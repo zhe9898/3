@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zongzu.Contracts\Zongzu.Contracts.csproj" />
+    <ProjectReference Include="..\Zongzu.Kernel\Zongzu.Kernel.csproj" />
+  </ItemGroup>
+</Project>
