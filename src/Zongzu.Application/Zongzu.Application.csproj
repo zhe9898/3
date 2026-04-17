@@ -6,9 +6,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Zongzu.Contracts\Zongzu.Contracts.csproj" />
     <ProjectReference Include="..\Zongzu.Kernel\Zongzu.Kernel.csproj" />
+    <ProjectReference Include="..\Zongzu.Modules.EducationAndExams\Zongzu.Modules.EducationAndExams.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.FamilyCore\Zongzu.Modules.FamilyCore.csproj" />
+    <ProjectReference Include="..\Zongzu.Modules.NarrativeProjection\Zongzu.Modules.NarrativeProjection.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.PopulationAndHouseholds\Zongzu.Modules.PopulationAndHouseholds.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.SocialMemoryAndRelations\Zongzu.Modules.SocialMemoryAndRelations.csproj" />
+    <ProjectReference Include="..\Zongzu.Modules.TradeAndIndustry\Zongzu.Modules.TradeAndIndustry.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.WorldSettlements\Zongzu.Modules.WorldSettlements.csproj" />
     <ProjectReference Include="..\Zongzu.Persistence\Zongzu.Persistence.csproj" />
     <ProjectReference Include="..\Zongzu.Scheduler\Zongzu.Scheduler.csproj" />

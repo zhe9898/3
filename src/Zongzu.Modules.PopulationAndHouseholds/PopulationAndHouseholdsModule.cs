@@ -197,6 +197,14 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 .ToArray();
         }
 
+        public IReadOnlyList<PopulationSettlementSnapshot> GetSettlements()
+        {
+            return _state.Settlements
+                .OrderBy(static settlement => settlement.SettlementId.Value)
+                .Select(CloneSettlement)
+                .ToArray();
+        }
+
         private static HouseholdPressureSnapshot CloneHousehold(PopulationHouseholdState household)
         {
             return new HouseholdPressureSnapshot

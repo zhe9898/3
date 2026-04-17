@@ -18,12 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Zongzu.Application\Zongzu.Application.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Contracts\Zongzu.Contracts.csproj" />
-    <ProjectReference Include="..\..\src\Zongzu.Modules.FamilyCore\Zongzu.Modules.FamilyCore.csproj" />
-    <ProjectReference Include="..\..\src\Zongzu.Presentation.Unity\Zongzu.Presentation.Unity.csproj" />
-    <ProjectReference Include="..\..\src\Zongzu.Modules.WorldSettlements\Zongzu.Modules.WorldSettlements.csproj" />
-    <ProjectReference Include="..\..\src\Zongzu.Persistence\Zongzu.Persistence.csproj" />
-    <ProjectReference Include="..\..\src\Zongzu.Scheduler\Zongzu.Scheduler.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Kernel\Zongzu.Kernel.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.NarrativeProjection\Zongzu.Modules.NarrativeProjection.csproj" />
   </ItemGroup>
 </Project>

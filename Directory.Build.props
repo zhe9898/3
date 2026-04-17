@@ -10,6 +10,11 @@
     '$(MSBuildProjectName)' == 'Zongzu.Contracts' or
     '$(MSBuildProjectName)' == 'Zongzu.Scheduler' or
     '$(MSBuildProjectName)' == 'Zongzu.Persistence' or
+    '$(MSBuildProjectName)' == 'Zongzu.Modules.ConflictAndForce' or
+    '$(MSBuildProjectName)' == 'Zongzu.Modules.EducationAndExams' or
+    '$(MSBuildProjectName)' == 'Zongzu.Modules.NarrativeProjection' or
+    '$(MSBuildProjectName)' == 'Zongzu.Modules.OrderAndBanditry' or
+    '$(MSBuildProjectName)' == 'Zongzu.Modules.TradeAndIndustry' or
     '$(MSBuildProjectName)' == 'Zongzu.Modules.PopulationAndHouseholds' or
     '$(MSBuildProjectName)' == 'Zongzu.Modules.SocialMemoryAndRelations' or
     '$(MSBuildProjectName)' == 'Zongzu.Modules.WorldSettlements' or

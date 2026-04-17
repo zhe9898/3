@@ -20,12 +20,28 @@ Every release line must pass:
 - grudges can persist across multiple years
 
 ## Phase M2
+- six-module replay remains deterministic across repeated seeds
+- 60-month replay remains deterministic across multiple representative seeds
+- headless diagnostics harness can run 120 months and report bounded notification growth plus save payload sizes
+- diagnostics harness and debug shell expose aligned runtime metrics for diff entries, domain events, notifications, and save payload bytes
+- M2 save roundtrip preserves all enabled module namespaces including `NarrativeProjection`
+- legacy M0-M1 saves load through the M2 loader when newer modules remain disabled
+- explicit root schema mismatches are rejected at load time
+- explicit module schema mismatches are rejected at load time
 - exam outcomes explainable
 - trade outcomes explainable
+- disabled M2-lite modules stay absent from save output
+- notifications trace back to `WorldDiff` entries
+- notification history retention stays bounded and trims oldest notices first
+- runtime-only debug traces reset after save/load and do not affect compatibility
+- first-pass shell composes from read-model bundles only
+- debug panel exposes seed, enabled modules, recent traces, inspectors, and invariant/warning output without authority writes
+- presentation projects do not reference authority modules directly
 - notifications trace back to diffs
 - UI shell can display all required surfaces without authority leakage
 
 ## Phase M3
+- before active M3 integration, placeholder `OrderAndBanditry` and `ConflictAndForce` modules expose stable no-op query seams and remain absent from active M2 bootstraps
 - local conflict resolution deterministic
 - conflict aftermath affects owned modules only through events
 - no tactical micro inputs exist

@@ -45,6 +45,8 @@ public sealed class GameSimulation
 
     public IReadOnlyList<IModuleRunner> Modules => _modules;
 
+    public SimulationMonthResult? LastMonthResult { get; private set; }
+
     public static GameSimulation CreateNew(
         GameDate startDate,
         KernelState kernelState,
@@ -72,17 +74,19 @@ public sealed class GameSimulation
         ArgumentNullException.ThrowIfNull(saveRoot);
         ArgumentNullException.ThrowIfNull(modules);
 
+        SaveMigrationPipeline migrationPipeline = new();
+        SaveRoot migratedRoot = migrationPipeline.PrepareForLoad(saveRoot, RootSchemaVersion, modules);
         MessagePackModuleStateSerializer serializer = new();
         SimulationStateStore stateStore = new();
 
         foreach (IModuleRunner module in modules)
         {
-            if (!saveRoot.FeatureManifest.IsEnabled(module.ModuleKey))
+            if (!migratedRoot.FeatureManifest.IsEnabled(module.ModuleKey))
             {
                 continue;
             }
 
-            if (!saveRoot.ModuleStates.TryGetValue(module.ModuleKey, out ModuleStateEnvelope? envelope))
+            if (!migratedRoot.ModuleStates.TryGetValue(module.ModuleKey, out ModuleStateEnvelope? envelope))
             {
                 throw new InvalidOperationException($"Save root is missing module state for {module.ModuleKey}.");
             }
@@ -96,13 +100,13 @@ public sealed class GameSimulation
         }
 
         GameSimulation simulation = new(
-            saveRoot.CurrentDate,
-            saveRoot.KernelState.Clone(),
-            saveRoot.FeatureManifest.Clone(),
+            migratedRoot.CurrentDate,
+            migratedRoot.KernelState.Clone(),
+            migratedRoot.FeatureManifest.Clone(),
             modules,
             stateStore);
 
-        ModuleBoundaryValidator.Validate(simulation._modules, simulation.FeatureManifest, saveRoot);
+        ModuleBoundaryValidator.Validate(simulation._modules, simulation.FeatureManifest, migratedRoot);
         return simulation;
     }
 
@@ -111,6 +115,7 @@ public sealed class GameSimulation
         DeterministicRandom random = new(KernelState);
         SimulationMonthResult result = _scheduler.AdvanceOneMonth(CurrentDate, FeatureManifest, random, _stateStore.States, _modules, KernelState);
         CurrentDate = result.NextDate;
+        LastMonthResult = result;
         RefreshReplayHash();
         return result;
     }
@@ -139,6 +144,11 @@ public sealed class GameSimulation
         where TState : class
     {
         return _stateStore.GetRequired<TState>(moduleKey);
+    }
+
+    internal bool TryGetModuleState(string moduleKey, out object? state)
+    {
+        return _stateStore.States.TryGetValue(moduleKey, out state);
     }
 
     internal void RefreshReplayHash()

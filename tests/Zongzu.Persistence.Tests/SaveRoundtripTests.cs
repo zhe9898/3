@@ -30,4 +30,30 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.WorldSettlements,
             }));
     }
+
+    [Test]
+    public void SaveCodec_RoundtripPreservesM2LiteSimulationState()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260419);
+        simulation.AdvanceMonths(12);
+
+        SaveCodec codec = new();
+        byte[] bytes = codec.Encode(simulation.ExportSave());
+        GameSimulation reloaded = SimulationBootstrapper.LoadM2(codec.Decode(bytes));
+
+        Assert.That(reloaded.CurrentDate, Is.EqualTo(simulation.CurrentDate));
+        Assert.That(reloaded.ReplayHash, Is.EqualTo(simulation.ReplayHash));
+        Assert.That(
+            reloaded.ExportSave().ModuleStates.Keys.OrderBy(static key => key).ToArray(),
+            Is.EqualTo(new[]
+            {
+                KnownModuleKeys.EducationAndExams,
+                KnownModuleKeys.FamilyCore,
+                KnownModuleKeys.NarrativeProjection,
+                KnownModuleKeys.PopulationAndHouseholds,
+                KnownModuleKeys.SocialMemoryAndRelations,
+                KnownModuleKeys.TradeAndIndustry,
+                KnownModuleKeys.WorldSettlements,
+            }));
+    }
 }

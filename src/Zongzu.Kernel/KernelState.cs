@@ -16,9 +16,13 @@ public sealed class KernelState
 
     public int NextSettlementId { get; set; }
 
+    public int NextInstitutionId { get; set; }
+
     public int NextMemoryId { get; set; }
 
     public int NextRelationshipEdgeId { get; set; }
+
+    public int NextNotificationId { get; set; }
 
     public string LastReplayHash { get; set; } = string.Empty;
 
@@ -38,8 +42,10 @@ public sealed class KernelState
             NextHouseholdId = 1,
             NextClanId = 1,
             NextSettlementId = 1,
+            NextInstitutionId = 1,
             NextMemoryId = 1,
             NextRelationshipEdgeId = 1,
+            NextNotificationId = 1,
         };
     }
 
@@ -53,8 +59,10 @@ public sealed class KernelState
             NextHouseholdId = NextHouseholdId,
             NextClanId = NextClanId,
             NextSettlementId = NextSettlementId,
+            NextInstitutionId = NextInstitutionId,
             NextMemoryId = NextMemoryId,
             NextRelationshipEdgeId = NextRelationshipEdgeId,
+            NextNotificationId = NextNotificationId,
             LastReplayHash = LastReplayHash,
         };
     }

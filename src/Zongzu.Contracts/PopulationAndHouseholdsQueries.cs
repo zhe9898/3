@@ -44,4 +44,6 @@ public interface IPopulationAndHouseholdsQueries
     PopulationSettlementSnapshot GetRequiredSettlement(SettlementId settlementId);
 
     IReadOnlyList<HouseholdPressureSnapshot> GetHouseholds();
+
+    IReadOnlyList<PopulationSettlementSnapshot> GetSettlements();
 }

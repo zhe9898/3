@@ -75,3 +75,22 @@ Correct approach:
 - `EducationAndExams` emits `ExamPassed`
 - `FamilyCore` handles the event to update its own prestige state
 - `OfficeAndCareer` handles the event to open or advance office eligibility
+
+## Current M2-lite integration notes
+- `EducationAndExams.Lite` currently reads only `WorldSettlements`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces
+- `EducationAndExams.Lite` owns study progress, tutor quality, exam attempts, outcomes, and explanation text; it does not write family prestige or office state directly
+- `TradeAndIndustry.Lite` currently reads only `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces
+- `TradeAndIndustry.Lite` owns clan trade cash/debt state, market pressure, route pressure, outcomes, and explanation text; it does not write household or clan internals directly
+- both M2-lite modules emit deterministic domain events and keep outcome explanations derived from queryable state plus kernel RNG only
+- `NarrativeProjection` currently reads only the shared `WorldDiff` and `DomainEvent` streams plus its own saved history; it does not emit authority events or write foreign module state
+- the current first-pass presentation shell consumes a read-model bundle only; it does not reference simulation modules directly and does not resolve commands or authority rules inside UI code
+
+## Current observability and migration notes
+- diagnostics harness reports and presentation debug snapshots now align on the same runtime-only metrics: diff entries, domain events, notifications, and save payload bytes
+- those observability summaries are derived after authority simulation and never become a backdoor write channel
+- save loading now passes through an explicit migration seam, but current behavior is intentionally narrow: same-version pass-through or explicit failure when no path is registered
+
+## M3 preflight integration notes
+- `OrderAndBanditry` currently exposes only settlement disorder query seams plus command/event name reservations; it does not read or write foreign authority state yet
+- `ConflictAndForce` currently exposes only settlement force-pool query seams plus command/event name reservations; it does not read or write foreign authority state yet
+- neither preflight module is wired into `CreateM2Modules`, active M2 manifests, or the current monthly simulation loop

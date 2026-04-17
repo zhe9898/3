@@ -42,6 +42,11 @@ public static class KernelIdAllocator
         return new SettlementId(kernelState.NextSettlementId++);
     }
 
+    public static InstitutionId NextInstitution(KernelState kernelState)
+    {
+        return new InstitutionId(kernelState.NextInstitutionId++);
+    }
+
     public static MemoryId NextMemory(KernelState kernelState)
     {
         return new MemoryId(kernelState.NextMemoryId++);
@@ -50,5 +55,10 @@ public static class KernelIdAllocator
     public static RelationshipEdgeId NextRelationshipEdge(KernelState kernelState)
     {
         return new RelationshipEdgeId(kernelState.NextRelationshipEdgeId++);
+    }
+
+    public static NotificationId NextNotification(KernelState kernelState)
+    {
+        return new NotificationId(kernelState.NextNotificationId++);
     }
 }

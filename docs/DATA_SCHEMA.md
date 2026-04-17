@@ -147,18 +147,76 @@ public sealed record SocialMemoryState {
 
 ### EducationAndExams state
 ```csharp
-public sealed record EducationState {
-    Dictionary<PersonId, EducationPersonState> People;
-    Dictionary<InstitutionId, AcademyState> Academies;
+public sealed class EducationAndExamsState {
+    List<EducationPersonState> People;
+    List<AcademyState> Academies;
+}
+
+public sealed class EducationPersonState {
+    PersonId PersonId;
+    ClanId ClanId;
+    InstitutionId AcademyId;
+    string DisplayName;
+    bool IsStudying;
+    bool HasTutor;
+    int TutorQuality;
+    int StudyProgress;
+    int Stress;
+    int ExamAttempts;
+    bool HasPassedLocalExam;
+    string LastOutcome;
+    string LastExplanation;
+    int ScholarlyReputation;
+}
+
+public sealed class AcademyState {
+    InstitutionId Id;
+    SettlementId SettlementId;
+    string AcademyName;
+    bool IsOpen;
+    int Capacity;
+    int Prestige;
 }
 ```
 
 ### TradeAndIndustry state
 ```csharp
-public sealed record TradeState {
-    Dictionary<ClanId, ClanTradeState> Clans;
-    Dictionary<SettlementId, SettlementMarketState> Markets;
-    Dictionary<int, RouteTradeState> Routes; // typed route id recommended in implementation
+public sealed class TradeAndIndustryState {
+    List<ClanTradeState> Clans;
+    List<SettlementMarketState> Markets;
+    List<RouteTradeState> Routes;
+}
+
+public sealed class ClanTradeState {
+    ClanId ClanId;
+    SettlementId PrimarySettlementId;
+    int CashReserve;
+    int GrainReserve;
+    int Debt;
+    int CommerceReputation;
+    int ShopCount;
+    int ManagerSkill;
+    string LastOutcome;
+    string LastExplanation;
+}
+
+public sealed class SettlementMarketState {
+    SettlementId SettlementId;
+    string MarketName;
+    int PriceIndex;
+    int Demand;
+    int LocalRisk;
+}
+
+public sealed class RouteTradeState {
+    int RouteId;   // typed route id can replace this later if needed
+    ClanId ClanId;
+    string RouteName;
+    SettlementId SettlementId;
+    bool IsActive;
+    int Capacity;
+    int Risk;
+    int LastMargin;
 }
 ```
 
@@ -172,19 +230,35 @@ public sealed record OfficeState {
 
 ### OrderAndBanditry state
 ```csharp
-public sealed record OrderState {
-    Dictionary<SettlementId, LocalOrderState> Settlements;
-    Dictionary<int, BanditGroupState> BanditGroups; // typed id recommended
-    Dictionary<PersonId, OutlawPathState> People;
+public sealed class OrderAndBanditryState {
+    List<SettlementDisorderState> Settlements;
+}
+
+public sealed class SettlementDisorderState {
+    SettlementId SettlementId;
+    int BanditThreat;
+    int RoutePressure;
+    int SuppressionDemand;
+    int DisorderPressure;
+    string LastPressureReason;
 }
 ```
 
 ### ConflictAndForce state
 ```csharp
-public sealed record ForceState {
-    Dictionary<ClanId, ClanForceState> Clans;
-    Dictionary<SettlementId, LocalConflictState> Settlements;
-    Dictionary<ForceGroupId, ForceGroupState> ForceGroups;
+public sealed class ConflictAndForceState {
+    List<SettlementForceState> Settlements;
+}
+
+public sealed class SettlementForceState {
+    SettlementId SettlementId;
+    int GuardCount;
+    int RetainerCount;
+    int MilitiaCount;
+    int EscortCount;
+    int Readiness;
+    int CommandCapacity;
+    string LastConflictTrace;
 }
 ```
 
@@ -199,8 +273,70 @@ public sealed record CampaignState {
 Narrative projections may be persisted or rebuilt.
 If persisted, keep them clearly marked as derived.
 ```csharp
-public sealed record NarrativeState {
-    Dictionary<NotificationId, NotificationData> Notifications;
+public sealed class NarrativeProjectionState {
+    List<NarrativeNotificationState> Notifications;
+}
+
+public sealed class NarrativeNotificationState {
+    NotificationId Id;
+    GameDate CreatedAt;
+    NotificationTier Tier;
+    NarrativeSurface Surface;
+    string Title;
+    string Summary;
+    string WhyItHappened;
+    string WhatNext;
+    string SourceModuleKey;
+    bool IsRead;
+    List<NarrativeTraceState> Traces;
+}
+
+public sealed class NarrativeTraceState {
+    string SourceModuleKey;
+    string EventType;
+    string EventSummary;
+    string DiffDescription;
+    string? EntityKey;
+}
+```
+
+### Presentation read-model bundle
+Not authoritative and not saved as a separate namespace.
+```csharp
+public sealed class PresentationReadModelBundle {
+    GameDate CurrentDate;
+    string ReplayHash;
+    IReadOnlyList<ClanSnapshot> Clans;
+    IReadOnlyList<SettlementSnapshot> Settlements;
+    IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements;
+    IReadOnlyList<EducationCandidateSnapshot> EducationCandidates;
+    IReadOnlyList<AcademySnapshot> Academies;
+    IReadOnlyList<ClanTradeSnapshot> ClanTrades;
+    IReadOnlyList<MarketSnapshot> Markets;
+    IReadOnlyList<TradeRouteSnapshot> TradeRoutes;
+    IReadOnlyList<NarrativeNotificationSnapshot> Notifications;
+    PresentationDebugSnapshot Debug;
+}
+
+public sealed class PresentationDebugSnapshot {
+    int DiagnosticsSchemaVersion;
+    long InitialSeed;
+    int NotificationRetentionLimit;
+    bool RetentionLimitReached;
+    ObservabilityMetricsSnapshot LatestMetrics;
+    IReadOnlyList<DebugFeatureModeSnapshot> EnabledModules;
+    IReadOnlyList<DebugModuleInspectorSnapshot> ModuleInspectors;
+    IReadOnlyList<DebugDiffTraceSnapshot> RecentDiffEntries;
+    IReadOnlyList<DebugDomainEventSnapshot> RecentDomainEvents;
+    IReadOnlyList<string> Warnings;
+    IReadOnlyList<string> Invariants;
+}
+
+public sealed class ObservabilityMetricsSnapshot {
+    int DiffEntryCount;
+    int DomainEventCount;
+    int NotificationCount;
+    int SavePayloadBytes;
 }
 ```
 
