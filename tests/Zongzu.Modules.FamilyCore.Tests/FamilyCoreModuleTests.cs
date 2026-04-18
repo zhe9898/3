@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Modules.FamilyCore;
@@ -61,5 +63,90 @@ public sealed class FamilyCoreModuleTests
         Assert.That(familyState.Clans[0].SupportReserve, Is.EqualTo(59));
         Assert.That(context.Diff.Entries, Has.Count.EqualTo(2));
         Assert.That(context.DomainEvents.Events, Has.Count.EqualTo(2));
+    }
+
+    [Test]
+    public void HandleEvents_AppliesCampaignReputationAndSupportFalloutInsideClanState()
+    {
+        FamilyCoreModule module = new();
+        FamilyCoreState state = module.CreateInitialState();
+        state.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 58,
+            SupportReserve = 64,
+            HeirPersonId = new PersonId(1),
+        });
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+        queries.Register<IWarfareCampaignQueries>(new StubWarfareCampaignQueries(
+        [
+            new CampaignFrontSnapshot
+            {
+                CampaignId = new CampaignId(1),
+                AnchorSettlementId = new SettlementId(1),
+                AnchorSettlementName = "Lanxi",
+                CampaignName = "Lanxi Campaign Board",
+                IsActive = true,
+                MobilizedForceCount = 52,
+                FrontPressure = 73,
+                FrontLabel = "Front tightening",
+                SupplyState = 38,
+                SupplyStateLabel = "Supply strained",
+                MoraleState = 45,
+                MoraleStateLabel = "Morale wavering",
+                LastAftermathSummary = "Lanxi clans are paying for wagons and funerals.",
+            },
+        ]));
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 10),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(61)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.HandleEvents(new ModuleEventHandlingScope<FamilyCoreState>(
+            state,
+            context,
+            [
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignMobilized, "Lanxi mobilized.", "1"),
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignSupplyStrained, "Lanxi supply strained.", "1"),
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignAftermathRegistered, "Lanxi entered aftermath review.", "1"),
+            ]));
+
+        Assert.That(state.Clans[0].Prestige, Is.LessThan(58));
+        Assert.That(state.Clans[0].SupportReserve, Is.LessThan(64));
+        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("Campaign spillover"));
+        Assert.That(context.DomainEvents.Events.Single().EventType, Is.EqualTo("ClanPrestigeAdjusted"));
+    }
+
+    private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
+    {
+        private readonly IReadOnlyList<CampaignFrontSnapshot> _campaigns;
+
+        public StubWarfareCampaignQueries(IReadOnlyList<CampaignFrontSnapshot> campaigns)
+        {
+            _campaigns = campaigns;
+        }
+
+        public IReadOnlyList<CampaignMobilizationSignalSnapshot> GetMobilizationSignals()
+        {
+            return [];
+        }
+
+        public CampaignFrontSnapshot GetRequiredCampaign(CampaignId campaignId)
+        {
+            return _campaigns.Single(campaign => campaign.CampaignId == campaignId);
+        }
+
+        public IReadOnlyList<CampaignFrontSnapshot> GetCampaigns()
+        {
+            return _campaigns;
+        }
     }
 }

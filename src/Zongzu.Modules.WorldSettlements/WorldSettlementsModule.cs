@@ -10,6 +10,14 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 {
     private static readonly string[] EventNames = ["SettlementPressureChanged"];
 
+    private static readonly string[] ConsumedEventNames =
+    [
+        WarfareCampaignEventNames.CampaignMobilized,
+        WarfareCampaignEventNames.CampaignPressureRaised,
+        WarfareCampaignEventNames.CampaignSupplyStrained,
+        WarfareCampaignEventNames.CampaignAftermathRegistered,
+    ];
+
     public override string ModuleKey => KnownModuleKeys.WorldSettlements;
 
     public override int ModuleSchemaVersion => 1;
@@ -19,6 +27,8 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
     public override int ExecutionOrder => 100;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
+
+    public override IReadOnlyCollection<string> ConsumedEvents => ConsumedEventNames;
 
     public override WorldSettlementsState CreateInitialState()
     {
@@ -50,6 +60,65 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
                 settlement.Id.Value.ToString());
             scope.Emit("SettlementPressureChanged", $"Settlement {settlement.Name} pressure changed.");
         }
+    }
+
+    public override void HandleEvents(ModuleEventHandlingScope<WorldSettlementsState> scope)
+    {
+        IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
+        if (warfareEvents.Count == 0)
+        {
+            return;
+        }
+
+        Dictionary<SettlementId, CampaignFrontSnapshot> campaignsBySettlement = scope.GetRequiredQuery<IWarfareCampaignQueries>()
+            .GetCampaigns()
+            .ToDictionary(static campaign => campaign.AnchorSettlementId, static campaign => campaign);
+
+        foreach (WarfareCampaignEventBundle bundle in warfareEvents)
+        {
+            if (!campaignsBySettlement.TryGetValue(bundle.SettlementId, out CampaignFrontSnapshot? campaign))
+            {
+                continue;
+            }
+
+            SettlementStateData settlement = scope.State.Settlements.SingleOrDefault(existing => existing.Id == bundle.SettlementId)
+                ?? throw new InvalidOperationException($"Settlement {bundle.SettlementId.Value} was not found for warfare fallout.");
+            int previousSecurity = settlement.Security;
+            int previousProsperity = settlement.Prosperity;
+
+            int securityDelta = ComputeCampaignSecurityDelta(bundle, campaign);
+            int prosperityDelta = ComputeCampaignProsperityDelta(bundle, campaign);
+
+            settlement.Security = Math.Clamp(settlement.Security - securityDelta, 0, 100);
+            settlement.Prosperity = Math.Clamp(settlement.Prosperity - prosperityDelta, 0, 100);
+
+            if (previousSecurity == settlement.Security && previousProsperity == settlement.Prosperity)
+            {
+                continue;
+            }
+
+            scope.RecordDiff(
+                $"Campaign spillover around {settlement.Name} cut security by {securityDelta} and prosperity by {prosperityDelta}; {campaign.FrontLabel}, {campaign.SupplyStateLabel}, and aftermath '{campaign.LastAftermathSummary}'.",
+                settlement.Id.Value.ToString());
+            scope.Emit("SettlementPressureChanged", $"Campaign spillover changed settlement pressure around {settlement.Name}.", settlement.Id.Value.ToString());
+        }
+    }
+
+    private static int ComputeCampaignSecurityDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int delta = bundle.CampaignPressureRaised ? 2 : 0;
+        delta += bundle.CampaignAftermathRegistered ? 2 : 0;
+        delta += Math.Max(0, campaign.FrontPressure - 60) / 18;
+        return Math.Max(1, delta);
+    }
+
+    private static int ComputeCampaignProsperityDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int delta = bundle.CampaignMobilized ? 1 : 0;
+        delta += bundle.CampaignSupplyStrained ? 3 : 0;
+        delta += bundle.CampaignAftermathRegistered ? 2 : 0;
+        delta += Math.Max(0, 55 - campaign.SupplyState) / 16;
+        return Math.Max(1, delta);
     }
 
     private sealed class WorldSettlementsQueries : IWorldSettlementsQueries

@@ -14,9 +14,13 @@ public static class KnownModuleKeys
 
     public const string TradeAndIndustry = "TradeAndIndustry";
 
+    public const string OfficeAndCareer = "OfficeAndCareer";
+
     public const string NarrativeProjection = "NarrativeProjection";
 
     public const string OrderAndBanditry = "OrderAndBanditry";
 
     public const string ConflictAndForce = "ConflictAndForce";
+
+    public const string WarfareCampaign = "WarfareCampaign";
 }

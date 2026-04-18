@@ -1,0 +1,9 @@
+root = true
+
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = false
+
+[*.{cs,csproj,sln,props,targets,md,json,yml,yaml,xml,txt}]
+charset = utf-8

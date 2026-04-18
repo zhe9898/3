@@ -38,14 +38,25 @@ Enabled modules run in deterministic order:
 1. `EducationAndExams`
 2. `TradeAndIndustry`
 3. `OfficeAndCareer` if enabled
-4. `OrderAndBanditry` if enabled
-5. `ConflictAndForce` if enabled
+4. `ConflictAndForce` if enabled
+5. `OrderAndBanditry` if enabled
 6. `WarfareCampaign` if enabled
+
+Current M3 local-conflict note:
+- `ConflictAndForce.Lite` may refresh force posture before `OrderAndBanditry.Lite` reads same-month response support
+- only activated local-conflict response state may feed same-month order relief; calm or standing-but-untriggered posture stays visible but does not leak relief
+- `ConflictAndForce.Lite` still reads only published query state and does not mutate `OrderAndBanditry` directly
+- `OfficeAndCareer.Lite`, when enabled through the governance-lite path, now runs ahead of conflict/order so jurisdiction leverage can be read as bounded same-month administrative support without direct writes
+- `ConflictAndForce.Lite` may now also carry campaign-fatigue and escort-strain fallout forward across months; those penalties recover during its own monthly pass and never require foreign-state writes
 
 ### Phase 6: domain event handling
 - modules emit events
-- deterministic event queue processed
+- deterministic event queue snapshot processed before projection
 - handlers update only owning module state
+- current active handler seam runs after authority modules finish their monthly pass and before `NarrativeProjection` builds notices
+- current handler seam is single-sweep per month: follow-on events may reach projection, but they do not trigger another handler cascade in the same month
+- `ConflictAndForce` now uses that seam to turn warfare aftermath into owned fatigue / readiness fallout after `WarfareCampaign` runs, so local-force wear can be visible immediately without moving authority rules into UI
+- the same seam now also lets warfare aftermath land in civilian livelihood (`PopulationAndHouseholds`), settlement prosperity/security (`WorldSettlements`), and clan standing (`FamilyCore`) through owned-state updates only
 
 ### Phase 7: diff generation
 Structured diff records created for:
@@ -61,6 +72,7 @@ Structured diff records created for:
 - urgent / consequential / background grouping
 - letters, reports, rumors, council prompts
 - explanation trails
+- projection now sees both source campaign events and any handler-emitted follow-on events from downstream modules in the same month
 
 ### Phase 9: player review and command
 The player acts through bounded commands:

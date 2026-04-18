@@ -23,11 +23,15 @@ public interface IModuleRunner
 
     IReadOnlyCollection<string> PublishedEvents { get; }
 
+    IReadOnlyCollection<string> ConsumedEvents { get; }
+
     object CreateInitialState();
 
     void RegisterQueries(object state, QueryRegistry queries);
 
     void RunMonth(ModuleExecutionContext context, object state);
+
+    void HandleEvents(ModuleExecutionContext context, object state, IReadOnlyList<IDomainEvent> events);
 }
 
 public interface IModuleStateDescriptor
@@ -56,6 +60,8 @@ public abstract class ModuleRunner<TState> : IModuleRunner
 
     public virtual IReadOnlyCollection<string> PublishedEvents => Array.Empty<string>();
 
+    public virtual IReadOnlyCollection<string> ConsumedEvents => Array.Empty<string>();
+
     public abstract TState CreateInitialState();
 
     public virtual void RegisterQueries(TState state, QueryRegistry queries)
@@ -63,6 +69,10 @@ public abstract class ModuleRunner<TState> : IModuleRunner
     }
 
     public abstract void RunMonth(ModuleExecutionScope<TState> scope);
+
+    public virtual void HandleEvents(ModuleEventHandlingScope<TState> scope)
+    {
+    }
 
     object IModuleRunner.CreateInitialState()
     {
@@ -77,6 +87,11 @@ public abstract class ModuleRunner<TState> : IModuleRunner
     void IModuleRunner.RunMonth(ModuleExecutionContext context, object state)
     {
         RunMonth(new ModuleExecutionScope<TState>(CastState(state), context));
+    }
+
+    void IModuleRunner.HandleEvents(ModuleExecutionContext context, object state, IReadOnlyList<IDomainEvent> events)
+    {
+        HandleEvents(new ModuleEventHandlingScope<TState>(CastState(state), context, events));
     }
 
     private static TState CastState(object state)

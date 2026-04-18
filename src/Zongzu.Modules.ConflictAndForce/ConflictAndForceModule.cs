@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -23,19 +24,29 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
         "MilitiaMobilized",
     ];
 
+    private static readonly string[] ConsumedEventNames =
+    [
+        WarfareCampaignEventNames.CampaignMobilized,
+        WarfareCampaignEventNames.CampaignPressureRaised,
+        WarfareCampaignEventNames.CampaignSupplyStrained,
+        WarfareCampaignEventNames.CampaignAftermathRegistered,
+    ];
+
     public override string ModuleKey => KnownModuleKeys.ConflictAndForce;
 
-    public override int ModuleSchemaVersion => 1;
+    public override int ModuleSchemaVersion => 3;
 
-    public override SimulationPhase Phase => SimulationPhase.EventHandling;
+    public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
 
-    public override int ExecutionOrder => 200;
+    public override int ExecutionOrder => 650;
 
     public override FeatureMode DefaultMode => FeatureMode.Lite;
 
     public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
+
+    public override IReadOnlyCollection<string> ConsumedEvents => ConsumedEventNames;
 
     public override ConflictAndForceState CreateInitialState()
     {
@@ -49,7 +60,624 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
 
     public override void RunMonth(ModuleExecutionScope<ConflictAndForceState> scope)
     {
-        _ = scope;
+        IWorldSettlementsQueries settlementQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        IPopulationAndHouseholdsQueries populationQueries = scope.GetRequiredQuery<IPopulationAndHouseholdsQueries>();
+        IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
+        ISocialMemoryAndRelationsQueries socialQueries = scope.GetRequiredQuery<ISocialMemoryAndRelationsQueries>();
+
+        IOrderAndBanditryQueries? orderQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OrderAndBanditry)
+            ? scope.GetRequiredQuery<IOrderAndBanditryQueries>()
+            : null;
+        IOfficeAndCareerQueries? officeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OfficeAndCareer)
+            ? scope.GetRequiredQuery<IOfficeAndCareerQueries>()
+            : null;
+        ITradeAndIndustryQueries? tradeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.TradeAndIndustry)
+            ? scope.GetRequiredQuery<ITradeAndIndustryQueries>()
+            : null;
+
+        IReadOnlyList<SettlementSnapshot> settlements = settlementQueries.GetSettlements();
+        IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
+        IReadOnlyList<ClanNarrativeSnapshot> narratives = socialQueries.GetClanNarratives();
+
+        Dictionary<ClanId, ClanNarrativeSnapshot> narrativesByClan = narratives.ToDictionary(
+            static narrative => narrative.ClanId,
+            static narrative => narrative);
+        Dictionary<SettlementId, SettlementDisorderSnapshot> disorderBySettlement = orderQueries is null
+            ? new Dictionary<SettlementId, SettlementDisorderSnapshot>()
+            : orderQueries.GetSettlementDisorder().ToDictionary(static disorder => disorder.SettlementId, static disorder => disorder);
+        Dictionary<SettlementId, JurisdictionAuthoritySnapshot> jurisdictionBySettlement = officeQueries is null
+            ? new Dictionary<SettlementId, JurisdictionAuthoritySnapshot>()
+            : officeQueries.GetJurisdictions().ToDictionary(static jurisdiction => jurisdiction.SettlementId, static jurisdiction => jurisdiction);
+        Dictionary<SettlementId, TradeActivitySnapshot> tradeActivityBySettlement = BuildTradeActivityBySettlement(tradeQueries);
+
+        foreach (SettlementSnapshot settlement in settlements.OrderBy(static settlement => settlement.Id.Value))
+        {
+            PopulationSettlementSnapshot population = populationQueries.GetRequiredSettlement(settlement.Id);
+            SettlementForceState force = GetOrCreateSettlement(scope.State, settlement.Id);
+
+            ClanSnapshot[] localClans = clans
+                .Where(clan => clan.HomeSettlementId == settlement.Id)
+                .OrderBy(static clan => clan.Id.Value)
+                .ToArray();
+            int averagePrestige = AverageClanValue(localClans, static clan => clan.Prestige);
+            int averageSupport = AverageClanValue(localClans, static clan => clan.SupportReserve);
+            int localGrudge = AverageNarrative(localClans, narrativesByClan, static narrative => narrative.GrudgePressure);
+            int localFear = AverageNarrative(localClans, narrativesByClan, static narrative => narrative.FearPressure);
+
+            SettlementDisorderSnapshot disorder = disorderBySettlement.TryGetValue(settlement.Id, out SettlementDisorderSnapshot? disorderSnapshot)
+                ? disorderSnapshot
+                : EmptyDisorderSnapshot.For(settlement.Id);
+            JurisdictionAuthoritySnapshot? jurisdiction = jurisdictionBySettlement.TryGetValue(settlement.Id, out JurisdictionAuthoritySnapshot? authority)
+                ? authority
+                : null;
+            int administrativeSupport = jurisdiction is null ? 0 : ComputeAdministrativeSupport(jurisdiction);
+            TradeActivitySnapshot tradeActivity = tradeActivityBySettlement.TryGetValue(settlement.Id, out TradeActivitySnapshot? tradeSnapshot)
+                ? tradeSnapshot
+                : TradeActivitySnapshot.Empty;
+
+            int previousGuardCount = force.GuardCount;
+            int previousRetainerCount = force.RetainerCount;
+            int previousMilitiaCount = force.MilitiaCount;
+            int previousEscortCount = force.EscortCount;
+            int previousReadiness = force.Readiness;
+            int previousCommandCapacity = force.CommandCapacity;
+            int previousResponseActivationLevel = force.ResponseActivationLevel;
+            int previousOrderSupportLevel = force.OrderSupportLevel;
+            bool previousIsResponseActivated = force.IsResponseActivated;
+            bool previousHasActiveConflict = force.HasActiveConflict;
+            int previousCampaignFatigue = force.CampaignFatigue;
+            int previousCampaignEscortStrain = force.CampaignEscortStrain;
+            string previousCampaignFalloutTrace = force.LastCampaignFalloutTrace;
+
+            RecoverCampaignFallout(force, settlement, disorder, administrativeSupport);
+
+            force.GuardCount = Math.Clamp(
+                4
+                + (settlement.Security / 10)
+                + (averageSupport / 15)
+                + (disorder.SuppressionDemand / 20)
+                - (disorder.BanditThreat / 25)
+                + scope.Context.Random.NextInt(-1, 2),
+                0,
+                60);
+
+            force.RetainerCount = Math.Clamp(
+                2
+                + (averagePrestige / 14)
+                + (averageSupport / 22)
+                + (localGrudge / 35)
+                + scope.Context.Random.NextInt(-1, 2),
+                0,
+                40);
+
+            force.MilitiaCount = Math.Clamp(
+                (population.MilitiaPotential / 6)
+                + (disorder.SuppressionDemand / 10)
+                + (localFear / 18)
+                - (population.MigrationPressure / 18)
+                + scope.Context.Random.NextInt(-2, 3),
+                0,
+                90);
+
+            force.EscortCount = tradeActivity.ActiveRouteCount == 0
+                ? 0
+                : Math.Clamp(
+                    (tradeActivity.ActiveRouteCount * 2)
+                    + (tradeActivity.TotalRouteCapacity / 14)
+                    + (disorder.RoutePressure / 18)
+                    + (disorder.BanditThreat / 30)
+                    + scope.Context.Random.NextInt(-1, 2),
+                    0,
+                    50);
+
+            ApplyCampaignStrengthPenalties(force);
+
+            force.Readiness = Math.Clamp(
+                12
+                + force.GuardCount
+                + force.RetainerCount
+                + (force.MilitiaCount / 2)
+                + force.EscortCount
+                + (averageSupport / 4)
+                + (settlement.Security / 3)
+                + (administrativeSupport * 4)
+                - (population.CommonerDistress / 3)
+                - (disorder.DisorderPressure / 4)
+                - (disorder.RoutePressure / 5),
+                0,
+                100);
+
+            force.Readiness = Math.Clamp(
+                force.Readiness
+                - (force.CampaignFatigue / 4)
+                - (force.CampaignEscortStrain / 8),
+                0,
+                100);
+
+            force.CommandCapacity = Math.Clamp(
+                6
+                + (averagePrestige / 3)
+                + (averageSupport / 4)
+                + force.RetainerCount
+                + (force.GuardCount / 2)
+                + (administrativeSupport * 6)
+                - (localGrudge / 6)
+                + scope.Context.Random.NextInt(-2, 3),
+                0,
+                100);
+
+            force.CommandCapacity = Math.Clamp(
+                force.CommandCapacity
+                - (force.CampaignFatigue / 5)
+                - (force.CampaignEscortStrain / 10),
+                0,
+                100);
+
+            int conflictPressure =
+                disorder.BanditThreat
+                + disorder.RoutePressure
+                + disorder.DisorderPressure
+                + localGrudge
+                + (population.CommonerDistress / 2)
+                + tradeActivity.AverageRouteRisk;
+            int forcePosture = force.Readiness + force.CommandCapacity + force.GuardCount + force.EscortCount;
+            bool conflictResolved = (conflictPressure - forcePosture) >= 60
+                || (disorder.BanditThreat >= 65 && disorder.RoutePressure >= 60);
+            bool commanderWounded = conflictResolved
+                && (force.Readiness < 35 || localGrudge >= 60)
+                && scope.Context.Random.NextInt(0, 100) < 35;
+            int responseActivationLevel = ConflictAndForceResponseStateCalculator.ComputeResponseActivationLevel(force);
+            force.HasActiveConflict = DetermineActiveConflict(
+                previousHasActiveConflict,
+                responseActivationLevel,
+                disorder,
+                localGrudge,
+                localFear,
+                conflictPressure,
+                forcePosture,
+                conflictResolved,
+                commanderWounded);
+            ConflictAndForceResponseStateCalculator.Refresh(force);
+
+            force.LastConflictTrace = BuildConflictTrace(
+                settlement,
+                population,
+                disorder,
+                tradeActivity,
+                force,
+                localGrudge,
+                localFear,
+                conflictPressure,
+                forcePosture,
+                conflictResolved,
+                commanderWounded,
+                jurisdiction,
+                administrativeSupport);
+
+            if (previousGuardCount == force.GuardCount &&
+                previousRetainerCount == force.RetainerCount &&
+                previousMilitiaCount == force.MilitiaCount &&
+                previousEscortCount == force.EscortCount &&
+                previousReadiness == force.Readiness &&
+                previousCommandCapacity == force.CommandCapacity &&
+                previousResponseActivationLevel == force.ResponseActivationLevel &&
+                previousOrderSupportLevel == force.OrderSupportLevel &&
+                previousIsResponseActivated == force.IsResponseActivated &&
+                previousHasActiveConflict == force.HasActiveConflict &&
+                previousCampaignFatigue == force.CampaignFatigue &&
+                previousCampaignEscortStrain == force.CampaignEscortStrain &&
+                string.Equals(previousCampaignFalloutTrace, force.LastCampaignFalloutTrace, StringComparison.Ordinal) &&
+                !conflictResolved &&
+                !commanderWounded)
+            {
+                continue;
+            }
+
+            scope.RecordDiff(
+                $"Settlement {settlement.Name} force posture moved to guards {force.GuardCount}, retainers {force.RetainerCount}, militia {force.MilitiaCount}, escorts {force.EscortCount}, readiness {force.Readiness}, command {force.CommandCapacity}, response {force.ResponseActivationLevel}, support {force.OrderSupportLevel}. {force.LastConflictTrace}",
+                settlement.Id.Value.ToString());
+
+            if (previousMilitiaCount < 20 && force.MilitiaCount >= 20)
+            {
+                scope.Emit("MilitiaMobilized", $"Clan-aligned militia mobilized around {settlement.Name}.");
+            }
+
+            if (Math.Abs(force.Readiness - previousReadiness) >= 8)
+            {
+                scope.Emit("ForceReadinessChanged", $"Force readiness around {settlement.Name} shifted to {force.Readiness}.");
+            }
+
+            if (conflictResolved)
+            {
+                scope.Emit("ConflictResolved", $"Local force pressure around {settlement.Name} resolved into a contained clash.");
+            }
+
+            if (commanderWounded)
+            {
+                scope.Emit("CommanderWounded", $"A local captain was wounded while containing violence near {settlement.Name}.");
+            }
+        }
+    }
+
+    public override void HandleEvents(ModuleEventHandlingScope<ConflictAndForceState> scope)
+    {
+        IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
+        if (warfareEvents.Count == 0)
+        {
+            return;
+        }
+
+        Dictionary<SettlementId, CampaignFrontSnapshot> campaignsBySettlement = scope.GetRequiredQuery<IWarfareCampaignQueries>()
+            .GetCampaigns()
+            .ToDictionary(static campaign => campaign.AnchorSettlementId, static campaign => campaign);
+
+        foreach (WarfareCampaignEventBundle bundle in warfareEvents)
+        {
+            if (!campaignsBySettlement.TryGetValue(bundle.SettlementId, out CampaignFrontSnapshot? campaign))
+            {
+                continue;
+            }
+
+            SettlementForceState force = GetOrCreateSettlement(scope.State, bundle.SettlementId);
+            int previousReadiness = force.Readiness;
+            int previousCommandCapacity = force.CommandCapacity;
+            int previousMilitiaCount = force.MilitiaCount;
+            int previousEscortCount = force.EscortCount;
+            int previousResponseActivationLevel = force.ResponseActivationLevel;
+            int previousOrderSupportLevel = force.OrderSupportLevel;
+            int previousCampaignFatigue = force.CampaignFatigue;
+            int previousCampaignEscortStrain = force.CampaignEscortStrain;
+            string previousFalloutTrace = force.LastCampaignFalloutTrace;
+
+            int fatigueDelta = ComputeCampaignFatigueDelta(bundle, campaign);
+            int escortStrainDelta = ComputeCampaignEscortStrainDelta(bundle, campaign);
+            int readinessDrop = ComputeImmediateReadinessDrop(bundle, campaign);
+            int commandDrop = ComputeImmediateCommandDrop(bundle, campaign);
+            int militiaLoss = Math.Min(force.MilitiaCount, ComputeImmediateMilitiaLoss(bundle, campaign));
+            int escortLoss = Math.Min(force.EscortCount, ComputeImmediateEscortLoss(bundle, campaign));
+
+            force.CampaignFatigue = Math.Clamp(force.CampaignFatigue + fatigueDelta, 0, 100);
+            force.CampaignEscortStrain = Math.Clamp(force.CampaignEscortStrain + escortStrainDelta, 0, 100);
+            force.MilitiaCount = Math.Max(0, force.MilitiaCount - militiaLoss);
+            force.EscortCount = Math.Max(0, force.EscortCount - escortLoss);
+            force.Readiness = Math.Clamp(force.Readiness - readinessDrop, 0, 100);
+            force.CommandCapacity = Math.Clamp(force.CommandCapacity - commandDrop, 0, 100);
+            force.LastCampaignFalloutTrace = BuildCampaignFalloutTrace(bundle, campaign, fatigueDelta, escortStrainDelta, readinessDrop, commandDrop);
+            force.LastConflictTrace = MergeFalloutIntoConflictTrace(force.LastConflictTrace, force.LastCampaignFalloutTrace);
+            ConflictAndForceResponseStateCalculator.Refresh(force);
+
+            if (previousReadiness == force.Readiness
+                && previousCommandCapacity == force.CommandCapacity
+                && previousMilitiaCount == force.MilitiaCount
+                && previousEscortCount == force.EscortCount
+                && previousResponseActivationLevel == force.ResponseActivationLevel
+                && previousOrderSupportLevel == force.OrderSupportLevel
+                && previousCampaignFatigue == force.CampaignFatigue
+                && previousCampaignEscortStrain == force.CampaignEscortStrain
+                && string.Equals(previousFalloutTrace, force.LastCampaignFalloutTrace, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            scope.RecordDiff(
+                $"Campaign aftermath around {campaign.AnchorSettlementName} left fatigue {force.CampaignFatigue}, escort strain {force.CampaignEscortStrain}, readiness {force.Readiness}, and command {force.CommandCapacity}. {force.LastCampaignFalloutTrace}",
+                bundle.SettlementId.Value.ToString());
+
+            if (previousReadiness - force.Readiness >= 4 || previousCampaignFatigue != force.CampaignFatigue)
+            {
+                scope.Emit(
+                    "ForceReadinessChanged",
+                    $"Campaign fallout pulled readiness around {campaign.AnchorSettlementName} down to {force.Readiness}.",
+                    bundle.SettlementId.Value.ToString());
+            }
+        }
+    }
+
+    private static Dictionary<SettlementId, TradeActivitySnapshot> BuildTradeActivityBySettlement(ITradeAndIndustryQueries? tradeQueries)
+    {
+        if (tradeQueries is null)
+        {
+            return new Dictionary<SettlementId, TradeActivitySnapshot>();
+        }
+
+        Dictionary<SettlementId, List<TradeRouteSnapshot>> routesBySettlement = new();
+        foreach (ClanTradeSnapshot clanTrade in tradeQueries.GetClanTrades().OrderBy(static trade => trade.ClanId.Value))
+        {
+            foreach (TradeRouteSnapshot route in tradeQueries.GetRoutesForClan(clanTrade.ClanId)
+                         .Where(static route => route.IsActive)
+                         .OrderBy(static route => route.RouteId))
+            {
+                if (!routesBySettlement.TryGetValue(route.SettlementId, out List<TradeRouteSnapshot>? routes))
+                {
+                    routes = [];
+                    routesBySettlement[route.SettlementId] = routes;
+                }
+
+                routes.Add(route);
+            }
+        }
+
+        return routesBySettlement.ToDictionary(
+            static pair => pair.Key,
+            static pair =>
+            {
+                int averageRouteRisk = pair.Value.Count == 0 ? 0 : pair.Value.Sum(static route => route.Risk) / pair.Value.Count;
+                int totalRouteCapacity = pair.Value.Sum(static route => route.Capacity);
+                return new TradeActivitySnapshot(pair.Value.Count, averageRouteRisk, totalRouteCapacity);
+            });
+    }
+
+    private static int AverageClanValue(IReadOnlyList<ClanSnapshot> clans, Func<ClanSnapshot, int> selector)
+    {
+        return clans.Count == 0 ? 0 : clans.Sum(selector) / clans.Count;
+    }
+
+    private static int AverageNarrative(
+        IReadOnlyList<ClanSnapshot> clans,
+        IReadOnlyDictionary<ClanId, ClanNarrativeSnapshot> narrativesByClan,
+        Func<ClanNarrativeSnapshot, int> selector)
+    {
+        int total = 0;
+        int count = 0;
+        foreach (ClanSnapshot clan in clans)
+        {
+            if (!narrativesByClan.TryGetValue(clan.Id, out ClanNarrativeSnapshot? narrative))
+            {
+                continue;
+            }
+
+            total += selector(narrative);
+            count += 1;
+        }
+
+        return count == 0 ? 0 : total / count;
+    }
+
+    private static SettlementForceState GetOrCreateSettlement(ConflictAndForceState state, SettlementId settlementId)
+    {
+        SettlementForceState? settlement = state.Settlements.SingleOrDefault(existing => existing.SettlementId == settlementId);
+        if (settlement is not null)
+        {
+            return settlement;
+        }
+
+        settlement = new SettlementForceState
+        {
+            SettlementId = settlementId,
+        };
+        state.Settlements.Add(settlement);
+        state.Settlements = state.Settlements.OrderBy(static entry => entry.SettlementId.Value).ToList();
+        return settlement;
+    }
+
+    private static void RecoverCampaignFallout(
+        SettlementForceState force,
+        SettlementSnapshot settlement,
+        SettlementDisorderSnapshot disorder,
+        int administrativeSupport)
+    {
+        int recovery = 2 + (settlement.Security / 30) + administrativeSupport;
+        if (disorder.BanditThreat >= 55 || disorder.SuppressionDemand >= 55 || force.HasActiveConflict)
+        {
+            recovery = Math.Max(1, recovery - 2);
+        }
+
+        force.CampaignFatigue = Math.Max(0, force.CampaignFatigue - recovery);
+        force.CampaignEscortStrain = Math.Max(0, force.CampaignEscortStrain - (recovery + (settlement.Prosperity >= 60 ? 1 : 0)));
+
+        if (force.CampaignFatigue == 0 && force.CampaignEscortStrain == 0)
+        {
+            force.LastCampaignFalloutTrace = string.Empty;
+        }
+    }
+
+    private static void ApplyCampaignStrengthPenalties(SettlementForceState force)
+    {
+        force.GuardCount = Math.Max(0, force.GuardCount - Math.Max(0, force.CampaignFatigue - 28) / 18);
+        force.RetainerCount = Math.Max(0, force.RetainerCount - Math.Max(0, force.CampaignFatigue - 32) / 20);
+        force.MilitiaCount = Math.Max(0, force.MilitiaCount - (force.CampaignFatigue / 16));
+        force.EscortCount = Math.Max(0, force.EscortCount - Math.Max(force.CampaignFatigue / 24, force.CampaignEscortStrain / 14));
+    }
+
+    private static string BuildConflictTrace(
+        SettlementSnapshot settlement,
+        PopulationSettlementSnapshot population,
+        SettlementDisorderSnapshot disorder,
+        TradeActivitySnapshot tradeActivity,
+        SettlementForceState force,
+        int localGrudge,
+        int localFear,
+        int conflictPressure,
+        int forcePosture,
+        bool conflictResolved,
+        bool commanderWounded,
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        int administrativeSupport)
+    {
+        List<string> reasons = [];
+
+        if (disorder.BanditThreat >= 45 || disorder.RoutePressure >= 45)
+        {
+            reasons.Add($"Bandit threat {disorder.BanditThreat} and route pressure {disorder.RoutePressure} are forcing a stronger watch posture.");
+        }
+
+        if (population.CommonerDistress >= 55 || population.MigrationPressure >= 45)
+        {
+            reasons.Add($"Commoner distress {population.CommonerDistress} and migration pressure {population.MigrationPressure} are widening the pool for local clashes.");
+        }
+
+        if (tradeActivity.ActiveRouteCount > 0)
+        {
+            reasons.Add($"Trade traffic keeps {tradeActivity.ActiveRouteCount} active routes protected by {force.EscortCount} escorts.");
+        }
+
+        if (jurisdiction is not null && administrativeSupport > 0)
+        {
+            reasons.Add($"{jurisdiction.LeadOfficeTitle} leverage {jurisdiction.JurisdictionLeverage} is adding {administrativeSupport} tiers of administrative support.");
+        }
+
+        if (force.CampaignFatigue > 0 || force.CampaignEscortStrain > 0)
+        {
+            string falloutTrace = string.IsNullOrWhiteSpace(force.LastCampaignFalloutTrace)
+                ? "Earlier campaigning is still draining local watches and escort lines."
+                : force.LastCampaignFalloutTrace;
+            reasons.Add($"Earlier campaigning still leaves fatigue {force.CampaignFatigue} and escort strain {force.CampaignEscortStrain}. {falloutTrace}");
+        }
+
+        if (conflictResolved)
+        {
+            reasons.Add("A local clash was contained before it spread into wider disorder.");
+        }
+
+        reasons.Add($"Force posture {forcePosture} is answering conflict pressure {conflictPressure} with readiness {force.Readiness} and command {force.CommandCapacity}.");
+
+        if (localFear >= 50 || localGrudge >= 50)
+        {
+            reasons.Add($"Fear {localFear} and grudge {localGrudge} are keeping tempers close to violence in {settlement.Name}.");
+        }
+
+        if (commanderWounded)
+        {
+            reasons.Add("That containment came with a wounded captain and fresh resentment.");
+        }
+
+        return string.Join(" ", reasons.Take(5));
+    }
+
+    private static int ComputeAdministrativeSupport(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        int support = 0;
+        if (jurisdiction.AuthorityTier >= 2)
+        {
+            support += 1;
+        }
+
+        if (jurisdiction.JurisdictionLeverage >= 55)
+        {
+            support += 2;
+        }
+        else if (jurisdiction.JurisdictionLeverage >= 28)
+        {
+            support += 1;
+        }
+
+        if (jurisdiction.PetitionPressure >= 65)
+        {
+            support -= 1;
+        }
+
+        return Math.Max(0, support);
+    }
+
+    private static int ComputeCampaignFatigueDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int delta = bundle.CampaignMobilized ? 2 : 0;
+        delta += bundle.CampaignPressureRaised ? 3 : 0;
+        delta += bundle.CampaignSupplyStrained ? 4 : 0;
+        delta += bundle.CampaignAftermathRegistered ? 2 : 0;
+        delta += Math.Max(0, campaign.FrontPressure - 55) / 18;
+        delta += Math.Max(0, 55 - campaign.MoraleState) / 20;
+        return Math.Max(1, delta);
+    }
+
+    private static int ComputeCampaignEscortStrainDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int delta = bundle.CampaignMobilized ? 1 : 0;
+        delta += bundle.CampaignSupplyStrained ? 4 : 0;
+        delta += bundle.CampaignAftermathRegistered ? 2 : 0;
+        delta += Math.Max(0, 55 - campaign.SupplyState) / 12;
+        return Math.Max(1, delta);
+    }
+
+    private static int ComputeImmediateReadinessDrop(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int drop = bundle.CampaignPressureRaised ? 2 : 0;
+        drop += bundle.CampaignSupplyStrained ? 3 : 0;
+        drop += bundle.CampaignAftermathRegistered ? 2 : 0;
+        drop += Math.Max(0, campaign.FrontPressure - 60) / 20;
+        return Math.Max(1, drop);
+    }
+
+    private static int ComputeImmediateCommandDrop(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int drop = bundle.CampaignSupplyStrained ? 2 : 0;
+        drop += bundle.CampaignAftermathRegistered ? 1 : 0;
+        drop += Math.Max(0, 55 - campaign.MoraleState) / 18;
+        return Math.Max(1, drop);
+    }
+
+    private static int ComputeImmediateMilitiaLoss(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int loss = bundle.CampaignAftermathRegistered ? 1 : 0;
+        loss += campaign.FrontPressure >= 72 ? 1 : 0;
+        return loss;
+    }
+
+    private static int ComputeImmediateEscortLoss(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int loss = bundle.CampaignSupplyStrained ? 1 : 0;
+        loss += campaign.SupplyState <= 35 ? 1 : 0;
+        return loss;
+    }
+
+    private static string BuildCampaignFalloutTrace(
+        WarfareCampaignEventBundle bundle,
+        CampaignFrontSnapshot campaign,
+        int fatigueDelta,
+        int escortStrainDelta,
+        int readinessDrop,
+        int commandDrop)
+    {
+        string strainText = bundle.CampaignSupplyStrained
+            ? "Supply escorts and relay lines are coming back frayed."
+            : "Watch rotations are carrying a lingering campaign burden.";
+
+        return $"Campaign fallout from {campaign.AnchorSettlementName} imposed fatigue +{fatigueDelta}, escort strain +{escortStrainDelta}, readiness -{readinessDrop}, and command -{commandDrop}. {campaign.FrontLabel}, {campaign.SupplyStateLabel}, and aftermath '{campaign.LastAftermathSummary}' keep the local force tired. {strainText}";
+    }
+
+    private static string MergeFalloutIntoConflictTrace(string currentTrace, string falloutTrace)
+    {
+        if (string.IsNullOrWhiteSpace(falloutTrace)
+            || currentTrace.Contains(falloutTrace, StringComparison.Ordinal))
+        {
+            return currentTrace;
+        }
+
+        if (string.IsNullOrWhiteSpace(currentTrace))
+        {
+            return falloutTrace;
+        }
+
+        return $"{currentTrace} {falloutTrace}";
+    }
+
+    private static bool DetermineActiveConflict(
+        bool previousHasActiveConflict,
+        int responseActivationLevel,
+        SettlementDisorderSnapshot disorder,
+        int localGrudge,
+        int localFear,
+        int conflictPressure,
+        int forcePosture,
+        bool conflictResolved,
+        bool commanderWounded)
+    {
+        return conflictResolved
+            || commanderWounded
+            || disorder.BanditThreat >= 60
+            || disorder.RoutePressure >= 55
+            || disorder.DisorderPressure >= 60
+            || disorder.SuppressionDemand >= 55
+            || localGrudge >= 60
+            || localFear >= 55
+            || (previousHasActiveConflict
+                && responseActivationLevel >= ConflictAndForceResponseStateCalculator.MinimumResponseActivationLevel
+                && (disorder.BanditThreat >= 20
+                    || disorder.RoutePressure >= 20
+                    || disorder.SuppressionDemand >= 15
+                    || localGrudge >= 40
+                    || localFear >= 40))
+            || (conflictPressure - forcePosture) >= 10;
     }
 
     private sealed class ConflictAndForceQueries : IConflictAndForceQueries
@@ -86,7 +714,30 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
                 EscortCount = settlement.EscortCount,
                 Readiness = settlement.Readiness,
                 CommandCapacity = settlement.CommandCapacity,
+                ResponseActivationLevel = settlement.ResponseActivationLevel,
+                OrderSupportLevel = settlement.OrderSupportLevel,
+                IsResponseActivated = settlement.IsResponseActivated,
+                HasActiveConflict = settlement.HasActiveConflict,
+                CampaignFatigue = settlement.CampaignFatigue,
+                CampaignEscortStrain = settlement.CampaignEscortStrain,
+                LastCampaignFalloutTrace = settlement.LastCampaignFalloutTrace,
                 LastConflictTrace = settlement.LastConflictTrace,
+            };
+        }
+    }
+
+    private sealed record TradeActivitySnapshot(int ActiveRouteCount, int AverageRouteRisk, int TotalRouteCapacity)
+    {
+        public static readonly TradeActivitySnapshot Empty = new(0, 0, 0);
+    }
+
+    private static class EmptyDisorderSnapshot
+    {
+        public static SettlementDisorderSnapshot For(SettlementId settlementId)
+        {
+            return new SettlementDisorderSnapshot
+            {
+                SettlementId = settlementId,
             };
         }
     }

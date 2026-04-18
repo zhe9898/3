@@ -20,8 +20,13 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Zongzu.Application\Zongzu.Application.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Contracts\Zongzu.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.ConflictAndForce\Zongzu.Modules.ConflictAndForce.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Modules.FamilyCore\Zongzu.Modules.FamilyCore.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.OfficeAndCareer\Zongzu.Modules.OfficeAndCareer.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.OrderAndBanditry\Zongzu.Modules.OrderAndBanditry.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Presentation.Unity\Zongzu.Presentation.Unity.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.TradeAndIndustry\Zongzu.Modules.TradeAndIndustry.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.WarfareCampaign\Zongzu.Modules.WarfareCampaign.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Modules.WorldSettlements\Zongzu.Modules.WorldSettlements.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Persistence\Zongzu.Persistence.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Scheduler\Zongzu.Scheduler.csproj" />

@@ -57,6 +57,20 @@ public sealed class PresentationReadModelBuilder
                 .ToArray();
         }
 
+        if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.OfficeAndCareer))
+        {
+            IOfficeAndCareerQueries officeQueries = queries.GetRequired<IOfficeAndCareerQueries>();
+            bundle.OfficeCareers = officeQueries.GetCareers();
+            bundle.OfficeJurisdictions = officeQueries.GetJurisdictions();
+        }
+
+        if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.WarfareCampaign))
+        {
+            IWarfareCampaignQueries warfareQueries = queries.GetRequired<IWarfareCampaignQueries>();
+            bundle.Campaigns = warfareQueries.GetCampaigns();
+            bundle.CampaignMobilizationSignals = warfareQueries.GetMobilizationSignals();
+        }
+
         if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.NarrativeProjection))
         {
             bundle.Notifications = queries.GetRequired<INarrativeProjectionQueries>().GetNotifications();
@@ -95,6 +109,12 @@ public sealed class PresentationReadModelBuilder
         IReadOnlyList<NarrativeNotificationSnapshot> notifications)
     {
         SaveRoot saveRoot = simulation.ExportSave();
+        InteractionPressureMetricsSnapshot interactionPressure = RuntimeObservabilityCollector.CollectInteractionPressure(simulation);
+        SettlementPressureDistributionSnapshot pressureDistribution = RuntimeObservabilityCollector.CollectPressureDistribution(simulation);
+        RuntimeScaleMetricsSnapshot scaleMetrics = RuntimeObservabilityCollector.CollectScaleMetrics(simulation, saveRoot, notifications.Count);
+        IReadOnlyList<SettlementInteractionHotspotSnapshot> currentHotspots = RuntimeObservabilityCollector.CollectTopHotspots(simulation);
+        RuntimePayloadSummarySnapshot payloadSummary = RuntimeObservabilityCollector.CollectPayloadSummary(saveRoot);
+        IReadOnlyList<ModulePayloadFootprintSnapshot> topPayloadModules = RuntimeObservabilityCollector.CollectTopPayloadModules(saveRoot);
         List<string> warnings = new();
         List<string> invariants = new();
 
@@ -135,6 +155,43 @@ public sealed class PresentationReadModelBuilder
             warnings.Add("Urgent notifications are pending review.");
         }
 
+        if (interactionPressure.ActivatedResponseSettlements > 0)
+        {
+            warnings.Add($"{interactionPressure.ActivatedResponseSettlements} settlement response postures are currently activated.");
+        }
+
+        if (pressureDistribution.CrisisSettlements > 0)
+        {
+            warnings.Add($"{pressureDistribution.CrisisSettlements} settlements are currently in crisis-pressure range.");
+        }
+
+        if (currentHotspots.Count > 0)
+        {
+            warnings.Add($"Current hotspot focus: {currentHotspots[0].SettlementName} at score {currentHotspots[0].HotspotScore}.");
+        }
+
+        if (scaleMetrics.NotificationUtilizationPercent >= 90)
+        {
+            warnings.Add($"Notification retention utilization is high at {scaleMetrics.NotificationUtilizationPercent}%.");
+        }
+
+        if (topPayloadModules.Count > 0)
+        {
+            warnings.Add($"Largest payload module: {topPayloadModules[0].ModuleKey} at {topPayloadModules[0].PayloadBytes} bytes.");
+        }
+
+        if (payloadSummary.TotalModulePayloadBytes > 0 && scaleMetrics.SettlementCount > 0)
+        {
+            warnings.Add($"Runtime payload density is {scaleMetrics.SavePayloadBytesPerSettlement} bytes per settlement.");
+        }
+
+        DebugLoadMigrationSnapshot loadMigration = BuildLoadMigrationSnapshot(simulation);
+        if (loadMigration.WasMigrationApplied)
+        {
+            warnings.Add(loadMigration.Summary);
+        }
+        warnings.AddRange(loadMigration.Warnings);
+
         return new PresentationDebugSnapshot
         {
             DiagnosticsSchemaVersion = 1,
@@ -148,6 +205,13 @@ public sealed class PresentationReadModelBuilder
                 NotificationCount = notifications.Count,
                 SavePayloadBytes = _saveCodec.Encode(saveRoot).Length,
             },
+            CurrentInteractionPressure = interactionPressure,
+            CurrentPressureDistribution = pressureDistribution,
+            CurrentScale = scaleMetrics,
+            CurrentHotspots = currentHotspots,
+            CurrentPayloadSummary = payloadSummary,
+            TopPayloadModules = topPayloadModules,
+            LoadMigration = loadMigration,
             EnabledModules = simulation.FeatureManifest.GetOrderedEntries()
                 .Where(static pair => !string.Equals(pair.Value, "off", StringComparison.Ordinal))
                 .Select(static pair => new DebugFeatureModeSnapshot
@@ -183,6 +247,60 @@ public sealed class PresentationReadModelBuilder
                 .ToArray() ?? [],
             Warnings = warnings.ToArray(),
             Invariants = invariants.ToArray(),
+        };
+    }
+
+    private static DebugLoadMigrationSnapshot BuildLoadMigrationSnapshot(GameSimulation simulation)
+    {
+        SaveMigrationReport? report = simulation.LoadMigrationReport;
+        if (report is null)
+        {
+            return new DebugLoadMigrationSnapshot
+            {
+                LoadOriginLabel = "Bootstrap",
+                WasMigrationApplied = false,
+                StepCount = 0,
+                ConsistencyPassed = true,
+                Summary = "Simulation was created from bootstrap state.",
+                ConsistencySummary = "Bootstrap path did not require save preparation.",
+                Steps = [],
+                Warnings = [],
+            };
+        }
+
+        DebugMigrationStepSnapshot[] steps =
+        [
+            .. report.RootSteps.Select(static step => new DebugMigrationStepSnapshot
+            {
+                ScopeLabel = "root",
+                SourceVersion = step.SourceVersion,
+                TargetVersion = step.TargetVersion,
+            }),
+            .. report.ModuleSteps.Select(static step => new DebugMigrationStepSnapshot
+            {
+                ScopeLabel = step.ModuleKey,
+                SourceVersion = step.SourceVersion,
+                TargetVersion = step.TargetVersion,
+            }),
+        ];
+
+        string summary = report.WasMigrationApplied
+            ? $"Loaded save required {report.AppliedStepCount} migration step(s) before simulation resumed."
+            : "Loaded save matched current schemas without migration.";
+        string consistencySummary =
+            $"{report.PreparedEnabledModuleCount}/{report.SourceEnabledModuleCount} enabled modules, " +
+            $"{report.PreparedModuleStateCount}/{report.SourceModuleStateCount} module envelopes preserved.";
+
+        return new DebugLoadMigrationSnapshot
+        {
+            LoadOriginLabel = "SaveLoad",
+            WasMigrationApplied = report.WasMigrationApplied,
+            StepCount = report.AppliedStepCount,
+            ConsistencyPassed = report.ConsistencyPassed,
+            Summary = summary,
+            ConsistencySummary = consistencySummary,
+            Steps = steps,
+            Warnings = report.ConsistencyWarnings,
         };
     }
 }

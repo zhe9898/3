@@ -25,6 +25,14 @@ public sealed class PresentationReadModelBundle
 
     public IReadOnlyList<TradeRouteSnapshot> TradeRoutes { get; set; } = [];
 
+    public IReadOnlyList<OfficeCareerSnapshot> OfficeCareers { get; set; } = [];
+
+    public IReadOnlyList<JurisdictionAuthoritySnapshot> OfficeJurisdictions { get; set; } = [];
+
+    public IReadOnlyList<CampaignFrontSnapshot> Campaigns { get; set; } = [];
+
+    public IReadOnlyList<CampaignMobilizationSignalSnapshot> CampaignMobilizationSignals { get; set; } = [];
+
     public IReadOnlyList<NarrativeNotificationSnapshot> Notifications { get; set; } = [];
 
     public PresentationDebugSnapshot Debug { get; set; } = new();

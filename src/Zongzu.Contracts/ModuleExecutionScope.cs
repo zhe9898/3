@@ -21,9 +21,9 @@ public sealed class ModuleExecutionScope<TState>
         return Context.Queries.GetRequired<TQuery>();
     }
 
-    public void Emit(string eventType, string summary)
+    public void Emit(string eventType, string summary, string? entityKey = null)
     {
-        Context.DomainEvents.Emit(new DomainEventRecord(ContextDiffModuleKey(), eventType, summary));
+        Context.DomainEvents.Emit(new DomainEventRecord(ContextDiffModuleKey(), eventType, summary, entityKey));
     }
 
     public void RecordDiff(string description, string? entityKey = null)

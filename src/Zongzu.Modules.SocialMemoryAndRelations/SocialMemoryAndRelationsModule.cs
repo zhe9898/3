@@ -24,6 +24,14 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         "ClanNarrativeUpdated",
     ];
 
+    private static readonly string[] ConsumedEventNames =
+    [
+        WarfareCampaignEventNames.CampaignMobilized,
+        WarfareCampaignEventNames.CampaignPressureRaised,
+        WarfareCampaignEventNames.CampaignSupplyStrained,
+        WarfareCampaignEventNames.CampaignAftermathRegistered,
+    ];
+
     public override string ModuleKey => KnownModuleKeys.SocialMemoryAndRelations;
 
     public override int ModuleSchemaVersion => 1;
@@ -35,6 +43,8 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
     public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
+
+    public override IReadOnlyCollection<string> ConsumedEvents => ConsumedEventNames;
 
     public override SocialMemoryAndRelationsState CreateInitialState()
     {
@@ -98,6 +108,67 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         }
     }
 
+    public override void HandleEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
+        if (warfareEvents.Count == 0)
+        {
+            return;
+        }
+
+        IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
+        Dictionary<SettlementId, CampaignFrontSnapshot> campaignsBySettlement = scope.GetRequiredQuery<IWarfareCampaignQueries>()
+            .GetCampaigns()
+            .ToDictionary(static campaign => campaign.AnchorSettlementId, static campaign => campaign);
+
+        ClanSnapshot[] clans = familyQueries.GetClans()
+            .OrderBy(static clan => clan.Id.Value)
+            .ToArray();
+
+        foreach (WarfareCampaignEventBundle bundle in warfareEvents)
+        {
+            if (!campaignsBySettlement.TryGetValue(bundle.SettlementId, out CampaignFrontSnapshot? campaign))
+            {
+                continue;
+            }
+
+            ClanSnapshot[] localClans = clans
+                .Where(clan => clan.HomeSettlementId == bundle.SettlementId)
+                .OrderBy(static clan => clan.Id.Value)
+                .ToArray();
+
+            foreach (ClanSnapshot clan in localClans)
+            {
+                ClanNarrativeState narrative = GetOrCreateNarrative(scope.State, clan.Id);
+                int previousGrudge = narrative.GrudgePressure;
+
+                narrative.FearPressure = Math.Clamp(narrative.FearPressure + ComputeCampaignFearDelta(bundle, campaign), 0, 100);
+                narrative.GrudgePressure = Math.Clamp(narrative.GrudgePressure + ComputeCampaignGrudgeDelta(bundle, campaign), 0, 100);
+                narrative.ShamePressure = Math.Clamp(narrative.ShamePressure + (bundle.CampaignAftermathRegistered ? 2 : 1), 0, 100);
+                narrative.FavorBalance = Math.Clamp(narrative.FavorBalance - (bundle.CampaignSupplyStrained ? 2 : 1), -100, 100);
+                narrative.PublicNarrative = BuildCampaignNarrativeText(clan, campaign, narrative);
+
+                scope.RecordDiff(
+                    $"Campaign spillover around {campaign.AnchorSettlementName} pushed clan {clan.ClanName} narrative to fear {narrative.FearPressure}, grudge {narrative.GrudgePressure}, shame {narrative.ShamePressure}.",
+                    clan.Id.Value.ToString());
+
+                AddMemory(
+                    scope.State,
+                    clan.Id,
+                    bundle.CampaignAftermathRegistered ? "campaign-aftermath" : "campaign-pressure",
+                    Math.Max(narrative.FearPressure, narrative.GrudgePressure),
+                    true,
+                    $"{campaign.AnchorSettlementName} campaign spillover left fear of {campaign.FrontLabel} and {campaign.LastAftermathSummary.ToLowerInvariant()} in local memory.",
+                    scope.Context);
+
+                if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
+                {
+                    scope.Emit("GrudgeEscalated", $"Campaign spillover hardened clan {clan.ClanName} grievance pressure.", clan.Id.Value.ToString());
+                }
+            }
+        }
+    }
+
     private static ClanNarrativeState GetOrCreateNarrative(SocialMemoryAndRelationsState state, ClanId clanId)
     {
         ClanNarrativeState? narrative = state.ClanNarratives.SingleOrDefault(existing => existing.ClanId == clanId);
@@ -139,6 +210,40 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         }
 
         return delta;
+    }
+
+    private static int ComputeCampaignFearDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int delta = bundle.CampaignMobilized ? 1 : 0;
+        delta += bundle.CampaignPressureRaised ? 2 : 0;
+        delta += bundle.CampaignSupplyStrained ? 3 : 0;
+        delta += bundle.CampaignAftermathRegistered ? 2 : 0;
+        delta += Math.Max(0, campaign.FrontPressure - 55) / 18;
+        return Math.Max(1, delta);
+    }
+
+    private static int ComputeCampaignGrudgeDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int delta = bundle.CampaignPressureRaised ? 1 : 0;
+        delta += bundle.CampaignSupplyStrained ? 2 : 0;
+        delta += bundle.CampaignAftermathRegistered ? 2 : 0;
+        delta += Math.Max(0, 45 - campaign.MoraleState) / 14;
+        return Math.Max(1, delta);
+    }
+
+    private static string BuildCampaignNarrativeText(ClanSnapshot clan, CampaignFrontSnapshot campaign, ClanNarrativeState narrative)
+    {
+        if (narrative.GrudgePressure >= 70)
+        {
+            return $"Campaign spillover around {campaign.AnchorSettlementName} is hardening resentment around clan {clan.ClanName}.";
+        }
+
+        if (narrative.FearPressure >= 60)
+        {
+            return $"Campaign pressure around {campaign.AnchorSettlementName} keeps clan {clan.ClanName} under anxious local memory.";
+        }
+
+        return $"Clan {clan.ClanName} remembers the strain of {campaign.AnchorSettlementName} through {campaign.LastAftermathSummary.ToLowerInvariant()}.";
     }
 
     private static string BuildNarrativeText(ClanSnapshot clan, int averageDistress, int grudgePressure)

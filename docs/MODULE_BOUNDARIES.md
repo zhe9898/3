@@ -207,12 +207,20 @@ For every module, define:
 - appointments
 - office authority
 - career track status
+- promotion / demotion pressure
+- administrative task assignment
+- petition backlog / petition outcomes
 - official influence projections
 
 ### Public queries
 - office authority tier
 - appointment status
 - current jurisdictional leverage
+- current petition pressure
+- current petition backlog
+- current administrative task tier and stable task label
+- petition outcome category plus latest petition outcome trace
+- promotion / demotion pressure labels and authority-trajectory summary
 
 ### Accepts commands
 - pursue posting
@@ -230,6 +238,8 @@ For every module, define:
 - school results
 - family tree
 - trade ledgers
+- local disorder pressure
+- local force pools
 - war battle plans
 
 ## 8. OrderAndBanditry
@@ -242,6 +252,8 @@ For every module, define:
 ### Public queries
 - bandit threat
 - outlaw route pressure
+- black-route pressure summaries for future trade-risk handoff
+- future black-route suppression-window and escalation-band summaries
 - suppression demand
 - local disorder projections
 
@@ -269,11 +281,13 @@ For every module, define:
 - local conflict resolution
 - injuries and losses tied to conflict
 - force-readiness, command capacity basics, supply basics for local conflict
+- persistent campaign-fatigue, escort-strain, and campaign-fallout traces for local force recovery
 
 ### Public queries
 - available force pools
 - readiness
 - command capacity projection
+- explicit response activation / order-support projection
 - local conflict traces
 
 ### Accepts commands
@@ -296,30 +310,40 @@ For every module, define:
 ## 10. WarfareCampaign
 ### Owns
 - campaign boards
-- fronts and routes
-- mobilized campaign forces
-- campaign plans, battle phases, supply lines, morale in campaign scope
+- bounded front pressure, supply state, and morale state in campaign scope
+- mobilization signals derived into campaign-owned state
+- campaign aftermath summaries and campaign-board labeling
+- command-fit wording, commander summaries, and bounded route descriptors for the campaign board
+- campaign-intent descriptors such as active directive code/label/summary and last directive trace
 
 ### Public queries
 - campaign status
 - route and front summaries
-- commander fit and supply state
+- anchor settlement and campaign-board summary
+- mobilization signals derived from upstream local-force posture
+- mobilization window labels, command-fit summaries, directive summaries, and office-coordination trace summaries
+- order-support, office-authority-tier, administrative-leverage, and petition-backlog precursors
+- supply state
 - campaign aftermath summaries
 
 ### Accepts commands
-- choose campaign objective
-- assign commander
-- set stance/strategy
-- allocate supply
-- authorize mobilization where permitted
+- draft campaign plan
+- commit mobilization
+- protect supply line
+- withdraw to barracks
+
+Current routing note:
+- these commands are currently staged through a thin application-routed warfare-intent service
+- the service may write only `WarfareCampaign`-owned directive state; it may not mutate `ConflictAndForce`, `OfficeAndCareer`, or settlement state directly
 
 ### Emits events
-- `CampaignStarted`
-- `CampaignWon`
-- `CampaignLost`
-- `SupplyCollapsed`
-- `CommanderKilled`
-- `RegionDevastated`
+- `CampaignMobilized`
+- `CampaignPressureRaised`
+- `CampaignSupplyStrained`
+- `CampaignAftermathRegistered`
+
+Current lite note:
+- warfare events now carry settlement-targeting metadata so downstream handlers can update only their own state without parsing narrative strings
 
 ### Does not own
 - family tree
@@ -355,6 +379,14 @@ For every module, define:
 ## Dependency guidance
 - `FamilyCore` may query `SocialMemoryAndRelations`, not mutate it
 - `TradeAndIndustry` may query `WorldSettlements` and `OrderAndBanditry`
+- `OrderAndBanditry` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `TradeAndIndustry`, `OfficeAndCareer`, and `ConflictAndForce`
+- `ConflictAndForce` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, and `TradeAndIndustry`
 - `OfficeAndCareer` may query `EducationAndExams` and `SocialMemoryAndRelations`
 - `WarfareCampaign` may query `ConflictAndForce`, `WorldSettlements`, `OfficeAndCareer`
+- `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, and `SocialMemoryAndRelations` may react to settlement-targeted `WarfareCampaign` events during the handler pass, but only by updating their own owned state
+- `ConflictAndForce` may also react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating its own fatigue, escort strain, readiness, command-capacity, and fallout-trace state
+- `PopulationAndHouseholds` may react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating household distress, debt, labor, migration, and rebuilt settlement summaries in its own namespace
+- `WorldSettlements` may react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating settlement security/prosperity inside its own namespace
+- `FamilyCore` may react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating clan prestige/support inside its own namespace
+- black-route depth must stay split across `OrderAndBanditry` pressure and `TradeAndIndustry` ledgers; it must not grow a detached module namespace
 - no module is allowed to “just update” another module’s internal data

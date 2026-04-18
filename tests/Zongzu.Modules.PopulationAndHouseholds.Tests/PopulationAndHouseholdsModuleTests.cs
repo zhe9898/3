@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Modules.FamilyCore;
@@ -72,5 +74,105 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(populationState.Settlements, Has.Count.EqualTo(1));
         Assert.That(populationState.Settlements[0].LaborSupply, Is.EqualTo(household.LaborCapacity));
         Assert.That(context.Diff.Entries, Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public void HandleEvents_AppliesCampaignBurdenToHouseholdLivelihood()
+    {
+        PopulationAndHouseholdsModule module = new();
+        PopulationAndHouseholdsState state = module.CreateInitialState();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 52,
+            DebtPressure = 48,
+            LaborCapacity = 60,
+            MigrationRisk = 42,
+        });
+        state.Settlements.Add(new PopulationSettlementState
+        {
+            SettlementId = new SettlementId(1),
+            CommonerDistress = 52,
+            LaborSupply = 60,
+            MigrationPressure = 42,
+            MilitiaPotential = 34,
+        });
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+        queries.Register<IWarfareCampaignQueries>(new StubWarfareCampaignQueries(
+        [
+            new CampaignFrontSnapshot
+            {
+                CampaignId = new CampaignId(1),
+                AnchorSettlementId = new SettlementId(1),
+                AnchorSettlementName = "Lanxi",
+                CampaignName = "Lanxi Campaign Board",
+                IsActive = true,
+                MobilizedForceCount = 48,
+                FrontPressure = 75,
+                FrontLabel = "Front tightening",
+                SupplyState = 36,
+                SupplyStateLabel = "Supply strained",
+                MoraleState = 44,
+                MoraleStateLabel = "Morale wavering",
+                LastAftermathSummary = "Returning levies and ruined carts are crowding the roads.",
+            },
+        ]));
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 10),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(41)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.HandleEvents(new ModuleEventHandlingScope<PopulationAndHouseholdsState>(
+            state,
+            context,
+            [
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignPressureRaised, "Lanxi pressure rose.", "1"),
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignSupplyStrained, "Lanxi supply strained.", "1"),
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignAftermathRegistered, "Lanxi entered aftermath review.", "1"),
+            ]));
+
+        PopulationHouseholdState household = state.Households[0];
+        PopulationSettlementState settlement = state.Settlements[0];
+
+        Assert.That(household.Distress, Is.GreaterThan(52));
+        Assert.That(household.DebtPressure, Is.GreaterThan(48));
+        Assert.That(household.MigrationRisk, Is.GreaterThan(42));
+        Assert.That(household.LaborCapacity, Is.LessThan(60));
+        Assert.That(settlement.CommonerDistress, Is.EqualTo(household.Distress));
+        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("Campaign spillover"));
+    }
+
+    private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
+    {
+        private readonly IReadOnlyList<CampaignFrontSnapshot> _campaigns;
+
+        public StubWarfareCampaignQueries(IReadOnlyList<CampaignFrontSnapshot> campaigns)
+        {
+            _campaigns = campaigns;
+        }
+
+        public IReadOnlyList<CampaignMobilizationSignalSnapshot> GetMobilizationSignals()
+        {
+            return [];
+        }
+
+        public CampaignFrontSnapshot GetRequiredCampaign(CampaignId campaignId)
+        {
+            return _campaigns.Single(campaign => campaign.CampaignId == campaignId);
+        }
+
+        public IReadOnlyList<CampaignFrontSnapshot> GetCampaigns()
+        {
+            return _campaigns;
+        }
     }
 }

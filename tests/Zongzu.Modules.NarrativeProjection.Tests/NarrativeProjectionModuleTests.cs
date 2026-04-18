@@ -40,7 +40,7 @@ public sealed class NarrativeProjectionModuleTests
         Assert.That(state.Notifications.All(static notification => notification.Traces.Count > 0), Is.True);
 
         NarrativeNotificationState examNotice = state.Notifications.Single(notification => notification.SourceModuleKey == KnownModuleKeys.EducationAndExams);
-        Assert.That(examNotice.Title, Is.EqualTo("Exam Success"));
+        Assert.That(examNotice.Title, Is.EqualTo("场屋得捷"));
         Assert.That(examNotice.Tier, Is.EqualTo(NotificationTier.Consequential));
         Assert.That(examNotice.WhyItHappened, Does.Contain("study progress"));
         Assert.That(examNotice.Traces[0].DiffDescription, Does.Contain("tutor support"));
@@ -79,5 +79,53 @@ public sealed class NarrativeProjectionModuleTests
         Assert.That(state.Notifications, Has.Count.EqualTo(NarrativeProjectionModule.NotificationRetentionLimit));
         Assert.That(state.Notifications[0].Id.Value, Is.EqualTo(7));
         Assert.That(state.Notifications[^1].Id.Value, Is.EqualTo(NarrativeProjectionModule.NotificationRetentionLimit + 6));
+    }
+
+    [Test]
+    public void RunMonth_WarfareAftermathNotice_PullsCrossModuleContextForHonorsBlameAndRelief()
+    {
+        NarrativeProjectionModule module = new();
+        NarrativeProjectionState state = module.CreateInitialState();
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer domainEvents = new();
+        domainEvents.Emit(new DomainEventRecord(
+            KnownModuleKeys.WarfareCampaign,
+            WarfareCampaignEventNames.CampaignAftermathRegistered,
+            "Lanxi campaign moved into aftermath review.",
+            "1"));
+
+        WorldDiff diff = new();
+        diff.Record(KnownModuleKeys.WarfareCampaign, "Lanxi campaign aftermath is now under formal review.", "1");
+        diff.Record(KnownModuleKeys.FamilyCore, "Campaign spillover opened clan merit claims and prestige review in Lanxi.", "1");
+        diff.Record(KnownModuleKeys.OfficeAndCareer, "Campaign spillover pushed censure memorials and relief petitions into the Lanxi docket.", "1");
+        diff.Record(KnownModuleKeys.PopulationAndHouseholds, "Campaign spillover raised household distress and aftercare pressure in Lanxi.", "1");
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 5),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(91)),
+            queries,
+            domainEvents,
+            diff,
+            KernelState.Create(91));
+
+        module.RunMonth(new ModuleExecutionScope<NarrativeProjectionState>(state, context));
+
+        NarrativeNotificationState aftermathNotice = state.Notifications.Single(notification =>
+            notification.SourceModuleKey == KnownModuleKeys.WarfareCampaign);
+
+        Assert.That(aftermathNotice.Title, Is.EqualTo("战后赏罚与抚恤"));
+        Assert.That(aftermathNotice.Tier, Is.EqualTo(NotificationTier.Consequential));
+        Assert.That(aftermathNotice.WhyItHappened, Does.Contain("merit claims"));
+        Assert.That(aftermathNotice.WhyItHappened, Does.Contain("censure memorials"));
+        Assert.That(aftermathNotice.WhatNext, Does.Contain("记功请赏"));
+        Assert.That(aftermathNotice.WhatNext, Does.Contain("失守追责"));
+        Assert.That(aftermathNotice.WhatNext, Does.Contain("抚恤安民"));
+        Assert.That(aftermathNotice.Traces.Any(static trace => trace.SourceModuleKey == KnownModuleKeys.FamilyCore), Is.True);
+        Assert.That(aftermathNotice.Traces.Any(static trace => trace.SourceModuleKey == KnownModuleKeys.OfficeAndCareer), Is.True);
+        Assert.That(aftermathNotice.Traces.Any(static trace => trace.SourceModuleKey == KnownModuleKeys.PopulationAndHouseholds), Is.True);
     }
 }

@@ -16,6 +16,7 @@ Owns:
 - guards, retainers, clan militia, escorts
 - local force readiness
 - local conflict outcomes
+- persistent local campaign fatigue and escort strain
 - authority/mobilization/command/supply basics
 
 ### `WarfareCampaign`
@@ -58,6 +59,13 @@ Player acts through:
 - prestige/legal fallout
 - grudge escalation or restraint
 - follow-up player decisions
+
+### M3 lite coordination note
+- `ConflictAndForce.Lite` may refresh force posture before `OrderAndBanditry.Lite` reads same-month support
+- that support now flows through explicit response activation/support state owned by `ConflictAndForce`
+- guards, militia, or escorts should matter only when they are actually activated into response posture
+- calm or standing-but-untriggered posture should remain visible but should not leak suppression power into other modules
+- warfare aftermath may now feed back into `ConflictAndForce.Lite` as owned fatigue / escort-strain fallout, which then drags later readiness and recovery without writing into foreign modules
 
 ## Post-MVP campaign sandbox
 This is the rare large-scale extension, not the main loop.
@@ -229,6 +237,8 @@ The most important outputs are:
 - route and settlement devastation
 - new feuds and fear
 - official promotion or punishment
+- exhausted guards, escorts, militia, and command capacity that must recover locally over later months
+- commoner distress, migration pressure, and local livelihood cracks that feed back into the living settlement
 
 ## Anti-patterns
 Do not implement:

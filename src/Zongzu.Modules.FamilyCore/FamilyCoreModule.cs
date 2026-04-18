@@ -21,6 +21,14 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         "FamilyMembersAged",
     ];
 
+    private static readonly string[] ConsumedEventNames =
+    [
+        WarfareCampaignEventNames.CampaignMobilized,
+        WarfareCampaignEventNames.CampaignPressureRaised,
+        WarfareCampaignEventNames.CampaignSupplyStrained,
+        WarfareCampaignEventNames.CampaignAftermathRegistered,
+    ];
+
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
 
     public override int ModuleSchemaVersion => 1;
@@ -32,6 +40,8 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
+
+    public override IReadOnlyCollection<string> ConsumedEvents => ConsumedEventNames;
 
     public override FamilyCoreState CreateInitialState()
     {
@@ -93,6 +103,75 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 clan.Id.Value.ToString());
             scope.Emit("ClanPrestigeAdjusted", $"Clan {clan.ClanName} adjusted to local pressure.");
         }
+    }
+
+    public override void HandleEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
+    {
+        IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
+        if (warfareEvents.Count == 0)
+        {
+            return;
+        }
+
+        Dictionary<SettlementId, CampaignFrontSnapshot> campaignsBySettlement = scope.GetRequiredQuery<IWarfareCampaignQueries>()
+            .GetCampaigns()
+            .ToDictionary(static campaign => campaign.AnchorSettlementId, static campaign => campaign);
+
+        foreach (WarfareCampaignEventBundle bundle in warfareEvents)
+        {
+            if (!campaignsBySettlement.TryGetValue(bundle.SettlementId, out CampaignFrontSnapshot? campaign))
+            {
+                continue;
+            }
+
+            ClanStateData[] clans = scope.State.Clans
+                .Where(clan => clan.HomeSettlementId == bundle.SettlementId)
+                .OrderBy(static clan => clan.Id.Value)
+                .ToArray();
+            if (clans.Length == 0)
+            {
+                continue;
+            }
+
+            int prestigeDelta = ComputeCampaignPrestigeDelta(bundle, campaign);
+            int supportDelta = ComputeCampaignSupportDelta(bundle, campaign);
+
+            foreach (ClanStateData clan in clans)
+            {
+                clan.Prestige = Math.Clamp(clan.Prestige + prestigeDelta, 0, 100);
+                clan.SupportReserve = Math.Clamp(clan.SupportReserve + supportDelta, 0, 100);
+            }
+
+            scope.RecordDiff(
+                $"Campaign spillover around {campaign.AnchorSettlementName} shifted clan standing by prestige {prestigeDelta:+#;-#;0} and support {supportDelta:+#;-#;0}; {campaign.LastAftermathSummary}",
+                bundle.SettlementId.Value.ToString());
+            scope.Emit("ClanPrestigeAdjusted", $"Campaign spillover reshaped clan standing around {campaign.AnchorSettlementName}.", bundle.SettlementId.Value.ToString());
+        }
+    }
+
+    private static int ComputeCampaignPrestigeDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int delta = 0;
+        if (campaign.MoraleState >= 62 && campaign.SupplyState >= 50 && !bundle.CampaignSupplyStrained)
+        {
+            delta += 1;
+        }
+
+        delta -= bundle.CampaignPressureRaised ? 1 : 0;
+        delta -= bundle.CampaignSupplyStrained ? 2 : 0;
+        delta -= bundle.CampaignAftermathRegistered ? 1 : 0;
+        return Math.Clamp(delta, -3, 1);
+    }
+
+    private static int ComputeCampaignSupportDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
+    {
+        int delta = 0;
+        delta -= bundle.CampaignMobilized ? 2 : 0;
+        delta -= bundle.CampaignPressureRaised ? 1 : 0;
+        delta -= bundle.CampaignSupplyStrained ? 2 : 0;
+        delta -= bundle.CampaignAftermathRegistered ? 1 : 0;
+        delta -= Math.Max(0, campaign.MobilizedForceCount - 24) / 24;
+        return Math.Clamp(delta, -8, 0);
     }
 
     private sealed class FamilyCoreQueries : IFamilyCoreQueries

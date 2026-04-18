@@ -23,7 +23,8 @@ public sealed class GameSimulation
         KernelState kernelState,
         FeatureManifest featureManifest,
         IReadOnlyList<IModuleRunner> modules,
-        SimulationStateStore stateStore)
+        SimulationStateStore stateStore,
+        SaveMigrationReport? loadMigrationReport)
     {
         CurrentDate = currentDate;
         KernelState = kernelState ?? throw new ArgumentNullException(nameof(kernelState));
@@ -33,6 +34,7 @@ public sealed class GameSimulation
         _scheduler = new MonthlyScheduler();
         _moduleStateSerializer = new MessagePackModuleStateSerializer();
         _saveCodec = new SaveCodec();
+        LoadMigrationReport = loadMigrationReport;
     }
 
     public GameDate CurrentDate { get; private set; }
@@ -46,6 +48,8 @@ public sealed class GameSimulation
     public IReadOnlyList<IModuleRunner> Modules => _modules;
 
     public SimulationMonthResult? LastMonthResult { get; private set; }
+
+    public SaveMigrationReport? LoadMigrationReport { get; }
 
     public static GameSimulation CreateNew(
         GameDate startDate,
@@ -64,18 +68,21 @@ public sealed class GameSimulation
             stateStore.Set(module.ModuleKey, module.CreateInitialState());
         }
 
-        GameSimulation simulation = new(startDate, kernelState, featureManifest.Clone(), modules, stateStore);
+        GameSimulation simulation = new(startDate, kernelState, featureManifest.Clone(), modules, stateStore, null);
         simulation.RefreshReplayHash();
         return simulation;
     }
 
-    public static GameSimulation Load(SaveRoot saveRoot, IReadOnlyList<IModuleRunner> modules)
+    public static GameSimulation Load(
+        SaveRoot saveRoot,
+        IReadOnlyList<IModuleRunner> modules,
+        SaveMigrationPipeline? migrationPipeline = null)
     {
         ArgumentNullException.ThrowIfNull(saveRoot);
         ArgumentNullException.ThrowIfNull(modules);
 
-        SaveMigrationPipeline migrationPipeline = new();
-        SaveRoot migratedRoot = migrationPipeline.PrepareForLoad(saveRoot, RootSchemaVersion, modules);
+        SavePreparationResult preparation = (migrationPipeline ?? new SaveMigrationPipeline()).PrepareForLoadWithReport(saveRoot, RootSchemaVersion, modules);
+        SaveRoot migratedRoot = preparation.SaveRoot;
         MessagePackModuleStateSerializer serializer = new();
         SimulationStateStore stateStore = new();
 
@@ -104,7 +111,8 @@ public sealed class GameSimulation
             migratedRoot.KernelState.Clone(),
             migratedRoot.FeatureManifest.Clone(),
             modules,
-            stateStore);
+            stateStore,
+            preparation.Report);
 
         ModuleBoundaryValidator.Validate(simulation._modules, simulation.FeatureManifest, migratedRoot);
         return simulation;

@@ -1,0 +1,84 @@
+name: release-artifacts
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-artifacts-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  NUGET_PACKAGES: ${{ github.workspace }}\.nuget\packages
+
+jobs:
+  build-release-artifacts:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('global.json', 'Directory.Build.props', '**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore .\Zongzu.sln
+
+      - name: Build release binaries
+        run: dotnet build .\Zongzu.sln -c Release --no-restore
+
+      - name: Stage release artifact bundle
+        shell: pwsh
+        run: |
+          $artifactRoot = Join-Path $PWD 'artifacts\release'
+          $zipPath = Join-Path $PWD 'artifacts\zongzu-release-binaries.zip'
+
+          if (Test-Path $artifactRoot) {
+            Remove-Item $artifactRoot -Recurse -Force
+          }
+
+          if (Test-Path $zipPath) {
+            Remove-Item $zipPath -Force
+          }
+
+          New-Item -ItemType Directory -Path $artifactRoot -Force | Out-Null
+
+          foreach ($projectDir in Get-ChildItem .\src -Directory) {
+            $releaseOutput = Join-Path $projectDir.FullName 'bin\Release\net8.0'
+            if (-not (Test-Path $releaseOutput)) {
+              continue
+            }
+
+            $destination = Join-Path $artifactRoot $projectDir.Name
+            New-Item -ItemType Directory -Path $destination -Force | Out-Null
+            Copy-Item (Join-Path $releaseOutput '*') $destination -Recurse -Force
+          }
+
+          Copy-Item .\README.md $artifactRoot -Force
+          if (Test-Path .\CHANGELOG.md) {
+            Copy-Item .\CHANGELOG.md $artifactRoot -Force
+          }
+
+          Compress-Archive -Path (Join-Path $artifactRoot '*') -DestinationPath $zipPath
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zongzu-release-binaries
+          path: .\artifacts\zongzu-release-binaries.zip
+          if-no-files-found: error

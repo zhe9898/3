@@ -65,6 +65,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zongzu.Modules.OrderAndBand
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zongzu.Modules.ConflictAndForce.Tests", "tests\Zongzu.Modules.ConflictAndForce.Tests\Zongzu.Modules.ConflictAndForce.Tests.csproj", "{83D4AE86-234B-470E-BB70-11F25C8BA559}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zongzu.Modules.OfficeAndCareer.Tests", "tests\Zongzu.Modules.OfficeAndCareer.Tests\Zongzu.Modules.OfficeAndCareer.Tests.csproj", "{ECAC9FFB-DE0A-4A88-880F-05A0D0C57944}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zongzu.Modules.WarfareCampaign.Tests", "tests\Zongzu.Modules.WarfareCampaign.Tests\Zongzu.Modules.WarfareCampaign.Tests.csproj", "{43E7C2AE-BB38-4863-8516-95DF0882F870}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zongzu.Modules.WarfareCampaign", "src\Zongzu.Modules.WarfareCampaign\Zongzu.Modules.WarfareCampaign.csproj", "{4B57E8AB-6247-4336-9151-E1225F5406B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zongzu.Modules.OfficeAndCareer", "src\Zongzu.Modules.OfficeAndCareer\Zongzu.Modules.OfficeAndCareer.csproj", "{7CC4BA7F-6325-4D0E-96BF-860EF9466F6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -190,6 +198,22 @@ Global
 		{83D4AE86-234B-470E-BB70-11F25C8BA559}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83D4AE86-234B-470E-BB70-11F25C8BA559}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83D4AE86-234B-470E-BB70-11F25C8BA559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECAC9FFB-DE0A-4A88-880F-05A0D0C57944}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECAC9FFB-DE0A-4A88-880F-05A0D0C57944}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECAC9FFB-DE0A-4A88-880F-05A0D0C57944}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECAC9FFB-DE0A-4A88-880F-05A0D0C57944}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43E7C2AE-BB38-4863-8516-95DF0882F870}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43E7C2AE-BB38-4863-8516-95DF0882F870}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43E7C2AE-BB38-4863-8516-95DF0882F870}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43E7C2AE-BB38-4863-8516-95DF0882F870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B57E8AB-6247-4336-9151-E1225F5406B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B57E8AB-6247-4336-9151-E1225F5406B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B57E8AB-6247-4336-9151-E1225F5406B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B57E8AB-6247-4336-9151-E1225F5406B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CC4BA7F-6325-4D0E-96BF-860EF9466F6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CC4BA7F-6325-4D0E-96BF-860EF9466F6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CC4BA7F-6325-4D0E-96BF-860EF9466F6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CC4BA7F-6325-4D0E-96BF-860EF9466F6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{762B1C33-27FB-4B0B-97A8-F59F69B599E4} = {EA54AB45-D567-411B-A7C1-3C7905DA746F}
@@ -221,5 +245,9 @@ Global
 		{D2ED4241-996D-4EBF-BDDC-3FCEB17D2614} = {EA54AB45-D567-411B-A7C1-3C7905DA746F}
 		{B642E351-5B80-40D6-9086-F7757D01A62D} = {37EE9800-04F3-4480-9E35-C3D7FBB471B4}
 		{83D4AE86-234B-470E-BB70-11F25C8BA559} = {37EE9800-04F3-4480-9E35-C3D7FBB471B4}
+		{ECAC9FFB-DE0A-4A88-880F-05A0D0C57944} = {37EE9800-04F3-4480-9E35-C3D7FBB471B4}
+		{43E7C2AE-BB38-4863-8516-95DF0882F870} = {37EE9800-04F3-4480-9E35-C3D7FBB471B4}
+		{4B57E8AB-6247-4336-9151-E1225F5406B9} = {EA54AB45-D567-411B-A7C1-3C7905DA746F}
+		{7CC4BA7F-6325-4D0E-96BF-860EF9466F6C} = {EA54AB45-D567-411B-A7C1-3C7905DA746F}
 	EndGlobalSection
 EndGlobal

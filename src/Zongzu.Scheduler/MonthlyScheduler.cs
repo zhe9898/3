@@ -26,6 +26,12 @@ public sealed class MonthlyScheduler
         KernelState? kernelState = null)
     {
         IReadOnlyList<IModuleRunner> orderedModules = OrderModules(modules);
+        IModuleRunner[] authorityModules = orderedModules
+            .Where(static module => module.Phase != SimulationPhase.Projection)
+            .ToArray();
+        IModuleRunner[] projectionModules = orderedModules
+            .Where(static module => module.Phase == SimulationPhase.Projection)
+            .ToArray();
         QueryRegistry queryRegistry = new();
 
         foreach (IModuleRunner module in orderedModules)
@@ -47,7 +53,28 @@ public sealed class MonthlyScheduler
         DomainEventBuffer domainEvents = new();
         ModuleExecutionContext context = new(currentDate, featureManifest, random, queryRegistry, domainEvents, diff, kernelState);
 
-        foreach (IModuleRunner module in orderedModules)
+        foreach (IModuleRunner module in authorityModules)
+        {
+            if (!featureManifest.IsEnabled(module.ModuleKey))
+            {
+                continue;
+            }
+
+            module.RunMonth(context, moduleStates[module.ModuleKey]);
+        }
+
+        IDomainEvent[] eventSnapshot = domainEvents.Events.ToArray();
+        foreach (IModuleRunner module in authorityModules)
+        {
+            if (!featureManifest.IsEnabled(module.ModuleKey) || module.ConsumedEvents.Count == 0)
+            {
+                continue;
+            }
+
+            module.HandleEvents(context, moduleStates[module.ModuleKey], eventSnapshot);
+        }
+
+        foreach (IModuleRunner module in projectionModules)
         {
             if (!featureManifest.IsEnabled(module.ModuleKey))
             {

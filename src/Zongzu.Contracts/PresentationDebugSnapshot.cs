@@ -36,6 +36,34 @@ public sealed class DebugDomainEventSnapshot
     public string Summary { get; set; } = string.Empty;
 }
 
+public sealed class DebugMigrationStepSnapshot
+{
+    public string ScopeLabel { get; set; } = string.Empty;
+
+    public int SourceVersion { get; set; }
+
+    public int TargetVersion { get; set; }
+}
+
+public sealed class DebugLoadMigrationSnapshot
+{
+    public string LoadOriginLabel { get; set; } = string.Empty;
+
+    public bool WasMigrationApplied { get; set; }
+
+    public int StepCount { get; set; }
+
+    public bool ConsistencyPassed { get; set; }
+
+    public string Summary { get; set; } = string.Empty;
+
+    public string ConsistencySummary { get; set; } = string.Empty;
+
+    public IReadOnlyList<DebugMigrationStepSnapshot> Steps { get; set; } = [];
+
+    public IReadOnlyList<string> Warnings { get; set; } = [];
+}
+
 public sealed class PresentationDebugSnapshot
 {
     public int DiagnosticsSchemaVersion { get; set; }
@@ -47,6 +75,20 @@ public sealed class PresentationDebugSnapshot
     public bool RetentionLimitReached { get; set; }
 
     public ObservabilityMetricsSnapshot LatestMetrics { get; set; } = new();
+
+    public InteractionPressureMetricsSnapshot CurrentInteractionPressure { get; set; } = new();
+
+    public SettlementPressureDistributionSnapshot CurrentPressureDistribution { get; set; } = new();
+
+    public RuntimeScaleMetricsSnapshot CurrentScale { get; set; } = new();
+
+    public IReadOnlyList<SettlementInteractionHotspotSnapshot> CurrentHotspots { get; set; } = [];
+
+    public RuntimePayloadSummarySnapshot CurrentPayloadSummary { get; set; } = new();
+
+    public IReadOnlyList<ModulePayloadFootprintSnapshot> TopPayloadModules { get; set; } = [];
+
+    public DebugLoadMigrationSnapshot LoadMigration { get; set; } = new();
 
     public IReadOnlyList<DebugFeatureModeSnapshot> EnabledModules { get; set; } = [];
 

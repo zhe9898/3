@@ -72,8 +72,13 @@ Example:
 ## Current migration seam behavior
 - load currently runs through an explicit `SaveMigrationPipeline`
 - same-version root and module schemas pass through unchanged
+- root and module migrations can now be registered as explicit chained steps
 - if no migration path is registered for a root or module schema jump, load fails explicitly with a migration error
 - runtime debug snapshots, observability summaries, and latest-month diff traces remain outside the persisted compatibility surface
+- runtime load-migration reports and hotspot summaries are explanatory overlays only; they do not extend root or module save namespaces
+- runtime scale summaries, payload-footprint summaries, and migration-consistency warnings are also explanatory overlays only
+- runtime domain-event targeting metadata used by the event-handling seam is also non-persisted and does not extend save namespaces
+- migration preparation must not mutate the caller's source save root; consistency reporting happens on cloned preparation data only
 
 ## Versioning rules
 - root save uses one root version integer
@@ -87,9 +92,11 @@ Example:
 - `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `1`
 - `EducationAndExams` uses namespace `EducationAndExams` with schema version `1`
 - `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `1`
+- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `2` for the active governance-lite slice
 - `NarrativeProjection` uses namespace `NarrativeProjection` with schema version `1`
-- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `1` for M3 preflight scaffolding
-- `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `1` for M3 preflight scaffolding
+- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `1`
+- `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `3` for active M3 local-conflict lite integration plus campaign-fallout persistence
+- `WarfareCampaign` uses namespace `WarfareCampaign` with schema version `3` for the active campaign-lite slice
 
 ## M2-lite default-state policy
 - old saves without `EducationAndExams` or `TradeAndIndustry` load cleanly when those modules remain disabled in the feature manifest
@@ -100,10 +107,29 @@ Example:
 - latest-month debug traces, warning lists, and module inspectors are non-persisted read models and must not require a root schema change
 - explicit schema mismatches must fail load clearly instead of silently coercing incompatible module envelopes
 
-## M3 preflight namespace policy
-- `OrderAndBanditry` and `ConflictAndForce` are schema-reserved and code-scaffolded before active M3 integration
-- both modules currently default to empty module-owned state and no-op month execution
-- neither module is included in current M2 bootstraps or manifests, so no existing save should gain those envelopes implicitly
+## M3 local-conflict namespace policy
+- `OrderAndBanditry` now has an order-enabled M3 bridge path and a conflict-enabled M3 local-conflict path; both seed module-owned settlement disorder state only when the feature is enabled
+- old M2 saves still load cleanly while `OrderAndBanditry` remains disabled in the manifest
+- `ConflictAndForce` now has a conflict-enabled M3 local-conflict path and seeds module-owned settlement force posture plus explicit response activation/support fields only when the feature is enabled
+- legacy M3 local-conflict saves with `ConflictAndForce` schema `1` now migrate through a built-in `1 -> 2` module step during default local-conflict load
+- built-in migration now also upgrades legacy `ConflictAndForce` schema `2` saves to schema `3` by backfilling zero campaign-fatigue / escort-strain fields and empty fallout traces inside the same namespace
+- no existing save gains `OrderAndBanditry` or `ConflictAndForce` envelopes implicitly unless the feature manifest enables them
+
+## Governance-lite namespace policy
+- `OfficeAndCareer` now has a dedicated governance-lite path that seeds its own office-career and jurisdiction-authority state only when the feature is enabled
+- legacy governance-lite saves with `OfficeAndCareer` schema `1` now migrate through a built-in `1 -> 2` module step during default governance-lite load
+- old M2 and M3 saves still load cleanly while `OfficeAndCareer` remains disabled in their manifests
+- no existing stable M2/M3 path gains an `OfficeAndCareer` envelope implicitly; only the governance-lite path does
+
+## Campaign-lite namespace policy
+- `WarfareCampaign` now has a dedicated campaign-enabled path that seeds its own campaign-board and mobilization-signal state only when the feature is enabled
+- old M2, M3, and governance-lite saves still load cleanly while `WarfareCampaign` remains disabled in their manifests
+- no existing stable path gains a `WarfareCampaign` envelope implicitly; only the campaign-enabled path does
+- built-in migration now upgrades legacy campaign-enabled saves from schema `1` to `2` to `3` by reconstructing board labels, command-fit wording, commander summaries, bounded route descriptors, and directive descriptors inside the same namespace
+
+## Post-MVP preflight namespace policy
+- black-route depth must not create a standalone `BlackRoute` namespace; future save data for that slice must stay inside `OrderAndBanditry` and `TradeAndIndustry`
+- any future black-route migration steps must therefore preserve the same module-key set unless an explicit module-addition migration introduces `WarfareCampaign` or another documented pack
 
 ## Success criteria
 A new module is schema-ready only if:

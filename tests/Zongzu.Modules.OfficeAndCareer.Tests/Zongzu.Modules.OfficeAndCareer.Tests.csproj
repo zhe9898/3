@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Zongzu.Contracts\Zongzu.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Kernel\Zongzu.Kernel.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.EducationAndExams\Zongzu.Modules.EducationAndExams.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.OfficeAndCareer\Zongzu.Modules.OfficeAndCareer.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.SocialMemoryAndRelations\Zongzu.Modules.SocialMemoryAndRelations.csproj" />
+  </ItemGroup>
+</Project>

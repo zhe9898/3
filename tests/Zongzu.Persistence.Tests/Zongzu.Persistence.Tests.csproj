@@ -19,6 +19,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Zongzu.Application\Zongzu.Application.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.OfficeAndCareer\Zongzu.Modules.OfficeAndCareer.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.WarfareCampaign\Zongzu.Modules.WarfareCampaign.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Persistence\Zongzu.Persistence.csproj" />
   </ItemGroup>
 </Project>

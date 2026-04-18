@@ -50,6 +50,39 @@ For large tasks also read:
 - `PLANS.md`
 - `docs/exec-plans/README.md`
 
+## Preferred MCP and Skills for This Repo
+Use the repo's actual stack and boundaries to choose tools.
+
+Preferred MCP servers:
+- `microsoft-learn` for C#, .NET 8, Microsoft.Extensions, WinUI-adjacent tooling, and other Microsoft platform questions
+- `context7` for third-party library and framework documentation
+- `openaiDeveloperDocs` only when the task specifically involves OpenAI or Codex products
+- `GitHub` for PR context, CI logs, review comments, and repository metadata
+
+Preferred skills:
+- `zongzu-ancient-china` for historical grounding, Chinese antiquity / imperial China institutions, anti-anachronism review, terms, titles, kinship, lineage behavior, exam and office pathways, household and tax framing, and history-to-game translation including desk sandbox, map nodes, warfare-lite boards, and spatial presentation language
+- `microsoft-code-reference` for API lookups, implementation details, code samples, and error repair in C# / .NET code
+- `microsoft-docs` for concept docs, configuration guidance, limits, and official Microsoft tutorials
+- `aspnet-core` for modern .NET project structure, testing, dependency boundaries, hosting patterns, and idiomatic C# guidance even when the repo is not a web app
+- `doc` when updating specs, architecture notes, acceptance criteria, or module boundary documentation
+- `security-best-practices` when touching persistence, serialization, save migration, file IO, process execution, or boundary-crossing code
+- `security-threat-model` and `security-ownership-map` for larger architectural changes that affect module boundaries, save compatibility, determinism, or trust boundaries
+- `gh-fix-ci` when build or test failures appear in GitHub Actions
+
+Do not default to web-first skills for this repo:
+- `develop-web-game` is not a fit for the authoritative simulation or Unity presentation path here
+- `frontend-skill`, `react-best-practices`, and `web-design-guidelines` are only relevant for auxiliary tooling, documentation sites, launchers, or future web surfaces
+
+Unity MCP note:
+- This repository currently does not contain a full Unity project root with `Assets/`, `Packages/`, and `ProjectSettings/`
+- do not assume Unity Editor MCP workflows are available yet
+- if a real Unity project root is added later, Unity-specific MCP setup should be added at that time
+
+Encoding and language note:
+- this repository contains meaningful Chinese text in docs, descriptors, and narrative-facing content
+- preserve existing Chinese text exactly when editing; do not transliterate, ASCII-normalize, or replace with mojibake
+- prefer UTF-8 for repo text files and treat encoding regressions as real bugs
+
 ## Non-negotiable product constraints
 1. **No event-pool core loop**
    - authoritative state changes happen before narrative projection

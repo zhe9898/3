@@ -19,6 +19,20 @@ public sealed class LocalForcePoolSnapshot
 
     public int CommandCapacity { get; set; }
 
+    public int ResponseActivationLevel { get; set; }
+
+    public int OrderSupportLevel { get; set; }
+
+    public bool IsResponseActivated { get; set; }
+
+    public bool HasActiveConflict { get; set; }
+
+    public int CampaignFatigue { get; set; }
+
+    public int CampaignEscortStrain { get; set; }
+
+    public string LastCampaignFalloutTrace { get; set; } = string.Empty;
+
     public string LastConflictTrace { get; set; } = string.Empty;
 }
 
