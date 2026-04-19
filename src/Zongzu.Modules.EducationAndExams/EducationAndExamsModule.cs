@@ -32,6 +32,8 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
 
     public override int ExecutionOrder => 500;
 
+    public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthAndSeasonal;
+
     public override FeatureMode DefaultMode => FeatureMode.Lite;
 
     public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
@@ -83,7 +85,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
             {
                 student.HasTutor = true;
                 student.TutorQuality = 10 + scope.Context.Random.NextInt(0, 8);
-                scope.Emit("TutorSecured", $"Tutor secured for {student.DisplayName}.");
+                scope.Emit("TutorSecured", $"{student.DisplayName}已得塾师指授。");
             }
 
             int supportFactor = clan.SupportReserve >= 60 ? 2 : clan.SupportReserve >= 45 ? 1 : -1;
@@ -97,7 +99,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
             student.Stress = Math.Clamp(student.Stress + ComputeStressDelta(clan, narrative), 0, 100);
 
             scope.RecordDiff(
-                $"Scholar {student.DisplayName} advanced to progress {student.StudyProgress} with stress {student.Stress}.",
+                $"{student.DisplayName}学业进至{student.StudyProgress}，心气劳迫{student.Stress}。",
                 student.PersonId.Value.ToString());
 
             if (!IsExamWindow(scope.Context.CurrentDate) || student.StudyProgress < 60)
@@ -122,33 +124,33 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 student.ScholarlyReputation = Math.Clamp(student.ScholarlyReputation + 15, 0, 100);
                 student.LastOutcome = "Passed";
                 student.LastExplanation =
-                    $"Passed with score {score} from progress {student.StudyProgress}, academy prestige {academy.Prestige}, tutor quality {student.TutorQuality}, and clan support {clan.SupportReserve}.";
+                    $"以学业{student.StudyProgress}、塾望{academy.Prestige}、塾师之助{student.TutorQuality}与宗房接济{clan.SupportReserve}，场中得分{score}。";
                 student.StudyProgress = 25;
 
                 scope.RecordDiff(
-                    $"Scholar {student.DisplayName} passed the local exam. {student.LastExplanation}",
+                    $"{student.DisplayName}场屋得捷。{student.LastExplanation}",
                     student.PersonId.Value.ToString());
-                scope.Emit("ExamPassed", $"Scholar {student.DisplayName} passed the local exam.");
+                scope.Emit("ExamPassed", $"{student.DisplayName}场屋得捷。");
             }
             else
             {
                 student.LastOutcome = "Failed";
                 student.LastExplanation =
-                    $"Failed with score {score} after stress {student.Stress}, shame {narrative.ShamePressure}, and progress {student.StudyProgress}.";
+                    $"心气劳迫{student.Stress}、羞压{narrative.ShamePressure}、学业{student.StudyProgress}，场中仅得{score}。";
                 student.StudyProgress = Math.Max(20, student.StudyProgress - 25);
                 student.Stress = Math.Clamp(student.Stress + 8, 0, 100);
 
                 scope.RecordDiff(
-                    $"Scholar {student.DisplayName} failed the local exam. {student.LastExplanation}",
+                    $"{student.DisplayName}场屋失利。{student.LastExplanation}",
                     student.PersonId.Value.ToString());
-                scope.Emit("ExamFailed", $"Scholar {student.DisplayName} failed the local exam.");
+                scope.Emit("ExamFailed", $"{student.DisplayName}场屋失利。");
 
                 if (student.ExamAttempts >= 3 && student.Stress >= 70)
                 {
                     student.IsStudying = false;
                     student.LastOutcome = "Abandoned";
-                    student.LastExplanation = $"Study was abandoned after repeated failure and stress {student.Stress}.";
-                    scope.Emit("StudyAbandoned", $"Scholar {student.DisplayName} abandoned study.");
+                    student.LastExplanation = $"屡试不捷，心气劳迫至{student.Stress}，遂停塾罢读。";
+                    scope.Emit("StudyAbandoned", $"{student.DisplayName}停塾罢读。");
                 }
             }
         }

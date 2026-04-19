@@ -13,6 +13,8 @@ public sealed class TradeAndIndustryState : IModuleStateDescriptor
     public List<SettlementMarketState> Markets { get; set; } = new();
 
     public List<RouteTradeState> Routes { get; set; } = new();
+
+    public List<SettlementBlackRouteLedgerState> BlackRouteLedgers { get; set; } = new();
 }
 
 public sealed class ClanTradeState
@@ -68,4 +70,31 @@ public sealed class RouteTradeState
     public int Risk { get; set; }
 
     public int LastMargin { get; set; }
+
+    public int BlockedShipmentCount { get; set; }
+
+    public int SeizureRisk { get; set; }
+
+    public string RouteConstraintLabel { get; set; } = string.Empty;
+
+    public string LastRouteTrace { get; set; } = string.Empty;
+}
+
+public sealed class SettlementBlackRouteLedgerState
+{
+    public SettlementId SettlementId { get; set; }
+
+    public int ShadowPriceIndex { get; set; }
+
+    public int DiversionShare { get; set; }
+
+    public int IllicitMargin { get; set; }
+
+    public int BlockedShipmentCount { get; set; }
+
+    public int SeizureRisk { get; set; }
+
+    public string DiversionBandLabel { get; set; } = string.Empty;
+
+    public string LastLedgerTrace { get; set; } = string.Empty;
 }

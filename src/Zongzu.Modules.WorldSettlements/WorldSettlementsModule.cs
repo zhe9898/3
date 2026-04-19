@@ -20,11 +20,13 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
     public override string ModuleKey => KnownModuleKeys.WorldSettlements;
 
-    public override int ModuleSchemaVersion => 1;
+    public override int ModuleSchemaVersion => 2;
 
     public override SimulationPhase Phase => SimulationPhase.WorldBaseline;
 
     public override int ExecutionOrder => 100;
+
+    public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.XunMonthAndSeasonal;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
 
@@ -40,15 +42,30 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
         queries.Register<IWorldSettlementsQueries>(new WorldSettlementsQueries(state));
     }
 
-    public override void RunMonth(ModuleExecutionScope<WorldSettlementsState> scope)
+    public override void RunXun(ModuleExecutionScope<WorldSettlementsState> scope)
     {
         foreach (SettlementStateData settlement in scope.State.Settlements.OrderBy(static settlement => settlement.Id.Value))
         {
             int oldSecurity = settlement.Security;
             int oldProsperity = settlement.Prosperity;
 
-            settlement.Security = Math.Clamp(settlement.Security + scope.Context.Random.NextInt(-2, 3), 0, 100);
-            settlement.Prosperity = Math.Clamp(settlement.Prosperity + scope.Context.Random.NextInt(-1, 2), 0, 100);
+            int securityDelta = scope.Context.CurrentXun switch
+            {
+                SimulationXun.Shangxun => scope.Context.Random.NextInt(-1, 2),
+                SimulationXun.Zhongxun => scope.Context.Random.NextInt(-1, 2),
+                SimulationXun.Xiaxun => scope.Context.Random.NextInt(-2, 1),
+                _ => 0,
+            };
+            int prosperityDelta = scope.Context.CurrentXun switch
+            {
+                SimulationXun.Shangxun => scope.Context.Random.NextInt(0, 2),
+                SimulationXun.Zhongxun => scope.Context.Random.NextInt(-1, 2),
+                SimulationXun.Xiaxun => scope.Context.Random.NextInt(-1, 1),
+                _ => 0,
+            };
+
+            settlement.Security = Math.Clamp(settlement.Security + securityDelta, 0, 100);
+            settlement.Prosperity = Math.Clamp(settlement.Prosperity + prosperityDelta, 0, 100);
 
             if (settlement.Security == oldSecurity && settlement.Prosperity == oldProsperity)
             {
@@ -56,10 +73,15 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             }
 
             scope.RecordDiff(
-                $"Settlement {settlement.Name} pressure shifted to security {settlement.Security} and prosperity {settlement.Prosperity}.",
+                $"{settlement.Name}{DescribeXun(scope.Context.CurrentXun)}乡面短波有变，安宁至{settlement.Security}，丰实至{settlement.Prosperity}。",
                 settlement.Id.Value.ToString());
-            scope.Emit("SettlementPressureChanged", $"Settlement {settlement.Name} pressure changed.");
         }
+    }
+
+    public override void RunMonth(ModuleExecutionScope<WorldSettlementsState> scope)
+    {
+        // Short-band settlement drift now lives in the three xun pulses.
+        // A later month-end owned-state slice can add explicit consolidation traces if needed.
     }
 
     public override void HandleEvents(ModuleEventHandlingScope<WorldSettlementsState> scope)
@@ -98,9 +120,9 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             }
 
             scope.RecordDiff(
-                $"Campaign spillover around {settlement.Name} cut security by {securityDelta} and prosperity by {prosperityDelta}; {campaign.FrontLabel}, {campaign.SupplyStateLabel}, and aftermath '{campaign.LastAftermathSummary}'.",
+                $"{settlement.Name}受战后余波所压，安宁减{securityDelta}，丰实减{prosperityDelta}；{campaign.FrontLabel}、{campaign.SupplyStateLabel}，{campaign.LastAftermathSummary}",
                 settlement.Id.Value.ToString());
-            scope.Emit("SettlementPressureChanged", $"Campaign spillover changed settlement pressure around {settlement.Name}.", settlement.Id.Value.ToString());
+            scope.Emit("SettlementPressureChanged", $"{settlement.Name}受战后余波，乡面气象有变。", settlement.Id.Value.ToString());
         }
     }
 
@@ -119,6 +141,17 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
         delta += bundle.CampaignAftermathRegistered ? 2 : 0;
         delta += Math.Max(0, 55 - campaign.SupplyState) / 16;
         return Math.Max(1, delta);
+    }
+
+    private static string DescribeXun(SimulationXun xun)
+    {
+        return xun switch
+        {
+            SimulationXun.Shangxun => "上旬",
+            SimulationXun.Zhongxun => "中旬",
+            SimulationXun.Xiaxun => "下旬",
+            _ => "月内",
+        };
     }
 
     private sealed class WorldSettlementsQueries : IWorldSettlementsQueries
@@ -152,6 +185,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             {
                 Id = settlement.Id,
                 Name = settlement.Name,
+                Tier = settlement.Tier,
                 Security = settlement.Security,
                 Prosperity = settlement.Prosperity,
             };

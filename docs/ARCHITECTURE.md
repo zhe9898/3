@@ -26,8 +26,13 @@ Owns:
 - RNG contracts
 - common result/error types
 - base event and command abstractions
+- **PersonRegistry**: identity-only anchor (PersonId, display name, birth date, gender, life stage, alive/dead, fidelity ring)
 
 Kernel does **not** know what exams, trade, office, banditry, or war are.
+
+PersonRegistry is **not** a mutable world-state base. It holds only stable identity facts that change rarely (life stage advances monthly, death is a one-time transition). All domain-specific person state (personality, abilities, health, social position, activity, kinship, memories) belongs to the respective domain modules. See `PERSON_OWNERSHIP_RULES.md`.
+
+The design test: if PersonRegistry grows beyond identity anchors + life stage + fidelity ring, something is leaking into Kernel that should live in a module.
 
 ### 2. Contracts
 Owns:
@@ -41,7 +46,8 @@ Owns:
 ### 3. Scheduler
 Owns:
 - module registration order
-- monthly phase execution
+- `xun / month / seasonal` cadence inspection
+- three inner `xun` pulses plus month-end consolidation
 - deterministic event queue handling
 - diff aggregation boundaries
 
@@ -79,6 +85,7 @@ Owns:
 - non-authoritative animations and vignettes
 
 ## Authoritative module list
+0. `PersonRegistry` (Kernel layer, identity-only; see `PERSON_OWNERSHIP_RULES.md`)
 1. `WorldSettlements`
 2. `FamilyCore`
 3. `PopulationAndHouseholds`
@@ -89,20 +96,19 @@ Owns:
 8. `OrderAndBanditry`
 9. `ConflictAndForce`
 10. `WarfareCampaign`
-11. `NarrativeProjection` (projection-oriented, not authority source)
+11. `PublicLifeAndRumor`
+12. `NarrativeProjection` (projection-oriented, not authority source)
 
 ## Base simulation flow
-1. scheduler begins month
-2. world/settlement pressure updates
-3. population/household pressure updates
-4. family structure and household status updates
-5. education, trade, office, order, conflict, war modules run if enabled
-6. modules emit domain events
-7. deterministic event handling pass
-8. structured diff aggregation
-9. narrative projection build
-10. application exposes commands to player
-11. player commands are staged for next month or resolved in permitted same-month windows
+1. scheduler opens the monthly review shell
+2. scheduler runs `上旬 / 中旬 / 下旬` inner pulses for modules that declare `xun`
+3. month-end authority consolidation runs for modules that declare `month`
+4. modules emit domain events
+5. deterministic event handling pass runs before projection
+6. structured diff aggregation remains month-facing
+7. narrative projection builds the readable month-end shell
+8. application exposes bounded commands to the player review surface
+9. player commands are staged for the next month or resolved only in explicitly permitted same-month windows
 
 ## Key architecture rule
 A module may respond to another module’s event by updating **its own** state only.

@@ -12,7 +12,9 @@ public sealed class ModuleExecutionContext
         QueryRegistry queries,
         DomainEventBuffer domainEvents,
         WorldDiff diff,
-        KernelState? kernelState = null)
+        KernelState? kernelState = null,
+        SimulationCadenceBand cadenceBand = SimulationCadenceBand.Month,
+        SimulationXun currentXun = SimulationXun.None)
     {
         CurrentDate = currentDate;
         FeatureManifest = featureManifest ?? throw new ArgumentNullException(nameof(featureManifest));
@@ -21,6 +23,8 @@ public sealed class ModuleExecutionContext
         DomainEvents = domainEvents ?? throw new ArgumentNullException(nameof(domainEvents));
         Diff = diff ?? throw new ArgumentNullException(nameof(diff));
         KernelState = kernelState ?? KernelState.Create(1);
+        CadenceBand = cadenceBand;
+        CurrentXun = cadenceBand == SimulationCadenceBand.Xun ? currentXun : SimulationXun.None;
     }
 
     public GameDate CurrentDate { get; }
@@ -36,4 +40,10 @@ public sealed class ModuleExecutionContext
     public WorldDiff Diff { get; }
 
     public KernelState KernelState { get; }
+
+    public SimulationCadenceBand CadenceBand { get; }
+
+    public SimulationXun CurrentXun { get; }
+
+    public bool IsXunPulse => CadenceBand == SimulationCadenceBand.Xun;
 }

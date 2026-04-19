@@ -28,6 +28,8 @@ If the answer is yes, the MVP is successful.
 - `EducationAndExams.Lite`
 - `TradeAndIndustry.Lite`
 
+Default MVP bootstrap/load paths should keep this mandatory set plus `NarrativeProjection` only, and should not silently enable optional public-life, conflict, governance, or warfare packs.
+
 ### Conditional MVP-plus modules
 Include only if they fit schedule without harming the above:
 - `OrderAndBanditry.Lite`

@@ -5,3 +5,27 @@ TestResults/
 artifacts/
 *.user
 *.suo
+
+# Unity shell
+unity/**/[Ll]ibrary/
+unity/**/[Tt]emp/
+unity/**/[Oo]bj/
+unity/**/[Bb]uild/
+unity/**/[Bb]uilds/
+unity/**/[Ll]ogs/
+unity/**/[Uu]ser[Ss]ettings/
+unity/**/[Mm]emoryCaptures/
+unity/**/[Rr]ecordings/
+unity/**/[Aa]ssets/AssetStoreTools*
+unity/**/*.pidb
+unity/**/*.booproj
+unity/**/*.svd
+unity/**/*.pdb
+unity/**/*.mdb
+unity/**/*.opendb
+unity/**/*.VC.db
+unity/**/*.unityproj
+unity/**/*.csproj
+unity/**/*.pidb.meta
+unity/**/*.pdb.meta
+unity/**/*.mdb.meta

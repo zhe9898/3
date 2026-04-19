@@ -54,6 +54,14 @@ public sealed class TradeRouteSnapshot
     public int Risk { get; set; }
 
     public int LastMargin { get; set; }
+
+    public int BlockedShipmentCount { get; set; }
+
+    public int SeizureRisk { get; set; }
+
+    public string RouteConstraintLabel { get; set; } = string.Empty;
+
+    public string LastRouteTrace { get; set; } = string.Empty;
 }
 
 public interface ITradeAndIndustryQueries

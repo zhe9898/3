@@ -32,6 +32,8 @@ public sealed class WarfareCampaignModule : ModuleRunner<WarfareCampaignState>
 
     public override int ExecutionOrder => 750;
 
+    public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthAndSeasonal;
+
     public override FeatureMode DefaultMode => FeatureMode.Lite;
 
     public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;

@@ -12,6 +12,72 @@ namespace Zongzu.Modules.PopulationAndHouseholds.Tests;
 public sealed class PopulationAndHouseholdsModuleTests
 {
     [Test]
+    public void RunXun_UpdatesLivelihoodPressureWithoutReadableOutput()
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 38,
+            Prosperity = 43,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 50,
+            SupportReserve = 40,
+            HeirPersonId = new PersonId(1),
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 58,
+            DebtPressure = 60,
+            LaborCapacity = 55,
+            MigrationRisk = 20,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 1),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(11)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            cadenceBand: SimulationCadenceBand.Xun,
+            currentXun: SimulationXun.Shangxun);
+
+        populationModule.RunXun(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
+
+        PopulationHouseholdState household = populationState.Households[0];
+        Assert.That(household.Distress, Is.EqualTo(59));
+        Assert.That(household.DebtPressure, Is.EqualTo(60));
+        Assert.That(populationState.Settlements, Has.Count.EqualTo(1));
+        Assert.That(populationState.Settlements[0].CommonerDistress, Is.EqualTo(59));
+        Assert.That(context.Diff.Entries, Is.Empty);
+        Assert.That(context.DomainEvents.Events, Is.Empty);
+    }
+
+    [Test]
     public void RunMonth_KeepsHouseholdPressuresInBoundsAndRebuildsSettlementSummary()
     {
         WorldSettlementsModule worldModule = new();
@@ -110,16 +176,16 @@ public sealed class PopulationAndHouseholdsModuleTests
                 CampaignId = new CampaignId(1),
                 AnchorSettlementId = new SettlementId(1),
                 AnchorSettlementName = "Lanxi",
-                CampaignName = "Lanxi Campaign Board",
+                CampaignName = "兰溪军务沙盘",
                 IsActive = true,
                 MobilizedForceCount = 48,
                 FrontPressure = 75,
-                FrontLabel = "Front tightening",
+                FrontLabel = "前线转紧",
                 SupplyState = 36,
-                SupplyStateLabel = "Supply strained",
+                SupplyStateLabel = "粮道吃紧",
                 MoraleState = 44,
-                MoraleStateLabel = "Morale wavering",
-                LastAftermathSummary = "Returning levies and ruined carts are crowding the roads.",
+                MoraleStateLabel = "军心摇动",
+                LastAftermathSummary = "还乡兵丁与败车残辎壅在路上。",
             },
         ]));
 
@@ -148,7 +214,7 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(household.MigrationRisk, Is.GreaterThan(42));
         Assert.That(household.LaborCapacity, Is.LessThan(60));
         Assert.That(settlement.CommonerDistress, Is.EqualTo(household.Distress));
-        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("Campaign spillover"));
+        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("战后余波"));
     }
 
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries

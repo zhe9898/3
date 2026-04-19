@@ -1,0 +1,14 @@
+{
+  "name": "Zongzu.UnityShell",
+  "rootNamespace": "Zongzu.UnityShell",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

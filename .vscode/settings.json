@@ -1,0 +1,8 @@
+{
+  "dotnet.defaultSolution": "Zongzu.sln",
+  "files.encoding": "utf8",
+  "editor.formatOnSave": true,
+  "[csharp]": {
+    "editor.formatOnSave": true
+  }
+}

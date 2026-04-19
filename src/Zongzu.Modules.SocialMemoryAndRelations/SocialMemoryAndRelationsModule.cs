@@ -40,6 +40,8 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
     public override int ExecutionOrder => 400;
 
+    public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.XunAndMonth;
+
     public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
@@ -54,6 +56,45 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
     public override void RegisterQueries(SocialMemoryAndRelationsState state, QueryRegistry queries)
     {
         queries.Register<ISocialMemoryAndRelationsQueries>(new SocialMemoryQueries(state));
+    }
+
+    public override void RunXun(ModuleExecutionScope<SocialMemoryAndRelationsState> scope)
+    {
+        IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
+        IPopulationAndHouseholdsQueries populationQueries = scope.GetRequiredQuery<IPopulationAndHouseholdsQueries>();
+        ITradeAndIndustryQueries? tradeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.TradeAndIndustry)
+            ? scope.GetRequiredQuery<ITradeAndIndustryQueries>()
+            : null;
+
+        IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
+        IReadOnlyList<HouseholdPressureSnapshot> households = populationQueries.GetHouseholds();
+        Dictionary<ClanId, ClanTradeSnapshot> tradeByClan = tradeQueries is null
+            ? new Dictionary<ClanId, ClanTradeSnapshot>()
+            : tradeQueries.GetClanTrades().ToDictionary(static trade => trade.ClanId, static trade => trade);
+
+        foreach (ClanSnapshot clan in clans.OrderBy(static clan => clan.Id.Value))
+        {
+            ClanNarrativeState narrative = GetOrCreateNarrative(scope.State, clan.Id);
+            HouseholdPressureSnapshot[] sponsoredHouseholds = households
+                .Where(household => household.SponsorClanId == clan.Id)
+                .OrderBy(household => household.Id.Value)
+                .ToArray();
+            int averageDistress = sponsoredHouseholds.Length == 0 ? 0 : sponsoredHouseholds.Sum(static household => household.Distress) / sponsoredHouseholds.Length;
+            int averageMigrationRisk = sponsoredHouseholds.Length == 0 ? 0 : sponsoredHouseholds.Sum(static household => household.MigrationRisk) / sponsoredHouseholds.Length;
+            bool hasMigratingHousehold = sponsoredHouseholds.Any(static household => household.IsMigrating);
+            ClanTradeSnapshot? trade = tradeByClan.TryGetValue(clan.Id, out ClanTradeSnapshot? snapshot)
+                ? snapshot
+                : null;
+
+            ApplyXunSocialPulse(
+                scope.Context.CurrentXun,
+                clan,
+                averageDistress,
+                averageMigrationRisk,
+                hasMigratingHousehold,
+                trade,
+                narrative);
+        }
     }
 
     public override void RunMonth(ModuleExecutionScope<SocialMemoryAndRelationsState> scope)
@@ -79,32 +120,32 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
             narrative.GrudgePressure = Math.Clamp(narrative.GrudgePressure + ComputeGrudgeDelta(clan, averageDistress), 0, 100);
             narrative.FearPressure = Math.Clamp(narrative.FearPressure + (averageDistress >= 70 ? 1 : averageDistress < 45 ? -1 : 0), 0, 100);
-            narrative.ShamePressure = Math.Clamp(narrative.ShamePressure + (clan.Prestige < 45 ? 1 : clan.Prestige > 58 ? -1 : 0), 0, 100);
-            narrative.FavorBalance = Math.Clamp(narrative.FavorBalance + (clan.SupportReserve >= 65 ? 1 : clan.SupportReserve < 40 ? -1 : 0), -100, 100);
+            narrative.ShamePressure = Math.Clamp(narrative.ShamePressure + ComputeShameDelta(clan), 0, 100);
+            narrative.FavorBalance = Math.Clamp(narrative.FavorBalance + ComputeFavorDelta(clan), -100, 100);
             narrative.PublicNarrative = BuildNarrativeText(clan, averageDistress, narrative.GrudgePressure);
 
             scope.RecordDiff(
-                $"Clan {clan.ClanName} narrative shifted to grudge {narrative.GrudgePressure}, fear {narrative.FearPressure}, shame {narrative.ShamePressure}.",
+                $"{clan.ClanName}宗中旧怨{narrative.GrudgePressure}，惧意{narrative.FearPressure}，羞压{narrative.ShamePressure}。",
                 clan.Id.Value.ToString());
 
             if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
             {
-                scope.Emit("GrudgeEscalated", $"Clan {clan.ClanName} grievance pressure escalated.");
-                AddMemory(scope.State, clan.Id, "hardship", narrative.GrudgePressure, true, $"Household hardship hardened grievances around clan {clan.ClanName}.", scope.Context);
+                scope.Emit("GrudgeEscalated", $"{clan.ClanName}旧怨更深。");
+                AddMemory(scope.State, clan.Id, "hardship", narrative.GrudgePressure, true, $"{clan.ClanName}因民困与家计艰难，旧怨更深。", scope.Context);
             }
 
             if (previousGrudge >= 45 && narrative.GrudgePressure < 45)
             {
-                scope.Emit("GrudgeSoftened", $"Clan {clan.ClanName} grievance pressure softened.");
-                AddMemory(scope.State, clan.Id, "conciliation", Math.Max(10, narrative.FavorBalance), true, $"Material relief softened resentment around clan {clan.ClanName}.", scope.Context);
+                scope.Emit("GrudgeSoftened", $"{clan.ClanName}旧怨稍缓。");
+                AddMemory(scope.State, clan.Id, "conciliation", Math.Max(10, narrative.FavorBalance), true, $"{clan.ClanName}因接济与调处，怨气稍缓。", scope.Context);
             }
 
             if (previousFavor < 10 && narrative.FavorBalance >= 10)
             {
-                scope.Emit("FavorIncurred", $"Clan {clan.ClanName} accrued visible obligations.");
+                scope.Emit("FavorIncurred", $"{clan.ClanName}人情债渐著。");
             }
 
-            scope.Emit("ClanNarrativeUpdated", $"Clan {clan.ClanName} narrative updated.");
+            scope.Emit("ClanNarrativeUpdated", $"{clan.ClanName}乡议口气有变。");
         }
     }
 
@@ -149,7 +190,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                 narrative.PublicNarrative = BuildCampaignNarrativeText(clan, campaign, narrative);
 
                 scope.RecordDiff(
-                    $"Campaign spillover around {campaign.AnchorSettlementName} pushed clan {clan.ClanName} narrative to fear {narrative.FearPressure}, grudge {narrative.GrudgePressure}, shame {narrative.ShamePressure}.",
+                    $"{campaign.AnchorSettlementName}战后余波牵得{clan.ClanName}惧意{narrative.FearPressure}，旧怨{narrative.GrudgePressure}，羞压{narrative.ShamePressure}。",
                     clan.Id.Value.ToString());
 
                 AddMemory(
@@ -158,13 +199,86 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                     bundle.CampaignAftermathRegistered ? "campaign-aftermath" : "campaign-pressure",
                     Math.Max(narrative.FearPressure, narrative.GrudgePressure),
                     true,
-                    $"{campaign.AnchorSettlementName} campaign spillover left fear of {campaign.FrontLabel} and {campaign.LastAftermathSummary.ToLowerInvariant()} in local memory.",
+                    $"{campaign.AnchorSettlementName}战后余波把{campaign.FrontLabel}与{campaign.LastAftermathSummary}一并压进了{clan.ClanName}的旧忆里。",
                     scope.Context);
 
                 if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
                 {
-                    scope.Emit("GrudgeEscalated", $"Campaign spillover hardened clan {clan.ClanName} grievance pressure.", clan.Id.Value.ToString());
+                    scope.Emit("GrudgeEscalated", $"战后余波使{clan.ClanName}旧怨更炽。", clan.Id.Value.ToString());
                 }
+            }
+        }
+    }
+
+    private static void ApplyXunSocialPulse(
+        SimulationXun currentXun,
+        ClanSnapshot clan,
+        int averageDistress,
+        int averageMigrationRisk,
+        bool hasMigratingHousehold,
+        ClanTradeSnapshot? trade,
+        ClanNarrativeState narrative)
+    {
+        switch (currentXun)
+        {
+            case SimulationXun.Shangxun:
+            {
+                int fearDelta = 0;
+                fearDelta += averageDistress >= 70 ? 1 : averageDistress < 45 ? -1 : 0;
+                fearDelta += hasMigratingHousehold ? 1 : 0;
+                fearDelta -= clan.SupportReserve >= 65 ? 1 : 0;
+
+                int grudgeDelta = 0;
+                grudgeDelta += clan.BranchTension >= 60 ? 1 : clan.BranchTension < 35 ? -1 : 0;
+                grudgeDelta += averageDistress >= 75 ? 1 : 0;
+                grudgeDelta -= clan.MediationMomentum >= 55 ? 1 : 0;
+
+                narrative.FearPressure = Math.Clamp(narrative.FearPressure + fearDelta, 0, 100);
+                narrative.GrudgePressure = Math.Clamp(narrative.GrudgePressure + grudgeDelta, 0, 100);
+                break;
+            }
+            case SimulationXun.Zhongxun:
+            {
+                int shameDelta = clan.Prestige < 45 ? 1 : clan.Prestige > 58 ? -1 : 0;
+                shameDelta += clan.BranchFavorPressure >= 40 ? 1 : 0;
+                shameDelta += trade is not null && trade.CommerceReputation < 25 ? 1 : 0;
+                shameDelta += trade is not null && trade.Debt >= 90 ? 1 : 0;
+
+                int favorDelta = clan.SupportReserve >= 65 ? 1 : clan.SupportReserve < 40 ? -1 : 0;
+                favorDelta += clan.MediationMomentum >= 45 ? 1 : 0;
+                favorDelta -= clan.ReliefSanctionPressure >= 40 ? 1 : 0;
+                favorDelta += trade is not null && trade.CashReserve >= 100 && trade.CommerceReputation >= 35 ? 1 : 0;
+                favorDelta -= averageDistress >= 70 && clan.SupportReserve < 40 ? 1 : 0;
+
+                narrative.ShamePressure = Math.Clamp(narrative.ShamePressure + shameDelta, 0, 100);
+                narrative.FavorBalance = Math.Clamp(narrative.FavorBalance + favorDelta, -100, 100);
+                break;
+            }
+            case SimulationXun.Xiaxun:
+            {
+                int grudgeDelta = 0;
+                grudgeDelta += clan.SeparationPressure >= 60 ? 1 : 0;
+                grudgeDelta += clan.InheritancePressure >= 55 ? 1 : 0;
+                grudgeDelta -= clan.MediationMomentum >= 50 ? 1 : 0;
+
+                int fearDelta = 0;
+                fearDelta += averageMigrationRisk >= 60 ? 1 : 0;
+                fearDelta += hasMigratingHousehold ? 1 : 0;
+                fearDelta -= clan.SupportReserve >= 65 ? 1 : 0;
+
+                int shameDelta = 0;
+                shameDelta += clan.SeparationPressure >= 60 ? 1 : 0;
+                shameDelta -= clan.MediationMomentum >= 50 ? 1 : 0;
+
+                int favorDelta = 0;
+                favorDelta += averageDistress >= 60 && clan.SupportReserve >= 65 ? 1 : 0;
+                favorDelta -= averageMigrationRisk >= 60 && clan.SupportReserve < 40 ? 1 : 0;
+
+                narrative.GrudgePressure = Math.Clamp(narrative.GrudgePressure + grudgeDelta, 0, 100);
+                narrative.FearPressure = Math.Clamp(narrative.FearPressure + fearDelta, 0, 100);
+                narrative.ShamePressure = Math.Clamp(narrative.ShamePressure + shameDelta, 0, 100);
+                narrative.FavorBalance = Math.Clamp(narrative.FavorBalance + favorDelta, -100, 100);
+                break;
             }
         }
     }
@@ -209,6 +323,46 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
             delta -= 1;
         }
 
+        if (clan.BranchTension >= 60)
+        {
+            delta += 2;
+        }
+        else if (clan.BranchTension >= 40)
+        {
+            delta += 1;
+        }
+
+        if (clan.ReliefSanctionPressure >= 45)
+        {
+            delta += 1;
+        }
+
+        if (clan.MediationMomentum >= 55)
+        {
+            delta -= 2;
+        }
+        else if (clan.MediationMomentum >= 28)
+        {
+            delta -= 1;
+        }
+
+        return delta;
+    }
+
+    private static int ComputeShameDelta(ClanSnapshot clan)
+    {
+        int delta = clan.Prestige < 45 ? 1 : clan.Prestige > 58 ? -1 : 0;
+        delta += clan.BranchFavorPressure >= 40 ? 1 : 0;
+        delta += clan.SeparationPressure >= 60 ? 1 : 0;
+        delta -= clan.MediationMomentum >= 50 ? 1 : 0;
+        return delta;
+    }
+
+    private static int ComputeFavorDelta(ClanSnapshot clan)
+    {
+        int delta = clan.SupportReserve >= 65 ? 1 : clan.SupportReserve < 40 ? -1 : 0;
+        delta += clan.MediationMomentum >= 45 ? 1 : 0;
+        delta -= clan.ReliefSanctionPressure >= 40 ? 2 : 0;
         return delta;
     }
 
@@ -235,35 +389,50 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
     {
         if (narrative.GrudgePressure >= 70)
         {
-            return $"Campaign spillover around {campaign.AnchorSettlementName} is hardening resentment around clan {clan.ClanName}.";
+            return $"{campaign.AnchorSettlementName}兵后余波未歇，{clan.ClanName}宗中怨望愈深。";
         }
 
         if (narrative.FearPressure >= 60)
         {
-            return $"Campaign pressure around {campaign.AnchorSettlementName} keeps clan {clan.ClanName} under anxious local memory.";
+            return $"{campaign.AnchorSettlementName}前线余压未退，{clan.ClanName}宗中人心惴惴。";
         }
 
-        return $"Clan {clan.ClanName} remembers the strain of {campaign.AnchorSettlementName} through {campaign.LastAftermathSummary.ToLowerInvariant()}.";
+        return $"{clan.ClanName}仍记得{campaign.AnchorSettlementName}战后诸案与里中劳瘁。";
     }
 
     private static string BuildNarrativeText(ClanSnapshot clan, int averageDistress, int grudgePressure)
     {
+        if (clan.SeparationPressure >= 65)
+        {
+            return $"{clan.ClanName}宗中分房之议渐炽。";
+        }
+
+        if (clan.BranchTension >= 60)
+        {
+            return $"{clan.ClanName}祠堂争声渐炽。";
+        }
+
+        if (clan.MediationMomentum >= 45)
+        {
+            return $"{clan.ClanName}正请族老压住争端。";
+        }
+
         if (grudgePressure >= 70)
         {
-            return $"Resentment is hardening around clan {clan.ClanName}.";
+            return $"{clan.ClanName}宗中旧怨益深。";
         }
 
         if (averageDistress >= 60)
         {
-            return $"Household strain is testing clan {clan.ClanName}.";
+            return $"{clan.ClanName}正受民户困顿所逼。";
         }
 
         if (clan.SupportReserve >= 65)
         {
-            return $"Clan {clan.ClanName} is seen as holding the line through relief.";
+            return $"{clan.ClanName}尚能以接济稳住门里人心。";
         }
 
-        return $"Clan {clan.ClanName} remains under watchful local memory.";
+        return $"{clan.ClanName}仍在乡里目光之下。";
     }
 
     private static void AddMemory(

@@ -1,0 +1,85 @@
+using System;
+using System.Linq;
+using Zongzu.Contracts;
+using Zongzu.Kernel;
+
+namespace Zongzu.Presentation.Unity;
+
+internal static class GovernanceShellAdapter
+{
+	internal static string BuildGreatHallGovernanceSummary(
+		PresentationReadModelBundle bundle,
+		string officeFallbackSummary)
+	{
+		SettlementGovernanceLaneSnapshot? governanceLane = SelectLeadGovernanceLane(bundle);
+		GovernanceDocketSnapshot? governanceDocket = HasGovernanceDocket(bundle.GovernanceDocket)
+			? bundle.GovernanceDocket
+			: null;
+		string summary = !string.IsNullOrWhiteSpace(governanceLane?.GovernanceSummary)
+			? governanceLane.GovernanceSummary
+			: officeFallbackSummary;
+		string momentum = !string.IsNullOrWhiteSpace(governanceDocket?.PublicMomentumSummary)
+			? governanceDocket.PublicMomentumSummary
+			: governanceLane?.PublicMomentumSummary ?? string.Empty;
+
+		return ShellTextAdapter.AppendDistinct(summary, momentum).Trim();
+	}
+
+	internal static string BuildSettlementGovernanceSummary(
+		string officeFallbackSummary,
+		SettlementGovernanceLaneSnapshot? governanceLane)
+	{
+		if (governanceLane == null)
+		{
+			return officeFallbackSummary;
+		}
+
+		string summary = !string.IsNullOrWhiteSpace(governanceLane.GovernanceSummary)
+			? governanceLane.GovernanceSummary
+			: officeFallbackSummary;
+
+		return ShellTextAdapter.AppendDistinct(summary, governanceLane.PublicMomentumSummary).Trim();
+	}
+
+	private static SettlementGovernanceLaneSnapshot? SelectLeadGovernanceLane(PresentationReadModelBundle bundle)
+	{
+		if (bundle.GovernanceFocus.SettlementId.Value > 0)
+		{
+			SettlementGovernanceLaneSnapshot? focusSettlement = bundle.GovernanceSettlements
+				.FirstOrDefault(settlement => settlement.SettlementId == bundle.GovernanceFocus.SettlementId);
+			if (focusSettlement != null)
+			{
+				return focusSettlement;
+			}
+		}
+
+		if (HasGovernanceDocket(bundle.GovernanceDocket) && bundle.GovernanceDocket.SettlementId.Value > 0)
+		{
+			SettlementGovernanceLaneSnapshot? docketSettlement = bundle.GovernanceSettlements
+				.FirstOrDefault(settlement => settlement.SettlementId == bundle.GovernanceDocket.SettlementId);
+			if (docketSettlement != null)
+			{
+				return docketSettlement;
+			}
+		}
+
+		return bundle.GovernanceSettlements
+			.OrderByDescending(settlement =>
+				settlement.AdministrativeTaskLoad
+				+ settlement.PetitionPressure
+				+ settlement.PetitionBacklog
+				+ settlement.StreetTalkHeat
+				+ settlement.RoutePressure
+				+ settlement.SuppressionDemand)
+			.ThenBy(settlement => settlement.SettlementName, StringComparer.Ordinal)
+			.FirstOrDefault();
+	}
+
+	private static bool HasGovernanceDocket(GovernanceDocketSnapshot docket)
+	{
+		return docket.SettlementId.Value > 0
+			|| !string.IsNullOrWhiteSpace(docket.Headline)
+			|| !string.IsNullOrWhiteSpace(docket.WhyNowSummary)
+			|| !string.IsNullOrWhiteSpace(docket.PublicMomentumSummary);
+	}
+}

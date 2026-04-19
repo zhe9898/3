@@ -345,6 +345,9 @@ public sealed class M2DiagnosticsHarness
             AverageSuppressionDemand = Math.Max(current.AverageSuppressionDemand, candidate.AverageSuppressionDemand),
             PeakSuppressionDemand = Math.Max(current.PeakSuppressionDemand, candidate.PeakSuppressionDemand),
             HighBanditThreatSettlements = Math.Max(current.HighBanditThreatSettlements, candidate.HighBanditThreatSettlements),
+            OrderInterventionCarryoverSettlements = Math.Max(current.OrderInterventionCarryoverSettlements, candidate.OrderInterventionCarryoverSettlements),
+            ShieldingDominantSettlements = Math.Max(current.ShieldingDominantSettlements, candidate.ShieldingDominantSettlements),
+            BacklashDominantSettlements = Math.Max(current.BacklashDominantSettlements, candidate.BacklashDominantSettlements),
         };
     }
 
@@ -454,6 +457,21 @@ public sealed class M2DiagnosticsHarness
             "peak high bandit threat settlements",
             peakInteractionPressure.HighBanditThreatSettlements,
             budget.InteractionPressureCeiling.HighBanditThreatSettlements);
+        AddViolationIfExceeded(
+            violations,
+            "peak order carryover settlements",
+            peakInteractionPressure.OrderInterventionCarryoverSettlements,
+            budget.InteractionPressureCeiling.OrderInterventionCarryoverSettlements);
+        AddViolationIfExceeded(
+            violations,
+            "peak shielding-dominant settlements",
+            peakInteractionPressure.ShieldingDominantSettlements,
+            budget.InteractionPressureCeiling.ShieldingDominantSettlements);
+        AddViolationIfExceeded(
+            violations,
+            "peak backlash-dominant settlements",
+            peakInteractionPressure.BacklashDominantSettlements,
+            budget.InteractionPressureCeiling.BacklashDominantSettlements);
         AddViolationIfExceeded(violations, "peak hotspot score", peakHotspotScore, budget.PeakHotspotScoreCeiling);
 
         return new SimulationDiagnosticsBudgetEvaluation

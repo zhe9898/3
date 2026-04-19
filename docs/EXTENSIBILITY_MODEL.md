@@ -34,6 +34,8 @@ A feature pack:
 - `SpatialShellPack`
 - optional `LocalConflictLitePack`
 
+Note: `PersonRegistry` is Kernel-layer infrastructure, always present, and does not require a feature pack. See `PERSON_OWNERSHIP_RULES.md`.
+
 ### Post-MVP packs
 - `OfficePack`
 - `OrderBanditryPack`

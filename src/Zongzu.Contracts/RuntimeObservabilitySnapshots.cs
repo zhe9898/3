@@ -17,6 +17,14 @@ public sealed class InteractionPressureMetricsSnapshot
     public int PeakSuppressionDemand { get; set; }
 
     public int HighBanditThreatSettlements { get; set; }
+
+    public int OrderInterventionCarryoverSettlements { get; set; }
+
+    public int OrderAdministrativeAftermathSettlements { get; set; }
+
+    public int ShieldingDominantSettlements { get; set; }
+
+    public int BacklashDominantSettlements { get; set; }
 }
 
 public sealed class SettlementInteractionHotspotSnapshot
@@ -32,6 +40,20 @@ public sealed class SettlementInteractionHotspotSnapshot
     public int RoutePressure { get; set; }
 
     public int SuppressionDemand { get; set; }
+
+    public int BlackRoutePressure { get; set; }
+
+    public int RouteShielding { get; set; }
+
+    public int RetaliationRisk { get; set; }
+
+    public int InterventionCarryoverMonths { get; set; }
+
+    public int AdministrativeTaskLoad { get; set; }
+
+    public int PetitionBacklog { get; set; }
+
+    public string AdministrativeAftermathSummary { get; set; } = string.Empty;
 
     public int ResponseActivationLevel { get; set; }
 

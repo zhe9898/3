@@ -22,9 +22,10 @@ Post-MVP features must extend the same:
 
 Current lite note:
 - `OfficeAndCareer.Lite` is now active through a dedicated governance-lite bootstrap path as the first formal authority layer after local exams
-- `OfficeAndCareer.Lite` now includes bounded promotion/demotion pressure, administrative task assignment, and petition handling inside the office-owned namespace
+- `OfficeAndCareer.Lite` now follows a Northern Song-inspired office funnel: local-exam success opens recommendation / waiting pressure first, then attached yamen service or appointment depending on backing and openings
+- `OfficeAndCareer.Lite` now includes bounded appointment pressure, clerk dependence, promotion/demotion pressure, administrative task assignment, and petition handling inside the office-owned namespace
 - current lite office leverage may feed disorder or local-force modules only through read-only queries; it does not grant direct writes into those modules
-- the lighter office v2.1 slice now surfaces administrative-task tier, petition-outcome category, and authority-trajectory wording as read-only descriptors only; it does not add new authority UI or a schema `3` transition
+- the lighter office v2.1 slice still surfaces administrative-task tier, petition-outcome category, and authority-trajectory wording as read-only descriptors only; the later queue/dependence lift moves save schema to `3` but still does not add authority UI
 
 ### Order and disorder pack
 - `OrderAndBanditry` full
@@ -38,17 +39,15 @@ Integration seam:
 - no future black-market system may bypass trade balances or write directly into trade-owned state
 - black-route pressure should keep treating `ConflictAndForce` response activation as an input projection, not as a foreign state it can rewrite
 
-Current preflight note:
-- the repository now reserves black-route contracts only as query seams: pressure stays conceptually owned by `OrderAndBanditry`, while illicit/gray-route ledgers stay conceptually owned by `TradeAndIndustry`
-- current preflight pressure/ledger contracts also reserve administrative suppression-window, escalation-band, seizure-risk, and diversion-band summaries for later rollout
+Current implemented slice:
+- the repository now ships the first black-route authority slice: pressure stays owned by `OrderAndBanditry`, while illicit/gray-route ledgers stay owned by `TradeAndIndustry`
+- the current slice already persists paper-compliance, implementation drag, route-shielding, retaliation-risk, administrative suppression-window, escalation-band, seizure-risk, diversion-band, route-constraint, and trace summaries inside those two module envelopes only
+- default loaders now migrate legacy `OrderAndBanditry` schema `1` saves to schema `2 -> 3 -> 4`, and legacy `TradeAndIndustry` schema `1` saves to schema `2 -> 3`, without changing the enabled-module or module-key set
 - no standalone `BlackRoute` module key or save namespace is active in current manifests
 
-Pre-implementation checklist:
-- define which disorder fields stay in `OrderAndBanditry` and which ledgers stay in `TradeAndIndustry`
-- define how black-route pressure becomes trade risk without adding direct writes
-- define how local force response can suppress, redirect, or fail against black-route pressure through queries/events only
-- define which runtime-only hotspot and migration diagnostics should stay visible to developers during black-route rollout without becoming player-facing authority
-- define which runtime-only scale or payload-footprint summaries best reveal black-route growth pressure during stress runs
+Next-step checklist:
+- deepen how later commands, office pressure, and diagnostics should interpret the same route-shielding / retaliation-risk fields without adding a detached outlaw pack
+- decide which developer-only hotspot and payload diagnostics best reveal black-route growth during larger stress runs
 
 ### Force pack
 - `ConflictAndForce` full

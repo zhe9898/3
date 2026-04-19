@@ -17,7 +17,7 @@ public sealed class ClanNarrativeState
 {
     public ClanId ClanId { get; set; }
 
-    public string PublicNarrative { get; set; } = "Quiet watchfulness";
+    public string PublicNarrative { get; set; } = "乡里尚在静看。";
 
     public int GrudgePressure { get; set; }
 

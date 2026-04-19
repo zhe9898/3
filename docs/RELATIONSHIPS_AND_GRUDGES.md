@@ -34,6 +34,7 @@ This avoids spreading social-state mutation across many modules.
 - memory records about events
 - clan narrative summaries that outlive individuals
 - escalation, restraint, and reconciliation pressure
+- dormant social-memory stubs for actors who leave the dense local horizon without becoming socially irrelevant
 
 ## How other modules interact
 - family queries it for marriage and branch tension context
@@ -62,6 +63,43 @@ Grievances may move through:
 - suppression without true resolution
 - fading after death or time
 - clan narrative preservation
+
+## Dormant stubs and delayed return
+
+Not every important actor should remain a dense local presence forever.
+Some should leave the core ring while still remaining active inside social memory.
+
+Typical cases:
+- defeated officials sent into remote service or exile
+- kin who marry out, migrate, or fall into distant hardship
+- affines and old friends who leave local visibility but remain emotionally or politically relevant
+- patrons, clients, and retainers who lose position without losing narrative weight
+- disgraced brokers pushed out of county visibility
+- branch actors expelled, married out, or displaced
+- feud-linked figures who leave but remain narratively charged
+
+For these cases, `SocialMemoryAndRelations` should preserve a dormant stub rather than treating the actor as erased.
+
+A dormant stub should preserve:
+- identity anchor
+- key relationship edges
+- shame / fear / resentment residue
+- patronage or faction residue
+- outstanding obligations
+- the narrative summary by which others still remember them
+- hooks that may reactivate them later
+
+This supports outcomes such as:
+- false disappearance
+- delayed revenge
+- delayed aid or recall through kin and friendship ties
+- reluctant reconciliation after years away
+- frontier-hardening and return
+- old faction residue returning through new office openings
+
+The social rule is:
+
+**people may leave the player's dense horizon without leaving the society's memory.**
 
 ## Design rule
 Grudges must be able to persist without being forced to explode every time.
