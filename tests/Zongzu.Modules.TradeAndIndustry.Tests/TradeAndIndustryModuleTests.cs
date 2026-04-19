@@ -114,8 +114,8 @@ public sealed class TradeAndIndustryModuleTests
 
         ClanTradeState clanTrade = tradeState.Clans.Single();
         Assert.That(clanTrade.LastOutcome, Is.EqualTo("Profit"));
-        Assert.That(clanTrade.LastExplanation, Does.Contain("Margin"));
-        Assert.That(clanTrade.LastExplanation, Does.Contain("route factor"));
+        Assert.That(clanTrade.LastExplanation, Does.Contain("盈亏"));
+        Assert.That(clanTrade.LastExplanation, Does.Contain("路势"));
         Assert.That(clanTrade.CashReserve, Is.GreaterThan(82));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("TradeProspered"));
     }
@@ -144,7 +144,7 @@ public sealed class TradeAndIndustryModuleTests
             ShopCount = 1,
             ManagerSkill = 3,
             LastOutcome = "Stable",
-            LastExplanation = "Route pressure is stable.",
+            LastExplanation = "路面之压暂还平稳。",
         });
         tradeState.Routes.Add(new RouteTradeState
         {
@@ -177,14 +177,14 @@ public sealed class TradeAndIndustryModuleTests
                 MoraleState = 43,
                 MoraleStateLabel = "军心摇动",
                 CommandFitLabel = "号令尚整",
-                CommanderSummary = "Lanxi command is holding.",
+                CommanderSummary = "兰溪号令尚能维持。",
                 ActiveDirectiveCode = WarfareCampaignCommandNames.ProtectSupplyLine,
                 ActiveDirectiveLabel = "催督粮道",
                 ActiveDirectiveSummary = "督运。",
-                LastDirectiveTrace = "Lanxi received a supply-line directive.",
-                MobilizationWindowLabel = "Narrow",
-                SupplyLineSummary = "Grain caravans are under pressure.",
-                OfficeCoordinationTrace = "Registrar is coordinating the docket.",
+                LastDirectiveTrace = "兰溪已受催督粮道之令。",
+                MobilizationWindowLabel = "偏窄",
+                SupplyLineSummary = "运粮之队正受路压。",
+                OfficeCoordinationTrace = "主簿正在看顾案牍与粮运。",
                 SourceTrace = "Campaign pressure rose from local conflict.",
                 LastAftermathSummary = "战后覆核压在粮道与商路之上。",
             },
@@ -192,8 +192,8 @@ public sealed class TradeAndIndustryModuleTests
 
         DomainEventRecord[] events =
         {
-            new(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignPressureRaised, "Lanxi pressure rose.", "1"),
-            new(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignSupplyStrained, "Lanxi supply strained.", "1"),
+            new(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignPressureRaised, "兰溪前线转紧。", "1"),
+            new(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignSupplyStrained, "兰溪粮道吃紧。", "1"),
         };
 
         ModuleExecutionContext context = new(
@@ -215,7 +215,7 @@ public sealed class TradeAndIndustryModuleTests
         Assert.That(clanTrade.CashReserve, Is.LessThan(82));
         Assert.That(clanTrade.GrainReserve, Is.LessThan(57));
         Assert.That(clanTrade.Debt, Is.GreaterThan(18));
-        Assert.That(clanTrade.LastExplanation, Does.Contain("Campaign pressure around Lanxi"));
+        Assert.That(clanTrade.LastExplanation, Does.Contain("Lanxi战事所及"));
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.TradeAndIndustry));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("RouteBusinessBlocked"));
         Assert.That(context.DomainEvents.Events.All(static entry => entry.ModuleKey == KnownModuleKeys.TradeAndIndustry), Is.True);

@@ -149,8 +149,8 @@ public sealed class ConflictAndForceModuleTests
         Assert.That(snapshot.OrderSupportLevel, Is.GreaterThan(0));
         Assert.That(snapshot.IsResponseActivated, Is.True);
         Assert.That(snapshot.HasActiveConflict, Is.True);
-        Assert.That(snapshot.LastConflictTrace, Does.Contain("Force posture"));
-        Assert.That(snapshot.LastConflictTrace, Does.Contain("contained"));
+        Assert.That(snapshot.LastConflictTrace, Does.Contain("守备之势"));
+        Assert.That(snapshot.LastConflictTrace, Does.Contain("已先被按住"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("MilitiaMobilized"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("ForceReadinessChanged"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("ConflictResolved"));
@@ -273,7 +273,7 @@ public sealed class ConflictAndForceModuleTests
             RoutePressure = 10,
             SuppressionDemand = 16,
             DisorderPressure = 14,
-            LastPressureReason = "Routine patrols are enough this month.",
+            LastPressureReason = "本月巡缉尚足按住路面。",
         });
 
         ConflictAndForceModule module = new();
@@ -446,11 +446,11 @@ public sealed class ConflictAndForceModuleTests
             SettlementId = new SettlementId(5),
             LeadOfficialPersonId = new PersonId(1),
             LeadOfficialName = "Zhang Yuan",
-            LeadOfficeTitle = "Assistant Magistrate",
+            LeadOfficeTitle = "县丞",
             AuthorityTier = 3,
             JurisdictionLeverage = 68,
             PetitionPressure = 22,
-            LastAdministrativeTrace = "The assistant magistrate is coordinating retainers and petitions.",
+            LastAdministrativeTrace = "县丞正在调度亲随与词状。",
         });
 
         ConflictAndForceModule module = new();
@@ -492,7 +492,7 @@ public sealed class ConflictAndForceModuleTests
 
         Assert.That(snapshot.Readiness, Is.GreaterThan(baselineSnapshot.Readiness));
         Assert.That(snapshot.CommandCapacity, Is.GreaterThan(baselineSnapshot.CommandCapacity));
-        Assert.That(snapshot.LastConflictTrace, Does.Contain("Assistant Magistrate leverage"));
+        Assert.That(snapshot.LastConflictTrace, Does.Contain("县丞乡面杠力"));
     }
 
     [Test]
@@ -580,7 +580,7 @@ public sealed class ConflictAndForceModuleTests
             RoutePressure = 28,
             SuppressionDemand = 24,
             DisorderPressure = 30,
-            LastPressureReason = "Routine patrols are holding the roads.",
+            LastPressureReason = "例行巡缉尚能把住道路。",
         });
 
         ConflictAndForceModule baselineModule = new();
@@ -594,7 +594,7 @@ public sealed class ConflictAndForceModuleTests
             EscortCount = 7,
             Readiness = 48,
             CommandCapacity = 38,
-            LastConflictTrace = "The watch is settled into routine patrols.",
+            LastConflictTrace = "守夜轮值已归常巡。",
         });
 
         QueryRegistry baselineQueries = new();
@@ -629,8 +629,8 @@ public sealed class ConflictAndForceModuleTests
             CommandCapacity = 38,
             CampaignFatigue = 24,
             CampaignEscortStrain = 18,
-            LastCampaignFalloutTrace = "Campaign fallout from Hengshan left escorts frayed and watches short of sleep.",
-            LastConflictTrace = "The watch is settled into routine patrols.",
+            LastCampaignFalloutTrace = "Hengshan战后余波拖得护运困乏，守夜未得安歇。",
+            LastConflictTrace = "守夜轮值已归常巡。",
         });
 
         QueryRegistry fatiguedQueries = new();
@@ -660,7 +660,7 @@ public sealed class ConflictAndForceModuleTests
         Assert.That(fatiguedSnapshot.Readiness, Is.LessThan(baselineSnapshot.Readiness));
         Assert.That(fatiguedSnapshot.CommandCapacity, Is.LessThan(baselineSnapshot.CommandCapacity));
         Assert.That(fatiguedSnapshot.EscortCount, Is.LessThan(baselineSnapshot.EscortCount));
-        Assert.That(fatiguedSnapshot.LastConflictTrace, Does.Contain("Earlier campaigning still leaves fatigue"));
+        Assert.That(fatiguedSnapshot.LastConflictTrace, Does.Contain("前番兵事仍留疲敝"));
     }
 
     [Test]
@@ -693,25 +693,25 @@ public sealed class ConflictAndForceModuleTests
                 CampaignId = new CampaignId(1),
                 AnchorSettlementId = new SettlementId(8),
                 AnchorSettlementName = "Lanxi",
-                CampaignName = "Lanxi Campaign Board",
+                CampaignName = "兰溪军务沙盘",
                 IsActive = true,
                 MobilizedForceCount = 52,
                 FrontPressure = 76,
-                FrontLabel = "Front under strain",
+                FrontLabel = "前线吃紧",
                 SupplyState = 34,
-                SupplyStateLabel = "Supply strained",
+                SupplyStateLabel = "粮道吃紧",
                 MoraleState = 43,
-                MoraleStateLabel = "Morale unsettled",
-                CommandFitLabel = "Orders stretching thin",
+                MoraleStateLabel = "军心未定",
+                CommandFitLabel = "号令渐紧",
                 ActiveDirectiveCode = WarfareCampaignCommandNames.CommitMobilization,
-                ActiveDirectiveLabel = "Commit mobilization",
-                ActiveDirectiveSummary = "Push men and grain forward.",
-                LastDirectiveTrace = "The board is pushing harder into the front.",
-                MobilizationWindowLabel = "Open",
-                ObjectiveSummary = "Hold the pass and keep the route open.",
-                SupplyLineSummary = "Escort lines are burning effort to hold the grain route.",
-                OfficeCoordinationTrace = "County clerks are relaying transport orders.",
-                LastAftermathSummary = "Exhausted escorts and militia are filtering back into town.",
+                ActiveDirectiveLabel = "发檄点兵",
+                ActiveDirectiveSummary = "催丁运粮向前。",
+                LastDirectiveTrace = "案头军议已催前线加紧。",
+                MobilizationWindowLabel = "可发",
+                ObjectiveSummary = "守住关口，不使道路断绝。",
+                SupplyLineSummary = "护运诸线正竭力保着粮道。",
+                OfficeCoordinationTrace = "县署书吏正在转递催运文移。",
+                LastAftermathSummary = "疲敝护运与乡勇正陆续回镇。",
             },
         ]));
 
@@ -727,9 +727,9 @@ public sealed class ConflictAndForceModuleTests
             state,
             context,
             [
-                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignPressureRaised, "Lanxi front pressure rose.", "8"),
-                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignSupplyStrained, "Lanxi supply lines strained.", "8"),
-                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignAftermathRegistered, "Lanxi entered aftermath review.", "8"),
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignPressureRaised, "兰溪前线转紧。", "8"),
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignSupplyStrained, "兰溪粮道吃紧。", "8"),
+                new DomainEventRecord(KnownModuleKeys.WarfareCampaign, WarfareCampaignEventNames.CampaignAftermathRegistered, "兰溪战后案前已立。", "8"),
             ]));
 
         LocalForcePoolSnapshot snapshot = queries.GetRequired<IConflictAndForceQueries>().GetRequiredSettlementForce(new SettlementId(8));
@@ -739,9 +739,9 @@ public sealed class ConflictAndForceModuleTests
         Assert.That(snapshot.Readiness, Is.LessThan(56));
         Assert.That(snapshot.CommandCapacity, Is.LessThan(44));
         Assert.That(snapshot.EscortCount, Is.LessThan(9));
-        Assert.That(snapshot.LastCampaignFalloutTrace, Does.Contain("Campaign fallout from Lanxi"));
-        Assert.That(snapshot.LastConflictTrace, Does.Contain("Campaign fallout from Lanxi"));
-        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("fatigue"));
+        Assert.That(snapshot.LastCampaignFalloutTrace, Does.Contain("Lanxi战后余波"));
+        Assert.That(snapshot.LastConflictTrace, Does.Contain("Lanxi战后余波"));
+        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("疲敝"));
         Assert.That(context.DomainEvents.Events.Any(static entry => entry.EventType == "ForceReadinessChanged"), Is.True);
     }
 

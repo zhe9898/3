@@ -110,16 +110,16 @@ public sealed class PopulationAndHouseholdsModuleTests
                 CampaignId = new CampaignId(1),
                 AnchorSettlementId = new SettlementId(1),
                 AnchorSettlementName = "Lanxi",
-                CampaignName = "Lanxi Campaign Board",
+                CampaignName = "兰溪军务沙盘",
                 IsActive = true,
                 MobilizedForceCount = 48,
                 FrontPressure = 75,
-                FrontLabel = "Front tightening",
+                FrontLabel = "前线转紧",
                 SupplyState = 36,
-                SupplyStateLabel = "Supply strained",
+                SupplyStateLabel = "粮道吃紧",
                 MoraleState = 44,
-                MoraleStateLabel = "Morale wavering",
-                LastAftermathSummary = "Returning levies and ruined carts are crowding the roads.",
+                MoraleStateLabel = "军心摇动",
+                LastAftermathSummary = "还乡兵丁与败车残辎壅在路上。",
             },
         ]));
 
@@ -148,7 +148,7 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(household.MigrationRisk, Is.GreaterThan(42));
         Assert.That(household.LaborCapacity, Is.LessThan(60));
         Assert.That(settlement.CommonerDistress, Is.EqualTo(household.Distress));
-        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("Campaign spillover"));
+        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("战后余波"));
     }
 
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries

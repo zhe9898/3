@@ -13,13 +13,19 @@ internal static class OfficeAndCareerDescriptors
 
         return taskName switch
         {
-            "急牍覆核" => "crisis",
-            "勘解乡怨词牍" => "crisis",
-            "巡丁清点" => "district",
+            "急牒核办" => "crisis",
+            "急牒覆核" => "crisis",
+            "勘解乡怨词牒" => "crisis",
+            "差丁清点" => "district",
             "勘理词状" => "district",
+            "张榜晓谕" => "district",
+            "遣吏催报" => "district",
             "勾检户籍" => "registry",
-            "誊录词牍" => "clerical",
-            "誊黄封牍" => "clerical",
+            "誊录词牒" => "clerical",
+            "誊黄封牒" => "clerical",
+            "随案听差" => "candidate",
+            "投牒候差" => "candidate",
+            "守选候阙" => "inactive",
             "候补听选" => "inactive",
             _ => authorityTier >= 2 ? "district" : "clerical",
         };
@@ -37,17 +43,16 @@ internal static class OfficeAndCareerDescriptors
             return "Unknown";
         }
 
-        if (outcomeText.Contains('：'))
-        {
-            string category = outcomeText[..outcomeText.IndexOf('：')].Trim();
-            return ParsePetitionOutcomeCategory(category);
-        }
-
-        int separator = outcomeText.IndexOf(':');
+        int separator = outcomeText.IndexOf('：');
         if (separator > 0)
         {
-            string category = outcomeText[..separator].Trim();
-            return ParsePetitionOutcomeCategory(category);
+            return ParsePetitionOutcomeCategory(outcomeText[..separator].Trim());
+        }
+
+        separator = outcomeText.IndexOf(':');
+        if (separator > 0)
+        {
+            return ParsePetitionOutcomeCategory(outcomeText[..separator].Trim());
         }
 
         return "Unknown";
@@ -75,6 +80,28 @@ internal static class OfficeAndCareerDescriptors
         };
     }
 
+    public static string DescribeAppointmentPressure(int appointmentPressure)
+    {
+        return appointmentPressure switch
+        {
+            >= 48 => "posting-near",
+            >= 32 => "queue-forming",
+            >= 18 => "entry-open",
+            _ => "thin",
+        };
+    }
+
+    public static string DescribeClerkDependence(int clerkDependence)
+    {
+        return clerkDependence switch
+        {
+            >= 60 => "captured",
+            >= 42 => "dependent",
+            >= 24 => "shared",
+            _ => "light",
+        };
+    }
+
     public static string BuildAuthorityTrajectorySummary(OfficeCareerState career)
     {
         string promotion = DescribePromotionPressure(career.PromotionMomentum);
@@ -82,14 +109,23 @@ internal static class OfficeAndCareerDescriptors
 
         if (!career.HasAppointment)
         {
-            return career.IsEligible
-                ? $"已入选途，升势{promotion}，黜压{demotion}，仍在候缺。"
-                : "未入官途，暂无仕路起伏。";
+            if (!career.IsEligible)
+            {
+                return "场屋与声望未足，官途尚未开启。";
+            }
+
+            string appointment = DescribeAppointmentPressure(career.AppointmentPressure);
+            string clerk = DescribeClerkDependence(career.ClerkDependence);
+            return career.LastOutcome switch
+            {
+                "听差" => $"场屋已捷，正随案听差；荐引势{appointment}，吏案依赖{clerk}。",
+                _ => $"已入守选候阙之途；荐引势{appointment}，升势{promotion}，黜压{demotion}。",
+            };
         }
 
         return career.LastOutcome switch
         {
-            "Promoted" => $"官阶新迁，升势{promotion}，黜压{demotion}。",
+            "Promoted" => $"官阶新进，升势{promotion}，黜压{demotion}。",
             "Demoted" => $"官阶受抑，升势{promotion}，黜压{demotion}。",
             "Lost" => $"官身已失，黜压{demotion}，积案{career.PetitionBacklog}。",
             _ => $"官途暂守，升势{promotion}，黜压{demotion}。",
@@ -107,7 +143,12 @@ internal static class OfficeAndCareerDescriptors
     {
         string promotion = DescribePromotionPressure(promotionMomentum);
         string demotion = DescribeDemotionPressure(demotionPressure);
-        return $"{displayName}今以{officeTitle}供职，事类{taskTier}，升势{promotion}，黜压{demotion}，积案{petitionBacklog}。";
+        return outcome switch
+        {
+            "Promoted" => $"{displayName}今以{officeTitle}供职，所主{taskTier}差遣，升势{promotion}，黜压{demotion}，积案{petitionBacklog}。",
+            "Demoted" => $"{displayName}今仍在{officeTitle}任上，所主{taskTier}差遣，升势{promotion}，黜压{demotion}，积案{petitionBacklog}。",
+            _ => $"{displayName}今以{officeTitle}供职，所主{taskTier}差遣，升势{promotion}，黜压{demotion}，积案{petitionBacklog}。",
+        };
     }
 
     private static string ParsePetitionOutcomeCategory(string category)
@@ -120,7 +161,7 @@ internal static class OfficeAndCareerDescriptors
             "分轻重" or "Triaged" => "Triaged",
             "已清" or "Cleared" => "Cleared",
             "准行" or "Granted" => "Granted",
-            "案牍骤涌" or "Surged" => "Surged",
+            "案前骇涌" or "Surged" => "Surged",
             "壅滞" or "Stalled" => "Stalled",
             "劾责中" or "Censured" => "Censured",
             _ => "Unknown",
@@ -137,7 +178,7 @@ internal static class OfficeAndCareerDescriptors
             "Triaged" => "分轻重",
             "Cleared" => "已清",
             "Granted" => "准行",
-            "Surged" => "案牍骤涌",
+            "Surged" => "案前骇涌",
             "Stalled" => "壅滞",
             "Censured" => "劾责中",
             _ => category,

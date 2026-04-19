@@ -2,6 +2,8 @@
 
 This document defines the authoritative monthly simulation loop.
 
+For the higher-level design rule that the world moves first, projection comes after diffs, and the player only acts late in the monthly cycle, see `RULES_DRIVEN_LIVING_WORLD.md`.
+
 ## Monthly tick phases
 
 ### Phase 0: prepare

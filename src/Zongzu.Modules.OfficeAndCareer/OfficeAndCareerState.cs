@@ -31,6 +31,10 @@ public sealed class OfficeCareerState
 
     public int AuthorityTier { get; set; }
 
+    public int AppointmentPressure { get; set; }
+
+    public int ClerkDependence { get; set; }
+
     public int JurisdictionLeverage { get; set; }
 
     public int PetitionPressure { get; set; }

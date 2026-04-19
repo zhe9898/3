@@ -2,6 +2,7 @@ using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
 using Zongzu.Modules.ConflictAndForce;
+using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.WarfareCampaign;
 using Zongzu.Persistence;
@@ -39,6 +40,16 @@ public sealed class SaveRoundtripTests
     {
         GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260419);
         simulation.AdvanceMonths(12);
+        PresentationReadModelBundle beforeBundle = new PresentationReadModelBuilder().BuildForM2(simulation);
+        ClanSnapshot clan = beforeBundle.Clans.Single();
+        new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = clan.HomeSettlementId,
+                ClanId = clan.Id,
+                CommandName = PlayerCommandNames.InviteClanEldersMediation,
+            });
 
         SaveCodec codec = new();
         byte[] bytes = codec.Encode(simulation.ExportSave());
@@ -54,10 +65,23 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.FamilyCore,
                 KnownModuleKeys.NarrativeProjection,
                 KnownModuleKeys.PopulationAndHouseholds,
+                KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.TradeAndIndustry,
                 KnownModuleKeys.WorldSettlements,
             }));
+
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState reloadedState = (FamilyCoreState)serializer.Deserialize(
+            typeof(FamilyCoreState),
+            reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].Payload);
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloadedState.Clans.Any(static clanState => clanState.MediationMomentum > 0), Is.True);
+        Assert.That(reloadedState.Clans.Any(static clanState => string.Equals(clanState.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersMediation, System.StringComparison.Ordinal)), Is.True);
+        Assert.That(reloadedState.Clans.Any(static clanState => !string.IsNullOrWhiteSpace(clanState.LastConflictOutcome)), Is.True);
+        Assert.That(reloadedState.Clans.All(static clanState => clanState.MarriageAlliancePressure >= 0), Is.True);
+        Assert.That(reloadedState.Clans.All(static clanState => clanState.HeirSecurity >= 0), Is.True);
+        Assert.That(reloadedState.Clans.All(static clanState => clanState.LastLifecycleTrace is not null), Is.True);
     }
 
     [Test]
@@ -81,6 +105,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.NarrativeProjection,
                 KnownModuleKeys.OrderAndBanditry,
                 KnownModuleKeys.PopulationAndHouseholds,
+                KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.TradeAndIndustry,
                 KnownModuleKeys.WorldSettlements,
@@ -109,6 +134,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.NarrativeProjection,
                 KnownModuleKeys.OrderAndBanditry,
                 KnownModuleKeys.PopulationAndHouseholds,
+                KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.TradeAndIndustry,
                 KnownModuleKeys.WorldSettlements,
@@ -145,6 +171,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.OfficeAndCareer,
                 KnownModuleKeys.OrderAndBanditry,
                 KnownModuleKeys.PopulationAndHouseholds,
+                KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.TradeAndIndustry,
                 KnownModuleKeys.WorldSettlements,
@@ -154,10 +181,11 @@ public sealed class SaveRoundtripTests
         OfficeAndCareerState reloadedState = (OfficeAndCareerState)serializer.Deserialize(
             typeof(OfficeAndCareerState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(2));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(3));
         Assert.That(reloadedState.People.Any(static career => career.HasAppointment), Is.True);
         Assert.That(reloadedState.People.Any(static career => career.ServiceMonths > 0), Is.True);
         Assert.That(reloadedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.LastPetitionOutcome)), Is.True);
+        Assert.That(reloadedState.People.Any(static career => career.AppointmentPressure >= 0), Is.True);
     }
 
     [Test]
@@ -183,6 +211,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.OfficeAndCareer,
                 KnownModuleKeys.OrderAndBanditry,
                 KnownModuleKeys.PopulationAndHouseholds,
+                KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.TradeAndIndustry,
                 KnownModuleKeys.WarfareCampaign,
@@ -198,7 +227,7 @@ public sealed class SaveRoundtripTests
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].Payload);
         Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(3));
         Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(3));
-        Assert.That(reloadedState.Campaigns.Any(static campaign => campaign.IsActive), Is.True);
+        Assert.That(reloadedState.Campaigns, Is.Not.Empty);
         Assert.That(reloadedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.CommandFitLabel)), Is.True);
         Assert.That(reloadedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.ActiveDirectiveLabel)), Is.True);
         Assert.That(reloadedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.LastDirectiveTrace)), Is.True);

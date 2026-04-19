@@ -189,6 +189,80 @@ public sealed class OfficeAndCareerModuleTests
     }
 
     [Test]
+    public void RunMonth_PassedCandidateWithoutStrongBacking_EntersQueuedOfficePathBeforeAppointment()
+    {
+        EducationAndExamsModule educationModule = new();
+        EducationAndExamsState educationState = educationModule.CreateInitialState();
+        educationState.Academies.Add(new AcademyState
+        {
+            Id = new InstitutionId(1),
+            SettlementId = new SettlementId(4),
+            AcademyName = "Bianzhou County School",
+            IsOpen = true,
+            Capacity = 2,
+            Prestige = 32,
+        });
+        educationState.People.Add(new EducationPersonState
+        {
+            PersonId = new PersonId(9),
+            ClanId = new ClanId(7),
+            AcademyId = new InstitutionId(1),
+            DisplayName = "Sun Qing",
+            IsStudying = false,
+            HasTutor = true,
+            TutorQuality = 10,
+            StudyProgress = 26,
+            Stress = 18,
+            ExamAttempts = 1,
+            HasPassedLocalExam = true,
+            LastOutcome = "Passed",
+            LastExplanation = "Passed the local exam but lacks strong backing.",
+            ScholarlyReputation = 17,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+        socialState.ClanNarratives.Add(new ClanNarrativeState
+        {
+            ClanId = new ClanId(7),
+            PublicNarrative = "The clan has some learning but thin patronage.",
+            GrudgePressure = 14,
+            FearPressure = 12,
+            ShamePressure = 18,
+            FavorBalance = 2,
+        });
+
+        OfficeAndCareerModule officeModule = new();
+        OfficeAndCareerState officeState = officeModule.CreateInitialState();
+
+        QueryRegistry queries = new();
+        educationModule.RegisterQueries(educationState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+        officeModule.RegisterQueries(officeState, queries);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 5),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(452)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        officeModule.RunMonth(new ModuleExecutionScope<OfficeAndCareerState>(officeState, context));
+
+        OfficeCareerState career = officeState.People.Single();
+
+        Assert.That(career.IsEligible, Is.True);
+        Assert.That(career.HasAppointment, Is.False);
+        Assert.That(career.AppointmentPressure, Is.GreaterThan(0));
+        Assert.That(career.ClerkDependence, Is.GreaterThanOrEqualTo(0));
+        Assert.That(career.LastOutcome, Is.AnyOf("候缺", "听差"));
+        Assert.That(career.CurrentAdministrativeTask, Is.Not.Empty);
+        Assert.That(career.LastExplanation, Does.Contain("场屋已捷"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Not.Contain("OfficeGranted"));
+    }
+
+    [Test]
     public void RunMonth_StrongServingOfficial_PromotesThroughAdministrativeService()
     {
         EducationAndExamsModule educationModule = new();
@@ -438,10 +512,10 @@ public sealed class OfficeAndCareerModuleTests
                 ActiveDirectiveCode = WarfareCampaignCommandNames.ProtectSupplyLine,
                 ActiveDirectiveLabel = "催督粮道",
                 ActiveDirectiveSummary = "先护粮道。",
-                LastDirectiveTrace = "Qingshui is protecting supply lines.",
-                MobilizationWindowLabel = "Open",
-                SupplyLineSummary = "Petitions cluster around grain depots.",
-                OfficeCoordinationTrace = "Registrar is coordinating wartime filings.",
+                LastDirectiveTrace = "清水已受催督粮道之令。",
+                MobilizationWindowLabel = "可发",
+                SupplyLineSummary = "粮站四周词状与催运俱聚。",
+                OfficeCoordinationTrace = "主簿正在看顾军务文移。",
                 SourceTrace = "Campaign pressure rose from local conflict.",
                 LastAftermathSummary = "战后覆核把文移与粮运一并压紧。",
             },
@@ -470,7 +544,7 @@ public sealed class OfficeAndCareerModuleTests
         Assert.That(career.PetitionPressure, Is.GreaterThan(26));
         Assert.That(career.CurrentAdministrativeTask, Is.EqualTo("急牍覆核"));
         Assert.That(career.LastPetitionOutcome, Does.Contain("案牍骤涌"));
-        Assert.That(career.LastExplanation, Does.Contain("Campaign spillover"));
+        Assert.That(career.LastExplanation, Does.Contain("战事外溢"));
         Assert.That(jurisdiction.CurrentAdministrativeTask, Is.EqualTo(career.CurrentAdministrativeTask));
         Assert.That(jurisdiction.PetitionBacklog, Is.EqualTo(career.PetitionBacklog));
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.OfficeAndCareer));

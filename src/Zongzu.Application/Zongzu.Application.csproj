@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Zongzu.Modules.OfficeAndCareer\Zongzu.Modules.OfficeAndCareer.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.OrderAndBanditry\Zongzu.Modules.OrderAndBanditry.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.PopulationAndHouseholds\Zongzu.Modules.PopulationAndHouseholds.csproj" />
+    <ProjectReference Include="..\Zongzu.Modules.PublicLifeAndRumor\Zongzu.Modules.PublicLifeAndRumor.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.SocialMemoryAndRelations\Zongzu.Modules.SocialMemoryAndRelations.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.TradeAndIndustry\Zongzu.Modules.TradeAndIndustry.csproj" />
     <ProjectReference Include="..\Zongzu.Modules.WarfareCampaign\Zongzu.Modules.WarfareCampaign.csproj" />

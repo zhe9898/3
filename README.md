@@ -11,6 +11,21 @@ dotnet build .\Zongzu.sln -c Debug
 dotnet test .\Zongzu.sln -c Debug --no-build
 ```
 
+## Preview
+
+You can generate the current MVP family-lifecycle snapshots with:
+
+```powershell
+dotnet run --project .\tools\Zongzu.MvpPreviewRunner\Zongzu.MvpPreviewRunner.csproj
+```
+
+The runner writes two preview artifacts against the explicit default MVP bootstrap, not the optional public-life / conflict / governance / warfare paths:
+
+- [content/generated/mvp-family-lifecycle-preview.md](content/generated/mvp-family-lifecycle-preview.md)
+- [content/generated/mvp-family-lifecycle-ten-year-preview.md](content/generated/mvp-family-lifecycle-ten-year-preview.md)
+
+- The second artifact stretches the same MVP family-lifecycle slice across ten in-world years and audits whether hall / family council / notification guidance stays aligned on the same next family action.
+
 ## GitHub Actions
 
 The repository now includes two GitHub Actions workflows:

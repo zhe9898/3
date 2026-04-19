@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -120,10 +121,10 @@ public sealed class SocialMemoryAndRelationsModuleTests
                 ActiveDirectiveCode = WarfareCampaignCommandNames.CommitMobilization,
                 ActiveDirectiveLabel = "发檄点兵",
                 ActiveDirectiveSummary = "整众应调。",
-                LastDirectiveTrace = "Lanxi has committed mobilization.",
-                MobilizationWindowLabel = "Open",
-                SupplyLineSummary = "Granaries and roads are under watch.",
-                OfficeCoordinationTrace = "Registrar is forwarding wartime filings.",
+                LastDirectiveTrace = "兰溪已发檄点兵。",
+                MobilizationWindowLabel = "可发",
+                SupplyLineSummary = "仓路与渡口都在看守之下。",
+                OfficeCoordinationTrace = "主簿正在转递军务文移。",
                 SourceTrace = "Campaign pressure rose from local conflict.",
                 LastAftermathSummary = "战后覆核仍在地方记忆里发酵。",
             },
@@ -156,6 +157,67 @@ public sealed class SocialMemoryAndRelationsModuleTests
         Assert.That(socialState.Memories[0].Kind, Is.EqualTo("campaign-aftermath"));
         Assert.That(socialState.Memories[0].Summary, Does.Contain("Lanxi"));
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.SocialMemoryAndRelations));
+    }
+
+    [Test]
+    public void RunMonth_FamilyConflictPressure_ShapesClanNarrativeTowardAncestralHallDispute()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 51,
+            SupportReserve = 48,
+            HeirPersonId = new PersonId(1),
+            BranchTension = 64,
+            InheritancePressure = 58,
+            SeparationPressure = 68,
+            MediationMomentum = 4,
+            BranchFavorPressure = 33,
+            ReliefSanctionPressure = 42,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 44,
+            DebtPressure = 41,
+            LaborCapacity = 52,
+            MigrationRisk = 28,
+            IsMigrating = false,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(29)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            KernelState.Create(29));
+
+        socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        Assert.That(socialState.ClanNarratives, Has.Count.EqualTo(1));
+        Assert.That(socialState.ClanNarratives[0].PublicNarrative, Does.Contain("分房"));
+        Assert.That(socialState.ClanNarratives[0].GrudgePressure, Is.GreaterThan(0));
+        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("旧怨"));
     }
 
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries

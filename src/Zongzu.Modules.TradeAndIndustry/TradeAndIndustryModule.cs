@@ -180,29 +180,29 @@ public sealed class TradeAndIndustryModule : ModuleRunner<TradeAndIndustryState>
             }
 
             clanTrade.LastExplanation =
-                $"Margin {margin} from demand {market.Demand}, price index {market.PriceIndex}, labor {population.LaborSupply}, route factor {routeFactor}, order pressure {orderPressure}, and grudge penalty {grudgePenalty}.";
+                $"市需{market.Demand}、时价{market.PriceIndex}、丁力{population.LaborSupply}、路势{routeFactor}、不靖之压{orderPressure}与旧怨所损{grudgePenalty}，折成盈亏{margin}。";
 
             scope.RecordDiff(
-                $"Clan trade for {clan.ClanName} moved to cash {clanTrade.CashReserve}, debt {clanTrade.Debt}, outcome {clanTrade.LastOutcome}. {clanTrade.LastExplanation}",
+                $"{clan.ClanName}商账今存银{clanTrade.CashReserve}，负债{clanTrade.Debt}，本月{RenderTradeOutcome(clanTrade.LastOutcome)}。{clanTrade.LastExplanation}",
                 clanTrade.ClanId.Value.ToString());
 
             if (margin >= 8)
             {
-                scope.Emit("TradeProspered", $"Clan {clan.ClanName} trade prospered.");
+                scope.Emit("TradeProspered", $"{clan.ClanName}本月市利有进。");
             }
             else if (margin < 0)
             {
-                scope.Emit("TradeLossOccurred", $"Clan {clan.ClanName} trade suffered losses.");
+                scope.Emit("TradeLossOccurred", $"{clan.ClanName}本月商账受亏。");
             }
 
             if (clanTrade.Debt >= 120 && clanTrade.CashReserve <= 40)
             {
-                scope.Emit("TradeDebtDefaulted", $"Clan {clan.ClanName} trade debt defaulted.");
+                scope.Emit("TradeDebtDefaulted", $"{clan.ClanName}商债压门。");
             }
 
             if (routes.Any(static route => route.Risk >= 70) || orderPressure >= 3)
             {
-                scope.Emit("RouteBusinessBlocked", $"A trade route for clan {clan.ClanName} was partially blocked.");
+                scope.Emit("RouteBusinessBlocked", $"{clan.ClanName}所行商路受阻。");
             }
         }
     }
@@ -270,7 +270,7 @@ public sealed class TradeAndIndustryModule : ModuleRunner<TradeAndIndustryState>
                     ? "Loss"
                     : "War Strain";
                 clanTrade.LastExplanation =
-                    $"{clanTrade.LastExplanation} Campaign pressure around {campaign.AnchorSettlementName} strained trade: {campaign.FrontLabel}, {campaign.SupplyStateLabel}, {campaign.LastAftermathSummary}";
+                    $"{clanTrade.LastExplanation}{campaign.AnchorSettlementName}战事所及，{campaign.FrontLabel}、{campaign.SupplyStateLabel}与{campaign.LastAftermathSummary}一并压商。";
             }
 
             if (market is null && routes.Length == 0 && clanTrades.Length == 0)
@@ -279,12 +279,12 @@ public sealed class TradeAndIndustryModule : ModuleRunner<TradeAndIndustryState>
             }
 
             scope.RecordDiff(
-                $"Campaign aftermath around {campaign.AnchorSettlementName} pushed market risk by {marketRiskDelta}, route risk by {routeRiskDelta}, and trade debt by {debtIncrease}; {campaign.SupplyStateLabel} and {campaign.LastAftermathSummary}",
+                $"{campaign.AnchorSettlementName}战后余波所及，市险增{marketRiskDelta}，路险增{routeRiskDelta}，商债增{debtIncrease}；{campaign.SupplyStateLabel}，{campaign.LastAftermathSummary}",
                 bundle.SettlementId.Value.ToString());
 
             if (routes.Any(static route => route.Risk >= 60) || market?.LocalRisk >= 60)
             {
-                scope.Emit("RouteBusinessBlocked", $"Campaign pressure partially blocked trade routes around {campaign.AnchorSettlementName}.", bundle.SettlementId.Value.ToString());
+                scope.Emit("RouteBusinessBlocked", $"{campaign.AnchorSettlementName}战事压得商路难行。", bundle.SettlementId.Value.ToString());
             }
 
             if (clanTrades.Any(static trade => trade.Debt >= 120 && trade.CashReserve <= 40))
@@ -293,9 +293,21 @@ public sealed class TradeAndIndustryModule : ModuleRunner<TradeAndIndustryState>
                     .OrderByDescending(static trade => trade.Debt)
                     .ThenBy(static trade => trade.CashReserve)
                     .First();
-                scope.Emit("TradeDebtDefaulted", $"Campaign strain pushed clan {defaultingTrade.ClanId.Value} toward debt default around {campaign.AnchorSettlementName}.", bundle.SettlementId.Value.ToString());
+                scope.Emit("TradeDebtDefaulted", $"{campaign.AnchorSettlementName}战事所逼，宗房{defaultingTrade.ClanId.Value}商债愈急。", bundle.SettlementId.Value.ToString());
             }
         }
+    }
+
+    private static string RenderTradeOutcome(string lastOutcome)
+    {
+        return lastOutcome switch
+        {
+            "Profit" => "得利",
+            "Loss" => "受亏",
+            "War Strain" => "兵事压商",
+            "Stable" => "持平",
+            _ => lastOutcome,
+        };
     }
 
     private static int ComputeOrderPenalty(SettlementDisorderSnapshot disorder)

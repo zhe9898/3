@@ -18,6 +18,7 @@ public sealed class WorldSettlementsModuleTests
         {
             Id = new SettlementId(1),
             Name = "Lanxi",
+            Tier = SettlementTier.CountySeat,
             Security = 50,
             Prosperity = 50,
             BaselineInstitutionCount = 1,
@@ -48,6 +49,7 @@ public sealed class WorldSettlementsModuleTests
         {
             Id = new SettlementId(1),
             Name = "Lanxi",
+            Tier = SettlementTier.CountySeat,
             Security = 62,
             Prosperity = 68,
             BaselineInstitutionCount = 1,
@@ -62,16 +64,16 @@ public sealed class WorldSettlementsModuleTests
                 CampaignId = new CampaignId(1),
                 AnchorSettlementId = new SettlementId(1),
                 AnchorSettlementName = "Lanxi",
-                CampaignName = "Lanxi Campaign Board",
+                CampaignName = "兰溪军务沙盘",
                 IsActive = true,
                 MobilizedForceCount = 54,
                 FrontPressure = 78,
-                FrontLabel = "Front under strain",
+                FrontLabel = "前线吃紧",
                 SupplyState = 34,
-                SupplyStateLabel = "Supply strained",
+                SupplyStateLabel = "粮道吃紧",
                 MoraleState = 41,
-                MoraleStateLabel = "Morale unsettled",
-                LastAftermathSummary = "Lanxi is carrying burned stores and shaken roads.",
+                MoraleStateLabel = "军心未定",
+                LastAftermathSummary = "兰溪仓路受焚余与惊扰所压。",
             },
         ]));
 
@@ -94,7 +96,7 @@ public sealed class WorldSettlementsModuleTests
 
         Assert.That(state.Settlements[0].Security, Is.LessThan(62));
         Assert.That(state.Settlements[0].Prosperity, Is.LessThan(68));
-        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("Campaign spillover"));
+        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("战后余波"));
         Assert.That(context.DomainEvents.Events.Single().EventType, Is.EqualTo("SettlementPressureChanged"));
     }
 

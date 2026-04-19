@@ -34,7 +34,7 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
 
     public override string ModuleKey => KnownModuleKeys.OfficeAndCareer;
 
-    public override int ModuleSchemaVersion => 2;
+    public override int ModuleSchemaVersion => 3;
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
 
@@ -130,14 +130,14 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
                 career.JurisdictionLeverage = Math.Clamp(career.JurisdictionLeverage - (bundle.CampaignSupplyStrained ? 3 : 1), 0, 100);
                 career.LastPetitionOutcome = OfficeAndCareerDescriptors.FormatPetitionOutcome(
                     "Surged",
-                    $"Campaign spillover from {campaign.AnchorSettlementName} flooded the docket while {wartimeTask}.");
+                    $"{campaign.AnchorSettlementName}战事外溢，案牍骤涌，眼下正以“{wartimeTask}”先行支应。");
                 career.LastExplanation =
-                    $"{career.LastExplanation} Campaign spillover redirected office labor into {wartimeTask}; backlog {career.PetitionBacklog}, petition pressure {career.PetitionPressure}, demotion {career.DemotionPressure}.";
+                    $"{career.LastExplanation} {campaign.AnchorSettlementName}战事外溢，官署人手尽转入“{wartimeTask}”；积案{career.PetitionBacklog}，词牌之压{career.PetitionPressure}，黜压{career.DemotionPressure}。";
                 anyCareerChanged = true;
             }
 
             scope.RecordDiff(
-                $"Campaign spillover around {campaign.AnchorSettlementName} pushed office backlog by {backlogIncrease} and petition pressure by {petitionPressureIncrease}; officials turned toward {wartimeTask}.",
+                $"{campaign.AnchorSettlementName}战事外溢，官署积案增{backlogIncrease}，词牌之压增{petitionPressureIncrease}；诸吏先转向“{wartimeTask}”。",
                 bundle.SettlementId.Value.ToString());
         }
 
@@ -172,18 +172,35 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
             + (candidate.Stress / 4)
             - (narrative.FavorBalance / 3)
             + scope.Context.Random.NextInt(-1, 2);
+        int appointmentBase = 9
+            + (candidate.HasPassedLocalExam ? 12 : 0)
+            + (scholarlySignal / 4)
+            + (narrative.FavorBalance / 3)
+            - (narrative.ShamePressure / 5)
+            - (candidate.Stress / 6)
+            + scope.Context.Random.NextInt(-1, 2);
+        int clerkBase = 8
+            + (candidate.HasPassedLocalExam ? 5 : 0)
+            + (petitionBase / 6)
+            + (narrative.FearPressure / 6)
+            - (narrative.FavorBalance / 8)
+            + scope.Context.Random.NextInt(-1, 2);
 
-        career.IsEligible = candidate.HasPassedLocalExam && reputationSignal >= 18;
-
-        if (career.IsEligible && !career.HasAppointment)
-        {
-            GrantInitialAppointment(scope, candidate, narrative, career, scholarlySignal, reputationSignal, leverageBase, petitionBase);
-            return;
-        }
+        career.IsEligible = candidate.HasPassedLocalExam && reputationSignal >= 16;
 
         if (!career.HasAppointment)
         {
-            UpdateUnappointedCareer(candidate, career, petitionBase, reputationSignal);
+            UpdatePreAppointmentCareer(
+                scope,
+                candidate,
+                narrative,
+                career,
+                scholarlySignal,
+                reputationSignal,
+                leverageBase,
+                petitionBase,
+                appointmentBase,
+                clerkBase);
             return;
         }
 
@@ -210,8 +227,13 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
             petitionBase);
 
         career.HasAppointment = true;
-        career.OfficeTitle = ResolveOfficeTitle(authorityTier);
+        career.OfficeTitle = ResolveNorthernSongOfficeTitle(authorityTier);
         career.AuthorityTier = authorityTier;
+        career.AppointmentPressure = Math.Max(career.AppointmentPressure, 48);
+        career.ClerkDependence = Math.Clamp(
+            Math.Max(career.ClerkDependence, 18 + (resolution.TaskLoad / 2) + (resolution.PetitionBacklog / 5)),
+            0,
+            100);
         career.ServiceMonths = 1;
         career.PromotionMomentum = Math.Clamp(6 + (scholarlySignal / 3) + (narrative.FavorBalance / 2) - (narrative.ShamePressure / 5), 0, 100);
         career.DemotionPressure = Math.Clamp(Math.Max(0, resolution.PetitionBacklog / 4 + (narrative.ShamePressure / 5) - (narrative.FavorBalance / 6)), 0, 100);
@@ -236,6 +258,73 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
         scope.Emit("OfficeGranted", $"{candidate.DisplayName}得授{career.OfficeTitle}。");
     }
 
+    private static void UpdatePreAppointmentCareer(
+        ModuleExecutionScope<OfficeAndCareerState> scope,
+        EducationCandidateSnapshot candidate,
+        ClanNarrativeSnapshot narrative,
+        OfficeCareerState career,
+        int scholarlySignal,
+        int reputationSignal,
+        int leverageBase,
+        int petitionBase,
+        int appointmentBase,
+        int clerkBase)
+    {
+        if (!career.IsEligible)
+        {
+            UpdateUnappointedCareer(candidate, career, petitionBase, reputationSignal);
+            return;
+        }
+
+        career.OfficeTitle = "未授官";
+        career.AuthorityTier = 0;
+        career.OfficeReputation = Math.Clamp(Math.Max(career.OfficeReputation, reputationSignal), 0, 100);
+        career.AppointmentPressure = Math.Clamp(
+            Math.Max(career.AppointmentPressure, 10)
+            + appointmentBase
+            + (string.Equals(career.LastOutcome, "候缺", StringComparison.Ordinal) ? 4 : 0),
+            0,
+            100);
+        career.ClerkDependence = Math.Clamp(
+            Math.Max(career.ClerkDependence, 6)
+            + clerkBase
+            + (career.AppointmentPressure >= 28 ? 3 : 0),
+            0,
+            100);
+        career.JurisdictionLeverage = 0;
+        career.PetitionPressure = Math.Clamp(Math.Max(6, petitionBase / 2), 0, 100);
+        career.PetitionBacklog = Math.Clamp(Math.Max(0, petitionBase / 4 - 2), 0, 100);
+
+        bool attachedToYamen = career.AppointmentPressure >= 26 || narrative.FavorBalance >= 18;
+        bool readyForAppointment =
+            career.AppointmentPressure >= 48
+            || (career.AppointmentPressure >= 40 && narrative.FavorBalance >= 16)
+            || (career.AppointmentPressure >= 34 && attachedToYamen && reputationSignal >= 28);
+
+        career.CurrentAdministrativeTask = ResolvePreAppointmentTask(career.AppointmentPressure, attachedToYamen);
+        career.AdministrativeTaskLoad = attachedToYamen
+            ? Math.Clamp(6 + (career.ClerkDependence / 4) + (candidate.Stress / 8), 0, 100)
+            : 0;
+        career.PromotionMomentum = Math.Max(0, career.PromotionMomentum - 1);
+        career.DemotionPressure = Math.Max(0, career.DemotionPressure - 1);
+
+        if (readyForAppointment)
+        {
+            GrantInitialAppointment(scope, candidate, narrative, career, scholarlySignal, reputationSignal, leverageBase, petitionBase);
+            return;
+        }
+
+        career.LastOutcome = attachedToYamen ? "听差" : "候缺";
+        career.LastPetitionOutcome = OfficeAndCareerDescriptors.FormatPetitionOutcome(
+            attachedToYamen ? "Queued" : "Unavailable",
+            attachedToYamen
+                ? "场屋已捷，先在县署随案听差，抄录收牒。"
+                : "阙次未至，词状暂未得由本人经手。");
+        career.LastExplanation = attachedToYamen
+            ? $"场屋已捷，但阙次未到、人情未固，暂在县署随案听差；荐引势{career.AppointmentPressure}，吏案依赖{career.ClerkDependence}。"
+            : $"场屋已捷，然阙次未至、人情未定，暂在守选候阙；荐引势{career.AppointmentPressure}，学压{candidate.Stress}。";
+    }
+
     private static void UpdateUnappointedCareer(
         EducationCandidateSnapshot candidate,
         OfficeCareerState career,
@@ -245,6 +334,8 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
         career.OfficeTitle = "未授官";
         career.AuthorityTier = 0;
         career.OfficeReputation = Math.Clamp(Math.Max(career.OfficeReputation, reputationSignal), 0, 100);
+        career.AppointmentPressure = Math.Max(0, career.AppointmentPressure - 2);
+        career.ClerkDependence = Math.Max(0, career.ClerkDependence - 2);
         career.JurisdictionLeverage = 0;
         career.PetitionPressure = Math.Clamp(petitionBase, 0, 100);
         career.PetitionBacklog = 0;
@@ -283,6 +374,14 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
             petitionBase);
 
         career.ServiceMonths = nextServiceMonth;
+        career.AppointmentPressure = Math.Max(career.AppointmentPressure, 48);
+        career.ClerkDependence = Math.Clamp(
+            Math.Max(career.ClerkDependence, 12 + (previousTier * 4))
+            + Math.Max(0, resolution.TaskLoad - 12) / 3
+            + (resolution.PetitionBacklog / 12)
+            - (narrative.FavorBalance / 10),
+            0,
+            100);
         career.CurrentAdministrativeTask = resolution.TaskName;
         career.AdministrativeTaskLoad = resolution.TaskLoad;
         career.PetitionBacklog = resolution.PetitionBacklog;
@@ -296,6 +395,7 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
         career.DemotionPressure = Math.Clamp(
             Math.Max(career.DemotionPressure, Math.Max(0, career.PetitionPressure / 4))
             + resolution.DemotionPressureAdjustment
+            + Math.Max(0, career.ClerkDependence - 42) / 5
             + (narrative.ShamePressure >= 32 ? 2 : 0),
             0,
             100);
@@ -322,6 +422,8 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
             career.HasAppointment = false;
             career.OfficeTitle = "未授官";
             career.AuthorityTier = 0;
+            career.AppointmentPressure = Math.Max(career.AppointmentPressure, 20);
+            career.ClerkDependence = Math.Clamp(career.ClerkDependence + 6, 0, 100);
             career.JurisdictionLeverage = 0;
             career.PetitionPressure = 0;
             career.PetitionBacklog = 0;
@@ -343,7 +445,7 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
         }
 
         career.AuthorityTier = updatedTier;
-        career.OfficeTitle = ResolveOfficeTitle(updatedTier);
+        career.OfficeTitle = ResolveNorthernSongOfficeTitle(updatedTier);
         career.OfficeReputation = Math.Clamp(
             Math.Max(career.OfficeReputation, reputationSignal) + resolution.OfficeReputationAdjustment,
             0,
@@ -353,6 +455,7 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
             + (updatedTier * 8)
             + (career.PromotionMomentum / 4)
             + resolution.LeverageAdjustment
+            - Math.Max(0, career.ClerkDependence - 36) / 4
             - (career.DemotionPressure / 6),
             0,
             100);
@@ -425,6 +528,31 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
         };
         state.People.Add(career);
         return career;
+    }
+
+    private static string ResolvePreAppointmentTask(int appointmentPressure, bool attachedToYamen)
+    {
+        if (attachedToYamen && appointmentPressure >= 38)
+        {
+            return "随案听差";
+        }
+
+        if (appointmentPressure >= 28)
+        {
+            return "投牒候差";
+        }
+
+        return "守选候阙";
+    }
+
+    private static string ResolveNorthernSongOfficeTitle(int authorityTier)
+    {
+        return authorityTier switch
+        {
+            >= 3 => "县丞",
+            2 => "主簿",
+            _ => "簿佐",
+        };
     }
 
     private static int DetermineAuthorityTier(
@@ -550,7 +678,7 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
                 taskPlan.TaskName,
                 taskLoad,
                 Math.Max(0, petitionBacklog - 14),
-                OfficeAndCareerDescriptors.FormatPetitionOutcome("Cleared", $"Petitions cleared while {taskPlan.TaskName}."),
+                OfficeAndCareerDescriptors.FormatPetitionOutcome("Cleared", $"今以{taskPlan.TaskName}清理诸状，积案已消。"),
                 -10,
                 4,
                 4,
@@ -682,6 +810,8 @@ public sealed class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
                 HasAppointment = career.HasAppointment,
                 OfficeTitle = career.OfficeTitle,
                 AuthorityTier = career.AuthorityTier,
+                AppointmentPressure = career.AppointmentPressure,
+                ClerkDependence = career.ClerkDependence,
                 JurisdictionLeverage = career.JurisdictionLeverage,
                 PetitionPressure = career.PetitionPressure,
                 PetitionBacklog = career.PetitionBacklog,

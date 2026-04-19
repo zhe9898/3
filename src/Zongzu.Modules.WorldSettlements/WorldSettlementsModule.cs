@@ -20,7 +20,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
     public override string ModuleKey => KnownModuleKeys.WorldSettlements;
 
-    public override int ModuleSchemaVersion => 1;
+    public override int ModuleSchemaVersion => 2;
 
     public override SimulationPhase Phase => SimulationPhase.WorldBaseline;
 
@@ -56,9 +56,9 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             }
 
             scope.RecordDiff(
-                $"Settlement {settlement.Name} pressure shifted to security {settlement.Security} and prosperity {settlement.Prosperity}.",
+                $"{settlement.Name}乡面安宁{settlement.Security}，丰实{settlement.Prosperity}。",
                 settlement.Id.Value.ToString());
-            scope.Emit("SettlementPressureChanged", $"Settlement {settlement.Name} pressure changed.");
+            scope.Emit("SettlementPressureChanged", $"{settlement.Name}乡面安宁与丰实有变。");
         }
     }
 
@@ -98,9 +98,9 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             }
 
             scope.RecordDiff(
-                $"Campaign spillover around {settlement.Name} cut security by {securityDelta} and prosperity by {prosperityDelta}; {campaign.FrontLabel}, {campaign.SupplyStateLabel}, and aftermath '{campaign.LastAftermathSummary}'.",
+                $"{settlement.Name}受战后余波所压，安宁减{securityDelta}，丰实减{prosperityDelta}；{campaign.FrontLabel}、{campaign.SupplyStateLabel}，{campaign.LastAftermathSummary}",
                 settlement.Id.Value.ToString());
-            scope.Emit("SettlementPressureChanged", $"Campaign spillover changed settlement pressure around {settlement.Name}.", settlement.Id.Value.ToString());
+            scope.Emit("SettlementPressureChanged", $"{settlement.Name}受战后余波，乡面气象有变。", settlement.Id.Value.ToString());
         }
     }
 
@@ -152,6 +152,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             {
                 Id = settlement.Id,
                 Name = settlement.Name,
+                Tier = settlement.Tier,
                 Security = settlement.Security,
                 Prosperity = settlement.Prosperity,
             };

@@ -23,8 +23,8 @@ Example conceptual shape:
   },
   "kernelState": { "...": "..." },
   "modules": {
-    "WorldSettlements": { "moduleSchemaVersion": 1, "state": { } },
-    "FamilyCore": { "moduleSchemaVersion": 1, "state": { } }
+    "WorldSettlements": { "moduleSchemaVersion": 2, "state": { } },
+    "FamilyCore": { "moduleSchemaVersion": 3, "state": { } }
   }
 }
 ```
@@ -86,13 +86,14 @@ Example:
 - incompatible module changes do not justify hidden root changes
 
 ## Current implemented module versions
-- `WorldSettlements` uses namespace `WorldSettlements` with schema version `1`
-- `FamilyCore` uses namespace `FamilyCore` with schema version `1`
+- `WorldSettlements` uses namespace `WorldSettlements` with schema version `2`
+- `FamilyCore` uses namespace `FamilyCore` with schema version `3`
 - `PopulationAndHouseholds` uses namespace `PopulationAndHouseholds` with schema version `1`
 - `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `1`
 - `EducationAndExams` uses namespace `EducationAndExams` with schema version `1`
 - `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `1`
-- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `2` for the active governance-lite slice
+- `PublicLifeAndRumor` uses namespace `PublicLifeAndRumor` with schema version `4` for the active county-public-life slice plus monthly-cadence, venue-channel, and channel-contention descriptors
+- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `3` for the active governance-lite slice
 - `NarrativeProjection` uses namespace `NarrativeProjection` with schema version `1`
 - `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `1`
 - `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `3` for active M3 local-conflict lite integration plus campaign-fallout persistence
@@ -102,6 +103,12 @@ Example:
 - old saves without `EducationAndExams` or `TradeAndIndustry` load cleanly when those modules remain disabled in the feature manifest
 - old M0-M1 saves must continue to load through the M2 loader when `EducationAndExams`, `TradeAndIndustry`, and `NarrativeProjection` remain disabled in the manifest
 - enabling either M2-lite module requires creating its owned default state inside its own namespace only
+- built-in default loaders now migrate legacy `FamilyCore` schema `1 -> 2 -> 3` by first backfilling lineage-conflict defaults, then by conservatively backfilling marriage/heir/mourning lifecycle defaults inside the family namespace only
+- built-in default loaders now also migrate legacy `WorldSettlements` schema `1` saves to schema `2` by backfilling conservative settlement tiers inside the world-settlement namespace only
+- `PublicLifeAndRumor` now defaults to schema `4` when enabled and owns its public-pulse plus monthly-cadence / venue-channel / channel-contention state inside its own namespace only
+- old saves still load cleanly while `PublicLifeAndRumor` remains disabled in the manifest
+- active M2 and later bootstrap paths may now enable `PublicLifeAndRumor`; that new envelope is intentional and documented rather than implicit schema drift
+- built-in default loaders now migrate legacy `PublicLifeAndRumor` schema `1 -> 2 -> 3 -> 4` by first backfilling cadence code/label, crowd mix, and cadence summary, then by conservatively backfilling dominant-venue code plus channel metrics, then by backfilling official/street/road/prefecture/contention wording inside the public-life namespace only
 - M2-lite explanation strings are module-owned authoritative traces and must roundtrip with the rest of the module state
 - `NarrativeProjection` persists derived notification history only inside its own namespace and may be rebuilt later without rewriting foreign module state
 - latest-month debug traces, warning lists, and module inspectors are non-persisted read models and must not require a root schema change
@@ -117,7 +124,7 @@ Example:
 
 ## Governance-lite namespace policy
 - `OfficeAndCareer` now has a dedicated governance-lite path that seeds its own office-career and jurisdiction-authority state only when the feature is enabled
-- legacy governance-lite saves with `OfficeAndCareer` schema `1` now migrate through a built-in `1 -> 2` module step during default governance-lite load
+- legacy governance-lite saves with `OfficeAndCareer` schema `1` now migrate through built-in `1 -> 2 -> 3` module steps during default governance-lite load
 - old M2 and M3 saves still load cleanly while `OfficeAndCareer` remains disabled in their manifests
 - no existing stable M2/M3 path gains an `OfficeAndCareer` envelope implicitly; only the governance-lite path does
 

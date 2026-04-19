@@ -1,4 +1,4 @@
-# MODULE_BOUNDARIES
+﻿# MODULE_BOUNDARIES
 
 This document defines authoritative module boundaries.
 
@@ -16,12 +16,14 @@ For every module, define:
 - regions, settlements, roads, route conditions
 - local prosperity/security/environment indicators
 - institution registry and baseline condition
+- settlement tier / node rank used by downstream projections
 
 ### Public queries
 - settlement security
 - route status
 - institution availability
 - local pressure indicators
+- settlement tier and parent-node relationship
 
 ### Accepts commands
 - mostly none from player in MVP
@@ -47,25 +49,38 @@ For every module, define:
 - inheritance state
 - clan policies / house rules
 - branch split/merge state
+- lineage-conflict pressure, mediation momentum, and branch-favor / relief-sanction pressure
+- marriage-alliance pressure/value, heir security, reproductive pressure, and mourning load
+- last family-command receipts that remain family-owned state
 
 ### Public queries
 - heirs
 - marriage eligibility
 - branch relations
 - clan prestige projection
+- lineage-conflict and mediation projection
 
 ### Accepts commands
 - arrange marriage
 - designate heir policy
 - redistribute household support
 - approve/suppress branch split actions where allowed
+- favor senior branch
+- order formal apology
+- permit branch separation
+- suspend clan relief
+- invite clan elders mediation
+- arrange marriage
+- designate heir policy
 
 ### Emits events
-- `MarriageArranged`
+- `MarriageAllianceArranged`
 - `BirthRegistered`
 - `DeathRegistered`
-- `BranchSplit`
-- `HeirStatusChanged`
+- `HeirSecurityWeakened`
+- `LineageDisputeHardened`
+- `LineageMediationOpened`
+- `BranchSeparationApproved`
 
 ### Does not own
 - exam progress
@@ -205,6 +220,8 @@ For every module, define:
 ## 7. OfficeAndCareer
 ### Owns
 - appointments
+- candidate-queue / waiting pressure before appointment
+- clerk / yamen dependence inside the office pathway
 - office authority
 - career track status
 - promotion / demotion pressure
@@ -215,6 +232,8 @@ For every module, define:
 ### Public queries
 - office authority tier
 - appointment status
+- current appointment pressure
+- current clerk dependence
 - current jurisdictional leverage
 - current petition pressure
 - current petition backlog
@@ -351,7 +370,49 @@ Current lite note:
 - grievance internals
 - direct settlement baseline data
 
-## 11. NarrativeProjection
+## 11. PublicLifeAndRumor
+### Owns
+- settlement-level public pulse
+- street-talk heat
+- market bustle / county-gate crowding
+- posted-notice visibility
+- road-report lag
+- prefecture-dispatch pressure
+- public-legitimacy and dominant-venue summaries
+- monthly cadence / crowd-mix descriptors for public spaces
+- documentary weight / verification cost / market-rumor flow / courier risk
+- venue-channel competition summaries for county gates, market streets, ferries, inns, and road nodes
+- official-notice / street-talk / road-report / prefecture-dispatch wording
+- contention summaries that explain where declared order and lived order pull apart
+
+### Public queries
+- public-life snapshots by settlement
+- street-talk / market-buzz / notice-visibility summaries
+- county-gate / road-report / prefecture-pressure summaries
+- dominant venue labels and public-trace summaries
+- monthly cadence labels and cadence summaries for hall / desk read models
+- venue-channel summaries and channel-pressure metrics for hall / desk read models
+- explicit channel-line wording for notice, street talk, road report, prefecture pressure, and contention
+
+### Accepts commands
+- none authoritative in the current lite slice
+- public-life response verbs such as `张榜晓谕`, `遣吏催报`, `催护一路`, and `请族老出面` must still route through `OfficeAndCareer`, `OrderAndBanditry`, or `FamilyCore`; `PublicLifeAndRumor` may project them but must not own or resolve them
+
+### Emits events
+- `StreetTalkSurged`
+- `CountyGateCrowded`
+- `MarketBuzzRaised`
+- `RoadReportDelayed`
+- `PrefectureDispatchPressed`
+
+### Does not own
+- household debt or labor
+- trade ledgers or route ownership
+- office appointments or petition state
+- force posture or campaign state
+- clan memory internals
+
+## 12. NarrativeProjection
 ### Owns
 - notifications
 - letters
@@ -383,10 +444,12 @@ Current lite note:
 - `ConflictAndForce` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, and `TradeAndIndustry`
 - `OfficeAndCareer` may query `EducationAndExams` and `SocialMemoryAndRelations`
 - `WarfareCampaign` may query `ConflictAndForce`, `WorldSettlements`, `OfficeAndCareer`
+- `PublicLifeAndRumor` may query `WorldSettlements`, `PopulationAndHouseholds`, `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations`
 - `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, and `SocialMemoryAndRelations` may react to settlement-targeted `WarfareCampaign` events during the handler pass, but only by updating their own owned state
 - `ConflictAndForce` may also react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating its own fatigue, escort strain, readiness, command-capacity, and fallout-trace state
 - `PopulationAndHouseholds` may react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating household distress, debt, labor, migration, and rebuilt settlement summaries in its own namespace
 - `WorldSettlements` may react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating settlement security/prosperity inside its own namespace
 - `FamilyCore` may react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating clan prestige/support inside its own namespace
+- `PublicLifeAndRumor` may also react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating its own public-pulse summaries and public-trace state
 - black-route depth must stay split across `OrderAndBanditry` pressure and `TradeAndIndustry` ledgers; it must not grow a detached module namespace
-- no module is allowed to “just update” another module’s internal data
+- no module is allowed to "just update" another module's internal data

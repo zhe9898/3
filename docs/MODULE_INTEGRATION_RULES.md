@@ -83,9 +83,26 @@ Correct approach:
 - `EducationAndExams.Lite` owns study progress, tutor quality, exam attempts, outcomes, and explanation text; it does not write family prestige or office state directly
 - `TradeAndIndustry.Lite` currently reads only `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces
 - `TradeAndIndustry.Lite` owns clan trade cash/debt state, market pressure, route pressure, outcomes, and explanation text; it does not write household or clan internals directly
+- `PublicLifeAndRumor.Lite` now reads `WorldSettlements`, `PopulationAndHouseholds`, `TradeAndIndustry`, `OrderAndBanditry`, optional `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces only
+- `PublicLifeAndRumor.Lite` owns settlement public pulse only: street-talk heat, market bustle, notice visibility, road-report lag, prefecture-dispatch pressure, public legitimacy, dominant-venue wording, monthly cadence / crowd-mix wording, venue-channel competition metrics, and channel-line wording for notice / street talk / road report / prefecture pressure / contention
+- `WorldSettlements` now owns settlement tier / node rank at schema `2`; presentation and public-life projections must not invent county / market / village rank in UI-only code
+- M2 and later manifests may enable `PublicLifeAndRumor` as an additive county-public-life layer without changing ownership of household, office, trade, force, or clan state
+- great-hall and desk-sandbox public-life summaries must be rebuilt from `IPublicLifeAndRumorQueries` through the presentation bundle only; UI remains read-only
+- monthly cadence labels such as fair days, county-gate docket pressure, or road-report bustle must remain `PublicLifeAndRumor`-owned descriptors rather than being synthesized inside shell code
+- public-life channel descriptors such as documentary weight, market-rumor flow, verification cost, and courier risk must remain `PublicLifeAndRumor`-owned descriptors rather than being synthesized inside shell code
+- public-life channel wording such as what the posted notice claims, what street talk says, how road reports differ, and how prefecture dispatch presses downward must also remain `PublicLifeAndRumor`-owned descriptors rather than being synthesized inside shell code
+- bounded public-life responses may surface as read-only command affordances / receipts on hall or desk nodes, but command resolution must still route through `OfficeAndCareer`, `OrderAndBanditry`, or `FamilyCore` rather than `PublicLifeAndRumor`
 - both M2-lite modules emit deterministic domain events and keep outcome explanations derived from queryable state plus kernel RNG only
 - `NarrativeProjection` currently reads only the shared `WorldDiff` and `DomainEvent` streams plus its own saved history; it does not emit authority events or write foreign module state
 - the current first-pass presentation shell consumes a read-model bundle only; it does not reference simulation modules directly and does not resolve commands or authority rules inside UI code
+
+## Family-conflict vertical slice notes
+- `FamilyCore` now owns lineage-conflict pressure, mediation momentum, branch-favor pressure, relief-sanction pressure, and last family-command receipts inside the family namespace
+- `FamilyCore` schema `3` also owns marriage-alliance pressure/value, heir security, reproductive pressure, mourning load, and last lifecycle-command receipts inside the same namespace
+- `SocialMemoryAndRelations` may read those family-conflict fields through queries only; it may not be written by the player-command service
+- a thin player-command service may now route bounded family intents such as branch favor, formal apology, branch separation, relief suspension, elder mediation, marriage arrangement, and heir designation into `FamilyCore` only
+- the family-council shell now reads clan conflict summaries, clan narratives, family affordances, and family receipts from read models only
+- built-in default loaders now migrate `FamilyCore` schema `1 -> 2 -> 3` without changing enabled-module or envelope-key sets
 
 ## Current observability and migration notes
 - diagnostics harness reports and presentation debug snapshots now align on the same runtime-only metrics: diff entries, domain events, notifications, and save payload bytes
@@ -115,14 +132,15 @@ Correct approach:
 - `ConflictAndForce.Lite` is available through a conflict-enabled M3 local-conflict bootstrap path and remains absent from active M2 manifests
 
 ## Governance-lite notes
-- `OfficeAndCareer.Lite` now owns office appointments, authority tier, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, and explanation text inside its own namespace
+- `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, and explanation text inside its own namespace
 - `OfficeAndCareer.Lite` currently reads only `EducationAndExams` and `SocialMemoryAndRelations` projections
 - the new governance-lite bootstrap path enables `OfficeAndCareer` without mutating the stable M2 or M3 manifests
-- governance-lite v2 now advances office careers month by month through bounded promotion/demotion pressure and petition handling while still staying inside office-owned state
+- a thin player-command service may now route bounded office intents such as petition review or administrative leverage into `OfficeAndCareer` only; it may not write family, trade, order, or force state directly
+- governance-lite now treats local-exam success as entry into a bounded office funnel rather than direct appointment: recommendation, waiting for openings, and attached yamen service stay office-owned and deterministic
 - the lighter office v2.1 slice now exposes petition-outcome category, administrative-task tier, promotion/demotion labels, and authority-trajectory wording as derived read-model/query fields only; it does not add new office-owned save fields
 - office influence stays bounded: downstream modules may read leverage or petition pressure, but only `OfficeAndCareer` mutates office appointments and jurisdiction authority
-- governance-lite loads now include a built-in `OfficeAndCareer` `1 -> 2` migration for legacy office saves
-- legacy office migration now reconstructs missing v2-only service/task/petition details from persisted explanation text before falling back to conservative defaults, so replay parity stays deterministic without a schema `3` bump
+- governance-lite loads now include built-in `OfficeAndCareer` `1 -> 2 -> 3` migration for legacy office saves
+- legacy office migration now reconstructs missing service/task/petition details first, then backfills queue pressure and clerk dependence conservatively for schema `3`
 
 ## Campaign-lite integration notes
 - `WarfareCampaign.Lite` is now active only through the dedicated campaign-enabled bootstrap/load path; stable M2/M3/governance-lite paths remain warfare-free
@@ -135,6 +153,7 @@ Correct approach:
 - current warfare-lite contracts already carry order-support, office-authority-tier, administrative-leverage, petition-backlog, mobilization-window, command-fit, route-flow, and office-coordination precursor fields so later campaign depth can stay query-first
 - the current board-depth refinement persists commander summaries plus bounded route descriptors inside `WarfareCampaign` rather than synthesizing them in UI-only code
 - a thin application-routed warfare-intent service now stages `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` into `WarfareCampaign`-owned directive state only
+- the current player-command vertical slice may expose those same warfare directives as read-only affordances and receipts in presentation, but the routing still stays in application services and the writes still stay inside `WarfareCampaign`
 - current warfare-lite state now persists active directive code/label/summary and last directive trace inside the warfare namespace instead of inventing a cross-module command ledger
 - built-in `WarfareCampaign` migration now upgrades schema `1 -> 2 -> 3` by backfilling labels, route descriptors, and directive descriptors without changing enabled-module or envelope-key sets
 - current warfare-lite aftermath now propagates into `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, and `SocialMemoryAndRelations` through the event-handling seam only

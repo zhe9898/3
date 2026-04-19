@@ -22,9 +22,10 @@ Post-MVP features must extend the same:
 
 Current lite note:
 - `OfficeAndCareer.Lite` is now active through a dedicated governance-lite bootstrap path as the first formal authority layer after local exams
-- `OfficeAndCareer.Lite` now includes bounded promotion/demotion pressure, administrative task assignment, and petition handling inside the office-owned namespace
+- `OfficeAndCareer.Lite` now follows a Northern Song-inspired office funnel: local-exam success opens recommendation / waiting pressure first, then attached yamen service or appointment depending on backing and openings
+- `OfficeAndCareer.Lite` now includes bounded appointment pressure, clerk dependence, promotion/demotion pressure, administrative task assignment, and petition handling inside the office-owned namespace
 - current lite office leverage may feed disorder or local-force modules only through read-only queries; it does not grant direct writes into those modules
-- the lighter office v2.1 slice now surfaces administrative-task tier, petition-outcome category, and authority-trajectory wording as read-only descriptors only; it does not add new authority UI or a schema `3` transition
+- the lighter office v2.1 slice still surfaces administrative-task tier, petition-outcome category, and authority-trajectory wording as read-only descriptors only; the later queue/dependence lift moves save schema to `3` but still does not add authority UI
 
 ### Order and disorder pack
 - `OrderAndBanditry` full

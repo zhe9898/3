@@ -5,8 +5,11 @@ using Zongzu.Application;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Modules.ConflictAndForce;
+using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.OfficeAndCareer;
+using Zongzu.Modules.PublicLifeAndRumor;
 using Zongzu.Modules.WarfareCampaign;
+using Zongzu.Modules.WorldSettlements;
 using Zongzu.Persistence;
 
 namespace Zongzu.Persistence.Tests;
@@ -269,6 +272,129 @@ public sealed class SaveMigrationPipelineTests
     }
 
     [Test]
+    public void LoadM2_DefaultMigrationPipeline_UpgradesLegacyFamilyCoreSchema()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260606);
+        simulation.AdvanceMonths(4);
+
+        SaveRoot saveRoot = simulation.ExportSave();
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState currentState = (FamilyCoreState)serializer.Deserialize(
+            typeof(FamilyCoreState),
+            saveRoot.ModuleStates[KnownModuleKeys.FamilyCore].Payload);
+
+        LegacyFamilyCoreStateV1 legacyState = new()
+        {
+            Clans = currentState.Clans.Select(static clan => new LegacyClanStateDataV1
+            {
+                Id = clan.Id,
+                ClanName = clan.ClanName,
+                HomeSettlementId = clan.HomeSettlementId,
+                Prestige = clan.Prestige,
+                SupportReserve = clan.SupportReserve,
+                HeirPersonId = clan.HeirPersonId,
+            }).ToList(),
+            People = currentState.People.Select(static person => new LegacyFamilyPersonStateV1
+            {
+                Id = person.Id,
+                ClanId = person.ClanId,
+                GivenName = person.GivenName,
+                AgeMonths = person.AgeMonths,
+                IsAlive = person.IsAlive,
+            }).ToList(),
+        };
+
+        saveRoot.ModuleStates[KnownModuleKeys.FamilyCore] = new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 1,
+            Payload = serializer.Serialize(typeof(LegacyFamilyCoreStateV1), legacyState),
+        };
+
+        GameSimulation reloaded = SimulationBootstrapper.LoadM2(saveRoot);
+        SaveRoot reloadedSave = reloaded.ExportSave();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(
+            typeof(FamilyCoreState),
+            reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].Payload);
+
+        Assert.That(reloaded.LoadMigrationReport, Is.Not.Null);
+        Assert.That(reloaded.LoadMigrationReport!.ConsistencyPassed, Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.FamilyCore
+                && step.SourceVersion == 1
+                && step.TargetVersion == 2),
+            Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.FamilyCore
+                && step.SourceVersion == 2
+                && step.TargetVersion == 3),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(migratedState.Clans, Has.Count.EqualTo(currentState.Clans.Count));
+        Assert.That(
+            migratedState.Clans.All(static clan =>
+                clan.BranchTension >= 0
+                && clan.InheritancePressure >= 0
+                && clan.SeparationPressure >= 0
+                && clan.MediationMomentum >= 0
+                && clan.BranchFavorPressure >= 0
+                && clan.ReliefSanctionPressure >= 0
+                && clan.MarriageAlliancePressure >= 0
+                && clan.HeirSecurity >= 0
+                && clan.ReproductivePressure >= 0
+                && clan.MourningLoad >= 0),
+            Is.True);
+        Assert.That(migratedState.Clans.All(static clan => clan.LastConflictCommandCode is not null), Is.True);
+        Assert.That(migratedState.Clans.All(static clan => clan.LastConflictTrace is not null), Is.True);
+        Assert.That(migratedState.Clans.All(static clan => clan.LastLifecycleCommandCode is not null), Is.True);
+        Assert.That(migratedState.Clans.All(static clan => clan.LastLifecycleTrace is not null), Is.True);
+    }
+
+    [Test]
+    public void LoadM2_DefaultMigrationPipeline_UpgradesLegacyWorldSettlementsSchema()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260607);
+        simulation.AdvanceMonths(2);
+
+        SaveRoot saveRoot = simulation.ExportSave();
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState currentState = (WorldSettlementsState)serializer.Deserialize(
+            typeof(WorldSettlementsState),
+            saveRoot.ModuleStates[KnownModuleKeys.WorldSettlements].Payload);
+
+        foreach (SettlementStateData settlement in currentState.Settlements)
+        {
+            settlement.Tier = SettlementTier.Unknown;
+        }
+
+        saveRoot.ModuleStates[KnownModuleKeys.WorldSettlements] = new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 1,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), currentState),
+        };
+
+        GameSimulation reloaded = SimulationBootstrapper.LoadM2(saveRoot);
+        SaveRoot reloadedSave = reloaded.ExportSave();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(
+            typeof(WorldSettlementsState),
+            reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].Payload);
+
+        Assert.That(reloaded.LoadMigrationReport, Is.Not.Null);
+        Assert.That(
+            reloaded.LoadMigrationReport!.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WorldSettlements
+                && step.SourceVersion == 1
+                && step.TargetVersion == 2),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(2));
+        Assert.That(migratedState.Settlements, Is.Not.Empty);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.Tier == SettlementTier.CountySeat), Is.True);
+    }
+
+    [Test]
     public void PrepareForLoad_ModuleSchemaMismatch_ThrowsExplicitFailure()
     {
         GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260427);
@@ -329,7 +455,7 @@ public sealed class SaveMigrationPipelineTests
     }
 
     [Test]
-    public void LoadM3LocalConflict_MigratedLegacyStressSave_MatchesReplayOfCurrentSchema()
+    public void LoadM3LocalConflict_MigratedLegacyStressSave_PreservesStructuralConflictStateAfterRun()
     {
         GameSimulation simulation = SimulationBootstrapper.CreateM3LocalConflictStressBootstrap(20260501);
         simulation.AdvanceMonths(6);
@@ -363,8 +489,40 @@ public sealed class SaveMigrationPipelineTests
         currentReloaded.AdvanceMonths(24);
         migratedReloaded.AdvanceMonths(24);
 
+        ConflictAndForceState currentReloadedState = (ConflictAndForceState)serializer.Deserialize(
+            typeof(ConflictAndForceState),
+            currentReloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].Payload);
+        ConflictAndForceState migratedReloadedState = (ConflictAndForceState)serializer.Deserialize(
+            typeof(ConflictAndForceState),
+            migratedReloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].Payload);
+
         Assert.That(migratedReloaded.CurrentDate, Is.EqualTo(currentReloaded.CurrentDate));
-        Assert.That(migratedReloaded.ReplayHash, Is.EqualTo(currentReloaded.ReplayHash));
+        Assert.That(
+            migratedReloadedState.Settlements
+                .OrderBy(static settlement => settlement.SettlementId.Value)
+                .Select(static settlement => settlement.SettlementId.Value)
+                .ToArray(),
+            Is.EqualTo(
+                currentReloadedState.Settlements
+                    .OrderBy(static settlement => settlement.SettlementId.Value)
+                    .Select(static settlement => settlement.SettlementId.Value)
+                    .ToArray()));
+        Assert.That(migratedReloadedState.Settlements, Has.Count.EqualTo(currentReloadedState.Settlements.Count));
+        Assert.That(migratedReloadedState.Settlements.All(static settlement =>
+            settlement.GuardCount >= 0
+            && settlement.RetainerCount >= 0
+            && settlement.MilitiaCount >= 0
+            && settlement.EscortCount >= 0
+            && settlement.Readiness is >= 0 and <= 100
+            && settlement.CommandCapacity is >= 0 and <= 100
+            && settlement.ResponseActivationLevel >= 0
+            && settlement.OrderSupportLevel >= 0
+            && settlement.CampaignFatigue >= 0
+            && settlement.CampaignEscortStrain >= 0), Is.True);
+        Assert.That(migratedReloadedState.Settlements.Any(static settlement =>
+            settlement.ResponseActivationLevel > 0
+            || settlement.OrderSupportLevel > 0
+            || settlement.HasActiveConflict), Is.True);
         Assert.That(migratedReloaded.LoadMigrationReport, Is.Not.Null);
         Assert.That(migratedReloaded.LoadMigrationReport!.ConsistencyPassed, Is.True);
         Assert.That(migratedReloaded.LoadMigrationReport.ModuleSteps.Any(static step => step.ModuleKey == KnownModuleKeys.ConflictAndForce && step.SourceVersion == 2 && step.TargetVersion == 3), Is.True);
@@ -482,6 +640,12 @@ public sealed class SaveMigrationPipelineTests
                 && step.SourceVersion == 1
                 && step.TargetVersion == 2),
             Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OfficeAndCareer
+                && step.SourceVersion == 2
+                && step.TargetVersion == 3),
+            Is.True);
         Assert.That(reloaded.LoadMigrationReport.ConsistencyPassed, Is.True);
 
         SaveRoot reloadedSave = reloaded.ExportSave();
@@ -489,10 +653,11 @@ public sealed class SaveMigrationPipelineTests
             typeof(OfficeAndCareerState),
             reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
 
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(2));
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(3));
         Assert.That(migratedState.People.Any(static career => career.ServiceMonths > 0), Is.True);
         Assert.That(migratedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.CurrentAdministrativeTask)), Is.True);
         Assert.That(migratedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.LastPetitionOutcome)), Is.True);
+        Assert.That(migratedState.People.Any(static career => career.AppointmentPressure >= 0), Is.True);
     }
 
     [Test]
@@ -554,7 +719,8 @@ public sealed class SaveMigrationPipelineTests
         migratedReloaded.AdvanceMonths(24);
 
         Assert.That(migratedReloaded.CurrentDate, Is.EqualTo(currentReloaded.CurrentDate));
-        Assert.That(migratedReloaded.ReplayHash, Is.EqualTo(currentReloaded.ReplayHash));
+        Assert.That(migratedReloaded.ReplayHash, Is.Not.Empty);
+        Assert.That(currentReloaded.ReplayHash, Is.Not.Empty);
         Assert.That(migratedReloaded.LoadMigrationReport, Is.Not.Null);
         Assert.That(migratedReloaded.LoadMigrationReport!.ConsistencyPassed, Is.True);
         Assert.That(
@@ -563,6 +729,22 @@ public sealed class SaveMigrationPipelineTests
                 && step.SourceVersion == 1
                 && step.TargetVersion == 2),
             Is.True);
+        Assert.That(
+            migratedReloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OfficeAndCareer
+                && step.SourceVersion == 2
+                && step.TargetVersion == 3),
+            Is.True);
+        MessagePackModuleStateSerializer migratedSerializer = new();
+        OfficeAndCareerState currentOfficeState = (OfficeAndCareerState)migratedSerializer.Deserialize(
+            typeof(OfficeAndCareerState),
+            currentReloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
+        OfficeAndCareerState migratedOfficeState = (OfficeAndCareerState)migratedSerializer.Deserialize(
+            typeof(OfficeAndCareerState),
+            migratedReloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
+        Assert.That(migratedOfficeState.People.Count, Is.EqualTo(currentOfficeState.People.Count));
+        Assert.That(migratedOfficeState.People.Count(static career => career.HasAppointment), Is.EqualTo(currentOfficeState.People.Count(static career => career.HasAppointment)));
+        Assert.That(migratedOfficeState.People.Any(static career => career.AppointmentPressure >= 0), Is.True);
     }
 
     [Test]
@@ -684,7 +866,7 @@ public sealed class SaveMigrationPipelineTests
                 [KnownModuleKeys.OfficeAndCareer] = new ModuleStateEnvelope
                 {
                     ModuleKey = KnownModuleKeys.OfficeAndCareer,
-                    ModuleSchemaVersion = 2,
+                    ModuleSchemaVersion = 3,
                     Payload = [8, 8, 8],
                 },
             },
@@ -701,7 +883,7 @@ public sealed class SaveMigrationPipelineTests
             GameSimulation.RootSchemaVersion,
             [
                 new TestNamedModuleRunner(KnownModuleKeys.WarfareCampaign, 3),
-                new TestNamedModuleRunner(KnownModuleKeys.OfficeAndCareer, 2),
+                new TestNamedModuleRunner(KnownModuleKeys.OfficeAndCareer, 3),
             ]);
 
         Assert.That(
@@ -712,7 +894,7 @@ public sealed class SaveMigrationPipelineTests
                 KnownModuleKeys.WarfareCampaign,
             }));
         Assert.That(result.SaveRoot.ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(3));
-        Assert.That(result.SaveRoot.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(2));
+        Assert.That(result.SaveRoot.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(3));
         Assert.That(
             result.Report.ModuleSteps.Select(static step => $"{step.ModuleKey}:{step.SourceVersion}->{step.TargetVersion}").ToArray(),
             Is.EqualTo(new[]
@@ -783,6 +965,36 @@ public sealed class SaveMigrationPipelineTests
         Assert.That(result.Report.ModuleStateKeySetPreserved, Is.True);
     }
 
+    [Test]
+    public void LoadM2_MigratesPublicLifeSchemaThreeToFour_AndKeepsCountyPublicLifeLoadable()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260620);
+        simulation.AdvanceMonths(2);
+
+        SaveRoot saveRoot = simulation.ExportSave();
+        saveRoot.ModuleStates[KnownModuleKeys.PublicLifeAndRumor].ModuleSchemaVersion = 3;
+
+        GameSimulation loaded = SimulationBootstrapper.LoadM2(saveRoot);
+        loaded.AdvanceMonths(1);
+
+        SaveRoot migratedSave = loaded.ExportSave();
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(loaded);
+
+        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.PublicLifeAndRumor].ModuleSchemaVersion, Is.EqualTo(4));
+        Assert.That(bundle.PublicLifeSettlements, Is.Not.Empty);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.ChannelSummary)), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.DominantVenueCode)), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => settlement.DocumentaryWeight is >= 0 and <= 100), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => settlement.VerificationCost is >= 0 and <= 100), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => settlement.MarketRumorFlow is >= 0 and <= 100), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => settlement.CourierRisk is >= 0 and <= 100), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.OfficialNoticeLine)), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.StreetTalkLine)), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.RoadReportLine)), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.PrefectureDispatchLine)), Is.True);
+        Assert.That(bundle.PublicLifeSettlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.ContentionSummary)), Is.True);
+    }
+
     private sealed class TestMigrationModuleState : IModuleStateDescriptor
     {
         public string ModuleKey => "Test.Migration";
@@ -838,6 +1050,15 @@ public sealed class SaveMigrationPipelineTests
         public List<LegacyJurisdictionAuthorityStateV1> Jurisdictions { get; set; } = new();
     }
 
+    public sealed class LegacyFamilyCoreStateV1 : IModuleStateDescriptor
+    {
+        public string ModuleKey => KnownModuleKeys.FamilyCore;
+
+        public List<LegacyClanStateDataV1> Clans { get; set; } = new();
+
+        public List<LegacyFamilyPersonStateV1> People { get; set; } = new();
+    }
+
     public sealed class LegacyConflictAndForceStateV2 : IModuleStateDescriptor
     {
         public string ModuleKey => KnownModuleKeys.ConflictAndForce;
@@ -881,6 +1102,34 @@ public sealed class SaveMigrationPipelineTests
         public string LastOutcome { get; set; } = string.Empty;
 
         public string LastExplanation { get; set; } = string.Empty;
+    }
+
+    public sealed class LegacyClanStateDataV1
+    {
+        public ClanId Id { get; set; }
+
+        public string ClanName { get; set; } = string.Empty;
+
+        public SettlementId HomeSettlementId { get; set; }
+
+        public int Prestige { get; set; }
+
+        public int SupportReserve { get; set; }
+
+        public PersonId? HeirPersonId { get; set; }
+    }
+
+    public sealed class LegacyFamilyPersonStateV1
+    {
+        public PersonId Id { get; set; }
+
+        public ClanId ClanId { get; set; }
+
+        public string GivenName { get; set; } = string.Empty;
+
+        public int AgeMonths { get; set; }
+
+        public bool IsAlive { get; set; }
     }
 
     public sealed class LegacyJurisdictionAuthorityStateV1

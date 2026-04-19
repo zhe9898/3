@@ -6,6 +6,18 @@ This document defines the project through **14 formal dimensions** plus **3 cros
 The player is not a god and not a single adventurer.
 The player is the head of a clan operating within a living world.
 
+For the higher-level rules-driven living-world thesis, player leverage doctrine, and multi-generation consequence framing, see `RULES_DRIVEN_LIVING_WORLD.md`.
+
+## Historical grounding baseline
+Default player-facing grounding should read as `Northern Song-inspired`, not as a dynasty-agnostic mashup and not as a strict documentary reenactment.
+
+That means the current baseline should lean toward:
+- county society shaped by literati ambition, yamen paperwork, recommendation networks, and waiting for openings
+- north-China road-county logic plus connected market and canal corridors where needed, rather than a flat all-China terrain voice
+- family, office, trade, route security, and campaign pressure as one linked field
+
+This baseline is a gameplay frame, not a claim that every mechanic is an exact Northern Song reconstruction.
+
 The world:
 - changes before the player acts
 - produces pressure through people, households, institutions, markets, order, weather, banditry, office, and war
@@ -61,6 +73,7 @@ The game should rely on:
 - stylized portrait modules
 - short vignettes
 - ambient sound layers
+- detailed sourcing, license, and staging rules live in `ART_AND_AUDIO_ASSET_SOURCING.md`
 
 ### 5. Version control
 Mainline must remain recoverable.
@@ -117,6 +130,7 @@ They are interconnected social positions and pathways:
 - **Outlaw / banditry**: disorder, failure, coercion, and gray power
 
 These positions must be able to transform into one another through world pressure and personal circumstance.
+See `RULES_DRIVEN_LIVING_WORLD.md` for the stronger multi-route doctrine: these are overlapping social positions in one dynamic field, not hard career branches.
 
 ## Three cross-dimensional hard principles
 1. **Explainable causality**

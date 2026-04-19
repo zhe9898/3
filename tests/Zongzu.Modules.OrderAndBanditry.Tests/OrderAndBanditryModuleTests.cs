@@ -58,7 +58,7 @@ public sealed class OrderAndBanditryModuleTests
         socialState.ClanNarratives.Add(new ClanNarrativeState
         {
             ClanId = new ClanId(1),
-            PublicNarrative = "Pressure is hardening in Lanxi.",
+            PublicNarrative = "兰溪乡面压力渐聚。",
             GrudgePressure = 58,
             FearPressure = 57,
             ShamePressure = 26,
@@ -78,7 +78,7 @@ public sealed class OrderAndBanditryModuleTests
             ShopCount = 1,
             ManagerSkill = 3,
             LastOutcome = "Stable",
-            LastExplanation = "Route pressure is rising.",
+            LastExplanation = "路面之压渐起。",
         });
         tradeState.Routes.Add(new RouteTradeState
         {
@@ -127,8 +127,8 @@ public sealed class OrderAndBanditryModuleTests
         Assert.That(snapshot.BanditThreat, Is.GreaterThanOrEqualTo(60));
         Assert.That(snapshot.RoutePressure, Is.GreaterThanOrEqualTo(60));
         Assert.That(snapshot.DisorderPressure, Is.GreaterThanOrEqualTo(70));
-        Assert.That(snapshot.LastPressureReason, Does.Contain("security"));
-        Assert.That(snapshot.LastPressureReason, Does.Contain("Commoner distress"));
+        Assert.That(snapshot.LastPressureReason, Does.Contain("乡面安宁"));
+        Assert.That(snapshot.LastPressureReason, Does.Contain("民困"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("BanditThreatRaised"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("OutlawGroupFormed"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("RouteUnsafeDueToBanditry"));
@@ -179,7 +179,7 @@ public sealed class OrderAndBanditryModuleTests
         socialState.ClanNarratives.Add(new ClanNarrativeState
         {
             ClanId = new ClanId(1),
-            PublicNarrative = "Pressure is hardening in Lanxi.",
+            PublicNarrative = "兰溪乡面压力渐聚。",
             GrudgePressure = 58,
             FearPressure = 57,
             ShamePressure = 26,
@@ -199,7 +199,7 @@ public sealed class OrderAndBanditryModuleTests
             ShopCount = 1,
             ManagerSkill = 3,
             LastOutcome = "Stable",
-            LastExplanation = "Route pressure is rising.",
+            LastExplanation = "路面之压渐起。",
         });
         tradeState.Routes.Add(new RouteTradeState
         {
@@ -299,8 +299,8 @@ public sealed class OrderAndBanditryModuleTests
 
         Assert.That(snapshot.SuppressionDemand, Is.LessThan(baselineSnapshot.SuppressionDemand));
         Assert.That(snapshot.RoutePressure, Is.LessThanOrEqualTo(baselineSnapshot.RoutePressure));
-        Assert.That(snapshot.LastPressureReason, Does.Contain("Activated guards"));
-        Assert.That(snapshot.LastPressureReason, Does.Contain("readiness"));
+        Assert.That(snapshot.LastPressureReason, Does.Contain("已激活的守丁"));
+        Assert.That(snapshot.LastPressureReason, Does.Contain("整备"));
     }
 
     [Test]
@@ -345,7 +345,7 @@ public sealed class OrderAndBanditryModuleTests
         socialState.ClanNarratives.Add(new ClanNarrativeState
         {
             ClanId = new ClanId(1),
-            PublicNarrative = "Pressure is hardening in Lanxi.",
+            PublicNarrative = "兰溪乡面压力渐聚。",
             GrudgePressure = 58,
             FearPressure = 57,
             ShamePressure = 26,
@@ -365,7 +365,7 @@ public sealed class OrderAndBanditryModuleTests
             ShopCount = 1,
             ManagerSkill = 3,
             LastOutcome = "Stable",
-            LastExplanation = "Route pressure is rising.",
+            LastExplanation = "路面之压渐起。",
         });
         tradeState.Routes.Add(new RouteTradeState
         {
@@ -510,7 +510,7 @@ public sealed class OrderAndBanditryModuleTests
         socialState.ClanNarratives.Add(new ClanNarrativeState
         {
             ClanId = new ClanId(1),
-            PublicNarrative = "Pressure is hardening in Lanxi.",
+            PublicNarrative = "兰溪乡面压力渐聚。",
             GrudgePressure = 58,
             FearPressure = 57,
             ShamePressure = 26,
@@ -530,7 +530,7 @@ public sealed class OrderAndBanditryModuleTests
             ShopCount = 1,
             ManagerSkill = 3,
             LastOutcome = "Stable",
-            LastExplanation = "Route pressure is rising.",
+            LastExplanation = "路面之压渐起。",
         });
         tradeState.Routes.Add(new RouteTradeState
         {
@@ -631,7 +631,7 @@ public sealed class OrderAndBanditryModuleTests
         Assert.That(snapshot.RoutePressure, Is.EqualTo(baselineSnapshot.RoutePressure));
         Assert.That(snapshot.DisorderPressure, Is.EqualTo(baselineSnapshot.DisorderPressure));
         Assert.That(snapshot.SuppressionDemand, Is.EqualTo(baselineSnapshot.SuppressionDemand));
-        Assert.That(snapshot.LastPressureReason, Does.Not.Contain("Activated guards"));
+        Assert.That(snapshot.LastPressureReason, Does.Not.Contain("已激活的守丁"));
         Assert.That(snapshot.LastPressureReason, Does.Not.Contain("support"));
     }
 
@@ -677,7 +677,7 @@ public sealed class OrderAndBanditryModuleTests
         socialState.ClanNarratives.Add(new ClanNarrativeState
         {
             ClanId = new ClanId(1),
-            PublicNarrative = "Pressure is hardening in Lanxi.",
+            PublicNarrative = "兰溪乡面压力渐聚。",
             GrudgePressure = 58,
             FearPressure = 57,
             ShamePressure = 26,
@@ -697,7 +697,7 @@ public sealed class OrderAndBanditryModuleTests
             ShopCount = 1,
             ManagerSkill = 3,
             LastOutcome = "Stable",
-            LastExplanation = "Route pressure is rising.",
+            LastExplanation = "路面之压渐起。",
         });
         tradeState.Routes.Add(new RouteTradeState
         {
@@ -748,11 +748,11 @@ public sealed class OrderAndBanditryModuleTests
             SettlementId = new SettlementId(2),
             LeadOfficialPersonId = new PersonId(1),
             LeadOfficialName = "Zhang Yuan",
-            LeadOfficeTitle = "Registrar",
+            LeadOfficeTitle = "主簿",
             AuthorityTier = 2,
             JurisdictionLeverage = 62,
             PetitionPressure = 18,
-            LastAdministrativeTrace = "Registrar leverage is coordinating escorts and petitions.",
+            LastAdministrativeTrace = "主簿正在调度护运与词状。",
         });
 
         OrderAndBanditryModule module = new();
@@ -791,7 +791,7 @@ public sealed class OrderAndBanditryModuleTests
 
         Assert.That(snapshot.SuppressionDemand, Is.LessThan(baselineSnapshot.SuppressionDemand));
         Assert.That(snapshot.DisorderPressure, Is.LessThanOrEqualTo(baselineSnapshot.DisorderPressure));
-        Assert.That(snapshot.LastPressureReason, Does.Contain("Registrar leverage"));
+        Assert.That(snapshot.LastPressureReason, Does.Contain("主簿乡面杠力"));
     }
 
     [Test]
@@ -832,10 +832,10 @@ public sealed class OrderAndBanditryModuleTests
                 ActiveDirectiveCode = WarfareCampaignCommandNames.CommitMobilization,
                 ActiveDirectiveLabel = "发檄点兵",
                 ActiveDirectiveSummary = "点集行伍。",
-                LastDirectiveTrace = "Lanxi has committed mobilization.",
-                MobilizationWindowLabel = "Open",
-                SupplyLineSummary = "Supply carts are stretched thin.",
-                OfficeCoordinationTrace = "Registrar is forwarding wartime filings.",
+                LastDirectiveTrace = "兰溪已发檄点兵。",
+                MobilizationWindowLabel = "可发",
+                SupplyLineSummary = "运粮车队已显吃紧。",
+                OfficeCoordinationTrace = "主簿正在转递军务文移。",
                 SourceTrace = "Campaign pressure rose from local conflict.",
                 LastAftermathSummary = "战后覆核与败粮余波压在路面。",
             },
@@ -863,7 +863,7 @@ public sealed class OrderAndBanditryModuleTests
         Assert.That(disorder.RoutePressure, Is.GreaterThan(57));
         Assert.That(disorder.DisorderPressure, Is.GreaterThan(61));
         Assert.That(disorder.SuppressionDemand, Is.GreaterThan(42));
-        Assert.That(disorder.LastPressureReason, Does.Contain("Campaign spillover from Lanxi"));
+        Assert.That(disorder.LastPressureReason, Does.Contain("Lanxi战事外溢"));
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.OrderAndBanditry));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("RouteUnsafeDueToBanditry"));
         Assert.That(context.DomainEvents.Events.All(static entry => entry.ModuleKey == KnownModuleKeys.OrderAndBanditry), Is.True);

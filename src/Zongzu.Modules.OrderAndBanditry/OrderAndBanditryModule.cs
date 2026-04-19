@@ -182,27 +182,27 @@ public sealed class OrderAndBanditryModule : ModuleRunner<OrderAndBanditryState>
             }
 
             scope.RecordDiff(
-                $"Settlement {settlement.Name} disorder moved to bandit {disorder.BanditThreat}, route {disorder.RoutePressure}, suppression {disorder.SuppressionDemand}. {disorder.LastPressureReason}",
+                $"{settlement.Name}地面不靖：盗压{disorder.BanditThreat}，路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。{disorder.LastPressureReason}",
                 settlement.Id.Value.ToString());
 
             if (previousBanditThreat < 60 && disorder.BanditThreat >= 60)
             {
-                scope.Emit("BanditThreatRaised", $"Bandit threat rose sharply around {settlement.Name}.");
+                scope.Emit("BanditThreatRaised", $"{settlement.Name}盗警骤起。");
             }
 
             if (previousDisorderPressure < 70 && disorder.DisorderPressure >= 70)
             {
-                scope.Emit("OutlawGroupFormed", $"Local disorder hardened into outlaw organization near {settlement.Name}.");
+                scope.Emit("OutlawGroupFormed", $"{settlement.Name}啸聚之势渐成。");
             }
 
             if (previousRoutePressure < 60 && disorder.RoutePressure >= 60)
             {
-                scope.Emit("RouteUnsafeDueToBanditry", $"Routes around {settlement.Name} became unsafe due to banditry.");
+                scope.Emit("RouteUnsafeDueToBanditry", $"{settlement.Name}行路已不稳。");
             }
 
             if (previousSuppressionDemand >= 55 && disorder.SuppressionDemand <= 40)
             {
-                scope.Emit("SuppressionSucceeded", $"Security suppression pressure eased around {settlement.Name}.");
+                scope.Emit("SuppressionSucceeded", $"{settlement.Name}镇压之需稍缓。");
             }
         }
     }
@@ -256,7 +256,7 @@ public sealed class OrderAndBanditryModule : ModuleRunner<OrderAndBanditryState>
             disorder.DisorderPressure = Math.Clamp(disorder.DisorderPressure + disorderDelta, 0, 100);
             disorder.SuppressionDemand = Math.Clamp(disorder.SuppressionDemand + suppressionDelta, 0, 100);
             disorder.LastPressureReason =
-                $"Campaign spillover from {campaign.AnchorSettlementName} drove {campaign.FrontLabel}, {campaign.SupplyStateLabel}, and aftermath '{campaign.LastAftermathSummary}' into local roads and patrols.";
+                $"{campaign.AnchorSettlementName}战事外溢，{campaign.FrontLabel}、{campaign.SupplyStateLabel}与{campaign.LastAftermathSummary}都压进了乡路巡哨。";
 
             if (previousBanditThreat == disorder.BanditThreat
                 && previousRoutePressure == disorder.RoutePressure
@@ -267,22 +267,22 @@ public sealed class OrderAndBanditryModule : ModuleRunner<OrderAndBanditryState>
             }
 
             scope.RecordDiff(
-                $"Campaign spillover around {campaign.AnchorSettlementName} raised disorder to bandit {disorder.BanditThreat}, route {disorder.RoutePressure}, and suppression {disorder.SuppressionDemand}. {disorder.LastPressureReason}",
+                $"{campaign.AnchorSettlementName}战事外溢：盗压{disorder.BanditThreat}，路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。{disorder.LastPressureReason}",
                 bundle.SettlementId.Value.ToString());
 
             if (previousBanditThreat < 60 && disorder.BanditThreat >= 60)
             {
-                scope.Emit("BanditThreatRaised", $"Campaign spillover sharpened bandit threat around {campaign.AnchorSettlementName}.", bundle.SettlementId.Value.ToString());
+                scope.Emit("BanditThreatRaised", $"战事外溢使{campaign.AnchorSettlementName}盗警更紧。", bundle.SettlementId.Value.ToString());
             }
 
             if (previousDisorderPressure < 70 && disorder.DisorderPressure >= 70)
             {
-                scope.Emit("OutlawGroupFormed", $"Campaign spillover hardened local disorder near {campaign.AnchorSettlementName}.", bundle.SettlementId.Value.ToString());
+                scope.Emit("OutlawGroupFormed", $"战事外溢使{campaign.AnchorSettlementName}啸聚更成形。", bundle.SettlementId.Value.ToString());
             }
 
             if (previousRoutePressure < 60 && disorder.RoutePressure >= 60)
             {
-                scope.Emit("RouteUnsafeDueToBanditry", $"Campaign spillover made routes around {campaign.AnchorSettlementName} newly unsafe.", bundle.SettlementId.Value.ToString());
+                scope.Emit("RouteUnsafeDueToBanditry", $"战事外溢使{campaign.AnchorSettlementName}行路更险。", bundle.SettlementId.Value.ToString());
             }
         }
     }
@@ -374,47 +374,47 @@ public sealed class OrderAndBanditryModule : ModuleRunner<OrderAndBanditryState>
 
         if (settlement.Security < 50)
         {
-            reasons.Add($"Low security {settlement.Security} is exposing roads and storehouses.");
+            reasons.Add($"乡面安宁仅{settlement.Security}，仓路与铺户更易外露。");
         }
 
         if (population.CommonerDistress >= 55)
         {
-            reasons.Add($"Commoner distress {population.CommonerDistress} is feeding local desperation.");
+            reasons.Add($"民困{population.CommonerDistress}，乡里窘急渐聚。");
         }
 
         if (localForce is not null && forceSuppression > 0)
         {
-            reasons.Add($"Activated guards {localForce.GuardCount}, escorts {localForce.EscortCount}, readiness {localForce.Readiness}, and support {localForce.OrderSupportLevel} are slowing escalation.");
+            reasons.Add($"已激活的守丁{localForce.GuardCount}、护运{localForce.EscortCount}、整备{localForce.Readiness}与应援{localForce.OrderSupportLevel}，正缓住事势。");
         }
 
         if (jurisdiction is not null && administrativeRelief > 0)
         {
-            reasons.Add($"{jurisdiction.LeadOfficeTitle} leverage {jurisdiction.JurisdictionLeverage} is shaving {administrativeRelief} points off suppression pressure.");
+            reasons.Add($"{jurisdiction.LeadOfficeTitle}乡面杠力{jurisdiction.JurisdictionLeverage}，可替镇压之需卸去{administrativeRelief}分。");
         }
 
         if (population.MigrationPressure >= 45)
         {
-            reasons.Add($"Migration pressure {population.MigrationPressure} is thinning settlement stability.");
+            reasons.Add($"流徙之压{population.MigrationPressure}，乡面人气渐散。");
         }
 
         if (tradeActivity.ActiveRouteCount > 0)
         {
-            reasons.Add($"Trade traffic keeps {tradeActivity.ActiveRouteCount} active routes and capacity {tradeActivity.TotalRouteCapacity} exposed.");
+            reasons.Add($"现有{tradeActivity.ActiveRouteCount}条活路、载力{tradeActivity.TotalRouteCapacity}，行旅财货尽在外露。");
         }
 
         if (tradeActivity.AverageRouteRisk >= 45)
         {
-            reasons.Add($"Average route risk {tradeActivity.AverageRouteRisk} is attracting opportunistic coercion.");
+            reasons.Add($"路险均值{tradeActivity.AverageRouteRisk}，最招乘隙劫掠。");
         }
 
         if (localFear >= 50 || localGrudge >= 55)
         {
-            reasons.Add($"Local fear {localFear} and grudge {localGrudge} are hardening into disorder.");
+            reasons.Add($"乡里惧意{localFear}、旧怨{localGrudge}，渐化为不靖之势。");
         }
 
         if (reasons.Count == 0)
         {
-            reasons.Add("Local order held roughly steady this month.");
+            reasons.Add("本月乡里大势尚能按住。");
         }
 
         return string.Join(" ", reasons.Take(3));

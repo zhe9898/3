@@ -42,6 +42,10 @@ Done when:
 - spatial shell usable
 - MVP core question answerable
 
+Implementation note:
+- the explicit default MVP bootstrap should stop at mandatory M0-M2 packs plus `NarrativeProjection`
+- later public-life, conflict, governance, and warfare slices must remain on separately named non-MVP paths
+
 ## Phase M3 - optional local conflict lite
 Modules:
 - OrderAndBanditry.Lite

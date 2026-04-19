@@ -274,27 +274,27 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
             }
 
             scope.RecordDiff(
-                $"Settlement {settlement.Name} force posture moved to guards {force.GuardCount}, retainers {force.RetainerCount}, militia {force.MilitiaCount}, escorts {force.EscortCount}, readiness {force.Readiness}, command {force.CommandCapacity}, response {force.ResponseActivationLevel}, support {force.OrderSupportLevel}. {force.LastConflictTrace}",
+                $"{settlement.Name}地面守备：守丁{force.GuardCount}，亲兵{force.RetainerCount}，乡勇{force.MilitiaCount}，护运{force.EscortCount}，整备{force.Readiness}，号令{force.CommandCapacity}，应势{force.ResponseActivationLevel}，援压{force.OrderSupportLevel}。{force.LastConflictTrace}",
                 settlement.Id.Value.ToString());
 
             if (previousMilitiaCount < 20 && force.MilitiaCount >= 20)
             {
-                scope.Emit("MilitiaMobilized", $"Clan-aligned militia mobilized around {settlement.Name}.");
+                scope.Emit("MilitiaMobilized", $"{settlement.Name}乡勇已集。");
             }
 
             if (Math.Abs(force.Readiness - previousReadiness) >= 8)
             {
-                scope.Emit("ForceReadinessChanged", $"Force readiness around {settlement.Name} shifted to {force.Readiness}.");
+                scope.Emit("ForceReadinessChanged", $"{settlement.Name}地面守备整备改为{force.Readiness}。");
             }
 
             if (conflictResolved)
             {
-                scope.Emit("ConflictResolved", $"Local force pressure around {settlement.Name} resolved into a contained clash.");
+                scope.Emit("ConflictResolved", $"{settlement.Name}地面冲突暂被按住。");
             }
 
             if (commanderWounded)
             {
-                scope.Emit("CommanderWounded", $"A local captain was wounded while containing violence near {settlement.Name}.");
+                scope.Emit("CommanderWounded", $"{settlement.Name}弹压之际，有领队负创。");
             }
         }
     }
@@ -360,14 +360,14 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
             }
 
             scope.RecordDiff(
-                $"Campaign aftermath around {campaign.AnchorSettlementName} left fatigue {force.CampaignFatigue}, escort strain {force.CampaignEscortStrain}, readiness {force.Readiness}, and command {force.CommandCapacity}. {force.LastCampaignFalloutTrace}",
+                $"{campaign.AnchorSettlementName}战后余波所留：疲敝{force.CampaignFatigue}，护运困乏{force.CampaignEscortStrain}，整备{force.Readiness}，号令{force.CommandCapacity}。{force.LastCampaignFalloutTrace}",
                 bundle.SettlementId.Value.ToString());
 
             if (previousReadiness - force.Readiness >= 4 || previousCampaignFatigue != force.CampaignFatigue)
             {
                 scope.Emit(
                     "ForceReadinessChanged",
-                    $"Campaign fallout pulled readiness around {campaign.AnchorSettlementName} down to {force.Readiness}.",
+                    $"{campaign.AnchorSettlementName}战后余波拖得地面整备降至{force.Readiness}。",
                     bundle.SettlementId.Value.ToString());
             }
         }
@@ -498,47 +498,47 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
 
         if (disorder.BanditThreat >= 45 || disorder.RoutePressure >= 45)
         {
-            reasons.Add($"Bandit threat {disorder.BanditThreat} and route pressure {disorder.RoutePressure} are forcing a stronger watch posture.");
+            reasons.Add($"盗压{disorder.BanditThreat}、路压{disorder.RoutePressure}，逼得地面不得不加紧巡守。");
         }
 
         if (population.CommonerDistress >= 55 || population.MigrationPressure >= 45)
         {
-            reasons.Add($"Commoner distress {population.CommonerDistress} and migration pressure {population.MigrationPressure} are widening the pool for local clashes.");
+            reasons.Add($"民困{population.CommonerDistress}、流徙之压{population.MigrationPressure}，都在推高地面斗殴与械争。");
         }
 
         if (tradeActivity.ActiveRouteCount > 0)
         {
-            reasons.Add($"Trade traffic keeps {tradeActivity.ActiveRouteCount} active routes protected by {force.EscortCount} escorts.");
+            reasons.Add($"尚有{tradeActivity.ActiveRouteCount}条活路待护，故而护运{force.EscortCount}不能轻撤。");
         }
 
         if (jurisdiction is not null && administrativeSupport > 0)
         {
-            reasons.Add($"{jurisdiction.LeadOfficeTitle} leverage {jurisdiction.JurisdictionLeverage} is adding {administrativeSupport} tiers of administrative support.");
+            reasons.Add($"{jurisdiction.LeadOfficeTitle}乡面杠力{jurisdiction.JurisdictionLeverage}，替地面守备添了{administrativeSupport}分文移支应。");
         }
 
         if (force.CampaignFatigue > 0 || force.CampaignEscortStrain > 0)
         {
             string falloutTrace = string.IsNullOrWhiteSpace(force.LastCampaignFalloutTrace)
-                ? "Earlier campaigning is still draining local watches and escort lines."
+                ? "前番兵事留下的困乏，仍在耗着守夜与护运。"
                 : force.LastCampaignFalloutTrace;
-            reasons.Add($"Earlier campaigning still leaves fatigue {force.CampaignFatigue} and escort strain {force.CampaignEscortStrain}. {falloutTrace}");
+            reasons.Add($"前番兵事仍留疲敝{force.CampaignFatigue}、护运困乏{force.CampaignEscortStrain}。{falloutTrace}");
         }
 
         if (conflictResolved)
         {
-            reasons.Add("A local clash was contained before it spread into wider disorder.");
+            reasons.Add("这一场地面冲突已先被按住，未曾外漫。");
         }
 
-        reasons.Add($"Force posture {forcePosture} is answering conflict pressure {conflictPressure} with readiness {force.Readiness} and command {force.CommandCapacity}.");
+        reasons.Add($"如今守备之势{forcePosture}，正以整备{force.Readiness}、号令{force.CommandCapacity}去压冲突之压{conflictPressure}。");
 
         if (localFear >= 50 || localGrudge >= 50)
         {
-            reasons.Add($"Fear {localFear} and grudge {localGrudge} are keeping tempers close to violence in {settlement.Name}.");
+            reasons.Add($"{settlement.Name}乡里惧意{localFear}、旧怨{localGrudge}，人心仍贴着械斗边缘。");
         }
 
         if (commanderWounded)
         {
-            reasons.Add("That containment came with a wounded captain and fresh resentment.");
+            reasons.Add("虽把局面按住，却也折了一名领队，平添新怨。");
         }
 
         return string.Join(" ", reasons.Take(5));
@@ -629,10 +629,10 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
         int commandDrop)
     {
         string strainText = bundle.CampaignSupplyStrained
-            ? "Supply escorts and relay lines are coming back frayed."
-            : "Watch rotations are carrying a lingering campaign burden.";
+            ? "护粮与驿传这一线回来时已显困敝。"
+            : "守夜轮值仍背着前番兵事留下的担子。";
 
-        return $"Campaign fallout from {campaign.AnchorSettlementName} imposed fatigue +{fatigueDelta}, escort strain +{escortStrainDelta}, readiness -{readinessDrop}, and command -{commandDrop}. {campaign.FrontLabel}, {campaign.SupplyStateLabel}, and aftermath '{campaign.LastAftermathSummary}' keep the local force tired. {strainText}";
+        return $"{campaign.AnchorSettlementName}战后余波留下疲敝+{fatigueDelta}、护运困乏+{escortStrainDelta}、整备-{readinessDrop}、号令-{commandDrop}。{campaign.FrontLabel}、{campaign.SupplyStateLabel}与{campaign.LastAftermathSummary}都还压在地面守备身上。{strainText}";
     }
 
     private static string MergeFalloutIntoConflictTrace(string currentTrace, string falloutTrace)

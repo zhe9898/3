@@ -60,6 +60,8 @@ Preferred MCP servers:
 - `GitHub` for PR context, CI logs, review comments, and repository metadata
 
 Preferred skills:
+- `zongzu-game-design` for rules-driven living-world design, monthly loop shaping, pressure-chain design, bounded player leverage, explainable causality, vertical slices, and MVP shaping when working on mechanics or product structure
+- `zongzu-ui-shell` for Zongzu shell and presentation work: great hall, ancestral hall, desk sandbox, notice tray, conflict vignette, campaign-lite board, information density, object grammar, 2.5D shell design, and anti-poster correction when a draft feels like a static concept board instead of a playable surface
 - `zongzu-ancient-china` for historical grounding, Chinese antiquity / imperial China institutions, anti-anachronism review, terms, titles, kinship, lineage behavior, exam and office pathways, household and tax framing, and history-to-game translation including desk sandbox, map nodes, warfare-lite boards, and spatial presentation language
 - `microsoft-code-reference` for API lookups, implementation details, code samples, and error repair in C# / .NET code
 - `microsoft-docs` for concept docs, configuration guidance, limits, and official Microsoft tutorials
@@ -71,7 +73,7 @@ Preferred skills:
 
 Do not default to web-first skills for this repo:
 - `develop-web-game` is not a fit for the authoritative simulation or Unity presentation path here
-- `frontend-skill`, `react-best-practices`, and `web-design-guidelines` are only relevant for auxiliary tooling, documentation sites, launchers, or future web surfaces
+- `frontend-skill`, `react-best-practices`, and `web-design-guidelines` are helpers only after `zongzu-ui-shell` when the task is about the actual Zongzu shell; they are mainly relevant for auxiliary tooling, documentation sites, launchers, or future web surfaces
 
 Unity MCP note:
 - This repository currently does not contain a full Unity project root with `Assets/`, `Packages/`, and `ProjectSettings/`

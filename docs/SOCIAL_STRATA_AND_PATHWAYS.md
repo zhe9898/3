@@ -2,6 +2,8 @@
 
 This document defines the main social positions and how people move between them.
 
+For the stronger multi-route design table covering route families, verbs, pressures, modules, surfaces, and transitions, see `MULTI_ROUTE_DESIGN_MATRIX.md`.
+
 ## Core rule
 These are not isolated job trees.
 They are social positions within the same world.
@@ -72,13 +74,16 @@ Outcomes:
 ## 5. Office
 Formal authority pathway.
 Path pressure:
-- exam success or patronage
+- exam success, recommendation, or yamen attachment
+- waiting for openings / candidate queue pressure
+- clerk and runner dependence once attached to office work
 - reputation
 - family strategy
 - political risk
 
 Outcomes:
 - authority access
+- candidate waiting, attached clerical service, or formal appointment depending on backing and openings
 - legal leverage
 - higher exposure
 - family tension through distance, posting, or political danger

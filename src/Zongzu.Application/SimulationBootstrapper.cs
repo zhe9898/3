@@ -10,6 +10,7 @@ using Zongzu.Modules.NarrativeProjection;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
 using Zongzu.Modules.PopulationAndHouseholds;
+using Zongzu.Modules.PublicLifeAndRumor;
 using Zongzu.Modules.SocialMemoryAndRelations;
 using Zongzu.Modules.TradeAndIndustry;
 using Zongzu.Modules.WarfareCampaign;
@@ -76,6 +77,20 @@ public static class SimulationBootstrapper
         ];
     }
 
+    public static IReadOnlyList<IModuleRunner> CreateMvpModules()
+    {
+        return
+        [
+            new WorldSettlementsModule(),
+            new PopulationAndHouseholdsModule(),
+            new FamilyCoreModule(),
+            new SocialMemoryAndRelationsModule(),
+            new EducationAndExamsModule(),
+            new TradeAndIndustryModule(),
+            new NarrativeProjectionModule(),
+        ];
+    }
+
     public static IReadOnlyList<IModuleRunner> CreateM2Modules()
     {
         return
@@ -86,6 +101,7 @@ public static class SimulationBootstrapper
             new SocialMemoryAndRelationsModule(),
             new EducationAndExamsModule(),
             new TradeAndIndustryModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -101,6 +117,7 @@ public static class SimulationBootstrapper
             new EducationAndExamsModule(),
             new TradeAndIndustryModule(),
             new OrderAndBanditryModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -117,6 +134,7 @@ public static class SimulationBootstrapper
             new TradeAndIndustryModule(),
             new OrderAndBanditryModule(),
             new ConflictAndForceModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -134,6 +152,7 @@ public static class SimulationBootstrapper
             new OfficeAndCareerModule(),
             new OrderAndBanditryModule(),
             new ConflictAndForceModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -152,6 +171,7 @@ public static class SimulationBootstrapper
             new OrderAndBanditryModule(),
             new ConflictAndForceModule(),
             new WarfareCampaignModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -171,11 +191,31 @@ public static class SimulationBootstrapper
         return simulation;
     }
 
+    public static GameSimulation CreateMvpBootstrap(long seed)
+    {
+        FeatureManifest manifest = CreateM0M1Manifest();
+        manifest.Set(KnownModuleKeys.EducationAndExams, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
+
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1200, 1),
+            KernelState.Create(seed),
+            manifest,
+            CreateMvpModules());
+
+        SeedFixture fixture = SeedMinimalWorld(simulation);
+        SeedM2LiteWorld(simulation, fixture);
+        simulation.RefreshReplayHash();
+        return simulation;
+    }
+
     public static GameSimulation CreateM2Bootstrap(long seed)
     {
         FeatureManifest manifest = CreateM0M1Manifest();
         manifest.Set(KnownModuleKeys.EducationAndExams, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -196,6 +236,7 @@ public static class SimulationBootstrapper
         manifest.Set(KnownModuleKeys.EducationAndExams, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -240,6 +281,7 @@ public static class SimulationBootstrapper
         manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.ConflictAndForce, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -288,6 +330,7 @@ public static class SimulationBootstrapper
         manifest.Set(KnownModuleKeys.OfficeAndCareer, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.ConflictAndForce, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -314,6 +357,7 @@ public static class SimulationBootstrapper
         manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.ConflictAndForce, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.WarfareCampaign, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -333,17 +377,22 @@ public static class SimulationBootstrapper
 
     public static GameSimulation LoadM0M1(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
     {
-        return GameSimulation.Load(saveRoot, CreateM0M1Modules(), migrationPipeline);
+        return GameSimulation.Load(saveRoot, CreateM0M1Modules(), migrationPipeline ?? CreateDefaultMigrationPipeline());
+    }
+
+    public static GameSimulation LoadMvp(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
+    {
+        return GameSimulation.Load(saveRoot, CreateMvpModules(), migrationPipeline ?? CreateDefaultMigrationPipeline());
     }
 
     public static GameSimulation LoadM2(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
     {
-        return GameSimulation.Load(saveRoot, CreateM2Modules(), migrationPipeline);
+        return GameSimulation.Load(saveRoot, CreateM2Modules(), migrationPipeline ?? CreateDefaultMigrationPipeline());
     }
 
     public static GameSimulation LoadM3OrderAndBanditry(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
     {
-        return GameSimulation.Load(saveRoot, CreateM3OrderAndBanditryModules(), migrationPipeline);
+        return GameSimulation.Load(saveRoot, CreateM3OrderAndBanditryModules(), migrationPipeline ?? CreateDefaultMigrationPipeline());
     }
 
     public static GameSimulation LoadM3LocalConflict(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
@@ -386,7 +435,8 @@ public static class SimulationBootstrapper
         worldState.Settlements.Add(new SettlementStateData
         {
             Id = settlementId,
-            Name = "Lanxi",
+            Name = "兰溪",
+            Tier = SettlementTier.CountySeat,
             Security = 57,
             Prosperity = 61,
             BaselineInstitutionCount = 1,
@@ -395,7 +445,7 @@ public static class SimulationBootstrapper
         familyState.Clans.Add(new ClanStateData
         {
             Id = clanId,
-            ClanName = "Zhang",
+            ClanName = "张",
             HomeSettlementId = settlementId,
             Prestige = 52,
             SupportReserve = 60,
@@ -406,7 +456,7 @@ public static class SimulationBootstrapper
         {
             Id = heirId,
             ClanId = clanId,
-            GivenName = "Zhang Yuan",
+            GivenName = "张远",
             AgeMonths = 32 * 12,
             IsAlive = true,
         });
@@ -414,7 +464,7 @@ public static class SimulationBootstrapper
         populationState.Households.Add(new PopulationHouseholdState
         {
             Id = tenantHouseholdId,
-            HouseholdName = "Tenant Li",
+            HouseholdName = "佃户李家",
             SettlementId = settlementId,
             SponsorClanId = clanId,
             Distress = 42,
@@ -427,7 +477,7 @@ public static class SimulationBootstrapper
         populationState.Households.Add(new PopulationHouseholdState
         {
             Id = freeHouseholdId,
-            HouseholdName = "Potter Wu",
+            HouseholdName = "陶户吴家",
             SettlementId = settlementId,
             SponsorClanId = null,
             Distress = 47,
@@ -460,7 +510,7 @@ public static class SimulationBootstrapper
         {
             Id = academyId,
             SettlementId = fixture.SettlementId,
-            AcademyName = "Lanxi Academy",
+            AcademyName = "兰溪书院",
             IsOpen = true,
             Capacity = 3,
             Prestige = 42,
@@ -471,7 +521,7 @@ public static class SimulationBootstrapper
             PersonId = fixture.HeirId,
             ClanId = fixture.ClanId,
             AcademyId = academyId,
-            DisplayName = "Zhang Yuan",
+            DisplayName = "张远",
             IsStudying = true,
             HasTutor = false,
             TutorQuality = 0,
@@ -479,8 +529,8 @@ public static class SimulationBootstrapper
             Stress = 16,
             ExamAttempts = 0,
             HasPassedLocalExam = false,
-            LastOutcome = "Preparing",
-            LastExplanation = "Clan support is funding local study at Lanxi Academy.",
+            LastOutcome = "备试",
+            LastExplanation = "宗房仍在出资供张远入兰溪书院。",
             ScholarlyReputation = 9,
         });
 
@@ -494,14 +544,14 @@ public static class SimulationBootstrapper
             CommerceReputation = 27,
             ShopCount = 1,
             ManagerSkill = 3,
-            LastOutcome = "Stable",
-            LastExplanation = "The clan maintains a small grain and ceramics trade in Lanxi.",
+            LastOutcome = "持平",
+            LastExplanation = "宗房在兰溪河埠守着小本行货。",
         });
 
         tradeState.Markets.Add(new SettlementMarketState
         {
             SettlementId = fixture.SettlementId,
-            MarketName = "Lanxi Morning Market",
+            MarketName = "兰溪早市",
             PriceIndex = 104,
             Demand = 63,
             LocalRisk = 16,
@@ -511,7 +561,7 @@ public static class SimulationBootstrapper
         {
             RouteId = 1,
             ClanId = fixture.ClanId,
-            RouteName = "Lanxi River Wharf",
+            RouteName = "兰溪河埠",
             SettlementId = fixture.SettlementId,
             IsActive = true,
             Capacity = 26,
@@ -536,8 +586,8 @@ public static class SimulationBootstrapper
         heir.StudyProgress = 28;
         heir.ExamAttempts = Math.Max(1, heir.ExamAttempts);
         heir.HasPassedLocalExam = true;
-        heir.LastOutcome = "Passed";
-        heir.LastExplanation = "The heir already passed the local exam before governance-lite appointment review began.";
+        heir.LastOutcome = "得解";
+        heir.LastExplanation = "张远场屋得捷，已可依门路守选候阙。";
         heir.ScholarlyReputation = Math.Max(heir.ScholarlyReputation, 26);
     }
 
@@ -551,7 +601,7 @@ public static class SimulationBootstrapper
             RoutePressure = 24,
             SuppressionDemand = 19,
             DisorderPressure = 21,
-            LastPressureReason = "Lanxi starts with modest road-watch pressure around the river wharf.",
+            LastPressureReason = "兰溪河埠虽有巡丁照看，市面与水路仍多暗涌。",
         });
     }
 
@@ -567,7 +617,7 @@ public static class SimulationBootstrapper
             EscortCount = 8,
             Readiness = 46,
             CommandCapacity = 34,
-            LastConflictTrace = "Lanxi keeps a disciplined hall guard and escort watch around the river wharf.",
+            LastConflictTrace = "兰溪宗房护院与护运丁役守着河埠，昼夜轮看。",
         };
         settlement.HasActiveConflict = true;
         ConflictAndForceResponseStateCalculator.Refresh(settlement);
@@ -579,14 +629,14 @@ public static class SimulationBootstrapper
         StressSliceTemplate[] slices =
         [
             new StressSliceTemplate(
-                "Qingshui",
-                "Li",
-                "Li Wen",
-                "Qingshui Study Hall",
-                "Qingshui Grain Market",
-                "Qingshui Canal Convoy",
-                "Tenant Han",
-                "Weaver Sun",
+                "清水",
+                "李",
+                "李文",
+                "清水书塾",
+                "清水粮市",
+                "清水漕埠",
+                "佃户韩家",
+                "织户孙家",
                 56,
                 59,
                 46,
@@ -620,16 +670,16 @@ public static class SimulationBootstrapper
                 2,
                 24,
                 20,
-                "Routine escort rotation keeps the canal market watchful."),
+                "清水埠头护运按班轮值，漕埠上下仍算警醒。"),
             new StressSliceTemplate(
-                "Fushan",
-                "Wu",
-                "Wu Cheng",
-                "Fushan Academy",
-                "Fushan Copper Market",
-                "Fushan Hill Route",
-                "Tenant Gao",
-                "Potter Xu",
+                "浮山",
+                "吴",
+                "吴成",
+                "浮山书院",
+                "浮山铜市",
+                "浮山山路",
+                "佃户高家",
+                "窑户徐家",
                 44,
                 55,
                 56,
@@ -663,16 +713,16 @@ public static class SimulationBootstrapper
                 6,
                 37,
                 31,
-                "Road escorts in Fushan keep encountering armed coercion around the hills."),
+                "浮山山路护送丁役屡逢挟胁，往来商脚多有惊惧。"),
             new StressSliceTemplate(
-                "Yonghe",
-                "Chen",
-                "Chen Rui",
-                "Yonghe Hall of Classics",
-                "Yonghe Salt Exchange",
-                "Yonghe North Ferry",
-                "Tenant Deng",
-                "Boatman Luo",
+                "永和",
+                "陈",
+                "陈睿",
+                "永和经馆",
+                "永和盐肆",
+                "永河北津",
+                "佃户邓家",
+                "舟户罗家",
                 39,
                 60,
                 62,
@@ -706,7 +756,7 @@ public static class SimulationBootstrapper
                 8,
                 45,
                 38,
-                "A bruising dockside clash in Yonghe forced militia and escorts into the same streets."),
+                "永河北津码头一度群斗，乡勇与护运同巷并守。"),
         ];
 
         foreach (StressSliceTemplate slice in slices)
@@ -740,6 +790,7 @@ public static class SimulationBootstrapper
         {
             Id = settlementId,
             Name = slice.SettlementName,
+            Tier = InferStressSettlementTier(slice.SettlementName),
             Security = slice.Security,
             Prosperity = slice.Prosperity,
             BaselineInstitutionCount = 1,
@@ -802,7 +853,7 @@ public static class SimulationBootstrapper
         socialState.ClanNarratives.Add(new ClanNarrativeState
         {
             ClanId = clanId,
-            PublicNarrative = $"{slice.SettlementName} balances study, trade, and rising coercion.",
+            PublicNarrative = $"{slice.SettlementName}一地书塾、行旅与乡里催迫并起。",
             GrudgePressure = slice.GrudgePressure,
             FearPressure = slice.FearPressure,
             ShamePressure = Math.Clamp(slice.GrudgePressure / 2, 0, 100),
@@ -832,8 +883,8 @@ public static class SimulationBootstrapper
             Stress = slice.ScholarStress,
             ExamAttempts = 0,
             HasPassedLocalExam = false,
-            LastOutcome = "Preparing",
-            LastExplanation = $"{slice.ClanName} is financing study while managing unrest around {slice.SettlementName}.",
+            LastOutcome = "备试",
+            LastExplanation = $"{slice.ClanName}家一面供读，一面应付{slice.SettlementName}乡里的催迫。",
             ScholarlyReputation = slice.ScholarlyReputation,
         });
 
@@ -847,8 +898,8 @@ public static class SimulationBootstrapper
             CommerceReputation = slice.CommerceReputation,
             ShopCount = slice.ShopCount,
             ManagerSkill = slice.ManagerSkill,
-            LastOutcome = "Stable",
-            LastExplanation = $"{slice.SettlementName} trade is balancing convoy risk against local pressure.",
+            LastOutcome = "持平",
+            LastExplanation = $"{slice.SettlementName}市易往来夹在护运风险与街巷催迫之间。",
         });
 
         tradeState.Markets.Add(new SettlementMarketState
@@ -879,7 +930,7 @@ public static class SimulationBootstrapper
             RoutePressure = slice.RoutePressure,
             SuppressionDemand = slice.SuppressionDemand,
             DisorderPressure = slice.DisorderPressure,
-            LastPressureReason = $"{slice.SettlementName} starts with a guarded but fragile order balance.",
+            LastPressureReason = $"{slice.SettlementName}现有巡防支应，然街市与道路之间仍觉绷紧。",
         });
 
         if (conflictState is null)
@@ -903,15 +954,147 @@ public static class SimulationBootstrapper
         conflictState.Settlements.Add(forceState);
     }
 
+    private static SettlementTier InferStressSettlementTier(string settlementName)
+    {
+        return settlementName switch
+        {
+            "姘稿拰" => SettlementTier.PrefectureSeat,
+            "娓呮按" or "娴北" => SettlementTier.MarketTown,
+            _ => SettlementTier.CountySeat,
+        };
+    }
+
     private static SaveMigrationPipeline CreateDefaultMigrationPipeline()
     {
         SaveMigrationPipeline pipeline = new();
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 1, 2, MigrateWorldSettlementsStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 1, 2, MigrateFamilyCoreStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 1, 2, MigratePublicLifeAndRumorStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 2, 3, MigratePublicLifeAndRumorStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 3, 4, MigratePublicLifeAndRumorStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 1, 2, MigrateOfficeAndCareerStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 2, 3, MigrateOfficeAndCareerStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 1, 2, MigrateConflictAndForceStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 2, 3, MigrateConflictAndForceStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 1, 2, MigrateWarfareCampaignStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 2, 3, MigrateWarfareCampaignStateV2ToV3);
         return pipeline;
+    }
+
+    private static ModuleStateEnvelope MigrateWorldSettlementsStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(typeof(WorldSettlementsState), envelope.Payload);
+
+        foreach (SettlementStateData settlement in migratedState.Settlements)
+        {
+            if (settlement.Tier == SettlementTier.Unknown)
+            {
+                settlement.Tier = SettlementTier.CountySeat;
+            }
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        FamilyCoreStateProjection.UpgradeFromSchemaV1(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        FamilyCoreStateProjection.UpgradeFromSchemaV2ToV3(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigratePublicLifeAndRumorStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        PublicLifeAndRumorState migratedState = (PublicLifeAndRumorState)serializer.Deserialize(typeof(PublicLifeAndRumorState), envelope.Payload);
+
+        foreach (SettlementPublicLifeState settlement in migratedState.Settlements)
+        {
+            settlement.MonthlyCadenceCode ??= "legacy-cadence";
+            settlement.MonthlyCadenceLabel ??= "旧档续脉";
+            settlement.CrowdMixLabel ??= string.Empty;
+            settlement.CadenceSummary ??= string.Empty;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(PublicLifeAndRumorState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigratePublicLifeAndRumorStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        PublicLifeAndRumorState migratedState = (PublicLifeAndRumorState)serializer.Deserialize(typeof(PublicLifeAndRumorState), envelope.Payload);
+
+        foreach (SettlementPublicLifeState settlement in migratedState.Settlements)
+        {
+            settlement.DominantVenueCode ??= string.Empty;
+            settlement.DocumentaryWeight = Math.Clamp(settlement.DocumentaryWeight, 0, 100);
+            settlement.VerificationCost = Math.Clamp(settlement.VerificationCost, 0, 100);
+            settlement.MarketRumorFlow = Math.Clamp(settlement.MarketRumorFlow, 0, 100);
+            settlement.CourierRisk = Math.Clamp(settlement.CourierRisk, 0, 100);
+            settlement.ChannelSummary ??= string.Empty;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+            ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(PublicLifeAndRumorState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigratePublicLifeAndRumorStateV3ToV4(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        PublicLifeAndRumorState migratedState = (PublicLifeAndRumorState)serializer.Deserialize(typeof(PublicLifeAndRumorState), envelope.Payload);
+
+        foreach (SettlementPublicLifeState settlement in migratedState.Settlements)
+        {
+            settlement.OfficialNoticeLine ??= string.Empty;
+            settlement.StreetTalkLine ??= string.Empty;
+            settlement.RoadReportLine ??= string.Empty;
+            settlement.PrefectureDispatchLine ??= string.Empty;
+            settlement.ContentionSummary ??= string.Empty;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+            ModuleSchemaVersion = 4,
+            Payload = serializer.Serialize(typeof(PublicLifeAndRumorState), migratedState),
+        };
     }
 
     private static ModuleStateEnvelope MigrateOfficeAndCareerStateV1ToV2(ModuleStateEnvelope envelope)
@@ -924,6 +1107,20 @@ public static class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.OfficeAndCareer,
             ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOfficeAndCareerStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OfficeAndCareerState migratedState = (OfficeAndCareerState)serializer.Deserialize(typeof(OfficeAndCareerState), envelope.Payload);
+        OfficeAndCareerStateProjection.UpgradeFromSchemaV2ToV3(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OfficeAndCareer,
+            ModuleSchemaVersion = 3,
             Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
         };
     }
