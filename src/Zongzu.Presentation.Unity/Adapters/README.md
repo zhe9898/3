@@ -1,6 +1,13 @@
 # Adapter Conventions
 
-Adapters in this folder are thin surface mappers.
+Adapters in this folder are thin surface mappers grouped by shell surface.
+
+## Folder shape
+
+- `Shared/`
+  - common command and text helpers reused by multiple surfaces
+- surface folders such as `Family/`, `GreatHall/`, `Office/`, and `Warfare/`
+  - one surface-facing adapter cluster per shell lane
 
 ## What belongs here
 
