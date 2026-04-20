@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -68,6 +68,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 2, 3, MigrateWorldSettlementsStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 1, 2, MigrateFamilyCoreStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 3, 4, MigrateFamilyCoreStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 1, 2, MigratePublicLifeAndRumorStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 2, 3, MigratePublicLifeAndRumorStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 3, 4, MigratePublicLifeAndRumorStateV3ToV4);
@@ -191,6 +192,20 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.FamilyCore,
             ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV3ToV4(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        FamilyCoreStateProjection.UpgradeFromSchemaV3ToV4(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 4,
             Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
         };
     }

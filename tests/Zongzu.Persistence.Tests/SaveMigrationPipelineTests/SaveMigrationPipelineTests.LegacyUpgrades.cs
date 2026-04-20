@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Application;
@@ -115,7 +115,13 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 2
                 && step.TargetVersion == 3),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.FamilyCore
+                && step.SourceVersion == 3
+                && step.TargetVersion == 4),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(migratedState.Clans, Has.Count.EqualTo(currentState.Clans.Count));
         Assert.That(
             migratedState.Clans.All(static clan =>

@@ -63,4 +63,49 @@ public interface IFamilyCoreQueries
     ClanSnapshot GetRequiredClan(ClanId clanId);
 
     IReadOnlyList<ClanSnapshot> GetClans();
+
+    /// <summary>
+    /// PERSON_OWNERSHIP_RULES.md — FamilyCore 视角下某人的结构性归位与性格
+    /// 四元组。其他模块需要学业 / 商贸 / 武力等能力时，走各自模块的 Query，
+    /// 不得从此处取。
+    /// </summary>
+    FamilyPersonSnapshot? FindPerson(PersonId personId);
+
+    IReadOnlyList<FamilyPersonSnapshot> GetClanMembers(ClanId clanId);
+}
+
+/// <summary>
+/// LIVING_WORLD_DESIGN.md §2.2 + PERSON_OWNERSHIP_RULES.md — clan-scoped
+/// kinship view. Age / IsAlive 仍由 FamilyCore 暂存（Phase 2b 会迁出到
+/// PersonRegistry），故此快照同时投这两类字段。
+/// </summary>
+public sealed record FamilyPersonSnapshot
+{
+    public PersonId Id { get; init; }
+
+    public ClanId ClanId { get; init; }
+
+    public string GivenName { get; init; } = string.Empty;
+
+    public int AgeMonths { get; init; }
+
+    public bool IsAlive { get; init; }
+
+    public BranchPosition BranchPosition { get; init; }
+
+    public PersonId? SpouseId { get; init; }
+
+    public PersonId? FatherId { get; init; }
+
+    public PersonId? MotherId { get; init; }
+
+    public IReadOnlyList<PersonId> ChildrenIds { get; init; } = System.Array.Empty<PersonId>();
+
+    public int Ambition { get; init; }
+
+    public int Prudence { get; init; }
+
+    public int Loyalty { get; init; }
+
+    public int Sociability { get; init; }
 }

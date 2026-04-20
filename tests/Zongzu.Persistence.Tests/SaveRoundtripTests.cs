@@ -79,7 +79,7 @@ public sealed class SaveRoundtripTests
         FamilyCoreState reloadedState = (FamilyCoreState)serializer.Deserialize(
             typeof(FamilyCoreState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(reloadedState.Clans.Any(static clanState => clanState.MediationMomentum > 0), Is.True);
         Assert.That(reloadedState.Clans.Any(static clanState => string.Equals(clanState.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersMediation, System.StringComparison.Ordinal)), Is.True);
         Assert.That(reloadedState.Clans.Any(static clanState => !string.IsNullOrWhiteSpace(clanState.LastConflictOutcome)), Is.True);

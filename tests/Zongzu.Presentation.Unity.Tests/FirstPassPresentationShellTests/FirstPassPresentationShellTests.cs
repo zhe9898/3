@@ -1,0 +1,144 @@
+using System.Linq;
+using Zongzu.Contracts;
+using Zongzu.Kernel;
+using Zongzu.Presentation.Unity;
+
+namespace Zongzu.Presentation.Unity.Tests;
+
+[TestFixture]
+public sealed partial class FirstPassPresentationShellTests
+{
+    [Test]
+    public void Compose_ProjectsMonthlyPublicLifeCadenceIntoGreatHallAndDeskSandbox()
+    {
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(CreateBundle());
+
+        Assert.That(shell.GreatHall.PublicLifeSummary, Does.Contain("春社集日"));
+        Assert.That(shell.GreatHall.PublicLifeSummary, Does.Contain("客商"));
+        Assert.That(shell.GreatHall.PublicLifeSummary, Does.Contain("说法相左").Or.Contain("榜文").Or.Contain("街谈"));
+        Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
+        Assert.That(shell.DeskSandbox.Settlements[0].PublicLifeSummary, Does.Contain("春社集日"));
+        Assert.That(shell.DeskSandbox.Settlements[0].PublicLifeSummary, Does.Contain("街口茶肆"));
+        Assert.That(shell.DeskSandbox.Settlements[0].PublicLifeSummary, Does.Contain("榜文").Or.Contain("街谈").Or.Contain("路报"));
+    }
+
+    [Test]
+    public void Compose_ProjectsGreatHallCountsDateHashAndCoreSummaries()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.Notifications =
+        [
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(1),
+                CreatedAt = new GameDate(1200, 2),
+                Tier = NotificationTier.Urgent,
+                Surface = NarrativeSurface.GreatHall,
+                Title = "急报一",
+                Summary = "急事一件。",
+            },
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(2),
+                CreatedAt = new GameDate(1200, 2),
+                Tier = NotificationTier.Consequential,
+                Surface = NarrativeSurface.GreatHall,
+                Title = "缓报二",
+                Summary = "缓事一件。",
+            },
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(3),
+                CreatedAt = new GameDate(1200, 2),
+                Tier = NotificationTier.Background,
+                Surface = NarrativeSurface.DeskSandbox,
+                Title = "杂讯三",
+                Summary = "杂讯一件。",
+            },
+        ];
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+
+        Assert.That(shell.GreatHall.CurrentDateLabel, Is.EqualTo("1200-02"));
+        Assert.That(shell.GreatHall.ReplayHash, Is.EqualTo("cadence-hash"));
+        Assert.That(shell.GreatHall.UrgentCount, Is.EqualTo(1));
+        Assert.That(shell.GreatHall.ConsequentialCount, Is.EqualTo(1));
+        Assert.That(shell.GreatHall.BackgroundCount, Is.EqualTo(1));
+        Assert.That(shell.GreatHall.EducationSummary, Does.Contain("塾馆在读0人"));
+        Assert.That(shell.GreatHall.TradeSummary, Does.Contain("市账1册"));
+        Assert.That(shell.GreatHall.TradeSummary, Does.Contain("得利1支"));
+        Assert.That(shell.GreatHall.LeadNoticeTitle, Is.EqualTo("急报一"));
+    }
+
+    [Test]
+    public void Compose_ProjectsWarfareAftermathFallbacksWhenNoCampaignAftermathExists()
+    {
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(CreateBundle());
+
+        Assert.That(shell.GreatHall.AftermathDocketSummary, Does.Contain("尚无战后案牍"));
+        Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
+        Assert.That(shell.DeskSandbox.Settlements[0].AftermathSummary, Is.EqualTo("战后案牍未起。"));
+        Assert.That(shell.Warfare.Summary, Does.Contain("暂无军务"));
+    }
+
+    [Test]
+    public void Compose_ProjectsFamilyCouncilCommandsAndReceipts()
+    {
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(CreateBundle());
+
+        Assert.That(shell.FamilyCouncil.Clans, Has.Count.EqualTo(1));
+        Assert.That(shell.GreatHall.FamilySummary, Does.Contain("承祧").Or.Contain("婚议").Or.Contain("举哀"));
+        Assert.That(shell.GreatHall.FamilySummary, Does.Contain("宜先议定承祧"));
+        Assert.That(shell.FamilyCouncil.Clans[0].LifecycleSummary, Does.Contain("议亲定婚").And.Contain("承祧"));
+        Assert.That(shell.FamilyCouncil.Clans[0].LifecycleSummary, Does.Contain("眼下宜先议定承祧"));
+        Assert.That(shell.FamilyCouncil.Clans[0].ClanName, Is.EqualTo("清河张氏"));
+        Assert.That(shell.FamilyCouncil.CommandAffordances, Has.Count.EqualTo(2));
+        Assert.That(shell.FamilyCouncil.CommandAffordances.Any(static command => command.CommandName == PlayerCommandNames.InviteClanEldersMediation), Is.True);
+        Assert.That(shell.FamilyCouncil.CommandAffordances.Any(static command => command.CommandName == PlayerCommandNames.DesignateHeirPolicy), Is.True);
+        Assert.That(shell.FamilyCouncil.RecentReceipts, Has.Count.EqualTo(1));
+        Assert.That(shell.FamilyCouncil.RecentReceipts[0].OutcomeSummary, Does.Contain("族老"));
+        Assert.That(shell.FamilyCouncil.Summary, Does.Contain("婚事").And.Contain("承祧"));
+        Assert.That(shell.FamilyCouncil.Summary, Does.Contain("眼下最宜先命清河张氏议定承祧。"));
+    }
+
+    [Test]
+    public void Compose_ProjectsLineageTilesForHeirAndNonHeirClans()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.Clans =
+        [
+            bundle.Clans[0],
+            new ClanSnapshot
+            {
+                Id = new ClanId(2),
+                ClanName = "B房李氏",
+                HomeSettlementId = new SettlementId(1),
+                Prestige = 41,
+                SupportReserve = 27,
+                BranchTension = 18,
+                InheritancePressure = 22,
+                SeparationPressure = 14,
+                MediationMomentum = 11,
+                MarriageAlliancePressure = 19,
+                MarriageAllianceValue = 12,
+                HeirSecurity = 9,
+                ReproductivePressure = 23,
+                MourningLoad = 0,
+                LastLifecycleCommandLabel = "缓议婚帖",
+                LastLifecycleOutcome = "暂缓一月再议。",
+                LastConflictCommandLabel = string.Empty,
+                LastConflictOutcome = string.Empty,
+            },
+        ];
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+
+        Assert.That(shell.Lineage.Clans, Has.Count.EqualTo(2));
+        ClanTileViewModel withHeir = shell.Lineage.Clans.Single(clan => clan.ClanName == "清河张氏");
+        ClanTileViewModel withoutHeir = shell.Lineage.Clans.Single(clan => clan.ClanName == "B房李氏");
+        Assert.That(withHeir.StatusText, Is.EqualTo("承祧之人已入谱。"));
+        Assert.That(withoutHeir.StatusText, Is.EqualTo("宗房暂未举出承祧人。"));
+        Assert.That(withoutHeir.SupportReserve, Is.EqualTo(27));
+    }
+
+}

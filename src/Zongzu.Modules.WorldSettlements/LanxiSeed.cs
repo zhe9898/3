@@ -40,6 +40,7 @@ public static class LanxiSeed
         SettlementId EastVillage,
         SettlementId SouthVillage,
         SettlementId Ferry,
+        SettlementId CanalJunction,
         SettlementId Granary,
         SettlementId QingfengTemple,
         SettlementId SaltCache,
@@ -62,6 +63,7 @@ public static class LanxiSeed
         SettlementId eastVillage = KernelIdAllocator.NextSettlement(kernelState);
         SettlementId southVillage = KernelIdAllocator.NextSettlement(kernelState);
         SettlementId ferry = KernelIdAllocator.NextSettlement(kernelState);
+        SettlementId canalJunction = KernelIdAllocator.NextSettlement(kernelState);
         SettlementId granary = KernelIdAllocator.NextSettlement(kernelState);
         SettlementId temple = KernelIdAllocator.NextSettlement(kernelState);
         SettlementId saltCache = KernelIdAllocator.NextSettlement(kernelState);
@@ -82,7 +84,7 @@ public static class LanxiSeed
         state.Settlements.Add(BuildNode(
             market, "埠头镇", SettlementTier.MarketTown, SettlementNodeKind.MarketTown,
             NodeVisibility.StateVisible, security: 45, prosperity: 58,
-            neighbors: new[] { county, ferry, temple },
+            neighbors: new[] { county, ferry, temple, canalJunction },
             parent: county));
 
         state.Settlements.Add(BuildNode(
@@ -106,7 +108,17 @@ public static class LanxiSeed
         state.Settlements.Add(BuildNode(
             ferry, "南渡津", SettlementTier.VillageCluster, SettlementNodeKind.Ferry,
             NodeVisibility.StateVisible, security: 42, prosperity: 40,
-            neighbors: new[] { market, southVillage },
+            neighbors: new[] { market, southVillage, canalJunction },
+            parent: county));
+
+        // SPEC §12.2 canal-junction anchor — required so FloodRisk breach
+        // signals reach all three streams (NoticeBoard via the junction,
+        // MarketTalk via the ferry, TempleWhisper via Qingfeng temple),
+        // and so §22.1 three-stream competition assertion can hold.
+        state.Settlements.Add(BuildNode(
+            canalJunction, "兰江闸口", SettlementTier.VillageCluster, SettlementNodeKind.CanalJunction,
+            NodeVisibility.StateVisible, security: 40, prosperity: 42,
+            neighbors: new[] { market, ferry },
             parent: county));
 
         state.Settlements.Add(BuildNode(
@@ -181,7 +193,7 @@ public static class LanxiSeed
 
         return new LanxiHandles(
             county, market, zhangHall, eastVillage, southVillage, ferry,
-            granary, temple, saltCache,
+            canalJunction, granary, temple, saltCache,
             grainEast, grainSouth, marketMain, dispatchHub, saltSmuggle);
     }
 

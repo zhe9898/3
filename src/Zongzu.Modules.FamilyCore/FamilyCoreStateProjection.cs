@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using Zongzu.Contracts;
+using Zongzu.Kernel;
 
 namespace Zongzu.Modules.FamilyCore;
 
@@ -84,5 +86,44 @@ public static class FamilyCoreStateProjection
         }
 
         return 28;
+    }
+
+    /// <summary>
+    /// Phase 2a schema v3→v4：为旧存档补齐 FamilyPersonState 新字段。
+    /// <list type="bullet">
+    ///   <item>Heir → <see cref="BranchPosition.MainLineHeir"/>；其余在世成人 →
+    ///         <see cref="BranchPosition.BranchMember"/>；在世幼童 →
+    ///         <see cref="BranchPosition.DependentKin"/>。</item>
+    ///   <item>性格四元组 Ambition/Prudence/Loyalty/Sociability 缺省 50。</item>
+    ///   <item>ChildrenIds 保持空（血亲图谱在后续 phase 补）。</item>
+    /// </list>
+    /// </summary>
+    public static void UpgradeFromSchemaV3ToV4(FamilyCoreState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        System.Collections.Generic.HashSet<PersonId> heirIds = state.Clans
+            .Where(clan => clan.HeirPersonId is not null)
+            .Select(clan => clan.HeirPersonId!.Value)
+            .ToHashSet();
+
+        foreach (FamilyPersonState person in state.People)
+        {
+            if (person.BranchPosition == BranchPosition.Unknown)
+            {
+                person.BranchPosition = heirIds.Contains(person.Id)
+                    ? BranchPosition.MainLineHeir
+                    : person.AgeMonths >= 16 * 12
+                        ? BranchPosition.BranchMember
+                        : BranchPosition.DependentKin;
+            }
+
+            if (person.Ambition == 0) person.Ambition = 50;
+            if (person.Prudence == 0) person.Prudence = 50;
+            if (person.Loyalty == 0) person.Loyalty = 50;
+            if (person.Sociability == 0) person.Sociability = 50;
+
+            person.ChildrenIds ??= new System.Collections.Generic.List<PersonId>();
+        }
     }
 }

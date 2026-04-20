@@ -44,8 +44,11 @@ internal static class SeasonBandAdvancer
 
         // Snapshot imperial before decay + cross-axis apply so we can detect
         // whether an external injection (IImperialEventTestHarness) or the
-        // monthly decay shifted the rhythm enough to announce.
-        ImperialBandData previousImperial = CloneImperial(season.Imperial);
+        // monthly decay shifted the rhythm enough to announce. Compared
+        // against the persisted "last-announced" baseline — not the start
+        // of this method — so an inject-then-decay in a single month still
+        // fires the announcement instead of cancelling itself out.
+        ImperialBandData previousImperial = CloneImperial(season.PreviousAnnouncedImperial);
 
         AgrarianPhase previousPhase = season.AgrarianPhase;
         season.AgrarianPhase = ResolveAgrarianPhase(date.Month);
@@ -96,6 +99,9 @@ internal static class SeasonBandAdvancer
                 WorldSettlementsEventNames.ImperialRhythmChanged,
                 $"皇权节律有变：哀 {season.Imperial.MourningInterruption}、赦 {season.Imperial.AmnestyWave}、储 {season.Imperial.SuccessionUncertainty}。",
                 "imperial");
+            // Latch the baseline only when we actually announced — avoids
+            // silently drifting the reference point during quiet months.
+            season.PreviousAnnouncedImperial = CloneImperial(season.Imperial);
         }
 
         bool floodBreached = season.FloodRisk >= FloodRiskUrgentThreshold;

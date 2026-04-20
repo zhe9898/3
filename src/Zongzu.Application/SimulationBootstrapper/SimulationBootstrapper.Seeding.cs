@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -62,6 +62,11 @@ public static partial class SimulationBootstrapper
             GivenName = "张远",
             AgeMonths = 32 * 12,
             IsAlive = true,
+            BranchPosition = BranchPosition.MainLineHeir,
+            Ambition = 55,
+            Prudence = 52,
+            Loyalty = 60,
+            Sociability = 48,
         });
 
         // Phase 1b: register the clan heir in the Kernel-layer PersonRegistry
@@ -462,6 +467,11 @@ public static partial class SimulationBootstrapper
             GivenName = slice.HeirName,
             AgeMonths = 30 * 12,
             IsAlive = true,
+            BranchPosition = BranchPosition.MainLineHeir,
+            Ambition = 50,
+            Prudence = 50,
+            Loyalty = 50,
+            Sociability = 50,
         });
 
         populationState.Households.Add(new PopulationHouseholdState

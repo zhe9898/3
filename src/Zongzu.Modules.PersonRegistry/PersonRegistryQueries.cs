@@ -51,4 +51,30 @@ internal sealed class PersonRegistryQueries : IPersonRegistryQueries
             .OrderBy(static p => p.Id.Value)
             .ToArray();
     }
+
+    public bool IsAlive(PersonId id)
+    {
+        foreach (PersonRecord candidate in _state.Persons)
+        {
+            if (candidate.Id.Equals(id))
+            {
+                return candidate.IsAlive;
+            }
+        }
+
+        return false;
+    }
+
+    public int GetAgeMonths(PersonId id, GameDate currentDate)
+    {
+        foreach (PersonRecord candidate in _state.Persons)
+        {
+            if (candidate.Id.Equals(id))
+            {
+                return PersonRegistryModule.ComputeAgeMonths(candidate.BirthDate, currentDate);
+            }
+        }
+
+        return -1;
+    }
 }

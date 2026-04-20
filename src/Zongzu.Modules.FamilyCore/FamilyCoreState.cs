@@ -77,4 +77,35 @@ public sealed class FamilyPersonState
     public int AgeMonths { get; set; }
 
     public bool IsAlive { get; set; }
+
+    // ── Phase 2a — clan-scoped kinship (LIVING_WORLD_DESIGN.md §2.2,
+    // PERSON_OWNERSHIP_RULES.md). FamilyCore 只持有属于或曾属本族之人的亲属
+    // 关系；非族人（流民、外族官、独立匪首）不录此处。
+
+    /// <summary>
+    /// 本族房支归位。默认 <see cref="BranchPosition.Unknown"/>；种子与迁移会
+    /// 补值。后续 phase 的承祧 / 房长继任逻辑以此为入口。
+    /// </summary>
+    public BranchPosition BranchPosition { get; set; }
+
+    public PersonId? SpouseId { get; set; }
+
+    public PersonId? FatherId { get; set; }
+
+    public PersonId? MotherId { get; set; }
+
+    /// <summary>族内子女 PersonId 列表。仅限本族可见血亲。</summary>
+    public System.Collections.Generic.List<PersonId> ChildrenIds { get; set; } = new();
+
+    // ── Phase 2a — FamilyPersonality（四元组 0..100）。权威归 FamilyCore
+    // （PERSON_OWNERSHIP_RULES.md 能力表：性格影响宗族内自主行为）。
+    // Phase 2a 仅声明字段与种子默认 50；性格漂移规则留到后续 phase。
+
+    public int Ambition { get; set; }
+
+    public int Prudence { get; set; }
+
+    public int Loyalty { get; set; }
+
+    public int Sociability { get; set; }
 }

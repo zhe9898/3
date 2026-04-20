@@ -52,6 +52,8 @@ public sealed class FamilyCoreModuleTests
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
 
         ModuleExecutionContext context = new(
             new GameDate(1200, 1),
@@ -109,6 +111,8 @@ public sealed class FamilyCoreModuleTests
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
 
         ModuleExecutionContext context = new(
             new GameDate(1200, 1),
@@ -222,6 +226,8 @@ public sealed class FamilyCoreModuleTests
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
 
         ModuleExecutionContext context = new(
             new GameDate(1200, 2),
@@ -277,6 +283,8 @@ public sealed class FamilyCoreModuleTests
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
 
         ModuleExecutionContext context = new(
             new GameDate(1200, 5),
@@ -341,6 +349,8 @@ public sealed class FamilyCoreModuleTests
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
 
         ModuleExecutionContext context = new(
             new GameDate(1200, 6),
@@ -397,6 +407,9 @@ public sealed class FamilyCoreModuleTests
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        RecordingPersonRegistryCommands registryCommands = new();
+        queries.Register<IPersonRegistryCommands>(registryCommands);
 
         ModuleExecutionContext context = new(
             new GameDate(1200, 7),
@@ -411,6 +424,11 @@ public sealed class FamilyCoreModuleTests
         Assert.That(familyState.People.Count(static person => person.IsAlive), Is.EqualTo(2));
         Assert.That(familyState.Clans[0].ReproductivePressure, Is.LessThan(74));
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.BirthRegistered), Is.True);
+        // Phase 2b.1 收口: FamilyCore births must flow through PersonRegistry.Register
+        // so identity ownership stays in one place (PERSON_OWNERSHIP_RULES.md §249).
+        Assert.That(registryCommands.RegisteredIds, Has.Count.EqualTo(1));
+        PersonId registeredNewbornId = registryCommands.RegisteredIds[0];
+        Assert.That(familyState.People.Any(person => person.Id == registeredNewbornId && person.ClanId.Value == 1), Is.True);
     }
 
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
@@ -435,6 +453,41 @@ public sealed class FamilyCoreModuleTests
         public IReadOnlyList<CampaignFrontSnapshot> GetCampaigns()
         {
             return _campaigns;
+        }
+    }
+    private sealed class EmptyPersonRegistryQueries : IPersonRegistryQueries
+    {
+        public bool TryGetPerson(PersonId id, out PersonRecord person)
+        {
+            person = null!;
+            return false;
+        }
+
+        public IReadOnlyList<PersonRecord> GetAllPersons() => [];
+
+        public IReadOnlyList<PersonRecord> GetPersonsByFidelityRing(FidelityRing ring) => [];
+
+        public IReadOnlyList<PersonRecord> GetLivingPersons() => [];
+
+        public bool IsAlive(PersonId id) => false;
+
+        public int GetAgeMonths(PersonId id, GameDate currentDate) => -1;
+    }
+
+    private sealed class RecordingPersonRegistryCommands : IPersonRegistryCommands
+    {
+        public List<PersonId> RegisteredIds { get; } = new();
+
+        public bool Register(
+            ModuleExecutionContext context,
+            PersonId id,
+            string displayName,
+            GameDate birthDate,
+            PersonGender gender,
+            FidelityRing fidelityRing)
+        {
+            RegisteredIds.Add(id);
+            return true;
         }
     }
 }

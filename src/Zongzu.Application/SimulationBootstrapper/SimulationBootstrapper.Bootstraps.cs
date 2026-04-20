@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -72,6 +72,35 @@ public static partial class SimulationBootstrapper
 
         SeedFixture fixture = SeedMinimalWorld(simulation);
         SeedM2LiteWorld(simulation, fixture);
+        simulation.RefreshReplayHash();
+        return simulation;
+    }
+
+    /// <summary>
+    /// SPATIAL_SKELETON_SPEC §22 — dedicated bootstrap for the Phase 1c
+    /// living-world liveness tests. Uses <see cref="LanxiSeed"/> to build
+    /// the full 9-node / 5-route Jiangnan water-network county with the
+    /// March-1200 initial season band, instead of the single-settlement
+    /// <c>SeedMinimalWorld</c> fixture the rest of the test corpus depends on.
+    ///
+    /// <para>Only <c>WorldSettlements</c> is enabled: liveness is a property
+    /// of the spatial skeleton itself, independent of Family / Population /
+    /// Trade layers. Keeping the surface narrow also lets the test assert
+    /// that no other module mutated <c>WorldSettlementsState</c>.</para>
+    /// </summary>
+    public static GameSimulation CreatePhase1cLivenessBootstrap(long seed)
+    {
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.WorldSettlements, FeatureMode.Full);
+
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1200, 3),
+            KernelState.Create(seed),
+            manifest,
+            [new WorldSettlementsModule()]);
+
+        WorldSettlementsState worldState = simulation.GetMutableModuleState<WorldSettlementsState>(KnownModuleKeys.WorldSettlements);
+        LanxiSeed.Seed(worldState, simulation.KernelState);
         simulation.RefreshReplayHash();
         return simulation;
     }

@@ -113,6 +113,12 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
         SeasonBandAdvancer.MonthAdvanceReport report =
             SeasonBandAdvancer.AdvanceMonth(scope.State.CurrentSeason, scope);
 
+        // SPEC §22.1 / STATIC_BACKEND_FIRST.md — one live pressure chain,
+        // in-module only: routes react to the season band their own module
+        // just advanced. Must run after SeasonBandAdvancer so routes see the
+        // new CanalWindow / FloodRisk.
+        RouteAdvancer.AdvanceMonth(scope.State, scope);
+
         EmitCanalAndFloodSignals(scope.State, report);
     }
 
@@ -322,11 +328,10 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
         public SeasonBandSnapshot GetCurrentSeason() => CloneSeason(_state.CurrentSeason);
 
-        // Phase 1c: locus scoring lands in §14.2's RunXun/RunMonth step
-        // together with season-band advancement. Until then, no locus is
-        // elected. SPEC §8 allows null before the first tick has run.
-        // TODO(Phase 1c §14.2): implement deterministic locus scoring.
-        public LocusSnapshot? GetCurrentLocus() => null;
+        // SPATIAL_SKELETON_SPEC §6.4 / §8 — deterministic locus cascade.
+        // Pure function of current state; see LocusScorer for the priority
+        // ladder. Null only when the seed has produced no settlements yet.
+        public LocusSnapshot? GetCurrentLocus() => LocusScorer.Score(_state);
 
         public IReadOnlyList<PublicSurfaceSignal> GetCurrentPulseSignals()
         {

@@ -75,6 +75,49 @@ public interface IPersonRegistryQueries
     IReadOnlyList<PersonRecord> GetPersonsByFidelityRing(FidelityRing ring);
 
     IReadOnlyList<PersonRecord> GetLivingPersons();
+
+    /// <summary>
+    /// Returns <see langword="true"/> only when the person exists in the
+    /// registry and <see cref="PersonRecord.IsAlive"/> is set. Returns
+    /// <see langword="false"/> for unknown persons so callers can distinguish
+    /// "not registered" from "alive" via <see cref="TryGetPerson"/>.
+    /// </summary>
+    bool IsAlive(PersonId id);
+
+    /// <summary>
+    /// Computes the person's current age in months using their registered
+    /// <see cref="PersonRecord.BirthDate"/>. Returns <c>-1</c> when the person
+    /// is not registered so domain modules can fall back to their own
+    /// local age mirror during the transitional period.
+    /// </summary>
+    int GetAgeMonths(PersonId id, GameDate currentDate);
+}
+
+/// <summary>
+/// Identity-creation write surface. Domain modules that create new persons
+/// (FamilyCore on birth, PopulationAndHouseholds on immigration, etc.) call
+/// <see cref="Register"/> synchronously so PersonRegistry remains the single
+/// identity-of-record — see <c>PERSON_OWNERSHIP_RULES.md §249</c>.
+///
+/// This is deliberately narrow: only identity-shaped fields are accepted.
+/// Domain state (clan membership, health, skills) is still the caller's
+/// responsibility and must be written to the caller's own module state.
+/// </summary>
+public interface IPersonRegistryCommands
+{
+    /// <summary>
+    /// Registers a new person. Returns <see langword="false"/> when a person
+    /// with the same <paramref name="id"/> is already registered — callers
+    /// should treat that as a programmer error, not as a retry signal.
+    /// Emits <c>PersonCreated</c> on the execution scope on success.
+    /// </summary>
+    bool Register(
+        ModuleExecutionContext context,
+        PersonId id,
+        string displayName,
+        GameDate birthDate,
+        PersonGender gender,
+        FidelityRing fidelityRing);
 }
 
 public static class PersonRegistryEventNames

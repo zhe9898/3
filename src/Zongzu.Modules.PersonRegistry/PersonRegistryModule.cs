@@ -67,6 +67,7 @@ public sealed class PersonRegistryModule : ModuleRunner<PersonRegistryState>
     public override void RegisterQueries(PersonRegistryState state, QueryRegistry queries)
     {
         queries.Register<IPersonRegistryQueries>(new PersonRegistryQueries(state));
+        queries.Register<IPersonRegistryCommands>(new PersonRegistryCommands(state));
     }
 
     public override void RunMonth(ModuleExecutionScope<PersonRegistryState> scope)

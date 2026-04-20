@@ -166,6 +166,37 @@ public sealed class GameSimulation
         return _stateStore.GetRequired<TState>(moduleKey);
     }
 
+    /// <summary>
+    /// Test-only escape hatch: resolve a query published by the simulation's
+    /// enabled modules. Mirrors how <c>PresentationReadModelBuilder</c>
+    /// constructs its own <see cref="QueryRegistry"/> per read — keeps tests
+    /// from needing to know per-module state shapes.
+    /// </summary>
+    public TQuery GetQueryForTesting<TQuery>()
+        where TQuery : class
+    {
+        QueryRegistry queries = new();
+        foreach (IModuleRunner module in _modules
+                     .OrderBy(static module => module.Phase)
+                     .ThenBy(static module => module.ExecutionOrder)
+                     .ThenBy(static module => module.ModuleKey, StringComparer.Ordinal))
+        {
+            if (!FeatureManifest.IsEnabled(module.ModuleKey))
+            {
+                continue;
+            }
+
+            if (!_stateStore.States.TryGetValue(module.ModuleKey, out object? state) || state is null)
+            {
+                continue;
+            }
+
+            module.RegisterQueries(state, queries);
+        }
+
+        return queries.GetRequired<TQuery>();
+    }
+
     internal bool TryGetModuleState(string moduleKey, out object? state)
     {
         return _stateStore.States.TryGetValue(moduleKey, out state);

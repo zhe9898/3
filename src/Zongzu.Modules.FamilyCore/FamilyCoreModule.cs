@@ -49,7 +49,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
 
-    public override int ModuleSchemaVersion => 3;
+    public override int ModuleSchemaVersion => 4;
 
     public override SimulationPhase Phase => SimulationPhase.FamilyStructure;
 
@@ -76,11 +76,13 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     public override void RunXun(ModuleExecutionScope<FamilyCoreState> scope)
     {
         IWorldSettlementsQueries settlementsQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        IPersonRegistryQueries registryQueries = scope.GetRequiredQuery<IPersonRegistryQueries>();
+        GameDate currentDate = scope.Context.CurrentDate;
 
         foreach (ClanStateData clan in scope.State.Clans.OrderBy(static clan => clan.Id.Value))
         {
             SettlementSnapshot homeSettlement = settlementsQueries.GetRequiredSettlement(clan.HomeSettlementId);
-            FamilyMonthSignals signals = AnalyzeClan(scope.State, clan);
+            FamilyMonthSignals signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
             ApplyXunClanPulse(scope.Context.CurrentXun, clan, signals, homeSettlement);
         }
     }
@@ -88,12 +90,25 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     public override void RunMonth(ModuleExecutionScope<FamilyCoreState> scope)
     {
         IWorldSettlementsQueries settlementsQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        IPersonRegistryQueries registryQueries = scope.GetRequiredQuery<IPersonRegistryQueries>();
+        GameDate currentDate = scope.Context.CurrentDate;
 
+        // Age progression for persons not yet registered in PersonRegistry
+        // (clan-internal mirror). Registered persons are aged by PersonRegistry
+        // in Phase 0 and FamilyCore reads via IPersonRegistryQueries.GetAgeMonths.
+        // See PERSON_OWNERSHIP_RULES.md — authority flows from PersonRegistry.
         int peopleAged = 0;
         foreach (FamilyPersonState person in scope.State.People.OrderBy(static person => person.Id.Value))
         {
-            if (!person.IsAlive)
+            if (!IsPersonAlive(person, registryQueries))
             {
+                continue;
+            }
+
+            if (registryQueries.TryGetPerson(person.Id, out _))
+            {
+                // Registry is authoritative for this person; local mirror is unused for age.
+                peopleAged += 1;
                 continue;
             }
 
@@ -110,20 +125,20 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         foreach (ClanStateData clan in scope.State.Clans.OrderBy(static clan => clan.Id.Value))
         {
             SettlementSnapshot homeSettlement = settlementsQueries.GetRequiredSettlement(clan.HomeSettlementId);
-            FamilyMonthSignals signals = AnalyzeClan(scope.State, clan);
+            FamilyMonthSignals signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 
             if (TryArrangeAutonomousMarriage(scope, clan, signals))
             {
-                signals = AnalyzeClan(scope.State, clan);
+                signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
             }
 
-            bool hadDeathThisMonth = TryResolveClanDeath(scope, clan, signals);
-            signals = AnalyzeClan(scope.State, clan);
+            bool hadDeathThisMonth = TryResolveClanDeath(scope, clan, signals, registryQueries);
+            signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 
             bool hadBirthThisMonth = TryResolveClanBirth(scope, clan, signals);
             if (hadBirthThisMonth)
             {
-                signals = AnalyzeClan(scope.State, clan);
+                signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
             }
 
             int oldPrestige = clan.Prestige;
@@ -332,24 +347,55 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         }
     }
 
-    private static FamilyMonthSignals AnalyzeClan(FamilyCoreState state, ClanStateData clan)
+    private static FamilyMonthSignals AnalyzeClan(
+        FamilyCoreState state,
+        ClanStateData clan,
+        IPersonRegistryQueries registryQueries,
+        GameDate currentDate)
     {
-        FamilyPersonState[] livingPeople = state.People
-            .Where(person => person.ClanId == clan.Id && person.IsAlive)
-            .OrderByDescending(static person => person.AgeMonths)
-            .ThenBy(static person => person.Id.Value)
+        FamilyPersonAge[] livingPeople = state.People
+            .Where(person => person.ClanId == clan.Id && IsPersonAlive(person, registryQueries))
+            .Select(person => new FamilyPersonAge(person, GetAgeMonths(person, registryQueries, currentDate)))
+            .OrderByDescending(static entry => entry.AgeMonths)
+            .ThenBy(static entry => entry.Person.Id.Value)
             .ToArray();
 
-        FamilyPersonState? livingHeir = clan.HeirPersonId is null
-            ? null
-            : livingPeople.SingleOrDefault(person => person.Id == clan.HeirPersonId.Value);
+        FamilyPersonAge? livingHeir = null;
+        if (clan.HeirPersonId is not null)
+        {
+            PersonId heirId = clan.HeirPersonId.Value;
+            foreach (FamilyPersonAge entry in livingPeople)
+            {
+                if (entry.Person.Id == heirId)
+                {
+                    livingHeir = entry;
+                    break;
+                }
+            }
+        }
 
-        int adultCount = livingPeople.Count(static person => person.AgeMonths >= AdultAgeMonths && person.AgeMonths < ElderAgeMonths);
-        int childCount = livingPeople.Count(static person => person.AgeMonths < AdultAgeMonths);
-        int elderCount = livingPeople.Count(static person => person.AgeMonths >= ElderAgeMonths);
-        int infantCount = livingPeople.Count(static person => person.AgeMonths <= InfantAgeMonths);
+        int adultCount = livingPeople.Count(static entry => entry.AgeMonths >= AdultAgeMonths && entry.AgeMonths < ElderAgeMonths);
+        int childCount = livingPeople.Count(static entry => entry.AgeMonths < AdultAgeMonths);
+        int elderCount = livingPeople.Count(static entry => entry.AgeMonths >= ElderAgeMonths);
+        int infantCount = livingPeople.Count(static entry => entry.AgeMonths <= InfantAgeMonths);
 
         return new FamilyMonthSignals(livingPeople, livingHeir, adultCount, childCount, elderCount, infantCount);
+    }
+
+    private static bool IsPersonAlive(FamilyPersonState person, IPersonRegistryQueries registryQueries)
+    {
+        if (registryQueries.TryGetPerson(person.Id, out PersonRecord record))
+        {
+            return record.IsAlive;
+        }
+
+        return person.IsAlive;
+    }
+
+    private static int GetAgeMonths(FamilyPersonState person, IPersonRegistryQueries registryQueries, GameDate currentDate)
+    {
+        int registryAge = registryQueries.GetAgeMonths(person.Id, currentDate);
+        return registryAge >= 0 ? registryAge : person.AgeMonths;
     }
 
     private static bool TryArrangeAutonomousMarriage(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals)
@@ -387,13 +433,31 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         }
 
         PersonId newbornId = KernelIdAllocator.NextPerson(scope.Context.KernelState);
+        string newbornName = $"{clan.ClanName}新丁{newbornId.Value}";
+        // Register identity first (PersonRegistry is authoritative for age and
+        // IsAlive since Phase 2b). FamilyCore still owns clan-scoped kinship
+        // and personality.
+        IPersonRegistryCommands registryCommands = scope.GetRequiredQuery<IPersonRegistryCommands>();
+        registryCommands.Register(
+            scope.Context,
+            newbornId,
+            newbornName,
+            scope.Context.CurrentDate,
+            PersonGender.Unspecified,
+            FidelityRing.Local);
+
         scope.State.People.Add(new FamilyPersonState
         {
             Id = newbornId,
             ClanId = clan.Id,
-            GivenName = $"新丁{newbornId.Value}",
+            GivenName = newbornName,
             AgeMonths = 0,
             IsAlive = true,
+            BranchPosition = BranchPosition.DependentKin,
+            Ambition = 50,
+            Prudence = 50,
+            Loyalty = 50,
+            Sociability = 50,
         });
 
         clan.ReproductivePressure = Math.Max(0, clan.ReproductivePressure - 26);
@@ -407,19 +471,31 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         return true;
     }
 
-    private static bool TryResolveClanDeath(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals)
+    private static bool TryResolveClanDeath(
+        ModuleExecutionScope<FamilyCoreState> scope,
+        ClanStateData clan,
+        FamilyMonthSignals signals,
+        IPersonRegistryQueries registryQueries)
     {
-        FamilyPersonState? deathTarget = signals.LivingPeople
-            .Where(person => person.AgeMonths >= DeathAgeMonths)
-            .OrderByDescending(static person => person.AgeMonths)
-            .ThenBy(static person => person.Id.Value)
-            .FirstOrDefault();
+        FamilyPersonAge? deathEntry = null;
+        foreach (FamilyPersonAge entry in signals.LivingPeople
+            .Where(entry => entry.AgeMonths >= DeathAgeMonths)
+            .OrderByDescending(static entry => entry.AgeMonths)
+            .ThenBy(static entry => entry.Person.Id.Value))
+        {
+            deathEntry = entry;
+            break;
+        }
 
-        if (deathTarget is null)
+        if (deathEntry is null)
         {
             return false;
         }
 
+        FamilyPersonState deathTarget = deathEntry.Value.Person;
+        int deathAgeMonths = deathEntry.Value.AgeMonths;
+        // Keep the local mirror in sync. PersonRegistry consolidates the
+        // cause-specific ClanMemberDied emission below into PersonDeceased.
         deathTarget.IsAlive = false;
         bool wasHeir = clan.HeirPersonId == deathTarget.Id;
         if (wasHeir)
@@ -430,7 +506,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         clan.MourningLoad = Math.Clamp(clan.MourningLoad + 24, 0, 100);
         clan.InheritancePressure = Math.Clamp(clan.InheritancePressure + (wasHeir ? 18 : 8), 0, 100);
         clan.SeparationPressure = Math.Clamp(clan.SeparationPressure + (wasHeir ? 8 : 2), 0, 100);
-        if (deathTarget.AgeMonths < AdultAgeMonths)
+        if (deathAgeMonths < AdultAgeMonths)
         {
             clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 10, 0, 100);
         }
@@ -509,11 +585,11 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         {
             score = 18;
         }
-        else if (signals.LivingHeir.AgeMonths >= SecureHeirAgeMonths)
+        else if (signals.LivingHeir.Value.AgeMonths >= SecureHeirAgeMonths)
         {
             score = 72;
         }
-        else if (signals.LivingHeir.AgeMonths >= AdultAgeMonths)
+        else if (signals.LivingHeir.Value.AgeMonths >= AdultAgeMonths)
         {
             score = 54;
         }
@@ -610,6 +686,42 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 .ToArray();
         }
 
+        public FamilyPersonSnapshot? FindPerson(PersonId personId)
+        {
+            FamilyPersonState? person = _state.People.SingleOrDefault(person => person.Id == personId);
+            return person is null ? null : ClonePerson(person);
+        }
+
+        public IReadOnlyList<FamilyPersonSnapshot> GetClanMembers(ClanId clanId)
+        {
+            return _state.People
+                .Where(person => person.ClanId == clanId)
+                .OrderBy(static person => person.Id.Value)
+                .Select(ClonePerson)
+                .ToArray();
+        }
+
+        private static FamilyPersonSnapshot ClonePerson(FamilyPersonState person)
+        {
+            return new FamilyPersonSnapshot
+            {
+                Id = person.Id,
+                ClanId = person.ClanId,
+                GivenName = person.GivenName,
+                AgeMonths = person.AgeMonths,
+                IsAlive = person.IsAlive,
+                BranchPosition = person.BranchPosition,
+                SpouseId = person.SpouseId,
+                FatherId = person.FatherId,
+                MotherId = person.MotherId,
+                ChildrenIds = person.ChildrenIds.ToArray(),
+                Ambition = person.Ambition,
+                Prudence = person.Prudence,
+                Loyalty = person.Loyalty,
+                Sociability = person.Sociability,
+            };
+        }
+
         private static ClanSnapshot Clone(FamilyCoreState state, ClanStateData clan)
         {
             int infantCount = state.People.Count(person =>
@@ -650,10 +762,12 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     }
 
     private readonly record struct FamilyMonthSignals(
-        IReadOnlyList<FamilyPersonState> LivingPeople,
-        FamilyPersonState? LivingHeir,
+        IReadOnlyList<FamilyPersonAge> LivingPeople,
+        FamilyPersonAge? LivingHeir,
         int AdultCount,
         int ChildCount,
         int ElderCount,
         int InfantCount);
+
+    private readonly record struct FamilyPersonAge(FamilyPersonState Person, int AgeMonths);
 }

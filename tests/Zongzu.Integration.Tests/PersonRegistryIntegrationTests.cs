@@ -41,12 +41,18 @@ public sealed class PersonRegistryIntegrationTests
         // Force the heir onto the edge of FamilyCore's death threshold and
         // let the next month-end elder check turn that into ClanMemberDied.
         // FamilyCoreModule uses DeathAgeMonths = 72 * 12 and picks the oldest
-        // living clan member. The seed heir starts at 32*12 months; bump to
-        // just past threshold so the very next AdvanceOneMonth triggers
-        // TryResolveClanDeath.
+        // living clan member. PersonRegistry is authoritative for age since
+        // Phase 2b, so we backdate the registry BirthDate (and keep the local
+        // FamilyCore mirror aligned as documentation for the test).
         FamilyCoreState familyState = GetModuleState<FamilyCoreState>(simulation, KnownModuleKeys.FamilyCore);
         FamilyPersonState heir = familyState.People.Single();
         heir.AgeMonths = (72 * 12) + 1;
+
+        PersonRegistryState registrySeed = GetModuleState<PersonRegistryState>(simulation, KnownModuleKeys.PersonRegistry);
+        PersonRecord heirRecord = registrySeed.Persons.Single(p => p.Id.Equals(heir.Id));
+        // Back-date birth so that ComputeAgeMonths(birth, CurrentDate) > DeathAgeMonths
+        // at the next month tick.
+        heirRecord.BirthDate = new GameDate(simulation.CurrentDate.Year - 73, simulation.CurrentDate.Month);
 
         simulation.AdvanceOneMonth();
 

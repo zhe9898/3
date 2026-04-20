@@ -667,6 +667,11 @@ public sealed class PublicLifeAndRumorModuleTests
         {
             return _clans;
         }
+
+        public FamilyPersonSnapshot? FindPerson(PersonId personId) => null;
+
+        public IReadOnlyList<FamilyPersonSnapshot> GetClanMembers(ClanId clanId)
+            => System.Array.Empty<FamilyPersonSnapshot>();
     }
 
     private sealed class StubSocialQueries : ISocialMemoryAndRelationsQueries

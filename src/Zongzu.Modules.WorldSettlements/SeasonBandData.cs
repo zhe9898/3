@@ -69,6 +69,15 @@ public sealed class SeasonBandData
 
     // ── Imperial axis (decision I; not self-advanced) ────────────
     public ImperialBandData Imperial { get; set; } = new();
+
+    /// <summary>
+    /// Persisted baseline used by <c>SeasonBandAdvancer</c> to decide when to
+    /// emit <c>ImperialRhythmChanged</c>. Compared against <see cref="Imperial"/>
+    /// at the end of each month; updated only when a 10-point band crossing
+    /// fires the announcement (prevents decay-drift spam while still catching
+    /// between-month injections from <see cref="IImperialEventTestHarness"/>).
+    /// </summary>
+    public ImperialBandData PreviousAnnouncedImperial { get; set; } = new();
 }
 
 /// <summary>
