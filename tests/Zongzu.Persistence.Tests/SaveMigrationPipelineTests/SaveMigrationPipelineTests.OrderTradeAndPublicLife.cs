@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Application;
@@ -222,7 +222,7 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 2
                 && step.TargetVersion == 3),
             Is.True);
-        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.TradeAndIndustry].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.TradeAndIndustry].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(migratedState.BlackRouteLedgers.Count, Is.EqualTo(migratedState.Markets.Count));
         Assert.That(migratedState.BlackRouteLedgers.All(static ledger => ledger.ShadowPriceIndex >= 70), Is.True);
         Assert.That(migratedState.BlackRouteLedgers.All(static ledger => !string.IsNullOrWhiteSpace(ledger.DiversionBandLabel)), Is.True);

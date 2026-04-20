@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -104,6 +104,65 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
                 .Select(CloneLedger)
 
                 .ToArray();
+
+        }
+
+
+        public IReadOnlyList<MarketGoodsSnapshot> GetMarketGoods()
+
+        {
+
+            return _state.MarketGoods
+
+                .OrderBy(static entry => entry.SettlementId.Value)
+
+                .ThenBy(static entry => (int)entry.Goods)
+
+                .Select(CloneMarketGoods)
+
+                .ToArray();
+
+        }
+
+
+        public IReadOnlyList<MarketGoodsSnapshot> GetMarketGoodsAt(SettlementId settlementId)
+
+        {
+
+            return _state.MarketGoods
+
+                .Where(entry => entry.SettlementId == settlementId)
+
+                .OrderBy(static entry => (int)entry.Goods)
+
+                .Select(CloneMarketGoods)
+
+                .ToArray();
+
+        }
+
+
+        private static MarketGoodsSnapshot CloneMarketGoods(MarketGoodsEntryState entry)
+
+        {
+
+            return new MarketGoodsSnapshot
+
+            {
+
+                SettlementId = entry.SettlementId,
+
+                Goods = entry.Goods,
+
+                Supply = entry.Supply,
+
+                Demand = entry.Demand,
+
+                BasePrice = entry.BasePrice,
+
+                CurrentPrice = entry.CurrentPrice,
+
+            };
 
         }
 

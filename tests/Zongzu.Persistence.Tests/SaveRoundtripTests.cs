@@ -132,7 +132,7 @@ public sealed class SaveRoundtripTests
             typeof(TradeAndIndustryState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].Payload);
         Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(6));
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(orderState.Settlements.Any(static settlement => settlement.PaperCompliance >= 0), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => settlement.ImplementationDrag >= 0), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => settlement.RouteShielding >= 0), Is.True);

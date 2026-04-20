@@ -76,6 +76,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 2, 3, MigrateOfficeAndCareerStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 1, 2, MigrateTradeAndIndustryStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 2, 3, MigrateTradeAndIndustryStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 3, 4, MigrateTradeAndIndustryStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 1, 2, MigrateOrderAndBanditryStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 2, 3, MigrateOrderAndBanditryStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 3, 4, MigrateOrderAndBanditryStateV3ToV4);
@@ -437,6 +438,20 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.TradeAndIndustry,
             ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(TradeAndIndustryState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateTradeAndIndustryStateV3ToV4(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        TradeAndIndustryState migratedState = (TradeAndIndustryState)serializer.Deserialize(typeof(TradeAndIndustryState), envelope.Payload);
+        TradeAndIndustryStateProjection.UpgradeFromSchemaV3ToV4(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.TradeAndIndustry,
+            ModuleSchemaVersion = 4,
             Payload = serializer.Serialize(typeof(TradeAndIndustryState), migratedState),
         };
     }

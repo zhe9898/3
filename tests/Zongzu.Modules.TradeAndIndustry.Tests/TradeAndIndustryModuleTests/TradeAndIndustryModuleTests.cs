@@ -335,4 +335,103 @@ public sealed partial class TradeAndIndustryModuleTests
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("TradeProspered"));
     }
 
+    [Test]
+    public void RunMonth_GrainPulse_HighGrainStoreLowDistress_PushesGrainPriceBelowBaseline()
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 60,
+            Prosperity = 62,
+            BaselineInstitutionCount = 2,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Settlements.Add(new PopulationSettlementState
+        {
+            SettlementId = new SettlementId(1),
+            CommonerDistress = 30,
+            LaborSupply = 80,
+            MigrationPressure = 10,
+            MilitiaPotential = 50,
+        });
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            Distress = 25,
+            DebtPressure = 18,
+            LaborCapacity = 55,
+            GrainStore = 90,
+            LandHolding = 40,
+            ToolCondition = 50,
+            ShelterQuality = 50,
+            LaborerCount = 2,
+        });
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(2),
+            HouseholdName = "Tenant Wang",
+            SettlementId = new SettlementId(1),
+            Distress = 28,
+            DebtPressure = 20,
+            LaborCapacity = 50,
+            GrainStore = 85,
+            LandHolding = 35,
+            ToolCondition = 50,
+            ShelterQuality = 50,
+            LaborerCount = 2,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+
+        TradeAndIndustryModule tradeModule = new();
+        TradeAndIndustryState tradeState = tradeModule.CreateInitialState();
+        tradeState.Markets.Add(new SettlementMarketState
+        {
+            SettlementId = new SettlementId(1),
+            MarketName = "Lanxi Morning Market",
+            PriceIndex = 100,
+            Demand = 50,
+            LocalRisk = 15,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+        tradeModule.RegisterQueries(tradeState, queries);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 5),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(88)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        tradeModule.RunMonth(new ModuleExecutionScope<TradeAndIndustryState>(tradeState, context));
+
+        MarketGoodsEntryState grain = tradeState.MarketGoods
+            .Single(entry => entry.SettlementId == new SettlementId(1) && entry.Goods == GoodsCategory.Grain);
+        Assert.That(grain.Supply, Is.GreaterThan(grain.Demand), "丰年低困应当供过于求。");
+        Assert.That(grain.CurrentPrice, Is.LessThan(grain.BasePrice), "供过于求应当压低粮价。");
+        Assert.That(grain.BasePrice, Is.EqualTo(100));
+
+        ITradeAndIndustryQueries tradeQueries = queries.GetRequired<ITradeAndIndustryQueries>();
+        IReadOnlyList<MarketGoodsSnapshot> goods = tradeQueries.GetMarketGoodsAt(new SettlementId(1));
+        Assert.That(goods, Has.Count.EqualTo(1));
+        Assert.That(goods[0].Goods, Is.EqualTo(GoodsCategory.Grain));
+    }
+
 }

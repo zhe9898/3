@@ -73,4 +73,10 @@ public interface ITradeAndIndustryQueries
     IReadOnlyList<MarketSnapshot> GetMarkets();
 
     IReadOnlyList<ClanTradeRouteSnapshot> GetRoutesForClan(ClanId clanId);
+
+    /// <summary>Phase 5 商贸骨骼：某镇按物品的供需价位。默认空集以兼容旧 stub。</summary>
+    IReadOnlyList<MarketGoodsSnapshot> GetMarketGoods() => [];
+
+    /// <summary>Phase 5 商贸骨骼：按镇聚焦某物品。默认空集以兼容旧 stub。</summary>
+    IReadOnlyList<MarketGoodsSnapshot> GetMarketGoodsAt(SettlementId settlementId) => [];
 }

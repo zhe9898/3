@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -58,7 +58,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
     public override string ModuleKey => KnownModuleKeys.TradeAndIndustry;
 
 
-    public override int ModuleSchemaVersion => 3;
+    public override int ModuleSchemaVersion => 4;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -552,6 +552,10 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
                 ledger);
 
         }
+
+
+        // Phase 5 商贸骨骼 —— 收成 → 粮食供给 → 粮价（薄链）。
+        ApplyMonthlyGrainPulse(scope.State, populationQueries, settlementQueries);
 
 
         foreach (ClanTradeState clanTrade in scope.State.Clans.OrderBy(static trade => trade.ClanId.Value))
