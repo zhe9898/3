@@ -26,7 +26,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
 
     public override string ModuleKey => KnownModuleKeys.EducationAndExams;
 
-    public override int ModuleSchemaVersion => 1;
+    public override int ModuleSchemaVersion => 2;
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
 
@@ -123,6 +123,9 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 student.IsStudying = false;
                 student.ScholarlyReputation = Math.Clamp(student.ScholarlyReputation + 15, 0, 100);
                 student.LastOutcome = "Passed";
+                student.LastResult = ExamResult.Passed;
+                student.FallbackPath = FallbackPath.ContinueStudy;
+                student.CurrentTier = PromoteTier(student.CurrentTier);
                 student.LastExplanation =
                     $"以学业{student.StudyProgress}、塾望{academy.Prestige}、塾师之助{student.TutorQuality}与宗房接济{clan.SupportReserve}，场中得分{score}。";
                 student.StudyProgress = 25;
@@ -135,10 +138,12 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
             else
             {
                 student.LastOutcome = "Failed";
+                student.LastResult = ExamResult.Failed;
                 student.LastExplanation =
                     $"心气劳迫{student.Stress}、羞压{narrative.ShamePressure}、学业{student.StudyProgress}，场中仅得{score}。";
                 student.StudyProgress = Math.Max(20, student.StudyProgress - 25);
                 student.Stress = Math.Clamp(student.Stress + 8, 0, 100);
+                student.FallbackPath = DetermineFallbackPath(student, clan, narrative);
 
                 scope.RecordDiff(
                     $"{student.DisplayName}场屋失利。{student.LastExplanation}",
@@ -149,6 +154,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 {
                     student.IsStudying = false;
                     student.LastOutcome = "Abandoned";
+                    student.LastResult = ExamResult.Abandoned;
                     student.LastExplanation = $"屡试不捷，心气劳迫至{student.Stress}，遂停塾罢读。";
                     scope.Emit("StudyAbandoned", $"{student.DisplayName}停塾罢读。");
                 }
@@ -175,6 +181,46 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
     private static bool IsExamWindow(GameDate currentDate)
     {
         return currentDate.Month is 3 or 9;
+    }
+
+    private static ExamTier PromoteTier(ExamTier tier)
+    {
+        return tier switch
+        {
+            ExamTier.CountyExam => ExamTier.PrefecturalExam,
+            ExamTier.PrefecturalExam => ExamTier.MetropolitanExam,
+            ExamTier.MetropolitanExam => ExamTier.MetropolitanExam,
+            _ => ExamTier.PrefecturalExam,
+        };
+    }
+
+    // Phase 6 科举骨骼 — LIVING_WORLD_DESIGN §2.6：落第后的五路分流。
+    private static FallbackPath DetermineFallbackPath(
+        EducationPersonState student,
+        ClanSnapshot clan,
+        ClanNarrativeSnapshot narrative)
+    {
+        if (student.ExamAttempts >= 3 && student.Stress >= 70)
+        {
+            return clan.SupportReserve < 30 ? FallbackPath.Drift : FallbackPath.TeachVillage;
+        }
+
+        if (clan.SupportReserve >= 55 && narrative.ShamePressure < 55)
+        {
+            return FallbackPath.ContinueStudy;
+        }
+
+        if (clan.SupportReserve >= 40)
+        {
+            return FallbackPath.BecomeClerk;
+        }
+
+        if (narrative.FavorBalance >= 5)
+        {
+            return FallbackPath.TurnToTrade;
+        }
+
+        return FallbackPath.Drift;
     }
 
     private sealed class EducationQueries : IEducationAndExamsQueries
@@ -214,6 +260,15 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 .ToArray();
         }
 
+        public IReadOnlyList<EducationCandidateSnapshot> GetCandidatesByTier(ExamTier tier)
+        {
+            return _state.People
+                .Where(person => person.CurrentTier == tier)
+                .OrderBy(static person => person.PersonId.Value)
+                .Select(ClonePerson)
+                .ToArray();
+        }
+
         private static EducationCandidateSnapshot ClonePerson(EducationPersonState person)
         {
             return new EducationCandidateSnapshot
@@ -231,6 +286,9 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 LastOutcome = person.LastOutcome,
                 LastExplanation = person.LastExplanation,
                 ScholarlyReputation = person.ScholarlyReputation,
+                CurrentTier = person.CurrentTier,
+                LastResult = person.LastResult,
+                FallbackPath = person.FallbackPath,
             };
         }
 

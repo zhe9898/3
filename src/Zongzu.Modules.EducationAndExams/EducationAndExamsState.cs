@@ -42,6 +42,13 @@ public sealed class EducationPersonState
     public string LastExplanation { get; set; } = string.Empty;
 
     public int ScholarlyReputation { get; set; }
+
+    // Phase 6 科举骨骼 — LIVING_WORLD_DESIGN §2.6
+    public ExamTier CurrentTier { get; set; } = ExamTier.CountyExam;
+
+    public ExamResult LastResult { get; set; } = ExamResult.Pending;
+
+    public FallbackPath FallbackPath { get; set; } = FallbackPath.ContinueStudy;
 }
 
 public sealed class AcademyState

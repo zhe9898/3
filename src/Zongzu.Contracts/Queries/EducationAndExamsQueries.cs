@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -30,6 +30,13 @@ public sealed record EducationCandidateSnapshot
     public string LastExplanation { get; init; } = string.Empty;
 
     public int ScholarlyReputation { get; init; }
+
+    // Phase 6 科举骨骼 — LIVING_WORLD_DESIGN §2.6
+    public ExamTier CurrentTier { get; init; } = ExamTier.CountyExam;
+
+    public ExamResult LastResult { get; init; } = ExamResult.Pending;
+
+    public FallbackPath FallbackPath { get; init; } = FallbackPath.ContinueStudy;
 }
 
 public sealed record AcademySnapshot
@@ -56,4 +63,7 @@ public interface IEducationAndExamsQueries
     IReadOnlyList<EducationCandidateSnapshot> GetCandidates();
 
     IReadOnlyList<AcademySnapshot> GetAcademies();
+
+    // Phase 6 科举骨骼 — LIVING_WORLD_DESIGN §2.6
+    IReadOnlyList<EducationCandidateSnapshot> GetCandidatesByTier(ExamTier tier) => [];
 }
