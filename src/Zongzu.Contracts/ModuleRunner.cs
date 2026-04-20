@@ -15,6 +15,8 @@ public interface IModuleRunner
 
     int ExecutionOrder { get; }
 
+    IReadOnlyCollection<SimulationCadenceBand> CadenceBands { get; }
+
     FeatureMode DefaultMode { get; }
 
     Type StateType { get; }
@@ -28,6 +30,8 @@ public interface IModuleRunner
     object CreateInitialState();
 
     void RegisterQueries(object state, QueryRegistry queries);
+
+    void RunXun(ModuleExecutionContext context, object state);
 
     void RunMonth(ModuleExecutionContext context, object state);
 
@@ -52,6 +56,8 @@ public abstract class ModuleRunner<TState> : IModuleRunner
 
     public abstract int ExecutionOrder { get; }
 
+    public abstract IReadOnlyCollection<SimulationCadenceBand> CadenceBands { get; }
+
     public virtual FeatureMode DefaultMode => FeatureMode.Full;
 
     public Type StateType => typeof(TState);
@@ -65,6 +71,10 @@ public abstract class ModuleRunner<TState> : IModuleRunner
     public abstract TState CreateInitialState();
 
     public virtual void RegisterQueries(TState state, QueryRegistry queries)
+    {
+    }
+
+    public virtual void RunXun(ModuleExecutionScope<TState> scope)
     {
     }
 
@@ -87,6 +97,11 @@ public abstract class ModuleRunner<TState> : IModuleRunner
     void IModuleRunner.RunMonth(ModuleExecutionContext context, object state)
     {
         RunMonth(new ModuleExecutionScope<TState>(CastState(state), context));
+    }
+
+    void IModuleRunner.RunXun(ModuleExecutionContext context, object state)
+    {
+        RunXun(new ModuleExecutionScope<TState>(CastState(state), context));
     }
 
     void IModuleRunner.HandleEvents(ModuleExecutionContext context, object state, IReadOnlyList<IDomainEvent> events)

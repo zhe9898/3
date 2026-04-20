@@ -30,6 +30,14 @@ public static class OfficeAndCareerStateProjection
                     (int)Math.Round(group.Average(static person => person.PetitionBacklog)),
                     0,
                     100);
+                int clerkDependence = Math.Clamp(
+                    (int)Math.Round(group.Average(static person => person.ClerkDependence)),
+                    0,
+                    100);
+                int administrativeTaskLoad = Math.Clamp(
+                    (int)Math.Round(group.Average(static person => person.AdministrativeTaskLoad)),
+                    0,
+                    100);
 
                 return new JurisdictionAuthorityState
                 {
@@ -39,9 +47,11 @@ public static class OfficeAndCareerStateProjection
                     LeadOfficeTitle = lead.OfficeTitle,
                     AuthorityTier = lead.AuthorityTier,
                     JurisdictionLeverage = jurisdictionLeverage,
+                    ClerkDependence = clerkDependence,
                     PetitionPressure = petitionPressure,
                     PetitionBacklog = petitionBacklog,
                     CurrentAdministrativeTask = lead.CurrentAdministrativeTask,
+                    AdministrativeTaskLoad = administrativeTaskLoad,
                     LastPetitionOutcome = lead.LastPetitionOutcome,
                     LastAdministrativeTrace =
                         $"{lead.DisplayName}以{lead.OfficeTitle}主事，乡面杖力{jurisdictionLeverage}，词牍压{petitionPressure}，积案{petitionBacklog}，所办差遣为{lead.CurrentAdministrativeTask}。{lead.LastPetitionOutcome}",
@@ -56,6 +66,20 @@ public static class OfficeAndCareerStateProjection
         foreach (OfficeCareerState career in state.People)
         {
             UpgradeCareer(career);
+        }
+
+        state.People = state.People
+            .OrderBy(static person => person.PersonId.Value)
+            .ToList();
+        state.Jurisdictions = BuildJurisdictions(state.People);
+        return state;
+    }
+
+    public static OfficeAndCareerState UpgradeFromSchemaV2ToV3(OfficeAndCareerState state)
+    {
+        foreach (OfficeCareerState career in state.People)
+        {
+            UpgradeCareerV3(career);
         }
 
         state.People = state.People
@@ -102,6 +126,41 @@ public static class OfficeAndCareerStateProjection
         career.AdministrativeTaskLoad = Math.Max(career.AdministrativeTaskLoad, 0);
         career.PromotionMomentum = Math.Max(career.PromotionMomentum, 0);
         career.DemotionPressure = Math.Max(career.DemotionPressure, 0);
+    }
+
+    private static void UpgradeCareerV3(OfficeCareerState career)
+    {
+        if (career.HasAppointment)
+        {
+            career.AppointmentPressure = Math.Max(career.AppointmentPressure, 48);
+            career.ClerkDependence = Math.Max(
+                career.ClerkDependence,
+                Math.Clamp(14 + (career.AdministrativeTaskLoad / 2) + (career.PetitionBacklog / 5), 0, 100));
+            return;
+        }
+
+        if (career.IsEligible)
+        {
+            if (string.IsNullOrWhiteSpace(career.CurrentAdministrativeTask))
+            {
+                career.CurrentAdministrativeTask = string.Equals(career.LastOutcome, "听差", StringComparison.Ordinal)
+                    ? "随案听差"
+                    : "守选候阙";
+            }
+
+            career.AppointmentPressure = Math.Max(
+                career.AppointmentPressure,
+                Math.Clamp(18 + (career.OfficeReputation / 3) + (career.PromotionMomentum / 4), 0, 100));
+            career.ClerkDependence = Math.Max(
+                career.ClerkDependence,
+                string.Equals(career.LastOutcome, "听差", StringComparison.Ordinal)
+                    ? 24
+                    : 10);
+            return;
+        }
+
+        career.AppointmentPressure = Math.Max(career.AppointmentPressure, 0);
+        career.ClerkDependence = Math.Max(career.ClerkDependence, 0);
     }
 
     private static string InferAdministrativeTask(OfficeCareerState career)

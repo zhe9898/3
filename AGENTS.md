@@ -27,24 +27,25 @@ The game must preserve these engineering truths:
 5. `docs/VERSION_ALIGNMENT.md`
 6. `docs/TECH_STACK.md`
 7. `docs/ENGINEERING_RULES.md`
-8. `docs/ARCHITECTURE.md`
-9. `docs/MODULE_BOUNDARIES.md`
-10. `docs/EXTENSIBILITY_MODEL.md`
-11. `docs/MODULE_INTEGRATION_RULES.md`
-12. `docs/SCHEMA_NAMESPACE_RULES.md`
-13. `docs/DATA_SCHEMA.md`
-14. `docs/SOCIAL_STRATA_AND_PATHWAYS.md`
-15. `docs/SIMULATION.md`
-16. `docs/PLAYER_SCOPE.md`
-17. `docs/RELATIONSHIPS_AND_GRUDGES.md`
-18. `docs/CONFLICT_AND_FORCE.md`
-19. `docs/VISUAL_FORM_AND_INTERACTION.md`
-20. `docs/UI_AND_PRESENTATION.md`
-21. `docs/MVP.md`
-22. `docs/IMPLEMENTATION_PHASES.md`
-23. `docs/ACCEPTANCE_TESTS.md`
-24. `docs/CODEX_TASK_PROMPTS.md`
-25. `docs/CODEX_MASTER_SPEC.md`
+8. `docs/STATIC_BACKEND_FIRST.md`
+9. `docs/ARCHITECTURE.md`
+10. `docs/MODULE_BOUNDARIES.md`
+11. `docs/EXTENSIBILITY_MODEL.md`
+12. `docs/MODULE_INTEGRATION_RULES.md`
+13. `docs/SCHEMA_NAMESPACE_RULES.md`
+14. `docs/DATA_SCHEMA.md`
+15. `docs/SOCIAL_STRATA_AND_PATHWAYS.md`
+16. `docs/SIMULATION.md`
+17. `docs/PLAYER_SCOPE.md`
+18. `docs/RELATIONSHIPS_AND_GRUDGES.md`
+19. `docs/CONFLICT_AND_FORCE.md`
+20. `docs/VISUAL_FORM_AND_INTERACTION.md`
+21. `docs/UI_AND_PRESENTATION.md`
+22. `docs/MVP.md`
+23. `docs/IMPLEMENTATION_PHASES.md`
+24. `docs/ACCEPTANCE_TESTS.md`
+25. `docs/CODEX_TASK_PROMPTS.md`
+26. `docs/CODEX_MASTER_SPEC.md`
 
 For large tasks also read:
 - `PLANS.md`
@@ -60,6 +61,8 @@ Preferred MCP servers:
 - `GitHub` for PR context, CI logs, review comments, and repository metadata
 
 Preferred skills:
+- `zongzu-game-design` for rules-driven living-world design, monthly loop shaping, pressure-chain design, bounded player leverage, explainable causality, vertical slices, and MVP shaping when working on mechanics or product structure
+- `zongzu-ui-shell` for Zongzu shell and presentation work: great hall, ancestral hall, desk sandbox, notice tray, conflict vignette, campaign-lite board, information density, object grammar, 2.5D shell design, and anti-poster correction when a draft feels like a static concept board instead of a playable surface
 - `zongzu-ancient-china` for historical grounding, Chinese antiquity / imperial China institutions, anti-anachronism review, terms, titles, kinship, lineage behavior, exam and office pathways, household and tax framing, and history-to-game translation including desk sandbox, map nodes, warfare-lite boards, and spatial presentation language
 - `microsoft-code-reference` for API lookups, implementation details, code samples, and error repair in C# / .NET code
 - `microsoft-docs` for concept docs, configuration guidance, limits, and official Microsoft tutorials
@@ -71,7 +74,7 @@ Preferred skills:
 
 Do not default to web-first skills for this repo:
 - `develop-web-game` is not a fit for the authoritative simulation or Unity presentation path here
-- `frontend-skill`, `react-best-practices`, and `web-design-guidelines` are only relevant for auxiliary tooling, documentation sites, launchers, or future web surfaces
+- `frontend-skill`, `react-best-practices`, and `web-design-guidelines` are helpers only after `zongzu-ui-shell` when the task is about the actual Zongzu shell; they are mainly relevant for auxiliary tooling, documentation sites, launchers, or future web surfaces
 
 Unity MCP note:
 - This repository currently does not contain a full Unity project root with `Assets/`, `Packages/`, and `ProjectSettings/`
@@ -132,6 +135,7 @@ Encoding and language note:
    - save manifest update
    - acceptance test updates
 8. UI code may never contain authoritative game rules.
+9. Application services must stay thin and may not become a second domain-rule layer while modules are still being shaped.
 
 ## Work process
 For any task larger than a tiny fix:
@@ -141,6 +145,7 @@ For any task larger than a tiny fix:
 4. add or update tests first or alongside code
 5. update docs if behavior, schema, boundaries, or scope changed
 6. keep save compatibility and determinism notes in the ExecPlan
+7. for backend-heavy work, prefer stabilizing state shape, cadence, and command/query/event contracts before deepening rule formulas
 
 ## Done criteria
 A task is done only if:

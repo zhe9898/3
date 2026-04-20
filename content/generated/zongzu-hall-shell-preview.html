@@ -1,0 +1,907 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zongzu Hall Shell Preview</title>
+  <style>
+    :root {
+      --bg: #140f0b;
+      --wall-top: #2a1d13;
+      --wall-mid: #1b130e;
+      --wall-bottom: #100c09;
+      --wood-1: #3a2819;
+      --wood-2: #2a1d13;
+      --wood-3: #1a120d;
+      --line: #76583a;
+      --gold: #b5946c;
+      --gold-dim: #8e7456;
+      --text: #eadbc6;
+      --muted: #b49a77;
+      --paper: #efe0c7;
+      --ink: #322215;
+      --shadow: 0 14px 26px rgba(0, 0, 0, 0.28);
+      --shadow-deep: 0 24px 42px rgba(0, 0, 0, 0.34);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 50% 12%, rgba(138, 101, 63, 0.16), transparent 40%),
+        linear-gradient(180deg, var(--wall-top) 0%, var(--wall-mid) 44%, var(--wall-bottom) 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      opacity: 0.12;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 34px 34px;
+      pointer-events: none;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 1600px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 20px 26px 26px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    .id .kicker {
+      font-size: 11px;
+      letter-spacing: 0.38em;
+      color: var(--gold);
+    }
+
+    .id .name {
+      margin-top: 6px;
+      font-size: 26px;
+      letter-spacing: 0.18em;
+      color: #f3e4cd;
+    }
+
+    .id .sub {
+      margin-top: 5px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .strip {
+      display: flex;
+      gap: 18px;
+      border: 1px solid rgba(118, 88, 57, 0.76);
+      background: rgba(31, 21, 15, 0.84);
+      padding: 10px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric { min-width: 108px; }
+
+    .metric .label {
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      color: var(--gold-dim);
+    }
+
+    .metric .value {
+      margin-top: 4px;
+      font-size: 14px;
+      color: #eddabc;
+    }
+
+    .shell {
+      position: relative;
+      min-height: calc(100vh - 92px);
+      border: 1px solid rgba(104, 76, 48, 0.72);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), transparent 18%),
+        linear-gradient(180deg, rgba(24,18,13,0.1), rgba(9,7,5,0.18));
+      box-shadow: var(--shadow-deep);
+      overflow: hidden;
+    }
+
+    .shell::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 36%;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.12)),
+        linear-gradient(180deg, var(--wood-1) 0%, var(--wood-2) 58%, var(--wood-3) 100%);
+      border-top: 1px solid rgba(120, 88, 55, 0.52);
+    }
+
+    .shell::after {
+      content: "";
+      position: absolute;
+      left: 48px;
+      right: 48px;
+      bottom: 34px;
+      height: 27%;
+      border: 1px solid rgba(122, 88, 55, 0.46);
+      background:
+        radial-gradient(circle at 50% 18%, rgba(214, 168, 105, 0.08), transparent 34%),
+        linear-gradient(180deg, #3a2819 0%, #281c13 100%);
+      box-shadow: inset 0 12px 24px rgba(255,255,255,0.03), inset 0 -16px 30px rgba(0,0,0,0.16);
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr) 320px;
+      gap: 18px;
+      padding: 24px 20px 48px;
+      min-height: calc(100vh - 92px);
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .slab {
+      position: relative;
+      border: 1px solid var(--line);
+      background: rgba(28, 20, 14, 0.95);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .slab::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translate(7px, 7px);
+      background: rgba(0,0,0,0.16);
+      z-index: -1;
+    }
+
+    .slab-title {
+      font-size: 11px;
+      letter-spacing: 0.34em;
+      color: var(--gold);
+    }
+
+    .slab-sub {
+      margin-top: 5px;
+      font-size: 13px;
+      color: #d7c4a9;
+    }
+
+    .tab-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .tab {
+      border: 1px solid #7a5f41;
+      background: linear-gradient(180deg, #453221, #312315);
+      color: #dcc7a6;
+      padding: 10px 12px;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+    }
+
+    .tab.active {
+      border-color: #c59662;
+      background: linear-gradient(180deg, #724028, #532d1c);
+      color: #f2deca;
+    }
+
+    .branch-list,
+    .visitor-list,
+    .receipt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .branch {
+      border: 1px solid;
+      padding: 10px 11px;
+    }
+
+    .branch.urgent {
+      border-color: #af5644;
+      background: #3b1d17;
+      color: #efc8bb;
+    }
+
+    .branch.high {
+      border-color: #9a7748;
+      background: #35261a;
+      color: #e4c791;
+    }
+
+    .branch.mid {
+      border-color: #5f675a;
+      background: #1f261f;
+      color: #becfb2;
+    }
+
+    .branch-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+    }
+
+    .branch-main {
+      margin-top: 7px;
+      font-size: 14px;
+    }
+
+    .branch-detail {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.55;
+      opacity: 0.86;
+    }
+
+    .visitor {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #4d3927;
+    }
+
+    .visitor:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .visitor .title,
+    .receipt .title {
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      color: #ebd9bf;
+    }
+
+    .visitor .summary,
+    .receipt .summary {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.65;
+      color: #aa8f6d;
+    }
+
+    .center {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sand-table {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 620px;
+      border: 1px solid #7c613f;
+      background:
+        linear-gradient(180deg, rgba(57,38,24,0.3), transparent 18%),
+        radial-gradient(circle at 50% 42%, rgba(150,107,62,0.18), transparent 44%),
+        linear-gradient(180deg, rgba(44,30,20,0.98), rgba(26,19,15,0.99));
+      box-shadow: var(--shadow-deep);
+      overflow: hidden;
+    }
+
+    .sand-table::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 18px;
+      bottom: 18px;
+      border: 1px solid rgba(116, 87, 55, 0.4);
+      pointer-events: none;
+    }
+
+    .table-label {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      transform: translate(-50%, -50%);
+      font-size: 42px;
+      letter-spacing: 0.24em;
+      color: rgba(100, 75, 50, 0.32);
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .lead-slip {
+      position: absolute;
+      left: 24px;
+      top: 24px;
+      width: 390px;
+      border: 1px solid #97734d;
+      background: rgba(239, 224, 199, 0.95);
+      color: var(--ink);
+      padding: 16px 18px;
+      box-shadow: 0 16px 30px rgba(0,0,0,0.22);
+      transform: rotate(-1.2deg);
+    }
+
+    .lead-slip::before {
+      content: "";
+      position: absolute;
+      top: -14px;
+      left: 18px;
+      width: 84px;
+      height: 22px;
+      background: rgba(155, 121, 82, 0.28);
+      transform: rotate(5deg);
+    }
+
+    .lead-slip .kicker {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      color: #866444;
+    }
+
+    .lead-slip .title {
+      margin-top: 8px;
+      font-size: 20px;
+      line-height: 1.45;
+      letter-spacing: 0.1em;
+      color: #3d2918;
+    }
+
+    .lead-slip .summary {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.72;
+      color: #4d3622;
+    }
+
+    .lead-slip .next {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #c5ad8a;
+    }
+
+    .lead-slip .next .small {
+      font-size: 10px;
+      letter-spacing: 0.26em;
+      color: #896845;
+    }
+
+    .lead-slip .next .main {
+      margin-top: 6px;
+      font-size: 15px;
+      color: #5d3d22;
+      line-height: 1.65;
+    }
+
+    .note-pin {
+      position: absolute;
+      border: 1px solid #8f6c43;
+      background: rgba(241, 230, 212, 0.94);
+      color: #3f2b19;
+      padding: 10px 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+      font-size: 12px;
+      line-height: 1.55;
+      max-width: 190px;
+    }
+
+    .note-pin .head {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: #866445;
+      margin-bottom: 4px;
+    }
+
+    .note-a { right: 42px; top: 46px; transform: rotate(2.4deg); }
+    .note-b { right: 68px; top: 200px; transform: rotate(-1.6deg); }
+
+    .route {
+      position: absolute;
+      height: 1px;
+      background: #74583a;
+      transform-origin: left center;
+    }
+
+    .node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .node-core {
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+      border: 1px solid #7d603f;
+      background: #2a1d14;
+      color: #d4b48e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.28);
+    }
+
+    .node.active .node-core {
+      border-color: #d19b62;
+      background: #4e301d;
+      color: #f3d8b6;
+    }
+
+    .node-name {
+      margin-top: 7px;
+      font-size: 11px;
+      color: #d1b38a;
+    }
+
+    .node-status {
+      margin-top: 2px;
+      font-size: 10px;
+      color: #9f8666;
+    }
+
+    .bottom-band {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 22px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .band-card {
+      border: 1px solid #73573a;
+      background: rgba(31, 21, 15, 0.94);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .band-card .head {
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      color: var(--gold);
+    }
+
+    .band-card .title {
+      margin-top: 6px;
+      font-size: 16px;
+      letter-spacing: 0.08em;
+      color: #edd9bd;
+    }
+
+    .band-card .summary {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.65;
+      color: #a88e6d;
+    }
+
+    .seal-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .seal {
+      min-width: 102px;
+      border-radius: 999px;
+      border: 1px solid #8f6b46;
+      background: linear-gradient(180deg, #4b3726, #342518);
+      color: #dcc6a4;
+      padding: 10px 12px;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.28);
+    }
+
+    .seal.primary {
+      border-color: #ba8561;
+      background: linear-gradient(180deg, #7a3123, #5a2118);
+      color: #f4dfca;
+    }
+
+    .seal .small {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      opacity: 0.75;
+    }
+
+    .seal .main {
+      margin-top: 4px;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+    }
+
+    .tray-card {
+      position: relative;
+      border: 1px solid #8b6842;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 16px 16px 18px;
+      box-shadow: var(--shadow-deep);
+      min-height: 100%;
+    }
+
+    .tray-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translate(10px, 10px);
+      background: rgba(0,0,0,0.18);
+      z-index: -1;
+    }
+
+    .tray-card::after {
+      content: "";
+      position: absolute;
+      right: 18px;
+      top: -12px;
+      width: 88px;
+      height: 24px;
+      background: rgba(153, 120, 80, 0.28);
+      transform: rotate(-6deg);
+    }
+
+    .tray-head {
+      text-align: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #c4ab86;
+    }
+
+    .tray-head .kicker {
+      font-size: 11px;
+      letter-spacing: 0.36em;
+      color: #8a6644;
+    }
+
+    .tray-head .main {
+      margin-top: 6px;
+      font-size: 22px;
+      letter-spacing: 0.12em;
+    }
+
+    .tray-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .tray-section-title {
+      margin-bottom: 8px;
+      font-size: 12px;
+      letter-spacing: 0.28em;
+    }
+
+    .red { color: #a14b3b; }
+    .amber { color: #8e6a3e; }
+    .slate { color: #6d665a; }
+
+    .notice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .notice {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #957040;
+      padding: 11px 12px 11px 17px;
+      background: rgba(245, 235, 219, 0.92);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    }
+
+    .notice::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: #a07d45;
+    }
+
+    .notice.urgent::before { background: #b45c49; }
+    .notice.background::before { background: #6c6559; }
+
+    .notice .kicker {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: #7d5d3a;
+    }
+
+    .notice .title {
+      margin-top: 4px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .notice .summary {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #5a4733;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="id">
+        <div class="kicker">宗门记</div>
+        <div class="name">汴州赵氏</div>
+        <div class="sub">熙宁二年 七月 · 堂上听事</div>
+      </div>
+      <div class="strip">
+        <div class="metric">
+          <div class="label">粮仓</div>
+          <div class="value">八仓有余</div>
+        </div>
+        <div class="metric">
+          <div class="label">族望</div>
+          <div class="value">中上</div>
+        </div>
+        <div class="metric">
+          <div class="label">人情</div>
+          <div class="value">可调用三处</div>
+        </div>
+        <div class="metric">
+          <div class="label">未阅</div>
+          <div class="value">六件</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell">
+      <div class="layout">
+        <aside class="side">
+          <section class="slab">
+            <div class="slab-title">案上分面</div>
+            <div class="slab-sub">保留大沙盘主位，但周围换成宗族操作物件</div>
+            <div class="tab-list">
+              <div class="tab active">堂上主案</div>
+              <div class="tab">宗房簿</div>
+              <div class="tab">案头县图</div>
+              <div class="tab">公中账册</div>
+            </div>
+          </section>
+
+          <section class="slab">
+            <div class="slab-title">宗房簿</div>
+            <div class="slab-sub">不是帝国派系，而是支房内部冲突</div>
+            <div class="branch-list">
+              <div class="branch urgent">
+                <div class="branch-top"><span>东二房</span><span>支房</span></div>
+                <div class="branch-main">承祧未定</div>
+                <div class="branch-detail">长支无子，旁支皆欲争名分。</div>
+              </div>
+              <div class="branch high">
+                <div class="branch-top"><span>西三房</span><span>支房</span></div>
+                <div class="branch-main">婚议相持</div>
+                <div class="branch-detail">聘财轻重不齐，女方仍未回帖。</div>
+              </div>
+              <div class="branch mid">
+                <div class="branch-top"><span>南偏房</span><span>支房</span></div>
+                <div class="branch-main">借粮未清</div>
+                <div class="branch-detail">秋收未至，月末仍待周转。</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="slab">
+            <div class="slab-title">来人位</div>
+            <div class="slab-sub">谁先入堂，就会改变先办哪件事</div>
+            <div class="visitor-list">
+              <div class="visitor">
+                <div class="title">族老候见</div>
+                <div class="summary">请先议承祧，勿使两支再各执一词。</div>
+              </div>
+              <div class="visitor">
+                <div class="title">里正来报</div>
+                <div class="summary">县门榜示方出，街谈已先于正信流入坊巷。</div>
+              </div>
+            </div>
+          </section>
+        </aside>
+
+        <main class="center">
+          <section class="sand-table">
+            <div class="table-label">县路沙盘</div>
+
+            <div class="lead-slip">
+              <div class="kicker">堂上急报</div>
+              <div class="title">二房请定承祧，三房缓婚不让</div>
+              <div class="summary">
+                二房无子，请从旁支续后。三房又忧嫁资外流，不肯先退一步。门内新婴体弱，
+                若只争名分而不先抚护，旧怨会趁机再起。
+              </div>
+              <div class="next">
+                <div class="small">眼下宜先</div>
+                <div class="main">议定承祧，拨粮护婴；婚帖可缓，不可久拖。</div>
+              </div>
+            </div>
+
+            <div class="note-pin note-a">
+              <div class="head">旁批</div>
+              县门榜示方出，讼户、商旅与看榜人并集，街谈比正信更快。
+            </div>
+
+            <div class="note-pin note-b">
+              <div class="head">公中记</div>
+              公中尚可先拨一仓粮、银三十两，但若偏袒太显，来月会生支房怨望。
+            </div>
+
+            <div class="route" style="left:17%;top:65%;width:20%;transform:rotate(-18deg);"></div>
+            <div class="route" style="left:37%;top:38%;width:16%;transform:rotate(26deg);"></div>
+            <div class="route" style="left:53%;top:56%;width:18%;transform:rotate(-20deg);"></div>
+            <div class="route" style="left:71%;top:40%;width:10%;transform:rotate(34deg);"></div>
+
+            <div class="node" style="left:17%;top:66%;">
+              <div class="node-core">宗宅</div>
+              <div class="node-name">宗宅</div>
+              <div class="node-status">堂上</div>
+            </div>
+            <div class="node active" style="left:37%;top:37%;">
+              <div class="node-core">县门</div>
+              <div class="node-name">县门</div>
+              <div class="node-status">拥堵</div>
+            </div>
+            <div class="node" style="left:53%;top:55%;">
+              <div class="node-core">西市</div>
+              <div class="node-name">西市</div>
+              <div class="node-status">价浮</div>
+            </div>
+            <div class="node" style="left:71%;top:39%;">
+              <div class="node-core">渡口</div>
+              <div class="node-name">渡口</div>
+              <div class="node-status">缓行</div>
+            </div>
+            <div class="node" style="left:81%;top:68%;">
+              <div class="node-core">学塾</div>
+              <div class="node-name">学塾</div>
+              <div class="node-status">催束脩</div>
+            </div>
+
+            <div class="bottom-band">
+              <div class="band-card">
+                <div class="head">当前热点</div>
+                <div class="title">县门榜示方出，人流与讼户并集</div>
+                <div class="summary">这不是战争目标点，而是会回流进宗宅名声、路报、闲言与后续压力的地方节点。</div>
+              </div>
+              <div class="band-card">
+                <div class="head">可议之事</div>
+                <div class="seal-grid">
+                  <div class="seal primary">
+                    <div class="small">可议</div>
+                    <div class="main">议定承祧</div>
+                  </div>
+                  <div class="seal primary">
+                    <div class="small">可议</div>
+                    <div class="main">拨粮护婴</div>
+                  </div>
+                  <div class="seal">
+                    <div class="small">可议</div>
+                    <div class="main">遣族老调停</div>
+                  </div>
+                  <div class="seal">
+                    <div class="small">可议</div>
+                    <div class="main">缓议婚帖</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="slab">
+            <div class="slab-title">回执与余波</div>
+            <div class="slab-sub">处理后留下的不是“任务完成”，而是余地、偏向与后患</div>
+            <div class="receipt-list">
+              <div class="receipt">
+                <div class="title">上月回执</div>
+                <div class="summary">已遣族老调停，三房暂罢恶语，但未真和。</div>
+              </div>
+              <div class="receipt">
+                <div class="title">账册记要</div>
+                <div class="summary">若先护婴，再议婚帖，公中仍可承受。</div>
+              </div>
+              <div class="receipt">
+                <div class="title">门内余波</div>
+                <div class="summary">若偏袒太显，来月会转成支房怨望与闲言。</div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <aside class="side">
+          <section class="tray-card">
+            <div class="tray-head">
+              <div class="kicker">告示托盘</div>
+              <div class="main">今月诸事</div>
+            </div>
+
+            <div class="tray-scroll">
+              <section>
+                <div class="tray-section-title red">急报</div>
+                <div class="notice-list">
+                  <div class="notice urgent">
+                    <div class="kicker">告示</div>
+                    <div class="title">二房请定承祧</div>
+                    <div class="summary">无子之后谁续香火，已牵动两支旧怨。</div>
+                  </div>
+                  <div class="notice urgent">
+                    <div class="kicker">告示</div>
+                    <div class="title">新婴体弱</div>
+                    <div class="summary">若缓护养，来月恐生更重后果。</div>
+                  </div>
+                </div>
+              </section>
+
+              <section>
+                <div class="tray-section-title amber">当月应理</div>
+                <div class="notice-list">
+                  <div class="notice">
+                    <div class="kicker">告示</div>
+                    <div class="title">婚帖再缓</div>
+                    <div class="summary">两家礼数尚可挽回，但不宜再拖。</div>
+                  </div>
+                  <div class="notice">
+                    <div class="kicker">告示</div>
+                    <div class="title">县门拥堵</div>
+                    <div class="summary">榜示、讼户、商旅并集，路报已显迟滞。</div>
+                  </div>
+                  <div class="notice">
+                    <div class="kicker">告示</div>
+                    <div class="title">学塾催束脩</div>
+                    <div class="summary">若再缓，先生来月未必肯留。</div>
+                  </div>
+                </div>
+              </section>
+
+              <section>
+                <div class="tray-section-title slate">风闻与杂讯</div>
+                <div class="notice-list">
+                  <div class="notice background">
+                    <div class="kicker">告示</div>
+                    <div class="title">西市米价微涨</div>
+                    <div class="summary">比上月略高，尚未成灾，但需早看。</div>
+                  </div>
+                  <div class="notice background">
+                    <div class="kicker">告示</div>
+                    <div class="title">渡口今晨稍缓</div>
+                    <div class="summary">船只无争，城南往来较昨日顺畅。</div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

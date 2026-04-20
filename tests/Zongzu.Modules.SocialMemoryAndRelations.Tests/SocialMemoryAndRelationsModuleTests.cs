@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -11,6 +12,183 @@ namespace Zongzu.Modules.SocialMemoryAndRelations.Tests;
 [TestFixture]
 public sealed class SocialMemoryAndRelationsModuleTests
 {
+    [Test]
+    public void RunXun_ShangxunUpdatesFearAndGrudgeWithoutReadableOutput()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 48,
+            SupportReserve = 38,
+            HeirPersonId = new PersonId(1),
+            BranchTension = 64,
+            MediationMomentum = 10,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 76,
+            DebtPressure = 72,
+            LaborCapacity = 30,
+            MigrationRisk = 68,
+            IsMigrating = true,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+        socialState.ClanNarratives.Add(new ClanNarrativeState
+        {
+            ClanId = new ClanId(1),
+            PublicNarrative = "Quiet watchfulness",
+            GrudgePressure = 24,
+            FearPressure = 18,
+            ShamePressure = 10,
+            FavorBalance = 3,
+        });
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 2),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(71)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            cadenceBand: SimulationCadenceBand.Xun,
+            currentXun: SimulationXun.Shangxun);
+
+        socialModule.RunXun(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        ClanNarrativeState narrative = socialState.ClanNarratives.Single();
+        Assert.That(narrative.FearPressure, Is.EqualTo(20));
+        Assert.That(narrative.GrudgePressure, Is.EqualTo(26));
+        Assert.That(narrative.ShamePressure, Is.EqualTo(10));
+        Assert.That(narrative.FavorBalance, Is.EqualTo(3));
+        Assert.That(socialState.Memories, Is.Empty);
+        Assert.That(context.Diff.Entries, Is.Empty);
+        Assert.That(context.DomainEvents.Events, Is.Empty);
+    }
+
+    [Test]
+    public void RunXun_ZhongAndXiaxunUpdateShameFavorAndLateMonthFeudWithoutReadableOutput()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 42,
+            SupportReserve = 68,
+            HeirPersonId = new PersonId(1),
+            MediationMomentum = 48,
+            ReliefSanctionPressure = 41,
+            BranchFavorPressure = 45,
+            SeparationPressure = 62,
+            InheritancePressure = 57,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 32,
+            DebtPressure = 28,
+            LaborCapacity = 48,
+            MigrationRisk = 64,
+            IsMigrating = true,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+        socialState.ClanNarratives.Add(new ClanNarrativeState
+        {
+            ClanId = new ClanId(1),
+            PublicNarrative = "Quiet watchfulness",
+            GrudgePressure = 30,
+            FearPressure = 22,
+            ShamePressure = 14,
+            FavorBalance = 5,
+        });
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        queries.Register<ITradeAndIndustryQueries>(new StubTradeQueries(
+        [
+            new ClanTradeSnapshot
+            {
+                ClanId = new ClanId(1),
+                PrimarySettlementId = new SettlementId(1),
+                CashReserve = 110,
+                GrainReserve = 54,
+                Debt = 92,
+                CommerceReputation = 36,
+                ShopCount = 1,
+                LastOutcome = "Stable",
+                LastExplanation = string.Empty,
+            },
+        ]));
+        socialModule.RegisterQueries(socialState, queries);
+
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
+
+        ModuleExecutionContext zhongxunContext = new(
+            new GameDate(1200, 2),
+            manifest,
+            new DeterministicRandom(KernelState.Create(72)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            cadenceBand: SimulationCadenceBand.Xun,
+            currentXun: SimulationXun.Zhongxun);
+
+        socialModule.RunXun(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, zhongxunContext));
+
+        ModuleExecutionContext xiaxunContext = new(
+            new GameDate(1200, 2),
+            manifest,
+            new DeterministicRandom(KernelState.Create(72)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            cadenceBand: SimulationCadenceBand.Xun,
+            currentXun: SimulationXun.Xiaxun);
+
+        socialModule.RunXun(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, xiaxunContext));
+
+        ClanNarrativeState narrative = socialState.ClanNarratives.Single();
+        Assert.That(narrative.GrudgePressure, Is.EqualTo(32));
+        Assert.That(narrative.FearPressure, Is.EqualTo(23));
+        Assert.That(narrative.ShamePressure, Is.EqualTo(18));
+        Assert.That(narrative.FavorBalance, Is.EqualTo(7));
+        Assert.That(socialState.Memories, Is.Empty);
+        Assert.That(zhongxunContext.Diff.Entries, Is.Empty);
+        Assert.That(zhongxunContext.DomainEvents.Events, Is.Empty);
+        Assert.That(xiaxunContext.Diff.Entries, Is.Empty);
+        Assert.That(xiaxunContext.DomainEvents.Events, Is.Empty);
+    }
+
     [Test]
     public void RunMonth_PreservesAndEscalatesGrudgesUnderRepeatedStrain()
     {
@@ -120,10 +298,10 @@ public sealed class SocialMemoryAndRelationsModuleTests
                 ActiveDirectiveCode = WarfareCampaignCommandNames.CommitMobilization,
                 ActiveDirectiveLabel = "发檄点兵",
                 ActiveDirectiveSummary = "整众应调。",
-                LastDirectiveTrace = "Lanxi has committed mobilization.",
-                MobilizationWindowLabel = "Open",
-                SupplyLineSummary = "Granaries and roads are under watch.",
-                OfficeCoordinationTrace = "Registrar is forwarding wartime filings.",
+                LastDirectiveTrace = "兰溪已发檄点兵。",
+                MobilizationWindowLabel = "可发",
+                SupplyLineSummary = "仓路与渡口都在看守之下。",
+                OfficeCoordinationTrace = "主簿正在转递军务文移。",
                 SourceTrace = "Campaign pressure rose from local conflict.",
                 LastAftermathSummary = "战后覆核仍在地方记忆里发酵。",
             },
@@ -158,6 +336,67 @@ public sealed class SocialMemoryAndRelationsModuleTests
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.SocialMemoryAndRelations));
     }
 
+    [Test]
+    public void RunMonth_FamilyConflictPressure_ShapesClanNarrativeTowardAncestralHallDispute()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 51,
+            SupportReserve = 48,
+            HeirPersonId = new PersonId(1),
+            BranchTension = 64,
+            InheritancePressure = 58,
+            SeparationPressure = 68,
+            MediationMomentum = 4,
+            BranchFavorPressure = 33,
+            ReliefSanctionPressure = 42,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 44,
+            DebtPressure = 41,
+            LaborCapacity = 52,
+            MigrationRisk = 28,
+            IsMigrating = false,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(29)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            KernelState.Create(29));
+
+        socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        Assert.That(socialState.ClanNarratives, Has.Count.EqualTo(1));
+        Assert.That(socialState.ClanNarratives[0].PublicNarrative, Does.Contain("分房"));
+        Assert.That(socialState.ClanNarratives[0].GrudgePressure, Is.GreaterThan(0));
+        Assert.That(context.Diff.Entries.Single().Description, Does.Contain("旧怨"));
+    }
+
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
     {
         private readonly IReadOnlyList<CampaignFrontSnapshot> _campaigns;
@@ -178,6 +417,36 @@ public sealed class SocialMemoryAndRelationsModuleTests
         }
 
         public IReadOnlyList<CampaignMobilizationSignalSnapshot> GetMobilizationSignals()
+        {
+            return [];
+        }
+    }
+
+    private sealed class StubTradeQueries : ITradeAndIndustryQueries
+    {
+        private readonly IReadOnlyList<ClanTradeSnapshot> _clanTrades;
+
+        public StubTradeQueries(IReadOnlyList<ClanTradeSnapshot> clanTrades)
+        {
+            _clanTrades = clanTrades;
+        }
+
+        public ClanTradeSnapshot GetRequiredClanTrade(ClanId clanId)
+        {
+            return _clanTrades.Single(trade => trade.ClanId == clanId);
+        }
+
+        public IReadOnlyList<ClanTradeSnapshot> GetClanTrades()
+        {
+            return _clanTrades;
+        }
+
+        public IReadOnlyList<MarketSnapshot> GetMarkets()
+        {
+            return [];
+        }
+
+        public IReadOnlyList<TradeRouteSnapshot> GetRoutesForClan(ClanId clanId)
         {
             return [];
         }

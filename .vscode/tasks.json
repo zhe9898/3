@@ -1,0 +1,83 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "restore-solution",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "restore",
+        "${workspaceFolder}/Zongzu.sln"
+      ],
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build-solution",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/Zongzu.sln",
+        "-c",
+        "Debug"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": "restore-solution",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "test-solution",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "${workspaceFolder}/Zongzu.sln",
+        "-c",
+        "Debug",
+        "--no-build"
+      ],
+      "group": "test",
+      "dependsOn": "build-solution",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build-preview-runner",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/tools/Zongzu.MvpPreviewRunner/Zongzu.MvpPreviewRunner.csproj",
+        "-c",
+        "Debug"
+      ],
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "run-mvp-preview",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/tools/Zongzu.MvpPreviewRunner/Zongzu.MvpPreviewRunner.csproj"
+      ],
+      "dependsOn": "build-preview-runner",
+      "problemMatcher": []
+    },
+    {
+      "label": "open-unity-shell",
+      "type": "process",
+      "command": "C:/Users/Xy172/Unity/Hub/Editor/6000.3.13f1/Editor/Unity.exe",
+      "args": [
+        "-projectPath",
+        "${workspaceFolder}/unity/Zongzu.UnityShell"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

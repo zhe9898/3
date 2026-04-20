@@ -17,6 +17,8 @@ public sealed class SettlementStateData
 
     public string Name { get; set; } = string.Empty;
 
+    public SettlementTier Tier { get; set; }
+
     public int Security { get; set; }
 
     public int Prosperity { get; set; }

@@ -39,6 +39,8 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
 
     public override int ExecutionOrder => 200;
 
+    public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.XunAndMonth;
+
     public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
@@ -53,6 +55,21 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
     public override void RegisterQueries(PopulationAndHouseholdsState state, QueryRegistry queries)
     {
         queries.Register<IPopulationAndHouseholdsQueries>(new PopulationQueries(state));
+    }
+
+    public override void RunXun(ModuleExecutionScope<PopulationAndHouseholdsState> scope)
+    {
+        IWorldSettlementsQueries settlementQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
+
+        foreach (PopulationHouseholdState household in scope.State.Households.OrderBy(static household => household.Id.Value))
+        {
+            SettlementSnapshot settlement = settlementQueries.GetRequiredSettlement(household.SettlementId);
+            int clanSupport = GetClanSupportReserve(familyQueries, household.SponsorClanId);
+            ApplyXunPulseAdjustments(scope.Context.CurrentXun, settlement, clanSupport, household);
+        }
+
+        RebuildSettlementSummaries(scope.State);
     }
 
     public override void RunMonth(ModuleExecutionScope<PopulationAndHouseholdsState> scope)
@@ -82,31 +99,89 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
             household.IsMigrating = household.IsMigrating || household.MigrationRisk >= 80;
 
             scope.RecordDiff(
-                $"Household {household.HouseholdName} shifted to distress {household.Distress}, debt {household.DebtPressure}, labor {household.LaborCapacity}, migration {household.MigrationRisk}.",
+                $"{household.HouseholdName}本月民困{household.Distress}，债压{household.DebtPressure}，丁力{household.LaborCapacity}，迁徙之念{household.MigrationRisk}。",
                 household.Id.Value.ToString());
 
             if (oldDebtPressure < 70 && household.DebtPressure >= 70)
             {
-                scope.Emit("HouseholdDebtSpiked", $"Household {household.HouseholdName} debt pressure spiked.");
+                scope.Emit("HouseholdDebtSpiked", $"{household.HouseholdName}债压陡起。");
             }
 
             if (oldLaborCapacity >= 30 && household.LaborCapacity < 30)
             {
-                scope.Emit("LaborShortage", $"Household {household.HouseholdName} entered labor shortage.");
+                scope.Emit("LaborShortage", $"{household.HouseholdName}丁力不继。");
             }
 
             if (oldMigrationRisk < 80 && household.MigrationRisk >= 80 && !wasMigrating)
             {
-                scope.Emit("MigrationStarted", $"Household {household.HouseholdName} started migration.");
+                scope.Emit("MigrationStarted", $"{household.HouseholdName}已起迁徙之念。");
             }
 
             if (oldDebtPressure < 85 && household.DebtPressure >= 85 && household.Distress >= 80)
             {
-                scope.Emit("LivelihoodCollapsed", $"Household {household.HouseholdName} livelihood collapsed.");
+                scope.Emit("LivelihoodCollapsed", $"{household.HouseholdName}生计顿敝。");
             }
         }
 
         RebuildSettlementSummaries(scope.State);
+    }
+
+    private static void ApplyXunPulseAdjustments(
+        SimulationXun currentXun,
+        SettlementSnapshot settlement,
+        int clanSupport,
+        PopulationHouseholdState household)
+    {
+        int supportBuffer = clanSupport >= 60 ? 1 : 0;
+
+        switch (currentXun)
+        {
+            case SimulationXun.Shangxun:
+            {
+                int distressDelta = household.DebtPressure >= 50 ? 1 : 0;
+                if (distressDelta > 0 && supportBuffer > 0)
+                {
+                    distressDelta -= 1;
+                }
+
+                household.Distress = Math.Clamp(household.Distress + distressDelta, 0, 100);
+
+                int debtDelta = household.Distress >= 60 && supportBuffer == 0 ? 1 : 0;
+                household.DebtPressure = Math.Clamp(household.DebtPressure + debtDelta, 0, 100);
+                break;
+            }
+            case SimulationXun.Zhongxun:
+            {
+                int laborDrop = household.Distress >= 60 ? 1 : 0;
+                household.LaborCapacity = Math.Clamp(household.LaborCapacity - laborDrop, 0, 100);
+
+                int distressDelta = settlement.Prosperity < 45 && supportBuffer == 0 ? 1 : 0;
+                household.Distress = Math.Clamp(household.Distress + distressDelta, 0, 100);
+                break;
+            }
+            case SimulationXun.Xiaxun:
+            {
+                int migrationDelta = 0;
+                if (settlement.Security < 45)
+                {
+                    migrationDelta += 1;
+                }
+
+                if (household.DebtPressure >= 60)
+                {
+                    migrationDelta += 1;
+                }
+
+                if (migrationDelta > 0 && supportBuffer > 0)
+                {
+                    migrationDelta -= 1;
+                }
+
+                household.MigrationRisk = Math.Clamp(household.MigrationRisk + migrationDelta, 0, 100);
+                household.IsMigrating = household.IsMigrating || household.MigrationRisk >= 80;
+                break;
+            }
+        }
     }
 
     public override void HandleEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
@@ -155,7 +230,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
             }
 
             scope.RecordDiff(
-                $"Campaign spillover around {campaign.AnchorSettlementName} raised household distress by {distressDelta}, debt by {debtDelta}, migration by {migrationDelta}, and cut labor by {laborDrop}. {campaign.LastAftermathSummary}",
+                $"{campaign.AnchorSettlementName}战后余波所及，民困增{distressDelta}，债压增{debtDelta}，迁徙增{migrationDelta}，丁力减{laborDrop}。{campaign.LastAftermathSummary}",
                 bundle.SettlementId.Value.ToString());
 
             if (households.Any(static household => household.MigrationRisk >= 80))
@@ -164,7 +239,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                     .OrderByDescending(static household => household.MigrationRisk)
                     .ThenBy(static household => household.Id.Value)
                     .First();
-                scope.Emit("MigrationStarted", $"Campaign spillover pushed household {migratingHousehold.HouseholdName} toward flight.", bundle.SettlementId.Value.ToString());
+                scope.Emit("MigrationStarted", $"{migratingHousehold.HouseholdName}受战后余波所逼，已有远徙之意。", bundle.SettlementId.Value.ToString());
             }
 
             if (households.Any(static household => household.DebtPressure >= 85 && household.Distress >= 80))
@@ -173,7 +248,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                     .OrderByDescending(static household => household.DebtPressure + household.Distress)
                     .ThenBy(static household => household.Id.Value)
                     .First();
-                scope.Emit("LivelihoodCollapsed", $"Campaign spillover crushed household {collapsedHousehold.HouseholdName} around {campaign.AnchorSettlementName}.", bundle.SettlementId.Value.ToString());
+                scope.Emit("LivelihoodCollapsed", $"{collapsedHousehold.HouseholdName}受{campaign.AnchorSettlementName}战后余波牵压，生计顿敝。", bundle.SettlementId.Value.ToString());
             }
         }
 

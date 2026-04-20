@@ -115,6 +115,34 @@ public sealed record SaveRoot {
 
 ## 4. Example module states
 
+### WorldSettlements state
+Owns:
+- settlement baselines
+- route conditions
+- prosperity / security
+- settlement tier / node rank
+
+```csharp
+public sealed class WorldSettlementsState {
+    List<SettlementStateData> Settlements;
+    List<RouteStateData> Routes;
+}
+
+public sealed class SettlementStateData {
+    SettlementId SettlementId;
+    string DisplayName;
+    SettlementTier Tier;
+    int Security;
+    int Prosperity;
+    string LastOutcome;
+    string LastExplanation;
+}
+```
+
+Current note:
+- `WorldSettlements` schema `2` now persists settlement tier so county seat, market town, village cluster, and prefecture-facing nodes stay module-owned rather than UI-invented
+- the built-in `1 -> 2` migration backfills conservative tiers for legacy saves inside the same namespace only
+
 ### FamilyCore state
 Owns:
 - lineage links
@@ -124,11 +152,43 @@ Owns:
 - clan policies
 
 ```csharp
-public sealed record FamilyCoreState {
-    Dictionary<PersonId, FamilyPersonState> People;
-    Dictionary<ClanId, FamilyClanState> Clans;
+public sealed class FamilyCoreState {
+    List<ClanStateData> Clans;
+    List<FamilyPersonState> People;
+}
+
+public sealed class ClanStateData {
+    ClanId Id;
+    string ClanName;
+    SettlementId HomeSettlementId;
+    int Prestige;
+    int SupportReserve;
+    PersonId? HeirPersonId;
+    int BranchTension;
+    int InheritancePressure;
+    int SeparationPressure;
+    int MediationMomentum;
+    int BranchFavorPressure;
+    int ReliefSanctionPressure;
+    int MarriageAlliancePressure;
+    int MarriageAllianceValue;
+    int HeirSecurity;
+    int ReproductivePressure;
+    int MourningLoad;
+    string LastConflictCommandCode;
+    string LastConflictCommandLabel;
+    string LastConflictOutcome;
+    string LastConflictTrace;
+    string LastLifecycleCommandCode;
+    string LastLifecycleCommandLabel;
+    string LastLifecycleOutcome;
+    string LastLifecycleTrace;
 }
 ```
+
+Current note:
+- `FamilyCore` schema `3` now owns the first lineage-lifecycle lite state inside the family namespace
+- lineage-conflict plus marriage/heir/mourning pressures remain authoritative family state even when projected through the hall, family council, or social-memory read models
 
 ### PopulationAndHouseholds state
 Owns:
@@ -200,6 +260,7 @@ public sealed class TradeAndIndustryState {
     List<ClanTradeState> Clans;
     List<SettlementMarketState> Markets;
     List<RouteTradeState> Routes;
+    List<SettlementBlackRouteLedgerState> BlackRouteLedgers;
 }
 
 public sealed class ClanTradeState {
@@ -232,11 +293,85 @@ public sealed class RouteTradeState {
     int Capacity;
     int Risk;
     int LastMargin;
+    int BlockedShipmentCount;
+    int SeizureRisk;
+    string RouteConstraintLabel;
+    string LastRouteTrace;
+}
+
+public sealed class SettlementBlackRouteLedgerState {
+    SettlementId SettlementId;
+    int ShadowPriceIndex;
+    int DiversionShare;
+    int IllicitMargin;
+    int BlockedShipmentCount;
+    int SeizureRisk;
+    string DiversionBandLabel;
+    string LastLedgerTrace;
 }
 ```
 
-Post-MVP seam note:
-- future black-route / gray-route ledgers stay in `TradeAndIndustry`; they do not justify a detached `BlackRoute` root namespace
+Current post-MVP slice note:
+- active route records now also carry bounded blockage / seizure mirrors so route-level read models can explain which road is being squeezed without moving ownership out of trade
+- gray-route / illicit ledgers now stay in `TradeAndIndustry`; they do not justify a detached `BlackRoute` root namespace
+
+### PublicLifeAndRumor state
+Owns:
+- street-talk heat
+- market bustle
+- notice visibility
+- road-report lag
+- prefecture-dispatch pressure
+- public legitimacy
+- dominant venue / public trace wording
+- monthly cadence / crowd-mix wording for each settlement node
+- documentary weight / verification cost / market-rumor flow / courier risk
+- channel-summary wording for each settlement node
+- official-notice / street-talk / road-report / prefecture-dispatch wording
+- contention-summary wording for each settlement node
+
+```csharp
+public sealed class PublicLifeAndRumorState {
+    List<SettlementPublicLifeState> Settlements;
+}
+
+public sealed class SettlementPublicLifeState {
+    SettlementId SettlementId;
+    int StreetTalkHeat;
+    int MarketBuzz;
+    int NoticeVisibility;
+    int RoadReportLag;
+    int PrefectureDispatchPressure;
+    int PublicLegitimacy;
+    string NodeLabel;
+    string DominantVenueLabel;
+    string DominantVenueCode;
+    string MonthlyCadenceCode;
+    string MonthlyCadenceLabel;
+    string CrowdMixLabel;
+    int DocumentaryWeight;
+    int VerificationCost;
+    int MarketRumorFlow;
+    int CourierRisk;
+    string OfficialNoticeLine;
+    string StreetTalkLine;
+    string RoadReportLine;
+    string PrefectureDispatchLine;
+    string ContentionSummary;
+    string CadenceSummary;
+    string PublicSummary;
+    string RouteReportSummary;
+    string ChannelSummary;
+    string LastPublicTrace;
+}
+```
+
+Current note:
+- `PublicLifeAndRumor.Lite` is a thin county-public-life slice: it owns only public pulse and venue wording
+- schema `2` extends the slice with monthly-cadence descriptors so the same county / town / road node can read differently across months without inventing a separate calendar module
+- schema `3` extends the slice with venue-channel competition descriptors so county gates, market streets, ferries, inns, and prefecture dispatch pressure can read differently without moving command ownership into the public-life module
+- schema `4` extends the slice with explicit channel lines so `榜文`、`街谈`、`路报`、`州牒` can visibly diverge without introducing a detached information manager
+- it derives from stable query inputs across settlement, household, trade, order, office, family, and social-memory layers without taking ownership away from them
 
 ### OfficeAndCareer state
 ```csharp
@@ -254,6 +389,8 @@ public sealed class OfficeCareerState {
     bool HasAppointment;
     string OfficeTitle;
     int AuthorityTier;
+    int AppointmentPressure;
+    int ClerkDependence;
     int JurisdictionLeverage;
     int PetitionPressure;
     int PetitionBacklog;
@@ -275,16 +412,18 @@ public sealed class JurisdictionAuthorityState {
     string LeadOfficeTitle;
     int AuthorityTier;
     int JurisdictionLeverage;
+    int ClerkDependence;
     int PetitionPressure;
     int PetitionBacklog;
     string CurrentAdministrativeTask;
+    int AdministrativeTaskLoad;
     string LastPetitionOutcome;
     string LastAdministrativeTrace;
 }
 ```
 
 Current lite note:
-- the active governance-lite v2 slice persists office careers, service progression, petition handling, and settlement jurisdiction leverage
+- the active governance-lite v3 slice persists office careers, candidate waiting pressure, clerk dependence, service progression, petition handling, settlement jurisdiction leverage, and jurisdiction-level administrative task load
 - office leverage now remains owned by `OfficeAndCareer` while downstream order/force modules may read it through queries only
 - the lighter office v2.1 slice adds only derived query/read-model labels such as administrative-task tier, petition-outcome category, and authority-trajectory wording; it does not add new saved fields
 
@@ -301,13 +440,30 @@ public sealed class SettlementDisorderState {
     int SuppressionDemand;
     int DisorderPressure;
     string LastPressureReason;
+    int BlackRoutePressure;
+    int CoercionRisk;
+    int SuppressionRelief;
+    int ResponseActivationLevel;
+    int PaperCompliance;
+    int ImplementationDrag;
+    int RouteShielding;
+    int RetaliationRisk;
+    int AdministrativeSuppressionWindow;
+    string EscalationBandLabel;
+    string LastPressureTrace;
+    string LastInterventionCommandCode;
+    string LastInterventionCommandLabel;
+    string LastInterventionSummary;
+    string LastInterventionOutcome;
+    int InterventionCarryoverMonths;
 }
 ```
 
 Current lite note:
-- the first active M3 slice persists settlement-level disorder only
+- the current M3 slice persists settlement-level disorder plus black-route pressure summaries, paper-compliance visibility, implementation-drag friction, route-shielding relief, and retaliation-risk backlash
+- bounded public-life order interventions now also persist a one-month follow-through window so recent road-watch / crackdown / negotiation choices can echo into the next monthly pass without creating a second authority surface
 - outlaw actors/camps remain deferred to a later deeper slice
-- future black-route pressure snapshots stay conceptually inside `OrderAndBanditry` even when `TradeAndIndustry` later reads them through preflight query seams
+- black-route pressure snapshots stay inside `OrderAndBanditry` even when `TradeAndIndustry` reads them through query seams
 
 ### ConflictAndForce state
 ```csharp
@@ -452,6 +608,7 @@ public sealed class PresentationReadModelBundle {
     GameDate CurrentDate;
     string ReplayHash;
     IReadOnlyList<ClanSnapshot> Clans;
+    IReadOnlyList<ClanNarrativeSnapshot> ClanNarratives;
     IReadOnlyList<SettlementSnapshot> Settlements;
     IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements;
     IReadOnlyList<EducationCandidateSnapshot> EducationCandidates;
@@ -459,12 +616,44 @@ public sealed class PresentationReadModelBundle {
     IReadOnlyList<ClanTradeSnapshot> ClanTrades;
     IReadOnlyList<MarketSnapshot> Markets;
     IReadOnlyList<TradeRouteSnapshot> TradeRoutes;
+    IReadOnlyList<SettlementPublicLifeSnapshot> PublicLifeSettlements;
     IReadOnlyList<OfficeCareerSnapshot> OfficeCareers;
     IReadOnlyList<JurisdictionAuthoritySnapshot> OfficeJurisdictions;
     IReadOnlyList<CampaignFrontSnapshot> Campaigns;
     IReadOnlyList<CampaignMobilizationSignalSnapshot> CampaignMobilizationSignals;
     IReadOnlyList<NarrativeNotificationSnapshot> Notifications;
+    PlayerCommandSurfaceSnapshot PlayerCommands;
     PresentationDebugSnapshot Debug;
+}
+
+public sealed class PlayerCommandSurfaceSnapshot {
+    IReadOnlyList<PlayerCommandAffordanceSnapshot> Affordances;
+    IReadOnlyList<PlayerCommandReceiptSnapshot> Receipts;
+}
+
+public sealed class PlayerCommandAffordanceSnapshot {
+    string ModuleKey;
+    string SurfaceKey;
+    SettlementId SettlementId;
+    ClanId? ClanId;
+    string CommandName;
+    string Label;
+    string Summary;
+    bool IsEnabled;
+    string AvailabilitySummary;
+    string TargetLabel;
+}
+
+public sealed class PlayerCommandReceiptSnapshot {
+    string ModuleKey;
+    string SurfaceKey;
+    SettlementId SettlementId;
+    ClanId? ClanId;
+    string CommandName;
+    string Label;
+    string Summary;
+    string OutcomeSummary;
+    string TargetLabel;
 }
 
 public sealed class PresentationDebugSnapshot {
@@ -551,6 +740,11 @@ public sealed class ModulePayloadFootprintSnapshot {
 }
 ```
 
+Current note:
+- the read-model bundle now carries `ClanNarratives` so lineage conflict, shame, and favor pressure can be shown in the family council without reading module state directly
+- `PlayerCommands` now spans family, office, and warfare affordances/receipts as read-only presentation data only
+- family command targeting is expressed through optional `ClanId` plus `TargetLabel`; it does not create a new save namespace
+
 Diagnostics harness note:
 - longer multi-seed sweep reports and budget evaluations are runtime-only application diagnostics
 - per-module diff/event activity peaks are also runtime-only diagnostics
@@ -560,6 +754,7 @@ Diagnostics harness note:
 - load-migration summaries shown in debug/presentation are runtime-only diagnostics derived from the active load path
 - scale summaries and top module payload footprints are also runtime-only diagnostics
 - payload-summary headlines and migration-consistency status are also runtime-only diagnostics
+- player-command affordances and receipts in the presentation bundle are also runtime-only read models
 - they are not saved in authoritative module namespaces
 
 ## 5. Relationship and grudge data

@@ -18,9 +18,9 @@ public sealed class MonthlySchedulerTests
         manifest.Set("WorldProbeA", FeatureMode.Full);
         manifest.Set("WorldProbeB", FeatureMode.Full);
 
-        ProbeModule worldA = new("WorldProbeA", SimulationPhase.WorldBaseline, 100);
-        ProbeModule family = new("FamilyProbe", SimulationPhase.FamilyStructure, 300);
-        ProbeModule worldB = new("WorldProbeB", SimulationPhase.WorldBaseline, 200);
+        ProbeModule worldA = new("WorldProbeA", SimulationPhase.WorldBaseline, 100, SimulationCadencePresets.MonthOnly);
+        ProbeModule family = new("FamilyProbe", SimulationPhase.FamilyStructure, 300, SimulationCadencePresets.MonthOnly);
+        ProbeModule worldB = new("WorldProbeB", SimulationPhase.WorldBaseline, 200, SimulationCadencePresets.MonthOnly);
         IReadOnlyList<IModuleRunner> modules = [family, worldB, worldA];
 
         Dictionary<string, object> states = modules.ToDictionary(
@@ -39,6 +39,48 @@ public sealed class MonthlySchedulerTests
         string[] executedModules = result.Diff.Entries.Select(static entry => entry.ModuleKey).ToArray();
 
         Assert.That(executedModules, Is.EqualTo(new[] { "WorldProbeA", "WorldProbeB", "FamilyProbe" }));
+    }
+
+    [Test]
+    public void AdvanceOneMonth_RunsThreeXunPulsesBeforeMonthPass()
+    {
+        FeatureManifest manifest = new();
+        manifest.Set("WorldProbe", FeatureMode.Full);
+        manifest.Set("FamilyProbe", FeatureMode.Full);
+
+        ProbeModule world = new("WorldProbe", SimulationPhase.WorldBaseline, 100, SimulationCadencePresets.XunAndMonth);
+        ProbeModule family = new("FamilyProbe", SimulationPhase.FamilyStructure, 300, SimulationCadencePresets.XunAndMonth);
+        IReadOnlyList<IModuleRunner> modules = [family, world];
+
+        Dictionary<string, object> states = modules.ToDictionary(
+            static module => module.ModuleKey,
+            static module => module.CreateInitialState(),
+            StringComparer.Ordinal);
+
+        MonthlyScheduler scheduler = new();
+        SimulationMonthResult result = scheduler.AdvanceOneMonth(
+            new GameDate(1200, 1),
+            manifest,
+            new DeterministicRandom(KernelState.Create(77)),
+            states,
+            modules);
+
+        string[] descriptions = result.Diff.Entries.Select(static entry => entry.Description).ToArray();
+
+        Assert.That(
+            descriptions,
+            Is.EqualTo(
+            new[]
+            {
+                "Executed WorldProbe during Shangxun.",
+                "Executed FamilyProbe during Shangxun.",
+                "Executed WorldProbe during Zhongxun.",
+                "Executed FamilyProbe during Zhongxun.",
+                "Executed WorldProbe during Xiaxun.",
+                "Executed FamilyProbe during Xiaxun.",
+                "Executed WorldProbe during month.",
+                "Executed FamilyProbe during month.",
+            }));
     }
 
     [Test]
@@ -78,10 +120,20 @@ public sealed class MonthlySchedulerTests
     private sealed class ProbeModule : ModuleRunner<ProbeState>
     {
         public ProbeModule(string moduleKey, SimulationPhase phase, int executionOrder)
+            : this(moduleKey, phase, executionOrder, SimulationCadencePresets.MonthOnly)
+        {
+        }
+
+        public ProbeModule(
+            string moduleKey,
+            SimulationPhase phase,
+            int executionOrder,
+            IReadOnlyCollection<SimulationCadenceBand> cadenceBands)
         {
             ModuleKey = moduleKey;
             Phase = phase;
             ExecutionOrder = executionOrder;
+            CadenceBands = cadenceBands;
         }
 
         public override string ModuleKey { get; }
@@ -92,14 +144,21 @@ public sealed class MonthlySchedulerTests
 
         public override int ExecutionOrder { get; }
 
+        public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands { get; }
+
         public override ProbeState CreateInitialState()
         {
             return new ProbeState { ModuleKeyValue = ModuleKey };
         }
 
+        public override void RunXun(ModuleExecutionScope<ProbeState> scope)
+        {
+            scope.RecordDiff($"Executed {ModuleKey} during {scope.Context.CurrentXun}.");
+        }
+
         public override void RunMonth(ModuleExecutionScope<ProbeState> scope)
         {
-            scope.RecordDiff($"Executed {ModuleKey}.");
+            scope.RecordDiff($"Executed {ModuleKey} during month.");
         }
     }
 
@@ -119,6 +178,8 @@ public sealed class MonthlySchedulerTests
         public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
 
         public override int ExecutionOrder => 100;
+
+        public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthOnly;
 
         public override IReadOnlyCollection<string> PublishedEvents => [ "SourceRaised" ];
 
@@ -143,6 +204,8 @@ public sealed class MonthlySchedulerTests
         public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
 
         public override int ExecutionOrder => 200;
+
+        public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthOnly;
 
         public override IReadOnlyCollection<string> ConsumedEvents => [ "SourceRaised" ];
 
@@ -176,6 +239,8 @@ public sealed class MonthlySchedulerTests
         public override SimulationPhase Phase => SimulationPhase.Projection;
 
         public override int ExecutionOrder => 100;
+
+        public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthOnly;
 
         public override ProbeState CreateInitialState()
         {

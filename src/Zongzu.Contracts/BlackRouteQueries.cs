@@ -15,6 +15,14 @@ public sealed class SettlementBlackRoutePressureSnapshot
 
     public int ResponseActivationLevel { get; set; }
 
+    public int PaperCompliance { get; set; }
+
+    public int ImplementationDrag { get; set; }
+
+    public int RouteShielding { get; set; }
+
+    public int RetaliationRisk { get; set; }
+
     public int AdministrativeSuppressionWindow { get; set; }
 
     public string EscalationBandLabel { get; set; } = string.Empty;

@@ -7,6 +7,7 @@ using Zongzu.Modules.FamilyCore;
 using Zongzu.Kernel;
 using Zongzu.Modules.ConflictAndForce;
 using Zongzu.Modules.NarrativeProjection;
+using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
 using Zongzu.Modules.PopulationAndHouseholds;
 using Zongzu.Modules.TradeAndIndustry;
@@ -156,6 +157,21 @@ internal static class RuntimeObservabilityCollector
                 ? 0
                 : orderState.Settlements.Max(static settlement => settlement.SuppressionDemand);
             snapshot.HighBanditThreatSettlements = orderState.Settlements.Count(static settlement => settlement.BanditThreat >= 55);
+            snapshot.OrderInterventionCarryoverSettlements = orderState.Settlements.Count(static settlement => settlement.InterventionCarryoverMonths > 0);
+            snapshot.ShieldingDominantSettlements = orderState.Settlements.Count(static settlement =>
+                settlement.RouteShielding >= 35 && settlement.RouteShielding > settlement.RetaliationRisk);
+            snapshot.BacklashDominantSettlements = orderState.Settlements.Count(static settlement =>
+                settlement.RetaliationRisk >= 35 && settlement.RetaliationRisk > settlement.RouteShielding);
+
+            if (simulation.TryGetModuleState(KnownModuleKeys.OfficeAndCareer, out object? officeStateObject) &&
+                officeStateObject is OfficeAndCareerState officeState)
+            {
+                Dictionary<SettlementId, JurisdictionAuthorityState> jurisdictionsBySettlement = officeState.Jurisdictions
+                    .ToDictionary(static jurisdiction => jurisdiction.SettlementId, static jurisdiction => jurisdiction);
+                snapshot.OrderAdministrativeAftermathSettlements = orderState.Settlements.Count(settlement =>
+                    jurisdictionsBySettlement.TryGetValue(settlement.SettlementId, out JurisdictionAuthorityState? jurisdiction)
+                    && HasLinkedAdministrativeAftermath(settlement.LastInterventionCommandLabel, jurisdiction));
+            }
         }
 
         return snapshot;
@@ -228,14 +244,25 @@ internal static class RuntimeObservabilityCollector
             forceBySettlement = conflictState.Settlements.ToDictionary(static settlement => settlement.SettlementId, static settlement => settlement);
         }
 
+        Dictionary<SettlementId, JurisdictionAuthorityState> jurisdictionsBySettlement = new();
+        if (simulation.TryGetModuleState(KnownModuleKeys.OfficeAndCareer, out object? officeStateObject) &&
+            officeStateObject is OfficeAndCareerState officeState)
+        {
+            jurisdictionsBySettlement = officeState.Jurisdictions.ToDictionary(static jurisdiction => jurisdiction.SettlementId, static jurisdiction => jurisdiction);
+        }
+
         return orderState.Settlements
             .Select(settlement =>
             {
                 forceBySettlement.TryGetValue(settlement.SettlementId, out SettlementForceState? force);
+                jurisdictionsBySettlement.TryGetValue(settlement.SettlementId, out JurisdictionAuthorityState? jurisdiction);
                 int hotspotScore =
                     settlement.SuppressionDemand
                     + settlement.BanditThreat
                     + settlement.RoutePressure
+                    + (settlement.BlackRoutePressure / 2)
+                    + (settlement.RetaliationRisk / 3)
+                    + (settlement.InterventionCarryoverMonths > 0 ? 12 : 0)
                     + ((force?.HasActiveConflict ?? false) ? 20 : 0)
                     + ((force?.IsResponseActivated ?? false) ? 12 : 0)
                     + ((force?.OrderSupportLevel ?? 0) * 3);
@@ -250,6 +277,13 @@ internal static class RuntimeObservabilityCollector
                     BanditThreat = settlement.BanditThreat,
                     RoutePressure = settlement.RoutePressure,
                     SuppressionDemand = settlement.SuppressionDemand,
+                    BlackRoutePressure = settlement.BlackRoutePressure,
+                    RouteShielding = settlement.RouteShielding,
+                    RetaliationRisk = settlement.RetaliationRisk,
+                    InterventionCarryoverMonths = settlement.InterventionCarryoverMonths,
+                    AdministrativeTaskLoad = jurisdiction?.AdministrativeTaskLoad ?? 0,
+                    PetitionBacklog = jurisdiction?.PetitionBacklog ?? 0,
+                    AdministrativeAftermathSummary = BuildAdministrativeAftermathSummary(settlement, jurisdiction),
                     ResponseActivationLevel = force?.ResponseActivationLevel ?? 0,
                     OrderSupportLevel = force?.OrderSupportLevel ?? 0,
                     HasActiveConflict = force?.HasActiveConflict ?? false,
@@ -257,5 +291,31 @@ internal static class RuntimeObservabilityCollector
                 };
             })
             .ToArray();
+    }
+
+    private static bool HasLinkedAdministrativeAftermath(string orderCommandLabel, JurisdictionAuthorityState jurisdiction)
+    {
+        if (string.IsNullOrWhiteSpace(orderCommandLabel))
+        {
+            return false;
+        }
+
+        return jurisdiction.LastPetitionOutcome.Contains(orderCommandLabel, StringComparison.Ordinal)
+            || jurisdiction.LastAdministrativeTrace.Contains(orderCommandLabel, StringComparison.Ordinal);
+    }
+
+    private static string BuildAdministrativeAftermathSummary(
+        SettlementDisorderState settlement,
+        JurisdictionAuthorityState? jurisdiction)
+    {
+        if (jurisdiction is null || !HasLinkedAdministrativeAftermath(settlement.LastInterventionCommandLabel, jurisdiction))
+        {
+            return string.Empty;
+        }
+
+        string leadLabel = string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
+            ? jurisdiction.LeadOfficeTitle
+            : jurisdiction.LeadOfficialName;
+        return $"{leadLabel}仍在{jurisdiction.CurrentAdministrativeTask}；积案{jurisdiction.PetitionBacklog}，{jurisdiction.LastPetitionOutcome}";
     }
 }

@@ -21,6 +21,10 @@ public sealed class OfficeCareerSnapshot
 
     public int AuthorityTier { get; set; }
 
+    public int AppointmentPressure { get; set; }
+
+    public int ClerkDependence { get; set; }
+
     public int JurisdictionLeverage { get; set; }
 
     public int PetitionPressure { get; set; }
@@ -70,6 +74,8 @@ public sealed class JurisdictionAuthoritySnapshot
 
     public int JurisdictionLeverage { get; set; }
 
+    public int ClerkDependence { get; set; }
+
     public int PetitionPressure { get; set; }
 
     public int PetitionBacklog { get; set; }
@@ -77,6 +83,8 @@ public sealed class JurisdictionAuthoritySnapshot
     public string CurrentAdministrativeTask { get; set; } = string.Empty;
 
     public string AdministrativeTaskTier { get; set; } = string.Empty;
+
+    public int AdministrativeTaskLoad { get; set; }
 
     public string LastPetitionOutcome { get; set; } = string.Empty;
 

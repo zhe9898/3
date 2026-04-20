@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run MVP Preview Runner",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-preview-runner",
+      "program": "${workspaceFolder}/tools/Zongzu.MvpPreviewRunner/bin/Debug/net8.0/Zongzu.MvpPreviewRunner.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    }
+  ]
+}

@@ -11,6 +11,8 @@ public sealed class PresentationReadModelBundle
 
     public IReadOnlyList<ClanSnapshot> Clans { get; set; } = [];
 
+    public IReadOnlyList<ClanNarrativeSnapshot> ClanNarratives { get; set; } = [];
+
     public IReadOnlyList<SettlementSnapshot> Settlements { get; set; } = [];
 
     public IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements { get; set; } = [];
@@ -25,15 +27,29 @@ public sealed class PresentationReadModelBundle
 
     public IReadOnlyList<TradeRouteSnapshot> TradeRoutes { get; set; } = [];
 
+    public IReadOnlyList<SettlementPublicLifeSnapshot> PublicLifeSettlements { get; set; } = [];
+
+    public IReadOnlyList<SettlementDisorderSnapshot> SettlementDisorder { get; set; } = [];
+
     public IReadOnlyList<OfficeCareerSnapshot> OfficeCareers { get; set; } = [];
 
     public IReadOnlyList<JurisdictionAuthoritySnapshot> OfficeJurisdictions { get; set; } = [];
+
+    public IReadOnlyList<SettlementGovernanceLaneSnapshot> GovernanceSettlements { get; set; } = [];
+
+    public GovernanceFocusSnapshot GovernanceFocus { get; set; } = new();
+
+    public GovernanceDocketSnapshot GovernanceDocket { get; set; } = new();
+
+    public HallDocketStackSnapshot HallDocket { get; set; } = new();
 
     public IReadOnlyList<CampaignFrontSnapshot> Campaigns { get; set; } = [];
 
     public IReadOnlyList<CampaignMobilizationSignalSnapshot> CampaignMobilizationSignals { get; set; } = [];
 
     public IReadOnlyList<NarrativeNotificationSnapshot> Notifications { get; set; } = [];
+
+    public PlayerCommandSurfaceSnapshot PlayerCommands { get; set; } = new();
 
     public PresentationDebugSnapshot Debug { get; set; } = new();
 }

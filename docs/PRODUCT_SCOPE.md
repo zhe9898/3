@@ -4,22 +4,39 @@ This document defines the project through **14 formal dimensions** plus **3 cros
 
 ## Core thesis
 The player is not a god and not a single adventurer.
-The player is the head of a clan operating within a living world.
+The project is a **Northern Song-inspired, multi-route, rules-driven simulation of a living Chinese ancient society**.
+The player enters that society through a household or lineage position.
+That position is not permanently elite: a house may stabilize, rise, fragment, sink into commoner survival, or fall into gray dependence under pressure.
+
+For the higher-level rules-driven living-world thesis, player leverage doctrine, and multi-generation consequence framing, see `RULES_DRIVEN_LIVING_WORLD.md`.
+
+## Historical grounding baseline
+Default player-facing grounding should read as `Northern Song-inspired`, not as a dynasty-agnostic mashup and not as a strict documentary reenactment.
+
+That means the current baseline should lean toward:
+- county society shaped by literati ambition, yamen paperwork, recommendation networks, and waiting for openings
+- north-China road-county logic plus connected market and canal corridors where needed, rather than a flat all-China terrain voice
+- family, office, trade, route security, and campaign pressure as one linked field
+
+This baseline is a gameplay frame, not a claim that every mechanic is an exact Northern Song reconstruction.
 
 The world:
 - changes before the player acts
 - produces pressure through people, households, institutions, markets, order, weather, banditry, office, and war
-- is then projected back to the player through space, visitors, reports, ledgers, lineage surfaces, desk-sandbox nodes, and conflict aftermath
+- is then projected back to the player through space, visitors, reports, ledgers, household and lineage surfaces, desk-sandbox nodes, and conflict aftermath
 
 ## Core loop
 Authoritative loop:
-1. advance one month
-2. world modules simulate
-3. structured diffs are produced
-4. projections and notifications are built
-5. player reviews pressure and opportunity
-6. player issues bounded commands
-7. the next month begins
+1. open a new monthly shell
+2. run the world's internal `xun` pulses
+3. consolidate month-end module state and structured diffs
+4. build projections and notifications
+5. let the player review pressure and opportunity
+6. let the player issue bounded commands
+7. carry those choices into the next month
+
+This is not a flat once-per-month jump.
+The month is the player's main review shell; lived pressure below it may pulse multiple times before review closes.
 
 ## The 14 dimensions
 
@@ -61,6 +78,7 @@ The game should rely on:
 - stylized portrait modules
 - short vignettes
 - ambient sound layers
+- detailed sourcing, license, and staging rules live in `ART_AND_AUDIO_ASSET_SOURCING.md`
 
 ### 5. Version control
 Mainline must remain recoverable.
@@ -90,7 +108,7 @@ It is a core expression of the game fantasy:
 - inspectors and ledgers
 
 ### 11. Performance and simulation scale control
-Simulation scale is achieved by tiered fidelity, not by simulating everything at full detail.
+Simulation scale is achieved by tiered fidelity and tiered cadence, not by simulating everything at full detail or at one flat speed.
 
 ### 12. Saves and compatibility
 Long-run saves are valuable.
@@ -109,7 +127,7 @@ Every release line needs:
 ## Social and pathway structure
 These are not separate game modes.
 They are interconnected social positions and pathways:
-- **Clan / family**: the player’s primary system
+- **Household / lineage position**: the player's nearest decision surface, but not the whole subject of the game
 - **Commoners / households**: the social base and labor layer
 - **Exams**: institutional upward mobility
 - **Trade**: wealth and network mobility
@@ -117,6 +135,13 @@ They are interconnected social positions and pathways:
 - **Outlaw / banditry**: disorder, failure, coercion, and gray power
 
 These positions must be able to transform into one another through world pressure and personal circumstance.
+That includes downward mobility:
+- a once-solid house can become an ordinary struggling household
+- a branch can lose status, labor security, and marriage value
+- a respectable line can slide into debt, dependence, migration, hired service, or gray survival
+- a low or poor start may remain precarious, stabilize, or climb
+
+See `RULES_DRIVEN_LIVING_WORLD.md` for the stronger multi-route doctrine: these are overlapping social positions in one dynamic field, not hard career branches.
 
 ## Three cross-dimensional hard principles
 1. **Explainable causality**

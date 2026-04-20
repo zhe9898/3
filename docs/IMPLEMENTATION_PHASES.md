@@ -6,6 +6,7 @@ This plan assumes a single-developer, Codex-assisted workflow.
 Goal:
 - repo skeleton
 - kernel/contracts/scheduler/persistence shell
+- cadence-aware scheduler foundation for `xun / month / seasonal`
 - module registration
 - save root + feature manifest
 - replay hash skeleton
@@ -42,6 +43,10 @@ Done when:
 - spatial shell usable
 - MVP core question answerable
 
+Implementation note:
+- the explicit default MVP bootstrap should stop at mandatory M0-M2 packs plus `NarrativeProjection`
+- later public-life, conflict, governance, and warfare slices must remain on separately named non-MVP paths
+
 ## Phase M3 - optional local conflict lite
 Modules:
 - OrderAndBanditry.Lite
@@ -51,11 +56,14 @@ Implementation note:
 - M3 may land incrementally so long as each slice stays additive and preserves M0-M2 stability
 - `OrderAndBanditry.Lite` may ship before `ConflictAndForce.Lite`
 - order pressure should integrate with trade and projection before richer force resolution is added
+- the current M3 authority slice now also persists black-route pressure, paper compliance, implementation drag, route shielding, retaliation risk, and intervention receipts in `OrderAndBanditry` plus gray-route / illicit ledgers in `TradeAndIndustry`
+- the current trade slice now also mirrors blockage / seizure pressure onto active routes so route-owned state can explain which road is actually being squeezed
 - the order-enabled M3 bridge path may remain available while the full local-conflict lite path enables both `OrderAndBanditry` and `ConflictAndForce`
 - active M3 local-conflict work must not alter the active M2 bootstrap surface
 
 Done when:
 - local security pressure exists
+- black-route pressure and gray-route ledgers stay split across order/trade ownership
 - local conflict can happen and be explained
 - no tactical micro introduced
 - schedule still intact
@@ -64,6 +72,9 @@ Done when:
 Modules:
 - OfficeAndCareer
 - OrderAndBanditry full
+
+Implementation note:
+- the first black-route authority slice is already in place before full order-pack work; later P1 work should extend those same fields and envelopes rather than invent a detached outlaw namespace
 
 ## Phase P2 - force depth
 Modules:

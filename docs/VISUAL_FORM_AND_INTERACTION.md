@@ -11,13 +11,16 @@ The game should not feel like:
 - a tactical battlefield game
 
 It should feel like:
-**a clan head seated in lived space, receiving people, letters, pressure, grief, celebration, and consequence.**
+**a household-side or lineage-side actor seated in lived space, receiving people, letters, pressure, grief, celebration, and consequence.**
 
 ## Core visual thesis
-Use **spatialized family simulation**:
+Use **spatialized living-society simulation**:
 - systemic authority remains data-driven
 - player experience is room/object/visitor anchored
 - presentation is stronger than a bare dashboard, but cheaper than open-world production
+
+The shell must not imply permanent elite insulation.
+It should still read correctly if the player's house is strained, diminished, debt-ridden, socially slipping toward ordinary survival, or starting from a poorer position.
 
 ## Primary spatial anchors
 ### A. Great hall / study
@@ -26,7 +29,17 @@ Main monthly dashboard and decision room.
 ### B. Ancestral hall / lineage surface
 Family tree, branch memory, ancestor weight, heir context.
 
-### C. Desk sandbox
+### C. Macro sandbox
+Regional route-pressure board:
+- roads and waterways
+- prefecture and county bands
+- grain and petition flow
+- flood, bandit, and military spillover
+- county-entry pins
+
+This should still feel like a sand table on a desk, not a detached national map.
+
+### D. Desk sandbox
 Local-world board:
 - estates
 - roads
@@ -36,7 +49,7 @@ Local-world board:
 - security hotspots
 - later campaign overlay
 
-### D. Conflict vignette
+### E. Conflict vignette
 Short visualized presentation for:
 - injury
 - raids
@@ -58,6 +71,7 @@ The player acts through:
 Must already include:
 - one great hall/study shell
 - one lineage surface
+- one macro sandbox
 - one desk sandbox
 - one conflict vignette surface if local conflict pack is on
 

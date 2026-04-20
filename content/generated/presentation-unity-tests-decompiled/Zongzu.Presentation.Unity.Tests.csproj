@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Zongzu.Presentation.Unity.Tests</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp8.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>12.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.ObjectModel">
+      <HintPath>..\..\..\tests\Zongzu.Presentation.Unity.Tests\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\tests\Zongzu.Presentation.Unity.Tests\bin\Debug\net8.0\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Zongzu.Presentation.Unity">
+      <HintPath>..\..\..\tests\Zongzu.Presentation.Unity.Tests\bin\Debug\net8.0\Zongzu.Presentation.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Zongzu.Contracts">
+      <HintPath>..\..\..\tests\Zongzu.Presentation.Unity.Tests\bin\Debug\net8.0\Zongzu.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Zongzu.Kernel">
+      <HintPath>..\..\..\tests\Zongzu.Presentation.Unity.Tests\bin\Debug\net8.0\Zongzu.Kernel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

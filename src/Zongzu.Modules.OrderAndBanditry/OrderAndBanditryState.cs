@@ -24,4 +24,36 @@ public sealed class SettlementDisorderState
     public int DisorderPressure { get; set; }
 
     public string LastPressureReason { get; set; } = string.Empty;
+
+    public int BlackRoutePressure { get; set; }
+
+    public int CoercionRisk { get; set; }
+
+    public int SuppressionRelief { get; set; }
+
+    public int ResponseActivationLevel { get; set; }
+
+    public int PaperCompliance { get; set; }
+
+    public int ImplementationDrag { get; set; }
+
+    public int RouteShielding { get; set; }
+
+    public int RetaliationRisk { get; set; }
+
+    public int AdministrativeSuppressionWindow { get; set; }
+
+    public string EscalationBandLabel { get; set; } = string.Empty;
+
+    public string LastPressureTrace { get; set; } = string.Empty;
+
+    public string LastInterventionCommandCode { get; set; } = string.Empty;
+
+    public string LastInterventionCommandLabel { get; set; } = string.Empty;
+
+    public string LastInterventionSummary { get; set; } = string.Empty;
+
+    public string LastInterventionOutcome { get; set; } = string.Empty;
+
+    public int InterventionCarryoverMonths { get; set; }
 }

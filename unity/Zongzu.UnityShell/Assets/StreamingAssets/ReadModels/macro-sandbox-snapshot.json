@@ -1,0 +1,45 @@
+{
+  "snapshotId": "macro-bootstrap",
+  "timeLabel": "皇祐三年 九月",
+  "routeBandLabel": "两浙路总览",
+  "leadPressure": "漕路微阻，州府递报转慢，县域冷热分化。",
+  "majorNodes": [
+    {
+      "label": "杭州",
+      "kind": "州府",
+      "heat": "中",
+      "note": "城门与市肆热闹，公文来往频仍。"
+    },
+    {
+      "label": "苏州",
+      "kind": "州府",
+      "heat": "高",
+      "note": "水路繁密，米价风声最先起伏。"
+    },
+    {
+      "label": "华亭县",
+      "kind": "县",
+      "heat": "中",
+      "note": "可作为县域案头沙盘入口。"
+    }
+  ],
+  "majorRoutes": [
+    {
+      "label": "江南漕路",
+      "kind": "水路",
+      "status": "迟滞",
+      "pressure": "粮运略慢，递报时间拉长。"
+    },
+    {
+      "label": "州县官路",
+      "kind": "陆路",
+      "status": "平稳",
+      "pressure": "客商仍行，县门稽验略严。"
+    }
+  ],
+  "hotspotLabels": [
+    "苏州米价微扬",
+    "州牒积压",
+    "水路报信转慢"
+  ]
+}

@@ -10,6 +10,7 @@ using Zongzu.Modules.NarrativeProjection;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
 using Zongzu.Modules.PopulationAndHouseholds;
+using Zongzu.Modules.PublicLifeAndRumor;
 using Zongzu.Modules.SocialMemoryAndRelations;
 using Zongzu.Modules.TradeAndIndustry;
 using Zongzu.Modules.WarfareCampaign;
@@ -76,6 +77,20 @@ public static class SimulationBootstrapper
         ];
     }
 
+    public static IReadOnlyList<IModuleRunner> CreateMvpModules()
+    {
+        return
+        [
+            new WorldSettlementsModule(),
+            new PopulationAndHouseholdsModule(),
+            new FamilyCoreModule(),
+            new SocialMemoryAndRelationsModule(),
+            new EducationAndExamsModule(),
+            new TradeAndIndustryModule(),
+            new NarrativeProjectionModule(),
+        ];
+    }
+
     public static IReadOnlyList<IModuleRunner> CreateM2Modules()
     {
         return
@@ -86,6 +101,7 @@ public static class SimulationBootstrapper
             new SocialMemoryAndRelationsModule(),
             new EducationAndExamsModule(),
             new TradeAndIndustryModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -101,6 +117,7 @@ public static class SimulationBootstrapper
             new EducationAndExamsModule(),
             new TradeAndIndustryModule(),
             new OrderAndBanditryModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -117,6 +134,7 @@ public static class SimulationBootstrapper
             new TradeAndIndustryModule(),
             new OrderAndBanditryModule(),
             new ConflictAndForceModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -134,6 +152,7 @@ public static class SimulationBootstrapper
             new OfficeAndCareerModule(),
             new OrderAndBanditryModule(),
             new ConflictAndForceModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -152,6 +171,7 @@ public static class SimulationBootstrapper
             new OrderAndBanditryModule(),
             new ConflictAndForceModule(),
             new WarfareCampaignModule(),
+            new PublicLifeAndRumorModule(),
             new NarrativeProjectionModule(),
         ];
     }
@@ -171,11 +191,31 @@ public static class SimulationBootstrapper
         return simulation;
     }
 
+    public static GameSimulation CreateMvpBootstrap(long seed)
+    {
+        FeatureManifest manifest = CreateM0M1Manifest();
+        manifest.Set(KnownModuleKeys.EducationAndExams, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
+
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1200, 1),
+            KernelState.Create(seed),
+            manifest,
+            CreateMvpModules());
+
+        SeedFixture fixture = SeedMinimalWorld(simulation);
+        SeedM2LiteWorld(simulation, fixture);
+        simulation.RefreshReplayHash();
+        return simulation;
+    }
+
     public static GameSimulation CreateM2Bootstrap(long seed)
     {
         FeatureManifest manifest = CreateM0M1Manifest();
         manifest.Set(KnownModuleKeys.EducationAndExams, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -196,6 +236,7 @@ public static class SimulationBootstrapper
         manifest.Set(KnownModuleKeys.EducationAndExams, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -240,6 +281,7 @@ public static class SimulationBootstrapper
         manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.ConflictAndForce, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -288,6 +330,7 @@ public static class SimulationBootstrapper
         manifest.Set(KnownModuleKeys.OfficeAndCareer, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.ConflictAndForce, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -314,6 +357,7 @@ public static class SimulationBootstrapper
         manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.ConflictAndForce, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.WarfareCampaign, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.PublicLifeAndRumor, FeatureMode.Lite);
         manifest.Set(KnownModuleKeys.NarrativeProjection, FeatureMode.Full);
 
         GameSimulation simulation = GameSimulation.CreateNew(
@@ -333,17 +377,22 @@ public static class SimulationBootstrapper
 
     public static GameSimulation LoadM0M1(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
     {
-        return GameSimulation.Load(saveRoot, CreateM0M1Modules(), migrationPipeline);
+        return GameSimulation.Load(saveRoot, CreateM0M1Modules(), migrationPipeline ?? CreateDefaultMigrationPipeline());
+    }
+
+    public static GameSimulation LoadMvp(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
+    {
+        return GameSimulation.Load(saveRoot, CreateMvpModules(), migrationPipeline ?? CreateDefaultMigrationPipeline());
     }
 
     public static GameSimulation LoadM2(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
     {
-        return GameSimulation.Load(saveRoot, CreateM2Modules(), migrationPipeline);
+        return GameSimulation.Load(saveRoot, CreateM2Modules(), migrationPipeline ?? CreateDefaultMigrationPipeline());
     }
 
     public static GameSimulation LoadM3OrderAndBanditry(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
     {
-        return GameSimulation.Load(saveRoot, CreateM3OrderAndBanditryModules(), migrationPipeline);
+        return GameSimulation.Load(saveRoot, CreateM3OrderAndBanditryModules(), migrationPipeline ?? CreateDefaultMigrationPipeline());
     }
 
     public static GameSimulation LoadM3LocalConflict(SaveRoot saveRoot, SaveMigrationPipeline? migrationPipeline = null)
@@ -386,7 +435,8 @@ public static class SimulationBootstrapper
         worldState.Settlements.Add(new SettlementStateData
         {
             Id = settlementId,
-            Name = "Lanxi",
+            Name = "兰溪",
+            Tier = SettlementTier.CountySeat,
             Security = 57,
             Prosperity = 61,
             BaselineInstitutionCount = 1,
@@ -395,7 +445,7 @@ public static class SimulationBootstrapper
         familyState.Clans.Add(new ClanStateData
         {
             Id = clanId,
-            ClanName = "Zhang",
+            ClanName = "张",
             HomeSettlementId = settlementId,
             Prestige = 52,
             SupportReserve = 60,
@@ -406,7 +456,7 @@ public static class SimulationBootstrapper
         {
             Id = heirId,
             ClanId = clanId,
-            GivenName = "Zhang Yuan",
+            GivenName = "张远",
             AgeMonths = 32 * 12,
             IsAlive = true,
         });
@@ -414,7 +464,7 @@ public static class SimulationBootstrapper
         populationState.Households.Add(new PopulationHouseholdState
         {
             Id = tenantHouseholdId,
-            HouseholdName = "Tenant Li",
+            HouseholdName = "佃户李家",
             SettlementId = settlementId,
             SponsorClanId = clanId,
             Distress = 42,
@@ -427,7 +477,7 @@ public static class SimulationBootstrapper
         populationState.Households.Add(new PopulationHouseholdState
         {
             Id = freeHouseholdId,
-            HouseholdName = "Potter Wu",
+            HouseholdName = "陶户吴家",
             SettlementId = settlementId,
             SponsorClanId = null,
             Distress = 47,
@@ -460,7 +510,7 @@ public static class SimulationBootstrapper
         {
             Id = academyId,
             SettlementId = fixture.SettlementId,
-            AcademyName = "Lanxi Academy",
+            AcademyName = "兰溪书院",
             IsOpen = true,
             Capacity = 3,
             Prestige = 42,
@@ -471,7 +521,7 @@ public static class SimulationBootstrapper
             PersonId = fixture.HeirId,
             ClanId = fixture.ClanId,
             AcademyId = academyId,
-            DisplayName = "Zhang Yuan",
+            DisplayName = "张远",
             IsStudying = true,
             HasTutor = false,
             TutorQuality = 0,
@@ -479,8 +529,8 @@ public static class SimulationBootstrapper
             Stress = 16,
             ExamAttempts = 0,
             HasPassedLocalExam = false,
-            LastOutcome = "Preparing",
-            LastExplanation = "Clan support is funding local study at Lanxi Academy.",
+            LastOutcome = "备试",
+            LastExplanation = "宗房仍在出资供张远入兰溪书院。",
             ScholarlyReputation = 9,
         });
 
@@ -494,14 +544,14 @@ public static class SimulationBootstrapper
             CommerceReputation = 27,
             ShopCount = 1,
             ManagerSkill = 3,
-            LastOutcome = "Stable",
-            LastExplanation = "The clan maintains a small grain and ceramics trade in Lanxi.",
+            LastOutcome = "持平",
+            LastExplanation = "宗房在兰溪河埠守着小本行货。",
         });
 
         tradeState.Markets.Add(new SettlementMarketState
         {
             SettlementId = fixture.SettlementId,
-            MarketName = "Lanxi Morning Market",
+            MarketName = "兰溪早市",
             PriceIndex = 104,
             Demand = 63,
             LocalRisk = 16,
@@ -511,12 +561,27 @@ public static class SimulationBootstrapper
         {
             RouteId = 1,
             ClanId = fixture.ClanId,
-            RouteName = "Lanxi River Wharf",
+            RouteName = "兰溪河埠",
             SettlementId = fixture.SettlementId,
             IsActive = true,
             Capacity = 26,
             Risk = 18,
             LastMargin = 0,
+            BlockedShipmentCount = 0,
+            SeizureRisk = 10,
+            RouteConstraintLabel = "尚可通行",
+            LastRouteTrace = "兰溪河埠眼下尚可通行，未见明显阻滞。",
+        });
+        tradeState.BlackRouteLedgers.Add(new SettlementBlackRouteLedgerState
+        {
+            SettlementId = fixture.SettlementId,
+            ShadowPriceIndex = 99,
+            DiversionShare = 6,
+            IllicitMargin = 1,
+            BlockedShipmentCount = 0,
+            SeizureRisk = 12,
+            DiversionBandLabel = "零星夹带",
+            LastLedgerTrace = "兰溪早市偶有零星夹带，尚未压过正市。",
         });
     }
 
@@ -536,8 +601,8 @@ public static class SimulationBootstrapper
         heir.StudyProgress = 28;
         heir.ExamAttempts = Math.Max(1, heir.ExamAttempts);
         heir.HasPassedLocalExam = true;
-        heir.LastOutcome = "Passed";
-        heir.LastExplanation = "The heir already passed the local exam before governance-lite appointment review began.";
+        heir.LastOutcome = "得解";
+        heir.LastExplanation = "张远场屋得捷，已可依门路守选候阙。";
         heir.ScholarlyReputation = Math.Max(heir.ScholarlyReputation, 26);
     }
 
@@ -551,7 +616,23 @@ public static class SimulationBootstrapper
             RoutePressure = 24,
             SuppressionDemand = 19,
             DisorderPressure = 21,
-            LastPressureReason = "Lanxi starts with modest road-watch pressure around the river wharf.",
+            LastPressureReason = "兰溪河埠虽有巡丁照看，市面与水路仍多暗涌。",
+            BlackRoutePressure = 18,
+            CoercionRisk = 12,
+            SuppressionRelief = 0,
+            ResponseActivationLevel = 0,
+            PaperCompliance = 0,
+            ImplementationDrag = 0,
+            RouteShielding = 0,
+            RetaliationRisk = 0,
+            AdministrativeSuppressionWindow = 0,
+            EscalationBandLabel = "尚未成势",
+            LastPressureTrace = "兰溪河埠私路尚浅，只在边角试探。",
+            LastInterventionCommandCode = string.Empty,
+            LastInterventionCommandLabel = string.Empty,
+            LastInterventionSummary = string.Empty,
+            LastInterventionOutcome = string.Empty,
+            InterventionCarryoverMonths = 0,
         });
     }
 
@@ -567,7 +648,7 @@ public static class SimulationBootstrapper
             EscortCount = 8,
             Readiness = 46,
             CommandCapacity = 34,
-            LastConflictTrace = "Lanxi keeps a disciplined hall guard and escort watch around the river wharf.",
+            LastConflictTrace = "兰溪宗房护院与护运丁役守着河埠，昼夜轮看。",
         };
         settlement.HasActiveConflict = true;
         ConflictAndForceResponseStateCalculator.Refresh(settlement);
@@ -579,14 +660,14 @@ public static class SimulationBootstrapper
         StressSliceTemplate[] slices =
         [
             new StressSliceTemplate(
-                "Qingshui",
-                "Li",
-                "Li Wen",
-                "Qingshui Study Hall",
-                "Qingshui Grain Market",
-                "Qingshui Canal Convoy",
-                "Tenant Han",
-                "Weaver Sun",
+                "清水",
+                "李",
+                "李文",
+                "清水书塾",
+                "清水粮市",
+                "清水漕埠",
+                "佃户韩家",
+                "织户孙家",
                 56,
                 59,
                 46,
@@ -620,16 +701,16 @@ public static class SimulationBootstrapper
                 2,
                 24,
                 20,
-                "Routine escort rotation keeps the canal market watchful."),
+                "清水埠头护运按班轮值，漕埠上下仍算警醒。"),
             new StressSliceTemplate(
-                "Fushan",
-                "Wu",
-                "Wu Cheng",
-                "Fushan Academy",
-                "Fushan Copper Market",
-                "Fushan Hill Route",
-                "Tenant Gao",
-                "Potter Xu",
+                "浮山",
+                "吴",
+                "吴成",
+                "浮山书院",
+                "浮山铜市",
+                "浮山山路",
+                "佃户高家",
+                "窑户徐家",
                 44,
                 55,
                 56,
@@ -663,16 +744,16 @@ public static class SimulationBootstrapper
                 6,
                 37,
                 31,
-                "Road escorts in Fushan keep encountering armed coercion around the hills."),
+                "浮山山路护送丁役屡逢挟胁，往来商脚多有惊惧。"),
             new StressSliceTemplate(
-                "Yonghe",
-                "Chen",
-                "Chen Rui",
-                "Yonghe Hall of Classics",
-                "Yonghe Salt Exchange",
-                "Yonghe North Ferry",
-                "Tenant Deng",
-                "Boatman Luo",
+                "永和",
+                "陈",
+                "陈睿",
+                "永和经馆",
+                "永和盐肆",
+                "永河北津",
+                "佃户邓家",
+                "舟户罗家",
                 39,
                 60,
                 62,
@@ -706,7 +787,7 @@ public static class SimulationBootstrapper
                 8,
                 45,
                 38,
-                "A bruising dockside clash in Yonghe forced militia and escorts into the same streets."),
+                "永河北津码头一度群斗，乡勇与护运同巷并守。"),
         ];
 
         foreach (StressSliceTemplate slice in slices)
@@ -740,6 +821,7 @@ public static class SimulationBootstrapper
         {
             Id = settlementId,
             Name = slice.SettlementName,
+            Tier = InferStressSettlementTier(slice.SettlementName),
             Security = slice.Security,
             Prosperity = slice.Prosperity,
             BaselineInstitutionCount = 1,
@@ -802,7 +884,7 @@ public static class SimulationBootstrapper
         socialState.ClanNarratives.Add(new ClanNarrativeState
         {
             ClanId = clanId,
-            PublicNarrative = $"{slice.SettlementName} balances study, trade, and rising coercion.",
+            PublicNarrative = $"{slice.SettlementName}一地书塾、行旅与乡里催迫并起。",
             GrudgePressure = slice.GrudgePressure,
             FearPressure = slice.FearPressure,
             ShamePressure = Math.Clamp(slice.GrudgePressure / 2, 0, 100),
@@ -832,8 +914,8 @@ public static class SimulationBootstrapper
             Stress = slice.ScholarStress,
             ExamAttempts = 0,
             HasPassedLocalExam = false,
-            LastOutcome = "Preparing",
-            LastExplanation = $"{slice.ClanName} is financing study while managing unrest around {slice.SettlementName}.",
+            LastOutcome = "备试",
+            LastExplanation = $"{slice.ClanName}家一面供读，一面应付{slice.SettlementName}乡里的催迫。",
             ScholarlyReputation = slice.ScholarlyReputation,
         });
 
@@ -847,8 +929,8 @@ public static class SimulationBootstrapper
             CommerceReputation = slice.CommerceReputation,
             ShopCount = slice.ShopCount,
             ManagerSkill = slice.ManagerSkill,
-            LastOutcome = "Stable",
-            LastExplanation = $"{slice.SettlementName} trade is balancing convoy risk against local pressure.",
+            LastOutcome = "持平",
+            LastExplanation = $"{slice.SettlementName}市易往来夹在护运风险与街巷催迫之间。",
         });
 
         tradeState.Markets.Add(new SettlementMarketState
@@ -870,6 +952,27 @@ public static class SimulationBootstrapper
             Capacity = slice.RouteCapacity,
             Risk = slice.RouteRisk,
             LastMargin = 0,
+            BlockedShipmentCount = Math.Clamp(slice.RoutePressure / 28, 0, 6),
+            SeizureRisk = Math.Clamp((slice.RouteRisk / 3) + (slice.MarketRisk / 4), 0, 100),
+            RouteConstraintLabel = DetermineMigratedRouteConstraintLabel(
+                Math.Clamp(slice.RoutePressure / 28, 0, 6),
+                Math.Clamp((slice.RouteRisk / 3) + (slice.MarketRisk / 4), 0, 100),
+                slice.RouteRisk),
+            LastRouteTrace = $"{slice.RouteName}眼下已有零星盘查，行路不如旧时顺手。",
+        });
+        tradeState.BlackRouteLedgers.Add(new SettlementBlackRouteLedgerState
+        {
+            SettlementId = settlementId,
+            ShadowPriceIndex = 100 + (slice.RouteRisk / 12),
+            DiversionShare = Math.Clamp((slice.RoutePressure / 2) + (slice.MarketRisk / 3), 0, 100),
+            IllicitMargin = Math.Clamp((slice.RouteRisk / 10) + (slice.MarketRisk / 12), -10, 30),
+            BlockedShipmentCount = Math.Clamp(slice.RoutePressure / 18, 0, 12),
+            SeizureRisk = Math.Clamp((slice.RoutePressure / 2) + (slice.MarketRisk / 2), 0, 100),
+            DiversionBandLabel = DetermineMigratedDiversionBandLabel(
+                Math.Clamp((slice.RoutePressure / 2) + (slice.MarketRisk / 3), 0, 100),
+                Math.Clamp((slice.RoutePressure / 2) + (slice.MarketRisk / 2), 0, 100),
+                Math.Clamp((slice.RouteRisk / 10) + (slice.MarketRisk / 12), -10, 30)),
+            LastLedgerTrace = $"{slice.SettlementName}河埠与市集之间已有私货夹带。",
         });
 
         orderState.Settlements.Add(new SettlementDisorderState
@@ -879,7 +982,25 @@ public static class SimulationBootstrapper
             RoutePressure = slice.RoutePressure,
             SuppressionDemand = slice.SuppressionDemand,
             DisorderPressure = slice.DisorderPressure,
-            LastPressureReason = $"{slice.SettlementName} starts with a guarded but fragile order balance.",
+            LastPressureReason = $"{slice.SettlementName}现有巡防支应，然街市与道路之间仍觉绷紧。",
+            BlackRoutePressure = Math.Clamp((slice.RoutePressure + slice.MarketRisk) / 2, 0, 100),
+            CoercionRisk = Math.Clamp((slice.CommonerDistress + slice.GrudgePressure) / 2, 0, 100),
+            SuppressionRelief = 0,
+            ResponseActivationLevel = 0,
+            PaperCompliance = 0,
+            ImplementationDrag = 0,
+            RouteShielding = 0,
+            RetaliationRisk = 0,
+            AdministrativeSuppressionWindow = 0,
+            EscalationBandLabel = DetermineMigratedEscalationBandLabel(
+                Math.Clamp((slice.RoutePressure + slice.MarketRisk) / 2, 0, 100),
+                Math.Clamp((slice.CommonerDistress + slice.GrudgePressure) / 2, 0, 100)),
+            LastPressureTrace = $"{slice.SettlementName}私路与暗手正在街市边角试探。",
+            LastInterventionCommandCode = string.Empty,
+            LastInterventionCommandLabel = string.Empty,
+            LastInterventionSummary = string.Empty,
+            LastInterventionOutcome = string.Empty,
+            InterventionCarryoverMonths = 0,
         });
 
         if (conflictState is null)
@@ -903,15 +1024,193 @@ public static class SimulationBootstrapper
         conflictState.Settlements.Add(forceState);
     }
 
+    private static SettlementTier InferStressSettlementTier(string settlementName)
+    {
+        return settlementName switch
+        {
+            "姘稿拰" => SettlementTier.PrefectureSeat,
+            "娓呮按" or "娴北" => SettlementTier.MarketTown,
+            _ => SettlementTier.CountySeat,
+        };
+    }
+
+    private static string DetermineMigratedEscalationBandLabel(int blackRoutePressure, int coercionRisk)
+    {
+        int combined = blackRoutePressure + coercionRisk;
+        return combined switch
+        {
+            >= 130 => "私路成势",
+            >= 100 => "暗运成线",
+            >= 70 => "夹带渐多",
+            >= 40 => "私贩试探",
+            _ => "尚未成势",
+        };
+    }
+
+    private static string DetermineMigratedDiversionBandLabel(int diversionShare, int seizureRisk, int illicitMargin)
+    {
+        int combined = diversionShare + seizureRisk + Math.Max(0, illicitMargin);
+        return combined switch
+        {
+            >= 120 => "私货成路",
+            >= 85 => "正私并行",
+            >= 55 => "夹带渐增",
+            >= 25 => "零星夹带",
+            _ => "尚未分流",
+        };
+    }
+
+    private static string DetermineMigratedRouteConstraintLabel(int blockedShipmentCount, int seizureRisk, int routeRisk)
+    {
+        int combined = (blockedShipmentCount * 12) + seizureRisk + (routeRisk / 2);
+        return combined switch
+        {
+            >= 120 => "盘查封路",
+            >= 85 => "卡口渐密",
+            >= 50 => "时有阻滞",
+            >= 20 => "尚可通行",
+            _ => "行路平稳",
+        };
+    }
+
     private static SaveMigrationPipeline CreateDefaultMigrationPipeline()
     {
         SaveMigrationPipeline pipeline = new();
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 1, 2, MigrateWorldSettlementsStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 1, 2, MigrateFamilyCoreStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 1, 2, MigratePublicLifeAndRumorStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 2, 3, MigratePublicLifeAndRumorStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 3, 4, MigratePublicLifeAndRumorStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 1, 2, MigrateOfficeAndCareerStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 2, 3, MigrateOfficeAndCareerStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 1, 2, MigrateTradeAndIndustryStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 2, 3, MigrateTradeAndIndustryStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 1, 2, MigrateOrderAndBanditryStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 2, 3, MigrateOrderAndBanditryStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 3, 4, MigrateOrderAndBanditryStateV3ToV4);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 4, 5, MigrateOrderAndBanditryStateV4ToV5);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 5, 6, MigrateOrderAndBanditryStateV5ToV6);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 1, 2, MigrateConflictAndForceStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 2, 3, MigrateConflictAndForceStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 1, 2, MigrateWarfareCampaignStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 2, 3, MigrateWarfareCampaignStateV2ToV3);
         return pipeline;
+    }
+
+    private static ModuleStateEnvelope MigrateWorldSettlementsStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(typeof(WorldSettlementsState), envelope.Payload);
+
+        foreach (SettlementStateData settlement in migratedState.Settlements)
+        {
+            if (settlement.Tier == SettlementTier.Unknown)
+            {
+                settlement.Tier = SettlementTier.CountySeat;
+            }
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        FamilyCoreStateProjection.UpgradeFromSchemaV1(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        FamilyCoreStateProjection.UpgradeFromSchemaV2ToV3(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigratePublicLifeAndRumorStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        PublicLifeAndRumorState migratedState = (PublicLifeAndRumorState)serializer.Deserialize(typeof(PublicLifeAndRumorState), envelope.Payload);
+
+        foreach (SettlementPublicLifeState settlement in migratedState.Settlements)
+        {
+            settlement.MonthlyCadenceCode ??= "legacy-cadence";
+            settlement.MonthlyCadenceLabel ??= "旧档续脉";
+            settlement.CrowdMixLabel ??= string.Empty;
+            settlement.CadenceSummary ??= string.Empty;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(PublicLifeAndRumorState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigratePublicLifeAndRumorStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        PublicLifeAndRumorState migratedState = (PublicLifeAndRumorState)serializer.Deserialize(typeof(PublicLifeAndRumorState), envelope.Payload);
+
+        foreach (SettlementPublicLifeState settlement in migratedState.Settlements)
+        {
+            settlement.DominantVenueCode ??= string.Empty;
+            settlement.DocumentaryWeight = Math.Clamp(settlement.DocumentaryWeight, 0, 100);
+            settlement.VerificationCost = Math.Clamp(settlement.VerificationCost, 0, 100);
+            settlement.MarketRumorFlow = Math.Clamp(settlement.MarketRumorFlow, 0, 100);
+            settlement.CourierRisk = Math.Clamp(settlement.CourierRisk, 0, 100);
+            settlement.ChannelSummary ??= string.Empty;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+            ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(PublicLifeAndRumorState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigratePublicLifeAndRumorStateV3ToV4(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        PublicLifeAndRumorState migratedState = (PublicLifeAndRumorState)serializer.Deserialize(typeof(PublicLifeAndRumorState), envelope.Payload);
+
+        foreach (SettlementPublicLifeState settlement in migratedState.Settlements)
+        {
+            settlement.OfficialNoticeLine ??= string.Empty;
+            settlement.StreetTalkLine ??= string.Empty;
+            settlement.RoadReportLine ??= string.Empty;
+            settlement.PrefectureDispatchLine ??= string.Empty;
+            settlement.ContentionSummary ??= string.Empty;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+            ModuleSchemaVersion = 4,
+            Payload = serializer.Serialize(typeof(PublicLifeAndRumorState), migratedState),
+        };
     }
 
     private static ModuleStateEnvelope MigrateOfficeAndCareerStateV1ToV2(ModuleStateEnvelope envelope)
@@ -925,6 +1224,267 @@ public static class SimulationBootstrapper
             ModuleKey = KnownModuleKeys.OfficeAndCareer,
             ModuleSchemaVersion = 2,
             Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOfficeAndCareerStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OfficeAndCareerState migratedState = (OfficeAndCareerState)serializer.Deserialize(typeof(OfficeAndCareerState), envelope.Payload);
+        OfficeAndCareerStateProjection.UpgradeFromSchemaV2ToV3(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OfficeAndCareer,
+            ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateTradeAndIndustryStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        TradeAndIndustryState migratedState = (TradeAndIndustryState)serializer.Deserialize(typeof(TradeAndIndustryState), envelope.Payload);
+
+        migratedState.Clans ??= [];
+        migratedState.Markets ??= [];
+        migratedState.Routes ??= [];
+        migratedState.BlackRouteLedgers ??= [];
+
+        foreach (SettlementMarketState market in migratedState.Markets.OrderBy(static market => market.SettlementId.Value))
+        {
+            SettlementBlackRouteLedgerState ledger = migratedState.BlackRouteLedgers.SingleOrDefault(existing => existing.SettlementId == market.SettlementId)
+                ?? new SettlementBlackRouteLedgerState
+                {
+                    SettlementId = market.SettlementId,
+                    ShadowPriceIndex = 100,
+                };
+
+            if (!migratedState.BlackRouteLedgers.Contains(ledger))
+            {
+                migratedState.BlackRouteLedgers.Add(ledger);
+            }
+
+            int activeRouteCount = migratedState.Routes.Count(route => route.IsActive && route.SettlementId == market.SettlementId);
+            int routeCapacity = migratedState.Routes
+                .Where(route => route.IsActive && route.SettlementId == market.SettlementId)
+                .Sum(static route => route.Capacity);
+
+            ledger.ShadowPriceIndex = Math.Clamp(
+                Math.Max(ledger.ShadowPriceIndex, 100)
+                + ((market.PriceIndex - 100) / 2)
+                + (market.LocalRisk / 5),
+                70,
+                180);
+            ledger.DiversionShare = Math.Clamp(
+                Math.Max(ledger.DiversionShare, (market.LocalRisk / 8) + (activeRouteCount * 4)),
+                0,
+                100);
+            ledger.BlockedShipmentCount = Math.Clamp(
+                Math.Max(ledger.BlockedShipmentCount, (market.LocalRisk >= 55 ? 1 : 0) + (activeRouteCount >= 2 ? 1 : 0)),
+                0,
+                12);
+            ledger.SeizureRisk = Math.Clamp(
+                Math.Max(ledger.SeizureRisk, (market.LocalRisk / 3) + (activeRouteCount * 2)),
+                0,
+                100);
+            ledger.IllicitMargin = Math.Clamp(
+                Math.Max(ledger.IllicitMargin, ((ledger.ShadowPriceIndex - 100) / 5) + (routeCapacity / 40) - ledger.BlockedShipmentCount),
+                -10,
+                30);
+            ledger.DiversionBandLabel = string.IsNullOrWhiteSpace(ledger.DiversionBandLabel)
+                ? DetermineMigratedDiversionBandLabel(ledger.DiversionShare, ledger.SeizureRisk, ledger.IllicitMargin)
+                : ledger.DiversionBandLabel;
+            ledger.LastLedgerTrace = string.IsNullOrWhiteSpace(ledger.LastLedgerTrace)
+                ? $"{market.MarketName}的私下分流由旧档补出，先按市险与活路回填。"
+                : ledger.LastLedgerTrace;
+        }
+
+        migratedState.BlackRouteLedgers = migratedState.BlackRouteLedgers
+            .OrderBy(static ledger => ledger.SettlementId.Value)
+            .ToList();
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.TradeAndIndustry,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(TradeAndIndustryState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateTradeAndIndustryStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        TradeAndIndustryState migratedState = (TradeAndIndustryState)serializer.Deserialize(typeof(TradeAndIndustryState), envelope.Payload);
+
+        foreach (RouteTradeState route in migratedState.Routes)
+        {
+            SettlementBlackRouteLedgerState? ledger = migratedState.BlackRouteLedgers
+                .SingleOrDefault(existing => existing.SettlementId == route.SettlementId);
+            int blockedShipmentCount = Math.Clamp(
+                Math.Max(route.BlockedShipmentCount, ledger is null ? 0 : (ledger.BlockedShipmentCount > 0 ? 1 : 0) + (ledger.BlockedShipmentCount >= 3 ? 1 : 0)),
+                0,
+                6);
+            int seizureRisk = Math.Clamp(
+                Math.Max(route.SeizureRisk, (route.Risk / 5) + (ledger?.SeizureRisk ?? 0) / 2),
+                0,
+                100);
+
+            route.BlockedShipmentCount = blockedShipmentCount;
+            route.SeizureRisk = seizureRisk;
+            route.RouteConstraintLabel = string.IsNullOrWhiteSpace(route.RouteConstraintLabel)
+                ? DetermineMigratedRouteConstraintLabel(blockedShipmentCount, seizureRisk, route.Risk)
+                : route.RouteConstraintLabel;
+            route.LastRouteTrace = string.IsNullOrWhiteSpace(route.LastRouteTrace)
+                ? $"{route.RouteName}旧档已按阻货与查缉势回填。"
+                : route.LastRouteTrace;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.TradeAndIndustry,
+            ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(TradeAndIndustryState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOrderAndBanditryStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState migratedState = (OrderAndBanditryState)serializer.Deserialize(typeof(OrderAndBanditryState), envelope.Payload);
+
+        migratedState.Settlements ??= [];
+        foreach (SettlementDisorderState settlement in migratedState.Settlements)
+        {
+            settlement.BlackRoutePressure = Math.Clamp(
+                Math.Max(settlement.BlackRoutePressure, (settlement.BanditThreat + settlement.RoutePressure + settlement.DisorderPressure) / 3),
+                0,
+                100);
+            settlement.CoercionRisk = Math.Clamp(
+                Math.Max(settlement.CoercionRisk, (settlement.BlackRoutePressure / 2) + (settlement.DisorderPressure / 3)),
+                0,
+                100);
+            settlement.SuppressionRelief = Math.Clamp(settlement.SuppressionRelief, 0, 12);
+            settlement.ResponseActivationLevel = Math.Clamp(settlement.ResponseActivationLevel, 0, 12);
+            settlement.AdministrativeSuppressionWindow = Math.Clamp(settlement.AdministrativeSuppressionWindow, 0, 8);
+            settlement.EscalationBandLabel = string.IsNullOrWhiteSpace(settlement.EscalationBandLabel)
+                ? DetermineMigratedEscalationBandLabel(settlement.BlackRoutePressure, settlement.CoercionRisk)
+                : settlement.EscalationBandLabel;
+            settlement.LastPressureTrace = string.IsNullOrWhiteSpace(settlement.LastPressureTrace)
+                ? (string.IsNullOrWhiteSpace(settlement.LastPressureReason)
+                    ? "旧档私路压力已按地面不靖回填。"
+                    : settlement.LastPressureReason)
+                : settlement.LastPressureTrace;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OrderAndBanditry,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOrderAndBanditryStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState migratedState = (OrderAndBanditryState)serializer.Deserialize(typeof(OrderAndBanditryState), envelope.Payload);
+
+        migratedState.Settlements ??= [];
+        foreach (SettlementDisorderState settlement in migratedState.Settlements)
+        {
+            settlement.PaperCompliance = Math.Clamp(
+                Math.Max(settlement.PaperCompliance, (settlement.SuppressionRelief * 18) + (settlement.AdministrativeSuppressionWindow * 12)),
+                0,
+                100);
+            settlement.ImplementationDrag = Math.Clamp(
+                Math.Max(settlement.ImplementationDrag, settlement.BlackRoutePressure - (settlement.SuppressionRelief * 6) - (settlement.AdministrativeSuppressionWindow * 8)),
+                0,
+                100);
+            settlement.AdministrativeSuppressionWindow = Math.Clamp(settlement.AdministrativeSuppressionWindow, 0, 8);
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OrderAndBanditry,
+            ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOrderAndBanditryStateV3ToV4(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState migratedState = (OrderAndBanditryState)serializer.Deserialize(typeof(OrderAndBanditryState), envelope.Payload);
+
+        migratedState.Settlements ??= [];
+        foreach (SettlementDisorderState settlement in migratedState.Settlements)
+        {
+            settlement.RouteShielding = Math.Clamp(
+                Math.Max(
+                    settlement.RouteShielding,
+                    (settlement.ResponseActivationLevel * 8)
+                    + (settlement.SuppressionRelief * 6)
+                    - (settlement.RoutePressure / 4)),
+                0,
+                100);
+            settlement.RetaliationRisk = Math.Clamp(
+                Math.Max(
+                    settlement.RetaliationRisk,
+                    (settlement.CoercionRisk / 2)
+                    + Math.Max(0, settlement.BlackRoutePressure - (settlement.RouteShielding / 2))
+                    - (settlement.SuppressionRelief * 4)
+                    - (settlement.AdministrativeSuppressionWindow * 5)),
+                0,
+                100);
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OrderAndBanditry,
+            ModuleSchemaVersion = 4,
+            Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOrderAndBanditryStateV4ToV5(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState migratedState = (OrderAndBanditryState)serializer.Deserialize(typeof(OrderAndBanditryState), envelope.Payload);
+
+        migratedState.Settlements ??= [];
+        foreach (SettlementDisorderState settlement in migratedState.Settlements)
+        {
+            settlement.LastInterventionCommandCode ??= string.Empty;
+            settlement.LastInterventionCommandLabel ??= string.Empty;
+            settlement.LastInterventionSummary ??= string.Empty;
+            settlement.LastInterventionOutcome ??= string.Empty;
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OrderAndBanditry,
+            ModuleSchemaVersion = 5,
+            Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOrderAndBanditryStateV5ToV6(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState migratedState = (OrderAndBanditryState)serializer.Deserialize(typeof(OrderAndBanditryState), envelope.Payload);
+
+        migratedState.Settlements ??= [];
+        foreach (SettlementDisorderState settlement in migratedState.Settlements)
+        {
+            settlement.InterventionCarryoverMonths = Math.Clamp(settlement.InterventionCarryoverMonths, 0, 1);
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OrderAndBanditry,
+            ModuleSchemaVersion = 6,
+            Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
         };
     }
 

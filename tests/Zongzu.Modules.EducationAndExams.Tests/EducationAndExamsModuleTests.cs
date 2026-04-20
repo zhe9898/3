@@ -96,8 +96,8 @@ public sealed class EducationAndExamsModuleTests
         EducationPersonState student = educationState.People.Single();
         Assert.That(student.HasPassedLocalExam, Is.True);
         Assert.That(student.LastOutcome, Is.EqualTo("Passed"));
-        Assert.That(student.LastExplanation, Does.Contain("score"));
-        Assert.That(student.LastExplanation, Does.Contain("academy prestige"));
+        Assert.That(student.LastExplanation, Does.Contain("得分"));
+        Assert.That(student.LastExplanation, Does.Contain("塾望"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("TutorSecured"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("ExamPassed"));
     }

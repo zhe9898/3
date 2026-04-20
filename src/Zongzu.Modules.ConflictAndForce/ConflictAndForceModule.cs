@@ -40,6 +40,8 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
 
     public override int ExecutionOrder => 650;
 
+    public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.XunAndMonth;
+
     public override FeatureMode DefaultMode => FeatureMode.Lite;
 
     public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
@@ -56,6 +58,115 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
     public override void RegisterQueries(ConflictAndForceState state, QueryRegistry queries)
     {
         queries.Register<IConflictAndForceQueries>(new ConflictAndForceQueries(state));
+    }
+
+    public override void RunXun(ModuleExecutionScope<ConflictAndForceState> scope)
+    {
+        IWorldSettlementsQueries settlementQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        IPopulationAndHouseholdsQueries populationQueries = scope.GetRequiredQuery<IPopulationAndHouseholdsQueries>();
+        IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
+        ISocialMemoryAndRelationsQueries socialQueries = scope.GetRequiredQuery<ISocialMemoryAndRelationsQueries>();
+
+        IOrderAndBanditryQueries? orderQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OrderAndBanditry)
+            ? scope.GetRequiredQuery<IOrderAndBanditryQueries>()
+            : null;
+        IOfficeAndCareerQueries? officeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OfficeAndCareer)
+            ? scope.GetRequiredQuery<IOfficeAndCareerQueries>()
+            : null;
+        ITradeAndIndustryQueries? tradeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.TradeAndIndustry)
+            ? scope.GetRequiredQuery<ITradeAndIndustryQueries>()
+            : null;
+
+        IReadOnlyList<SettlementSnapshot> settlements = settlementQueries.GetSettlements();
+        IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
+        IReadOnlyList<ClanNarrativeSnapshot> narratives = socialQueries.GetClanNarratives();
+
+        Dictionary<ClanId, ClanNarrativeSnapshot> narrativesByClan = narratives.ToDictionary(
+            static narrative => narrative.ClanId,
+            static narrative => narrative);
+        Dictionary<SettlementId, SettlementDisorderSnapshot> disorderBySettlement = orderQueries is null
+            ? new Dictionary<SettlementId, SettlementDisorderSnapshot>()
+            : orderQueries.GetSettlementDisorder().ToDictionary(static disorder => disorder.SettlementId, static disorder => disorder);
+        Dictionary<SettlementId, JurisdictionAuthoritySnapshot> jurisdictionBySettlement = officeQueries is null
+            ? new Dictionary<SettlementId, JurisdictionAuthoritySnapshot>()
+            : officeQueries.GetJurisdictions().ToDictionary(static jurisdiction => jurisdiction.SettlementId, static jurisdiction => jurisdiction);
+        Dictionary<SettlementId, TradeActivitySnapshot> tradeActivityBySettlement = BuildTradeActivityBySettlement(tradeQueries);
+
+        foreach (SettlementSnapshot settlement in settlements.OrderBy(static settlement => settlement.Id.Value))
+        {
+            PopulationSettlementSnapshot population = populationQueries.GetRequiredSettlement(settlement.Id);
+            SettlementForceState force = GetOrCreateSettlement(scope.State, settlement.Id);
+
+            ClanSnapshot[] localClans = clans
+                .Where(clan => clan.HomeSettlementId == settlement.Id)
+                .OrderBy(static clan => clan.Id.Value)
+                .ToArray();
+            int averagePrestige = AverageClanValue(localClans, static clan => clan.Prestige);
+            int averageSupport = AverageClanValue(localClans, static clan => clan.SupportReserve);
+            int localGrudge = AverageNarrative(localClans, narrativesByClan, static narrative => narrative.GrudgePressure);
+            int localFear = AverageNarrative(localClans, narrativesByClan, static narrative => narrative.FearPressure);
+
+            SettlementDisorderSnapshot disorder = disorderBySettlement.TryGetValue(settlement.Id, out SettlementDisorderSnapshot? disorderSnapshot)
+                ? disorderSnapshot
+                : EmptyDisorderSnapshot.For(settlement.Id);
+            JurisdictionAuthoritySnapshot? jurisdiction = jurisdictionBySettlement.TryGetValue(settlement.Id, out JurisdictionAuthoritySnapshot? authority)
+                ? authority
+                : null;
+            int administrativeSupport = jurisdiction is null ? 0 : ComputeAdministrativeSupport(jurisdiction);
+            TradeActivitySnapshot tradeActivity = tradeActivityBySettlement.TryGetValue(settlement.Id, out TradeActivitySnapshot? tradeSnapshot)
+                ? tradeSnapshot
+                : TradeActivitySnapshot.Empty;
+
+            bool previousHasActiveConflict = force.HasActiveConflict;
+
+            switch (scope.Context.CurrentXun)
+            {
+                case SimulationXun.Shangxun:
+                    ApplyXunOpeningPosture(force, settlement, population, disorder, tradeActivity, averageSupport, administrativeSupport);
+                    break;
+                case SimulationXun.Zhongxun:
+                    ApplyXunHotspotPulse(force, settlement, disorder, tradeActivity, localFear, localGrudge, averagePrestige, administrativeSupport);
+                    break;
+                case SimulationXun.Xiaxun:
+                    ApplyXunClosingPosture(force, settlement, population, disorder, tradeActivity, localFear, localGrudge, administrativeSupport);
+                    break;
+            }
+
+            int conflictPressure =
+                disorder.BanditThreat
+                + disorder.RoutePressure
+                + disorder.DisorderPressure
+                + localGrudge
+                + (population.CommonerDistress / 2)
+                + tradeActivity.AverageRouteRisk;
+            int forcePosture = force.Readiness + force.CommandCapacity + force.GuardCount + force.EscortCount;
+            int responseActivationLevel = ConflictAndForceResponseStateCalculator.ComputeResponseActivationLevel(force);
+            force.HasActiveConflict = scope.Context.CurrentXun switch
+            {
+                SimulationXun.Shangxun => DetermineXunCarryoverConflict(
+                    previousHasActiveConflict,
+                    disorder,
+                    localGrudge,
+                    localFear),
+                _ => DetermineXunEscalatingConflict(
+                    previousHasActiveConflict,
+                    responseActivationLevel,
+                    disorder,
+                    localGrudge,
+                    localFear,
+                    conflictPressure,
+                    forcePosture),
+            };
+            ConflictAndForceResponseStateCalculator.Refresh(force);
+            force.LastConflictTrace = BuildXunConflictTrace(
+                settlement,
+                disorder,
+                tradeActivity,
+                force,
+                localFear,
+                localGrudge,
+                jurisdiction);
+        }
     }
 
     public override void RunMonth(ModuleExecutionScope<ConflictAndForceState> scope)
@@ -274,27 +385,27 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
             }
 
             scope.RecordDiff(
-                $"Settlement {settlement.Name} force posture moved to guards {force.GuardCount}, retainers {force.RetainerCount}, militia {force.MilitiaCount}, escorts {force.EscortCount}, readiness {force.Readiness}, command {force.CommandCapacity}, response {force.ResponseActivationLevel}, support {force.OrderSupportLevel}. {force.LastConflictTrace}",
+                $"{settlement.Name}地面守备：守丁{force.GuardCount}，亲兵{force.RetainerCount}，乡勇{force.MilitiaCount}，护运{force.EscortCount}，整备{force.Readiness}，号令{force.CommandCapacity}，应势{force.ResponseActivationLevel}，援压{force.OrderSupportLevel}。{force.LastConflictTrace}",
                 settlement.Id.Value.ToString());
 
             if (previousMilitiaCount < 20 && force.MilitiaCount >= 20)
             {
-                scope.Emit("MilitiaMobilized", $"Clan-aligned militia mobilized around {settlement.Name}.");
+                scope.Emit("MilitiaMobilized", $"{settlement.Name}乡勇已集。");
             }
 
             if (Math.Abs(force.Readiness - previousReadiness) >= 8)
             {
-                scope.Emit("ForceReadinessChanged", $"Force readiness around {settlement.Name} shifted to {force.Readiness}.");
+                scope.Emit("ForceReadinessChanged", $"{settlement.Name}地面守备整备改为{force.Readiness}。");
             }
 
             if (conflictResolved)
             {
-                scope.Emit("ConflictResolved", $"Local force pressure around {settlement.Name} resolved into a contained clash.");
+                scope.Emit("ConflictResolved", $"{settlement.Name}地面冲突暂被按住。");
             }
 
             if (commanderWounded)
             {
-                scope.Emit("CommanderWounded", $"A local captain was wounded while containing violence near {settlement.Name}.");
+                scope.Emit("CommanderWounded", $"{settlement.Name}弹压之际，有领队负创。");
             }
         }
     }
@@ -360,14 +471,14 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
             }
 
             scope.RecordDiff(
-                $"Campaign aftermath around {campaign.AnchorSettlementName} left fatigue {force.CampaignFatigue}, escort strain {force.CampaignEscortStrain}, readiness {force.Readiness}, and command {force.CommandCapacity}. {force.LastCampaignFalloutTrace}",
+                $"{campaign.AnchorSettlementName}战后余波所留：疲敝{force.CampaignFatigue}，护运困乏{force.CampaignEscortStrain}，整备{force.Readiness}，号令{force.CommandCapacity}。{force.LastCampaignFalloutTrace}",
                 bundle.SettlementId.Value.ToString());
 
             if (previousReadiness - force.Readiness >= 4 || previousCampaignFatigue != force.CampaignFatigue)
             {
                 scope.Emit(
                     "ForceReadinessChanged",
-                    $"Campaign fallout pulled readiness around {campaign.AnchorSettlementName} down to {force.Readiness}.",
+                    $"{campaign.AnchorSettlementName}战后余波拖得地面整备降至{force.Readiness}。",
                     bundle.SettlementId.Value.ToString());
             }
         }
@@ -450,6 +561,98 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
         return settlement;
     }
 
+    private static void ApplyXunOpeningPosture(
+        SettlementForceState force,
+        SettlementSnapshot settlement,
+        PopulationSettlementSnapshot population,
+        SettlementDisorderSnapshot disorder,
+        TradeActivitySnapshot tradeActivity,
+        int averageSupport,
+        int administrativeSupport)
+    {
+        int escortDelta = 0;
+        escortDelta += tradeActivity.ActiveRouteCount > 0 ? 1 : 0;
+        escortDelta += disorder.RoutePressure >= 55 ? 1 : disorder.RoutePressure < 20 ? -1 : 0;
+        escortDelta += tradeActivity.AverageRouteRisk >= 55 ? 1 : 0;
+        escortDelta -= force.CampaignEscortStrain >= 40 ? 1 : 0;
+
+        int readinessDelta = 0;
+        readinessDelta += disorder.SuppressionDemand >= 55 ? 1 : 0;
+        readinessDelta += disorder.RoutePressure >= 55 ? 1 : 0;
+        readinessDelta += administrativeSupport;
+        readinessDelta += averageSupport >= 60 ? 1 : 0;
+        readinessDelta -= settlement.Security < 45 ? 1 : 0;
+        readinessDelta -= population.CommonerDistress >= 60 ? 1 : 0;
+        readinessDelta -= force.CampaignFatigue >= 35 ? 1 : 0;
+
+        force.EscortCount = Math.Clamp(force.EscortCount + escortDelta, 0, 50);
+        force.Readiness = Math.Clamp(force.Readiness + readinessDelta, 0, 100);
+    }
+
+    private static void ApplyXunHotspotPulse(
+        SettlementForceState force,
+        SettlementSnapshot settlement,
+        SettlementDisorderSnapshot disorder,
+        TradeActivitySnapshot tradeActivity,
+        int localFear,
+        int localGrudge,
+        int averagePrestige,
+        int administrativeSupport)
+    {
+        int commandDelta = 0;
+        commandDelta += averagePrestige >= 55 ? 1 : 0;
+        commandDelta += administrativeSupport;
+        commandDelta += disorder.BanditThreat >= 60 ? 1 : 0;
+        commandDelta -= localGrudge >= 60 ? 1 : 0;
+        commandDelta -= force.CampaignFatigue >= 40 ? 1 : 0;
+
+        int readinessDelta = 0;
+        readinessDelta += disorder.DisorderPressure >= 60 ? 1 : 0;
+        readinessDelta += disorder.RoutePressure >= 55 ? 1 : 0;
+        readinessDelta -= localFear >= 60 ? 1 : 0;
+        readinessDelta -= tradeActivity.AverageRouteRisk >= 70 ? 1 : 0;
+
+        force.CommandCapacity = Math.Clamp(force.CommandCapacity + commandDelta, 0, 100);
+        force.Readiness = Math.Clamp(force.Readiness + readinessDelta, 0, 100);
+
+        if (settlement.Security < 45 && disorder.RoutePressure >= 60)
+        {
+            force.EscortCount = Math.Clamp(force.EscortCount + 1, 0, 50);
+        }
+    }
+
+    private static void ApplyXunClosingPosture(
+        SettlementForceState force,
+        SettlementSnapshot settlement,
+        PopulationSettlementSnapshot population,
+        SettlementDisorderSnapshot disorder,
+        TradeActivitySnapshot tradeActivity,
+        int localFear,
+        int localGrudge,
+        int administrativeSupport)
+    {
+        int readinessDelta = 0;
+        readinessDelta += administrativeSupport;
+        readinessDelta += disorder.SuppressionDemand >= 50 ? 1 : 0;
+        readinessDelta -= population.MigrationPressure >= 55 ? 1 : 0;
+        readinessDelta -= localFear >= 55 ? 1 : 0;
+        readinessDelta -= force.CampaignFatigue >= 45 ? 1 : 0;
+
+        int escortDelta = 0;
+        escortDelta += tradeActivity.ActiveRouteCount > 0 && disorder.RoutePressure >= 45 ? 1 : 0;
+        escortDelta -= tradeActivity.ActiveRouteCount == 0 ? 1 : 0;
+        escortDelta -= settlement.Security >= 65 && disorder.RoutePressure < 25 ? 1 : 0;
+
+        int commandDelta = 0;
+        commandDelta += localGrudge >= 55 ? -1 : 0;
+        commandDelta += disorder.DisorderPressure >= 60 ? 1 : 0;
+        commandDelta += force.CommandCapacity < 20 && administrativeSupport > 0 ? 1 : 0;
+
+        force.Readiness = Math.Clamp(force.Readiness + readinessDelta, 0, 100);
+        force.EscortCount = Math.Clamp(force.EscortCount + escortDelta, 0, 50);
+        force.CommandCapacity = Math.Clamp(force.CommandCapacity + commandDelta, 0, 100);
+    }
+
     private static void RecoverCampaignFallout(
         SettlementForceState force,
         SettlementSnapshot settlement,
@@ -498,47 +701,47 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
 
         if (disorder.BanditThreat >= 45 || disorder.RoutePressure >= 45)
         {
-            reasons.Add($"Bandit threat {disorder.BanditThreat} and route pressure {disorder.RoutePressure} are forcing a stronger watch posture.");
+            reasons.Add($"盗压{disorder.BanditThreat}、路压{disorder.RoutePressure}，逼得地面不得不加紧巡守。");
         }
 
         if (population.CommonerDistress >= 55 || population.MigrationPressure >= 45)
         {
-            reasons.Add($"Commoner distress {population.CommonerDistress} and migration pressure {population.MigrationPressure} are widening the pool for local clashes.");
+            reasons.Add($"民困{population.CommonerDistress}、流徙之压{population.MigrationPressure}，都在推高地面斗殴与械争。");
         }
 
         if (tradeActivity.ActiveRouteCount > 0)
         {
-            reasons.Add($"Trade traffic keeps {tradeActivity.ActiveRouteCount} active routes protected by {force.EscortCount} escorts.");
+            reasons.Add($"尚有{tradeActivity.ActiveRouteCount}条活路待护，故而护运{force.EscortCount}不能轻撤。");
         }
 
         if (jurisdiction is not null && administrativeSupport > 0)
         {
-            reasons.Add($"{jurisdiction.LeadOfficeTitle} leverage {jurisdiction.JurisdictionLeverage} is adding {administrativeSupport} tiers of administrative support.");
+            reasons.Add($"{jurisdiction.LeadOfficeTitle}乡面杠力{jurisdiction.JurisdictionLeverage}，替地面守备添了{administrativeSupport}分文移支应。");
         }
 
         if (force.CampaignFatigue > 0 || force.CampaignEscortStrain > 0)
         {
             string falloutTrace = string.IsNullOrWhiteSpace(force.LastCampaignFalloutTrace)
-                ? "Earlier campaigning is still draining local watches and escort lines."
+                ? "前番兵事留下的困乏，仍在耗着守夜与护运。"
                 : force.LastCampaignFalloutTrace;
-            reasons.Add($"Earlier campaigning still leaves fatigue {force.CampaignFatigue} and escort strain {force.CampaignEscortStrain}. {falloutTrace}");
+            reasons.Add($"前番兵事仍留疲敝{force.CampaignFatigue}、护运困乏{force.CampaignEscortStrain}。{falloutTrace}");
         }
 
         if (conflictResolved)
         {
-            reasons.Add("A local clash was contained before it spread into wider disorder.");
+            reasons.Add("这一场地面冲突已先被按住，未曾外漫。");
         }
 
-        reasons.Add($"Force posture {forcePosture} is answering conflict pressure {conflictPressure} with readiness {force.Readiness} and command {force.CommandCapacity}.");
+        reasons.Add($"如今守备之势{forcePosture}，正以整备{force.Readiness}、号令{force.CommandCapacity}去压冲突之压{conflictPressure}。");
 
         if (localFear >= 50 || localGrudge >= 50)
         {
-            reasons.Add($"Fear {localFear} and grudge {localGrudge} are keeping tempers close to violence in {settlement.Name}.");
+            reasons.Add($"{settlement.Name}乡里惧意{localFear}、旧怨{localGrudge}，人心仍贴着械斗边缘。");
         }
 
         if (commanderWounded)
         {
-            reasons.Add("That containment came with a wounded captain and fresh resentment.");
+            reasons.Add("虽把局面按住，却也折了一名领队，平添新怨。");
         }
 
         return string.Join(" ", reasons.Take(5));
@@ -629,10 +832,10 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
         int commandDrop)
     {
         string strainText = bundle.CampaignSupplyStrained
-            ? "Supply escorts and relay lines are coming back frayed."
-            : "Watch rotations are carrying a lingering campaign burden.";
+            ? "护粮与驿传这一线回来时已显困敝。"
+            : "守夜轮值仍背着前番兵事留下的担子。";
 
-        return $"Campaign fallout from {campaign.AnchorSettlementName} imposed fatigue +{fatigueDelta}, escort strain +{escortStrainDelta}, readiness -{readinessDrop}, and command -{commandDrop}. {campaign.FrontLabel}, {campaign.SupplyStateLabel}, and aftermath '{campaign.LastAftermathSummary}' keep the local force tired. {strainText}";
+        return $"{campaign.AnchorSettlementName}战后余波留下疲敝+{fatigueDelta}、护运困乏+{escortStrainDelta}、整备-{readinessDrop}、号令-{commandDrop}。{campaign.FrontLabel}、{campaign.SupplyStateLabel}与{campaign.LastAftermathSummary}都还压在地面守备身上。{strainText}";
     }
 
     private static string MergeFalloutIntoConflictTrace(string currentTrace, string falloutTrace)
@@ -649,6 +852,36 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
         }
 
         return $"{currentTrace} {falloutTrace}";
+    }
+
+    private static string BuildXunConflictTrace(
+        SettlementSnapshot settlement,
+        SettlementDisorderSnapshot disorder,
+        TradeActivitySnapshot tradeActivity,
+        SettlementForceState force,
+        int localFear,
+        int localGrudge,
+        JurisdictionAuthoritySnapshot? jurisdiction)
+    {
+        List<string> reasons = [];
+
+        if (disorder.RoutePressure >= 45 || disorder.BanditThreat >= 45)
+        {
+            reasons.Add($"{settlement.Name}路面盗压{disorder.BanditThreat}、路压{disorder.RoutePressure}，守夜与护运都被往前推。");
+        }
+
+        if (tradeActivity.ActiveRouteCount > 0)
+        {
+            reasons.Add($"现有{tradeActivity.ActiveRouteCount}条活路，护运{force.EscortCount}正贴着行脚与货脚走。");
+        }
+
+        if (jurisdiction is not null && jurisdiction.JurisdictionLeverage >= 28)
+        {
+            reasons.Add($"{jurisdiction.LeadOfficeTitle}乡面杖力{jurisdiction.JurisdictionLeverage}，还能替地面守备撑一把。");
+        }
+
+        reasons.Add($"眼下整备{force.Readiness}、号令{force.CommandCapacity}、应势{force.ResponseActivationLevel}，惧意{localFear}、旧怨{localGrudge}都还在场。");
+        return string.Join(" ", reasons.Take(4));
     }
 
     private static bool DetermineActiveConflict(
@@ -678,6 +911,44 @@ public sealed class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
                     || localGrudge >= 40
                     || localFear >= 40))
             || (conflictPressure - forcePosture) >= 10;
+    }
+
+    private static bool DetermineXunCarryoverConflict(
+        bool previousHasActiveConflict,
+        SettlementDisorderSnapshot disorder,
+        int localGrudge,
+        int localFear)
+    {
+        return previousHasActiveConflict
+            && (disorder.BanditThreat >= 20
+                || disorder.RoutePressure >= 20
+                || disorder.SuppressionDemand >= 15
+                || localGrudge >= 35
+                || localFear >= 35);
+    }
+
+    private static bool DetermineXunEscalatingConflict(
+        bool previousHasActiveConflict,
+        int responseActivationLevel,
+        SettlementDisorderSnapshot disorder,
+        int localGrudge,
+        int localFear,
+        int conflictPressure,
+        int forcePosture)
+    {
+        return disorder.BanditThreat >= 60
+            || disorder.RoutePressure >= 55
+            || disorder.DisorderPressure >= 60
+            || disorder.SuppressionDemand >= 55
+            || localGrudge >= 60
+            || localFear >= 55
+            || DetermineXunCarryoverConflict(
+                previousHasActiveConflict,
+                disorder,
+                localGrudge,
+                localFear)
+            || (responseActivationLevel >= ConflictAndForceResponseStateCalculator.MinimumResponseActivationLevel
+                && (conflictPressure - forcePosture) >= 80);
     }
 
     private sealed class ConflictAndForceQueries : IConflictAndForceQueries

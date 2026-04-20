@@ -52,6 +52,8 @@
     /Zongzu.Modules.WarfareCampaign
     /Zongzu.Modules.NarrativeProjection
     /Zongzu.Presentation.Unity
+  /unity
+    /Zongzu.UnityShell
   /tests
     /Zongzu.Kernel.Tests
     /Zongzu.Persistence.Tests
@@ -95,6 +97,7 @@ It is **not**:
 - application depends on kernel + contracts + scheduler + module facades
 - persistence depends on kernel + contracts + module schema contracts
 - presentation depends on application + projections, never directly on module internals
+- the Unity host shell lives under `/unity/Zongzu.UnityShell`; it is a presentation host and asset/scene workspace, not an authority layer
 
 ## Out-of-scope technologies for MVP
 Do not introduce without explicit architecture approval:
