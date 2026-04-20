@@ -1,40 +1,40 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class HouseholdPressureSnapshot
+public sealed record HouseholdPressureSnapshot
 {
-    public HouseholdId Id { get; set; }
+    public HouseholdId Id { get; init; }
 
-    public string HouseholdName { get; set; } = string.Empty;
+    public string HouseholdName { get; init; } = string.Empty;
 
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public ClanId? SponsorClanId { get; set; }
+    public ClanId? SponsorClanId { get; init; }
 
-    public int Distress { get; set; }
+    public int Distress { get; init; }
 
-    public int DebtPressure { get; set; }
+    public int DebtPressure { get; init; }
 
-    public int LaborCapacity { get; set; }
+    public int LaborCapacity { get; init; }
 
-    public int MigrationRisk { get; set; }
+    public int MigrationRisk { get; init; }
 
-    public bool IsMigrating { get; set; }
+    public bool IsMigrating { get; init; }
 }
 
-public sealed class PopulationSettlementSnapshot
+public sealed record PopulationSettlementSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public int CommonerDistress { get; set; }
+    public int CommonerDistress { get; init; }
 
-    public int LaborSupply { get; set; }
+    public int LaborSupply { get; init; }
 
-    public int MigrationPressure { get; set; }
+    public int MigrationPressure { get; init; }
 
-    public int MilitiaPotential { get; set; }
+    public int MilitiaPotential { get; init; }
 }
 
 public interface IPopulationAndHouseholdsQueries

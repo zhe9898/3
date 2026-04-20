@@ -42,6 +42,30 @@ public sealed class MonthlyScheduler
         WorldDiff diff = new();
         DomainEventBuffer domainEvents = new();
 
+        // Phase 0 (Prepare): run Prepare-phase authority modules once at
+        // month start, before xun pulses begin. Per SIMULATION.md, this is
+        // where PersonRegistry advances age / life stage so every Phase 1+
+        // module reads a current life stage.
+        IModuleRunner[] prepareModules = authorityModules
+            .Where(static module => module.Phase == SimulationPhase.Prepare)
+            .ToArray();
+        IModuleRunner[] postPrepareAuthorityModules = authorityModules
+            .Where(static module => module.Phase != SimulationPhase.Prepare)
+            .ToArray();
+
+        RunCadencePass(
+            currentDate,
+            featureManifest,
+            random,
+            moduleStates,
+            orderedModules,
+            prepareModules,
+            kernelState,
+            diff,
+            domainEvents,
+            SimulationCadenceBand.Month,
+            SimulationXun.None);
+
         foreach (SimulationXun xun in XunOrder)
         {
             RunCadencePass(
@@ -64,7 +88,7 @@ public sealed class MonthlyScheduler
             random,
             moduleStates,
             orderedModules,
-            authorityModules,
+            postPrepareAuthorityModules,
             kernelState,
             diff,
             domainEvents,

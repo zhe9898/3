@@ -223,7 +223,7 @@ public sealed class NarrativeProjectionModule : ModuleRunner<NarrativeProjection
                 TryAddContextDiff(selected, domainEvent, allDiffs, KnownModuleKeys.PopulationAndHouseholds, KnownModuleKeys.WorldSettlements);
                 TryAddContextDiff(selected, domainEvent, allDiffs, KnownModuleKeys.SocialMemoryAndRelations);
                 break;
-            case FamilyCoreEventNames.DeathRegistered:
+            case FamilyCoreEventNames.ClanMemberDied:
                 TryAddContextDiff(selected, domainEvent, allDiffs, KnownModuleKeys.SocialMemoryAndRelations);
                 TryAddContextDiff(selected, domainEvent, allDiffs, KnownModuleKeys.PopulationAndHouseholds, KnownModuleKeys.WorldSettlements);
                 break;
@@ -273,7 +273,7 @@ public sealed class NarrativeProjectionModule : ModuleRunner<NarrativeProjection
     {
         return string.Equals(domainEvent.ModuleKey, KnownModuleKeys.FamilyCore, StringComparison.Ordinal)
             && domainEvent.EventType is FamilyCoreEventNames.BirthRegistered
-                or FamilyCoreEventNames.DeathRegistered
+                or FamilyCoreEventNames.ClanMemberDied
                 or FamilyCoreEventNames.HeirSecurityWeakened;
     }
 
@@ -322,7 +322,7 @@ public sealed class NarrativeProjectionModule : ModuleRunner<NarrativeProjection
             "GrudgeEscalated" => NotificationTier.Consequential,
             FamilyCoreEventNames.MarriageAllianceArranged => NotificationTier.Consequential,
             FamilyCoreEventNames.BirthRegistered => NotificationTier.Consequential,
-            FamilyCoreEventNames.DeathRegistered => NotificationTier.Urgent,
+            FamilyCoreEventNames.ClanMemberDied => NotificationTier.Urgent,
             FamilyCoreEventNames.HeirSecurityWeakened => NotificationTier.Urgent,
             FamilyCoreEventNames.LineageDisputeHardened => NotificationTier.Consequential,
             FamilyCoreEventNames.LineageMediationOpened => NotificationTier.Consequential,
@@ -384,7 +384,7 @@ public sealed class NarrativeProjectionModule : ModuleRunner<NarrativeProjection
             FamilyCoreEventNames.BranchSeparationApproved => "分房议定",
             FamilyCoreEventNames.MarriageAllianceArranged => "门内议亲",
             FamilyCoreEventNames.BirthRegistered => "门内添丁",
-            FamilyCoreEventNames.DeathRegistered => "门内举哀",
+            FamilyCoreEventNames.ClanMemberDied => "门内举哀",
             FamilyCoreEventNames.HeirSecurityWeakened => "承祧未稳",
             _ => $"{GetModuleLabel(moduleKey)}告示",
         };
@@ -471,7 +471,7 @@ public sealed class NarrativeProjectionModule : ModuleRunner<NarrativeProjection
             FamilyCoreEventNames.BranchSeparationApproved => "先看分房是否稳住祠堂气口，再定后续接济、祭田与香火如何分开。",
             FamilyCoreEventNames.MarriageAllianceArranged => "先看这门婚议是缓了承祧之急，还是又添人情与聘财之压，再定后手接济轻重。",
             FamilyCoreEventNames.BirthRegistered => BuildBirthNextStep(traces),
-            FamilyCoreEventNames.DeathRegistered => BuildDeathNextStep(traces),
+            FamilyCoreEventNames.ClanMemberDied => BuildDeathNextStep(traces),
             FamilyCoreEventNames.HeirSecurityWeakened => BuildHeirSecurityNextStep(traces),
             _ => moduleKey switch
             {

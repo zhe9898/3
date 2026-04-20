@@ -35,7 +35,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         FamilyCoreEventNames.BranchSeparationApproved,
         FamilyCoreEventNames.MarriageAllianceArranged,
         FamilyCoreEventNames.BirthRegistered,
-        FamilyCoreEventNames.DeathRegistered,
+        FamilyCoreEventNames.ClanMemberDied,
         FamilyCoreEventNames.HeirSecurityWeakened,
     ];
 
@@ -447,7 +447,9 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 ? $"{clan.ClanName}承祧之人身故，门内举哀，继嗣之议与房支争执随即翻起。"
                 : $"{clan.ClanName}门内举哀，丧服与祭次先压住家中诸事。",
             clan.Id.Value.ToString());
-        scope.Emit(FamilyCoreEventNames.DeathRegistered, $"{clan.ClanName}门内举哀。", clan.Id.Value.ToString());
+        // Entity key is PersonId so PersonRegistry can consolidate this into
+        // the canonical PersonDeceased. See PERSON_OWNERSHIP_RULES.md.
+        scope.Emit(FamilyCoreEventNames.ClanMemberDied, $"{clan.ClanName}门内举哀。", deathTarget.Id.Value.ToString());
         return true;
     }
 

@@ -936,7 +936,7 @@ public sealed class TradeAndIndustryModule : ModuleRunner<TradeAndIndustryState>
                 .ToArray();
         }
 
-        public IReadOnlyList<TradeRouteSnapshot> GetRoutesForClan(ClanId clanId)
+        public IReadOnlyList<ClanTradeRouteSnapshot> GetRoutesForClan(ClanId clanId)
         {
             return _state.Routes
                 .Where(route => route.ClanId == clanId)
@@ -987,9 +987,9 @@ public sealed class TradeAndIndustryModule : ModuleRunner<TradeAndIndustryState>
             };
         }
 
-        private static TradeRouteSnapshot CloneRoute(RouteTradeState route)
+        private static ClanTradeRouteSnapshot CloneRoute(RouteTradeState route)
         {
-            return new TradeRouteSnapshot
+            return new ClanTradeRouteSnapshot
             {
                 RouteId = route.RouteId,
                 ClanId = route.ClanId,

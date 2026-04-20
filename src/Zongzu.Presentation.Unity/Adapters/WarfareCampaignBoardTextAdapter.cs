@@ -151,7 +151,7 @@ internal static class WarfareCampaignBoardTextAdapter
 	internal static RegionalBoardProfile BuildCampaignRegionalProfile(
 		CampaignFrontSnapshot campaign,
 		SettlementSnapshot? settlement = null,
-		IReadOnlyList<TradeRouteSnapshot>? tradeRoutes = null)
+		IReadOnlyList<ClanTradeRouteSnapshot>? clanTradeRoutes = null)
 	{
 		List<string> signals =
 		[
@@ -160,7 +160,7 @@ internal static class WarfareCampaignBoardTextAdapter
 		];
 		signals.AddRange(campaign.Routes.Select(route => route.RouteLabel));
 		signals.AddRange(campaign.Routes.Select(route => route.Summary));
-		signals.AddRange((tradeRoutes ?? Array.Empty<TradeRouteSnapshot>()).Select(route => route.RouteName));
+		signals.AddRange((clanTradeRoutes ?? Array.Empty<ClanTradeRouteSnapshot>()).Select(route => route.RouteName));
 
 		bool water = ContainsRegionalSignal(signals, "river", "canal", "ferry", "wharf", "water", "河", "江", "渡", "港", "浦", "漕");
 		bool mountain = ContainsRegionalSignal(signals, "hill", "mountain", "ridge", "pass", "山", "岭", "关", "隘", "谷");

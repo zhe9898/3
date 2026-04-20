@@ -9,6 +9,7 @@ using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.NarrativeProjection;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
+using Zongzu.Modules.PersonRegistry;
 using Zongzu.Modules.PopulationAndHouseholds;
 using Zongzu.Modules.PublicLifeAndRumor;
 using Zongzu.Modules.SocialMemoryAndRelations;
@@ -70,6 +71,7 @@ public static class SimulationBootstrapper
     {
         return
         [
+            new PersonRegistryModule(),
             new WorldSettlementsModule(),
             new PopulationAndHouseholdsModule(),
             new FamilyCoreModule(),
@@ -81,6 +83,7 @@ public static class SimulationBootstrapper
     {
         return
         [
+            new PersonRegistryModule(),
             new WorldSettlementsModule(),
             new PopulationAndHouseholdsModule(),
             new FamilyCoreModule(),
@@ -95,6 +98,7 @@ public static class SimulationBootstrapper
     {
         return
         [
+            new PersonRegistryModule(),
             new WorldSettlementsModule(),
             new PopulationAndHouseholdsModule(),
             new FamilyCoreModule(),
@@ -110,6 +114,7 @@ public static class SimulationBootstrapper
     {
         return
         [
+            new PersonRegistryModule(),
             new WorldSettlementsModule(),
             new PopulationAndHouseholdsModule(),
             new FamilyCoreModule(),
@@ -126,6 +131,7 @@ public static class SimulationBootstrapper
     {
         return
         [
+            new PersonRegistryModule(),
             new WorldSettlementsModule(),
             new PopulationAndHouseholdsModule(),
             new FamilyCoreModule(),
@@ -143,6 +149,7 @@ public static class SimulationBootstrapper
     {
         return
         [
+            new PersonRegistryModule(),
             new WorldSettlementsModule(),
             new PopulationAndHouseholdsModule(),
             new FamilyCoreModule(),
@@ -161,6 +168,7 @@ public static class SimulationBootstrapper
     {
         return
         [
+            new PersonRegistryModule(),
             new WorldSettlementsModule(),
             new PopulationAndHouseholdsModule(),
             new FamilyCoreModule(),
@@ -413,6 +421,7 @@ public static class SimulationBootstrapper
     private static FeatureManifest CreateM0M1Manifest()
     {
         FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.PersonRegistry, FeatureMode.Full);
         manifest.Set(KnownModuleKeys.WorldSettlements, FeatureMode.Full);
         manifest.Set(KnownModuleKeys.FamilyCore, FeatureMode.Full);
         manifest.Set(KnownModuleKeys.PopulationAndHouseholds, FeatureMode.Full);
@@ -425,6 +434,7 @@ public static class SimulationBootstrapper
         WorldSettlementsState worldState = simulation.GetMutableModuleState<WorldSettlementsState>(KnownModuleKeys.WorldSettlements);
         PopulationAndHouseholdsState populationState = simulation.GetMutableModuleState<PopulationAndHouseholdsState>(KnownModuleKeys.PopulationAndHouseholds);
         FamilyCoreState familyState = simulation.GetMutableModuleState<FamilyCoreState>(KnownModuleKeys.FamilyCore);
+        PersonRegistryState personRegistryState = simulation.GetMutableModuleState<PersonRegistryState>(KnownModuleKeys.PersonRegistry);
 
         SettlementId settlementId = KernelIdAllocator.NextSettlement(simulation.KernelState);
         ClanId clanId = KernelIdAllocator.NextClan(simulation.KernelState);
@@ -459,6 +469,21 @@ public static class SimulationBootstrapper
             GivenName = "张远",
             AgeMonths = 32 * 12,
             IsAlive = true,
+        });
+
+        // Phase 1b: register the clan heir in the Kernel-layer PersonRegistry
+        // as the canonical identity anchor. FamilyCore's FamilyPersonState is
+        // kept in sync for now (Phase 2 will retire the redundant age/alive
+        // fields). See PERSON_OWNERSHIP_RULES.md.
+        personRegistryState.Persons.Add(new PersonRecord
+        {
+            Id = heirId,
+            DisplayName = "张远",
+            BirthDate = new GameDate(simulation.CurrentDate.Year - 32, simulation.CurrentDate.Month),
+            Gender = PersonGender.Male,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Core,
         });
 
         populationState.Households.Add(new PopulationHouseholdState
@@ -1077,6 +1102,7 @@ public static class SimulationBootstrapper
     {
         SaveMigrationPipeline pipeline = new();
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 1, 2, MigrateWorldSettlementsStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 2, 3, MigrateWorldSettlementsStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 1, 2, MigrateFamilyCoreStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 1, 2, MigratePublicLifeAndRumorStateV1ToV2);
@@ -1115,6 +1141,65 @@ public static class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.WorldSettlements,
             ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
+        };
+    }
+
+    /// <summary>
+    /// SPATIAL_SKELETON_SPEC §13 — Phase 1c v2→v3 upgrade:
+    /// <list type="bullet">
+    ///   <item>Seed <see cref="SettlementStateData.NodeKind"/> by inference from
+    ///         <see cref="SettlementStateData.Tier"/> (SPEC §13.2 table).</item>
+    ///   <item>Seed <see cref="SettlementStateData.Visibility"/> to
+    ///         <see cref="NodeVisibility.StateVisible"/> (safe default: all
+    ///         pre-1c nodes were officially registered).</item>
+    ///   <item>Seed <see cref="SettlementStateData.EcoZone"/> to
+    ///         <see cref="SettlementEcoZone.JiangnanWaterNetwork"/> (Lanxi
+    ///         seed — the only live world in Phase 1c).</item>
+    ///   <item>Leave <see cref="WorldSettlementsState.Routes"/> empty (SPEC
+    ///         §13.3: old saves carry no routes; seed bootstrap rebuilds them).</item>
+    ///   <item>Leave <see cref="WorldSettlementsState.CurrentSeason"/> at
+    ///         constructor defaults (neutral Slack / Limited / Quiet).</item>
+    /// </list>
+    /// </summary>
+    private static ModuleStateEnvelope MigrateWorldSettlementsStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(typeof(WorldSettlementsState), envelope.Payload);
+
+        foreach (SettlementStateData settlement in migratedState.Settlements)
+        {
+            if (settlement.NodeKind == SettlementNodeKind.Unknown)
+            {
+                settlement.NodeKind = settlement.Tier switch
+                {
+                    SettlementTier.PrefectureSeat => SettlementNodeKind.PrefectureSeat,
+                    SettlementTier.CountySeat => SettlementNodeKind.CountySeat,
+                    SettlementTier.MarketTown => SettlementNodeKind.MarketTown,
+                    _ => SettlementNodeKind.Village,
+                };
+            }
+
+            if (settlement.Visibility == NodeVisibility.Unknown)
+            {
+                settlement.Visibility = NodeVisibility.StateVisible;
+            }
+
+            if (settlement.EcoZone == SettlementEcoZone.Unknown)
+            {
+                settlement.EcoZone = SettlementEcoZone.JiangnanWaterNetwork;
+            }
+
+            // NeighborIds and ParentAdministrativeId default to empty/null;
+            // seed bootstrap (SPEC §12) rebuilds them when the Lanxi world
+            // is re-seeded. Phase 1c does not force pre-existing saves to
+            // adopt the seed graph.
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 3,
             Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
         };
     }

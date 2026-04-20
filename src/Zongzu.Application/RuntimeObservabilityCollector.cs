@@ -136,31 +136,41 @@ internal static class RuntimeObservabilityCollector
     {
         ArgumentNullException.ThrowIfNull(simulation);
 
-        InteractionPressureMetricsSnapshot snapshot = new();
+        int activeConflictSettlements = 0;
+        int activatedResponseSettlements = 0;
+        int supportedOrderSettlements = 0;
+        int highSuppressionDemandSettlements = 0;
+        int averageSuppressionDemand = 0;
+        int peakSuppressionDemand = 0;
+        int highBanditThreatSettlements = 0;
+        int orderInterventionCarryoverSettlements = 0;
+        int shieldingDominantSettlements = 0;
+        int backlashDominantSettlements = 0;
+        int orderAdministrativeAftermathSettlements = 0;
 
         if (simulation.TryGetModuleState(KnownModuleKeys.ConflictAndForce, out object? conflictStateObject) &&
             conflictStateObject is ConflictAndForceState conflictState)
         {
-            snapshot.ActiveConflictSettlements = conflictState.Settlements.Count(static settlement => settlement.HasActiveConflict);
-            snapshot.ActivatedResponseSettlements = conflictState.Settlements.Count(static settlement => settlement.IsResponseActivated);
-            snapshot.SupportedOrderSettlements = conflictState.Settlements.Count(static settlement => settlement.OrderSupportLevel > 0);
+            activeConflictSettlements = conflictState.Settlements.Count(static settlement => settlement.HasActiveConflict);
+            activatedResponseSettlements = conflictState.Settlements.Count(static settlement => settlement.IsResponseActivated);
+            supportedOrderSettlements = conflictState.Settlements.Count(static settlement => settlement.OrderSupportLevel > 0);
         }
 
         if (simulation.TryGetModuleState(KnownModuleKeys.OrderAndBanditry, out object? orderStateObject) &&
             orderStateObject is OrderAndBanditryState orderState)
         {
-            snapshot.HighSuppressionDemandSettlements = orderState.Settlements.Count(static settlement => settlement.SuppressionDemand >= 55);
-            snapshot.AverageSuppressionDemand = orderState.Settlements.Count == 0
+            highSuppressionDemandSettlements = orderState.Settlements.Count(static settlement => settlement.SuppressionDemand >= 55);
+            averageSuppressionDemand = orderState.Settlements.Count == 0
                 ? 0
                 : (int)Math.Round(orderState.Settlements.Average(static settlement => settlement.SuppressionDemand), MidpointRounding.AwayFromZero);
-            snapshot.PeakSuppressionDemand = orderState.Settlements.Count == 0
+            peakSuppressionDemand = orderState.Settlements.Count == 0
                 ? 0
                 : orderState.Settlements.Max(static settlement => settlement.SuppressionDemand);
-            snapshot.HighBanditThreatSettlements = orderState.Settlements.Count(static settlement => settlement.BanditThreat >= 55);
-            snapshot.OrderInterventionCarryoverSettlements = orderState.Settlements.Count(static settlement => settlement.InterventionCarryoverMonths > 0);
-            snapshot.ShieldingDominantSettlements = orderState.Settlements.Count(static settlement =>
+            highBanditThreatSettlements = orderState.Settlements.Count(static settlement => settlement.BanditThreat >= 55);
+            orderInterventionCarryoverSettlements = orderState.Settlements.Count(static settlement => settlement.InterventionCarryoverMonths > 0);
+            shieldingDominantSettlements = orderState.Settlements.Count(static settlement =>
                 settlement.RouteShielding >= 35 && settlement.RouteShielding > settlement.RetaliationRisk);
-            snapshot.BacklashDominantSettlements = orderState.Settlements.Count(static settlement =>
+            backlashDominantSettlements = orderState.Settlements.Count(static settlement =>
                 settlement.RetaliationRisk >= 35 && settlement.RetaliationRisk > settlement.RouteShielding);
 
             if (simulation.TryGetModuleState(KnownModuleKeys.OfficeAndCareer, out object? officeStateObject) &&
@@ -168,13 +178,26 @@ internal static class RuntimeObservabilityCollector
             {
                 Dictionary<SettlementId, JurisdictionAuthorityState> jurisdictionsBySettlement = officeState.Jurisdictions
                     .ToDictionary(static jurisdiction => jurisdiction.SettlementId, static jurisdiction => jurisdiction);
-                snapshot.OrderAdministrativeAftermathSettlements = orderState.Settlements.Count(settlement =>
+                orderAdministrativeAftermathSettlements = orderState.Settlements.Count(settlement =>
                     jurisdictionsBySettlement.TryGetValue(settlement.SettlementId, out JurisdictionAuthorityState? jurisdiction)
                     && HasLinkedAdministrativeAftermath(settlement.LastInterventionCommandLabel, jurisdiction));
             }
         }
 
-        return snapshot;
+        return new InteractionPressureMetricsSnapshot
+        {
+            ActiveConflictSettlements = activeConflictSettlements,
+            ActivatedResponseSettlements = activatedResponseSettlements,
+            SupportedOrderSettlements = supportedOrderSettlements,
+            HighSuppressionDemandSettlements = highSuppressionDemandSettlements,
+            AverageSuppressionDemand = averageSuppressionDemand,
+            PeakSuppressionDemand = peakSuppressionDemand,
+            HighBanditThreatSettlements = highBanditThreatSettlements,
+            OrderInterventionCarryoverSettlements = orderInterventionCarryoverSettlements,
+            ShieldingDominantSettlements = shieldingDominantSettlements,
+            BacklashDominantSettlements = backlashDominantSettlements,
+            OrderAdministrativeAftermathSettlements = orderAdministrativeAftermathSettlements,
+        };
     }
 
     public static SettlementPressureDistributionSnapshot CollectPressureDistribution(GameSimulation simulation)
@@ -182,28 +205,37 @@ internal static class RuntimeObservabilityCollector
         ArgumentNullException.ThrowIfNull(simulation);
 
         SettlementInteractionHotspotSnapshot[] hotspots = BuildHotspotSnapshots(simulation);
-        SettlementPressureDistributionSnapshot snapshot = new();
+        int crisisSettlements = 0;
+        int stressedSettlements = 0;
+        int watchedSettlements = 0;
+        int calmSettlements = 0;
         foreach (SettlementInteractionHotspotSnapshot hotspot in hotspots)
         {
             if (hotspot.HotspotScore >= 220)
             {
-                snapshot.CrisisSettlements += 1;
+                crisisSettlements += 1;
             }
             else if (hotspot.HotspotScore >= 150)
             {
-                snapshot.StressedSettlements += 1;
+                stressedSettlements += 1;
             }
             else if (hotspot.HotspotScore >= 90)
             {
-                snapshot.WatchedSettlements += 1;
+                watchedSettlements += 1;
             }
             else
             {
-                snapshot.CalmSettlements += 1;
+                calmSettlements += 1;
             }
         }
 
-        return snapshot;
+        return new SettlementPressureDistributionSnapshot
+        {
+            CrisisSettlements = crisisSettlements,
+            StressedSettlements = stressedSettlements,
+            WatchedSettlements = watchedSettlements,
+            CalmSettlements = calmSettlements,
+        };
     }
 
     public static IReadOnlyList<SettlementInteractionHotspotSnapshot> CollectTopHotspots(GameSimulation simulation, int takeCount = 3)

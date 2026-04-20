@@ -1,27 +1,78 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 
 namespace Zongzu.Modules.WorldSettlements;
 
+/// <summary>
+/// Authoritative state for the <c>WorldSettlements</c> module — the spatial
+/// skeleton root: settlement nodes, social-function routes, and the parallel
+/// season bands.
+///
+/// <para>SPATIAL_SKELETON_SPEC Phase 1c (schema v3) adds <see cref="Routes"/>
+/// and <see cref="CurrentSeason"/>. See SPEC §1 / §2 / §3.</para>
+/// </summary>
 public sealed class WorldSettlementsState : IModuleStateDescriptor
 {
     public string ModuleKey => KnownModuleKeys.WorldSettlements;
 
     public List<SettlementStateData> Settlements { get; set; } = new();
+
+    /// <summary>Routes between settlements (SPEC §2). Phase 1c schema v3.</summary>
+    public List<RouteStateData> Routes { get; set; } = new();
+
+    /// <summary>Current season bands — natural / government / imperial (SPEC §3). Phase 1c schema v3.</summary>
+    public SeasonBandData CurrentSeason { get; set; } = new();
+
+    /// <summary>
+    /// SPATIAL_SKELETON_SPEC §20.3 — public-surface signals emitted during the
+    /// current tick (xun or month). Derived from state transitions by
+    /// <see cref="PublicSurfaceSignalEmitter"/>; consumers read via
+    /// <see cref="IWorldSettlementsQueries.GetCurrentPulseSignals"/>.
+    ///
+    /// <para><b>Lifetime = one tick.</b> Cleared at the start of every xun
+    /// and month pulse. Not persisted — <see cref="IgnoreDataMemberAttribute"/>
+    /// keeps signals out of MessagePack output (regenerated on next tick).</para>
+    /// </summary>
+    [IgnoreDataMember]
+    public List<PublicSurfaceSignal> CurrentPulseSignals { get; set; } = new();
 }
 
+/// <summary>
+/// Authoritative per-settlement state. SPEC §1 Phase 1c (schema v3) adds
+/// <see cref="NodeKind"/> (functional semantics, decision A),
+/// <see cref="Visibility"/> (decision H), <see cref="EcoZone"/> (decision I),
+/// and graph fields <see cref="NeighborIds"/> / <see cref="ParentAdministrativeId"/>.
+/// </summary>
 public sealed class SettlementStateData
 {
     public SettlementId Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
 
+    /// <summary>Administrative level. Orthogonal to <see cref="NodeKind"/>.</summary>
     public SettlementTier Tier { get; set; }
+
+    /// <summary>Functional-semantic classification (decision A). Phase 1c schema v3.</summary>
+    public SettlementNodeKind NodeKind { get; set; }
+
+    /// <summary>State-visible / local-known / covert (decision H). Phase 1c schema v3.</summary>
+    public NodeVisibility Visibility { get; set; }
+
+    /// <summary>Regional ecology (decision I). Phase 1c schema v3.</summary>
+    public SettlementEcoZone EcoZone { get; set; }
 
     public int Security { get; set; }
 
     public int Prosperity { get; set; }
 
     public int BaselineInstitutionCount { get; set; }
+
+    /// <summary>Adjacency graph — purely geometric neighbors; SPEC §1.1/12.4. Phase 1c schema v3.</summary>
+    public List<SettlementId> NeighborIds { get; set; } = new();
+
+    /// <summary>Administrative parent (county seat for a village, prefecture for a county). <c>null</c> at the top. Phase 1c schema v3.</summary>
+    public SettlementId? ParentAdministrativeId { get; set; }
 }
+

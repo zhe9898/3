@@ -1,23 +1,23 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class ClanNarrativeSnapshot
+public sealed record ClanNarrativeSnapshot
 {
-    public ClanId ClanId { get; set; }
+    public ClanId ClanId { get; init; }
 
-    public string PublicNarrative { get; set; } = string.Empty;
+    public string PublicNarrative { get; init; } = string.Empty;
 
-    public int GrudgePressure { get; set; }
+    public int GrudgePressure { get; init; }
 
-    public int FearPressure { get; set; }
+    public int FearPressure { get; init; }
 
-    public int ShamePressure { get; set; }
+    public int ShamePressure { get; init; }
 
-    public int FavorBalance { get; set; }
+    public int FavorBalance { get; init; }
 
-    public int MemoryCount { get; set; }
+    public int MemoryCount { get; init; }
 }
 
 public interface ISocialMemoryAndRelationsQueries

@@ -2,6 +2,8 @@
 
 本文档定义人物数据的所有权边界。
 
+> **相关骨骼**：`SPATIAL_SKELETON_SPEC.md` 是空间骨骼；本文件是人物骨骼。两者正交：空间不含人，人物不含节点；两者通过 `SettlementId`（人物在某地）/ `PersonId`（节点事件牵连某人）在 projection 层交汇。
+
 ## 核心决策
 
 **方案 B：Kernel 层 PersonRegistry + 各模块各自持有领域状态。**

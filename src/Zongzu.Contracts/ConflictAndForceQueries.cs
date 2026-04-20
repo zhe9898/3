@@ -1,39 +1,39 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class LocalForcePoolSnapshot
+public sealed record LocalForcePoolSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public int GuardCount { get; set; }
+    public int GuardCount { get; init; }
 
-    public int RetainerCount { get; set; }
+    public int RetainerCount { get; init; }
 
-    public int MilitiaCount { get; set; }
+    public int MilitiaCount { get; init; }
 
-    public int EscortCount { get; set; }
+    public int EscortCount { get; init; }
 
-    public int Readiness { get; set; }
+    public int Readiness { get; init; }
 
-    public int CommandCapacity { get; set; }
+    public int CommandCapacity { get; init; }
 
-    public int ResponseActivationLevel { get; set; }
+    public int ResponseActivationLevel { get; init; }
 
-    public int OrderSupportLevel { get; set; }
+    public int OrderSupportLevel { get; init; }
 
-    public bool IsResponseActivated { get; set; }
+    public bool IsResponseActivated { get; init; }
 
-    public bool HasActiveConflict { get; set; }
+    public bool HasActiveConflict { get; init; }
 
-    public int CampaignFatigue { get; set; }
+    public int CampaignFatigue { get; init; }
 
-    public int CampaignEscortStrain { get; set; }
+    public int CampaignEscortStrain { get; init; }
 
-    public string LastCampaignFalloutTrace { get; set; } = string.Empty;
+    public string LastCampaignFalloutTrace { get; init; } = string.Empty;
 
-    public string LastConflictTrace { get; set; } = string.Empty;
+    public string LastConflictTrace { get; init; } = string.Empty;
 }
 
 public interface IConflictAndForceQueries

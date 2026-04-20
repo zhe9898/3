@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -60,7 +60,7 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
 
         Dictionary<SettlementId, PopulationSettlementSnapshot> populationBySettlement = BuildPopulationBySettlement(scope);
         Dictionary<SettlementId, MarketSnapshot> marketsBySettlement = BuildMarketsBySettlement(scope);
-        Dictionary<SettlementId, List<TradeRouteSnapshot>> routesBySettlement = BuildRoutesBySettlement(scope);
+        Dictionary<SettlementId, List<ClanTradeRouteSnapshot>> routesBySettlement = BuildRoutesBySettlement(scope);
         Dictionary<SettlementId, SettlementDisorderSnapshot> disorderBySettlement = BuildDisorderBySettlement(scope);
         Dictionary<SettlementId, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = BuildJurisdictionsBySettlement(scope);
         Dictionary<SettlementId, List<ClanSnapshot>> clansBySettlement = BuildClansBySettlement(scope);
@@ -124,7 +124,7 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
         SettlementSnapshot settlement,
         IReadOnlyDictionary<SettlementId, PopulationSettlementSnapshot> populationBySettlement,
         IReadOnlyDictionary<SettlementId, MarketSnapshot> marketsBySettlement,
-        IReadOnlyDictionary<SettlementId, List<TradeRouteSnapshot>> routesBySettlement,
+        IReadOnlyDictionary<SettlementId, List<ClanTradeRouteSnapshot>> routesBySettlement,
         IReadOnlyDictionary<SettlementId, SettlementDisorderSnapshot> disorderBySettlement,
         IReadOnlyDictionary<SettlementId, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement,
         IReadOnlyDictionary<SettlementId, List<ClanSnapshot>> clansBySettlement,
@@ -132,7 +132,7 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
     {
         populationBySettlement.TryGetValue(settlement.Id, out PopulationSettlementSnapshot? population);
         marketsBySettlement.TryGetValue(settlement.Id, out MarketSnapshot? market);
-        routesBySettlement.TryGetValue(settlement.Id, out List<TradeRouteSnapshot>? routes);
+        routesBySettlement.TryGetValue(settlement.Id, out List<ClanTradeRouteSnapshot>? routes);
         disorderBySettlement.TryGetValue(settlement.Id, out SettlementDisorderSnapshot? disorder);
         jurisdictionsBySettlement.TryGetValue(settlement.Id, out JurisdictionAuthoritySnapshot? jurisdiction);
         clansBySettlement.TryGetValue(settlement.Id, out List<ClanSnapshot>? clans);
@@ -422,9 +422,9 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
             .ToDictionary(static market => market.SettlementId, static market => market);
     }
 
-    private static Dictionary<SettlementId, List<TradeRouteSnapshot>> BuildRoutesBySettlement(ModuleExecutionScope<PublicLifeAndRumorState> scope)
+    private static Dictionary<SettlementId, List<ClanTradeRouteSnapshot>> BuildRoutesBySettlement(ModuleExecutionScope<PublicLifeAndRumorState> scope)
     {
-        Dictionary<SettlementId, List<TradeRouteSnapshot>> routesBySettlement = new();
+        Dictionary<SettlementId, List<ClanTradeRouteSnapshot>> routesBySettlement = new();
         if (!scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.TradeAndIndustry))
         {
             return routesBySettlement;
@@ -433,9 +433,9 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
         ITradeAndIndustryQueries tradeQueries = scope.GetRequiredQuery<ITradeAndIndustryQueries>();
         foreach (ClanTradeSnapshot trade in tradeQueries.GetClanTrades().OrderBy(static entry => entry.ClanId.Value))
         {
-            foreach (TradeRouteSnapshot route in tradeQueries.GetRoutesForClan(trade.ClanId).OrderBy(static entry => entry.RouteId))
+            foreach (ClanTradeRouteSnapshot route in tradeQueries.GetRoutesForClan(trade.ClanId).OrderBy(static entry => entry.RouteId))
             {
-                if (!routesBySettlement.TryGetValue(route.SettlementId, out List<TradeRouteSnapshot>? routes))
+                if (!routesBySettlement.TryGetValue(route.SettlementId, out List<ClanTradeRouteSnapshot>? routes))
                 {
                     routes = [];
                     routesBySettlement.Add(route.SettlementId, routes);
@@ -704,7 +704,7 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
     private static VenueDescriptor BuildDominantVenue(
         SettlementSnapshot settlement,
         MarketSnapshot? market,
-        IReadOnlyList<TradeRouteSnapshot> routes,
+        IReadOnlyList<ClanTradeRouteSnapshot> routes,
         int streetTalkHeat,
         int marketBuzz,
         int noticeVisibility,
@@ -796,7 +796,7 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
         return $"街谈尚浅，{state.DominantVenueLabel}的人多半仍在等确实说法。";
     }
 
-    private static string BuildRoadReportLine(SettlementPublicLifeState state, IReadOnlyList<TradeRouteSnapshot> routes)
+    private static string BuildRoadReportLine(SettlementPublicLifeState state, IReadOnlyList<ClanTradeRouteSnapshot> routes)
     {
         if (routes.Count == 0)
         {
@@ -805,7 +805,7 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
                 : "此地外路不繁，消息多在近处缓缓传开。";
         }
 
-        TradeRouteSnapshot leadRoute = routes
+        ClanTradeRouteSnapshot leadRoute = routes
             .OrderByDescending(static route => route.Risk)
             .ThenByDescending(static route => route.Capacity)
             .First();
@@ -870,7 +870,7 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
 
     private static string BuildRouteReportSummary(
         SettlementPublicLifeState state,
-        IReadOnlyList<TradeRouteSnapshot> routes,
+        IReadOnlyList<ClanTradeRouteSnapshot> routes,
         JurisdictionAuthoritySnapshot? jurisdiction)
     {
         if (routes.Count == 0)
@@ -880,7 +880,7 @@ public sealed class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAndRumorSt
                 : $"此地暂无大路牵扰，路报迟滞仅至{state.RoadReportLag}。";
         }
 
-        TradeRouteSnapshot leadRoute = routes
+        ClanTradeRouteSnapshot leadRoute = routes
             .OrderByDescending(static route => route.Risk)
             .ThenByDescending(static route => route.Capacity)
             .First();

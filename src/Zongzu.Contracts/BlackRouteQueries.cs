@@ -1,52 +1,52 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class SettlementBlackRoutePressureSnapshot
+public sealed record SettlementBlackRoutePressureSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public int BlackRoutePressure { get; set; }
+    public int BlackRoutePressure { get; init; }
 
-    public int CoercionRisk { get; set; }
+    public int CoercionRisk { get; init; }
 
-    public int SuppressionRelief { get; set; }
+    public int SuppressionRelief { get; init; }
 
-    public int ResponseActivationLevel { get; set; }
+    public int ResponseActivationLevel { get; init; }
 
-    public int PaperCompliance { get; set; }
+    public int PaperCompliance { get; init; }
 
-    public int ImplementationDrag { get; set; }
+    public int ImplementationDrag { get; init; }
 
-    public int RouteShielding { get; set; }
+    public int RouteShielding { get; init; }
 
-    public int RetaliationRisk { get; set; }
+    public int RetaliationRisk { get; init; }
 
-    public int AdministrativeSuppressionWindow { get; set; }
+    public int AdministrativeSuppressionWindow { get; init; }
 
-    public string EscalationBandLabel { get; set; } = string.Empty;
+    public string EscalationBandLabel { get; init; } = string.Empty;
 
-    public string LastPressureTrace { get; set; } = string.Empty;
+    public string LastPressureTrace { get; init; } = string.Empty;
 }
 
-public sealed class SettlementBlackRouteLedgerSnapshot
+public sealed record SettlementBlackRouteLedgerSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public int ShadowPriceIndex { get; set; }
+    public int ShadowPriceIndex { get; init; }
 
-    public int DiversionShare { get; set; }
+    public int DiversionShare { get; init; }
 
-    public int IllicitMargin { get; set; }
+    public int IllicitMargin { get; init; }
 
-    public int BlockedShipmentCount { get; set; }
+    public int BlockedShipmentCount { get; init; }
 
-    public int SeizureRisk { get; set; }
+    public int SeizureRisk { get; init; }
 
-    public string DiversionBandLabel { get; set; } = string.Empty;
+    public string DiversionBandLabel { get; init; } = string.Empty;
 
-    public string LastLedgerTrace { get; set; } = string.Empty;
+    public string LastLedgerTrace { get; init; } = string.Empty;
 }
 
 public interface IBlackRoutePressureQueries

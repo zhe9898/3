@@ -15,6 +15,7 @@
 - `MODULE_CADENCE_MATRIX.md`
 - `PLAYER_SCOPE.md`
 - `PERSON_OWNERSHIP_RULES.md`
+- `SPATIAL_SKELETON_SPEC.md`（Phase 1c 的实施规格）
 - `FULL_SYSTEM_SPEC.md`
 
 ---
@@ -203,17 +204,20 @@ MVP 的规则很薄，但瓶颈不是"公式不够复杂"，而是**静态容器
 
 ## 第三章：实施顺序
 
-**Phase 1a**：PersonRegistry（Kernel 层身份锚点，极稳定）
-**Phase 1b**：空间骨骼（WorldSettlements 节点类型 + 路线 + 季节日历）
-**Phase 2**：各模块人物领域状态（按 `PERSON_OWNERSHIP_RULES.md` 分布到各模块）
-**Phase 3**：生计骨骼（PopulationAndHouseholds 生计类型 + 摘要池）
+**Phase 1a** ✅：PersonRegistry 骨架（Kernel 层身份锚点、`ClanMemberDied → PersonDeceased` 汇总、Scheduler Phase 0 hook）
+**Phase 1b** ✅：PersonRegistry 接入所有 bootstrap、manifest 启用、seed heir 双写、金丝雀 integration 测试
+**Phase 1c**：空间骨骼（WorldSettlements 节点分类 + 功能路线 + 水陆双拓扑 + 季节带 + 叠加 query 契约）—— 详见 `SPATIAL_SKELETON_SPEC.md`
+**Phase 2**：各模块人物领域状态（按 `PERSON_OWNERSHIP_RULES.md` 分布到各模块；同时迁出 FamilyCore 的冗余年龄/存活字段，改读 PersonRegistry）
+**Phase 3**：生计骨骼（PopulationAndHouseholds 生计类型 + 摘要池 + `DeathByIllness` 通道）
 **Phase 4**：记忆骨骼（SocialMemoryAndRelations 事件记忆）
 **Phase 5**：商贸骨骼（TradeAndIndustry 商品 + 价格）
-**Phase 6**：科举 + 官场 + 匪患 + 武力 + 战役骨骼
+**Phase 6**：科举 + 官场 + 匪患 + 武力 + 战役骨骼（含 ConflictAndForce 的 `DeathByViolence` 通道）
 
 每个 Phase：枚举 -> 状态容器 -> Schema 迁移 -> Query 契约 -> 一条薄链。
 
 人物相关的所有结构变更均遵循 `PERSON_OWNERSHIP_RULES.md`。
+
+> **Phase 1a/1b 已落地状态**（截至 commit 后审计）：`Zongzu.Modules.PersonRegistry` 作为 Kernel 层新模块存在，identity-only（`PersonId/DisplayName/BirthDate/Gender/LifeStage/IsAlive/FidelityRing`）；`FamilyCoreEventNames.DeathRegistered` 已重命名为 `ClanMemberDied`，entity key 改为 PersonId；PersonRegistry 消费 `ClanMemberDied / DeathByIllness / DeathByViolence` 后汇总发出规范的 `PersonDeceased`；`MonthlyScheduler` 新增 Phase 0 pre-month pass；所有 bootstrap 场景 manifest 启用 PersonRegistry，seed heir 以 `FidelityRing.Core` 双写入 registry；包括一个金丝雀 integration 测试 `ClanMemberDied_IsConsolidated_Into_PersonDeceased_ByPersonRegistry` 守护这条链。
 
 ---
 

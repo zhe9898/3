@@ -8,6 +8,13 @@ public readonly record struct ClanId(int Value);
 
 public readonly record struct SettlementId(int Value);
 
+/// <summary>
+/// SPATIAL_SKELETON_SPEC §2 — a social-function route between settlements.
+/// Same physical corridor can host multiple RouteId entries (grain + market
+/// + exam-travel sharing one road), each its own RouteState.
+/// </summary>
+public readonly record struct RouteId(int Value);
+
 public readonly record struct InstitutionId(int Value);
 
 public readonly record struct MemoryId(int Value);
@@ -40,6 +47,11 @@ public static class KernelIdAllocator
     public static SettlementId NextSettlement(KernelState kernelState)
     {
         return new SettlementId(kernelState.NextSettlementId++);
+    }
+
+    public static RouteId NextRoute(KernelState kernelState)
+    {
+        return new RouteId(kernelState.NextRouteId++);
     }
 
     public static InstitutionId NextInstitution(KernelState kernelState)

@@ -1,104 +1,104 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Zongzu.Contracts;
 
-public sealed class DebugFeatureModeSnapshot
+public sealed record DebugFeatureModeSnapshot
 {
-    public string ModuleKey { get; set; } = string.Empty;
+    public string ModuleKey { get; init; } = string.Empty;
 
-    public string Mode { get; set; } = string.Empty;
+    public string Mode { get; init; } = string.Empty;
 }
 
-public sealed class DebugModuleInspectorSnapshot
+public sealed record DebugModuleInspectorSnapshot
 {
-    public string ModuleKey { get; set; } = string.Empty;
+    public string ModuleKey { get; init; } = string.Empty;
 
-    public int ModuleSchemaVersion { get; set; }
+    public int ModuleSchemaVersion { get; init; }
 
-    public int PayloadBytes { get; set; }
+    public int PayloadBytes { get; init; }
 }
 
-public sealed class DebugDiffTraceSnapshot
+public sealed record DebugDiffTraceSnapshot
 {
-    public string ModuleKey { get; set; } = string.Empty;
+    public string ModuleKey { get; init; } = string.Empty;
 
-    public string Description { get; set; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
 
-    public string? EntityKey { get; set; }
+    public string? EntityKey { get; init; }
 }
 
-public sealed class DebugDomainEventSnapshot
+public sealed record DebugDomainEventSnapshot
 {
-    public string ModuleKey { get; set; } = string.Empty;
+    public string ModuleKey { get; init; } = string.Empty;
 
-    public string EventType { get; set; } = string.Empty;
+    public string EventType { get; init; } = string.Empty;
 
-    public string Summary { get; set; } = string.Empty;
+    public string Summary { get; init; } = string.Empty;
 }
 
-public sealed class DebugMigrationStepSnapshot
+public sealed record DebugMigrationStepSnapshot
 {
-    public string ScopeLabel { get; set; } = string.Empty;
+    public string ScopeLabel { get; init; } = string.Empty;
 
-    public int SourceVersion { get; set; }
+    public int SourceVersion { get; init; }
 
-    public int TargetVersion { get; set; }
+    public int TargetVersion { get; init; }
 }
 
-public sealed class DebugLoadMigrationSnapshot
+public sealed record DebugLoadMigrationSnapshot
 {
-    public string LoadOriginLabel { get; set; } = string.Empty;
+    public string LoadOriginLabel { get; init; } = string.Empty;
 
-    public bool WasMigrationApplied { get; set; }
+    public bool WasMigrationApplied { get; init; }
 
-    public int StepCount { get; set; }
+    public int StepCount { get; init; }
 
-    public bool ConsistencyPassed { get; set; }
+    public bool ConsistencyPassed { get; init; }
 
-    public string Summary { get; set; } = string.Empty;
+    public string Summary { get; init; } = string.Empty;
 
-    public string ConsistencySummary { get; set; } = string.Empty;
+    public string ConsistencySummary { get; init; } = string.Empty;
 
-    public IReadOnlyList<DebugMigrationStepSnapshot> Steps { get; set; } = [];
+    public IReadOnlyList<DebugMigrationStepSnapshot> Steps { get; init; } = [];
 
-    public IReadOnlyList<string> Warnings { get; set; } = [];
+    public IReadOnlyList<string> Warnings { get; init; } = [];
 }
 
-public sealed class PresentationDebugSnapshot
+public sealed record PresentationDebugSnapshot
 {
-    public int DiagnosticsSchemaVersion { get; set; }
+    public int DiagnosticsSchemaVersion { get; init; }
 
-    public long InitialSeed { get; set; }
+    public long InitialSeed { get; init; }
 
-    public int NotificationRetentionLimit { get; set; }
+    public int NotificationRetentionLimit { get; init; }
 
-    public bool RetentionLimitReached { get; set; }
+    public bool RetentionLimitReached { get; init; }
 
-    public ObservabilityMetricsSnapshot LatestMetrics { get; set; } = new();
+    public ObservabilityMetricsSnapshot LatestMetrics { get; init; } = new();
 
-    public InteractionPressureMetricsSnapshot CurrentInteractionPressure { get; set; } = new();
+    public InteractionPressureMetricsSnapshot CurrentInteractionPressure { get; init; } = new();
 
-    public SettlementPressureDistributionSnapshot CurrentPressureDistribution { get; set; } = new();
+    public SettlementPressureDistributionSnapshot CurrentPressureDistribution { get; init; } = new();
 
-    public RuntimeScaleMetricsSnapshot CurrentScale { get; set; } = new();
+    public RuntimeScaleMetricsSnapshot CurrentScale { get; init; } = new();
 
-    public IReadOnlyList<SettlementInteractionHotspotSnapshot> CurrentHotspots { get; set; } = [];
+    public IReadOnlyList<SettlementInteractionHotspotSnapshot> CurrentHotspots { get; init; } = [];
 
-    public RuntimePayloadSummarySnapshot CurrentPayloadSummary { get; set; } = new();
+    public RuntimePayloadSummarySnapshot CurrentPayloadSummary { get; init; } = new();
 
-    public IReadOnlyList<ModulePayloadFootprintSnapshot> TopPayloadModules { get; set; } = [];
+    public IReadOnlyList<ModulePayloadFootprintSnapshot> TopPayloadModules { get; init; } = [];
 
-    public DebugLoadMigrationSnapshot LoadMigration { get; set; } = new();
+    public DebugLoadMigrationSnapshot LoadMigration { get; init; } = new();
 
-    public IReadOnlyList<DebugFeatureModeSnapshot> EnabledModules { get; set; } = [];
+    public IReadOnlyList<DebugFeatureModeSnapshot> EnabledModules { get; init; } = [];
 
-    public IReadOnlyList<DebugModuleInspectorSnapshot> ModuleInspectors { get; set; } = [];
+    public IReadOnlyList<DebugModuleInspectorSnapshot> ModuleInspectors { get; init; } = [];
 
-    public IReadOnlyList<DebugDiffTraceSnapshot> RecentDiffEntries { get; set; } = [];
+    public IReadOnlyList<DebugDiffTraceSnapshot> RecentDiffEntries { get; init; } = [];
 
-    public IReadOnlyList<DebugDomainEventSnapshot> RecentDomainEvents { get; set; } = [];
+    public IReadOnlyList<DebugDomainEventSnapshot> RecentDomainEvents { get; init; } = [];
 
-    public IReadOnlyList<string> Warnings { get; set; } = [];
+    public IReadOnlyList<string> Warnings { get; init; } = [];
 
-    public IReadOnlyList<string> Invariants { get; set; } = [];
+    public IReadOnlyList<string> Invariants { get; init; } = [];
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
@@ -34,6 +34,7 @@ public sealed class M2LiteIntegrationTests
                 KnownModuleKeys.EducationAndExams,
                 KnownModuleKeys.FamilyCore,
                 KnownModuleKeys.NarrativeProjection,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.TradeAndIndustry,
@@ -44,6 +45,7 @@ public sealed class M2LiteIntegrationTests
             KnownModuleKeys.EducationAndExams,
             KnownModuleKeys.FamilyCore,
             KnownModuleKeys.NarrativeProjection,
+            KnownModuleKeys.PersonRegistry,
             KnownModuleKeys.PopulationAndHouseholds,
             KnownModuleKeys.SocialMemoryAndRelations,
             KnownModuleKeys.TradeAndIndustry,
@@ -119,6 +121,7 @@ public sealed class M2LiteIntegrationTests
                 KnownModuleKeys.EducationAndExams,
                 KnownModuleKeys.FamilyCore,
                 KnownModuleKeys.NarrativeProjection,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
@@ -219,7 +222,7 @@ public sealed class M2LiteIntegrationTests
         Assert.That(bundle.Debug.LatestMetrics.DomainEventCount, Is.GreaterThan(0));
         Assert.That(bundle.Debug.LatestMetrics.NotificationCount, Is.EqualTo(bundle.Notifications.Count));
         Assert.That(bundle.Debug.LatestMetrics.SavePayloadBytes, Is.GreaterThan(0));
-        Assert.That(bundle.Debug.CurrentScale.EnabledModuleCount, Is.EqualTo(8));
+        Assert.That(bundle.Debug.CurrentScale.EnabledModuleCount, Is.EqualTo(9));
         Assert.That(bundle.Debug.CurrentScale.SettlementCount, Is.EqualTo(1));
         Assert.That(bundle.Debug.CurrentScale.ClanCount, Is.EqualTo(1));
         Assert.That(bundle.Debug.CurrentScale.HouseholdCount, Is.GreaterThanOrEqualTo(2));
@@ -273,7 +276,7 @@ public sealed class M2LiteIntegrationTests
         Assert.That(report.PeakMetrics.SavePayloadBytes, Is.GreaterThan(0));
         Assert.That(report.FinalMetrics.NotificationCount, Is.LessThanOrEqualTo(NarrativeProjectionModule.NotificationRetentionLimit));
         Assert.That(report.RetentionLimitReached, Is.True);
-        Assert.That(report.PeakScaleMetrics.EnabledModuleCount, Is.EqualTo(8));
+        Assert.That(report.PeakScaleMetrics.EnabledModuleCount, Is.EqualTo(9));
         Assert.That(report.PeakScaleMetrics.SettlementCount, Is.EqualTo(1));
         Assert.That(report.PeakPayloadSummary.TotalModulePayloadBytes, Is.GreaterThan(0));
         Assert.That(report.Samples.All(static sample => !string.IsNullOrWhiteSpace(sample.ReplayHash)), Is.True);
@@ -295,14 +298,17 @@ public sealed class M2LiteIntegrationTests
                 DiffEntryCount = 18,
                 DomainEventCount = 16,
                 NotificationCount = NarrativeProjectionModule.NotificationRetentionLimit,
-                SavePayloadBytes = 51000,
+                // Phase 1c: +~1 KB headroom for WorldSettlements schema v3
+                // (Routes + CurrentSeason + per-settlement NodeKind/Visibility/
+                // EcoZone/NeighborIds/ParentAdministrativeId). SPEC §13.
+                SavePayloadBytes = 52000,
             },
             GrowthCeiling = new ObservabilityMetricsSnapshot
             {
                 DiffEntryCount = 18,
                 DomainEventCount = 16,
                 NotificationCount = NarrativeProjectionModule.NotificationRetentionLimit,
-                SavePayloadBytes = 46000,
+                SavePayloadBytes = 47000,
             },
         };
 
@@ -327,7 +333,7 @@ public sealed class M2LiteIntegrationTests
         Assert.That(report.PeakInteractionPressure.ActivatedResponseSettlements, Is.GreaterThanOrEqualTo(1));
         Assert.That(report.PeakInteractionPressure.SupportedOrderSettlements, Is.GreaterThanOrEqualTo(1));
         Assert.That(report.PeakInteractionPressure.PeakSuppressionDemand, Is.GreaterThan(0));
-        Assert.That(report.PeakScaleMetrics.EnabledModuleCount, Is.EqualTo(10));
+        Assert.That(report.PeakScaleMetrics.EnabledModuleCount, Is.EqualTo(11));
         Assert.That(report.PeakScaleMetrics.SettlementCount, Is.EqualTo(1));
         Assert.That(report.PeakPayloadSummary.TotalModulePayloadBytes, Is.GreaterThan(0));
         Assert.That(

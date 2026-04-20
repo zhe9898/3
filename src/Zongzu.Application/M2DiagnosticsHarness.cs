@@ -195,10 +195,13 @@ public sealed class M2DiagnosticsHarness
             };
 
             samples.Add(sample);
-            peakMetrics.DiffEntryCount = Math.Max(peakMetrics.DiffEntryCount, sample.Metrics.DiffEntryCount);
-            peakMetrics.DomainEventCount = Math.Max(peakMetrics.DomainEventCount, sample.Metrics.DomainEventCount);
-            peakMetrics.NotificationCount = Math.Max(peakMetrics.NotificationCount, sample.Metrics.NotificationCount);
-            peakMetrics.SavePayloadBytes = Math.Max(peakMetrics.SavePayloadBytes, sample.Metrics.SavePayloadBytes);
+            peakMetrics = new ObservabilityMetricsSnapshot
+            {
+                DiffEntryCount = Math.Max(peakMetrics.DiffEntryCount, sample.Metrics.DiffEntryCount),
+                DomainEventCount = Math.Max(peakMetrics.DomainEventCount, sample.Metrics.DomainEventCount),
+                NotificationCount = Math.Max(peakMetrics.NotificationCount, sample.Metrics.NotificationCount),
+                SavePayloadBytes = Math.Max(peakMetrics.SavePayloadBytes, sample.Metrics.SavePayloadBytes),
+            };
             UpdatePeakModuleActivity(peakModuleActivity, sample.ModuleActivity);
             peakInteractionPressure = MaxInteractionPressure(peakInteractionPressure, sample.InteractionPressure);
             peakPressureDistribution = MaxPressureDistribution(peakPressureDistribution, sample.PressureDistribution);

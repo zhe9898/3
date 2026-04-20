@@ -446,7 +446,7 @@ public sealed class SocialMemoryAndRelationsModuleTests
             return [];
         }
 
-        public IReadOnlyList<TradeRouteSnapshot> GetRoutesForClan(ClanId clanId)
+        public IReadOnlyList<ClanTradeRouteSnapshot> GetRoutesForClan(ClanId clanId)
         {
             return [];
         }

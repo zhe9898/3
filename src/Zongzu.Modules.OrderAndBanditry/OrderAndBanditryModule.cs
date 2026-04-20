@@ -645,14 +645,14 @@ public sealed class OrderAndBanditryModule : ModuleRunner<OrderAndBanditryState>
             return new Dictionary<SettlementId, TradeActivitySnapshot>();
         }
 
-        Dictionary<SettlementId, List<TradeRouteSnapshot>> routesBySettlement = new();
+        Dictionary<SettlementId, List<ClanTradeRouteSnapshot>> routesBySettlement = new();
         foreach (ClanTradeSnapshot clanTrade in tradeQueries.GetClanTrades().OrderBy(static trade => trade.ClanId.Value))
         {
-            foreach (TradeRouteSnapshot route in tradeQueries.GetRoutesForClan(clanTrade.ClanId)
+            foreach (ClanTradeRouteSnapshot route in tradeQueries.GetRoutesForClan(clanTrade.ClanId)
                          .Where(static route => route.IsActive)
                          .OrderBy(static route => route.RouteId))
             {
-                if (!routesBySettlement.TryGetValue(route.SettlementId, out List<TradeRouteSnapshot>? routes))
+                if (!routesBySettlement.TryGetValue(route.SettlementId, out List<ClanTradeRouteSnapshot>? routes))
                 {
                     routes = [];
                     routesBySettlement[route.SettlementId] = routes;

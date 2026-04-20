@@ -25,7 +25,7 @@ public sealed class PresentationReadModelBundle
 
     public IReadOnlyList<MarketSnapshot> Markets { get; set; } = [];
 
-    public IReadOnlyList<TradeRouteSnapshot> TradeRoutes { get; set; } = [];
+    public IReadOnlyList<ClanTradeRouteSnapshot> ClanTradeRoutes { get; set; } = [];
 
     public IReadOnlyList<SettlementPublicLifeSnapshot> PublicLifeSettlements { get; set; } = [];
 

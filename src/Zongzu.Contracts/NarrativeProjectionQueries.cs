@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -19,42 +19,42 @@ public enum NarrativeSurface
     NotificationCenter = 4,
 }
 
-public sealed class NotificationTraceSnapshot
+public sealed record NotificationTraceSnapshot
 {
-    public string SourceModuleKey { get; set; } = string.Empty;
+    public string SourceModuleKey { get; init; } = string.Empty;
 
-    public string EventType { get; set; } = string.Empty;
+    public string EventType { get; init; } = string.Empty;
 
-    public string EventSummary { get; set; } = string.Empty;
+    public string EventSummary { get; init; } = string.Empty;
 
-    public string DiffDescription { get; set; } = string.Empty;
+    public string DiffDescription { get; init; } = string.Empty;
 
-    public string? EntityKey { get; set; }
+    public string? EntityKey { get; init; }
 }
 
-public sealed class NarrativeNotificationSnapshot
+public sealed record NarrativeNotificationSnapshot
 {
-    public NotificationId Id { get; set; }
+    public NotificationId Id { get; init; }
 
-    public GameDate CreatedAt { get; set; }
+    public GameDate CreatedAt { get; init; }
 
-    public NotificationTier Tier { get; set; }
+    public NotificationTier Tier { get; init; }
 
-    public NarrativeSurface Surface { get; set; }
+    public NarrativeSurface Surface { get; init; }
 
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; init; } = string.Empty;
 
-    public string Summary { get; set; } = string.Empty;
+    public string Summary { get; init; } = string.Empty;
 
-    public string WhyItHappened { get; set; } = string.Empty;
+    public string WhyItHappened { get; init; } = string.Empty;
 
-    public string WhatNext { get; set; } = string.Empty;
+    public string WhatNext { get; init; } = string.Empty;
 
-    public string SourceModuleKey { get; set; } = string.Empty;
+    public string SourceModuleKey { get; init; } = string.Empty;
 
-    public bool IsRead { get; set; }
+    public bool IsRead { get; init; }
 
-    public IReadOnlyList<NotificationTraceSnapshot> Traces { get; set; } = [];
+    public IReadOnlyList<NotificationTraceSnapshot> Traces { get; init; } = [];
 }
 
 public interface INarrativeProjectionQueries

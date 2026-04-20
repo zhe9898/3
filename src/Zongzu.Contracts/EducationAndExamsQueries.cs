@@ -1,50 +1,50 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class EducationCandidateSnapshot
+public sealed record EducationCandidateSnapshot
 {
-    public PersonId PersonId { get; set; }
+    public PersonId PersonId { get; init; }
 
-    public ClanId ClanId { get; set; }
+    public ClanId ClanId { get; init; }
 
-    public InstitutionId AcademyId { get; set; }
+    public InstitutionId AcademyId { get; init; }
 
-    public string DisplayName { get; set; } = string.Empty;
+    public string DisplayName { get; init; } = string.Empty;
 
-    public bool IsStudying { get; set; }
+    public bool IsStudying { get; init; }
 
-    public bool HasTutor { get; set; }
+    public bool HasTutor { get; init; }
 
-    public int StudyProgress { get; set; }
+    public int StudyProgress { get; init; }
 
-    public int Stress { get; set; }
+    public int Stress { get; init; }
 
-    public int ExamAttempts { get; set; }
+    public int ExamAttempts { get; init; }
 
-    public bool HasPassedLocalExam { get; set; }
+    public bool HasPassedLocalExam { get; init; }
 
-    public string LastOutcome { get; set; } = string.Empty;
+    public string LastOutcome { get; init; } = string.Empty;
 
-    public string LastExplanation { get; set; } = string.Empty;
+    public string LastExplanation { get; init; } = string.Empty;
 
-    public int ScholarlyReputation { get; set; }
+    public int ScholarlyReputation { get; init; }
 }
 
-public sealed class AcademySnapshot
+public sealed record AcademySnapshot
 {
-    public InstitutionId Id { get; set; }
+    public InstitutionId Id { get; init; }
 
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public string AcademyName { get; set; } = string.Empty;
+    public string AcademyName { get; init; } = string.Empty;
 
-    public bool IsOpen { get; set; }
+    public bool IsOpen { get; init; }
 
-    public int Capacity { get; set; }
+    public int Capacity { get; init; }
 
-    public int Prestige { get; set; }
+    public int Prestige { get; init; }
 }
 
 public interface IEducationAndExamsQueries

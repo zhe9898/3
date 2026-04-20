@@ -2,6 +2,12 @@ namespace Zongzu.Contracts;
 
 public static class KnownModuleKeys
 {
+    /// <summary>
+    /// Kernel-layer person identity anchor. Identity-only — see
+    /// <c>PERSON_OWNERSHIP_RULES.md</c> and <c>MODULE_BOUNDARIES.md §0</c>.
+    /// </summary>
+    public const string PersonRegistry = "PersonRegistry";
+
     public const string WorldSettlements = "WorldSettlements";
 
     public const string FamilyCore = "FamilyCore";

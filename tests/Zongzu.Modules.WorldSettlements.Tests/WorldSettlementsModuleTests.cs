@@ -67,10 +67,18 @@ public sealed class WorldSettlementsModuleTests
 
         module.RunMonth(new ModuleExecutionScope<WorldSettlementsState>(state, context));
 
+        // Phase 1c: RunMonth now advances the three season-band axes
+        // (SPATIAL_SKELETON_SPEC §3.2). Settlement security / prosperity
+        // must still stay put — that drift lives in xun, not month.
         Assert.That(state.Settlements[0].Security, Is.EqualTo(50));
         Assert.That(state.Settlements[0].Prosperity, Is.EqualTo(50));
-        Assert.That(context.Diff.Entries, Is.Empty);
-        Assert.That(context.DomainEvents.Events, Is.Empty);
+        // Settlement-level diffs must still be empty — season events carry no
+        // settlement entity key and live on the module channel, not the
+        // per-settlement one tested here.
+        Assert.That(
+            context.Diff.Entries.Any(entry => entry.EntityKey == "1"),
+            Is.False,
+            "RunMonth must not drift individual settlements.");
     }
 
     [Test]

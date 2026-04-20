@@ -58,7 +58,7 @@ public sealed class PresentationReadModelBuilder
             ClanTradeSnapshot[] clanTrades = tradeQueries.GetClanTrades().ToArray();
             bundle.ClanTrades = clanTrades;
             bundle.Markets = tradeQueries.GetMarkets();
-            bundle.TradeRoutes = clanTrades
+            bundle.ClanTradeRoutes = clanTrades
                 .SelectMany(trade => tradeQueries.GetRoutesForClan(trade.ClanId))
                 .OrderBy(static route => route.RouteId)
                 .ToArray();

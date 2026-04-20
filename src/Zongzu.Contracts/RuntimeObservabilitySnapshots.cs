@@ -1,121 +1,121 @@
-using Zongzu.Kernel;
+﻿using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class InteractionPressureMetricsSnapshot
+public sealed record InteractionPressureMetricsSnapshot
 {
-    public int ActiveConflictSettlements { get; set; }
+    public int ActiveConflictSettlements { get; init; }
 
-    public int ActivatedResponseSettlements { get; set; }
+    public int ActivatedResponseSettlements { get; init; }
 
-    public int SupportedOrderSettlements { get; set; }
+    public int SupportedOrderSettlements { get; init; }
 
-    public int HighSuppressionDemandSettlements { get; set; }
+    public int HighSuppressionDemandSettlements { get; init; }
 
-    public int AverageSuppressionDemand { get; set; }
+    public int AverageSuppressionDemand { get; init; }
 
-    public int PeakSuppressionDemand { get; set; }
+    public int PeakSuppressionDemand { get; init; }
 
-    public int HighBanditThreatSettlements { get; set; }
+    public int HighBanditThreatSettlements { get; init; }
 
-    public int OrderInterventionCarryoverSettlements { get; set; }
+    public int OrderInterventionCarryoverSettlements { get; init; }
 
-    public int OrderAdministrativeAftermathSettlements { get; set; }
+    public int OrderAdministrativeAftermathSettlements { get; init; }
 
-    public int ShieldingDominantSettlements { get; set; }
+    public int ShieldingDominantSettlements { get; init; }
 
-    public int BacklashDominantSettlements { get; set; }
+    public int BacklashDominantSettlements { get; init; }
 }
 
-public sealed class SettlementInteractionHotspotSnapshot
+public sealed record SettlementInteractionHotspotSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public string SettlementName { get; set; } = string.Empty;
+    public string SettlementName { get; init; } = string.Empty;
 
-    public int HotspotScore { get; set; }
+    public int HotspotScore { get; init; }
 
-    public int BanditThreat { get; set; }
+    public int BanditThreat { get; init; }
 
-    public int RoutePressure { get; set; }
+    public int RoutePressure { get; init; }
 
-    public int SuppressionDemand { get; set; }
+    public int SuppressionDemand { get; init; }
 
-    public int BlackRoutePressure { get; set; }
+    public int BlackRoutePressure { get; init; }
 
-    public int RouteShielding { get; set; }
+    public int RouteShielding { get; init; }
 
-    public int RetaliationRisk { get; set; }
+    public int RetaliationRisk { get; init; }
 
-    public int InterventionCarryoverMonths { get; set; }
+    public int InterventionCarryoverMonths { get; init; }
 
-    public int AdministrativeTaskLoad { get; set; }
+    public int AdministrativeTaskLoad { get; init; }
 
-    public int PetitionBacklog { get; set; }
+    public int PetitionBacklog { get; init; }
 
-    public string AdministrativeAftermathSummary { get; set; } = string.Empty;
+    public string AdministrativeAftermathSummary { get; init; } = string.Empty;
 
-    public int ResponseActivationLevel { get; set; }
+    public int ResponseActivationLevel { get; init; }
 
-    public int OrderSupportLevel { get; set; }
+    public int OrderSupportLevel { get; init; }
 
-    public bool HasActiveConflict { get; set; }
+    public bool HasActiveConflict { get; init; }
 
-    public bool IsResponseActivated { get; set; }
+    public bool IsResponseActivated { get; init; }
 }
 
-public sealed class RuntimeScaleMetricsSnapshot
+public sealed record RuntimeScaleMetricsSnapshot
 {
-    public int EnabledModuleCount { get; set; }
+    public int EnabledModuleCount { get; init; }
 
-    public int SavedModuleCount { get; set; }
+    public int SavedModuleCount { get; init; }
 
-    public int SettlementCount { get; set; }
+    public int SettlementCount { get; init; }
 
-    public int ClanCount { get; set; }
+    public int ClanCount { get; init; }
 
-    public int HouseholdCount { get; set; }
+    public int HouseholdCount { get; init; }
 
-    public int AcademyCount { get; set; }
+    public int AcademyCount { get; init; }
 
-    public int RouteCount { get; set; }
+    public int RouteCount { get; init; }
 
-    public int NotificationCount { get; set; }
+    public int NotificationCount { get; init; }
 
-    public int NotificationUtilizationPercent { get; set; }
+    public int NotificationUtilizationPercent { get; init; }
 
-    public int SavePayloadBytesPerSettlement { get; set; }
+    public int SavePayloadBytesPerSettlement { get; init; }
 
-    public int AverageHouseholdsPerSettlement { get; set; }
+    public int AverageHouseholdsPerSettlement { get; init; }
 }
 
-public sealed class ModulePayloadFootprintSnapshot
+public sealed record ModulePayloadFootprintSnapshot
 {
-    public string ModuleKey { get; set; } = string.Empty;
+    public string ModuleKey { get; init; } = string.Empty;
 
-    public int PayloadBytes { get; set; }
+    public int PayloadBytes { get; init; }
 
-    public int PayloadShareBasisPoints { get; set; }
+    public int PayloadShareBasisPoints { get; init; }
 }
 
-public sealed class RuntimePayloadSummarySnapshot
+public sealed record RuntimePayloadSummarySnapshot
 {
-    public int TotalModulePayloadBytes { get; set; }
+    public int TotalModulePayloadBytes { get; init; }
 
-    public string LargestModuleKey { get; set; } = string.Empty;
+    public string LargestModuleKey { get; init; } = string.Empty;
 
-    public int LargestModulePayloadBytes { get; set; }
+    public int LargestModulePayloadBytes { get; init; }
 
-    public int LargestModuleShareBasisPoints { get; set; }
+    public int LargestModuleShareBasisPoints { get; init; }
 }
 
-public sealed class SettlementPressureDistributionSnapshot
+public sealed record SettlementPressureDistributionSnapshot
 {
-    public int CalmSettlements { get; set; }
+    public int CalmSettlements { get; init; }
 
-    public int WatchedSettlements { get; set; }
+    public int WatchedSettlements { get; init; }
 
-    public int StressedSettlements { get; set; }
+    public int StressedSettlements { get; init; }
 
-    public int CrisisSettlements { get; set; }
+    public int CrisisSettlements { get; init; }
 }

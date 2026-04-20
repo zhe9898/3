@@ -355,7 +355,7 @@ public sealed class FamilyCoreModuleTests
         Assert.That(familyState.People.Count(static person => person.IsAlive), Is.EqualTo(1));
         Assert.That(familyState.Clans[0].MourningLoad, Is.GreaterThan(0));
         Assert.That(familyState.Clans[0].HeirSecurity, Is.LessThan(62));
-        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.DeathRegistered), Is.True);
+        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.ClanMemberDied), Is.True);
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.HeirSecurityWeakened), Is.True);
     }
 

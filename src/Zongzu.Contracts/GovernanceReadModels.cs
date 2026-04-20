@@ -1,144 +1,144 @@
-using Zongzu.Kernel;
+﻿using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class SettlementGovernanceLaneSnapshot
+public sealed record SettlementGovernanceLaneSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public string SettlementName { get; set; } = string.Empty;
+    public string SettlementName { get; init; } = string.Empty;
 
-    public string NodeLabel { get; set; } = string.Empty;
+    public string NodeLabel { get; init; } = string.Empty;
 
-    public string LeadOfficialName { get; set; } = string.Empty;
+    public string LeadOfficialName { get; init; } = string.Empty;
 
-    public string LeadOfficeTitle { get; set; } = string.Empty;
+    public string LeadOfficeTitle { get; init; } = string.Empty;
 
-    public string CurrentAdministrativeTask { get; set; } = string.Empty;
+    public string CurrentAdministrativeTask { get; init; } = string.Empty;
 
-    public int AdministrativeTaskLoad { get; set; }
+    public int AdministrativeTaskLoad { get; init; }
 
-    public int PetitionPressure { get; set; }
+    public int PetitionPressure { get; init; }
 
-    public int PetitionBacklog { get; set; }
+    public int PetitionBacklog { get; init; }
 
-    public int PublicLegitimacy { get; set; }
+    public int PublicLegitimacy { get; init; }
 
-    public int StreetTalkHeat { get; set; }
+    public int StreetTalkHeat { get; init; }
 
-    public int RoutePressure { get; set; }
+    public int RoutePressure { get; init; }
 
-    public int SuppressionDemand { get; set; }
+    public int SuppressionDemand { get; init; }
 
-    public string RecentOrderCommandName { get; set; } = string.Empty;
+    public string RecentOrderCommandName { get; init; } = string.Empty;
 
-    public string RecentOrderCommandLabel { get; set; } = string.Empty;
+    public string RecentOrderCommandLabel { get; init; } = string.Empty;
 
-    public bool HasOrderAdministrativeAftermath { get; set; }
+    public bool HasOrderAdministrativeAftermath { get; init; }
 
-    public string SuggestedCommandName { get; set; } = string.Empty;
+    public string SuggestedCommandName { get; init; } = string.Empty;
 
-    public string SuggestedCommandLabel { get; set; } = string.Empty;
+    public string SuggestedCommandLabel { get; init; } = string.Empty;
 
-    public string SuggestedCommandPrompt { get; set; } = string.Empty;
+    public string SuggestedCommandPrompt { get; init; } = string.Empty;
 
-    public string PublicPressureSummary { get; set; } = string.Empty;
+    public string PublicPressureSummary { get; init; } = string.Empty;
 
-    public string PublicMomentumSummary { get; set; } = string.Empty;
+    public string PublicMomentumSummary { get; init; } = string.Empty;
 
-    public string OrderAdministrativeAftermathSummary { get; set; } = string.Empty;
+    public string OrderAdministrativeAftermathSummary { get; init; } = string.Empty;
 
-    public string GovernanceSummary { get; set; } = string.Empty;
+    public string GovernanceSummary { get; init; } = string.Empty;
 }
 
-public sealed class GovernanceFocusSnapshot
+public sealed record GovernanceFocusSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public string SettlementName { get; set; } = string.Empty;
+    public string SettlementName { get; init; } = string.Empty;
 
-    public string NodeLabel { get; set; } = string.Empty;
+    public string NodeLabel { get; init; } = string.Empty;
 
-    public int UrgencyScore { get; set; }
+    public int UrgencyScore { get; init; }
 
-    public bool HasOrderAdministrativeAftermath { get; set; }
+    public bool HasOrderAdministrativeAftermath { get; init; }
 
-    public string LeadSummary { get; set; } = string.Empty;
+    public string LeadSummary { get; init; } = string.Empty;
 
-    public string PublicPressureSummary { get; set; } = string.Empty;
+    public string PublicPressureSummary { get; init; } = string.Empty;
 
-    public string PublicMomentumSummary { get; set; } = string.Empty;
+    public string PublicMomentumSummary { get; init; } = string.Empty;
 
-    public string SuggestedCommandName { get; set; } = string.Empty;
+    public string SuggestedCommandName { get; init; } = string.Empty;
 
-    public string SuggestedCommandLabel { get; set; } = string.Empty;
+    public string SuggestedCommandLabel { get; init; } = string.Empty;
 
-    public string SuggestedCommandPrompt { get; set; } = string.Empty;
+    public string SuggestedCommandPrompt { get; init; } = string.Empty;
 }
 
-public sealed class GovernanceDocketSnapshot
+public sealed record GovernanceDocketSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public string SettlementName { get; set; } = string.Empty;
+    public string SettlementName { get; init; } = string.Empty;
 
-    public string NodeLabel { get; set; } = string.Empty;
+    public string NodeLabel { get; init; } = string.Empty;
 
-    public int UrgencyScore { get; set; }
+    public int UrgencyScore { get; init; }
 
-    public bool HasOrderAdministrativeAftermath { get; set; }
+    public bool HasOrderAdministrativeAftermath { get; init; }
 
-    public bool HasRelatedNotification { get; set; }
+    public bool HasRelatedNotification { get; init; }
 
-    public NotificationTier RelatedNotificationTier { get; set; }
+    public NotificationTier RelatedNotificationTier { get; init; }
 
-    public NarrativeSurface RelatedNotificationSurface { get; set; }
+    public NarrativeSurface RelatedNotificationSurface { get; init; }
 
-    public string RelatedNotificationTitle { get; set; } = string.Empty;
+    public string RelatedNotificationTitle { get; init; } = string.Empty;
 
-    public string RelatedNotificationWhyItHappened { get; set; } = string.Empty;
+    public string RelatedNotificationWhyItHappened { get; init; } = string.Empty;
 
-    public string RelatedNotificationWhatNext { get; set; } = string.Empty;
+    public string RelatedNotificationWhatNext { get; init; } = string.Empty;
 
-    public string RelatedNotificationSourceModuleKey { get; set; } = string.Empty;
+    public string RelatedNotificationSourceModuleKey { get; init; } = string.Empty;
 
-    public string LeadOfficialName { get; set; } = string.Empty;
+    public string LeadOfficialName { get; init; } = string.Empty;
 
-    public string LeadOfficeTitle { get; set; } = string.Empty;
+    public string LeadOfficeTitle { get; init; } = string.Empty;
 
-    public string CurrentAdministrativeTask { get; set; } = string.Empty;
+    public string CurrentAdministrativeTask { get; init; } = string.Empty;
 
-    public bool HasRecentReceipt { get; set; }
+    public bool HasRecentReceipt { get; init; }
 
-    public string RecentReceiptSurfaceKey { get; set; } = string.Empty;
+    public string RecentReceiptSurfaceKey { get; init; } = string.Empty;
 
-    public string RecentReceiptCommandName { get; set; } = string.Empty;
+    public string RecentReceiptCommandName { get; init; } = string.Empty;
 
-    public string RecentReceiptLabel { get; set; } = string.Empty;
+    public string RecentReceiptLabel { get; init; } = string.Empty;
 
-    public string RecentReceiptSummary { get; set; } = string.Empty;
+    public string RecentReceiptSummary { get; init; } = string.Empty;
 
-    public string RecentReceiptOutcomeSummary { get; set; } = string.Empty;
+    public string RecentReceiptOutcomeSummary { get; init; } = string.Empty;
 
-    public string RecentReceiptExecutionSummary { get; set; } = string.Empty;
+    public string RecentReceiptExecutionSummary { get; init; } = string.Empty;
 
-    public string Headline { get; set; } = string.Empty;
+    public string Headline { get; init; } = string.Empty;
 
-    public string WhyNowSummary { get; set; } = string.Empty;
+    public string WhyNowSummary { get; init; } = string.Empty;
 
-    public string PublicMomentumSummary { get; set; } = string.Empty;
+    public string PublicMomentumSummary { get; init; } = string.Empty;
 
-    public string PhaseLabel { get; set; } = string.Empty;
+    public string PhaseLabel { get; init; } = string.Empty;
 
-    public string PhaseSummary { get; set; } = string.Empty;
+    public string PhaseSummary { get; init; } = string.Empty;
 
-    public string HandlingSummary { get; set; } = string.Empty;
+    public string HandlingSummary { get; init; } = string.Empty;
 
-    public string GuidanceSummary { get; set; } = string.Empty;
+    public string GuidanceSummary { get; init; } = string.Empty;
 
-    public string SuggestedCommandName { get; set; } = string.Empty;
+    public string SuggestedCommandName { get; init; } = string.Empty;
 
-    public string SuggestedCommandLabel { get; set; } = string.Empty;
+    public string SuggestedCommandLabel { get; init; } = string.Empty;
 
-    public string SuggestedCommandPrompt { get; set; } = string.Empty;
+    public string SuggestedCommandPrompt { get; init; } = string.Empty;
 }

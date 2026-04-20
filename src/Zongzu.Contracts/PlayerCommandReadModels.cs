@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -68,57 +68,57 @@ public sealed class PlayerCommandResult
     public string TargetLabel { get; set; } = string.Empty;
 }
 
-public sealed class PlayerCommandAffordanceSnapshot
+public sealed record PlayerCommandAffordanceSnapshot
 {
-    public string ModuleKey { get; set; } = string.Empty;
+    public string ModuleKey { get; init; } = string.Empty;
 
-    public string SurfaceKey { get; set; } = string.Empty;
+    public string SurfaceKey { get; init; } = string.Empty;
 
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public ClanId? ClanId { get; set; }
+    public ClanId? ClanId { get; init; }
 
-    public string CommandName { get; set; } = string.Empty;
+    public string CommandName { get; init; } = string.Empty;
 
-    public string Label { get; set; } = string.Empty;
+    public string Label { get; init; } = string.Empty;
 
-    public string Summary { get; set; } = string.Empty;
+    public string Summary { get; init; } = string.Empty;
 
-    public bool IsEnabled { get; set; }
+    public bool IsEnabled { get; init; }
 
-    public string AvailabilitySummary { get; set; } = string.Empty;
+    public string AvailabilitySummary { get; init; } = string.Empty;
 
-    public string ExecutionSummary { get; set; } = string.Empty;
+    public string ExecutionSummary { get; init; } = string.Empty;
 
-    public string TargetLabel { get; set; } = string.Empty;
+    public string TargetLabel { get; init; } = string.Empty;
 }
 
-public sealed class PlayerCommandReceiptSnapshot
+public sealed record PlayerCommandReceiptSnapshot
 {
-    public string ModuleKey { get; set; } = string.Empty;
+    public string ModuleKey { get; init; } = string.Empty;
 
-    public string SurfaceKey { get; set; } = string.Empty;
+    public string SurfaceKey { get; init; } = string.Empty;
 
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public ClanId? ClanId { get; set; }
+    public ClanId? ClanId { get; init; }
 
-    public string CommandName { get; set; } = string.Empty;
+    public string CommandName { get; init; } = string.Empty;
 
-    public string Label { get; set; } = string.Empty;
+    public string Label { get; init; } = string.Empty;
 
-    public string Summary { get; set; } = string.Empty;
+    public string Summary { get; init; } = string.Empty;
 
-    public string OutcomeSummary { get; set; } = string.Empty;
+    public string OutcomeSummary { get; init; } = string.Empty;
 
-    public string ExecutionSummary { get; set; } = string.Empty;
+    public string ExecutionSummary { get; init; } = string.Empty;
 
-    public string TargetLabel { get; set; } = string.Empty;
+    public string TargetLabel { get; init; } = string.Empty;
 }
 
-public sealed class PlayerCommandSurfaceSnapshot
+public sealed record PlayerCommandSurfaceSnapshot
 {
-    public IReadOnlyList<PlayerCommandAffordanceSnapshot> Affordances { get; set; } = [];
+    public IReadOnlyList<PlayerCommandAffordanceSnapshot> Affordances { get; init; } = [];
 
-    public IReadOnlyList<PlayerCommandReceiptSnapshot> Receipts { get; set; } = [];
+    public IReadOnlyList<PlayerCommandReceiptSnapshot> Receipts { get; init; } = [];
 }

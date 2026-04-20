@@ -86,7 +86,7 @@ internal sealed class NotificationProjectionContext
 		return notification.Traces.Any(trace => trace.EventType is
 			FamilyCoreEventNames.MarriageAllianceArranged or
 			FamilyCoreEventNames.BirthRegistered or
-			FamilyCoreEventNames.DeathRegistered or
+			FamilyCoreEventNames.ClanMemberDied or
 			FamilyCoreEventNames.HeirSecurityWeakened);
 	}
 }

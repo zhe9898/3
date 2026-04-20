@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Presentation.Unity;
@@ -158,10 +158,13 @@ public sealed class FirstPassPresentationShellTests
     public void Compose_ProjectsOfficeAppointmentsJurisdictionsAndCommands()
     {
         PresentationReadModelBundle bundle = CreateBundle();
-        bundle.OfficeCareers[0].ServiceMonths = 6;
-        bundle.OfficeCareers[0].PromotionPressureLabel = "rising";
-        bundle.OfficeCareers[0].DemotionPressureLabel = "watched";
-        bundle.OfficeCareers[0].LastOutcome = "Promoted";
+        bundle.OfficeCareers = [bundle.OfficeCareers[0] with
+        {
+            ServiceMonths = 6,
+            PromotionPressureLabel = "rising",
+            DemotionPressureLabel = "watched",
+            LastOutcome = "Promoted",
+        }];
         bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
         {
             Affordances =
@@ -708,14 +711,12 @@ public sealed class FirstPassPresentationShellTests
     public void Compose_ProjectsRegionalWarfareAndAftermathIntoHallDeskAndCampaignBoard()
     {
         PresentationReadModelBundle bundle = CreateBundle();
-        bundle.Settlements[0].Security = 54;
-        bundle.Settlements[0].Prosperity = 62;
-        bundle.PopulationSettlements[0].CommonerDistress = 45;
-        bundle.PopulationSettlements[0].MigrationPressure = 36;
-        bundle.OfficeJurisdictions[0].PetitionBacklog = 9;
-        bundle.TradeRoutes =
+        bundle.Settlements = [bundle.Settlements[0] with { Security = 54, Prosperity = 62 }];
+        bundle.PopulationSettlements = [bundle.PopulationSettlements[0] with { CommonerDistress = 45, MigrationPressure = 36 }];
+        bundle.OfficeJurisdictions = [bundle.OfficeJurisdictions[0] with { PetitionBacklog = 9 }];
+        bundle.ClanTradeRoutes =
         [
-            new TradeRouteSnapshot
+            new ClanTradeRouteSnapshot
             {
                 RouteId = 1,
                 ClanId = new ClanId(1),

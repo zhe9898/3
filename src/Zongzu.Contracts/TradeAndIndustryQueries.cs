@@ -3,65 +3,65 @@ using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class ClanTradeSnapshot
+public sealed record ClanTradeSnapshot
 {
-    public ClanId ClanId { get; set; }
+    public ClanId ClanId { get; init; }
 
-    public SettlementId PrimarySettlementId { get; set; }
+    public SettlementId PrimarySettlementId { get; init; }
 
-    public int CashReserve { get; set; }
+    public int CashReserve { get; init; }
 
-    public int GrainReserve { get; set; }
+    public int GrainReserve { get; init; }
 
-    public int Debt { get; set; }
+    public int Debt { get; init; }
 
-    public int CommerceReputation { get; set; }
+    public int CommerceReputation { get; init; }
 
-    public int ShopCount { get; set; }
+    public int ShopCount { get; init; }
 
-    public string LastOutcome { get; set; } = string.Empty;
+    public string LastOutcome { get; init; } = string.Empty;
 
-    public string LastExplanation { get; set; } = string.Empty;
+    public string LastExplanation { get; init; } = string.Empty;
 }
 
-public sealed class MarketSnapshot
+public sealed record MarketSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public string MarketName { get; set; } = string.Empty;
+    public string MarketName { get; init; } = string.Empty;
 
-    public int PriceIndex { get; set; }
+    public int PriceIndex { get; init; }
 
-    public int Demand { get; set; }
+    public int Demand { get; init; }
 
-    public int LocalRisk { get; set; }
+    public int LocalRisk { get; init; }
 }
 
-public sealed class TradeRouteSnapshot
+public sealed record ClanTradeRouteSnapshot
 {
-    public int RouteId { get; set; }
+    public int RouteId { get; init; }
 
-    public ClanId ClanId { get; set; }
+    public ClanId ClanId { get; init; }
 
-    public string RouteName { get; set; } = string.Empty;
+    public string RouteName { get; init; } = string.Empty;
 
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public bool IsActive { get; set; }
+    public bool IsActive { get; init; }
 
-    public int Capacity { get; set; }
+    public int Capacity { get; init; }
 
-    public int Risk { get; set; }
+    public int Risk { get; init; }
 
-    public int LastMargin { get; set; }
+    public int LastMargin { get; init; }
 
-    public int BlockedShipmentCount { get; set; }
+    public int BlockedShipmentCount { get; init; }
 
-    public int SeizureRisk { get; set; }
+    public int SeizureRisk { get; init; }
 
-    public string RouteConstraintLabel { get; set; } = string.Empty;
+    public string RouteConstraintLabel { get; init; } = string.Empty;
 
-    public string LastRouteTrace { get; set; } = string.Empty;
+    public string LastRouteTrace { get; init; } = string.Empty;
 }
 
 public interface ITradeAndIndustryQueries
@@ -72,5 +72,5 @@ public interface ITradeAndIndustryQueries
 
     IReadOnlyList<MarketSnapshot> GetMarkets();
 
-    IReadOnlyList<TradeRouteSnapshot> GetRoutesForClan(ClanId clanId);
+    IReadOnlyList<ClanTradeRouteSnapshot> GetRoutesForClan(ClanId clanId);
 }

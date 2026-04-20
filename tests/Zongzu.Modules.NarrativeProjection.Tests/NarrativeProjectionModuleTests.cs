@@ -322,7 +322,7 @@ public sealed class NarrativeProjectionModuleTests
         DomainEventBuffer domainEvents = new();
         domainEvents.Emit(new DomainEventRecord(
             KnownModuleKeys.FamilyCore,
-            FamilyCoreEventNames.DeathRegistered,
+            FamilyCoreEventNames.ClanMemberDied,
             "Clan Zhang entered mourning.",
             "1"));
 

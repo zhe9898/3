@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -16,65 +16,65 @@ public static class PublicLifeAndRumorEventNames
     public const string PrefectureDispatchPressed = "PrefectureDispatchPressed";
 }
 
-public sealed class SettlementPublicLifeSnapshot
+public sealed record SettlementPublicLifeSnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public string SettlementName { get; set; } = string.Empty;
+    public string SettlementName { get; init; } = string.Empty;
 
-    public SettlementTier SettlementTier { get; set; }
+    public SettlementTier SettlementTier { get; init; }
 
-    public string NodeLabel { get; set; } = string.Empty;
+    public string NodeLabel { get; init; } = string.Empty;
 
-    public string DominantVenueLabel { get; set; } = string.Empty;
+    public string DominantVenueLabel { get; init; } = string.Empty;
 
-    public string DominantVenueCode { get; set; } = string.Empty;
+    public string DominantVenueCode { get; init; } = string.Empty;
 
-    public string MonthlyCadenceCode { get; set; } = string.Empty;
+    public string MonthlyCadenceCode { get; init; } = string.Empty;
 
-    public string MonthlyCadenceLabel { get; set; } = string.Empty;
+    public string MonthlyCadenceLabel { get; init; } = string.Empty;
 
-    public string CrowdMixLabel { get; set; } = string.Empty;
+    public string CrowdMixLabel { get; init; } = string.Empty;
 
-    public int StreetTalkHeat { get; set; }
+    public int StreetTalkHeat { get; init; }
 
-    public int MarketBuzz { get; set; }
+    public int MarketBuzz { get; init; }
 
-    public int NoticeVisibility { get; set; }
+    public int NoticeVisibility { get; init; }
 
-    public int RoadReportLag { get; set; }
+    public int RoadReportLag { get; init; }
 
-    public int PrefectureDispatchPressure { get; set; }
+    public int PrefectureDispatchPressure { get; init; }
 
-    public int PublicLegitimacy { get; set; }
+    public int PublicLegitimacy { get; init; }
 
-    public int DocumentaryWeight { get; set; }
+    public int DocumentaryWeight { get; init; }
 
-    public int VerificationCost { get; set; }
+    public int VerificationCost { get; init; }
 
-    public int MarketRumorFlow { get; set; }
+    public int MarketRumorFlow { get; init; }
 
-    public int CourierRisk { get; set; }
+    public int CourierRisk { get; init; }
 
-    public string OfficialNoticeLine { get; set; } = string.Empty;
+    public string OfficialNoticeLine { get; init; } = string.Empty;
 
-    public string StreetTalkLine { get; set; } = string.Empty;
+    public string StreetTalkLine { get; init; } = string.Empty;
 
-    public string RoadReportLine { get; set; } = string.Empty;
+    public string RoadReportLine { get; init; } = string.Empty;
 
-    public string PrefectureDispatchLine { get; set; } = string.Empty;
+    public string PrefectureDispatchLine { get; init; } = string.Empty;
 
-    public string ContentionSummary { get; set; } = string.Empty;
+    public string ContentionSummary { get; init; } = string.Empty;
 
-    public string PublicSummary { get; set; } = string.Empty;
+    public string PublicSummary { get; init; } = string.Empty;
 
-    public string RouteReportSummary { get; set; } = string.Empty;
+    public string RouteReportSummary { get; init; } = string.Empty;
 
-    public string CadenceSummary { get; set; } = string.Empty;
+    public string CadenceSummary { get; init; } = string.Empty;
 
-    public string ChannelSummary { get; set; } = string.Empty;
+    public string ChannelSummary { get; init; } = string.Empty;
 
-    public string LastPublicTrace { get; set; } = string.Empty;
+    public string LastPublicTrace { get; init; } = string.Empty;
 }
 
 public interface IPublicLifeAndRumorQueries

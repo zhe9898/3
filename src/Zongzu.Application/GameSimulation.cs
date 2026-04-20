@@ -154,6 +154,18 @@ public sealed class GameSimulation
         return _stateStore.GetRequired<TState>(moduleKey);
     }
 
+    /// <summary>
+    /// Test-only escape hatch: read a module's live state object without
+    /// going through ExportSave. Application code must keep using
+    /// <see cref="TryGetModuleState"/> (query-style) rather than mutating
+    /// via this entry point.
+    /// </summary>
+    public TState GetModuleStateForTesting<TState>(string moduleKey)
+        where TState : class
+    {
+        return _stateStore.GetRequired<TState>(moduleKey);
+    }
+
     internal bool TryGetModuleState(string moduleKey, out object? state)
     {
         return _stateStore.States.TryGetValue(moduleKey, out state);

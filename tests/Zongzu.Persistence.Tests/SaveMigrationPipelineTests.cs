@@ -391,9 +391,22 @@ public sealed class SaveMigrationPipelineTests
                 && step.SourceVersion == 1
                 && step.TargetVersion == 2),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(2));
+        // Phase 1c: WorldSettlements schema was raised 2→3 (SPATIAL_SKELETON_SPEC
+        // §13). Legacy v1 saves now chain through v1→v2→v3.
+        Assert.That(
+            reloaded.LoadMigrationReport!.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WorldSettlements
+                && step.SourceVersion == 2
+                && step.TargetVersion == 3),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(3));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.Tier == SettlementTier.CountySeat), Is.True);
+        // v2→v3 migration must populate the new NodeKind / Visibility / EcoZone
+        // fields with sensible defaults (SPEC §13.2).
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.NodeKind != SettlementNodeKind.Unknown), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.Visibility == NodeVisibility.StateVisible), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.EcoZone == SettlementEcoZone.JiangnanWaterNetwork), Is.True);
     }
 
     [Test]

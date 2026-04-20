@@ -8,7 +8,21 @@ namespace Zongzu.Modules.WorldSettlements;
 
 public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 {
-    private static readonly string[] EventNames = ["SettlementPressureChanged"];
+    private static readonly string[] EventNames =
+    [
+        "SettlementPressureChanged",
+        WorldSettlementsEventNames.SeasonPhaseAdvanced,
+        WorldSettlementsEventNames.CanalWindowChanged,
+        WorldSettlementsEventNames.CorveeWindowChanged,
+        WorldSettlementsEventNames.ImperialRhythmChanged,
+        WorldSettlementsEventNames.ComplianceModeShifted,
+        WorldSettlementsEventNames.RouteConstraintEmerged,
+        WorldSettlementsEventNames.IllicitRouteExposed,
+        WorldSettlementsEventNames.NodeVisibilityDiscovered,
+        WorldSettlementsEventNames.FloodRiskThresholdBreached,
+        WorldSettlementsEventNames.ForceStationChanged,
+        WorldSettlementsEventNames.SeasonalFestivalArrived,
+    ];
 
     private static readonly string[] ConsumedEventNames =
     [
@@ -20,7 +34,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
     public override string ModuleKey => KnownModuleKeys.WorldSettlements;
 
-    public override int ModuleSchemaVersion => 2;
+    public override int ModuleSchemaVersion => 3;
 
     public override SimulationPhase Phase => SimulationPhase.WorldBaseline;
 
@@ -40,10 +54,18 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
     public override void RegisterQueries(WorldSettlementsState state, QueryRegistry queries)
     {
         queries.Register<IWorldSettlementsQueries>(new WorldSettlementsQueries(state));
+        queries.Register<IImperialEventTestHarness>(new WorldSettlementsImperialTestHarness(state));
     }
 
     public override void RunXun(ModuleExecutionScope<WorldSettlementsState> scope)
     {
+        // SPEC §20.3: pulse signals have tick lifetime — reset before this
+        // tick's emissions.
+        scope.State.CurrentPulseSignals.Clear();
+
+        // SPATIAL_SKELETON_SPEC §3.2 — xun advances labor/market/message axes.
+        SeasonBandAdvancer.AdvanceXun(scope.State.CurrentSeason, scope);
+
         foreach (SettlementStateData settlement in scope.State.Settlements.OrderBy(static settlement => settlement.Id.Value))
         {
             int oldSecurity = settlement.Security;
@@ -80,8 +102,71 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
     public override void RunMonth(ModuleExecutionScope<WorldSettlementsState> scope)
     {
-        // Short-band settlement drift now lives in the three xun pulses.
-        // A later month-end owned-state slice can add explicit consolidation traces if needed.
+        // SPEC §20.3: pulse signals have tick lifetime — reset before this
+        // tick's emissions.
+        scope.State.CurrentPulseSignals.Clear();
+
+        // SPATIAL_SKELETON_SPEC §3.2 — month advances the slow axes and
+        // returns a transition report so we can derive public-surface
+        // signals that need settlement-graph context (canal junction, ferry,
+        // temple nodes) which the advancer does not hold.
+        SeasonBandAdvancer.MonthAdvanceReport report =
+            SeasonBandAdvancer.AdvanceMonth(scope.State.CurrentSeason, scope);
+
+        EmitCanalAndFloodSignals(scope.State, report);
+    }
+
+    /// <summary>
+    /// SPATIAL_SKELETON_SPEC §20.3 Phase 1c minimum signal emission.
+    /// State transitions on the season band have already fired their
+    /// authoritative domain events inside <see cref="SeasonBandAdvancer"/>;
+    /// here we project them into one or more <see cref="PublicSurfaceSignal"/>s
+    /// by selecting the relevant settlement nodes from <see cref="WorldSettlementsState.Settlements"/>.
+    ///
+    /// <para>Canal transition → one <see cref="OpinionStream.NoticeBoard"/>
+    /// signal on any <see cref="SettlementNodeKind.CanalJunction"/>.</para>
+    ///
+    /// <para>Flood breach → three concurrent signals (NoticeBoard / MarketTalk
+    /// / TempleWhisper) — the canonical stream-competition demonstration.</para>
+    /// </summary>
+    private static void EmitCanalAndFloodSignals(WorldSettlementsState state, SeasonBandAdvancer.MonthAdvanceReport report)
+    {
+        if (report.CanalWindowChanged)
+        {
+            foreach (SettlementStateData canalJunction in state.Settlements
+                .Where(static node => node.NodeKind == SettlementNodeKind.CanalJunction)
+                .OrderBy(static node => node.Id.Value))
+            {
+                PublicSurfaceSignalEmitter.EmitCanalWindowChanged(
+                    state.CurrentPulseSignals,
+                    canalJunction,
+                    report.CanalFrom,
+                    report.CanalTo);
+            }
+        }
+
+        if (report.FloodRiskBreached)
+        {
+            SettlementStateData? canalJunction = state.Settlements
+                .Where(static node => node.NodeKind == SettlementNodeKind.CanalJunction)
+                .OrderBy(static node => node.Id.Value)
+                .FirstOrDefault();
+            SettlementStateData? ferry = state.Settlements
+                .Where(static node => node.NodeKind == SettlementNodeKind.Ferry)
+                .OrderBy(static node => node.Id.Value)
+                .FirstOrDefault();
+            SettlementStateData? temple = state.Settlements
+                .Where(static node => node.NodeKind == SettlementNodeKind.Temple)
+                .OrderBy(static node => node.Id.Value)
+                .FirstOrDefault();
+
+            PublicSurfaceSignalEmitter.EmitFloodRiskBreach(
+                state.CurrentPulseSignals,
+                report.FloodRisk,
+                canalJunction,
+                ferry,
+                temple);
+        }
     }
 
     public override void HandleEvents(ModuleEventHandlingScope<WorldSettlementsState> scope)
@@ -179,6 +264,78 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
                 .ToArray();
         }
 
+        public IReadOnlyList<SettlementSnapshot> GetSettlementsByNodeKind(SettlementNodeKind kind)
+        {
+            return _state.Settlements
+                .Where(settlement => settlement.NodeKind == kind)
+                .OrderBy(static settlement => settlement.Id.Value)
+                .Select(Clone)
+                .ToArray();
+        }
+
+        public IReadOnlyList<SettlementSnapshot> GetSettlementsByVisibility(NodeVisibility visibility)
+        {
+            return _state.Settlements
+                .Where(settlement => settlement.Visibility == visibility)
+                .OrderBy(static settlement => settlement.Id.Value)
+                .Select(Clone)
+                .ToArray();
+        }
+
+        public IReadOnlyList<RouteSnapshot> GetRoutes()
+        {
+            return _state.Routes
+                .OrderBy(static route => route.Id.Value)
+                .Select(CloneRoute)
+                .ToArray();
+        }
+
+        public IReadOnlyList<RouteSnapshot> GetRoutesByKind(RouteKind kind)
+        {
+            return _state.Routes
+                .Where(route => route.Kind == kind)
+                .OrderBy(static route => route.Id.Value)
+                .Select(CloneRoute)
+                .ToArray();
+        }
+
+        public IReadOnlyList<RouteSnapshot> GetRoutesByLegitimacy(RouteLegitimacy legitimacy)
+        {
+            return _state.Routes
+                .Where(route => route.Legitimacy == legitimacy)
+                .OrderBy(static route => route.Id.Value)
+                .Select(CloneRoute)
+                .ToArray();
+        }
+
+        public IReadOnlyList<RouteSnapshot> GetRoutesTouching(SettlementId settlementId)
+        {
+            return _state.Routes
+                .Where(route =>
+                    route.Origin == settlementId
+                    || route.Destination == settlementId
+                    || route.Waypoints.Contains(settlementId))
+                .OrderBy(static route => route.Id.Value)
+                .Select(CloneRoute)
+                .ToArray();
+        }
+
+        public SeasonBandSnapshot GetCurrentSeason() => CloneSeason(_state.CurrentSeason);
+
+        // Phase 1c: locus scoring lands in §14.2's RunXun/RunMonth step
+        // together with season-band advancement. Until then, no locus is
+        // elected. SPEC §8 allows null before the first tick has run.
+        // TODO(Phase 1c §14.2): implement deterministic locus scoring.
+        public LocusSnapshot? GetCurrentLocus() => null;
+
+        public IReadOnlyList<PublicSurfaceSignal> GetCurrentPulseSignals()
+        {
+            // Snapshot-copy the tick-lifetime buffer so callers cannot mutate
+            // the authoritative list, and so a mid-tick consumer reads a
+            // stable value. List is already in deterministic emission order.
+            return _state.CurrentPulseSignals.ToArray();
+        }
+
         private static SettlementSnapshot Clone(SettlementStateData settlement)
         {
             return new SettlementSnapshot
@@ -186,8 +343,58 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
                 Id = settlement.Id,
                 Name = settlement.Name,
                 Tier = settlement.Tier,
+                NodeKind = settlement.NodeKind,
+                Visibility = settlement.Visibility,
+                EcoZone = settlement.EcoZone,
                 Security = settlement.Security,
                 Prosperity = settlement.Prosperity,
+            };
+        }
+
+        private static RouteSnapshot CloneRoute(RouteStateData route)
+        {
+            return new RouteSnapshot
+            {
+                Id = route.Id,
+                Kind = route.Kind,
+                Medium = route.Medium,
+                Legitimacy = route.Legitimacy,
+                ComplianceMode = route.ComplianceMode,
+                Origin = route.Origin,
+                Destination = route.Destination,
+                // Defensive copy: consumers must not see internal list.
+                Waypoints = route.Waypoints.ToArray(),
+                TravelDaysBand = route.TravelDaysBand,
+                Capacity = route.Capacity,
+                Reliability = route.Reliability,
+                SeasonalVulnerability = route.SeasonalVulnerability,
+                CurrentConstraintLabel = route.CurrentConstraintLabel,
+            };
+        }
+
+        private static SeasonBandSnapshot CloneSeason(SeasonBandData season)
+        {
+            return new SeasonBandSnapshot
+            {
+                AsOf = season.AsOf,
+                AgrarianPhase = season.AgrarianPhase,
+                LaborPinch = season.LaborPinch,
+                HarvestWindowProgress = season.HarvestWindowProgress,
+                WaterControlConfidence = season.WaterControlConfidence,
+                EmbankmentStrain = season.EmbankmentStrain,
+                FloodRisk = season.FloodRisk,
+                CanalWindow = season.CanalWindow,
+                MarketCadencePulse = season.MarketCadencePulse,
+                CorveeWindow = season.CorveeWindow,
+                MessageDelayBand = season.MessageDelayBand,
+                Imperial = new ImperialBandSnapshot
+                {
+                    MourningInterruption = season.Imperial.MourningInterruption,
+                    AmnestyWave = season.Imperial.AmnestyWave,
+                    SuccessionUncertainty = season.Imperial.SuccessionUncertainty,
+                    MandateConfidence = season.Imperial.MandateConfidence,
+                    CourtTimeDisruption = season.Imperial.CourtTimeDisruption,
+                },
             };
         }
     }

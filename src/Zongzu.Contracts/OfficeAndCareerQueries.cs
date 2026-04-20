@@ -1,96 +1,96 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
-public sealed class OfficeCareerSnapshot
+public sealed record OfficeCareerSnapshot
 {
-    public PersonId PersonId { get; set; }
+    public PersonId PersonId { get; init; }
 
-    public ClanId ClanId { get; set; }
+    public ClanId ClanId { get; init; }
 
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public string DisplayName { get; set; } = string.Empty;
+    public string DisplayName { get; init; } = string.Empty;
 
-    public bool IsEligible { get; set; }
+    public bool IsEligible { get; init; }
 
-    public bool HasAppointment { get; set; }
+    public bool HasAppointment { get; init; }
 
-    public string OfficeTitle { get; set; } = string.Empty;
+    public string OfficeTitle { get; init; } = string.Empty;
 
-    public int AuthorityTier { get; set; }
+    public int AuthorityTier { get; init; }
 
-    public int AppointmentPressure { get; set; }
+    public int AppointmentPressure { get; init; }
 
-    public int ClerkDependence { get; set; }
+    public int ClerkDependence { get; init; }
 
-    public int JurisdictionLeverage { get; set; }
+    public int JurisdictionLeverage { get; init; }
 
-    public int PetitionPressure { get; set; }
+    public int PetitionPressure { get; init; }
 
-    public int PetitionBacklog { get; set; }
+    public int PetitionBacklog { get; init; }
 
-    public int ServiceMonths { get; set; }
+    public int ServiceMonths { get; init; }
 
-    public int PromotionMomentum { get; set; }
+    public int PromotionMomentum { get; init; }
 
-    public int DemotionPressure { get; set; }
+    public int DemotionPressure { get; init; }
 
-    public string CurrentAdministrativeTask { get; set; } = string.Empty;
+    public string CurrentAdministrativeTask { get; init; } = string.Empty;
 
-    public string AdministrativeTaskTier { get; set; } = string.Empty;
+    public string AdministrativeTaskTier { get; init; } = string.Empty;
 
-    public int AdministrativeTaskLoad { get; set; }
+    public int AdministrativeTaskLoad { get; init; }
 
-    public int OfficeReputation { get; set; }
+    public int OfficeReputation { get; init; }
 
-    public string LastOutcome { get; set; } = string.Empty;
+    public string LastOutcome { get; init; } = string.Empty;
 
-    public string LastPetitionOutcome { get; set; } = string.Empty;
+    public string LastPetitionOutcome { get; init; } = string.Empty;
 
-    public string PetitionOutcomeCategory { get; set; } = string.Empty;
+    public string PetitionOutcomeCategory { get; init; } = string.Empty;
 
-    public string PromotionPressureLabel { get; set; } = string.Empty;
+    public string PromotionPressureLabel { get; init; } = string.Empty;
 
-    public string DemotionPressureLabel { get; set; } = string.Empty;
+    public string DemotionPressureLabel { get; init; } = string.Empty;
 
-    public string AuthorityTrajectorySummary { get; set; } = string.Empty;
+    public string AuthorityTrajectorySummary { get; init; } = string.Empty;
 
-    public string LastExplanation { get; set; } = string.Empty;
+    public string LastExplanation { get; init; } = string.Empty;
 }
 
-public sealed class JurisdictionAuthoritySnapshot
+public sealed record JurisdictionAuthoritySnapshot
 {
-    public SettlementId SettlementId { get; set; }
+    public SettlementId SettlementId { get; init; }
 
-    public PersonId? LeadOfficialPersonId { get; set; }
+    public PersonId? LeadOfficialPersonId { get; init; }
 
-    public string LeadOfficialName { get; set; } = string.Empty;
+    public string LeadOfficialName { get; init; } = string.Empty;
 
-    public string LeadOfficeTitle { get; set; } = string.Empty;
+    public string LeadOfficeTitle { get; init; } = string.Empty;
 
-    public int AuthorityTier { get; set; }
+    public int AuthorityTier { get; init; }
 
-    public int JurisdictionLeverage { get; set; }
+    public int JurisdictionLeverage { get; init; }
 
-    public int ClerkDependence { get; set; }
+    public int ClerkDependence { get; init; }
 
-    public int PetitionPressure { get; set; }
+    public int PetitionPressure { get; init; }
 
-    public int PetitionBacklog { get; set; }
+    public int PetitionBacklog { get; init; }
 
-    public string CurrentAdministrativeTask { get; set; } = string.Empty;
+    public string CurrentAdministrativeTask { get; init; } = string.Empty;
 
-    public string AdministrativeTaskTier { get; set; } = string.Empty;
+    public string AdministrativeTaskTier { get; init; } = string.Empty;
 
-    public int AdministrativeTaskLoad { get; set; }
+    public int AdministrativeTaskLoad { get; init; }
 
-    public string LastPetitionOutcome { get; set; } = string.Empty;
+    public string LastPetitionOutcome { get; init; } = string.Empty;
 
-    public string PetitionOutcomeCategory { get; set; } = string.Empty;
+    public string PetitionOutcomeCategory { get; init; } = string.Empty;
 
-    public string LastAdministrativeTrace { get; set; } = string.Empty;
+    public string LastAdministrativeTrace { get; init; } = string.Empty;
 }
 
 public interface IOfficeAndCareerQueries

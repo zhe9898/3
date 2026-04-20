@@ -39,10 +39,10 @@ internal static class WarfareCampaignShellAdapter
 				.Select(campaign =>
 				{
 					context.SettlementsById.TryGetValue(campaign.AnchorSettlementId.Value, out SettlementSnapshot? settlement);
-					TradeRouteSnapshot[] tradeRoutes = context.TradeRoutesBySettlement[campaign.AnchorSettlementId.Value]
+					ClanTradeRouteSnapshot[] clanTradeRoutes = context.ClanTradeRoutesBySettlement[campaign.AnchorSettlementId.Value]
 						.OrderBy(route => route.RouteName, StringComparer.Ordinal)
 						.ToArray();
-					WarfareCampaignBoardTextAdapter.RegionalBoardProfile regionalProfile = WarfareCampaignBoardTextAdapter.BuildCampaignRegionalProfile(campaign, settlement, tradeRoutes);
+					WarfareCampaignBoardTextAdapter.RegionalBoardProfile regionalProfile = WarfareCampaignBoardTextAdapter.BuildCampaignRegionalProfile(campaign, settlement, clanTradeRoutes);
 
 					return new CampaignBoardViewModel
 					{
@@ -106,7 +106,7 @@ internal static class WarfareCampaignShellAdapter
 		WarfareCampaignBoardTextAdapter.RegionalBoardProfile regionalBoardProfile = WarfareCampaignBoardTextAdapter.BuildCampaignRegionalProfile(
 			leadCampaign,
 			context.LeadCampaignSettlement,
-			context.LeadCampaignTradeRoutes);
+			context.LeadCampaignClanTradeRoutes);
 
 		return $"现有 {context.ActiveCampaignCount} 处在案行营；{leadCampaign.AnchorSettlementName}当前{leadCampaign.FrontLabel}、{leadCampaign.SupplyStateLabel}，属{regionalBoardProfile.Label}之局，案头呈{WarfareCampaignBoardTextAdapter.BuildCampaignConditionLabelChinese(leadCampaign)}。";
 	}
@@ -115,11 +115,11 @@ internal static class WarfareCampaignShellAdapter
 		CampaignFrontSnapshot? campaign,
 		CampaignMobilizationSignalSnapshot? signal,
 		SettlementSnapshot settlement,
-		IReadOnlyList<TradeRouteSnapshot> tradeRoutes)
+		IReadOnlyList<ClanTradeRouteSnapshot> clanTradeRoutes)
 	{
 		if (campaign != null)
 		{
-			WarfareCampaignBoardTextAdapter.RegionalBoardProfile regionalBoardProfile = WarfareCampaignBoardTextAdapter.BuildCampaignRegionalProfile(campaign, settlement, tradeRoutes);
+			WarfareCampaignBoardTextAdapter.RegionalBoardProfile regionalBoardProfile = WarfareCampaignBoardTextAdapter.BuildCampaignRegionalProfile(campaign, settlement, clanTradeRoutes);
 			CampaignRouteSnapshot? leadRoute = WarfareCampaignBoardTextAdapter.SelectLeadCampaignRoute(campaign);
 			string routeSummary = leadRoute == null
 				? "暂无路况细目"
@@ -146,7 +146,7 @@ internal static class WarfareCampaignShellAdapter
 		WarfareCampaignBoardTextAdapter.RegionalBoardProfile regionalBoardProfile = WarfareCampaignBoardTextAdapter.BuildCampaignRegionalProfile(
 			leadCampaign,
 			context.LeadCampaignSettlement,
-			context.LeadCampaignTradeRoutes);
+			context.LeadCampaignClanTradeRoutes);
 
 		return $"现有 {context.ActiveCampaignCount} 处在案行营，峰值前线压力 {context.PeakFrontPressure}；{leadCampaign.AnchorSettlementName}正以 {leadCampaign.CommandFitLabel} 维持 {leadCampaign.FrontLabel}，属{regionalBoardProfile.Label}之局。";
 	}

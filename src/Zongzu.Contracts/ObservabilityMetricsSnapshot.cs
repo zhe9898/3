@@ -1,12 +1,12 @@
-namespace Zongzu.Contracts;
+﻿namespace Zongzu.Contracts;
 
-public sealed class ObservabilityMetricsSnapshot
+public sealed record ObservabilityMetricsSnapshot
 {
-    public int DiffEntryCount { get; set; }
+    public int DiffEntryCount { get; init; }
 
-    public int DomainEventCount { get; set; }
+    public int DomainEventCount { get; init; }
 
-    public int NotificationCount { get; set; }
+    public int NotificationCount { get; init; }
 
-    public int SavePayloadBytes { get; set; }
+    public int SavePayloadBytes { get; init; }
 }

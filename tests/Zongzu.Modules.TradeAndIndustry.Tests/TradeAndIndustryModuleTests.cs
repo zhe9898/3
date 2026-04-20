@@ -207,7 +207,7 @@ public sealed class TradeAndIndustryModuleTests
 
         SettlementBlackRouteLedgerSnapshot ledger = queries.GetRequired<IBlackRouteLedgerQueries>()
             .GetRequiredSettlementBlackRouteLedger(new SettlementId(1));
-        TradeRouteSnapshot route = queries.GetRequired<ITradeAndIndustryQueries>()
+        ClanTradeRouteSnapshot route = queries.GetRequired<ITradeAndIndustryQueries>()
             .GetRoutesForClan(new ClanId(1))
             .Single();
         SettlementMarketState market = tradeState.Markets.Single();
@@ -467,7 +467,7 @@ public sealed class TradeAndIndustryModuleTests
         SettlementBlackRouteLedgerSnapshot ledger = queries.GetRequired<IBlackRouteLedgerQueries>()
             .GetRequiredSettlementBlackRouteLedger(new SettlementId(1));
         ClanTradeState clanTrade = tradeState.Clans.Single();
-        TradeRouteSnapshot route = queries.GetRequired<ITradeAndIndustryQueries>()
+        ClanTradeRouteSnapshot route = queries.GetRequired<ITradeAndIndustryQueries>()
             .GetRoutesForClan(new ClanId(1))
             .Single();
 
@@ -616,7 +616,7 @@ public sealed class TradeAndIndustryModuleTests
 
             SettlementBlackRouteLedgerSnapshot ledger = queries.GetRequired<IBlackRouteLedgerQueries>()
                 .GetRequiredSettlementBlackRouteLedger(new SettlementId(1));
-            TradeRouteSnapshot route = queries.GetRequired<ITradeAndIndustryQueries>()
+            ClanTradeRouteSnapshot route = queries.GetRequired<ITradeAndIndustryQueries>()
                 .GetRoutesForClan(new ClanId(1))
                 .Single();
 
@@ -874,7 +874,7 @@ public sealed class TradeAndIndustryModuleTests
 
             SettlementBlackRouteLedgerSnapshot ledger = queries.GetRequired<IBlackRouteLedgerQueries>()
                 .GetRequiredSettlementBlackRouteLedger(new SettlementId(1));
-            TradeRouteSnapshot route = queries.GetRequired<ITradeAndIndustryQueries>()
+            ClanTradeRouteSnapshot route = queries.GetRequired<ITradeAndIndustryQueries>()
                 .GetRoutesForClan(new ClanId(1))
                 .Single();
 
