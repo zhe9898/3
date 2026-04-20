@@ -350,7 +350,8 @@ public sealed class FamilyCoreModuleTests
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
         queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
-        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
+        RecordingPersonRegistryCommands registryCommands = new();
+        queries.Register<IPersonRegistryCommands>(registryCommands);
 
         ModuleExecutionContext context = new(
             new GameDate(1200, 6),
@@ -367,6 +368,8 @@ public sealed class FamilyCoreModuleTests
         Assert.That(familyState.Clans[0].HeirSecurity, Is.LessThan(62));
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.ClanMemberDied), Is.True);
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.HeirSecurityWeakened), Is.True);
+        Assert.That(registryCommands.DeceasedIds, Has.Count.EqualTo(1));
+        Assert.That(registryCommands.DeceasedIds[0], Is.EqualTo(new PersonId(1)));
     }
 
     [Test]
@@ -478,6 +481,8 @@ public sealed class FamilyCoreModuleTests
     {
         public List<PersonId> RegisteredIds { get; } = new();
 
+        public List<PersonId> DeceasedIds { get; } = new();
+
         public bool Register(
             ModuleExecutionContext context,
             PersonId id,
@@ -487,6 +492,12 @@ public sealed class FamilyCoreModuleTests
             FidelityRing fidelityRing)
         {
             RegisteredIds.Add(id);
+            return true;
+        }
+
+        public bool MarkDeceased(ModuleExecutionContext context, PersonId id)
+        {
+            DeceasedIds.Add(id);
             return true;
         }
     }

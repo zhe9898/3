@@ -494,8 +494,14 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
         FamilyPersonState deathTarget = deathEntry.Value.Person;
         int deathAgeMonths = deathEntry.Value.AgeMonths;
-        // Keep the local mirror in sync. PersonRegistry consolidates the
-        // cause-specific ClanMemberDied emission below into PersonDeceased.
+        // PersonRegistry is the authoritative death write since Phase 2c.
+        // Call MarkDeceased synchronously; the cause-specific ClanMemberDied
+        // emission below remains for downstream flavor consumers but no
+        // longer drives registry state. See PERSON_OWNERSHIP_RULES.md.
+        IPersonRegistryCommands registryCommands = scope.GetRequiredQuery<IPersonRegistryCommands>();
+        registryCommands.MarkDeceased(scope.Context, deathTarget.Id);
+        // Local mirror stays in sync as transitional documentation; the
+        // registry's PersonRecord is now canonical.
         deathTarget.IsAlive = false;
         bool wasHeir = clan.HeirPersonId == deathTarget.Id;
         if (wasHeir)

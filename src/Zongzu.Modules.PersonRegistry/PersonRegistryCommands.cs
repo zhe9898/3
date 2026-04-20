@@ -54,4 +54,33 @@ internal sealed class PersonRegistryCommands : IPersonRegistryCommands
 
         return true;
     }
+
+    public bool MarkDeceased(ModuleExecutionContext context, PersonId id)
+    {
+        PersonRecord? target = null;
+        foreach (PersonRecord existing in _state.Persons)
+        {
+            if (existing.Id.Equals(id))
+            {
+                target = existing;
+                break;
+            }
+        }
+
+        if (target is null || !target.IsAlive)
+        {
+            return false;
+        }
+
+        target.IsAlive = false;
+        target.LifeStage = LifeStage.Deceased;
+
+        context.DomainEvents.Emit(new DomainEventRecord(
+            KnownModuleKeys.PersonRegistry,
+            PersonRegistryEventNames.PersonDeceased,
+            $"{target.DisplayName}身故登记。",
+            id.Value.ToString()));
+
+        return true;
+    }
 }

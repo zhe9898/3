@@ -118,6 +118,20 @@ public interface IPersonRegistryCommands
         GameDate birthDate,
         PersonGender gender,
         FidelityRing fidelityRing);
+
+    /// <summary>
+    /// Marks an existing person as deceased. Returns <see langword="false"/>
+    /// when the person is not registered or was already dead — both are
+    /// idempotent no-ops so domain modules can call this without first
+    /// checking registry state. Emits <c>PersonDeceased</c> on success.
+    ///
+    /// Domain modules (FamilyCore on clan death, ConflictAndForce on
+    /// violence, etc.) call this synchronously as the authoritative death
+    /// write; cause-specific events like <c>ClanMemberDied</c> still flow
+    /// for downstream flavor consumers but no longer drive the death state
+    /// in the registry.
+    /// </summary>
+    bool MarkDeceased(ModuleExecutionContext context, PersonId id);
 }
 
 public static class PersonRegistryEventNames
