@@ -34,7 +34,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
     public override string ModuleKey => KnownModuleKeys.SocialMemoryAndRelations;
 
-    public override int ModuleSchemaVersion => 1;
+    public override int ModuleSchemaVersion => 2;
 
     public override SimulationPhase Phase => SimulationPhase.SocialMemory;
 
@@ -105,6 +105,8 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
         IReadOnlyList<HouseholdPressureSnapshot> households = populationQueries.GetHouseholds();
 
+        AdvanceMemoryLifecycle(scope.State);
+
         foreach (ClanSnapshot clan in clans.OrderBy(static clan => clan.Id.Value))
         {
             ClanNarrativeState narrative = GetOrCreateNarrative(scope.State, clan.Id);
@@ -131,13 +133,13 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
             if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
             {
                 scope.Emit("GrudgeEscalated", $"{clan.ClanName}旧怨更深。");
-                AddMemory(scope.State, clan.Id, "hardship", narrative.GrudgePressure, true, $"{clan.ClanName}因民困与家计艰难，旧怨更深。", scope.Context);
+                AddMemory(scope.State, clan.Id, "hardship", MemoryType.Grudge, MemorySubtype.WealthGrudge, "clan.hardship", 2, narrative.GrudgePressure, true, $"{clan.ClanName}因民困与家计艰难，旧怨更深。", scope.Context);
             }
 
             if (previousGrudge >= 45 && narrative.GrudgePressure < 45)
             {
                 scope.Emit("GrudgeSoftened", $"{clan.ClanName}旧怨稍缓。");
-                AddMemory(scope.State, clan.Id, "conciliation", Math.Max(10, narrative.FavorBalance), true, $"{clan.ClanName}因接济与调处，怨气稍缓。", scope.Context);
+                AddMemory(scope.State, clan.Id, "conciliation", MemoryType.Favor, MemorySubtype.ReliefFavor, "clan.relief", 3, Math.Max(10, narrative.FavorBalance), true, $"{clan.ClanName}因接济与调处，怨气稍缓。", scope.Context);
             }
 
             if (previousFavor < 10 && narrative.FavorBalance >= 10)
@@ -197,6 +199,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                     scope.State,
                     clan.Id,
                     bundle.CampaignAftermathRegistered ? "campaign-aftermath" : "campaign-pressure",
+                    MemoryType.Fear,
+                    MemorySubtype.WarDread,
+                    bundle.CampaignAftermathRegistered ? "campaign.aftermath" : "campaign.pressure",
+                    bundle.CampaignAftermathRegistered ? 1 : 2,
                     Math.Max(narrative.FearPressure, narrative.GrudgePressure),
                     true,
                     $"{campaign.AnchorSettlementName}战后余波把{campaign.FrontLabel}与{campaign.LastAftermathSummary}一并压进了{clan.ClanName}的旧忆里。",
@@ -439,6 +445,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         SocialMemoryAndRelationsState state,
         ClanId clanId,
         string kind,
+        MemoryType type,
+        MemorySubtype subtype,
+        string causeKey,
+        int monthlyDecay,
         int intensity,
         bool isPublic,
         string summary,
@@ -455,16 +465,45 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
             return;
         }
 
+        int clampedIntensity = Math.Clamp(intensity, 0, 100);
         state.Memories.Add(new MemoryRecordState
         {
             Id = KernelIdAllocator.NextMemory(context.KernelState),
             SubjectClanId = clanId,
             Kind = kind,
-            Intensity = Math.Clamp(intensity, 0, 100),
+            Intensity = clampedIntensity,
             IsPublic = isPublic,
             CreatedAt = context.CurrentDate,
             Summary = summary,
+            Type = type,
+            Subtype = subtype,
+            SourceKind = MemorySubjectKind.Clan,
+            SourceClanId = clanId,
+            TargetKind = MemorySubjectKind.Clan,
+            TargetClanId = clanId,
+            OriginDate = context.CurrentDate,
+            CauseKey = causeKey,
+            Weight = clampedIntensity,
+            MonthlyDecay = Math.Max(1, monthlyDecay),
+            LifecycleState = MemoryLifecycleState.Active,
         });
+    }
+
+    private static void AdvanceMemoryLifecycle(SocialMemoryAndRelationsState state)
+    {
+        foreach (MemoryRecordState memory in state.Memories)
+        {
+            if (memory.LifecycleState != MemoryLifecycleState.Active)
+            {
+                continue;
+            }
+
+            memory.Weight = Math.Max(0, memory.Weight - Math.Max(1, memory.MonthlyDecay));
+            if (memory.Weight == 0)
+            {
+                memory.LifecycleState = MemoryLifecycleState.Dormant;
+            }
+        }
     }
 
     private sealed class SocialMemoryQueries : ISocialMemoryAndRelationsQueries
@@ -488,6 +527,62 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                 .OrderBy(static narrative => narrative.ClanId.Value)
                 .Select(narrative => CloneNarrative(narrative, _state.Memories))
                 .ToArray();
+        }
+
+        public IReadOnlyList<SocialMemoryEntrySnapshot> GetMemories()
+        {
+            return _state.Memories
+                .OrderBy(static memory => memory.Id.Value)
+                .Select(CloneMemory)
+                .ToArray();
+        }
+
+        public IReadOnlyList<SocialMemoryEntrySnapshot> GetMemoriesByClan(ClanId clanId)
+        {
+            return _state.Memories
+                .Where(memory => memory.SubjectClanId == clanId)
+                .OrderBy(static memory => memory.Id.Value)
+                .Select(CloneMemory)
+                .ToArray();
+        }
+
+        public IReadOnlyList<DormantStubSnapshot> GetDormantStubs()
+        {
+            return _state.DormantStubs
+                .OrderBy(static stub => stub.PersonId.Value)
+                .Select(static stub => new DormantStubSnapshot
+                {
+                    PersonId = stub.PersonId,
+                    LastKnownSettlementId = stub.LastKnownSettlementId,
+                    LastKnownRole = stub.LastKnownRole,
+                    ActiveMemoryIds = stub.ActiveMemoryIds.ToArray(),
+                    LastSeen = stub.LastSeen,
+                    IsEligibleForReemergence = stub.IsEligibleForReemergence,
+                })
+                .ToArray();
+        }
+
+        private static SocialMemoryEntrySnapshot CloneMemory(MemoryRecordState memory)
+        {
+            return new SocialMemoryEntrySnapshot
+            {
+                Id = memory.Id,
+                Type = memory.Type,
+                Subtype = memory.Subtype,
+                SourceKind = memory.SourceKind,
+                SourcePersonId = memory.SourcePersonId,
+                SourceClanId = memory.SourceClanId,
+                TargetKind = memory.TargetKind,
+                TargetPersonId = memory.TargetPersonId,
+                TargetClanId = memory.TargetClanId,
+                OriginDate = memory.OriginDate,
+                CauseKey = memory.CauseKey,
+                Weight = memory.Weight,
+                MonthlyDecay = memory.MonthlyDecay,
+                IsPublic = memory.IsPublic,
+                State = memory.LifecycleState,
+                Summary = memory.Summary,
+            };
         }
 
         private static ClanNarrativeSnapshot CloneNarrative(ClanNarrativeState narrative, IReadOnlyCollection<MemoryRecordState> memories)

@@ -397,6 +397,146 @@ public sealed class SocialMemoryAndRelationsModuleTests
         Assert.That(context.Diff.Entries.Single().Description, Does.Contain("旧怨"));
     }
 
+    [Test]
+    public void RunMonth_ReliefPath_AddsStructuredFavorMemoryWithReliefFavorSubtype()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 52,
+            SupportReserve = 72,
+            HeirPersonId = new PersonId(1),
+            MediationMomentum = 58,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 30,
+            DebtPressure = 20,
+            LaborCapacity = 55,
+            MigrationRisk = 15,
+            IsMigrating = false,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+        socialState.ClanNarratives.Add(new ClanNarrativeState
+        {
+            ClanId = new ClanId(1),
+            GrudgePressure = 46,
+            FearPressure = 10,
+            ShamePressure = 10,
+            FavorBalance = 6,
+        });
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+
+        KernelState kernelState = KernelState.Create(9001);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        MemoryRecordState reliefMemory = socialState.Memories.Single(memory => memory.CauseKey == "clan.relief");
+        Assert.That(reliefMemory.Type, Is.EqualTo(MemoryType.Favor));
+        Assert.That(reliefMemory.Subtype, Is.EqualTo(MemorySubtype.ReliefFavor));
+        Assert.That(reliefMemory.LifecycleState, Is.EqualTo(MemoryLifecycleState.Active));
+        Assert.That(reliefMemory.SourceKind, Is.EqualTo(MemorySubjectKind.Clan));
+        Assert.That(reliefMemory.SourceClanId, Is.EqualTo(new ClanId(1)));
+        Assert.That(reliefMemory.Weight, Is.GreaterThan(0));
+        Assert.That(reliefMemory.MonthlyDecay, Is.GreaterThanOrEqualTo(1));
+
+        ISocialMemoryAndRelationsQueries socialQueries = queries.GetRequired<ISocialMemoryAndRelationsQueries>();
+        IReadOnlyList<SocialMemoryEntrySnapshot> structured = socialQueries.GetMemoriesByClan(new ClanId(1));
+        Assert.That(structured, Has.Count.GreaterThanOrEqualTo(1));
+        Assert.That(structured.Any(entry => entry.Subtype == MemorySubtype.ReliefFavor), Is.True);
+    }
+
+    [Test]
+    public void RunMonth_MemoryLifecycle_DecaysActiveToDormantOverMonths()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 50,
+            SupportReserve = 50,
+            HeirPersonId = new PersonId(1),
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+        socialState.Memories.Add(new MemoryRecordState
+        {
+            Id = new MemoryId(1),
+            SubjectClanId = new ClanId(1),
+            Kind = "seed",
+            Intensity = 20,
+            IsPublic = true,
+            CreatedAt = new GameDate(1200, 1),
+            Summary = "seeded",
+            Type = MemoryType.Grudge,
+            Subtype = MemorySubtype.WealthGrudge,
+            SourceKind = MemorySubjectKind.Clan,
+            SourceClanId = new ClanId(1),
+            TargetKind = MemorySubjectKind.Clan,
+            TargetClanId = new ClanId(1),
+            OriginDate = new GameDate(1200, 1),
+            CauseKey = "seed",
+            Weight = 6,
+            MonthlyDecay = 2,
+            LifecycleState = MemoryLifecycleState.Active,
+        });
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+
+        KernelState kernelState = KernelState.Create(42);
+        for (int month = 0; month < 4; month += 1)
+        {
+            ModuleExecutionContext context = new(
+                new GameDate(1200, month + 2),
+                new FeatureManifest(),
+                new DeterministicRandom(kernelState),
+                queries,
+                new DomainEventBuffer(),
+                new WorldDiff(),
+                kernelState);
+            socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+        }
+
+        MemoryRecordState seed = socialState.Memories.Single(memory => memory.CauseKey == "seed");
+        Assert.That(seed.Weight, Is.EqualTo(0));
+        Assert.That(seed.LifecycleState, Is.EqualTo(MemoryLifecycleState.Dormant));
+    }
+
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
     {
         private readonly IReadOnlyList<CampaignFrontSnapshot> _campaigns;
