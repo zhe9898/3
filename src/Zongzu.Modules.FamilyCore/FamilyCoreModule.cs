@@ -70,7 +70,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override void RegisterQueries(FamilyCoreState state, QueryRegistry queries)
     {
-        queries.Register<IFamilyCoreQueries>(new FamilyCoreQueries(state));
+        queries.Register<IFamilyCoreQueries>(new FamilyCoreQueries(state, queries));
     }
 
     public override void RunXun(ModuleExecutionScope<FamilyCoreState> scope)
@@ -494,15 +494,13 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
         FamilyPersonState deathTarget = deathEntry.Value.Person;
         int deathAgeMonths = deathEntry.Value.AgeMonths;
-        // PersonRegistry is the authoritative death write since Phase 2c.
-        // Call MarkDeceased synchronously; the cause-specific ClanMemberDied
-        // emission below remains for downstream flavor consumers but no
-        // longer drives registry state. See PERSON_OWNERSHIP_RULES.md.
+        // PersonRegistry is the authoritative death write since Phase 2c/2d.
+        // FamilyCore no longer writes the local IsAlive mirror; all readers
+        // (simulation loop, snapshots, projections) consult registryQueries
+        // first and fall back to the local flag only for unregistered persons.
+        // See PERSON_OWNERSHIP_RULES.md.
         IPersonRegistryCommands registryCommands = scope.GetRequiredQuery<IPersonRegistryCommands>();
         registryCommands.MarkDeceased(scope.Context, deathTarget.Id);
-        // Local mirror stays in sync as transitional documentation; the
-        // registry's PersonRecord is now canonical.
-        deathTarget.IsAlive = false;
         bool wasHeir = clan.HeirPersonId == deathTarget.Id;
         if (wasHeir)
         {
@@ -672,10 +670,23 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     private sealed class FamilyCoreQueries : IFamilyCoreQueries
     {
         private readonly FamilyCoreState _state;
+        private readonly QueryRegistry _queries;
 
-        public FamilyCoreQueries(FamilyCoreState state)
+        public FamilyCoreQueries(FamilyCoreState state, QueryRegistry queries)
         {
             _state = state;
+            _queries = queries;
+        }
+
+        private bool IsPersonAlive(FamilyPersonState person)
+        {
+            IPersonRegistryQueries registry = _queries.GetRequired<IPersonRegistryQueries>();
+            if (registry.TryGetPerson(person.Id, out PersonRecord record))
+            {
+                return record.IsAlive;
+            }
+
+            return person.IsAlive;
         }
 
         public ClanSnapshot GetRequiredClan(ClanId clanId)
@@ -707,7 +718,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 .ToArray();
         }
 
-        private static FamilyPersonSnapshot ClonePerson(FamilyPersonState person)
+        private FamilyPersonSnapshot ClonePerson(FamilyPersonState person)
         {
             return new FamilyPersonSnapshot
             {
@@ -715,7 +726,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 ClanId = person.ClanId,
                 GivenName = person.GivenName,
                 AgeMonths = person.AgeMonths,
-                IsAlive = person.IsAlive,
+                IsAlive = IsPersonAlive(person),
                 BranchPosition = person.BranchPosition,
                 SpouseId = person.SpouseId,
                 FatherId = person.FatherId,
@@ -728,11 +739,11 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
             };
         }
 
-        private static ClanSnapshot Clone(FamilyCoreState state, ClanStateData clan)
+        private ClanSnapshot Clone(FamilyCoreState state, ClanStateData clan)
         {
             int infantCount = state.People.Count(person =>
                 person.ClanId == clan.Id
-                && person.IsAlive
+                && IsPersonAlive(person)
                 && person.AgeMonths <= InfantAgeMonths);
 
             return new ClanSnapshot

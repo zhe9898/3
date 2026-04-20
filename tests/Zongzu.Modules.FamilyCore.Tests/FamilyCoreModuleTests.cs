@@ -349,8 +349,8 @@ public sealed class FamilyCoreModuleTests
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
-        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
         RecordingPersonRegistryCommands registryCommands = new();
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries(registryCommands));
         queries.Register<IPersonRegistryCommands>(registryCommands);
 
         ModuleExecutionContext context = new(
@@ -363,7 +363,9 @@ public sealed class FamilyCoreModuleTests
 
         familyModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(familyState, context));
 
-        Assert.That(familyState.People.Count(static person => person.IsAlive), Is.EqualTo(1));
+        IFamilyCoreQueries familyQueries = queries.GetRequired<IFamilyCoreQueries>();
+        IReadOnlyList<FamilyPersonSnapshot> clanMembers = familyQueries.GetClanMembers(new ClanId(1));
+        Assert.That(clanMembers.Count(static person => person.IsAlive), Is.EqualTo(1));
         Assert.That(familyState.Clans[0].MourningLoad, Is.GreaterThan(0));
         Assert.That(familyState.Clans[0].HeirSecurity, Is.LessThan(62));
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.ClanMemberDied), Is.True);
@@ -460,19 +462,42 @@ public sealed class FamilyCoreModuleTests
     }
     private sealed class EmptyPersonRegistryQueries : IPersonRegistryQueries
     {
+        private readonly RecordingPersonRegistryCommands? _commands;
+
+        public EmptyPersonRegistryQueries()
+        {
+        }
+
+        public EmptyPersonRegistryQueries(RecordingPersonRegistryCommands commands)
+        {
+            _commands = commands;
+        }
+
         public bool TryGetPerson(PersonId id, out PersonRecord person)
         {
+            if (_commands is not null && _commands.Records.TryGetValue(id, out PersonRecord? record))
+            {
+                person = record;
+                return true;
+            }
+
             person = null!;
             return false;
         }
 
-        public IReadOnlyList<PersonRecord> GetAllPersons() => [];
+        public IReadOnlyList<PersonRecord> GetAllPersons() =>
+            _commands is null ? [] : [.. _commands.Records.Values];
 
-        public IReadOnlyList<PersonRecord> GetPersonsByFidelityRing(FidelityRing ring) => [];
+        public IReadOnlyList<PersonRecord> GetPersonsByFidelityRing(FidelityRing ring) =>
+            _commands is null ? [] : _commands.Records.Values.Where(r => r.FidelityRing == ring).ToArray();
 
-        public IReadOnlyList<PersonRecord> GetLivingPersons() => [];
+        public IReadOnlyList<PersonRecord> GetLivingPersons() =>
+            _commands is null ? [] : _commands.Records.Values.Where(static r => r.IsAlive).ToArray();
 
-        public bool IsAlive(PersonId id) => false;
+        public bool IsAlive(PersonId id) =>
+            _commands is not null
+            && _commands.Records.TryGetValue(id, out PersonRecord? record)
+            && record.IsAlive;
 
         public int GetAgeMonths(PersonId id, GameDate currentDate) => -1;
     }
@@ -483,6 +508,8 @@ public sealed class FamilyCoreModuleTests
 
         public List<PersonId> DeceasedIds { get; } = new();
 
+        public Dictionary<PersonId, PersonRecord> Records { get; } = new();
+
         public bool Register(
             ModuleExecutionContext context,
             PersonId id,
@@ -492,13 +519,35 @@ public sealed class FamilyCoreModuleTests
             FidelityRing fidelityRing)
         {
             RegisteredIds.Add(id);
+            Records[id] = new PersonRecord
+            {
+                Id = id,
+                DisplayName = displayName,
+                BirthDate = birthDate,
+                Gender = gender,
+                FidelityRing = fidelityRing,
+                IsAlive = true,
+                LifeStage = LifeStage.Infant,
+            };
             return true;
         }
 
         public bool MarkDeceased(ModuleExecutionContext context, PersonId id)
         {
             DeceasedIds.Add(id);
+            if (!Records.TryGetValue(id, out PersonRecord? record))
+            {
+                record = new PersonRecord { Id = id };
+                Records[id] = record;
+            }
+            record.IsAlive = false;
+            record.LifeStage = LifeStage.Deceased;
             return true;
+        }
+
+        public void Seed(PersonRecord record)
+        {
+            Records[record.Id] = record;
         }
     }
 }
