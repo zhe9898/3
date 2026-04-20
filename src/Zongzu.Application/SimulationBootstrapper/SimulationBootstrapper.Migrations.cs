@@ -85,7 +85,22 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 2, 3, MigrateConflictAndForceStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 1, 2, MigrateWarfareCampaignStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 2, 3, MigrateWarfareCampaignStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.PopulationAndHouseholds, 1, 2, MigratePopulationAndHouseholdsStateV1ToV2);
         return pipeline;
+    }
+
+    private static ModuleStateEnvelope MigratePopulationAndHouseholdsStateV1ToV2(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        PopulationAndHouseholdsState migratedState = (PopulationAndHouseholdsState)serializer.Deserialize(typeof(PopulationAndHouseholdsState), envelope.Payload);
+        PopulationAndHouseholdsStateProjection.UpgradeFromSchemaV1ToV2(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PopulationAndHouseholds,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(PopulationAndHouseholdsState), migratedState),
+        };
     }
 
     private static ModuleStateEnvelope MigrateWorldSettlementsStateV1ToV2(ModuleStateEnvelope envelope)

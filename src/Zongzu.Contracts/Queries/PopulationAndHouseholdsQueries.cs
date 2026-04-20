@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -13,6 +13,8 @@ public sealed record HouseholdPressureSnapshot
 
     public ClanId? SponsorClanId { get; init; }
 
+    public LivelihoodType Livelihood { get; init; } = LivelihoodType.Smallholder;
+
     public int Distress { get; init; }
 
     public int DebtPressure { get; init; }
@@ -22,6 +24,18 @@ public sealed record HouseholdPressureSnapshot
     public int MigrationRisk { get; init; }
 
     public bool IsMigrating { get; init; }
+
+    public int LandHolding { get; init; }
+
+    public int GrainStore { get; init; }
+
+    public int ToolCondition { get; init; }
+
+    public int ShelterQuality { get; init; }
+
+    public int DependentCount { get; init; }
+
+    public int LaborerCount { get; init; }
 }
 
 public sealed record PopulationSettlementSnapshot
@@ -46,4 +60,23 @@ public interface IPopulationAndHouseholdsQueries
     IReadOnlyList<HouseholdPressureSnapshot> GetHouseholds();
 
     IReadOnlyList<PopulationSettlementSnapshot> GetSettlements();
+
+    // Phase 3 生计骨骼 additions. Default implementations keep legacy stubs
+    // (e.g. `PublicLifeAndRumor` test doubles) compiling until those stubs
+    // need to expose memberships / pools; concrete module overrides them.
+    IReadOnlyList<HouseholdMembershipSnapshot> GetMemberships() => [];
+
+    IReadOnlyList<HouseholdMembershipSnapshot> GetMembershipsByHousehold(HouseholdId householdId) => [];
+
+    bool TryGetMembership(PersonId personId, out HouseholdMembershipSnapshot membership)
+    {
+        membership = new HouseholdMembershipSnapshot();
+        return false;
+    }
+
+    IReadOnlyList<LaborPoolEntrySnapshot> GetLaborPools() => [];
+
+    IReadOnlyList<MarriagePoolEntrySnapshot> GetMarriagePools() => [];
+
+    IReadOnlyList<MigrationPoolEntrySnapshot> GetMigrationPools() => [];
 }
