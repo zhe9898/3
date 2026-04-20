@@ -69,20 +69,18 @@ public static partial class SimulationBootstrapper
             Sociability = 48,
         });
 
-        // Phase 1b: register the clan heir in the Kernel-layer PersonRegistry
-        // as the canonical identity anchor. FamilyCore's FamilyPersonState is
-        // kept in sync for now (Phase 2 will retire the redundant age/alive
-        // fields). See PERSON_OWNERSHIP_RULES.md.
-        personRegistryState.Persons.Add(new PersonRecord
-        {
-            Id = heirId,
-            DisplayName = "张远",
-            BirthDate = new GameDate(simulation.CurrentDate.Year - 32, simulation.CurrentDate.Month),
-            Gender = PersonGender.Male,
-            LifeStage = LifeStage.Adult,
-            IsAlive = true,
-            FidelityRing = FidelityRing.Core,
-        });
+        // Phase 2b.2: every seeded FamilyPersonState must also land in
+        // PersonRegistry so IPersonRegistryQueries is authoritative for
+        // age / IsAlive instead of FamilyCore's local mirror.
+        // See PERSON_OWNERSHIP_RULES.md.
+        SeedPersonRecord(
+            personRegistryState,
+            simulation.CurrentDate,
+            heirId,
+            "张远",
+            ageMonths: 32 * 12,
+            gender: PersonGender.Male,
+            fidelityRing: FidelityRing.Core);
 
         populationState.Households.Add(new PopulationHouseholdState
         {
@@ -474,6 +472,17 @@ public static partial class SimulationBootstrapper
             Sociability = 50,
         });
 
+        // Phase 2b.2: stress-slice heirs also land in PersonRegistry.
+        PersonRegistryState stressPersonRegistryState = simulation.GetMutableModuleState<PersonRegistryState>(KnownModuleKeys.PersonRegistry);
+        SeedPersonRecord(
+            stressPersonRegistryState,
+            simulation.CurrentDate,
+            heirId,
+            slice.HeirName,
+            ageMonths: 30 * 12,
+            gender: PersonGender.Male,
+            fidelityRing: FidelityRing.Local);
+
         populationState.Households.Add(new PopulationHouseholdState
         {
             Id = tenantHouseholdId,
@@ -660,6 +669,45 @@ public static partial class SimulationBootstrapper
             "娓呮按" or "娴北" => SettlementTier.MarketTown,
             _ => SettlementTier.CountySeat,
         };
+    }
+
+    /// <summary>
+    /// Phase 2b.2 — single seam for seeding a <see cref="PersonRecord"/> with
+    /// an age-derived <c>BirthDate</c> and matching <see cref="LifeStage"/>.
+    /// Every <c>FamilyPersonState</c> seeded into the world must be mirrored
+    /// here so <c>IPersonRegistryQueries.GetAgeMonths</c> is authoritative
+    /// and FamilyCore's local age mirror is only a transitional fallback.
+    /// See <c>PERSON_OWNERSHIP_RULES.md</c>.
+    /// </summary>
+    private static void SeedPersonRecord(
+        PersonRegistryState personRegistryState,
+        GameDate currentDate,
+        PersonId id,
+        string displayName,
+        int ageMonths,
+        PersonGender gender,
+        FidelityRing fidelityRing)
+    {
+        int years = ageMonths / 12;
+        int monthsRemainder = ageMonths % 12;
+        int birthYear = currentDate.Year - years;
+        int birthMonth = currentDate.Month - monthsRemainder;
+        if (birthMonth <= 0)
+        {
+            birthMonth += 12;
+            birthYear -= 1;
+        }
+
+        personRegistryState.Persons.Add(new PersonRecord
+        {
+            Id = id,
+            DisplayName = displayName,
+            BirthDate = new GameDate(birthYear, birthMonth),
+            Gender = gender,
+            LifeStage = PersonRegistryModule.ResolveLifeStage(ageMonths),
+            IsAlive = true,
+            FidelityRing = fidelityRing,
+        });
     }
 
 }
