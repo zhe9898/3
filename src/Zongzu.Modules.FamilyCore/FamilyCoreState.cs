@@ -49,6 +49,19 @@ public sealed class ClanStateData
 
     public int MourningLoad { get; set; }
 
+    // ── STEP2A / A0a — 家内照料 + 郎中药铺链。A1 老死风险带、A4 婚议、
+    //    A5 婴幼儿夭折的共同维度入口；本 step 只种字段 + seed，不写规则。
+    //    skill medicine-healing-burial：治疗只改风险权重，不保证成功。
+
+    /// <summary>长期照料负担（0–100）。慢病老人、重症婴儿累积。</summary>
+    public int CareLoad { get; set; }
+
+    /// <summary>葬事拖累（0–100）。葬事一跳，3–6 月衰。</summary>
+    public int FuneralDebt { get; set; }
+
+    /// <summary>求医信心（0–100）。与聚落 HealerAccess band 联动。</summary>
+    public int RemedyConfidence { get; set; }
+
     public string LastConflictCommandCode { get; set; } = string.Empty;
 
     public string LastConflictCommandLabel { get; set; } = string.Empty;

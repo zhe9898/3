@@ -219,8 +219,33 @@ public static class LanxiSeed
             Security = security,
             Prosperity = prosperity,
             BaselineInstitutionCount = 1,
+            HealerAccess = DeriveHealerAccess(nodeKind, tier),
             NeighborIds = new List<SettlementId>(neighbors),
             ParentAdministrativeId = parent,
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A0a — band 由 NodeKind + Tier 推断，而非同质数字
+    /// （skill simulation-calibration）。州府级 MarketTown 才配 Renowned，
+    /// 县治 / 本镇有 Local 坐堂医，村落大多 None/Itinerant，祠堂 / 私窝不看病。
+    /// </summary>
+    private static HealerAccess DeriveHealerAccess(SettlementNodeKind kind, SettlementTier tier)
+    {
+        return kind switch
+        {
+            SettlementNodeKind.PrefectureSeat => HealerAccess.Renowned,
+            SettlementNodeKind.CountySeat => HealerAccess.Local,
+            SettlementNodeKind.MarketTown => HealerAccess.Local,
+            SettlementNodeKind.Ferry => HealerAccess.Itinerant,
+            SettlementNodeKind.CanalJunction => HealerAccess.Itinerant,
+            SettlementNodeKind.Temple => HealerAccess.Itinerant,
+            SettlementNodeKind.Granary => HealerAccess.None,
+            SettlementNodeKind.LineageHall => HealerAccess.None,
+            SettlementNodeKind.Village => HealerAccess.None,
+            SettlementNodeKind.SmugglingCache => HealerAccess.None,
+            SettlementNodeKind.CovertMeetPoint => HealerAccess.None,
+            _ => HealerAccess.None,
         };
     }
 

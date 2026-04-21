@@ -34,7 +34,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
     public override string ModuleKey => KnownModuleKeys.WorldSettlements;
 
-    public override int ModuleSchemaVersion => 3;
+    public override int ModuleSchemaVersion => 4;
 
     public override SimulationPhase Phase => SimulationPhase.WorldBaseline;
 
@@ -353,6 +353,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
                 EcoZone = settlement.EcoZone,
                 Security = settlement.Security,
                 Prosperity = settlement.Prosperity,
+                HealerAccess = settlement.HealerAccess,
             };
         }
 

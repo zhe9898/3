@@ -126,4 +126,32 @@ public static class FamilyCoreStateProjection
             person.ChildrenIds ??= new System.Collections.Generic.List<PersonId>();
         }
     }
+
+    /// <summary>
+    /// STEP2A / A0a — v4 → v5：家内照料 + 郎中药铺链字段入场。
+    /// <list type="bullet">
+    ///   <item><c>CareLoad</c>, <c>FuneralDebt</c> 默认 0（旧档没有葬债记账）。</item>
+    ///   <item><c>RemedyConfidence</c> 按 <c>Prestige/4 + 30</c> 推断并夹 0–60；
+    ///         旧档没有问医信心，但门望高的人家对请医更自信，给一点启动值。</item>
+    /// </list>
+    /// 本 step 不写规则；A1 老死风险带才会读 CareLoad/RemedyConfidence。
+    /// </summary>
+    public static void UpgradeFromSchemaV4ToV5(FamilyCoreState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        foreach (ClanStateData clan in state.Clans)
+        {
+            clan.CareLoad = Math.Clamp(clan.CareLoad, 0, 100);
+            clan.FuneralDebt = Math.Clamp(clan.FuneralDebt, 0, 100);
+            if (clan.RemedyConfidence <= 0)
+            {
+                clan.RemedyConfidence = Math.Clamp((clan.Prestige / 4) + 30, 0, 60);
+            }
+            else
+            {
+                clan.RemedyConfidence = Math.Clamp(clan.RemedyConfidence, 0, 100);
+            }
+        }
+    }
 }

@@ -69,6 +69,13 @@ public sealed class SettlementStateData
 
     public int BaselineInstitutionCount { get; set; }
 
+    /// <summary>
+    /// STEP2A / A0a — 家内照料 + 郎中药铺链 band。决定本聚落能否求医，
+    /// 以及 A1 老死风险带的降档权重入口。band 而非数字（skill
+    /// simulation-calibration）；治疗不保证成功（skill medicine-healing-burial）。
+    /// </summary>
+    public HealerAccess HealerAccess { get; set; }
+
     /// <summary>Adjacency graph — purely geometric neighbors; SPEC §1.1/12.4. Phase 1c schema v3.</summary>
     public List<SettlementId> NeighborIds { get; set; } = new();
 

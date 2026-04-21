@@ -39,6 +39,13 @@ public sealed record ClanSnapshot
 
     public int MourningLoad { get; init; }
 
+    // STEP2A / A0a — 家内照料 + 郎中药铺链投影。
+    public int CareLoad { get; init; }
+
+    public int FuneralDebt { get; init; }
+
+    public int RemedyConfidence { get; init; }
+
     public int InfantCount { get; init; }
 
     public string LastConflictCommandCode { get; init; } = string.Empty;

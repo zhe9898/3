@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Application;
@@ -121,7 +121,13 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 3
                 && step.TargetVersion == 4),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(4));
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.FamilyCore
+                && step.SourceVersion == 4
+                && step.TargetVersion == 5),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(5));
         Assert.That(migratedState.Clans, Has.Count.EqualTo(currentState.Clans.Count));
         Assert.That(
             migratedState.Clans.All(static clan =>
@@ -187,7 +193,15 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 2
                 && step.TargetVersion == 3),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(3));
+        // STEP2A / A0a: WorldSettlements schema raised 3→4 so HealerAccess band
+        // lands on legacy saves too (skill simulation-calibration).
+        Assert.That(
+            reloaded.LoadMigrationReport!.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WorldSettlements
+                && step.SourceVersion == 3
+                && step.TargetVersion == 4),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.Tier == SettlementTier.CountySeat), Is.True);
         // v2閳姵3 migration must populate the new NodeKind / Visibility / EcoZone

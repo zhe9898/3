@@ -60,6 +60,12 @@ public sealed record SettlementSnapshot
     public int Security { get; init; }
 
     public int Prosperity { get; init; }
+
+    /// <summary>
+    /// STEP2A / A0a — 家内照料 + 郎中药铺 band（skill simulation-calibration：
+    /// 每 band 语义各不相同，不是同质 0–100 条）。
+    /// </summary>
+    public HealerAccess HealerAccess { get; init; }
 }
 
 /// <summary>

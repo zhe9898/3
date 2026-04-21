@@ -66,9 +66,11 @@ public static partial class SimulationBootstrapper
         SaveMigrationPipeline pipeline = new();
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 1, 2, MigrateWorldSettlementsStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 2, 3, MigrateWorldSettlementsStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 3, 4, MigrateWorldSettlementsStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 1, 2, MigrateFamilyCoreStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 3, 4, MigrateFamilyCoreStateV3ToV4);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 4, 5, MigrateFamilyCoreStateV4ToV5);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 1, 2, MigratePublicLifeAndRumorStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 2, 3, MigratePublicLifeAndRumorStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 3, 4, MigratePublicLifeAndRumorStateV3ToV4);
@@ -218,6 +220,47 @@ public static partial class SimulationBootstrapper
         };
     }
 
+    /// <summary>
+    /// STEP2A / A0a — v3 → v4：<see cref="SettlementStateData.HealerAccess"/>
+    /// band 入场。旧档按 NodeKind 推断档位（skill simulation-calibration：band
+    /// 语义各不相同，不是同质数字）。州府级名医、县镇坐堂医、渡口游方郎中、
+    /// 村落祠堂私窝无医。不重写已经有值的档位。
+    /// </summary>
+    private static ModuleStateEnvelope MigrateWorldSettlementsStateV3ToV4(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(typeof(WorldSettlementsState), envelope.Payload);
+
+        foreach (SettlementStateData settlement in migratedState.Settlements)
+        {
+            if (settlement.HealerAccess != HealerAccess.Unknown)
+            {
+                continue;
+            }
+
+            settlement.HealerAccess = settlement.NodeKind switch
+            {
+                SettlementNodeKind.PrefectureSeat => HealerAccess.Renowned,
+                SettlementNodeKind.CountySeat => HealerAccess.Local,
+                SettlementNodeKind.MarketTown => HealerAccess.Local,
+                SettlementNodeKind.WalledTown => HealerAccess.Local,
+                SettlementNodeKind.Ferry => HealerAccess.Itinerant,
+                SettlementNodeKind.Wharf => HealerAccess.Itinerant,
+                SettlementNodeKind.CanalJunction => HealerAccess.Itinerant,
+                SettlementNodeKind.Temple => HealerAccess.Itinerant,
+                SettlementNodeKind.ShrineCourt => HealerAccess.Itinerant,
+                _ => HealerAccess.None,
+            };
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 4,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
+        };
+    }
+
     private static ModuleStateEnvelope MigrateFamilyCoreStateV1ToV2(ModuleStateEnvelope envelope)
     {
         MessagePackModuleStateSerializer serializer = new();
@@ -256,6 +299,24 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.FamilyCore,
             ModuleSchemaVersion = 4,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A0a — v4 → v5：家内照料 + 郎中药铺链字段入场。旧档补默认值，
+    /// 规则（A1 老死风险带）不在本步触发。
+    /// </summary>
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV4ToV5(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        FamilyCoreStateProjection.UpgradeFromSchemaV4ToV5(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 5,
             Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
         };
     }

@@ -43,6 +43,8 @@ public static partial class SimulationBootstrapper
             Security = 57,
             Prosperity = 61,
             BaselineInstitutionCount = 1,
+            // STEP2A / A0a — 兰溪县治配坐堂医（非州府名医）。band 而非数字。
+            HealerAccess = HealerAccess.Local,
         });
 
         familyState.Clans.Add(new ClanStateData
@@ -53,6 +55,10 @@ public static partial class SimulationBootstrapper
             Prestige = 52,
             SupportReserve = 60,
             HeirPersonId = heirId,
+            // STEP2A / A0a — 家内照料链初值：无葬债，照料轻，问医信心中等偏低。
+            CareLoad = 6,
+            FuneralDebt = 0,
+            RemedyConfidence = 40,
         });
 
         familyState.People.Add(new FamilyPersonState
@@ -457,6 +463,14 @@ public static partial class SimulationBootstrapper
             Security = slice.Security,
             Prosperity = slice.Prosperity,
             BaselineInstitutionCount = 1,
+            // STEP2A / A0a — 压力片子县 / 镇 / 村按 Tier 推一档，避免同质 0–100。
+            HealerAccess = InferStressSettlementTier(slice.SettlementName) switch
+            {
+                SettlementTier.PrefectureSeat => HealerAccess.Renowned,
+                SettlementTier.CountySeat => HealerAccess.Local,
+                SettlementTier.MarketTown => HealerAccess.Itinerant,
+                _ => HealerAccess.None,
+            },
         });
 
         familyState.Clans.Add(new ClanStateData
@@ -467,6 +481,10 @@ public static partial class SimulationBootstrapper
             Prestige = slice.ClanPrestige,
             SupportReserve = slice.ClanSupport,
             HeirPersonId = heirId,
+            // STEP2A / A0a — 旁房照料初值：比宗房略紧，葬债尚无。
+            CareLoad = 10,
+            FuneralDebt = 0,
+            RemedyConfidence = Math.Clamp((slice.ClanPrestige / 4) + 25, 0, 60),
         });
 
         familyState.People.Add(new FamilyPersonState
