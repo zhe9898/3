@@ -537,6 +537,86 @@ public sealed class SocialMemoryAndRelationsModuleTests
         Assert.That(seed.LifecycleState, Is.EqualTo(MemoryLifecycleState.Dormant));
     }
 
+    [Test]
+    public void HandleEvents_ChildLossFromFamilyCore_RaisesFearAndAddsChildLossMemory()
+    {
+        // STEP2A / A5 — FamilyCore 发的 DeathByIllness（婴幼儿分流）应在
+        // 死者所属 clan 提 FearPressure 并添一条 Fear/MourningDebt 记忆。
+        // Population 的 DeathByIllness（族外佃户 / 成人）不走此通道。
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+        });
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(11),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Wa",
+            AgeMonths = 6,
+            IsAlive = false,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+
+        DomainEventRecord[] events =
+        {
+            // FamilyCore child death
+            new(KnownModuleKeys.FamilyCore, DeathCauseEventNames.DeathByIllness, "Zhang门内幼儿病殁。", "11"),
+            // Population adult illness — 不应触发 child_loss
+            new(KnownModuleKeys.PopulationAndHouseholds, DeathCauseEventNames.DeathByIllness, "佃户病殁。", "999"),
+        };
+
+        KernelState kernelState = KernelState.Create(915);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 12),
+            new FeatureManifest(),
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.HandleEvents(new ModuleEventHandlingScope<SocialMemoryAndRelationsState>(socialState, context, events));
+
+        ClanNarrativeState narrative = socialState.ClanNarratives.Single();
+        Assert.That(narrative.FearPressure, Is.GreaterThan(0));
+
+        MemoryRecordState[] childLoss = socialState.Memories.Where(m => m.Kind == "child_loss").ToArray();
+        Assert.That(childLoss, Has.Length.EqualTo(1));
+        Assert.That(childLoss[0].Type, Is.EqualTo(MemoryType.Fear));
+        Assert.That(childLoss[0].Subtype, Is.EqualTo(MemorySubtype.MourningDebt));
+        Assert.That(childLoss[0].SubjectClanId, Is.EqualTo(new ClanId(1)));
+    }
+
+    private sealed class EmptyPersonRegistryQueries : IPersonRegistryQueries
+    {
+        public bool TryGetPerson(PersonId id, out PersonRecord person)
+        {
+            person = null!;
+            return false;
+        }
+
+        public IReadOnlyList<PersonRecord> GetAllPersons() => [];
+
+        public IReadOnlyList<PersonRecord> GetPersonsByFidelityRing(FidelityRing ring) => [];
+
+        public IReadOnlyList<PersonRecord> GetLivingPersons() => [];
+
+        public bool IsAlive(PersonId id) => false;
+
+        public int GetAgeMonths(PersonId id, GameDate currentDate) => -1;
+    }
+
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
     {
         private readonly IReadOnlyList<CampaignFrontSnapshot> _campaigns;

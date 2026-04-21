@@ -40,6 +40,8 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         FamilyCoreEventNames.HeirSecurityWeakened,
         FamilyCoreEventNames.HeirAppointed,
         FamilyCoreEventNames.HeirSuccessionOccurred,
+        // STEP2A / A5 — 婴幼儿夭折走 DeathByIllness 分流（= DeathCauseEventNames.DeathByIllness）。
+        DeathCauseEventNames.DeathByIllness,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -151,6 +153,9 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
             // STEP2A / A1 — 老死风险带累积（先累账本，再判身亡）。
             AccrueElderFragility(clan, signals, homeSettlement, currentDate);
+            // STEP2A / A5 — 婴幼儿病殁风险带累积（与 A1 同通道；累到 100 走
+            // DeathByIllness 分流，由 TryResolveClanDeath 按年龄分流发射）。
+            AccrueChildFragility(clan, signals, homeSettlement, currentDate);
             bool hadDeathThisMonth = TryResolveClanDeath(scope, clan, signals, registryQueries);
             signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 

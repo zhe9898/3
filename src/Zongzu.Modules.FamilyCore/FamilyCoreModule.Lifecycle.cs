@@ -294,29 +294,55 @@ public sealed partial class FamilyCoreModule
             clan.HeirPersonId = null;
         }
 
-        clan.MourningLoad = Math.Clamp(clan.MourningLoad + 24, 0, 100);
+        // STEP2A / A5 — 按死者年龄分流死因事件 & 副作用权重。
+        // 婴幼儿（<12 岁）走 DeathByIllness + 更重的 ReproductivePressure 与 MourningLoad
+        // （skill fertility-demography-infant-mortality：婴儿死不塌成单一 sadness，
+        // 应产出 fear/debt/ritual/inheritance anxiety，此处先在 clan 侧加压，
+        // SocialMemory 侧再接 child_loss 记忆）；其余仍走 ClanMemberDied（A1 老死链）。
+        bool isChildDeath = deathAgeMonths < AdultAgeMonths;
+
+        int mourningDelta = isChildDeath ? 18 : 24;
+        clan.MourningLoad = Math.Clamp(clan.MourningLoad + mourningDelta, 0, 100);
         clan.InheritancePressure = Math.Clamp(clan.InheritancePressure + (wasHeir ? 18 : 8), 0, 100);
         clan.SeparationPressure = Math.Clamp(clan.SeparationPressure + (wasHeir ? 8 : 2), 0, 100);
-        if (deathAgeMonths < AdultAgeMonths)
+        if (isChildDeath)
         {
-            clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 10, 0, 100);
+            // 再育焦虑 —— 婴幼儿夭折后家内再添丁之望更紧。
+            clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 14, 0, 100);
         }
 
-        clan.LastLifecycleOutcome = wasHeir
-            ? "承祧之人忽逝，举哀之外，又添后议与房支觊觎。"
-            : "门内举哀，堂上先忙丧服与祭次，旁事都得让后。";
-        clan.LastLifecycleTrace = wasHeir
-            ? $"{clan.ClanName}失了承祧之人，香火、后议与房支人心一时俱紧。"
-            : $"{clan.ClanName}门内有长者亡故，家中先忙丧服、发引与祭次。";
+        if (isChildDeath)
+        {
+            clan.LastLifecycleOutcome = "襁褓未立，堂上添了一分白头人送黑头人的凄惶。";
+            clan.LastLifecycleTrace = $"{clan.ClanName}门内幼儿夭折，家中丧服之外又添再育之忧。";
+        }
+        else
+        {
+            clan.LastLifecycleOutcome = wasHeir
+                ? "承祧之人忽逝，举哀之外，又添后议与房支觊觎。"
+                : "门内举哀，堂上先忙丧服与祭次，旁事都得让后。";
+            clan.LastLifecycleTrace = wasHeir
+                ? $"{clan.ClanName}失了承祧之人，香火、后议与房支人心一时俱紧。"
+                : $"{clan.ClanName}门内有长者亡故，家中先忙丧服、发引与祭次。";
+        }
 
         scope.RecordDiff(
-            wasHeir
-                ? $"{clan.ClanName}承祧之人身故，门内举哀，继嗣之议与房支争执随即翻起。"
-                : $"{clan.ClanName}门内举哀，丧服与祭次先压住家中诸事。",
+            isChildDeath
+                ? $"{clan.ClanName}门内幼儿夭折，家中丧服与再育之议一并上肩。"
+                : wasHeir
+                    ? $"{clan.ClanName}承祧之人身故，门内举哀，继嗣之议与房支争执随即翻起。"
+                    : $"{clan.ClanName}门内举哀，丧服与祭次先压住家中诸事。",
             clan.Id.Value.ToString());
         // Entity key is PersonId so PersonRegistry can consolidate this into
         // the canonical PersonDeceased. See PERSON_OWNERSHIP_RULES.md.
-        scope.Emit(FamilyCoreEventNames.ClanMemberDied, $"{clan.ClanName}门内举哀。", deathTarget.Id.Value.ToString());
+        if (isChildDeath)
+        {
+            scope.Emit(DeathCauseEventNames.DeathByIllness, $"{clan.ClanName}门内幼儿病殁。", deathTarget.Id.Value.ToString());
+        }
+        else
+        {
+            scope.Emit(FamilyCoreEventNames.ClanMemberDied, $"{clan.ClanName}门内举哀。", deathTarget.Id.Value.ToString());
+        }
         return true;
     }
 
@@ -411,6 +437,98 @@ public sealed partial class FamilyCoreModule
         }
 
         // 求医信心高则略降权重（-1，不归零）。
+        if (clan.RemedyConfidence >= 60) dose = Math.Max(0, dose - 1);
+
+        return dose;
+    }
+
+    /// <summary>
+    /// STEP2A / A5 — 婴幼儿病殁风险带累积。走与 A1 老死同一条 <see cref="FamilyPersonState.FragilityLedger"/>
+    /// 通道；不重拍新字段。累积到 100 由 <see cref="TryResolveClanDeath"/> 选中，随后
+    /// 走 <c>DeathByIllness</c> 分流（见该函数）。
+    ///
+    /// <para>skill <c>fertility-demography-infant-mortality</c>：婴儿死亡不是单一 sadness，
+    /// 应沉淀为 fear / ritual / inheritance anxiety。本函数只负责累压，副作用分布在
+    /// 死亡结算（<c>MourningLoad</c>/<c>ReproductivePressure</c>）与 SocialMemory（child_loss 记忆）。</para>
+    ///
+    /// <para>年龄带（0 – &lt;144 月）：Infant（&lt;24）最高；Young Child（24–59）中；
+    /// Child（60–143）只在家内 / 聚落压力真起来时才累。Youth 以上由 A1 接管或不累。</para>
+    /// </summary>
+    internal static void AccrueChildFragility(
+        ClanStateData clan,
+        FamilyMonthSignals signals,
+        SettlementSnapshot homeSettlement,
+        GameDate currentDate)
+    {
+        foreach (FamilyPersonAge entry in signals.LivingPeople)
+        {
+            int ageMonths = entry.AgeMonths;
+            if (ageMonths >= AdultAgeMonths)
+            {
+                continue;
+            }
+
+            int dose = ComputeChildFragilityDose(ageMonths, clan, homeSettlement, currentDate);
+            if (dose <= 0)
+            {
+                continue;
+            }
+
+            entry.Person.FragilityLedger = Math.Clamp(entry.Person.FragilityLedger + dose, 0, 100);
+        }
+    }
+
+    internal static int ComputeChildFragilityDose(
+        int ageMonths,
+        ClanStateData clan,
+        SettlementSnapshot homeSettlement,
+        GameDate currentDate)
+    {
+        // 年龄带基底（believable band，不拍概率）。Infant 最脆；越大越不依赖基线。
+        int dose;
+        bool isInfant;
+        if (ageMonths < 24)
+        {
+            dose = 2;
+            isInfant = true;
+        }
+        else if (ageMonths < 60)
+        {
+            dose = 1;
+            isInfant = false;
+        }
+        else
+        {
+            dose = 0;
+            isInfant = false;
+        }
+
+        // 冬寒对襁褓尤甚（农历十一/十二/正）。
+        int month = currentDate.Month;
+        bool isWinter = month == 11 || month == 12 || month == 1;
+        if (isWinter)
+        {
+            dose += isInfant ? 2 : ageMonths < 60 ? 1 : 0;
+        }
+
+        // clan 养护侧：照料已满的户新婴最先崩；支匮喂养不继；哀重家内人心无余力。
+        if (clan.CareLoad >= 50) dose += 1;
+        if (clan.SupportReserve < 40) dose += 1;
+        if (clan.MourningLoad >= 50) dose += 1;
+
+        // 聚落侧：治安差则疫疠多（秩序差 = 水陆 / 街巷腌臜）。
+        if (homeSettlement.Security < 40) dose += 1;
+
+        // HealerAccess：对婴儿权重比成人更重。
+        switch (homeSettlement.HealerAccess)
+        {
+            case HealerAccess.None: dose += isInfant ? 2 : 1; break;
+            case HealerAccess.Itinerant: dose += 1; break;
+            case HealerAccess.Renowned: dose = Math.Max(0, dose - 1); break;
+            default: break; // Local 基线
+        }
+
+        // 求医信心高略降权重（-1，不归零；skill 铁律：治疗不是魔法）。
         if (clan.RemedyConfidence >= 60) dose = Math.Max(0, dose - 1);
 
         return dose;

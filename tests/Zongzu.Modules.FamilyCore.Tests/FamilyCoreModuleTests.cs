@@ -381,6 +381,92 @@ public sealed class FamilyCoreModuleTests
     }
 
     [Test]
+    public void RunMonth_InfantDeath_EmitsDeathByIllness_AndRaisesReproductivePressure()
+    {
+        // STEP2A / A5 — 婴幼儿夭折走 DeathByIllness 分流；MourningLoad 上涨；
+        // ReproductivePressure 因再育焦虑同步上涨；成人 heir 不被此事波及。
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 57,
+            Prosperity = 64,
+            BaselineInstitutionCount = 1,
+            HealerAccess = HealerAccess.None,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 58,
+            SupportReserve = 52,
+            HeirPersonId = new PersonId(10),
+            HeirSecurity = 62,
+            MarriageAllianceValue = 72,
+            ReproductivePressure = 30,
+            MourningLoad = 0,
+        });
+        // 成人 heir 不应被新路径影响。
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(10),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Lang",
+            AgeMonths = 30 * 12,
+            IsAlive = true,
+        });
+        // 婴儿 ledger 预置到顶 → 本月由 TryResolveClanDeath 选中。
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(11),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Wa",
+            AgeMonths = 6,
+            IsAlive = true,
+            FragilityLedger = 100,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        RecordingPersonRegistryCommands registryCommands = new();
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries(registryCommands));
+        queries.Register<IPersonRegistryCommands>(registryCommands);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 12),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(41)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        int reproductiveBefore = familyState.Clans[0].ReproductivePressure;
+        familyModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(familyState, context));
+
+        // 发射的是 DeathByIllness（婴幼儿分流），而不是 ClanMemberDied。
+        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == DeathCauseEventNames.DeathByIllness), Is.True);
+        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.ClanMemberDied), Is.False);
+        // EntityKey 为 PersonId，便于 PersonRegistry consolidate。
+        IDomainEvent illnessEvent = context.DomainEvents.Events.Single(static evt => evt.EventType == DeathCauseEventNames.DeathByIllness);
+        Assert.That(illnessEvent.EntityKey, Is.EqualTo("11"));
+        // 死亡写回走 PersonRegistry.MarkDeceased（权威链未变）。
+        Assert.That(registryCommands.DeceasedIds, Has.Count.EqualTo(1));
+        Assert.That(registryCommands.DeceasedIds[0], Is.EqualTo(new PersonId(11)));
+        // heir 仍在（成人未被新路径误伤）。
+        Assert.That(familyState.Clans[0].HeirPersonId, Is.EqualTo(new PersonId(10)));
+        // 副作用：MourningLoad / ReproductivePressure 均涨。
+        Assert.That(familyState.Clans[0].MourningLoad, Is.GreaterThan(0));
+        Assert.That(familyState.Clans[0].ReproductivePressure, Is.GreaterThan(reproductiveBefore));
+    }
+
+    [Test]
     public void RunMonth_RegistersBirth_WhenMarriageAndReproductivePressureAlign()
     {
         WorldSettlementsModule worldModule = new();

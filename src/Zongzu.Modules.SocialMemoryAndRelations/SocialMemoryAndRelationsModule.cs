@@ -37,6 +37,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         TradeShockEventTypes.TradeProspered,
         // Step 1b gap 2: violent death → cross-generation blood-feud memory (no-op dispatch)
         DeathCauseEventNames.DeathByViolence,
+        // STEP2A / A5: infant/child illness death → child_loss memory + fear pressure.
+        // 来自 FamilyCore 的 DeathByIllness 表婴幼儿病殁（ModuleKey == FamilyCore），
+        // Population 的 DeathByIllness 表族外佃户 / 成人病殁，不在此通道。
+        DeathCauseEventNames.DeathByIllness,
         // Step 1b gap 4: branch split / heir weakened → clan narrative (no-op dispatch)
         FamilyCoreEventNames.BranchSeparationApproved,
         FamilyCoreEventNames.HeirSecurityWeakened,
@@ -174,6 +178,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         DispatchTradeShockEvents(scope);
         DispatchViolentDeathEvents(scope);
         DispatchFamilyBranchEvents(scope);
+        DispatchChildLossEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
@@ -250,6 +255,48 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
             {
                 // TODO Step 2: 更新 ClanNarrativeState / 跨代 grudge / FeudMemory。
             }
+        }
+    }
+
+    /// <summary>
+    /// STEP2A / A5 — 婴幼儿病殁（FamilyCore 发 <c>DeathByIllness</c> 且 EntityKey 为 PersonId）
+    /// 在死者所属 clan 沉淀 child_loss 记忆。skill
+    /// <c>fertility-demography-infant-mortality</c>：婴儿死不塌成单一 sadness，
+    /// 应产出 fear / ritual / inheritance anxiety。此处提 <c>FearPressure</c> 一跳，
+    /// 添一条 <see cref="MemoryType.Fear"/> / <see cref="MemorySubtype.MourningDebt"/> 记忆。
+    ///
+    /// <para>只消费来自 <see cref="KnownModuleKeys.FamilyCore"/> 的 DeathByIllness（婴幼儿通道）；
+    /// Population 发的同名事件是族外佃户 / 成人病殁，跳过。</para>
+    /// </summary>
+    private static void DispatchChildLossEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        IFamilyCoreQueries? familyQueries = null;
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType != DeathCauseEventNames.DeathByIllness) continue;
+            if (!string.Equals(domainEvent.ModuleKey, KnownModuleKeys.FamilyCore, StringComparison.Ordinal)) continue;
+            if (string.IsNullOrEmpty(domainEvent.EntityKey)) continue;
+            if (!int.TryParse(domainEvent.EntityKey, out int personIdValue)) continue;
+
+            familyQueries ??= scope.GetRequiredQuery<IFamilyCoreQueries>();
+            FamilyPersonSnapshot? person = familyQueries.FindPerson(new PersonId(personIdValue));
+            if (person is null) continue;
+
+            ClanNarrativeState narrative = GetOrCreateNarrative(scope.State, person.ClanId);
+            narrative.FearPressure = Math.Clamp(narrative.FearPressure + 3, 0, 100);
+
+            AddMemory(
+                scope.State,
+                person.ClanId,
+                "child_loss",
+                MemoryType.Fear,
+                MemorySubtype.MourningDebt,
+                "clan.child_loss",
+                2,
+                Math.Max(25, narrative.FearPressure),
+                true,
+                $"{person.GivenName}夭折，堂上哀惧未平，再育与祭次之议同压。",
+                scope.Context);
         }
     }
 
