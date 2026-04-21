@@ -161,7 +161,7 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
             TryReappointHeir(scope, clan, signals, registryQueries, hadDeathThisMonth);
             signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 
-            bool hadBirthThisMonth = TryResolveClanBirth(scope, clan, signals);
+            bool hadBirthThisMonth = TryResolveClanBirth(scope, clan, signals, registryQueries);
             if (hadBirthThisMonth)
             {
                 signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);

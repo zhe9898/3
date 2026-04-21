@@ -186,7 +186,7 @@ public sealed partial class FamilyCoreModule
         return true;
     }
 
-    internal static bool TryResolveClanBirth(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals)
+    internal static bool TryResolveClanBirth(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals, IPersonRegistryQueries registryQueries)
     {
         if (signals.AdultCount == 0
             || clan.MarriageAllianceValue < 55
@@ -224,6 +224,12 @@ public sealed partial class FamilyCoreModule
             Loyalty = 50,
             Sociability = 50,
         });
+
+        // STEP2A / A4 补遗 — 新生儿挂父母关系。父取本 clan 在世已婚男性中最年长者，
+        // 若其 SpouseId 在世则取为母；无已婚父时退而取本 clan 在世男性长者（保
+        // 留父系血亲图谱），母留空。挂 ChildrenIds 以便后续过继 / 分房使用。
+        FamilyPersonState newborn = scope.State.People[scope.State.People.Count - 1];
+        LinkNewbornParents(scope.State, clan, newborn, registryQueries);
 
         clan.ReproductivePressure = Math.Max(0, clan.ReproductivePressure - 26);
         clan.SupportReserve = Math.Max(0, clan.SupportReserve - 4);
@@ -490,5 +496,53 @@ public sealed partial class FamilyCoreModule
             return true;
         }
         return record.Gender != PersonGender.Female;
+    }
+
+    /// <summary>
+    /// STEP2A / A4 补遗 — 新生儿父母挂载。取本 clan 在世已婚男性中最年长者
+    /// 为父，其 <c>SpouseId</c>（在任一 clan、在世）为母；若无已婚父，退取本
+    /// clan 在世男性长者。同时把新生儿加入父母的 <see cref="FamilyPersonState.ChildrenIds"/>。
+    /// </summary>
+    private static void LinkNewbornParents(
+        FamilyCoreState state,
+        ClanStateData clan,
+        FamilyPersonState newborn,
+        IPersonRegistryQueries registryQueries)
+    {
+        FamilyPersonState? father = null;
+        FamilyPersonState? fatherFallback = null;
+        foreach (FamilyPersonState person in state.People
+                     .Where(p => p.ClanId == clan.Id && p.Id != newborn.Id)
+                     .OrderByDescending(p => p.AgeMonths)
+                     .ThenBy(p => p.Id.Value))
+        {
+            if (!IsPersonAlive(person, registryQueries)) continue;
+            if (!IsHeirEligibleGender(person.Id, registryQueries)) continue;
+            if (person.SpouseId is not null && father is null)
+            {
+                father = person;
+            }
+            fatherFallback ??= person;
+        }
+
+        father ??= fatherFallback;
+        if (father is null) return;
+
+        newborn.FatherId = father.Id;
+        if (!father.ChildrenIds.Contains(newborn.Id))
+        {
+            father.ChildrenIds.Add(newborn.Id);
+        }
+
+        if (father.SpouseId is null) return;
+
+        FamilyPersonState? mother = state.People.FirstOrDefault(p => p.Id == father.SpouseId.Value);
+        if (mother is null || !IsPersonAlive(mother, registryQueries)) return;
+
+        newborn.MotherId = mother.Id;
+        if (!mother.ChildrenIds.Contains(newborn.Id))
+        {
+            mother.ChildrenIds.Add(newborn.Id);
+        }
     }
 }

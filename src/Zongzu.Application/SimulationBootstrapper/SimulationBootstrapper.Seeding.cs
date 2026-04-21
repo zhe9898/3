@@ -102,6 +102,7 @@ public static partial class SimulationBootstrapper
             personRegistryState,
             simulation,
             clanId,
+            heirId,
             elderName: "张德",
             spouseName: "张王氏",
             youthName: "张敬",
@@ -566,6 +567,7 @@ public static partial class SimulationBootstrapper
             stressPersonRegistryState,
             simulation,
             clanId,
+            heirId,
             elderName: kin.elder,
             spouseName: kin.spouse,
             youthName: kin.youth,
@@ -814,6 +816,7 @@ public static partial class SimulationBootstrapper
         PersonRegistryState personRegistry,
         GameSimulation simulation,
         ClanId clanId,
+        PersonId heirId,
         string elderName,
         string spouseName,
         string youthName,
@@ -891,6 +894,45 @@ public static partial class SimulationBootstrapper
         });
         SeedPersonRecord(personRegistry, simulation.CurrentDate, childId, childName,
             ageMonths: 8 * 12, gender: PersonGender.Male, fidelityRing: FidelityRing.Local);
+
+        // STEP2A / A4 补遗 — 族内亲属图谱挂载：
+        //   elder(63 父) → 子：heir(32), youth(17)
+        //   heir ↔ spouse（heir 之妻）
+        //   spouse(28 母) / heir(32 父) → 子：child(8)
+        // 注：28 岁之 spouse 非 17 岁 youth 的生母（年代不合），youth 只挂父线。
+        LinkSeededKin(familyState, elderId, heirId);
+        LinkSeededKin(familyState, elderId, youthId);
+        LinkSeededSpouses(familyState, heirId, spouseId);
+        LinkSeededKin(familyState, heirId, childId);
+        LinkSeededKin(familyState, spouseId, childId, isMother: true);
+    }
+
+    private static void LinkSeededKin(FamilyCoreState familyState, PersonId parentId, PersonId childId, bool isMother = false)
+    {
+        FamilyPersonState? parent = familyState.People.FirstOrDefault(p => p.Id == parentId);
+        FamilyPersonState? child = familyState.People.FirstOrDefault(p => p.Id == childId);
+        if (parent is null || child is null) return;
+        if (isMother)
+        {
+            child.MotherId = parentId;
+        }
+        else
+        {
+            child.FatherId = parentId;
+        }
+        if (!parent.ChildrenIds.Contains(childId))
+        {
+            parent.ChildrenIds.Add(childId);
+        }
+    }
+
+    private static void LinkSeededSpouses(FamilyCoreState familyState, PersonId a, PersonId b)
+    {
+        FamilyPersonState? personA = familyState.People.FirstOrDefault(p => p.Id == a);
+        FamilyPersonState? personB = familyState.People.FirstOrDefault(p => p.Id == b);
+        if (personA is null || personB is null) return;
+        personA.SpouseId = b;
+        personB.SpouseId = a;
     }
 
 }
