@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -65,6 +65,46 @@ public sealed partial class WarfareCampaignModule : ModuleRunner<WarfareCampaign
         }
 
 
+        public IReadOnlyList<AftermathDocketSnapshot> GetAftermathDockets()
+
+        {
+
+            return _state.AftermathDockets
+
+                .OrderBy(static docket => docket.CampaignId.Value)
+
+                .Select(CloneDocket)
+
+                .ToArray();
+
+        }
+
+
+        private static AftermathDocketSnapshot CloneDocket(AftermathDocketState docket)
+
+        {
+
+            return new AftermathDocketSnapshot
+
+            {
+
+                CampaignId = docket.CampaignId,
+
+                Merits = docket.Merits.ToArray(),
+
+                Blames = docket.Blames.ToArray(),
+
+                ReliefNeeds = docket.ReliefNeeds.ToArray(),
+
+                RouteRepairs = docket.RouteRepairs.ToArray(),
+
+                DocketSummary = docket.DocketSummary,
+
+            };
+
+        }
+
+
         private static CampaignFrontSnapshot CloneCampaign(CampaignFrontState campaign)
 
         {
@@ -120,6 +160,18 @@ public sealed partial class WarfareCampaignModule : ModuleRunner<WarfareCampaign
                 SourceTrace = campaign.SourceTrace,
 
                 LastAftermathSummary = campaign.LastAftermathSummary,
+
+                Phase = campaign.Phase,
+
+                CommittedForces = campaign.CommittedForces,
+
+                SupplyStretch = campaign.SupplyStretch,
+
+                CommandFit = campaign.CommandFit,
+
+                CivilianExposure = campaign.CivilianExposure,
+
+                ContestedRouteIds = campaign.ContestedRouteIds.ToArray(),
 
                 Routes = campaign.Routes
 

@@ -219,6 +219,12 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 2
                 && step.TargetVersion == 3),
             Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WarfareCampaign
+                && step.SourceVersion == 3
+                && step.TargetVersion == 4),
+            Is.True);
         Assert.That(reloaded.LoadMigrationReport.ConsistencyPassed, Is.True);
 
         SaveRoot reloadedSave = reloaded.ExportSave();
@@ -226,7 +232,7 @@ public sealed partial class SaveMigrationPipelineTests
             typeof(WarfareCampaignState),
             reloadedSave.ModuleStates[KnownModuleKeys.WarfareCampaign].Payload);
 
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(migratedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.FrontLabel)), Is.True);
         Assert.That(migratedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.CommandFitLabel)), Is.True);
         Assert.That(migratedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.CommanderSummary)), Is.True);
@@ -281,6 +287,12 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 2
                 && step.TargetVersion == 3),
             Is.True);
+        Assert.That(
+            migratedReloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WarfareCampaign
+                && step.SourceVersion == 3
+                && step.TargetVersion == 4),
+            Is.True);
     }
 
     [Test]
@@ -314,12 +326,13 @@ public sealed partial class SaveMigrationPipelineTests
         SaveMigrationPipeline pipeline = new();
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 1, 2, static envelope => envelope);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 2, 3, static envelope => envelope);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 3, 4, static envelope => envelope);
 
         SavePreparationResult result = pipeline.PrepareForLoadWithReport(
             saveRoot,
             GameSimulation.RootSchemaVersion,
             [
-                new TestNamedModuleRunner(KnownModuleKeys.WarfareCampaign, 3),
+                new TestNamedModuleRunner(KnownModuleKeys.WarfareCampaign, 4),
                 new TestNamedModuleRunner(KnownModuleKeys.OfficeAndCareer, 3),
             ]);
 
@@ -330,7 +343,7 @@ public sealed partial class SaveMigrationPipelineTests
                 KnownModuleKeys.OfficeAndCareer,
                 KnownModuleKeys.WarfareCampaign,
             }));
-        Assert.That(result.SaveRoot.ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(result.SaveRoot.ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(result.SaveRoot.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(3));
         Assert.That(
             result.Report.ModuleSteps.Select(static step => $"{step.ModuleKey}:{step.SourceVersion}->{step.TargetVersion}").ToArray(),
@@ -338,6 +351,7 @@ public sealed partial class SaveMigrationPipelineTests
             {
                 $"{KnownModuleKeys.WarfareCampaign}:1->2",
                 $"{KnownModuleKeys.WarfareCampaign}:2->3",
+                $"{KnownModuleKeys.WarfareCampaign}:3->4",
             }));
         Assert.That(result.Report.EnabledModuleKeySetPreserved, Is.True);
         Assert.That(result.Report.ModuleStateKeySetPreserved, Is.True);

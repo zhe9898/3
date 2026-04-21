@@ -11,6 +11,23 @@ public sealed class WarfareCampaignState : IModuleStateDescriptor
     public List<CampaignFrontState> Campaigns { get; set; } = new();
 
     public List<CampaignMobilizationSignalState> MobilizationSignals { get; set; } = new();
+
+    public List<AftermathDocketState> AftermathDockets { get; set; } = new();
+}
+
+public sealed class AftermathDocketState
+{
+    public CampaignId CampaignId { get; set; }
+
+    public List<string> Merits { get; set; } = new();
+
+    public List<string> Blames { get; set; } = new();
+
+    public List<string> ReliefNeeds { get; set; } = new();
+
+    public List<string> RouteRepairs { get; set; } = new();
+
+    public string DocketSummary { get; set; } = string.Empty;
 }
 
 public sealed class CampaignFrontState
@@ -62,6 +79,18 @@ public sealed class CampaignFrontState
     public string SourceTrace { get; set; } = string.Empty;
 
     public string LastAftermathSummary { get; set; } = string.Empty;
+
+    public CampaignPhase Phase { get; set; } = CampaignPhase.Unknown;
+
+    public int CommittedForces { get; set; }
+
+    public int SupplyStretch { get; set; }
+
+    public int CommandFit { get; set; }
+
+    public int CivilianExposure { get; set; }
+
+    public List<string> ContestedRouteIds { get; set; } = new();
 
     public List<CampaignRouteState> Routes { get; set; } = new();
 }

@@ -53,6 +53,18 @@ public sealed record CampaignFrontSnapshot
 
     public string LastAftermathSummary { get; init; } = string.Empty;
 
+    public CampaignPhase Phase { get; init; } = CampaignPhase.Unknown;
+
+    public int CommittedForces { get; init; }
+
+    public int SupplyStretch { get; init; }
+
+    public int CommandFit { get; init; }
+
+    public int CivilianExposure { get; init; }
+
+    public IReadOnlyList<string> ContestedRouteIds { get; init; } = [];
+
     public IReadOnlyList<CampaignRouteSnapshot> Routes { get; init; } = [];
 }
 
@@ -108,6 +120,21 @@ public sealed record CampaignMobilizationSignalSnapshot
     public string SourceTrace { get; init; } = string.Empty;
 }
 
+public sealed record AftermathDocketSnapshot
+{
+    public CampaignId CampaignId { get; init; }
+
+    public IReadOnlyList<string> Merits { get; init; } = [];
+
+    public IReadOnlyList<string> Blames { get; init; } = [];
+
+    public IReadOnlyList<string> ReliefNeeds { get; init; } = [];
+
+    public IReadOnlyList<string> RouteRepairs { get; init; } = [];
+
+    public string DocketSummary { get; init; } = string.Empty;
+}
+
 public interface IWarfareCampaignQueries
 {
     CampaignFrontSnapshot GetRequiredCampaign(CampaignId campaignId);
@@ -115,4 +142,6 @@ public interface IWarfareCampaignQueries
     IReadOnlyList<CampaignFrontSnapshot> GetCampaigns();
 
     IReadOnlyList<CampaignMobilizationSignalSnapshot> GetMobilizationSignals();
+
+    IReadOnlyList<AftermathDocketSnapshot> GetAftermathDockets() => System.Array.Empty<AftermathDocketSnapshot>();
 }

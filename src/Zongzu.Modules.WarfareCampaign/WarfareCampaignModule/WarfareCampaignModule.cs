@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -41,7 +41,7 @@ public sealed partial class WarfareCampaignModule : ModuleRunner<WarfareCampaign
     public override string ModuleKey => KnownModuleKeys.WarfareCampaign;
 
 
-    public override int ModuleSchemaVersion => 3;
+    public override int ModuleSchemaVersion => 4;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -274,6 +274,8 @@ public sealed partial class WarfareCampaignModule : ModuleRunner<WarfareCampaign
             .OrderBy(static campaign => campaign.CampaignId.Value)
 
             .ToList();
+
+        WarfareCampaignStateProjection.BuildCampaignPhasingAndAftermath(scope.State);
 
     }
 
