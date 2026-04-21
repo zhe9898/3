@@ -78,6 +78,17 @@ Correct approach:
 - `FamilyCore` handles the event to update its own prestige state
 - `OfficeAndCareer` handles the event to open or advance office eligibility
 
+## Current command-routing gap (documented, to be closed)
+
+`ModuleRunner<TState>` currently does **not** expose a command-handling interface (no `HandleCommand` / `ExecuteCommand` method).  Therefore the thin player-command services in `Zongzu.Application` (`PlayerCommandService`, `WarfareCampaignCommandService`) currently retrieve module state via `GameSimulation.GetMutableModuleState<T>()` and mutate it directly.
+
+This is a **known structural gap**, not an intended permanent design.  The plan is:
+1. add a command-handling seam to `ModuleRunner<TState>` (or a parallel `ICommandHandler<TState>` contract);
+2. move command resolution logic out of `PlayerCommandService` and into the owning modules;
+3. make `GetMutableModuleState` truly internal-only for bootstrapping and testing.
+
+Until that seam exists, the Application services act as a temporary rule layer.  All direct state mutations are confined to Application-layer command services and do not leak into UI or projection code.
+
 ## Current M2-lite integration notes
 - `EducationAndExams.Lite` currently reads only `WorldSettlements`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces
 - `EducationAndExams.Lite` owns study progress, tutor quality, exam attempts, outcomes, and explanation text; it does not write family prestige or office state directly

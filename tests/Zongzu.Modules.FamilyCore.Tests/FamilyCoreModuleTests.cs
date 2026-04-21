@@ -370,9 +370,12 @@ public sealed class FamilyCoreModuleTests
         IReadOnlyList<FamilyPersonSnapshot> clanMembers = familyQueries.GetClanMembers(new ClanId(1));
         Assert.That(clanMembers.Count(static person => person.IsAlive), Is.EqualTo(1));
         Assert.That(familyState.Clans[0].MourningLoad, Is.GreaterThan(0));
-        Assert.That(familyState.Clans[0].HeirSecurity, Is.LessThan(62));
+        // STEP2A / A3：死一个 heir 立即递补（近 primogeniture），HeirSecurity 不再
+        // 人为凹陷——由 Zhang Er 承祧。原断言（HeirSecurity<62 + HeirSecurityWeakened）
+        // 预设 heir 空缺一月，与承祧链通电语义冲突，替换为立即补位断言。
+        Assert.That(familyState.Clans[0].HeirPersonId, Is.EqualTo(new PersonId(2)));
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.ClanMemberDied), Is.True);
-        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.HeirSecurityWeakened), Is.True);
+        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.HeirSuccessionOccurred), Is.True);
         Assert.That(registryCommands.DeceasedIds, Has.Count.EqualTo(1));
         Assert.That(registryCommands.DeceasedIds[0], Is.EqualTo(new PersonId(1)));
     }

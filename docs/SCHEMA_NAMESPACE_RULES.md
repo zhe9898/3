@@ -86,17 +86,18 @@ Example:
 - incompatible module changes do not justify hidden root changes
 
 ## Current implemented module versions
-- `WorldSettlements` uses namespace `WorldSettlements` with schema version `2`
-- `FamilyCore` uses namespace `FamilyCore` with schema version `3`
-- `PopulationAndHouseholds` uses namespace `PopulationAndHouseholds` with schema version `1`
-- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `1`
-- `EducationAndExams` uses namespace `EducationAndExams` with schema version `1`
-- `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `3`
+- `PersonRegistry` uses namespace `PersonRegistry` with schema version `1`
+- `WorldSettlements` uses namespace `WorldSettlements` with schema version `6`
+- `FamilyCore` uses namespace `FamilyCore` with schema version `7`
+- `PopulationAndHouseholds` uses namespace `PopulationAndHouseholds` with schema version `2`
+- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `2`
+- `EducationAndExams` uses namespace `EducationAndExams` with schema version `2`
+- `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `4`
 - `PublicLifeAndRumor` uses namespace `PublicLifeAndRumor` with schema version `4` for the active county-public-life slice plus monthly-cadence, venue-channel, and channel-contention descriptors
-- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `3` for the active governance-lite slice
+- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `4` for the active governance-lite slice
 - `NarrativeProjection` uses namespace `NarrativeProjection` with schema version `1`
-- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `6`
-- `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `3` for active M3 local-conflict lite integration plus campaign-fallout persistence
+- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `7`
+- `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `4` for active M3 local-conflict lite integration plus campaign-fallout persistence
 - `WarfareCampaign` uses namespace `WarfareCampaign` with schema version `4` for the active campaign-lite slice (phase + aftermath docket projection)
 
 ## M2-lite default-state policy

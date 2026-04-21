@@ -30,6 +30,8 @@ A successful MVP proves that:
 - tactical battles
 - free-roam exploration
 
+> Lite / placeholder modules for office, outlaw, campaign, and local conflict exist in the codebase but remain disabled by default in the stable MVP feature manifest. They are additive packs, not MVP core.
+
 ## MVP must feel like
 
 "Sitting in the hall, hearing the world arrive at the door."

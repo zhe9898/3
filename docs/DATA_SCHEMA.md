@@ -30,51 +30,27 @@ Rules:
 public readonly record struct GameDate(int Year, int Month);
 ```
 
-### Core person identity
+### Kernel person identity
+`PersonRegistry` (Kernel layer) owns the thin identity anchor:
 ```csharp
-public sealed record PersonCoreData {
-    PersonId Id;
-    string GivenName;
-    string? CourtesyName;
-    Sex Sex;
-    int BirthAgeMonths;   // optional alternative to BirthDate depending on implementation
-    bool IsAlive;
-    ClanId ClanId;
-    HouseholdId HouseholdId;
-    SettlementId SettlementId;
-    List<string> CoreTraits;
+public sealed class PersonRecord {
+    public PersonId Id { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
+    public GameDate BirthDate { get; set; }
+    public Gender Gender { get; set; }
+    public LifeStage LifeStage { get; set; }
+    public bool IsAlive { get; set; }
+    public FidelityRing FidelityRing { get; set; }
 }
 ```
 
-### Core household identity
-```csharp
-public sealed record HouseholdCoreData {
-    HouseholdId Id;
-    ClanId? ClanId;
-    SettlementId SettlementId;
-    PersonId? HeadId;
-    List<PersonId> MemberIds;
-}
-```
+> No fat `PersonCoreData` exists in the codebase.  Module-owned per-person state lives inside each module's state namespace (e.g. `FamilyPersonState` in `FamilyCore`, `HouseholdMembership` in `PopulationAndHouseholds`, `OfficeCareerState` in `OfficeAndCareer`).
 
-### Core clan identity
-```csharp
-public sealed record ClanCoreData {
-    ClanId Id;
-    string ClanName;
-    SettlementId HomeSettlementId;
-}
-```
-
-### Core settlement identity
-```csharp
-public sealed record SettlementCoreData {
-    SettlementId Id;
-    string Name;
-    SettlementTier Tier;
-    SettlementId? ParentSettlementId;
-}
-```
+### Module-owned identity fragments
+Modules expose read-only *snapshots* via query interfaces, not shared core records:
+- `ClanSnapshot` — projection from `FamilyCore`
+- `SettlementSnapshot` — projection from `WorldSettlements`
+- `PopulationSettlementSnapshot` — projection from `PopulationAndHouseholds`
 
 ## 3. Module state model
 

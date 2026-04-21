@@ -23,4 +23,22 @@ public static class FamilyCoreEventNames
     public const string ClanMemberDied = DeathCauseEventNames.ClanMemberDied;
 
     public const string HeirSecurityWeakened = "HeirSecurityWeakened";
+
+    /// <summary>
+    /// STEP2A / A3 — Heir appointed (first-time or after a vacancy). Signals
+    /// that a clan that previously had no <c>HeirPersonId</c> now has one.
+    /// Different from <see cref="HeirSuccessionOccurred"/>: this is a fill
+    /// into an empty slot, not a transfer from a living heir.
+    /// Entity key: the newly appointed <c>PersonId</c>.
+    /// </summary>
+    public const string HeirAppointed = "HeirAppointed";
+
+    /// <summary>
+    /// STEP2A / A3 — Heir succession transferred (the previous heir died
+    /// and a replacement was picked up the same month). Used by SocialMemory
+    /// / NarrativeProjection to distinguish orderly vacancy fills from true
+    /// succession turbulence.
+    /// Entity key: the newly appointed <c>PersonId</c>.
+    /// </summary>
+    public const string HeirSuccessionOccurred = "HeirSuccessionOccurred";
 }

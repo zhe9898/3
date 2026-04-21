@@ -101,15 +101,16 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - clan-scoped kinship view (only for persons who are or were clan members; not a global kinship registry)
 
 ### Accepts commands
-- arrange marriage
-- designate heir policy
-- redistribute household support
-- approve/suppress branch split actions where allowed
-- favor senior branch
-- order formal apology
-- permit branch separation
-- suspend clan relief
-- invite clan elders mediation
+- `ArrangeMarriage`
+- `DesignateHeirPolicy`
+- `SupportSeniorBranch`
+- `OrderFormalApology`
+- `PermitBranchSeparation`
+- `SuspendClanRelief`
+- `InviteClanEldersMediation`
+- `InviteClanEldersPubliclyBroker`
+
+> Note: `RedistributeHouseholdSupport` is not yet implemented in the active command surface.
 
 ### Emits events
 - `MarriageAllianceArranged`
