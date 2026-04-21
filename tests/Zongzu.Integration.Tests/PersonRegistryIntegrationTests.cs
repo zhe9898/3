@@ -50,6 +50,9 @@ public sealed class PersonRegistryIntegrationTests
         // explicitly rather than relying on a single-person clan.
         FamilyPersonState heir = familyState.People.Single(p => p.BranchPosition == BranchPosition.MainLineHeir);
         heir.AgeMonths = (72 * 12) + 1;
+        // STEP2A / A1：老死走累积 FragilityLedger，不再是 72 岁悬崖。
+        // 预置到顶让本月立即老死，保留原"死后发 ClanMemberDied→PersonDeceased"契约测试。
+        heir.FragilityLedger = 100;
 
         PersonRegistryState registrySeed = GetModuleState<PersonRegistryState>(simulation, KnownModuleKeys.PersonRegistry);
         PersonRecord heirRecord = registrySeed.Persons.Single(p => p.Id.Equals(heir.Id));

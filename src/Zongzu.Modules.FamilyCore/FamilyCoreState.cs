@@ -133,4 +133,12 @@ public sealed class FamilyPersonState
     public int Loyalty { get; set; }
 
     public int Sociability { get; set; }
+
+    // ── STEP2A / A1 — 老死风险带（累积脆弱度账本）。年龄 ≥55 者按月
+    //    加 dose，由年龄带 × clan 照料 × 聚落 HealerAccess × 季节 × 战后
+    //    综合决定。ledger ≥ 100 → 候选本月老死。skill 铁律
+    //    disease-lifespan-death：不拍概率，不引新 RNG，复合维度累积。
+    /// <summary>Fragility ledger (0–100). 仅对 ≥55 岁在世者有意义；
+    /// 每月在 FamilyCore RunMonth 累积 dose，到顶则本月身亡。</summary>
+    public int FragilityLedger { get; set; }
 }

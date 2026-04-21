@@ -178,4 +178,20 @@ public static class FamilyCoreStateProjection
             }
         }
     }
+
+    /// <summary>
+    /// STEP2A / A1 — v6 → v7：老死风险带账本入场（skill
+    /// <c>disease-lifespan-death</c>）。FragilityLedger 默认 0；旧档全部以"健康"
+    /// 重启，ledger 由后续月节拍按 band 累积。规则见
+    /// <c>FamilyCoreModule.ComputeFragilityDose</c>。
+    /// </summary>
+    public static void UpgradeFromSchemaV6ToV7(FamilyCoreState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        foreach (FamilyPersonState person in state.People)
+        {
+            person.FragilityLedger = Math.Clamp(person.FragilityLedger, 0, 100);
+        }
+    }
 }

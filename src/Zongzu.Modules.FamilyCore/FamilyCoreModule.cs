@@ -11,7 +11,8 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     private const int AdultAgeMonths = 16 * 12;
     private const int SecureHeirAgeMonths = 20 * 12;
     private const int ElderAgeMonths = 55 * 12;
-    private const int DeathAgeMonths = 72 * 12;
+    // STEP2A / A1 之后老死走累积风险带（FragilityLedger），不再有固定悬崖。
+    // DeathAgeMonths 常量废止，保留 AccrueElderFragility 的 90 岁天花板。
     private const int InfantAgeMonths = 2 * 12;
 
     private static readonly string[] CommandNames =
@@ -64,7 +65,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
 
-    public override int ModuleSchemaVersion => 6;
+    public override int ModuleSchemaVersion => 7;
 
     public override SimulationPhase Phase => SimulationPhase.FamilyStructure;
 
@@ -147,6 +148,8 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
             }
 
+            // STEP2A / A1 — 老死风险带累积（先累账本，再判身亡）。
+            AccrueElderFragility(clan, signals, homeSettlement, currentDate);
             bool hadDeathThisMonth = TryResolveClanDeath(scope, clan, signals, registryQueries);
             signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 
@@ -528,14 +531,30 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         FamilyMonthSignals signals,
         IPersonRegistryQueries registryQueries)
     {
+        // STEP2A / A1 — 按 FragilityLedger 选身亡者。ledger ≥ 100 表该人
+        // 已过脆弱度阈。多人同时过阈时选 ledger 最高 → 最老 → 最小 Id
+        // （纯确定性，不引 RNG）。skill disease-lifespan-death：老死是
+        // 累积，不是悬崖；复合维度权重在 AccrueElderFragility 里计算。
         FamilyPersonAge? deathEntry = null;
-        foreach (FamilyPersonAge entry in signals.LivingPeople
-            .Where(entry => entry.AgeMonths >= DeathAgeMonths)
-            .OrderByDescending(static entry => entry.AgeMonths)
-            .ThenBy(static entry => entry.Person.Id.Value))
+        int bestLedger = -1;
+        int bestAge = -1;
+        foreach (FamilyPersonAge entry in signals.LivingPeople)
         {
-            deathEntry = entry;
-            break;
+            int ledger = entry.Person.FragilityLedger;
+            if (ledger < 100)
+            {
+                continue;
+            }
+
+            if (ledger > bestLedger
+                || (ledger == bestLedger && entry.AgeMonths > bestAge)
+                || (ledger == bestLedger && entry.AgeMonths == bestAge && deathEntry is not null
+                    && entry.Person.Id.Value < deathEntry.Value.Person.Id.Value))
+            {
+                deathEntry = entry;
+                bestLedger = ledger;
+                bestAge = entry.AgeMonths;
+            }
         }
 
         if (deathEntry is null)
@@ -582,6 +601,102 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         // the canonical PersonDeceased. See PERSON_OWNERSHIP_RULES.md.
         scope.Emit(FamilyCoreEventNames.ClanMemberDied, $"{clan.ClanName}门内举哀。", deathTarget.Id.Value.ToString());
         return true;
+    }
+
+    /// <summary>
+    /// STEP2A / A1 — 每月给 clan 内 ≥55 岁在世者累积
+    /// <see cref="FamilyPersonState.FragilityLedger"/>。复合维度（年龄带 × 养护 ×
+    /// 聚落 HealerAccess × 季节 × 战后）纯确定性相加，不引新 RNG。ledger 到顶
+    /// 不清零（保持已过阈的状态，由 <see cref="TryResolveClanDeath"/> 消费）。
+    /// skill 铁律：治疗只降权重、不归零——<c>RemedyConfidence</c> 高时 -1，
+    /// 不能一笔勾销老龄 dose。
+    /// </summary>
+    private static void AccrueElderFragility(
+        ClanStateData clan,
+        FamilyMonthSignals signals,
+        SettlementSnapshot homeSettlement,
+        GameDate currentDate)
+    {
+        foreach (FamilyPersonAge entry in signals.LivingPeople)
+        {
+            int ageMonths = entry.AgeMonths;
+            if (ageMonths < ElderAgeMonths)
+            {
+                continue;
+            }
+
+            int dose = ComputeFragilityDose(ageMonths, clan, homeSettlement, currentDate);
+            if (dose <= 0)
+            {
+                continue;
+            }
+
+            entry.Person.FragilityLedger = Math.Clamp(entry.Person.FragilityLedger + dose, 0, 100);
+        }
+    }
+
+    private static int ComputeFragilityDose(
+        int ageMonths,
+        ClanStateData clan,
+        SettlementSnapshot homeSettlement,
+        GameDate currentDate)
+    {
+        // 年龄带基底（believable band，不拍概率）。
+        int dose;
+        if (ageMonths >= 90 * 12)
+        {
+            // 期颐之年，本月必到顶——仍走 ledger 通道以便诊断可见。
+            return 100;
+        }
+        else if (ageMonths >= 85 * 12)
+        {
+            dose = 20;
+        }
+        else if (ageMonths >= 75 * 12)
+        {
+            dose = 8;
+        }
+        else if (ageMonths >= 65 * 12)
+        {
+            dose = 3;
+        }
+        else
+        {
+            dose = 1; // 55–64 岁
+        }
+
+        // clan 养护侧：支匮、哀重、照料已满的户，老人更脆。
+        if (clan.SupportReserve < 30) dose += 2;
+        else if (clan.SupportReserve < 50) dose += 1;
+
+        if (clan.MourningLoad >= 50) dose += 2;
+        else if (clan.MourningLoad >= 25) dose += 1;
+
+        if (clan.CareLoad >= 60) dose += 2;
+        else if (clan.CareLoad >= 30) dose += 1;
+
+        // 聚落侧：秩序与医者可及性。
+        if (homeSettlement.Security < 40) dose += 2;
+
+        switch (homeSettlement.HealerAccess)
+        {
+            case HealerAccess.None: dose += 2; break;
+            case HealerAccess.Itinerant: dose += 1; break;
+            case HealerAccess.Renowned: dose = Math.Max(0, dose - 1); break;
+            default: break; // Local 基线
+        }
+
+        // 季节：寒冬对 ≥65 岁尤甚（农历十一/十二/正）。
+        if (ageMonths >= 65 * 12)
+        {
+            int m = currentDate.Month;
+            if (m == 11 || m == 12 || m == 1) dose += 2;
+        }
+
+        // 求医信心高则略降权重（-1，不归零）。
+        if (clan.RemedyConfidence >= 60) dose = Math.Max(0, dose - 1);
+
+        return dose;
     }
 
     private static bool ClanStateUnchanged(

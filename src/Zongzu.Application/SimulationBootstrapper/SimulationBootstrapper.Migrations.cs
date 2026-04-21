@@ -74,6 +74,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 3, 4, MigrateFamilyCoreStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 4, 5, MigrateFamilyCoreStateV4ToV5);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 5, 6, MigrateFamilyCoreStateV5ToV6);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 6, 7, MigrateFamilyCoreStateV6ToV7);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 1, 2, MigratePublicLifeAndRumorStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 2, 3, MigratePublicLifeAndRumorStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 3, 4, MigratePublicLifeAndRumorStateV3ToV4);
@@ -442,6 +443,24 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.FamilyCore,
             ModuleSchemaVersion = 6,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A1 — v6 → v7：老死风险带 FragilityLedger 入场。旧档默认 0
+    /// （健康重启），由后续月节拍累积。
+    /// </summary>
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV6ToV7(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        FamilyCoreStateProjection.UpgradeFromSchemaV6ToV7(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 7,
             Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
         };
     }

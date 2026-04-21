@@ -336,6 +336,9 @@ public sealed class FamilyCoreModuleTests
             GivenName = "Zhang Lao",
             AgeMonths = 72 * 12,
             IsAlive = true,
+            // STEP2A / A1：老死走累积 FragilityLedger，不再是 72 岁悬崖。
+            // 预置到顶让本月立即老死，保留原测试的语义。
+            FragilityLedger = 100,
         });
         familyState.People.Add(new FamilyPersonState
         {
