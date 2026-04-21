@@ -201,7 +201,16 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 3
                 && step.TargetVersion == 4),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(4));
+        // STEP2A / A0b: WorldSettlements schema raised 4→5 so TempleHealingPresence
+        // band lands on legacy saves too (skill religion-temples-ritual-brokerage:
+        // 平行通道 band；skill simulation-calibration: band 非数字).
+        Assert.That(
+            reloaded.LoadMigrationReport!.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WorldSettlements
+                && step.SourceVersion == 4
+                && step.TargetVersion == 5),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(5));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.Tier == SettlementTier.CountySeat), Is.True);
         // v2閳姵3 migration must populate the new NodeKind / Visibility / EcoZone

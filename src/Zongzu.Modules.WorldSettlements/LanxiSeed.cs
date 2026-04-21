@@ -220,6 +220,7 @@ public static class LanxiSeed
             Prosperity = prosperity,
             BaselineInstitutionCount = 1,
             HealerAccess = DeriveHealerAccess(nodeKind, tier),
+            TempleHealingPresence = DeriveTempleHealing(nodeKind, tier),
             NeighborIds = new List<SettlementId>(neighbors),
             ParentAdministrativeId = parent,
         };
@@ -246,6 +247,36 @@ public static class LanxiSeed
             SettlementNodeKind.SmugglingCache => HealerAccess.None,
             SettlementNodeKind.CovertMeetPoint => HealerAccess.None,
             _ => HealerAccess.None,
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A0b — 寺观 band 由 NodeKind 推断。寺观本身是
+    /// Institutional 档，县治 / 市镇带 Lay 香火通道，村落 / 祠堂 / 私窝
+    /// 多是 Folk / None（skill religion-temples-ritual-brokerage：
+    /// 保留延误 / 安抚张力，不做第二家医院）。
+    /// </summary>
+    private static TempleHealingPresence DeriveTempleHealing(SettlementNodeKind kind, SettlementTier tier)
+    {
+        return kind switch
+        {
+            SettlementNodeKind.Temple => TempleHealingPresence.Institutional,
+            SettlementNodeKind.ShrineCourt => TempleHealingPresence.Lay,
+            SettlementNodeKind.HillShrine => TempleHealingPresence.Folk,
+            SettlementNodeKind.PrefectureSeat => TempleHealingPresence.Lay,
+            SettlementNodeKind.CountySeat => TempleHealingPresence.Lay,
+            SettlementNodeKind.MarketTown => TempleHealingPresence.Lay,
+            SettlementNodeKind.WalledTown => TempleHealingPresence.Lay,
+            SettlementNodeKind.Village => TempleHealingPresence.Folk,
+            SettlementNodeKind.EstateCluster => TempleHealingPresence.Folk,
+            SettlementNodeKind.Ferry => TempleHealingPresence.Folk,
+            SettlementNodeKind.Wharf => TempleHealingPresence.Folk,
+            SettlementNodeKind.CanalJunction => TempleHealingPresence.Folk,
+            SettlementNodeKind.LineageHall => TempleHealingPresence.None,
+            SettlementNodeKind.Granary => TempleHealingPresence.None,
+            SettlementNodeKind.SmugglingCache => TempleHealingPresence.None,
+            SettlementNodeKind.CovertMeetPoint => TempleHealingPresence.None,
+            _ => TempleHealingPresence.None,
         };
     }
 

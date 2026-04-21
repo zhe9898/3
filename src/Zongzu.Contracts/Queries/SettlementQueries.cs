@@ -66,6 +66,11 @@ public sealed record SettlementSnapshot
     /// 每 band 语义各不相同，不是同质 0–100 条）。
     /// </summary>
     public HealerAccess HealerAccess { get; init; }
+
+    /// <summary>
+    /// STEP2A / A0b — 寺观 / 巫祝 / 民间疗法 band（平行通道，不是第二家医院）。
+    /// </summary>
+    public TempleHealingPresence TempleHealingPresence { get; init; }
 }
 
 /// <summary>

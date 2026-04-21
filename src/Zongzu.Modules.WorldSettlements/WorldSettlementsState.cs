@@ -76,6 +76,14 @@ public sealed class SettlementStateData
     /// </summary>
     public HealerAccess HealerAccess { get; set; }
 
+    /// <summary>
+    /// STEP2A / A0b — 寺观 / 巫祝 / 民间疗法 band。平行通道：信仰救心
+    /// 不救命（skill religion-temples-ritual-brokerage）；band 而非数字
+    /// （skill simulation-calibration）。A1 老死与 A5 婴幼儿夭折会把
+    /// Folk/Lay 档的"延误"反映成风险权重上抬。
+    /// </summary>
+    public TempleHealingPresence TempleHealingPresence { get; set; }
+
     /// <summary>Adjacency graph — purely geometric neighbors; SPEC §1.1/12.4. Phase 1c schema v3.</summary>
     public List<SettlementId> NeighborIds { get; set; } = new();
 

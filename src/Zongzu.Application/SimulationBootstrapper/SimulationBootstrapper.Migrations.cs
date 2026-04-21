@@ -67,6 +67,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 1, 2, MigrateWorldSettlementsStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 2, 3, MigrateWorldSettlementsStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 3, 4, MigrateWorldSettlementsStateV3ToV4);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 4, 5, MigrateWorldSettlementsStateV4ToV5);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 1, 2, MigrateFamilyCoreStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 3, 4, MigrateFamilyCoreStateV3ToV4);
@@ -257,6 +258,51 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.WorldSettlements,
             ModuleSchemaVersion = 4,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A0b — v4 → v5：<see cref="SettlementStateData.TempleHealingPresence"/>
+    /// band 入场。寺观平行通道而非第二家医院（skill
+    /// religion-temples-ritual-brokerage）。旧档按 NodeKind 推断档位；
+    /// Temple 本身 Institutional，县镇 Lay 香火通道，村 / 渡口 Folk，
+    /// 祠堂 / 仓 / 私窝 None。
+    /// </summary>
+    private static ModuleStateEnvelope MigrateWorldSettlementsStateV4ToV5(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(typeof(WorldSettlementsState), envelope.Payload);
+
+        foreach (SettlementStateData settlement in migratedState.Settlements)
+        {
+            if (settlement.TempleHealingPresence != TempleHealingPresence.Unknown)
+            {
+                continue;
+            }
+
+            settlement.TempleHealingPresence = settlement.NodeKind switch
+            {
+                SettlementNodeKind.Temple => TempleHealingPresence.Institutional,
+                SettlementNodeKind.ShrineCourt => TempleHealingPresence.Lay,
+                SettlementNodeKind.HillShrine => TempleHealingPresence.Folk,
+                SettlementNodeKind.PrefectureSeat => TempleHealingPresence.Lay,
+                SettlementNodeKind.CountySeat => TempleHealingPresence.Lay,
+                SettlementNodeKind.MarketTown => TempleHealingPresence.Lay,
+                SettlementNodeKind.WalledTown => TempleHealingPresence.Lay,
+                SettlementNodeKind.Village => TempleHealingPresence.Folk,
+                SettlementNodeKind.EstateCluster => TempleHealingPresence.Folk,
+                SettlementNodeKind.Ferry => TempleHealingPresence.Folk,
+                SettlementNodeKind.Wharf => TempleHealingPresence.Folk,
+                SettlementNodeKind.CanalJunction => TempleHealingPresence.Folk,
+                _ => TempleHealingPresence.None,
+            };
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 5,
             Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
         };
     }

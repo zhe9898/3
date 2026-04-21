@@ -45,6 +45,8 @@ public static partial class SimulationBootstrapper
             BaselineInstitutionCount = 1,
             // STEP2A / A0a — 兰溪县治配坐堂医（非州府名医）。band 而非数字。
             HealerAccess = HealerAccess.Local,
+            // STEP2A / A0b — 县治带 Lay 档香火通道（寺观平行通道，不是第二家医院）。
+            TempleHealingPresence = TempleHealingPresence.Lay,
         });
 
         familyState.Clans.Add(new ClanStateData
@@ -470,6 +472,14 @@ public static partial class SimulationBootstrapper
                 SettlementTier.CountySeat => HealerAccess.Local,
                 SettlementTier.MarketTown => HealerAccess.Itinerant,
                 _ => HealerAccess.None,
+            },
+            // STEP2A / A0b — 寺观 band 按 Tier 推断；village 多 Folk，县镇 Lay。
+            TempleHealingPresence = InferStressSettlementTier(slice.SettlementName) switch
+            {
+                SettlementTier.PrefectureSeat => TempleHealingPresence.Institutional,
+                SettlementTier.CountySeat => TempleHealingPresence.Lay,
+                SettlementTier.MarketTown => TempleHealingPresence.Lay,
+                _ => TempleHealingPresence.Folk,
             },
         });
 
