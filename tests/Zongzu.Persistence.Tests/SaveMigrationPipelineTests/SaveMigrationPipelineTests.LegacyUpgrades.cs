@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Application;
@@ -179,8 +179,8 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 1
                 && step.TargetVersion == 2),
             Is.True);
-        // Phase 1c: WorldSettlements schema was raised 2鈫? (SPATIAL_SKELETON_SPEC
-        // 搂13). Legacy v1 saves now chain through v1鈫抳2鈫抳3.
+        // Phase 1c: WorldSettlements schema was raised 2閳? (SPATIAL_SKELETON_SPEC
+        // 鎼?3). Legacy v1 saves now chain through v1閳姵2閳姵3.
         Assert.That(
             reloaded.LoadMigrationReport!.ModuleSteps.Any(static step =>
                 step.ModuleKey == KnownModuleKeys.WorldSettlements
@@ -190,8 +190,8 @@ public sealed partial class SaveMigrationPipelineTests
         Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(3));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.Tier == SettlementTier.CountySeat), Is.True);
-        // v2鈫抳3 migration must populate the new NodeKind / Visibility / EcoZone
-        // fields with sensible defaults (SPEC 搂13.2).
+        // v2閳姵3 migration must populate the new NodeKind / Visibility / EcoZone
+        // fields with sensible defaults (SPEC 鎼?3.2).
         Assert.That(migratedState.Settlements.All(static settlement => settlement.NodeKind != SettlementNodeKind.Unknown), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.Visibility == NodeVisibility.StateVisible), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.EcoZone == SettlementEcoZone.JiangnanWaterNetwork), Is.True);
@@ -250,7 +250,7 @@ public sealed partial class SaveMigrationPipelineTests
             typeof(ConflictAndForceState),
             reloadedSave.ModuleStates[KnownModuleKeys.ConflictAndForce].Payload);
 
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(migratedState.Settlements, Has.Count.EqualTo(currentState.Settlements.Count));
         Assert.That(migratedState.Settlements.Any(static settlement => settlement.ResponseActivationLevel > 0), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.CampaignFatigue == 0), Is.True);
@@ -377,7 +377,7 @@ public sealed partial class SaveMigrationPipelineTests
 
         Assert.That(reloaded.LoadMigrationReport, Is.Not.Null);
         Assert.That(reloaded.LoadMigrationReport!.ModuleSteps.Any(static step => step.ModuleKey == KnownModuleKeys.ConflictAndForce && step.SourceVersion == 2 && step.TargetVersion == 3), Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(migratedState.Settlements, Has.Count.EqualTo(currentState.Settlements.Count));
         Assert.That(migratedState.Settlements.All(static settlement => settlement.CampaignFatigue == 0), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.CampaignEscortStrain == 0), Is.True);

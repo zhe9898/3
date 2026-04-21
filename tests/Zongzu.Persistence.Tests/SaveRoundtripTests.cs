@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
 using Zongzu.Modules.ConflictAndForce;
@@ -178,7 +178,7 @@ public sealed class SaveRoundtripTests
         ConflictAndForceState reloadedState = (ConflictAndForceState)serializer.Deserialize(
             typeof(ConflictAndForceState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(reloadedState.Settlements.Any(static settlement => settlement.ResponseActivationLevel > 0), Is.True);
     }
 
@@ -261,7 +261,7 @@ public sealed class SaveRoundtripTests
         ConflictAndForceState conflictState = (ConflictAndForceState)serializer.Deserialize(
             typeof(ConflictAndForceState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(3));
         Assert.That(reloadedState.Campaigns, Is.Not.Empty);
         Assert.That(reloadedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.CommandFitLabel)), Is.True);

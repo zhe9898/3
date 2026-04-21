@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
@@ -531,7 +531,9 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(bundle.Debug.LoadMigration.Steps.Any(static step => step.ScopeLabel == KnownModuleKeys.ConflictAndForce && step.SourceVersion == 2 && step.TargetVersion == 3), Is.True);
 
-        Assert.That(bundle.Debug.LoadMigration.StepCount, Is.EqualTo(2));
+        Assert.That(bundle.Debug.LoadMigration.Steps.Any(static step => step.ScopeLabel == KnownModuleKeys.ConflictAndForce && step.SourceVersion == 3 && step.TargetVersion == 4), Is.True);
+
+        Assert.That(bundle.Debug.LoadMigration.StepCount, Is.EqualTo(3));
 
         Assert.That(bundle.Debug.LoadMigration.ConsistencyPassed, Is.True);
 

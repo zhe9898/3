@@ -86,6 +86,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 6, 7, MigrateOrderAndBanditryStateV6ToV7);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 1, 2, MigrateConflictAndForceStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 2, 3, MigrateConflictAndForceStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 3, 4, MigrateConflictAndForceStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 1, 2, MigrateWarfareCampaignStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 2, 3, MigrateWarfareCampaignStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PopulationAndHouseholds, 1, 2, MigratePopulationAndHouseholdsStateV1ToV2);
@@ -678,6 +679,21 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.ConflictAndForce,
             ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(ConflictAndForceState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateConflictAndForceStateV3ToV4(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        ConflictAndForceState migratedState = (ConflictAndForceState)serializer.Deserialize(typeof(ConflictAndForceState), envelope.Payload);
+
+        ConflictAndForceStateProjection.UpgradeFromSchemaV3ToV4(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.ConflictAndForce,
+            ModuleSchemaVersion = 4,
             Payload = serializer.Serialize(typeof(ConflictAndForceState), migratedState),
         };
     }

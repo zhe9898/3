@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -87,6 +87,70 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
                 LastCampaignFalloutTrace = settlement.LastCampaignFalloutTrace,
 
                 LastConflictTrace = settlement.LastConflictTrace,
+
+            };
+
+        }
+
+
+        private static ForceGroupSnapshot CloneGroup(ForceGroupState group)
+
+        {
+
+            return new ForceGroupSnapshot
+
+            {
+
+                ForceId = group.ForceId,
+
+                Family = group.Family,
+
+                OwnerKey = group.OwnerKey,
+
+                Location = group.Location,
+
+                Strength = group.Strength,
+
+                Readiness = group.Readiness,
+
+                Morale = group.Morale,
+
+                Discipline = group.Discipline,
+
+                Fatigue = group.Fatigue,
+
+            };
+
+        }
+
+
+        private static ConflictIncidentSnapshot CloneIncident(ConflictIncidentState incident)
+
+        {
+
+            return new ConflictIncidentSnapshot
+
+            {
+
+                IncidentId = incident.IncidentId,
+
+                Scale = incident.Scale,
+
+                Location = incident.Location,
+
+                RouteId = incident.RouteId,
+
+                Attackers = incident.Attackers.ToArray(),
+
+                Defenders = incident.Defenders.ToArray(),
+
+                Outcome = incident.Outcome,
+
+                CauseKey = incident.CauseKey,
+
+                OccurredYear = incident.OccurredYear,
+
+                OccurredMonth = incident.OccurredMonth,
 
             };
 

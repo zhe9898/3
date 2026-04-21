@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -56,7 +56,7 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
     public override string ModuleKey => KnownModuleKeys.ConflictAndForce;
 
 
-    public override int ModuleSchemaVersion => 3;
+    public override int ModuleSchemaVersion => 4;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -758,6 +758,8 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
             }
 
         }
+
+        ConflictAndForceStateProjection.BuildForceGroupsAndIncidents(scope.State);
 
     }
 
