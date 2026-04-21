@@ -45,7 +45,10 @@ public sealed class PersonRegistryIntegrationTests
         // Phase 2b, so we backdate the registry BirthDate (and keep the local
         // FamilyCore mirror aligned as documentation for the test).
         FamilyCoreState familyState = GetModuleState<FamilyCoreState>(simulation, KnownModuleKeys.FamilyCore);
-        FamilyPersonState heir = familyState.People.Single();
+        // Step 2-A / A2: the seed now includes cross-generation kin (elder /
+        // spouse / youth / child) around the heir, so pick the main-line heir
+        // explicitly rather than relying on a single-person clan.
+        FamilyPersonState heir = familyState.People.Single(p => p.BranchPosition == BranchPosition.MainLineHeir);
         heir.AgeMonths = (72 * 12) + 1;
 
         PersonRegistryState registrySeed = GetModuleState<PersonRegistryState>(simulation, KnownModuleKeys.PersonRegistry);

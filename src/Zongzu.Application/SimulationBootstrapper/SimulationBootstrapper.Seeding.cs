@@ -82,6 +82,17 @@ public static partial class SimulationBootstrapper
             gender: PersonGender.Male,
             fidelityRing: FidelityRing.Core);
 
+        // A2: 张宗跨代口——父辈 / 配 / 少 / 幼
+        SeedClanKinship(
+            familyState,
+            personRegistryState,
+            simulation,
+            clanId,
+            elderName: "张德",
+            spouseName: "张王氏",
+            youthName: "张敬",
+            childName: "张晓");
+
         populationState.Households.Add(new PopulationHouseholdState
         {
             Id = tenantHouseholdId,
@@ -483,6 +494,24 @@ public static partial class SimulationBootstrapper
             gender: PersonGender.Male,
             fidelityRing: FidelityRing.Local);
 
+        // A2: 旁房跨代口——父辈 / 配 / 少 / 幼
+        (string elder, string spouse, string youth, string child) kin = slice.ClanName switch
+        {
+            "李" => ("李宏", "李范氏", "李承", "李幼"),
+            "吴" => ("吴安", "吴沈氏", "吴旭", "吴小"),
+            "陈" => ("陈谦", "陈周氏", "陈明", "陈稚"),
+            _ => (slice.ClanName + "长", slice.ClanName + "氏", slice.ClanName + "少", slice.ClanName + "幼"),
+        };
+        SeedClanKinship(
+            familyState,
+            stressPersonRegistryState,
+            simulation,
+            clanId,
+            elderName: kin.elder,
+            spouseName: kin.spouse,
+            youthName: kin.youth,
+            childName: kin.child);
+
         populationState.Households.Add(new PopulationHouseholdState
         {
             Id = tenantHouseholdId,
@@ -708,6 +737,101 @@ public static partial class SimulationBootstrapper
             IsAlive = true,
             FidelityRing = fidelityRing,
         });
+    }
+
+    /// <summary>
+    /// Step 2-A / A2 — seed a cross-generation kinship circle around a clan's
+    /// main-line heir: one elder (父辈), one spouse (配), one youth (少年次男),
+    /// one child (幼). Every seeded FamilyPersonState is mirrored into
+    /// PersonRegistry via <see cref="SeedPersonRecord"/>.
+    ///
+    /// <para>A2 is a pure seed expansion — it does not introduce new fields
+    /// or rules. HealerAccess / CareLoad / RemedyConfidence / CharityObligation
+    /// etc. are reserved for A0a–A0d. Marriage-in semantics for the spouse
+    /// are left at <see cref="BranchPosition.DependentKin"/> until A4 婚议.</para>
+    /// </summary>
+    private static void SeedClanKinship(
+        FamilyCoreState familyState,
+        PersonRegistryState personRegistry,
+        GameSimulation simulation,
+        ClanId clanId,
+        string elderName,
+        string spouseName,
+        string youthName,
+        string childName)
+    {
+        PersonId elderId = KernelIdAllocator.NextPerson(simulation.KernelState);
+        PersonId spouseId = KernelIdAllocator.NextPerson(simulation.KernelState);
+        PersonId youthId = KernelIdAllocator.NextPerson(simulation.KernelState);
+        PersonId childId = KernelIdAllocator.NextPerson(simulation.KernelState);
+
+        // 父辈 — 63 岁，在籍族众之长者
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = elderId,
+            ClanId = clanId,
+            GivenName = elderName,
+            AgeMonths = 63 * 12,
+            IsAlive = true,
+            BranchPosition = BranchPosition.BranchHead,
+            Ambition = 38,
+            Prudence = 62,
+            Loyalty = 58,
+            Sociability = 44,
+        });
+        SeedPersonRecord(personRegistry, simulation.CurrentDate, elderId, elderName,
+            ageMonths: 63 * 12, gender: PersonGender.Male, fidelityRing: FidelityRing.Core);
+
+        // 配 — 28 岁，heir 之妻
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = spouseId,
+            ClanId = clanId,
+            GivenName = spouseName,
+            AgeMonths = 28 * 12,
+            IsAlive = true,
+            BranchPosition = BranchPosition.DependentKin,
+            Ambition = 34,
+            Prudence = 56,
+            Loyalty = 60,
+            Sociability = 52,
+        });
+        SeedPersonRecord(personRegistry, simulation.CurrentDate, spouseId, spouseName,
+            ageMonths: 28 * 12, gender: PersonGender.Female, fidelityRing: FidelityRing.Local);
+
+        // 少年 — 17 岁，次房 youth
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = youthId,
+            ClanId = clanId,
+            GivenName = youthName,
+            AgeMonths = 17 * 12,
+            IsAlive = true,
+            BranchPosition = BranchPosition.BranchMember,
+            Ambition = 48,
+            Prudence = 40,
+            Loyalty = 52,
+            Sociability = 50,
+        });
+        SeedPersonRecord(personRegistry, simulation.CurrentDate, youthId, youthName,
+            ageMonths: 17 * 12, gender: PersonGender.Male, fidelityRing: FidelityRing.Local);
+
+        // 幼 — 8 岁
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = childId,
+            ClanId = clanId,
+            GivenName = childName,
+            AgeMonths = 8 * 12,
+            IsAlive = true,
+            BranchPosition = BranchPosition.DependentKin,
+            Ambition = 30,
+            Prudence = 30,
+            Loyalty = 50,
+            Sociability = 46,
+        });
+        SeedPersonRecord(personRegistry, simulation.CurrentDate, childId, childName,
+            ageMonths: 8 * 12, gender: PersonGender.Male, fidelityRing: FidelityRing.Local);
     }
 
 }

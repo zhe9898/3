@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
@@ -554,7 +554,13 @@ public sealed partial class M2LiteIntegrationTests
 
                 // EcoZone/NeighborIds/ParentAdministrativeId). SPEC §13.
 
-                SavePayloadBytes = 52000,
+                // Step 2-A / A2: +4 kin per clan in FamilyCore + PersonRegistry
+
+                // seeds (elder / spouse / youth / child) raises the peak
+
+                // payload by ~1 KB on this minimal-world slice.
+
+                SavePayloadBytes = 53500,
 
             },
 
