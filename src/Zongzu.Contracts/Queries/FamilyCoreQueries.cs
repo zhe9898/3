@@ -46,6 +46,9 @@ public sealed record ClanSnapshot
 
     public int RemedyConfidence { get; init; }
 
+    // STEP2A / A0d — 宗族救济挑选性投影（skill lineage-institutions-corporate-power）。
+    public int CharityObligation { get; init; }
+
     public int InfantCount { get; init; }
 
     public string LastConflictCommandCode { get; init; } = string.Empty;

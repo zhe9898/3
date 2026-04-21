@@ -64,7 +64,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
 
-    public override int ModuleSchemaVersion => 5;
+    public override int ModuleSchemaVersion => 6;
 
     public override SimulationPhase Phase => SimulationPhase.FamilyStructure;
 
@@ -819,6 +819,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 CareLoad = clan.CareLoad,
                 FuneralDebt = clan.FuneralDebt,
                 RemedyConfidence = clan.RemedyConfidence,
+                CharityObligation = clan.CharityObligation,
                 InfantCount = infantCount,
                 LastConflictCommandCode = clan.LastConflictCommandCode,
                 LastConflictCommandLabel = clan.LastConflictCommandLabel,

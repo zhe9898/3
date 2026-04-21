@@ -154,4 +154,28 @@ public static class FamilyCoreStateProjection
             }
         }
     }
+
+    /// <summary>
+    /// STEP2A / A0d — v5 → v6：宗族救济链字段入场（skill
+    /// lineage-institutions-corporate-power）。救济是挑选性的，不是普惠，
+    /// 债主是宗（clan），不是官。<c>CharityObligation</c> 0–100：宗房越殷实，
+    /// 对"债主感"认知越重。旧档按 <c>SupportReserve/3 + 10</c> clamp 0–60
+    /// 推断，避免同质化。本 step 不写规则。
+    /// </summary>
+    public static void UpgradeFromSchemaV5ToV6(FamilyCoreState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        foreach (ClanStateData clan in state.Clans)
+        {
+            if (clan.CharityObligation <= 0)
+            {
+                clan.CharityObligation = Math.Clamp((clan.SupportReserve / 3) + 10, 0, 60);
+            }
+            else
+            {
+                clan.CharityObligation = Math.Clamp(clan.CharityObligation, 0, 100);
+            }
+        }
+    }
 }

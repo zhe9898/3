@@ -64,6 +64,9 @@ public static partial class SimulationBootstrapper
             CareLoad = 6,
             FuneralDebt = 0,
             RemedyConfidence = 40,
+            // STEP2A / A0d — 宗族救济挑选性初值：中等宗力，债主感不轻不重，
+            // 留给 A1+ 规则"可救可弃"的选择空间。
+            CharityObligation = 25,
         });
 
         familyState.People.Add(new FamilyPersonState
@@ -515,6 +518,14 @@ public static partial class SimulationBootstrapper
             CareLoad = 10,
             FuneralDebt = 0,
             RemedyConfidence = Math.Clamp((slice.ClanPrestige / 4) + 25, 0, 60),
+            // STEP2A / A0d — 旁房救济挑选性初值：按 slice 族名差异化，避免同质条。
+            CharityObligation = slice.ClanName switch
+            {
+                "李" => 30,
+                "吴" => 35,
+                "陈" => 28,
+                _ => 25,
+            },
         });
 
         familyState.People.Add(new FamilyPersonState

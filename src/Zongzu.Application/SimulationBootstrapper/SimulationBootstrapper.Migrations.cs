@@ -73,6 +73,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 3, 4, MigrateFamilyCoreStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 4, 5, MigrateFamilyCoreStateV4ToV5);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 5, 6, MigrateFamilyCoreStateV5ToV6);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 1, 2, MigratePublicLifeAndRumorStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 2, 3, MigratePublicLifeAndRumorStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 3, 4, MigratePublicLifeAndRumorStateV3ToV4);
@@ -422,6 +423,25 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.FamilyCore,
             ModuleSchemaVersion = 5,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A0d — v5 → v6：宗族救济挑选性字段入场。旧档补默认值，
+    /// 规则（救一人 +Prestige / 弃一人 +BranchTension + ShameExclusion）
+    /// 留给后续 step。
+    /// </summary>
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV5ToV6(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        FamilyCoreStateProjection.UpgradeFromSchemaV5ToV6(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 6,
             Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
         };
     }

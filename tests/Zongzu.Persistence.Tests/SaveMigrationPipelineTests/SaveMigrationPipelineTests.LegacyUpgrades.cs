@@ -127,7 +127,13 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 4
                 && step.TargetVersion == 5),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(5));
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.FamilyCore
+                && step.SourceVersion == 5
+                && step.TargetVersion == 6),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(6));
         Assert.That(migratedState.Clans, Has.Count.EqualTo(currentState.Clans.Count));
         Assert.That(
             migratedState.Clans.All(static clan =>

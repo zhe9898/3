@@ -62,6 +62,18 @@ public sealed class ClanStateData
     /// <summary>求医信心（0–100）。与聚落 HealerAccess band 联动。</summary>
     public int RemedyConfidence { get; set; }
 
+    /// <summary>
+    /// STEP2A / A0d — 宗族救济链（<b>挑选性，非普惠</b>，skill
+    /// <c>lineage-institutions-corporate-power</c>）。0–100 表本 clan
+    /// 对下属房支、贫亲、外戚的"救济义务积压"——债主是 clan 自己。
+    ///
+    /// <para>不是温情值：救一人 → 降本字段 + 涨 <c>Prestige</c>（公信）；
+    /// 弃一人 → 降本字段 + 涨远支 <c>BranchTension</c>、给被弃者记
+    /// <see cref="SocialMemoryKinds.ShameExclusion"/>（跨代 grudge）。
+    /// 本 step 只种字段 + seed，规则（挑选逻辑）走后续 step。</para>
+    /// </summary>
+    public int CharityObligation { get; set; }
+
     public string LastConflictCommandCode { get; set; } = string.Empty;
 
     public string LastConflictCommandLabel { get; set; } = string.Empty;
