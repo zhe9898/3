@@ -560,7 +560,11 @@ public sealed partial class M2LiteIntegrationTests
 
                 // payload by ~1 KB on this minimal-world slice.
 
-                SavePayloadBytes = 53500,
+                // Step 2-A / A6: birth gate 解卡后 240 月沙盘真实添丁，新生儿 +
+
+                // 父母 ChildrenIds + PersonRegistry 条目 约再增 ~6 KB 峰值。
+
+                SavePayloadBytes = 60000,
 
             },
 
@@ -574,7 +578,7 @@ public sealed partial class M2LiteIntegrationTests
 
                 NotificationCount = NarrativeProjectionModule.NotificationRetentionLimit,
 
-                SavePayloadBytes = 47000,
+                SavePayloadBytes = 52000,
 
             },
 

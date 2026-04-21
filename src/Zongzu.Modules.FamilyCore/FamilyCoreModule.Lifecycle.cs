@@ -186,13 +186,31 @@ public sealed partial class FamilyCoreModule
         return true;
     }
 
+    /// <summary>
+    /// STEP2A / A6 — 生育链解卡。原 gate 同时要求
+    /// <c>MarriageAllianceValue ≥ 55</c> 与 <c>ReproductivePressure ≥ 52</c>，
+    /// 而这两个字段 seed 初值均为 0，四重合取一起卡死 → 10 年沙盘零新生儿。
+    ///
+    /// <para>新形状：<b>已婚成年夫妇存在 × 无在场婴孩 × SupportReserve 可撑 ×
+    /// MourningLoad 未塌陷</b>。婚议是"合法可育"的结构锚（由 A4 / A4-kin 真实种
+    /// <see cref="FamilyPersonState.SpouseId"/>），不再用 MarriageAllianceValue
+    /// 的分值代理；ReproductivePressure 作为"再育焦虑"是死亡/结婚的下游产物，
+    /// 不该反过来充当生育的前提。MourningLoad 放宽到 35（原 18 对老死后 12 个月
+    /// 窗口过严），让老人去世后仍有合理怀胎窗。</para>
+    ///
+    /// <para>skill <c>fertility-demography-infant-mortality</c>：生育是"夫妇—家
+    /// 内—口粮"的接力，不该塌成一个分值门槛。</para>
+    /// </summary>
     internal static bool TryResolveClanBirth(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals, IPersonRegistryQueries registryQueries)
     {
+        const int MourningCeiling = 35;
+        const int SupportFloor = 25;
+
         if (signals.AdultCount == 0
-            || clan.MarriageAllianceValue < 55
-            || clan.ReproductivePressure < 52
-            || clan.MourningLoad >= 18
-            || signals.InfantCount > 0)
+            || clan.MourningLoad >= MourningCeiling
+            || clan.SupportReserve < SupportFloor
+            || signals.InfantCount > 0
+            || !HasMarriedAdultCouple(scope.State, clan.Id, registryQueries, scope.Context.CurrentDate))
         {
             return false;
         }
@@ -614,6 +632,32 @@ public sealed partial class FamilyCoreModule
             return true;
         }
         return record.Gender != PersonGender.Female;
+    }
+
+    /// <summary>
+    /// STEP2A / A6 — 生育 gate 前置：本 clan 是否存在一对"已婚成年夫妇"。
+    /// 仅要求一方：本 clan 内、在世、成年、<see cref="FamilyPersonState.SpouseId"/>
+    /// 挂有目标；配偶可在任一 clan（嫁入 / 嫁出）但需在世。
+    /// </summary>
+    private static bool HasMarriedAdultCouple(
+        FamilyCoreState state,
+        ClanId clanId,
+        IPersonRegistryQueries registryQueries,
+        GameDate currentDate)
+    {
+        foreach (FamilyPersonState person in state.People)
+        {
+            if (person.ClanId != clanId) continue;
+            if (person.SpouseId is null) continue;
+            if (!IsPersonAlive(person, registryQueries)) continue;
+            int age = GetAgeMonths(person, registryQueries, currentDate);
+            if (age < AdultAgeMonths) continue;
+
+            FamilyPersonState? spouse = state.People.FirstOrDefault(p => p.Id == person.SpouseId.Value);
+            if (spouse is null || !IsPersonAlive(spouse, registryQueries)) continue;
+            return true;
+        }
+        return false;
     }
 
     /// <summary>

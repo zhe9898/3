@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
@@ -41,7 +41,12 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(bundle.PlayerCommands.Affordances.Any(static command => string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.Warfare, StringComparison.Ordinal)), Is.False);
 
-        Assert.That(bundle.PlayerCommands.Receipts, Is.Empty);
+        // Step 2-A / A6: birth gate 解卡后 seed 夫妇在头两月内可能自然添丁，进
+        // 而产生 Family 表面的生命周期 receipt。契约仍是"Office / Warfare 不泄
+        // 漏到 M2 沙盘"，允许 Family receipt 但禁绝非 Family 的 receipt。
+        Assert.That(
+            bundle.PlayerCommands.Receipts.All(static receipt => string.Equals(receipt.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal)),
+            Is.True);
 
         Assert.That(shell.Office.CommandAffordances, Is.Empty);
 

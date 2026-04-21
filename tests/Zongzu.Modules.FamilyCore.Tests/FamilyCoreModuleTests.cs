@@ -499,6 +499,17 @@ public sealed class FamilyCoreModuleTests
             GivenName = "Zhang Da",
             AgeMonths = 28 * 12,
             IsAlive = true,
+            SpouseId = new PersonId(2),
+        });
+        // STEP2A / A6 — 生育 gate 需要"已婚成年夫妇"；补一位在世配偶。
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(2),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Shi",
+            AgeMonths = 26 * 12,
+            IsAlive = true,
+            SpouseId = new PersonId(1),
         });
 
         QueryRegistry queries = new();
@@ -518,7 +529,8 @@ public sealed class FamilyCoreModuleTests
 
         familyModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(familyState, context));
 
-        Assert.That(familyState.People.Count(static person => person.IsAlive), Is.EqualTo(2));
+        // 2 名 seed 成年夫妇 + 新生儿。
+        Assert.That(familyState.People.Count(static person => person.IsAlive), Is.EqualTo(3));
         Assert.That(familyState.Clans[0].ReproductivePressure, Is.LessThan(74));
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.BirthRegistered), Is.True);
         // Phase 2b.1 收口: FamilyCore births must flow through PersonRegistry.Register
@@ -526,6 +538,136 @@ public sealed class FamilyCoreModuleTests
         Assert.That(registryCommands.RegisteredIds, Has.Count.EqualTo(1));
         PersonId registeredNewbornId = registryCommands.RegisteredIds[0];
         Assert.That(familyState.People.Any(person => person.Id == registeredNewbornId && person.ClanId.Value == 1), Is.True);
+    }
+
+    [Test]
+    public void RunMonth_RegistersBirth_ForMarriedCouple_EvenWhenAllianceValueAndReproductivePressureAreSeedZero()
+    {
+        // STEP2A / A6 — 生育链解卡：MarriageAllianceValue / ReproductivePressure
+        // 在 seed 阶段为 0，原 gate 合取 ≥55 / ≥52 永不触发。新 gate 改以
+        // "已婚成年夫妇 × 无近 12 月婴儿 × SupportReserve 可撑 × MourningLoad 未塌陷"
+        // 为前提。本测试验证：即使两字段均为 0，只要夫妇成立，就应出新生儿。
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 57,
+            Prosperity = 64,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 58,
+            SupportReserve = 60,
+            MarriageAllianceValue = 0,
+            ReproductivePressure = 0,
+            MourningLoad = 0,
+        });
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(1),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Da",
+            AgeMonths = 28 * 12,
+            IsAlive = true,
+            SpouseId = new PersonId(2),
+        });
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(2),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Shi",
+            AgeMonths = 26 * 12,
+            IsAlive = true,
+            SpouseId = new PersonId(1),
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        RecordingPersonRegistryCommands registryCommands = new();
+        queries.Register<IPersonRegistryCommands>(registryCommands);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 7),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(41)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        familyModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(familyState, context));
+
+        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.BirthRegistered), Is.True);
+        Assert.That(registryCommands.RegisteredIds, Has.Count.EqualTo(1));
+        Assert.That(familyState.People.Count(static person => person.IsAlive), Is.EqualTo(3));
+    }
+
+    [Test]
+    public void RunMonth_DoesNotRegisterBirth_WhenNoMarriedCouple()
+    {
+        // STEP2A / A6 — 单个未婚成年不应生子。婚议是生育的结构前置。
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 57,
+            Prosperity = 64,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 58,
+            SupportReserve = 60,
+            MarriageAllianceValue = 72,
+            ReproductivePressure = 74,
+            MourningLoad = 0,
+        });
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(1),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Du",
+            AgeMonths = 28 * 12,
+            IsAlive = true,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        RecordingPersonRegistryCommands registryCommands = new();
+        queries.Register<IPersonRegistryCommands>(registryCommands);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 7),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(41)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        familyModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(familyState, context));
+
+        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.BirthRegistered), Is.False);
+        Assert.That(registryCommands.RegisteredIds, Is.Empty);
     }
 
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
