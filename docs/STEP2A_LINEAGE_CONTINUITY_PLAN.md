@@ -67,34 +67,81 @@
 
 ---
 
-## Step 2-A 工作面分解（A0–A7）
+## Step 2-A 工作面分解（A0a–A7）
 
-### 第零刀：医疗/养生缓冲层（A0，独立 commit，A1/A5 的维度供给方）
+### 第零刀：五条社会化照护链（A0a → A0b → A0c → A0d，独立 commit）
 
-#### **A0 — HealerAccess + RemedyConfidence + CareLoad**
-依 `medicine-healing-burial.md` 铁律：治疗是**社会调节层**而非医院系统，作为 A1 老死和 A5 婴儿夭折的**脆弱—缓冲调节**。
+医疗/养生不是单一字段，是 **五条并行的社会化照护链**——横贯 A1 老死、A5 婴儿夭折、A4 婚议、A6 生育。
 
-**落点（不新建模块）**：
-- `WorldSettlements.SettlementStateData.HealerAccess` —— band: `None / Itinerant / Local / Renowned`
-- `FamilyCore.ClanStateData.CareLoad` —— 0-100，长期照料负担（孀居 + 慢性病老人 + 重病婴儿累出来）
-- `FamilyCore.ClanStateData.RemedyConfidence` —— 0-100，受 clan prosperity + settlement.HealerAccess + 最近治疗结果影响
+#### **A0a — 链 ① 家内照料 + 链 ② 郎中药铺**
 
-**交出的维度**（被 A1 / A5 消费）：老人和婴儿风险带累加时，`HealerAccess + RemedyConfidence + CareLoad` 作为缓冲 / 加剧因子。
+**新字段**：
+- `WorldSettlements.SettlementStateData.HealerAccess` —— band `None / Itinerant / Local / Renowned`
+- `FamilyCore.ClanStateData.CareLoad`（0-100，长期照料负担）
+- `FamilyCore.ClanStateData.FuneralDebt`（0-100，葬事后拖累）
+- `FamilyCore.ClanStateData.RemedyConfidence`（0-100）
 
-**A0 自己的回路**（非"纯维度供给"）：
-- `CareLoad` 高 → 阻塞婚议（A4 驱动降）、压住分房前置（A7）、降 `MarriageAllianceValue`
-- 葬事后 `CareLoad` 衰减、`MourningLoad` 接管——两条 load 交接
+**机制**：
+- 慢性老人 / 重病婴儿 → `CareLoad` 累积；葬事 → `FuneralDebt` 涨一跳 3-6 月衰
+- clan 花 `SupportReserve` "问医" → `RemedyConfidence +`、本人风险权重 **降一档但不归零**
+- `HealerAccess = None` 的聚落，花钱也没用
 
-**不做**：
-- 不做"每人每月养生"event-pool —— 违铁律
-- 不建独立医疗模块 —— 这是社会调节层不是系统
-- 不拍治疗概率 —— 用 band 对 band
+**回路**：
+- `CareLoad ≥ 50` 阻塞婚议（A4）、压分房（A7）、降 `ReproductivePressure`
+- `FuneralDebt` 高时降 `SupportReserve`、推迟生育（A6）
 
-**验证**：
-- A0 单独上线后 10 年沙盘老人 CareLoad 真实累积
-- `MarriageAllianceValue` 因 CareLoad 真实受阻（对比基线）
+**skill 铁律**：治疗**只改风险权重，不保证成功**（`medicine-healing-burial`）
 
-### 第一刀：让时间轴活起来（A2 + A1 + A3 + A4，独立 commit）
+#### **A0b — 链 ③ 寺观 / 巫祝 / 民间疗法**
+
+**新字段**：
+- `WorldSettlements.SettlementStateData.TempleHealingPresence` —— band
+- `SocialMemoryAndRelations` memory kind 扩 `vow_obligation`
+
+**机制（平行通道，不是替代医生）**：
+- 信任寺观的家 → 不找郎中 → **延误**（A1/A5 风险权重反涨）**但** `ShamePressure / FearPressure` 下沉（安抚）
+- 病愈欠还愿债 → `vow_obligation` 未还会转回 `ShamePressure`
+- **玩法矛盾**：信仰救心，不救命
+
+#### **A0c — 链 ④ 官府 / 义仓 / 赈济（疫灾驱动，平时 dormant）**
+
+**新字段**：
+- `WorldSettlements.SettlementStateData.GranaryTrust`（0-100）
+- `WorldSettlements.SettlementStateData.ReliefReach` —— band
+
+**新契约事件**：
+- `EpidemicOutbreak`（WorldSettlements 发）
+- `ReliefDelivered` / `ReliefWithheld`（WorldSettlements 发）
+
+**机制**：
+- 疫灾时 `GranaryTrust` 决定 clan 是否求赈；`ReliefReach` 决定实到
+- 实到 → clan `favor_incurred`（记官府管用）
+- 不到 → clan `shame + grudge`，走街谈（补 Step 2-C 的 `StreetTalkSurged` 源头之一）
+
+**skill 铁律**：relief is political as well as humanitarian（`disaster-famine-relief-granaries`）
+
+#### **A0d — 链 ⑤ 宗族救济（挑选性，非普惠）**
+
+**新字段**：
+- `FamilyCore.ClanStateData.CharityObligation`（0-100）
+
+**新 memory kind**：
+- `SocialMemoryAndRelations.favor_incurred`（被救）
+- `SocialMemoryAndRelations.shame_exclusion`（被弃）
+
+**机制（关键：挑选性）**：
+- 房支近 + 门望高 + 历史 favor 正 → 被救 → 记 `favor_incurred`
+- 房支远 + 素有过节 + 门望低 → 被弃 → 记 `shame_exclusion` + 跨代 `grudge`
+- 救济动作降 `SupportReserve`、涨 `prestige`（公信）
+- 弃一人降 `CharityObligation`、涨远支 `branchTension`
+
+**20-30 年回响**：memory 跨代累积，未来某支起事、分房、外嫁谈判时权重来自这里——**宗族不是温情，是有成本的秩序**。
+
+**skill 铁律**：charity obligation can turn into debt dependency（`lineage-institutions-corporate-power` 失败态）
+
+---
+
+### 第一刀：让时间轴活起来（A2 → A1 → A3 → A4，独立 commit）
 
 #### **A1 — 老死风险带**
 替换 `DeathAgeMonths=72*12` 悬崖为 **年龄带 × 多维护养** 的渐进风险模型。
@@ -266,14 +313,17 @@ public const string CameOfAge = "CameOfAge";
 
 | 阶段 | 代号 | commit 粒度 | 验证点 |
 |---|---|---|---|
-| 1 | A2 | Seed 跨代化 + seed `HealerAccess`/`CareLoad` 初值 | 开局 20+ 人，跨代分布合理 |
-| 2 | A0 | 医疗/养生缓冲层 —— A1/A5 的维度供给 | `CareLoad`/`RemedyConfidence`/`HealerAccess` 字段就位并真实涨落 |
-| 3 | A1 | 老死风险带（吃 A0 维度） | 10 年沙盘见死亡发生 |
-| 4 | A3 | Heir 自动指派 —— 承祧活起来 | `HeirSecurity` 随 heir 生死真实波动 |
-| 5 | A4 | 婚议链通电（吃 `CareLoad` 阻塞） | 婚事有 SocialMemory 痕迹 |
-| 6 | A5 | 婴幼儿夭折（吃 A0 维度） | Infant/Child 死亡率带 |
-| 7 | A6 | 生育链解卡 —— 生育真发生 | 新生儿真实出现 |
-| 8 | A7 | 成年 + 分房前置 —— 年华推人 | SeparationPressure 真涨 |
+| 1 | A2 | Seed 跨代化 + seed 五链初值 | 开局 20+ 人，跨代分布；五链字段就位 |
+| 2 | A0a | 链①家内照料 + 链②郎中药铺 | `CareLoad`/`FuneralDebt`/`RemedyConfidence`/`HealerAccess` 真实涨落 |
+| 3 | A0b | 链③寺观民间（延误/安抚平行通道） | `vow_obligation` memory 出现；寺观派别家延误权重真实 |
+| 4 | A0c | 链④官仓赈济（疫灾驱动） | `EpidemicOutbreak` / `ReliefDelivered` / `ReliefWithheld` 出现 |
+| 5 | A0d | 链⑤宗族救济（挑选性） | `favor_incurred` / `shame_exclusion` memory 跨代累积 |
+| 6 | A1 | 老死风险带（吃 A0a–d 全部维度） | 10 年沙盘见死亡发生，风险依维度加权 |
+| 7 | A3 | Heir 自动指派 / 递补 | `HeirSecurity` 随 heir 生死真实波动 |
+| 8 | A4 | 婚议链通电（吃 CareLoad 阻塞） | 婚事有 SocialMemory 痕迹 |
+| 9 | A5 | 婴幼儿夭折（吃 A0a–d） | Infant/Child 死亡率带 |
+| 10 | A6 | 生育链解卡 | 新生儿真实出现 |
+| 11 | A7 | CameOfAge + 分房前置 | SeparationPressure 真涨 |
 
 每一步都要：
 1. 改代码
@@ -290,6 +340,10 @@ public const string CameOfAge = "CameOfAge";
 - ❌ 在 A1–A4 阶段试图做过继 / 玩家操作 —— 超出本 step 范围
 - ❌ 引入新随机数发生器 —— 必须用 `scope.Context` 已有 deterministic source
 - ❌ 在 FamilyCoreModule 之外的模块改 clan state —— 违模块边界
+- ❌ 把治疗做成"付钱 → 治好"的交易 —— 违 `medicine-healing-burial`（治疗不保证成功）
+- ❌ 让宗族救济变成自动普惠 —— 违 `lineage-institutions-corporate-power`（救济是挑选性的）
+- ❌ 让寺观变成"第二家医院" —— 违 `religion-temples-ritual-brokerage`（要保留延误/安抚张力）
+- ❌ 让 `HealerAccess` / `GranaryTrust` / `TempleHealingPresence` 变成同质 0-100 条 —— 违 `simulation-calibration`（每 band 有不同语义）
 
 ## 跨 step 衔接
 
