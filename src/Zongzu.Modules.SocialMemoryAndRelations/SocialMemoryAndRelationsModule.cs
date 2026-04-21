@@ -30,7 +30,20 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         WarfareCampaignEventNames.CampaignPressureRaised,
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
+        // Step 1b gap 1: trade shock → clan narrative memory (no-op dispatch)
+        TradeShockEventTypes.RouteBusinessBlocked,
+        TradeShockEventTypes.TradeLossOccurred,
+        TradeShockEventTypes.TradeDebtDefaulted,
+        TradeShockEventTypes.TradeProspered,
     ];
+
+    private static class TradeShockEventTypes
+    {
+        public const string RouteBusinessBlocked = "RouteBusinessBlocked";
+        public const string TradeLossOccurred = "TradeLossOccurred";
+        public const string TradeDebtDefaulted = "TradeDebtDefaulted";
+        public const string TradeProspered = "TradeProspered";
+    }
 
     public override string ModuleKey => KnownModuleKeys.SocialMemoryAndRelations;
 
@@ -153,6 +166,8 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
     public override void HandleEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
     {
+        DispatchTradeShockEvents(scope);
+
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
         {
@@ -212,6 +227,25 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                 {
                     scope.Emit("GrudgeEscalated", $"战后余波使{clan.ClanName}旧怨更炽。", clan.Id.Value.ToString());
                 }
+            }
+        }
+    }
+
+    private static void DispatchTradeShockEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        // Step 1b gap 1 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口（Step 2 可吃）：违约方与被违约方既有 grudge/favor；事件规模；当地粮价与治安；
+        // 是否发生在灾害窗口；两家是否既有姻亲/世交。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case TradeShockEventTypes.RouteBusinessBlocked:
+                case TradeShockEventTypes.TradeLossOccurred:
+                case TradeShockEventTypes.TradeDebtDefaulted:
+                case TradeShockEventTypes.TradeProspered:
+                    // TODO Step 2: 按维度入口更新 ClanNarrativeState / EventMemoryState。
+                    break;
             }
         }
     }

@@ -30,7 +30,20 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         WarfareCampaignEventNames.CampaignPressureRaised,
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
+        // Step 1b gap 1: trade shock → household livelihood pressure (no-op dispatch)
+        TradeShockEventTypes.RouteBusinessBlocked,
+        TradeShockEventTypes.TradeLossOccurred,
+        TradeShockEventTypes.TradeDebtDefaulted,
+        TradeShockEventTypes.TradeProspered,
     ];
+
+    private static class TradeShockEventTypes
+    {
+        public const string RouteBusinessBlocked = "RouteBusinessBlocked";
+        public const string TradeLossOccurred = "TradeLossOccurred";
+        public const string TradeDebtDefaulted = "TradeDebtDefaulted";
+        public const string TradeProspered = "TradeProspered";
+    }
 
     public override string ModuleKey => KnownModuleKeys.PopulationAndHouseholds;
 
@@ -190,6 +203,8 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
 
     public override void HandleEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
     {
+        DispatchTradeShockEvents(scope);
+
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
         {
@@ -259,6 +274,25 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         if (anyHouseholdChanged)
         {
             RebuildSettlementSummaries(scope.State);
+        }
+    }
+
+    private static void DispatchTradeShockEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Step 1b gap 1 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口（Step 2 可吃）：违约方所属聚落的 debt/distress/livelihood；家户 sponsor clan 救济余力；
+        // 当地粮价波动；徭役窗口；灾害窗口；季节带。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case TradeShockEventTypes.RouteBusinessBlocked:
+                case TradeShockEventTypes.TradeLossOccurred:
+                case TradeShockEventTypes.TradeDebtDefaulted:
+                case TradeShockEventTypes.TradeProspered:
+                    // TODO Step 2: 按维度入口调整相关 household 的 DebtLoad / LivelihoodPressure / MigrationRisk。
+                    break;
+            }
         }
     }
 

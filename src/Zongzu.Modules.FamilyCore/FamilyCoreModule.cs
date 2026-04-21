@@ -45,7 +45,20 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         WarfareCampaignEventNames.CampaignPressureRaised,
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
+        // Step 1b gap 1: trade shock → clan pressure (no-op dispatch, rule density 留给 Step 2)
+        TradeShockEventTypes.RouteBusinessBlocked,
+        TradeShockEventTypes.TradeLossOccurred,
+        TradeShockEventTypes.TradeDebtDefaulted,
+        TradeShockEventTypes.TradeProspered,
     ];
+
+    private static class TradeShockEventTypes
+    {
+        public const string RouteBusinessBlocked = "RouteBusinessBlocked";
+        public const string TradeLossOccurred = "TradeLossOccurred";
+        public const string TradeDebtDefaulted = "TradeDebtDefaulted";
+        public const string TradeProspered = "TradeProspered";
+    }
 
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
 
@@ -240,6 +253,8 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override void HandleEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
     {
+        DispatchTradeShockEvents(scope);
+
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
         {
@@ -279,6 +294,25 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 $"{campaign.AnchorSettlementName}战后余波牵动宗房声势：门望{prestigeDelta:+#;-#;0}，宗力{supportDelta:+#;-#;0}。{campaign.LastAftermathSummary}",
                 bundle.SettlementId.Value.ToString());
             scope.Emit(FamilyCoreEventNames.ClanPrestigeAdjusted, $"{campaign.AnchorSettlementName}战后余波改动了宗房声势。", bundle.SettlementId.Value.ToString());
+        }
+    }
+
+    private static void DispatchTradeShockEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
+    {
+        // Step 1b gap 1 — thin dispatch only. Intentionally no state change, no Emit, no diff.
+        // 维度入口（Step 2 填规则时可吃）：违约方 clan prestige / prosperity / shame / branchTension；
+        // 债务规模与家底比；两家 SocialMemory grudge；当地粮价 / 治安 / 季节带 / 徭役窗口。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case TradeShockEventTypes.RouteBusinessBlocked:
+                case TradeShockEventTypes.TradeLossOccurred:
+                case TradeShockEventTypes.TradeDebtDefaulted:
+                case TradeShockEventTypes.TradeProspered:
+                    // TODO Step 2: 按维度入口调整 clan Prestige / Shame / SupportReserve / BranchTension。
+                    break;
+            }
         }
     }
 
