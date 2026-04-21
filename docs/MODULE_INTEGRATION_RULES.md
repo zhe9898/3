@@ -180,7 +180,7 @@ Correct approach:
 - a thin application-routed warfare-intent service now stages `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` into `WarfareCampaign`-owned directive state only
 - the current player-command vertical slice may expose those same warfare directives as read-only affordances and receipts in presentation, but the routing still stays in application services and the writes still stay inside `WarfareCampaign`
 - current warfare-lite state now persists active directive code/label/summary and last directive trace inside the warfare namespace instead of inventing a cross-module command ledger
-- built-in `WarfareCampaign` migration now upgrades schema `1 -> 2 -> 3` by backfilling labels, route descriptors, and directive descriptors without changing enabled-module or envelope-key sets
+- built-in `WarfareCampaign` migration now upgrades schema `1 -> 2 -> 3 -> 4` by backfilling labels, route descriptors, directive descriptors, and campaign phasing plus aftermath dockets without changing enabled-module or envelope-key sets
 - current warfare-lite aftermath now propagates into `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, and `SocialMemoryAndRelations` through the event-handling seam only
 - those downstream modules update only their own prosperity, livelihood, prestige, ledger, pressure, petition, or memory state; none of them write back into `WarfareCampaign`
 

@@ -194,11 +194,13 @@ MVP 的规则很薄，但瓶颈不是"公式不够复杂"，而是**静态容器
 
 ---
 
-### 2.10 WarfareCampaign：战役骨骼
+### 2.10 WarfareCampaign：战役骨骼 ✅
 
-补全 `CampaignState`：phase（8步）/ directive / committedForces / contestedRoutes / supplyStretch / commandFit / civilianExposure
+补全 `CampaignState`：phase（8步 `CampaignPhase` 枚举：Proposed / Mobilizing / Marshalled / Engaged / Stalemate / Decisive / Withdrawing / Aftermath）/ directive / committedForces / contestedRoutes / supplyStretch / commandFit / civilianExposure
 
-新增 `AftermathDocket`：merits / blames / reliefNeeds / routeRepairs
+新增 `AftermathDocket`：merits / blames / reliefNeeds / routeRepairs / docketSummary
+
+> **Phase 10 已落地**（schema 3→4，投影 `WarfareCampaignStateProjection.BuildCampaignPhasingAndAftermath` 在 RunMonth 尾部统一推导相位与善后案卷；`IWarfareCampaignQueries.GetAftermathDockets` 暴露只读快照）。
 
 ---
 
@@ -208,10 +210,10 @@ MVP 的规则很薄，但瓶颈不是"公式不够复杂"，而是**静态容器
 **Phase 1b** ✅：PersonRegistry 接入所有 bootstrap、manifest 启用、seed heir 双写、金丝雀 integration 测试
 **Phase 1c**：空间骨骼（WorldSettlements 节点分类 + 功能路线 + 水陆双拓扑 + 季节带 + 叠加 query 契约）—— 详见 `SPATIAL_SKELETON_SPEC.md`
 **Phase 2**：各模块人物领域状态（按 `PERSON_OWNERSHIP_RULES.md` 分布到各模块；同时迁出 FamilyCore 的冗余年龄/存活字段，改读 PersonRegistry）
-**Phase 3**：生计骨骼（PopulationAndHouseholds 生计类型 + 摘要池 + `DeathByIllness` 通道）
-**Phase 4**：记忆骨骼（SocialMemoryAndRelations 事件记忆）
-**Phase 5**：商贸骨骼（TradeAndIndustry 商品 + 价格）
-**Phase 6**：科举 + 官场 + 匪患 + 武力 + 战役骨骼（含 ConflictAndForce 的 `DeathByViolence` 通道）
+**Phase 3** ✅：生计骨骼（PopulationAndHouseholds 生计类型 + 摘要池 + `DeathByIllness` 通道）
+**Phase 4** ✅：记忆骨骼（SocialMemoryAndRelations 事件记忆）
+**Phase 5** ✅：商贸骨骼（TradeAndIndustry 商品 + 价格）
+**Phase 6** ✅：科举 + 官场 + 匪患 + 武力 + 战役骨骼（含 ConflictAndForce 的 `DeathByViolence` 通道）；分解为 Phase 6/7/8/9/10 四骨骼依次落地（EducationAndExams / OfficeAndCareer / OrderAndBanditry / ConflictAndForce / WarfareCampaign）
 
 每个 Phase：枚举 -> 状态容器 -> Schema 迁移 -> Query 契约 -> 一条薄链。
 
