@@ -38,6 +38,9 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         // Step 1b gap 3: world pulse → labor / livelihood (no-op dispatch)
         WorldSettlementsEventNames.FloodRiskThresholdBreached,
         WorldSettlementsEventNames.CorveeWindowChanged,
+        // Step 1b gap 4: family branch / heir pressure → household count & sponsor shift (no-op dispatch)
+        FamilyCoreEventNames.BranchSeparationApproved,
+        FamilyCoreEventNames.HeirSecurityWeakened,
     ];
 
     private static class TradeShockEventTypes
@@ -208,6 +211,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
     {
         DispatchTradeShockEvents(scope);
         DispatchWorldPulseEvents(scope);
+        DispatchFamilyBranchEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
@@ -311,6 +315,23 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 case WorldSettlementsEventNames.FloodRiskThresholdBreached:
                 case WorldSettlementsEventNames.CorveeWindowChanged:
                     // TODO Step 2: 按维度入口调整 LaborPressure / LivelihoodPressure / MigrationRisk。
+                    break;
+            }
+        }
+    }
+
+    private static void DispatchFamilyBranchEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Step 1b gap 4 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：分房 clan 家底 / 聚落容纳；旧家 sponsor 关系；是否可迁移；新分出支系与原聚落距离；
+        // 四季带 / 战后恢复期。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case FamilyCoreEventNames.BranchSeparationApproved:
+                case FamilyCoreEventNames.HeirSecurityWeakened:
+                    // TODO Step 2: 按维度入口调整 household sponsor / 新增户 / MigrationRisk。
                     break;
             }
         }

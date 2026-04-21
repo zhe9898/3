@@ -36,6 +36,8 @@ public sealed class PersonRegistryModule : ModuleRunner<PersonRegistryState>
         DeathCauseEventNames.ClanMemberDied,
         DeathCauseEventNames.DeathByIllness,
         DeathCauseEventNames.DeathByViolence,
+        // Step 1b gap 4: branch separation → person settlement re-anchor (no-op dispatch)
+        FamilyCoreEventNames.BranchSeparationApproved,
     ];
 
     private static readonly string[] PublishedEventNames =

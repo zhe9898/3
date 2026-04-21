@@ -37,6 +37,9 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         TradeShockEventTypes.TradeProspered,
         // Step 1b gap 2: violent death → cross-generation blood-feud memory (no-op dispatch)
         DeathCauseEventNames.DeathByViolence,
+        // Step 1b gap 4: branch split / heir weakened → clan narrative (no-op dispatch)
+        FamilyCoreEventNames.BranchSeparationApproved,
+        FamilyCoreEventNames.HeirSecurityWeakened,
     ];
 
     private static class TradeShockEventTypes
@@ -170,6 +173,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
     {
         DispatchTradeShockEvents(scope);
         DispatchViolentDeathEvents(scope);
+        DispatchFamilyBranchEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
@@ -245,6 +249,23 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
             if (domainEvent.EventType == DeathCauseEventNames.DeathByViolence)
             {
                 // TODO Step 2: 更新 ClanNarrativeState / 跨代 grudge / FeudMemory。
+            }
+        }
+    }
+
+    private static void DispatchFamilyBranchEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        // Step 1b gap 4 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：分家规模（主房 / 旁支）；分出方与原房既有 grudge / favor；分家是否伴随 shame；
+        // 邻族是否围观；当地公议（PublicLife）热度。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case FamilyCoreEventNames.BranchSeparationApproved:
+                case FamilyCoreEventNames.HeirSecurityWeakened:
+                    // TODO Step 2: 更新 ClanNarrativeState / EventMemoryState。
+                    break;
             }
         }
     }
