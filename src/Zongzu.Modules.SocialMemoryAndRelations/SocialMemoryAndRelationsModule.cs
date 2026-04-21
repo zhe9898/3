@@ -35,6 +35,8 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         TradeShockEventTypes.TradeLossOccurred,
         TradeShockEventTypes.TradeDebtDefaulted,
         TradeShockEventTypes.TradeProspered,
+        // Step 1b gap 2: violent death → cross-generation blood-feud memory (no-op dispatch)
+        DeathCauseEventNames.DeathByViolence,
     ];
 
     private static class TradeShockEventTypes
@@ -167,6 +169,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
     public override void HandleEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
     {
         DispatchTradeShockEvents(scope);
+        DispatchViolentDeathEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
@@ -227,6 +230,21 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                 {
                     scope.Emit("GrudgeEscalated", $"战后余波使{clan.ClanName}旧怨更炽。", clan.Id.Value.ToString());
                 }
+            }
+        }
+    }
+
+    private static void DispatchViolentDeathEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        // Step 1b gap 2 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：加害方 / 受害方所属 clan；两家既有 grudge / favor；事件规模（群殴/单伤/命案）；
+        // 是否战时 / 战后余波；地方权威是否介入（Office AuthorityTier）。暴力致死在族叙事里应当比病死更
+        // 容易沉淀为跨代血仇——Step 2 填函数形状。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType == DeathCauseEventNames.DeathByViolence)
+            {
+                // TODO Step 2: 更新 ClanNarrativeState / 跨代 grudge / FeudMemory。
             }
         }
     }

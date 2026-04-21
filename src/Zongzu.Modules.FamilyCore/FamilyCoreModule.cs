@@ -50,6 +50,8 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         TradeShockEventTypes.TradeLossOccurred,
         TradeShockEventTypes.TradeDebtDefaulted,
         TradeShockEventTypes.TradeProspered,
+        // Step 1b gap 2: violent death → clan mourning / heir security / grudge (no-op dispatch)
+        DeathCauseEventNames.DeathByViolence,
     ];
 
     private static class TradeShockEventTypes
@@ -254,6 +256,7 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     public override void HandleEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
     {
         DispatchTradeShockEvents(scope);
+        DispatchViolentDeathEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
@@ -294,6 +297,20 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 $"{campaign.AnchorSettlementName}战后余波牵动宗房声势：门望{prestigeDelta:+#;-#;0}，宗力{supportDelta:+#;-#;0}。{campaign.LastAftermathSummary}",
                 bundle.SettlementId.Value.ToString());
             scope.Emit(FamilyCoreEventNames.ClanPrestigeAdjusted, $"{campaign.AnchorSettlementName}战后余波改动了宗房声势。", bundle.SettlementId.Value.ToString());
+        }
+    }
+
+    private static void DispatchViolentDeathEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
+    {
+        // Step 1b gap 2 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：死者生前 LifeStage / 家族身份（宗子 / 分支 / 旁系）；家族 prestige / prosperity 支撑力；
+        // 战后恢复期（Warfare Phase == Aftermath）；既有 grudge 网络；季节带 / 治安。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType == DeathCauseEventNames.DeathByViolence)
+            {
+                // TODO Step 2: 按维度入口更新 MourningLoad / HeirSecurity 与发 ClanMemberDied / HeirSecurityWeakened。
+            }
         }
     }
 
