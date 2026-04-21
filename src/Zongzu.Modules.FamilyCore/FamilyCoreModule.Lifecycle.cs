@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
@@ -38,6 +39,128 @@ public sealed partial class FamilyCoreModule
                     break;
             }
         }
+    }
+
+    /// <summary>
+    /// STEP2A / A4 — 跨 clan 婚议通电。每月一次扫描所有 clan，按以下合意配对：
+    /// 同聚落、双方 <c>MarriageAlliancePressure ≥ 55</c>、双方 <c>MourningLoad &lt; 18</c>、
+    /// <c>|ΔPrestige| ≤ 30</c>、候选：未婚（<c>SpouseId == null</c>）+ 在世 +
+    /// 16–30 岁 + 异性（依 PersonRegistry gender；未登记默认男），每对只配一次。
+    ///
+    /// <para>双边：各自 <c>MarriageAllianceValue</c> 至少拉到 55，<c>MarriageAlliancePressure -= 22</c>，
+    /// <c>ReproductivePressure += 8</c>，<c>SupportReserve -= 2</c>（聘仪所费）；
+    /// 写双向 <c>SpouseId</c>；发两次 <c>MarriageAllianceArranged</c>（以各自
+    /// clan.Id 为 entity key）。未配上的 clan 下方循环走本族自议 fallback。</para>
+    ///
+    /// <para>skill <c>marriage-alliance-politics</c>：婚议是两族合意的联络，
+    /// 本 step 不做聘礼 / 债务 / 政治操盘（后续 step 接）。</para>
+    /// </summary>
+    internal static void TryArrangeCrossClanMarriages(
+        ModuleExecutionScope<FamilyCoreState> scope,
+        IPersonRegistryQueries registryQueries,
+        GameDate currentDate)
+    {
+        const int MatchPressureThreshold = 55;
+        const int MatchMourningCeiling = 18;
+        const int PrestigeGapCeiling = 30;
+        const int YouthMinAgeMonths = 16 * 12;
+        const int YouthMaxAgeMonths = 30 * 12;
+
+        ClanStateData[] clans = scope.State.Clans
+            .Where(c => c.MarriageAlliancePressure >= MatchPressureThreshold
+                        && c.MourningLoad < MatchMourningCeiling)
+            .OrderBy(static c => c.Id.Value)
+            .ToArray();
+        if (clans.Length < 2) return;
+
+        // 收集每个合格 clan 的未婚候选（按性别分桶）。
+        Dictionary<ClanId, List<FamilyPersonState>> maleByClan = new();
+        Dictionary<ClanId, List<FamilyPersonState>> femaleByClan = new();
+        foreach (ClanStateData clan in clans)
+        {
+            List<FamilyPersonState> males = new();
+            List<FamilyPersonState> females = new();
+            foreach (FamilyPersonState person in scope.State.People.Where(p => p.ClanId == clan.Id))
+            {
+                if (person.SpouseId is not null) continue;
+                if (!IsPersonAlive(person, registryQueries)) continue;
+                int age = GetAgeMonths(person, registryQueries, currentDate);
+                if (age < YouthMinAgeMonths || age > YouthMaxAgeMonths) continue;
+                if (IsHeirEligibleGender(person.Id, registryQueries))
+                {
+                    males.Add(person);
+                }
+                else
+                {
+                    females.Add(person);
+                }
+            }
+            if (males.Count > 0) maleByClan[clan.Id] = males;
+            if (females.Count > 0) femaleByClan[clan.Id] = females;
+        }
+
+        // 配对：按 clan 对有序遍历（i<j），先吃一对合格男女则写定；已写入
+        // 的 clan 本月不再配第二对（避免一月多婚与候选被重复选中）。
+        HashSet<ClanId> matchedThisMonth = new();
+        for (int i = 0; i < clans.Length; i++)
+        {
+            ClanStateData a = clans[i];
+            if (matchedThisMonth.Contains(a.Id)) continue;
+            for (int j = i + 1; j < clans.Length; j++)
+            {
+                ClanStateData b = clans[j];
+                if (matchedThisMonth.Contains(b.Id)) continue;
+                if (a.HomeSettlementId != b.HomeSettlementId) continue;
+                if (Math.Abs(a.Prestige - b.Prestige) > PrestigeGapCeiling) continue;
+
+                // 找一对：A-男 × B-女，或 A-女 × B-男。优先取最年长。
+                FamilyPersonState? groom = null;
+                FamilyPersonState? bride = null;
+                if (maleByClan.TryGetValue(a.Id, out List<FamilyPersonState>? aMales)
+                    && femaleByClan.TryGetValue(b.Id, out List<FamilyPersonState>? bFemales))
+                {
+                    groom = aMales.OrderByDescending(p => GetAgeMonths(p, registryQueries, currentDate)).First();
+                    bride = bFemales.OrderByDescending(p => GetAgeMonths(p, registryQueries, currentDate)).First();
+                }
+                else if (femaleByClan.TryGetValue(a.Id, out List<FamilyPersonState>? aFemales)
+                         && maleByClan.TryGetValue(b.Id, out List<FamilyPersonState>? bMales))
+                {
+                    bride = aFemales.OrderByDescending(p => GetAgeMonths(p, registryQueries, currentDate)).First();
+                    groom = bMales.OrderByDescending(p => GetAgeMonths(p, registryQueries, currentDate)).First();
+                }
+
+                if (groom is null || bride is null) continue;
+
+                // 写 spouse 双向 + 两边 clan 状态。
+                groom.SpouseId = bride.Id;
+                bride.SpouseId = groom.Id;
+
+                ApplyCrossClanMarriageEffects(scope, a, groom, bride);
+                ApplyCrossClanMarriageEffects(scope, b, bride, groom);
+
+                matchedThisMonth.Add(a.Id);
+                matchedThisMonth.Add(b.Id);
+                break;
+            }
+        }
+    }
+
+    private static void ApplyCrossClanMarriageEffects(
+        ModuleExecutionScope<FamilyCoreState> scope,
+        ClanStateData clan,
+        FamilyPersonState ownParty,
+        FamilyPersonState otherParty)
+    {
+        clan.MarriageAllianceValue = Math.Max(clan.MarriageAllianceValue, 55);
+        clan.MarriageAlliancePressure = Math.Max(0, clan.MarriageAlliancePressure - 22);
+        clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 8, 0, 100);
+        clan.SupportReserve = Math.Max(0, clan.SupportReserve - 2);
+        clan.LastLifecycleOutcome = $"{clan.ClanName}与邻族结亲，婚议已定。";
+        clan.LastLifecycleTrace = $"{ownParty.GivenName}与{otherParty.GivenName}议定姻亲，门墙之间先借此一络。";
+
+        string message = $"{clan.ClanName}与邻族议定{ownParty.GivenName}之姻。";
+        scope.RecordDiff(message, clan.Id.Value.ToString());
+        scope.Emit(FamilyCoreEventNames.MarriageAllianceArranged, message, clan.Id.Value.ToString());
     }
 
     internal static bool TryArrangeAutonomousMarriage(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals)

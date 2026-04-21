@@ -270,6 +270,32 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         }
     }
 
+    /// <summary>
+    /// STEP2A / A4 — 跨 clan 婚议 → 双方 clan 的 <c>FavorBalance</c> 各加一跳；
+    /// 若越过 10 的阈值发 <c>FavorIncurred</c>。婚议本身即人情债的生成事件。
+    /// EntityKey 即本 clan 的 ClanId（FamilyCore 发 MarriageAllianceArranged 时
+    /// 双方 clan 各发一条）。
+    /// </summary>
+    private static void DispatchMarriageAllianceEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType != FamilyCoreEventNames.MarriageAllianceArranged) continue;
+            if (string.IsNullOrEmpty(domainEvent.EntityKey)) continue;
+            if (!int.TryParse(domainEvent.EntityKey, out int clanIdValue)) continue;
+
+            ClanId clanId = new(clanIdValue);
+            ClanNarrativeState narrative = GetOrCreateNarrative(scope.State, clanId);
+            int previousFavor = narrative.FavorBalance;
+            narrative.FavorBalance = Math.Clamp(narrative.FavorBalance + 3, -100, 100);
+
+            if (previousFavor < 10 && narrative.FavorBalance >= 10)
+            {
+                scope.Emit("FavorIncurred", $"{clanId.Value}族因议婚人情渐著。");
+            }
+        }
+    }
+
     private static void DispatchTradeShockEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
     {
         // Step 1b gap 1 — thin dispatch only. No state change, no Emit, no diff.

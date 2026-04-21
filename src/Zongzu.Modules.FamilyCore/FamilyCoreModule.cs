@@ -132,6 +132,13 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
             scope.Emit(FamilyCoreEventNames.FamilyMembersAged, $"宗房人口本月俱各长一月，共{peopleAged}人。");
         }
 
+        // STEP2A / A4 — 跨 clan 婚议通电。先做一轮跨族配对（同聚落 + 异性 +
+        // 未婚 + 适婚窗 + 双方压力阈值达到），配成则双边各写一次
+        // MarriageAllianceArranged；未配上的走本族自议 fallback（下方循环）。
+        // skill marriage-alliance-politics：联姻由两族合意而成，不是单方
+        // 意愿；本 step 不做聘礼 / 债务 / 政治操盘。
+        TryArrangeCrossClanMarriages(scope, registryQueries, currentDate);
+
         foreach (ClanStateData clan in scope.State.Clans.OrderBy(static clan => clan.Id.Value))
         {
             SettlementSnapshot homeSettlement = settlementsQueries.GetRequiredSettlement(clan.HomeSettlementId);
