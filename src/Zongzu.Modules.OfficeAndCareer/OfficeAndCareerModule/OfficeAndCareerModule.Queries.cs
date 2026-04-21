@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -73,6 +73,43 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
                 .ToArray();
 
+        }
+
+
+        public IReadOnlyList<OfficialPostSnapshot> GetOfficialPosts()
+        {
+            return _state.OfficialPosts
+                .OrderBy(static post => post.Location.Value)
+                .ThenBy(static post => post.PostId, StringComparer.Ordinal)
+                .Select(static post => new OfficialPostSnapshot
+                {
+                    PostId = post.PostId,
+                    Location = post.Location,
+                    Rank = post.Rank,
+                    PostTitle = post.PostTitle,
+                    CurrentHolder = post.CurrentHolder,
+                    VacancyMonths = post.VacancyMonths,
+                    PetitionBacklog = post.PetitionBacklog,
+                    ClerkDependence = post.ClerkDependence,
+                    EvaluationPressure = post.EvaluationPressure,
+                })
+                .ToArray();
+        }
+
+        public IReadOnlyList<WaitingListEntrySnapshot> GetWaitingList()
+        {
+            return _state.WaitingList
+                .OrderBy(static entry => entry.PersonId.Value)
+                .Select(static entry => new WaitingListEntrySnapshot
+                {
+                    PersonId = entry.PersonId,
+                    SettlementId = entry.SettlementId,
+                    DisplayName = entry.DisplayName,
+                    QualificationTier = entry.QualificationTier,
+                    WaitingMonths = entry.WaitingMonths,
+                    PatronageSupport = entry.PatronageSupport,
+                })
+                .ToArray();
         }
 
 

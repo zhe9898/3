@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Application;
@@ -90,7 +90,7 @@ public sealed partial class SaveMigrationPipelineTests
             typeof(OfficeAndCareerState),
             reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
 
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(migratedState.People.Any(static career => career.ServiceMonths > 0), Is.True);
         Assert.That(migratedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.CurrentAdministrativeTask)), Is.True);
         Assert.That(migratedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.LastPetitionOutcome)), Is.True);

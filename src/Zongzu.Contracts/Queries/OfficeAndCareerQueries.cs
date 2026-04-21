@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -102,4 +102,45 @@ public interface IOfficeAndCareerQueries
     JurisdictionAuthoritySnapshot GetRequiredJurisdiction(SettlementId settlementId);
 
     IReadOnlyList<JurisdictionAuthoritySnapshot> GetJurisdictions();
+
+    // Phase 7 衙门骨骼 — LIVING_WORLD_DESIGN §2.7
+    IReadOnlyList<OfficialPostSnapshot> GetOfficialPosts() => [];
+
+    IReadOnlyList<WaitingListEntrySnapshot> GetWaitingList() => [];
+}
+
+public sealed record OfficialPostSnapshot
+{
+    public string PostId { get; init; } = string.Empty;
+
+    public SettlementId Location { get; init; }
+
+    public int Rank { get; init; }
+
+    public string PostTitle { get; init; } = string.Empty;
+
+    public PersonId? CurrentHolder { get; init; }
+
+    public int VacancyMonths { get; init; }
+
+    public int PetitionBacklog { get; init; }
+
+    public int ClerkDependence { get; init; }
+
+    public int EvaluationPressure { get; init; }
+}
+
+public sealed record WaitingListEntrySnapshot
+{
+    public PersonId PersonId { get; init; }
+
+    public SettlementId SettlementId { get; init; }
+
+    public string DisplayName { get; init; } = string.Empty;
+
+    public int QualificationTier { get; init; }
+
+    public int WaitingMonths { get; init; }
+
+    public int PatronageSupport { get; init; }
 }

@@ -216,7 +216,7 @@ public sealed class SaveRoundtripTests
         OfficeAndCareerState reloadedState = (OfficeAndCareerState)serializer.Deserialize(
             typeof(OfficeAndCareerState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(reloadedState.People.Any(static career => career.HasAppointment), Is.True);
         Assert.That(reloadedState.People.Any(static career => career.ServiceMonths > 0), Is.True);
         Assert.That(reloadedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.LastPetitionOutcome)), Is.True);

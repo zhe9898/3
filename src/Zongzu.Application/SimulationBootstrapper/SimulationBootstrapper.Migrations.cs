@@ -74,6 +74,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 3, 4, MigratePublicLifeAndRumorStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 1, 2, MigrateOfficeAndCareerStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 2, 3, MigrateOfficeAndCareerStateV2ToV3);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 3, 4, MigrateOfficeAndCareerStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 1, 2, MigrateTradeAndIndustryStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 2, 3, MigrateTradeAndIndustryStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 3, 4, MigrateTradeAndIndustryStateV3ToV4);
@@ -346,6 +347,20 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.OfficeAndCareer,
             ModuleSchemaVersion = 3,
+            Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOfficeAndCareerStateV3ToV4(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OfficeAndCareerState migratedState = (OfficeAndCareerState)serializer.Deserialize(typeof(OfficeAndCareerState), envelope.Payload);
+        OfficeAndCareerStateProjection.UpgradeFromSchemaV3ToV4(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OfficeAndCareer,
+            ModuleSchemaVersion = 4,
             Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
         };
     }

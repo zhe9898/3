@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -56,7 +56,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
     public override string ModuleKey => KnownModuleKeys.OfficeAndCareer;
 
 
-    public override int ModuleSchemaVersion => 3;
+    public override int ModuleSchemaVersion => 4;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -265,6 +265,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             .ToList();
 
         scope.State.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(scope.State.People);
+
+        OfficeAndCareerStateProjection.BuildOfficialPostsAndWaitingList(scope.State);
 
     }
 
