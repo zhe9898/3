@@ -50,6 +50,11 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         WarfareCampaignEventNames.CampaignAftermathRegistered,
 
+        // Step 1b gap 3: public life → office petition backlog (no-op dispatch)
+        PublicLifeAndRumorEventNames.PrefectureDispatchPressed,
+        PublicLifeAndRumorEventNames.CountyGateCrowded,
+        PublicLifeAndRumorEventNames.StreetTalkSurged,
+
     ];
 
 
@@ -275,6 +280,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
     {
 
+        DispatchPublicLifeEvents(scope);
+
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
 
         if (warfareEvents.Count == 0)
@@ -387,4 +394,21 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
     }
 
 
+    private static void DispatchPublicLifeEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
+    {
+        // Step 1b gap 3 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：州牒 / 县门拥堵 / 街议所在聚落；本地 AuthorityTier 与现任 posts；积案深度；
+        // 是否处在徭役窗口或战后恢复期；公议量级。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case PublicLifeAndRumorEventNames.PrefectureDispatchPressed:
+                case PublicLifeAndRumorEventNames.CountyGateCrowded:
+                case PublicLifeAndRumorEventNames.StreetTalkSurged:
+                    // TODO Step 2: 按维度入口堆积 PetitionBacklog / AuthorityChanged。
+                    break;
+            }
+        }
+    }
 }

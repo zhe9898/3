@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -11,6 +11,8 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
     public override void HandleEvents(ModuleEventHandlingScope<TradeAndIndustryState> scope)
 
     {
+
+        DispatchWorldPulseEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
 
@@ -229,4 +231,23 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
     }
 
 
+    private static void DispatchWorldPulseEvents(ModuleEventHandlingScope<TradeAndIndustryState> scope)
+    {
+        // Step 1b gap 3 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：洪灾 / 路阻 / 徭役窗口落在哪条线 / 哪个聚落；季节带；市面 buzz 与 road-report 延迟；
+        // 宗房商路暴露度（ClanTradeSnapshot）；粮价基线。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case WorldSettlementsEventNames.FloodRiskThresholdBreached:
+                case WorldSettlementsEventNames.RouteConstraintEmerged:
+                case WorldSettlementsEventNames.CorveeWindowChanged:
+                case PublicLifeAndRumorEventNames.MarketBuzzRaised:
+                case PublicLifeAndRumorEventNames.RoadReportDelayed:
+                    // TODO Step 2: 按维度入口调整路况 / 粮价 / 商路风险 / 发 RouteBusinessBlocked。
+                    break;
+            }
+        }
+    }
 }

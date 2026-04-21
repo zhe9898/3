@@ -35,6 +35,9 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         TradeShockEventTypes.TradeLossOccurred,
         TradeShockEventTypes.TradeDebtDefaulted,
         TradeShockEventTypes.TradeProspered,
+        // Step 1b gap 3: world pulse → labor / livelihood (no-op dispatch)
+        WorldSettlementsEventNames.FloodRiskThresholdBreached,
+        WorldSettlementsEventNames.CorveeWindowChanged,
     ];
 
     private static class TradeShockEventTypes
@@ -204,6 +207,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
     public override void HandleEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
     {
         DispatchTradeShockEvents(scope);
+        DispatchWorldPulseEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
@@ -291,6 +295,22 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 case TradeShockEventTypes.TradeDebtDefaulted:
                 case TradeShockEventTypes.TradeProspered:
                     // TODO Step 2: 按维度入口调整相关 household 的 DebtLoad / LivelihoodPressure / MigrationRisk。
+                    break;
+            }
+        }
+    }
+
+    private static void DispatchWorldPulseEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Step 1b gap 3 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：洪灾 / 徭役窗口落在哪个聚落；家户 sponsor clan 支撑力；家底 ratio；季节带。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case WorldSettlementsEventNames.FloodRiskThresholdBreached:
+                case WorldSettlementsEventNames.CorveeWindowChanged:
+                    // TODO Step 2: 按维度入口调整 LaborPressure / LivelihoodPressure / MigrationRisk。
                     break;
             }
         }

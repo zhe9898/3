@@ -52,6 +52,13 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
         WarfareCampaignEventNames.CampaignAftermathRegistered,
 
+        // Step 1b gap 3: world pulse / public life → trade routes & prices (no-op dispatch)
+        WorldSettlementsEventNames.FloodRiskThresholdBreached,
+        WorldSettlementsEventNames.RouteConstraintEmerged,
+        WorldSettlementsEventNames.CorveeWindowChanged,
+        PublicLifeAndRumorEventNames.MarketBuzzRaised,
+        PublicLifeAndRumorEventNames.RoadReportDelayed,
+
     ];
 
 

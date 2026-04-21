@@ -52,6 +52,16 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
         WarfareCampaignEventNames.CampaignAftermathRegistered,
 
+        // Step 1b gap 3: world pulse / public life → order baseline (no-op dispatch)
+        WorldSettlementsEventNames.FloodRiskThresholdBreached,
+        WorldSettlementsEventNames.RouteConstraintEmerged,
+        WorldSettlementsEventNames.CorveeWindowChanged,
+        PublicLifeAndRumorEventNames.PrefectureDispatchPressed,
+        PublicLifeAndRumorEventNames.CountyGateCrowded,
+        PublicLifeAndRumorEventNames.StreetTalkSurged,
+        PublicLifeAndRumorEventNames.MarketBuzzRaised,
+        PublicLifeAndRumorEventNames.RoadReportDelayed,
+
     ];
 
 
@@ -994,6 +1004,8 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
     {
 
+        DispatchWorldPulseEvents(scope);
+
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
 
         if (warfareEvents.Count == 0)
@@ -1223,4 +1235,26 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
     }
 
 
+    private static void DispatchWorldPulseEvents(ModuleEventHandlingScope<OrderAndBanditryState> scope)
+    {
+        // Step 1b gap 3 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：洪灾 / 徭役 / 州牒 / 县门拥堵落在哪个聚落；该聚落治安基线 / 地形 / 繁荣度；
+        // 是否战时；是否粮荒窗口；既有匪患饱和度。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case WorldSettlementsEventNames.FloodRiskThresholdBreached:
+                case WorldSettlementsEventNames.RouteConstraintEmerged:
+                case WorldSettlementsEventNames.CorveeWindowChanged:
+                case PublicLifeAndRumorEventNames.PrefectureDispatchPressed:
+                case PublicLifeAndRumorEventNames.CountyGateCrowded:
+                case PublicLifeAndRumorEventNames.StreetTalkSurged:
+                case PublicLifeAndRumorEventNames.MarketBuzzRaised:
+                case PublicLifeAndRumorEventNames.RoadReportDelayed:
+                    // TODO Step 2: 按维度入口抬升匪患基线 / RouteUnsafe / BlackRoutePressure。
+                    break;
+            }
+        }
+    }
 }
