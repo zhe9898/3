@@ -221,6 +221,8 @@ public static class LanxiSeed
             BaselineInstitutionCount = 1,
             HealerAccess = DeriveHealerAccess(nodeKind, tier),
             TempleHealingPresence = DeriveTempleHealing(nodeKind, tier),
+            GranaryTrust = DeriveGranaryTrust(nodeKind, tier),
+            ReliefReach = DeriveReliefReach(nodeKind, tier),
             NeighborIds = new List<SettlementId>(neighbors),
             ParentAdministrativeId = parent,
         };
@@ -277,6 +279,64 @@ public static class LanxiSeed
             SettlementNodeKind.SmugglingCache => TempleHealingPresence.None,
             SettlementNodeKind.CovertMeetPoint => TempleHealingPresence.None,
             _ => TempleHealingPresence.None,
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A0c — GranaryTrust（0–100）初值。仓本身 55（半信）；
+    /// 县治与市镇 45（常见失望经验）；村落 30（遥远）；祠堂 / 私窝 20。
+    /// 高不是好事——信任 + Stalled band 才是最伤的组合
+    /// （skill disaster-famine-relief-granaries：赈济是政治）。
+    /// </summary>
+    private static int DeriveGranaryTrust(SettlementNodeKind kind, SettlementTier tier)
+    {
+        return kind switch
+        {
+            SettlementNodeKind.Granary => 55,
+            SettlementNodeKind.PrefectureSeat => 50,
+            SettlementNodeKind.CountySeat => 45,
+            SettlementNodeKind.MarketTown => 40,
+            SettlementNodeKind.WalledTown => 40,
+            SettlementNodeKind.Ferry => 35,
+            SettlementNodeKind.Wharf => 35,
+            SettlementNodeKind.CanalJunction => 38,
+            SettlementNodeKind.Temple => 30,
+            SettlementNodeKind.Village => 30,
+            SettlementNodeKind.EstateCluster => 28,
+            SettlementNodeKind.LineageHall => 25,
+            SettlementNodeKind.SmugglingCache => 10,
+            SettlementNodeKind.CovertMeetPoint => 10,
+            _ => 25,
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A0c — 赈济实到 band。平时 Stalled / Selective 最常见
+    /// （skill disaster-famine-relief-granaries：吏胥把持、挑选性是
+    /// 常态，OpenHand 是少数名臣窗口）。Granary / PrefectureSeat 略好，
+    /// 村落 / 私窝多 None。
+    /// </summary>
+    private static ReliefReach DeriveReliefReach(SettlementNodeKind kind, SettlementTier tier)
+    {
+        return kind switch
+        {
+            SettlementNodeKind.Granary => ReliefReach.Selective,
+            SettlementNodeKind.PrefectureSeat => ReliefReach.Selective,
+            SettlementNodeKind.CountySeat => ReliefReach.Stalled,
+            SettlementNodeKind.MarketTown => ReliefReach.Stalled,
+            SettlementNodeKind.WalledTown => ReliefReach.Stalled,
+            SettlementNodeKind.Ferry => ReliefReach.None,
+            SettlementNodeKind.Wharf => ReliefReach.None,
+            SettlementNodeKind.CanalJunction => ReliefReach.None,
+            SettlementNodeKind.Temple => ReliefReach.None,
+            SettlementNodeKind.ShrineCourt => ReliefReach.None,
+            SettlementNodeKind.HillShrine => ReliefReach.None,
+            SettlementNodeKind.Village => ReliefReach.None,
+            SettlementNodeKind.EstateCluster => ReliefReach.None,
+            SettlementNodeKind.LineageHall => ReliefReach.None,
+            SettlementNodeKind.SmugglingCache => ReliefReach.None,
+            SettlementNodeKind.CovertMeetPoint => ReliefReach.None,
+            _ => ReliefReach.None,
         };
     }
 

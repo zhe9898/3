@@ -22,6 +22,10 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
         WorldSettlementsEventNames.FloodRiskThresholdBreached,
         WorldSettlementsEventNames.ForceStationChanged,
         WorldSettlementsEventNames.SeasonalFestivalArrived,
+        // STEP2A / A0c — 契约登记，规则发射留给后续 step。
+        WorldSettlementsEventNames.EpidemicOutbreak,
+        WorldSettlementsEventNames.ReliefDelivered,
+        WorldSettlementsEventNames.ReliefWithheld,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -34,7 +38,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
     public override string ModuleKey => KnownModuleKeys.WorldSettlements;
 
-    public override int ModuleSchemaVersion => 5;
+    public override int ModuleSchemaVersion => 6;
 
     public override SimulationPhase Phase => SimulationPhase.WorldBaseline;
 
@@ -355,6 +359,8 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
                 Prosperity = settlement.Prosperity,
                 HealerAccess = settlement.HealerAccess,
                 TempleHealingPresence = settlement.TempleHealingPresence,
+                GranaryTrust = settlement.GranaryTrust,
+                ReliefReach = settlement.ReliefReach,
             };
         }
 

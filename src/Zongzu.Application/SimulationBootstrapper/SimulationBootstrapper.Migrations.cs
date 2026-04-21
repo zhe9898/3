@@ -68,6 +68,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 2, 3, MigrateWorldSettlementsStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 3, 4, MigrateWorldSettlementsStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 4, 5, MigrateWorldSettlementsStateV4ToV5);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 5, 6, MigrateWorldSettlementsStateV5ToV6);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 1, 2, MigrateFamilyCoreStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 3, 4, MigrateFamilyCoreStateV3ToV4);
@@ -303,6 +304,64 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.WorldSettlements,
             ModuleSchemaVersion = 5,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
+        };
+    }
+
+    /// <summary>
+    /// STEP2A / A0c — v5 → v6：<see cref="SettlementStateData.GranaryTrust"/>
+    /// + <see cref="SettlementStateData.ReliefReach"/> 入场。赈济是政治
+    /// （skill disaster-famine-relief-granaries）——旧档 Granary 给 55 信任 +
+    /// Selective 实到，县治 45 + Stalled，市镇 40 + Stalled，其余 None。
+    /// 不重写非零 GranaryTrust；ReliefReach 仅替换 Unknown。
+    /// </summary>
+    private static ModuleStateEnvelope MigrateWorldSettlementsStateV5ToV6(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(typeof(WorldSettlementsState), envelope.Payload);
+
+        foreach (SettlementStateData settlement in migratedState.Settlements)
+        {
+            if (settlement.GranaryTrust <= 0)
+            {
+                settlement.GranaryTrust = settlement.NodeKind switch
+                {
+                    SettlementNodeKind.Granary => 55,
+                    SettlementNodeKind.PrefectureSeat => 50,
+                    SettlementNodeKind.CountySeat => 45,
+                    SettlementNodeKind.MarketTown => 40,
+                    SettlementNodeKind.WalledTown => 40,
+                    SettlementNodeKind.Ferry => 35,
+                    SettlementNodeKind.Wharf => 35,
+                    SettlementNodeKind.CanalJunction => 38,
+                    SettlementNodeKind.Temple => 30,
+                    SettlementNodeKind.Village => 30,
+                    SettlementNodeKind.EstateCluster => 28,
+                    SettlementNodeKind.LineageHall => 25,
+                    SettlementNodeKind.SmugglingCache => 10,
+                    SettlementNodeKind.CovertMeetPoint => 10,
+                    _ => 25,
+                };
+            }
+
+            if (settlement.ReliefReach == ReliefReach.Unknown)
+            {
+                settlement.ReliefReach = settlement.NodeKind switch
+                {
+                    SettlementNodeKind.Granary => ReliefReach.Selective,
+                    SettlementNodeKind.PrefectureSeat => ReliefReach.Selective,
+                    SettlementNodeKind.CountySeat => ReliefReach.Stalled,
+                    SettlementNodeKind.MarketTown => ReliefReach.Stalled,
+                    SettlementNodeKind.WalledTown => ReliefReach.Stalled,
+                    _ => ReliefReach.None,
+                };
+            }
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 6,
             Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
         };
     }

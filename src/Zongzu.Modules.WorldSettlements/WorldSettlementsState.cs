@@ -84,6 +84,21 @@ public sealed class SettlementStateData
     /// </summary>
     public TempleHealingPresence TempleHealingPresence { get; set; }
 
+    /// <summary>
+    /// STEP2A / A0c — 官府 / 义仓 / 赈济链。0–100 数值决定 clan <b>是否
+    /// 上门求赈</b>（高 = 相信官府、敢去），不是赈米实到率。实到率
+    /// 走 <see cref="ReliefReach"/> band（skill
+    /// disaster-famine-relief-granaries：赈济是政治）。平时 dormant，
+    /// 疫灾 / 饥荒时激活。
+    /// </summary>
+    public int GranaryTrust { get; set; }
+
+    /// <summary>
+    /// STEP2A / A0c — 赈济实到 band（None/Stalled/Selective/OpenHand）。
+    /// 与 <see cref="GranaryTrust"/> 配对：信任决定去不去，band 决定到不到。
+    /// </summary>
+    public ReliefReach ReliefReach { get; set; }
+
     /// <summary>Adjacency graph — purely geometric neighbors; SPEC §1.1/12.4. Phase 1c schema v3.</summary>
     public List<SettlementId> NeighborIds { get; set; } = new();
 

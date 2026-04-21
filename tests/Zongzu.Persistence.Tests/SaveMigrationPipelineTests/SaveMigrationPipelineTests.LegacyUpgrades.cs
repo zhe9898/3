@@ -210,7 +210,16 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 4
                 && step.TargetVersion == 5),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(5));
+        // STEP2A / A0c: WorldSettlements schema raised 5→6 so GranaryTrust +
+        // ReliefReach land on legacy saves (skill disaster-famine-relief-granaries:
+        // 赈济是政治，不是纯人道).
+        Assert.That(
+            reloaded.LoadMigrationReport!.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WorldSettlements
+                && step.SourceVersion == 5
+                && step.TargetVersion == 6),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(6));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.Tier == SettlementTier.CountySeat), Is.True);
         // v2閳姵3 migration must populate the new NodeKind / Visibility / EcoZone

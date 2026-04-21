@@ -47,6 +47,9 @@ public static partial class SimulationBootstrapper
             HealerAccess = HealerAccess.Local,
             // STEP2A / A0b — 县治带 Lay 档香火通道（寺观平行通道，不是第二家医院）。
             TempleHealingPresence = TempleHealingPresence.Lay,
+            // STEP2A / A0c — 县治求赈信任偏中等（45），实到 Stalled（吏胥把持是常态）。
+            GranaryTrust = 45,
+            ReliefReach = ReliefReach.Stalled,
         });
 
         familyState.Clans.Add(new ClanStateData
@@ -480,6 +483,23 @@ public static partial class SimulationBootstrapper
                 SettlementTier.CountySeat => TempleHealingPresence.Lay,
                 SettlementTier.MarketTown => TempleHealingPresence.Lay,
                 _ => TempleHealingPresence.Folk,
+            },
+            // STEP2A / A0c — GranaryTrust + ReliefReach 按 Tier 推断。
+            //   村民信任低（30）但偶尔去赈（赈点远），实到 None；
+            //   市镇中等（40）Stalled；县镇 45 Stalled；州府 50 Selective。
+            GranaryTrust = InferStressSettlementTier(slice.SettlementName) switch
+            {
+                SettlementTier.PrefectureSeat => 50,
+                SettlementTier.CountySeat => 45,
+                SettlementTier.MarketTown => 40,
+                _ => 30,
+            },
+            ReliefReach = InferStressSettlementTier(slice.SettlementName) switch
+            {
+                SettlementTier.PrefectureSeat => ReliefReach.Selective,
+                SettlementTier.CountySeat => ReliefReach.Stalled,
+                SettlementTier.MarketTown => ReliefReach.Stalled,
+                _ => ReliefReach.None,
             },
         });
 

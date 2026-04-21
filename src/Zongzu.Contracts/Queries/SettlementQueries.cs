@@ -71,6 +71,12 @@ public sealed record SettlementSnapshot
     /// STEP2A / A0b — 寺观 / 巫祝 / 民间疗法 band（平行通道，不是第二家医院）。
     /// </summary>
     public TempleHealingPresence TempleHealingPresence { get; init; }
+
+    /// <summary>STEP2A / A0c — 官仓求赈信任值（0–100）。</summary>
+    public int GranaryTrust { get; init; }
+
+    /// <summary>STEP2A / A0c — 赈济实到 band（赈济是政治，不是纯人道）。</summary>
+    public ReliefReach ReliefReach { get; init; }
 }
 
 /// <summary>

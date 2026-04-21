@@ -55,4 +55,12 @@ public static class WorldSettlementsEventNames
 
     // Calendar
     public const string SeasonalFestivalArrived = "WorldSettlements.SeasonalFestivalArrived";
+
+    // STEP2A / A0c — 官府 / 义仓 / 赈济链（疫灾驱动，平时 dormant）。
+    // skill disaster-famine-relief-granaries：relief is political as well as
+    // humanitarian。本 step 只立契约名 + 字段 + 种子，规则（疫灾触发 /
+    // 赈济裁定）留给后续 step（A5 婴幼儿夭折 + 疫灾链）消费。
+    public const string EpidemicOutbreak = "WorldSettlements.EpidemicOutbreak";
+    public const string ReliefDelivered = "WorldSettlements.ReliefDelivered";
+    public const string ReliefWithheld = "WorldSettlements.ReliefWithheld";
 }
