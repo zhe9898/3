@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -58,7 +58,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
     public override string ModuleKey => KnownModuleKeys.OrderAndBanditry;
 
 
-    public override int ModuleSchemaVersion => 6;
+    public override int ModuleSchemaVersion => 7;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -971,6 +971,20 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             }
 
+        }
+
+        IReadOnlyList<string> priorBandIds = scope.State.OutlawBands
+            .Select(static band => band.BandId)
+            .ToArray();
+
+        OrderAndBanditryStateProjection.BuildOrEvolveOutlawBands(scope.State);
+
+        foreach (OutlawBandState band in scope.State.OutlawBands)
+        {
+            if (!priorBandIds.Contains(band.BandId, StringComparer.Ordinal))
+            {
+                scope.Emit("OutlawGroupFormed", $"{band.BandName}聚众成势。", band.BaseSettlementId.Value.ToString());
+            }
         }
 
     }

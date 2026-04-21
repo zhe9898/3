@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -44,6 +44,23 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
                 .OrderBy(static settlement => settlement.SettlementId.Value)
 
                 .Select(Clone)
+
+                .ToArray();
+
+        }
+
+
+        public IReadOnlyList<OutlawBandSnapshot> GetOutlawBands()
+
+        {
+
+            return _state.OutlawBands
+
+                .OrderBy(static band => band.BaseSettlementId.Value)
+
+                .ThenBy(static band => band.BandId, StringComparer.Ordinal)
+
+                .Select(CloneBand)
 
                 .ToArray();
 
@@ -142,6 +159,37 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
                 EscalationBandLabel = settlement.EscalationBandLabel,
 
                 LastPressureTrace = settlement.LastPressureTrace,
+
+            };
+
+        }
+
+
+        private static OutlawBandSnapshot CloneBand(OutlawBandState band)
+
+        {
+
+            return new OutlawBandSnapshot
+
+            {
+
+                BandId = band.BandId,
+
+                BandName = band.BandName,
+
+                BaseSettlementId = band.BaseSettlementId,
+
+                Strength = band.Strength,
+
+                GrainReserve = band.GrainReserve,
+
+                Cohesion = band.Cohesion,
+
+                Legitimacy = band.Legitimacy,
+
+                Concentration = band.Concentration,
+
+                ControlledRoutes = band.ControlledRoutes.ToArray(),
 
             };
 

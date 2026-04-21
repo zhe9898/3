@@ -158,7 +158,7 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 5
                 && step.TargetVersion == 6),
             Is.True);
-        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(6));
+        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(7));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.BlackRoutePressure > 0), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.CoercionRisk >= 0), Is.True);
