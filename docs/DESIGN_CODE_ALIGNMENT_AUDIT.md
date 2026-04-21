@@ -242,6 +242,60 @@
 
 **通电最小骨架**：
 - ConflictAndForce.`PublishedEvents` 保证已声明 `DeathByViolence`（已登记），其 `RunMonth` / `RunXun` 里加入占位致死分支（函数体 TODO，默认 no-op）。
+
+---
+
+## Step 1b 复盘 + Step 2 靶位分类（2025 增补）
+
+Step 1b 已把 4 个通电缺口全部落地（commit `4ec0c50` / `3c29740` / `4215b5c` / `78b843f`），Step 1c 10 年健康体检确认 `authorityConsumed > 0`：Trade shock 3 条 / WorldSettlements 2 条 / PublicLife 2 条链通电成功。
+
+体检报告同时暴露"声明可发但 120 月从未出现"的 dormant 事件共 24 条，其中**与本次 Step 1b 4 缺口相关的**有 6 条未从源头触发。**逐条核源码后**，按根因分三类（禁止用"降阈值"回避根因）：
+
+### Step 2-A 源头代码已就位，但上游信号断电
+
+| Dormant 事件 | 源码位置 | 不触发原因 |
+|---|---|---|
+| `FamilyCore.HeirSecurityWeakened` | `FamilyCoreModule.cs:232` | `ComputeHeirSecurity` 依赖 `signals.LivingHeir`；沙盘 4 个 clan 初始无 heir，因此 heir 判定永远落在同一分支，heirSecurity=55 不跌破 40 |
+| `ConflictAndForce.DeathByViolence` | **不存在** | 契约常量已声明但 Conflict 模块内没有任何 `scope.Emit(DeathByViolence, ...)` 调用点——10 年沙盘里士兵 wound 从不转为 kill |
+
+根因：**不是规则没写，是人物生成/死亡通道从没跑起来**。真解在 🅰️ PersonRegistry kernel 补强 + 🅱️ 因果死亡事件拆分，而不是在 FamilyCore 里硬挖一条"无 heir 时 heirSecurity 下跌"。
+
+### Step 2-B 源头代码已就位，但触发依赖玩家命令
+
+| Dormant 事件 | 源码位置 | 不触发原因 |
+|---|---|---|
+| `FamilyCore.BranchSeparationApproved` | `FamilyCoreModule.cs:246` | 要求 `LastConflictCommandCode == PermitBranchSeparation`，headless 沙盘打不出玩家命令 |
+
+根因：**这是设计意图**——分房是玩家决议点。沙盘 dormant 是正确结果，不该为了"把数字点亮"改成自动触发；改了就违"bounded leverage"。只要保留现状即可；后续 UI shell + 命令通道做完时自然通电。
+
+### Step 2-C 源头代码不存在 —— 需真实规则填充
+
+| Dormant 事件 | 源头模块 | 设计预留维度 |
+|---|---|---|
+| `PublicLifeAndRumor.StreetTalkSurged` | PublicLifeAndRumor | 本地恩怨热度 + 市集密度 + 季节 / 节庆窗口 |
+| `PublicLifeAndRumor.MarketBuzzRaised` | PublicLifeAndRumor | 贸易流量 + 路线通畅度 + 盐茶节奏 |
+| `PublicLifeAndRumor.RoadReportDelayed` | PublicLifeAndRumor | 路况衰减 + 军务阻塞 + 气候 |
+
+根因：**规则密度缺口**。目前 PublicLifeAndRumor 只发 `PrefectureDispatchPressed` + `CountyGateCrowded` 两条基础冲击流。其余 3 条是设计预留契约。这 3 条是 Step 2 **真正的规则密度工作面**，且下游消费通道在 Step 1b 缺口 3 已全部通电，只等源头发射。
+
+### Step 2 推进顺序建议
+
+1. **先做 Step 2-C（PublicLifeAndRumor 3 条源头）**——本 step 1b 通电闭环里唯一纯规则密度的工作，下游已通电，收益最高风险最小。
+2. Step 2-A 的两条是**跨模块改造**：需要先把 🅰️ PersonRegistry kernel 死亡链 + 🅱️ DeathByViolence 源头一起做，工作面跨 PersonRegistry / FamilyCore / ConflictAndForce / Population 四模块，量级比 Step 2-C 大一档。
+3. Step 2-B 不动，保留为玩家命令入口。
+
+### Step 2-C 工作面预估
+
+- 文件：`src/Zongzu.Modules.PublicLifeAndRumor/PublicLifeAndRumorModule.cs`
+- 触发位置：现有 month-phase 规则区块，追加 3 条判定分支
+- 维度来源全部已有 Query：
+  - `IWorldSettlementsQueries.GetSettlements()` → 季节 / 路况 / canal window
+  - `ITradeAndIndustryQueries` → 贸易流量 / 路线
+  - `ISocialMemoryQueries` → 恩怨热度
+  - `IOrderAndBanditryQueries` → 路况压力
+- 每条事件一个 `ComputeXxxTrigger()` 纯函数，阈值**不拍数字**：从现有常量体系（如 `WorldSettlementsThresholds` / 现有 PrefectureDispatch 触发条件）镜像过来
+
+要不要直接开做 Step 2-C？
 - FamilyCore.`ConsumedEvents` += `DeathByViolence`；`HandleEvents` 加分支，先只记 trace，不改 state。
 - SocialMemoryAndRelations.`ConsumedEvents` += `DeathByViolence`；同上。
 - 规则函数主体：**Step 2 填**。
