@@ -67,20 +67,48 @@
 
 ---
 
-## Step 2-A 工作面分解（A1–A7）
+## Step 2-A 工作面分解（A0–A7）
 
-### 第一刀：让时间轴活起来（A1 + A2 + A3 + A4，独立 commit）
+### 第零刀：医疗/养生缓冲层（A0，独立 commit，A1/A5 的维度供给方）
+
+#### **A0 — HealerAccess + RemedyConfidence + CareLoad**
+依 `medicine-healing-burial.md` 铁律：治疗是**社会调节层**而非医院系统，作为 A1 老死和 A5 婴儿夭折的**脆弱—缓冲调节**。
+
+**落点（不新建模块）**：
+- `WorldSettlements.SettlementStateData.HealerAccess` —— band: `None / Itinerant / Local / Renowned`
+- `FamilyCore.ClanStateData.CareLoad` —— 0-100，长期照料负担（孀居 + 慢性病老人 + 重病婴儿累出来）
+- `FamilyCore.ClanStateData.RemedyConfidence` —— 0-100，受 clan prosperity + settlement.HealerAccess + 最近治疗结果影响
+
+**交出的维度**（被 A1 / A5 消费）：老人和婴儿风险带累加时，`HealerAccess + RemedyConfidence + CareLoad` 作为缓冲 / 加剧因子。
+
+**A0 自己的回路**（非"纯维度供给"）：
+- `CareLoad` 高 → 阻塞婚议（A4 驱动降）、压住分房前置（A7）、降 `MarriageAllianceValue`
+- 葬事后 `CareLoad` 衰减、`MourningLoad` 接管——两条 load 交接
+
+**不做**：
+- 不做"每人每月养生"event-pool —— 违铁律
+- 不建独立医疗模块 —— 这是社会调节层不是系统
+- 不拍治疗概率 —— 用 band 对 band
+
+**验证**：
+- A0 单独上线后 10 年沙盘老人 CareLoad 真实累积
+- `MarriageAllianceValue` 因 CareLoad 真实受阻（对比基线）
+
+### 第一刀：让时间轴活起来（A2 + A1 + A3 + A4，独立 commit）
 
 #### **A1 — 老死风险带**
 替换 `DeathAgeMonths=72*12` 悬崖为 **年龄带 × 多维护养** 的渐进风险模型。
 
-**维度入口（来自 skill + 已有 Query）**：
+**维度入口（来自 skill + 已有 Query + A0 新供给）**：
 - `age_band`: Infant / Child / Youth / Adult / Elder-Early（55–65）/ Elder-Late（65–80）/ Venerable（80+）
-- `clan.SupportReserve`（养护能力）—— FamilyCore 已有
-- `clan.MourningLoad`（已在重负的户更脆弱）—— FamilyCore 已有
-- `settlement.Security`（动乱期病弱更易死）—— WorldSettlements 已有
-- 季节（寒冬老人高风险）—— WorldSettlements `SeasonPhase` 已有
-- 是否处于战后恢复期 —— WarfareCampaign `Phase` 已有
+- `clan.SupportReserve`（养护能力）
+- `clan.MourningLoad`（已在重负的户更脆弱）
+- `clan.CareLoad`（A0 新供给，长期照料拖累）
+- `clan.RemedyConfidence`（A0 新供给，愿意求医的信心）
+- `settlement.Security`（动乱期病弱更易死）
+- `settlement.HealerAccess`（A0 新供给，有无医者）
+- 季节（寒冬老人高风险）
+- 是否处于战后恢复期
 
 **不做的事**：
 - 不引入新随机数发生器——复用 `scope.Context` 已有的 deterministic source
@@ -176,6 +204,9 @@ Infant（<2）/ Child（<12）阶段引入 **低基线 + 压力加权** 的 `Dea
 - 季节（春瘟、冬寒）
 - settlement 疫疠度（Order / PublicLife）
 - clan.SupportReserve（穷户夭折率高）
+- settlement.HealerAccess（A0 新供给）
+- clan.RemedyConfidence（A0 新供给）
+- clan.CareLoad（A0 新供给，照料已重时新婴儿最脆弱）
 
 **设计锚点**（`fertility-demography-infant-mortality`）：
 > **分开建模母体风险 vs 婴儿风险；婴儿死亡不应塌成单一 sadness 变量，应产出 fear/debt/ritual/inheritance anxiety。**
@@ -235,13 +266,14 @@ public const string CameOfAge = "CameOfAge";
 
 | 阶段 | 代号 | commit 粒度 | 验证点 |
 |---|---|---|---|
-| 1 | A2 | Seed 跨代化先做 —— 先有人 | 开局 20+ 人，跨代分布合理 |
-| 2 | A1 | 老死风险带 —— 时间有重量 | 10 年沙盘见死亡发生 |
-| 3 | A3 | Heir 自动指派 —— 承祧活起来 | `HeirSecurity` 随 heir 生死真实波动 |
-| 4 | A4 | 婚议链通电 —— 联姻有后果 | 婚事有 SocialMemory 痕迹 |
-| 5 | A5 | 婴幼儿夭折 —— 生育有代价 | Infant/Child 死亡率带 |
-| 6 | A6 | 生育链解卡 —— 生育真发生 | 新生儿真实出现 |
-| 7 | A7 | 成年 + 分房前置 —— 年华推人 | SeparationPressure 真涨 |
+| 1 | A2 | Seed 跨代化 + seed `HealerAccess`/`CareLoad` 初值 | 开局 20+ 人，跨代分布合理 |
+| 2 | A0 | 医疗/养生缓冲层 —— A1/A5 的维度供给 | `CareLoad`/`RemedyConfidence`/`HealerAccess` 字段就位并真实涨落 |
+| 3 | A1 | 老死风险带（吃 A0 维度） | 10 年沙盘见死亡发生 |
+| 4 | A3 | Heir 自动指派 —— 承祧活起来 | `HeirSecurity` 随 heir 生死真实波动 |
+| 5 | A4 | 婚议链通电（吃 `CareLoad` 阻塞） | 婚事有 SocialMemory 痕迹 |
+| 6 | A5 | 婴幼儿夭折（吃 A0 维度） | Infant/Child 死亡率带 |
+| 7 | A6 | 生育链解卡 —— 生育真发生 | 新生儿真实出现 |
+| 8 | A7 | 成年 + 分房前置 —— 年华推人 | SeparationPressure 真涨 |
 
 每一步都要：
 1. 改代码

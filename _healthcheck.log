@@ -1,0 +1,453 @@
+﻿  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  Zongzu.Kernel -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Kernel\bin\Debug\net10.0\Zongzu.Kernel.dll
+  Zongzu.Contracts -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Contracts\bin\Debug\net10.0\Zongzu.Contracts.dll
+  Zongzu.Persistence -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Persistence\bin\Debug\net10.0\Zongzu.Persistence.dll
+  Zongzu.Modules.OfficeAndCareer -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.OfficeAndCareer\bin\Debug\net10.0\Zongzu.Modules.OfficeAndCareer.dll
+  Zongzu.Modules.TradeAndIndustry -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.TradeAndIndustry\bin\Debug\net10.0\Zongzu.Modules.TradeAndIndustry.dll
+  Zongzu.Scheduler -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Scheduler\bin\Debug\net10.0\Zongzu.Scheduler.dll
+  Zongzu.Modules.WorldSettlements -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.WorldSettlements\bin\Debug\net10.0\Zongzu.Modules.WorldSettlements.dll
+  Zongzu.Modules.NarrativeProjection -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.NarrativeProjection\bin\Debug\net10.0\Zongzu.Modules.NarrativeProjection.dll
+  Zongzu.Presentation.Unity -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Presentation.Unity\bin\Debug\net10.0\Zongzu.Presentation.Unity.dll
+  Zongzu.Modules.EducationAndExams -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.EducationAndExams\bin\Debug\net10.0\Zongzu.Modules.EducationAndExams.dll
+  Zongzu.Modules.ConflictAndForce -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.ConflictAndForce\bin\Debug\net10.0\Zongzu.Modules.ConflictAndForce.dll
+  Zongzu.Modules.WarfareCampaign -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.WarfareCampaign\bin\Debug\net10.0\Zongzu.Modules.WarfareCampaign.dll
+  Zongzu.Modules.OrderAndBanditry -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.OrderAndBanditry\bin\Debug\net10.0\Zongzu.Modules.OrderAndBanditry.dll
+  Zongzu.Modules.PopulationAndHouseholds -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.PopulationAndHouseholds\bin\Debug\net10.0\Zongzu.Modules.PopulationAndHouseholds.dll
+  Zongzu.Modules.FamilyCore -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.FamilyCore\bin\Debug\net10.0\Zongzu.Modules.FamilyCore.dll
+  Zongzu.Modules.SocialMemoryAndRelations -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.SocialMemoryAndRelations\bin\Debug\net10.0\Zongzu.Modules.SocialMemoryAndRelations.dll
+  Zongzu.Modules.PersonRegistry -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.PersonRegistry\bin\Debug\net10.0\Zongzu.Modules.PersonRegistry.dll
+  Zongzu.Modules.PublicLifeAndRumor -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Modules.PublicLifeAndRumor\bin\Debug\net10.0\Zongzu.Modules.PublicLifeAndRumor.dll
+  Zongzu.Application -> E:\zongzu_codex_spec_modular_rebuilt\src\Zongzu.Application\bin\Debug\net10.0\Zongzu.Application.dll
+  Zongzu.Integration.Tests -> E:\zongzu_codex_spec_modular_rebuilt\tests\Zongzu.Integration.Tests\bin\Debug\net10.0\Zongzu.Integration.Tests.dll
+E:\zongzu_codex_spec_modular_rebuilt\tests\Zongzu.Integration.Tests\bin\Debug\net10.0\Zongzu.Integration.Tests.dll (.NETCoreApp,Version=v10.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+E:\zongzu_codex_spec_modular_rebuilt\tests\Zongzu.Integration.Tests\bin\Debug\net10.0\Zongzu.Integration.Tests.dll
+NUnit Adapter 4.5.0.0: Test execution started
+Running selected tests in E:\zongzu_codex_spec_modular_rebuilt\tests\Zongzu.Integration.Tests\bin\Debug\net10.0\Zongzu.Integration.Tests.dll
+   NUnit3TestExecutor discovered 1 of 1 NUnit test cases using Current Discovery mode, Non-Explicit run
+《10年骨骼运行体检报告》原始诊断输出
+Seed=20260421; Months=120; FinalDate=1210-01; ReplayHash=C85E1ADCE8494C5B42F92869ADCB11FA21CB98902104A827458DDF0C150005D0
+
+一、跨模块事件流
+实际发布事件 Top:
+- TradeAndIndustry.RouteBusinessBlocked: emitted=484, authorityConsumed=1428, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+- SocialMemoryAndRelations.ClanNarrativeUpdated: emitted=480, authorityConsumed=0, consumers=[]
+- FamilyCore.ClanPrestigeAdjusted: emitted=430, authorityConsumed=0, consumers=[]
+- PublicLifeAndRumor.PrefectureDispatchPressed: emitted=378, authorityConsumed=756, consumers=[OfficeAndCareer,OrderAndBanditry]
+- ConflictAndForce.ConflictResolved: emitted=371, authorityConsumed=0, consumers=[]
+- TradeAndIndustry.TradeLossOccurred: emitted=361, authorityConsumed=1083, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+- TradeAndIndustry.TradeDebtDefaulted: emitted=279, authorityConsumed=819, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+- ConflictAndForce.CommanderWounded: emitted=135, authorityConsumed=0, consumers=[]
+- FamilyCore.FamilyMembersAged: emitted=120, authorityConsumed=0, consumers=[]
+- ConflictAndForce.ForceReadinessChanged: emitted=116, authorityConsumed=0, consumers=[]
+- PublicLifeAndRumor.CountyGateCrowded: emitted=100, authorityConsumed=200, consumers=[OfficeAndCareer,OrderAndBanditry]
+- WorldSettlements.WorldSettlements.FloodRiskThresholdBreached: emitted=77, authorityConsumed=231, consumers=[OrderAndBanditry,PopulationAndHouseholds,TradeAndIndustry]
+- WorldSettlements.WorldSettlements.CorveeWindowChanged: emitted=50, authorityConsumed=150, consumers=[OrderAndBanditry,PopulationAndHouseholds,TradeAndIndustry]
+- WorldSettlements.WorldSettlements.SeasonPhaseAdvanced: emitted=50, authorityConsumed=0, consumers=[]
+- WorldSettlements.WorldSettlements.SeasonalFestivalArrived: emitted=50, authorityConsumed=0, consumers=[]
+- WorldSettlements.WorldSettlements.CanalWindowChanged: emitted=41, authorityConsumed=0, consumers=[]
+- TradeAndIndustry.TradeProspered: emitted=30, authorityConsumed=90, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+- ConflictAndForce.MilitiaMobilized: emitted=15, authorityConsumed=0, consumers=[]
+- WorldSettlements.SettlementPressureChanged: emitted=12, authorityConsumed=0, consumers=[]
+- PopulationAndHouseholds.MigrationStarted: emitted=9, authorityConsumed=0, consumers=[]
+- PopulationAndHouseholds.LivelihoodCollapsed: emitted=8, authorityConsumed=0, consumers=[]
+- OfficeAndCareer.AuthorityChanged: emitted=6, authorityConsumed=0, consumers=[]
+- OfficeAndCareer.OfficeTransfer: emitted=6, authorityConsumed=0, consumers=[]
+- OrderAndBanditry.OutlawGroupFormed: emitted=6, authorityConsumed=0, consumers=[]
+- WarfareCampaign.CampaignPressureRaised: emitted=6, authorityConsumed=48, consumers=[ConflictAndForce,FamilyCore,OfficeAndCareer,OrderAndBanditry,PopulationAndHouseholds,SocialMemoryAndRelations,TradeAndIndustry,WorldSettlements]
+- PopulationAndHouseholds.HouseholdDebtSpiked: emitted=5, authorityConsumed=0, consumers=[]
+- WarfareCampaign.CampaignMobilized: emitted=5, authorityConsumed=40, consumers=[ConflictAndForce,FamilyCore,OfficeAndCareer,OrderAndBanditry,PopulationAndHouseholds,SocialMemoryAndRelations,TradeAndIndustry,WorldSettlements]
+- EducationAndExams.ExamFailed: emitted=4, authorityConsumed=0, consumers=[]
+- FamilyCore.MarriageAllianceArranged: emitted=4, authorityConsumed=0, consumers=[]
+- OfficeAndCareer.OfficeGranted: emitted=3, authorityConsumed=0, consumers=[]
+- EducationAndExams.ExamPassed: emitted=2, authorityConsumed=0, consumers=[]
+- FamilyCore.LineageDisputeHardened: emitted=2, authorityConsumed=0, consumers=[]
+无人权威处理的已发布事件:
+- SocialMemoryAndRelations.ClanNarrativeUpdated x480; FamilyCore.ClanPrestigeAdjusted x430; ConflictAndForce.ConflictResolved x371; ConflictAndForce.CommanderWounded x135; FamilyCore.FamilyMembersAged x120; ConflictAndForce.ForceReadinessChanged x116; WorldSettlements.WorldSettlements.SeasonPhaseAdvanced x50; WorldSettlements.WorldSettlements.SeasonalFestivalArrived x50; WorldSettlements.WorldSettlements.CanalWindowChanged x41; ConflictAndForce.MilitiaMobilized x15; WorldSettlements.SettlementPressureChanged x12; PopulationAndHouseholds.MigrationStarted x9
+声明可发布但120个月从未出现的事件:
+- ConflictAndForce.DeathByViolence; EducationAndExams.TutorSecured; FamilyCore.BirthRegistered; FamilyCore.BranchSeparationApproved; FamilyCore.ClanMemberDied; FamilyCore.HeirSecurityWeakened; FamilyCore.LineageMediationOpened; OfficeAndCareer.OfficeLost; OrderAndBanditry.BlackRoutePressureRaised; OrderAndBanditry.SuppressionSucceeded; PersonRegistry.FidelityRingChanged; PersonRegistry.PersonCreated; PersonRegistry.PersonDeceased; PopulationAndHouseholds.DeathByIllness; PublicLifeAndRumor.RoadReportDelayed; PublicLifeAndRumor.StreetTalkSurged; SocialMemoryAndRelations.FavorIncurred; SocialMemoryAndRelations.GrudgeSoftened; WarfareCampaign.CampaignSupplyStrained; WorldSettlements.WorldSettlements.ComplianceModeShifted; WorldSettlements.WorldSettlements.ForceStationChanged; WorldSettlements.WorldSettlements.IllicitRouteExposed; WorldSettlements.WorldSettlements.ImperialRhythmChanged; WorldSettlements.WorldSettlements.NodeVisibilityDiscovered
+
+二、结构化 diff 输出
+- WorldSettlements: diffEntries=1146
+- PopulationAndHouseholds: diffEntries=972
+- FamilyCore: diffEntries=554
+- SocialMemoryAndRelations: diffEntries=492
+- TradeAndIndustry: diffEntries=492
+- ConflictAndForce: diffEntries=492
+- OrderAndBanditry: diffEntries=492
+- PublicLifeAndRumor: diffEntries=480
+- WarfareCampaign: diffEntries=451
+- OfficeAndCareer: diffEntries=360
+- EducationAndExams: diffEntries=33
+
+三、聚落十年曲线
+聚落 兰溪(1)
+  - Security: first=53, last=0, delta=-53, min=0, max=53, unique=35, signChanges=30
+  - Prosperity: first=62, last=65, delta=3, min=58, max=69, unique=12, signChanges=45
+  - CommonerDistress: first=44, last=49, delta=5, min=43, max=57, unique=15, signChanges=48
+  - MigrationPressure: first=21, last=57, delta=36, min=20, max=57, unique=20, signChanges=3
+  - BanditThreat: first=22, last=0, delta=-22, min=0, max=34, unique=20, signChanges=26
+  - RoutePressure: first=21, last=100, delta=79, min=18, max=100, unique=42, signChanges=27
+  - DisorderPressure: first=15, last=0, delta=-15, min=0, max=15, unique=6, signChanges=2
+  - SuppressionDemand: first=1, last=20, delta=19, min=0, max=21, unique=21, signChanges=22
+  - ForceReadiness: first=62, last=47, delta=-15, min=42, max=64, unique=21, signChanges=77
+  - CommandCapacity: first=68, last=45, delta=-23, min=42, max=70, unique=28, signChanges=67
+  - CampaignSupplyState: first=100, last=100, delta=0, min=100, max=100, unique=1, signChanges=0
+  - CampaignFrontPressure: first=13, last=47, delta=34, min=3, max=48, unique=25, signChanges=45
+  - CampaignMoraleState: first=98, last=85, delta=-13, min=83, max=99, unique=17, signChanges=66
+  年度断面:
+  - M012: Sec=33, Pros=61, Supply=100, Bandit=29, Route=55, Distress=47, ActiveCampaign=True
+  - M024: Sec=24, Pros=63, Supply=100, Bandit=0, Route=52, Distress=49, ActiveCampaign=True
+  - M036: Sec=12, Pros=60, Supply=100, Bandit=0, Route=52, Distress=56, ActiveCampaign=True
+  - M048: Sec=0, Pros=64, Supply=100, Bandit=0, Route=51, Distress=53, ActiveCampaign=True
+  - M060: Sec=0, Pros=65, Supply=100, Bandit=0, Route=44, Distress=49, ActiveCampaign=True
+  - M072: Sec=0, Pros=64, Supply=100, Bandit=0, Route=46, Distress=50, ActiveCampaign=True
+  - M084: Sec=0, Pros=67, Supply=100, Bandit=0, Route=73, Distress=50, ActiveCampaign=True
+  - M096: Sec=1, Pros=68, Supply=100, Bandit=1, Route=97, Distress=50, ActiveCampaign=True
+  - M108: Sec=0, Pros=65, Supply=100, Bandit=1, Route=99, Distress=49, ActiveCampaign=True
+  - M120: Sec=0, Pros=65, Supply=100, Bandit=0, Route=100, Distress=49, ActiveCampaign=True
+聚落 永和(4)
+  - Security: first=37, last=2, delta=-35, min=0, max=37, unique=22, signChanges=33
+  - Prosperity: first=58, last=76, delta=18, min=56, max=82, unique=23, signChanges=37
+  - CommonerDistress: first=71, last=50, delta=-21, min=49, max=84, unique=35, signChanges=28
+  - MigrationPressure: first=60, last=100, delta=40, min=60, max=100, unique=16, signChanges=0
+  - BanditThreat: first=73, last=88, delta=15, min=73, max=100, unique=14, signChanges=5
+  - RoutePressure: first=65, last=100, delta=35, min=65, max=100, unique=6, signChanges=0
+  - DisorderPressure: first=70, last=100, delta=30, min=70, max=100, unique=8, signChanges=12
+  - SuppressionDemand: first=71, last=79, delta=8, min=71, max=100, unique=25, signChanges=43
+  - ForceReadiness: first=23, last=25, delta=2, min=2, max=32, unique=29, signChanges=76
+  - CommandCapacity: first=46, last=46, delta=0, min=41, max=59, unique=17, signChanges=70
+  - CampaignSupplyState: first=98, last=100, delta=2, min=84, max=100, unique=11, signChanges=5
+  - CampaignFrontPressure: first=35, last=45, delta=10, min=34, max=55, unique=19, signChanges=61
+  - CampaignMoraleState: first=64, last=71, delta=7, min=39, max=76, unique=36, signChanges=66
+  年度断面:
+  - M012: Sec=22, Pros=58, Supply=94, Bandit=100, Route=100, Distress=81, ActiveCampaign=True
+  - M024: Sec=9, Pros=60, Supply=100, Bandit=100, Route=100, Distress=83, ActiveCampaign=True
+  - M036: Sec=1, Pros=70, Supply=100, Bandit=100, Route=100, Distress=74, ActiveCampaign=True
+  - M048: Sec=0, Pros=72, Supply=100, Bandit=100, Route=100, Distress=69, ActiveCampaign=True
+  - M060: Sec=1, Pros=78, Supply=100, Bandit=100, Route=100, Distress=64, ActiveCampaign=True
+  - M072: Sec=1, Pros=78, Supply=100, Bandit=100, Route=100, Distress=56, ActiveCampaign=True
+  - M084: Sec=0, Pros=79, Supply=100, Bandit=100, Route=100, Distress=50, ActiveCampaign=True
+  - M096: Sec=1, Pros=81, Supply=100, Bandit=100, Route=100, Distress=50, ActiveCampaign=True
+  - M108: Sec=0, Pros=78, Supply=100, Bandit=99, Route=100, Distress=49, ActiveCampaign=True
+  - M120: Sec=2, Pros=76, Supply=100, Bandit=88, Route=100, Distress=50, ActiveCampaign=True
+
+四、十年后 PersonRegistry / SocialMemoryAndRelations / FamilyCore
+PersonRegistry: total=4, living=4, deceased=0
+- LifeStage.Adult: 4
+  Person 1: 张远, alive=True, stage=Adult, ring=Core
+  Person 2: 李文, alive=True, stage=Adult, ring=Local
+  Person 3: 吴成, alive=True, stage=Adult, ring=Local
+  Person 4: 陈睿, alive=True, stage=Adult, ring=Local
+SocialMemory: clanNarratives=4, memories=13, dormantStubs=0
+  Clan 1: grudge=100, fear=0, shame=100, favor=100, text='张宗中分房之议渐炽。'
+  Clan 2: grudge=100, fear=100, shame=100, favor=100, text='李宗中分房之议渐炽。'
+  Clan 3: grudge=100, fear=100, shame=100, favor=100, text='吴宗中分房之议渐炽。'
+  Clan 4: grudge=100, fear=9, shame=100, favor=100, text='陈宗中分房之议渐炽。'
+  Memory 1: clan=1, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='兰溪战后余波把前线暂静与兰溪军务态势尚能持守，有主簿接应；前线13，粮道100，军心98。一并压进了张的旧忆里。'
+  Memory 2: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=62, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线持守与浮山军务态势尚能持守，暂无官署接应；前线35，粮道92，军心65。一并压进了吴的旧忆里。'
+  Memory 3: clan=4, kind=campaign-pressure, type=Fear/WarDread, intensity=67, weight=0, cause=campaign.pressure, summary='永和战后余波把前线持守与永和军务态势尚能持守，暂无官署接应；前线35，粮道98，军心64。一并压进了陈的旧忆里。'
+  Memory 4: clan=1, kind=campaign-aftermath, type=Fear/WarDread, intensity=2, weight=0, cause=campaign.aftermath, summary='兰溪战后余波把前线暂静与兰溪正在覆核战后余波：修补护运、消化积案，并围绕待整窗口稳住军心。一并压进了张的旧忆里。'
+  Memory 5: clan=1, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='兰溪战后余波把前线暂静与兰溪军务态势尚能持守，有县丞接应；前线22，粮道100，军心98。一并压进了张的旧忆里。'
+  Memory 6: clan=2, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='清水战后余波把前线暂静与清水军务态势尚能持守，有县丞接应；前线17，粮道100，军心92。一并压进了李的旧忆里。'
+  Memory 7: clan=2, kind=hardship, type=Grudge/WealthGrudge, intensity=62, weight=0, cause=clan.hardship, summary='李因民困与家计艰难，旧怨更深。'
+  Memory 8: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道95，军心42。一并压进了吴的旧忆里。'
+  Memory 9: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道92，军心43。一并压进了吴的旧忆里。'
+  Memory 10: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=6, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道97，军心43。一并压进了吴的旧忆里。'
+  Memory 11: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=10, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道97，军心43。一并压进了吴的旧忆里。'
+  Memory 12: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=18, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道96，军心43。一并压进了吴的旧忆里。'
+  Memory 13: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=28, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道94，军心43。一并压进了吴的旧忆里。'
+FamilyCore: clans=4, people=4, deadFamilyPeople=0
+  Clan 1: prestige=0, support=100, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+  Clan 2: prestige=0, support=82, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+  Clan 3: prestige=0, support=88, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+  Clan 4: prestige=0, support=100, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+
+《10年骨骼运行体检报告》原始诊断输出
+Seed=20260421; Months=120; FinalDate=1210-01; ReplayHash=C85E1ADCE8494C5B42F92869ADCB11FA21CB98902104A827458DDF0C150005D0
+
+一、跨模块事件流
+实际发布事件 Top:
+- TradeAndIndustry.RouteBusinessBlocked: emitted=484, authorityConsumed=1428, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+- SocialMemoryAndRelations.ClanNarrativeUpdated: emitted=480, authorityConsumed=0, consumers=[]
+- FamilyCore.ClanPrestigeAdjusted: emitted=430, authorityConsumed=0, consumers=[]
+- PublicLifeAndRumor.PrefectureDispatchPressed: emitted=378, authorityConsumed=756, consumers=[OfficeAndCareer,OrderAndBanditry]
+- ConflictAndForce.ConflictResolved: emitted=371, authorityConsumed=0, consumers=[]
+- TradeAndIndustry.TradeLossOccurred: emitted=361, authorityConsumed=1083, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+- TradeAndIndustry.TradeDebtDefaulted: emitted=279, authorityConsumed=819, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+- ConflictAndForce.CommanderWounded: emitted=135, authorityConsumed=0, consumers=[]
+- FamilyCore.FamilyMembersAged: emitted=120, authorityConsumed=0, consumers=[]
+- ConflictAndForce.ForceReadinessChanged: emitted=116, authorityConsumed=0, consumers=[]
+- PublicLifeAndRumor.CountyGateCrowded: emitted=100, authorityConsumed=200, consumers=[OfficeAndCareer,OrderAndBanditry]
+- WorldSettlements.WorldSettlements.FloodRiskThresholdBreached: emitted=77, authorityConsumed=231, consumers=[OrderAndBanditry,PopulationAndHouseholds,TradeAndIndustry]
+- WorldSettlements.WorldSettlements.CorveeWindowChanged: emitted=50, authorityConsumed=150, consumers=[OrderAndBanditry,PopulationAndHouseholds,TradeAndIndustry]
+- WorldSettlements.WorldSettlements.SeasonPhaseAdvanced: emitted=50, authorityConsumed=0, consumers=[]
+- WorldSettlements.WorldSettlements.SeasonalFestivalArrived: emitted=50, authorityConsumed=0, consumers=[]
+- WorldSettlements.WorldSettlements.CanalWindowChanged: emitted=41, authorityConsumed=0, consumers=[]
+- TradeAndIndustry.TradeProspered: emitted=30, authorityConsumed=90, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+- ConflictAndForce.MilitiaMobilized: emitted=15, authorityConsumed=0, consumers=[]
+- WorldSettlements.SettlementPressureChanged: emitted=12, authorityConsumed=0, consumers=[]
+- PopulationAndHouseholds.MigrationStarted: emitted=9, authorityConsumed=0, consumers=[]
+- PopulationAndHouseholds.LivelihoodCollapsed: emitted=8, authorityConsumed=0, consumers=[]
+- OfficeAndCareer.AuthorityChanged: emitted=6, authorityConsumed=0, consumers=[]
+- OfficeAndCareer.OfficeTransfer: emitted=6, authorityConsumed=0, consumers=[]
+- OrderAndBanditry.OutlawGroupFormed: emitted=6, authorityConsumed=0, consumers=[]
+- WarfareCampaign.CampaignPressureRaised: emitted=6, authorityConsumed=48, consumers=[ConflictAndForce,FamilyCore,OfficeAndCareer,OrderAndBanditry,PopulationAndHouseholds,SocialMemoryAndRelations,TradeAndIndustry,WorldSettlements]
+- PopulationAndHouseholds.HouseholdDebtSpiked: emitted=5, authorityConsumed=0, consumers=[]
+- WarfareCampaign.CampaignMobilized: emitted=5, authorityConsumed=40, consumers=[ConflictAndForce,FamilyCore,OfficeAndCareer,OrderAndBanditry,PopulationAndHouseholds,SocialMemoryAndRelations,TradeAndIndustry,WorldSettlements]
+- EducationAndExams.ExamFailed: emitted=4, authorityConsumed=0, consumers=[]
+- FamilyCore.MarriageAllianceArranged: emitted=4, authorityConsumed=0, consumers=[]
+- OfficeAndCareer.OfficeGranted: emitted=3, authorityConsumed=0, consumers=[]
+- EducationAndExams.ExamPassed: emitted=2, authorityConsumed=0, consumers=[]
+- FamilyCore.LineageDisputeHardened: emitted=2, authorityConsumed=0, consumers=[]
+无人权威处理的已发布事件:
+- SocialMemoryAndRelations.ClanNarrativeUpdated x480; FamilyCore.ClanPrestigeAdjusted x430; ConflictAndForce.ConflictResolved x371; ConflictAndForce.CommanderWounded x135; FamilyCore.FamilyMembersAged x120; ConflictAndForce.ForceReadinessChanged x116; WorldSettlements.WorldSettlements.SeasonPhaseAdvanced x50; WorldSettlements.WorldSettlements.SeasonalFestivalArrived x50; WorldSettlements.WorldSettlements.CanalWindowChanged x41; ConflictAndForce.MilitiaMobilized x15; WorldSettlements.SettlementPressureChanged x12; PopulationAndHouseholds.MigrationStarted x9
+声明可发布但120个月从未出现的事件:
+- ConflictAndForce.DeathByViolence; EducationAndExams.TutorSecured; FamilyCore.BirthRegistered; FamilyCore.BranchSeparationApproved; FamilyCore.ClanMemberDied; FamilyCore.HeirSecurityWeakened; FamilyCore.LineageMediationOpened; OfficeAndCareer.OfficeLost; OrderAndBanditry.BlackRoutePressureRaised; OrderAndBanditry.SuppressionSucceeded; PersonRegistry.FidelityRingChanged; PersonRegistry.PersonCreated; PersonRegistry.PersonDeceased; PopulationAndHouseholds.DeathByIllness; PublicLifeAndRumor.RoadReportDelayed; PublicLifeAndRumor.StreetTalkSurged; SocialMemoryAndRelations.FavorIncurred; SocialMemoryAndRelations.GrudgeSoftened; WarfareCampaign.CampaignSupplyStrained; WorldSettlements.WorldSettlements.ComplianceModeShifted; WorldSettlements.WorldSettlements.ForceStationChanged; WorldSettlements.WorldSettlements.IllicitRouteExposed; WorldSettlements.WorldSettlements.ImperialRhythmChanged; WorldSettlements.WorldSettlements.NodeVisibilityDiscovered
+
+二、结构化 diff 输出
+- WorldSettlements: diffEntries=1146
+- PopulationAndHouseholds: diffEntries=972
+- FamilyCore: diffEntries=554
+- SocialMemoryAndRelations: diffEntries=492
+- TradeAndIndustry: diffEntries=492
+- ConflictAndForce: diffEntries=492
+- OrderAndBanditry: diffEntries=492
+- PublicLifeAndRumor: diffEntries=480
+- WarfareCampaign: diffEntries=451
+- OfficeAndCareer: diffEntries=360
+- EducationAndExams: diffEntries=33
+
+三、聚落十年曲线
+聚落 兰溪(1)
+  - Security: first=53, last=0, delta=-53, min=0, max=53, unique=35, signChanges=30
+  - Prosperity: first=62, last=65, delta=3, min=58, max=69, unique=12, signChanges=45
+  - CommonerDistress: first=44, last=49, delta=5, min=43, max=57, unique=15, signChanges=48
+  - MigrationPressure: first=21, last=57, delta=36, min=20, max=57, unique=20, signChanges=3
+  - BanditThreat: first=22, last=0, delta=-22, min=0, max=34, unique=20, signChanges=26
+  - RoutePressure: first=21, last=100, delta=79, min=18, max=100, unique=42, signChanges=27
+  - DisorderPressure: first=15, last=0, delta=-15, min=0, max=15, unique=6, signChanges=2
+  - SuppressionDemand: first=1, last=20, delta=19, min=0, max=21, unique=21, signChanges=22
+  - ForceReadiness: first=62, last=47, delta=-15, min=42, max=64, unique=21, signChanges=77
+  - CommandCapacity: first=68, last=45, delta=-23, min=42, max=70, unique=28, signChanges=67
+  - CampaignSupplyState: first=100, last=100, delta=0, min=100, max=100, unique=1, signChanges=0
+  - CampaignFrontPressure: first=13, last=47, delta=34, min=3, max=48, unique=25, signChanges=45
+  - CampaignMoraleState: first=98, last=85, delta=-13, min=83, max=99, unique=17, signChanges=66
+  年度断面:
+  - M012: Sec=33, Pros=61, Supply=100, Bandit=29, Route=55, Distress=47, ActiveCampaign=True
+  - M024: Sec=24, Pros=63, Supply=100, Bandit=0, Route=52, Distress=49, ActiveCampaign=True
+  - M036: Sec=12, Pros=60, Supply=100, Bandit=0, Route=52, Distress=56, ActiveCampaign=True
+  - M048: Sec=0, Pros=64, Supply=100, Bandit=0, Route=51, Distress=53, ActiveCampaign=True
+  - M060: Sec=0, Pros=65, Supply=100, Bandit=0, Route=44, Distress=49, ActiveCampaign=True
+  - M072: Sec=0, Pros=64, Supply=100, Bandit=0, Route=46, Distress=50, ActiveCampaign=True
+  - M084: Sec=0, Pros=67, Supply=100, Bandit=0, Route=73, Distress=50, ActiveCampaign=True
+  - M096: Sec=1, Pros=68, Supply=100, Bandit=1, Route=97, Distress=50, ActiveCampaign=True
+  - M108: Sec=0, Pros=65, Supply=100, Bandit=1, Route=99, Distress=49, ActiveCampaign=True
+  - M120: Sec=0, Pros=65, Supply=100, Bandit=0, Route=100, Distress=49, ActiveCampaign=True
+聚落 永和(4)
+  - Security: first=37, last=2, delta=-35, min=0, max=37, unique=22, signChanges=33
+  - Prosperity: first=58, last=76, delta=18, min=56, max=82, unique=23, signChanges=37
+  - CommonerDistress: first=71, last=50, delta=-21, min=49, max=84, unique=35, signChanges=28
+  - MigrationPressure: first=60, last=100, delta=40, min=60, max=100, unique=16, signChanges=0
+  - BanditThreat: first=73, last=88, delta=15, min=73, max=100, unique=14, signChanges=5
+  - RoutePressure: first=65, last=100, delta=35, min=65, max=100, unique=6, signChanges=0
+  - DisorderPressure: first=70, last=100, delta=30, min=70, max=100, unique=8, signChanges=12
+  - SuppressionDemand: first=71, last=79, delta=8, min=71, max=100, unique=25, signChanges=43
+  - ForceReadiness: first=23, last=25, delta=2, min=2, max=32, unique=29, signChanges=76
+  - CommandCapacity: first=46, last=46, delta=0, min=41, max=59, unique=17, signChanges=70
+  - CampaignSupplyState: first=98, last=100, delta=2, min=84, max=100, unique=11, signChanges=5
+  - CampaignFrontPressure: first=35, last=45, delta=10, min=34, max=55, unique=19, signChanges=61
+  - CampaignMoraleState: first=64, last=71, delta=7, min=39, max=76, unique=36, signChanges=66
+  年度断面:
+  - M012: Sec=22, Pros=58, Supply=94, Bandit=100, Route=100, Distress=81, ActiveCampaign=True
+  - M024: Sec=9, Pros=60, Supply=100, Bandit=100, Route=100, Distress=83, ActiveCampaign=True
+  - M036: Sec=1, Pros=70, Supply=100, Bandit=100, Route=100, Distress=74, ActiveCampaign=True
+  - M048: Sec=0, Pros=72, Supply=100, Bandit=100, Route=100, Distress=69, ActiveCampaign=True
+  - M060: Sec=1, Pros=78, Supply=100, Bandit=100, Route=100, Distress=64, ActiveCampaign=True
+  - M072: Sec=1, Pros=78, Supply=100, Bandit=100, Route=100, Distress=56, ActiveCampaign=True
+  - M084: Sec=0, Pros=79, Supply=100, Bandit=100, Route=100, Distress=50, ActiveCampaign=True
+  - M096: Sec=1, Pros=81, Supply=100, Bandit=100, Route=100, Distress=50, ActiveCampaign=True
+  - M108: Sec=0, Pros=78, Supply=100, Bandit=99, Route=100, Distress=49, ActiveCampaign=True
+  - M120: Sec=2, Pros=76, Supply=100, Bandit=88, Route=100, Distress=50, ActiveCampaign=True
+
+四、十年后 PersonRegistry / SocialMemoryAndRelations / FamilyCore
+PersonRegistry: total=4, living=4, deceased=0
+- LifeStage.Adult: 4
+  Person 1: 张远, alive=True, stage=Adult, ring=Core
+  Person 2: 李文, alive=True, stage=Adult, ring=Local
+  Person 3: 吴成, alive=True, stage=Adult, ring=Local
+  Person 4: 陈睿, alive=True, stage=Adult, ring=Local
+SocialMemory: clanNarratives=4, memories=13, dormantStubs=0
+  Clan 1: grudge=100, fear=0, shame=100, favor=100, text='张宗中分房之议渐炽。'
+  Clan 2: grudge=100, fear=100, shame=100, favor=100, text='李宗中分房之议渐炽。'
+  Clan 3: grudge=100, fear=100, shame=100, favor=100, text='吴宗中分房之议渐炽。'
+  Clan 4: grudge=100, fear=9, shame=100, favor=100, text='陈宗中分房之议渐炽。'
+  Memory 1: clan=1, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='兰溪战后余波把前线暂静与兰溪军务态势尚能持守，有主簿接应；前线13，粮道100，军心98。一并压进了张的旧忆里。'
+  Memory 2: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=62, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线持守与浮山军务态势尚能持守，暂无官署接应；前线35，粮道92，军心65。一并压进了吴的旧忆里。'
+  Memory 3: clan=4, kind=campaign-pressure, type=Fear/WarDread, intensity=67, weight=0, cause=campaign.pressure, summary='永和战后余波把前线持守与永和军务态势尚能持守，暂无官署接应；前线35，粮道98，军心64。一并压进了陈的旧忆里。'
+  Memory 4: clan=1, kind=campaign-aftermath, type=Fear/WarDread, intensity=2, weight=0, cause=campaign.aftermath, summary='兰溪战后余波把前线暂静与兰溪正在覆核战后余波：修补护运、消化积案，并围绕待整窗口稳住军心。一并压进了张的旧忆里。'
+  Memory 5: clan=1, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='兰溪战后余波把前线暂静与兰溪军务态势尚能持守，有县丞接应；前线22，粮道100，军心98。一并压进了张的旧忆里。'
+  Memory 6: clan=2, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='清水战后余波把前线暂静与清水军务态势尚能持守，有县丞接应；前线17，粮道100，军心92。一并压进了李的旧忆里。'
+  Memory 7: clan=2, kind=hardship, type=Grudge/WealthGrudge, intensity=62, weight=0, cause=clan.hardship, summary='李因民困与家计艰难，旧怨更深。'
+  Memory 8: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道95，军心42。一并压进了吴的旧忆里。'
+  Memory 9: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道92，军心43。一并压进了吴的旧忆里。'
+  Memory 10: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=6, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道97，军心43。一并压进了吴的旧忆里。'
+  Memory 11: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=10, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道97，军心43。一并压进了吴的旧忆里。'
+  Memory 12: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=18, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道96，军心43。一并压进了吴的旧忆里。'
+  Memory 13: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=28, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道94，军心43。一并压进了吴的旧忆里。'
+FamilyCore: clans=4, people=4, deadFamilyPeople=0
+  Clan 1: prestige=0, support=100, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+  Clan 2: prestige=0, support=82, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+  Clan 3: prestige=0, support=88, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+  Clan 4: prestige=0, support=100, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+
+
+NUnit Adapter 4.5.0.0: Test execution complete
+  已通过 CampaignEnabledStressSandbox_TenYearHealthReport [796 ms]
+  标准输出消息:
+ 《10年骨骼运行体检报告》原始诊断输出
+ Seed=20260421; Months=120; FinalDate=1210-01; ReplayHash=C85E1ADCE8494C5B42F92869ADCB11FA21CB98902104A827458DDF0C150005D0
+ 
+ 一、跨模块事件流
+ 实际发布事件 Top:
+ - TradeAndIndustry.RouteBusinessBlocked: emitted=484, authorityConsumed=1428, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+ - SocialMemoryAndRelations.ClanNarrativeUpdated: emitted=480, authorityConsumed=0, consumers=[]
+ - FamilyCore.ClanPrestigeAdjusted: emitted=430, authorityConsumed=0, consumers=[]
+ - PublicLifeAndRumor.PrefectureDispatchPressed: emitted=378, authorityConsumed=756, consumers=[OfficeAndCareer,OrderAndBanditry]
+ - ConflictAndForce.ConflictResolved: emitted=371, authorityConsumed=0, consumers=[]
+ - TradeAndIndustry.TradeLossOccurred: emitted=361, authorityConsumed=1083, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+ - TradeAndIndustry.TradeDebtDefaulted: emitted=279, authorityConsumed=819, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+ - ConflictAndForce.CommanderWounded: emitted=135, authorityConsumed=0, consumers=[]
+ - FamilyCore.FamilyMembersAged: emitted=120, authorityConsumed=0, consumers=[]
+ - ConflictAndForce.ForceReadinessChanged: emitted=116, authorityConsumed=0, consumers=[]
+ - PublicLifeAndRumor.CountyGateCrowded: emitted=100, authorityConsumed=200, consumers=[OfficeAndCareer,OrderAndBanditry]
+ - WorldSettlements.WorldSettlements.FloodRiskThresholdBreached: emitted=77, authorityConsumed=231, consumers=[OrderAndBanditry,PopulationAndHouseholds,TradeAndIndustry]
+ - WorldSettlements.WorldSettlements.CorveeWindowChanged: emitted=50, authorityConsumed=150, consumers=[OrderAndBanditry,PopulationAndHouseholds,TradeAndIndustry]
+ - WorldSettlements.WorldSettlements.SeasonPhaseAdvanced: emitted=50, authorityConsumed=0, consumers=[]
+ - WorldSettlements.WorldSettlements.SeasonalFestivalArrived: emitted=50, authorityConsumed=0, consumers=[]
+ - WorldSettlements.WorldSettlements.CanalWindowChanged: emitted=41, authorityConsumed=0, consumers=[]
+ - TradeAndIndustry.TradeProspered: emitted=30, authorityConsumed=90, consumers=[FamilyCore,PopulationAndHouseholds,SocialMemoryAndRelations]
+ - ConflictAndForce.MilitiaMobilized: emitted=15, authorityConsumed=0, consumers=[]
+ - WorldSettlements.SettlementPressureChanged: emitted=12, authorityConsumed=0, consumers=[]
+ - PopulationAndHouseholds.MigrationStarted: emitted=9, authorityConsumed=0, consumers=[]
+ - PopulationAndHouseholds.LivelihoodCollapsed: emitted=8, authorityConsumed=0, consumers=[]
+ - OfficeAndCareer.AuthorityChanged: emitted=6, authorityConsumed=0, consumers=[]
+ - OfficeAndCareer.OfficeTransfer: emitted=6, authorityConsumed=0, consumers=[]
+ - OrderAndBanditry.OutlawGroupFormed: emitted=6, authorityConsumed=0, consumers=[]
+ - WarfareCampaign.CampaignPressureRaised: emitted=6, authorityConsumed=48, consumers=[ConflictAndForce,FamilyCore,OfficeAndCareer,OrderAndBanditry,PopulationAndHouseholds,SocialMemoryAndRelations,TradeAndIndustry,WorldSettlements]
+ - PopulationAndHouseholds.HouseholdDebtSpiked: emitted=5, authorityConsumed=0, consumers=[]
+ - WarfareCampaign.CampaignMobilized: emitted=5, authorityConsumed=40, consumers=[ConflictAndForce,FamilyCore,OfficeAndCareer,OrderAndBanditry,PopulationAndHouseholds,SocialMemoryAndRelations,TradeAndIndustry,WorldSettlements]
+ - EducationAndExams.ExamFailed: emitted=4, authorityConsumed=0, consumers=[]
+ - FamilyCore.MarriageAllianceArranged: emitted=4, authorityConsumed=0, consumers=[]
+ - OfficeAndCareer.OfficeGranted: emitted=3, authorityConsumed=0, consumers=[]
+ - EducationAndExams.ExamPassed: emitted=2, authorityConsumed=0, consumers=[]
+ - FamilyCore.LineageDisputeHardened: emitted=2, authorityConsumed=0, consumers=[]
+ 无人权威处理的已发布事件:
+ - SocialMemoryAndRelations.ClanNarrativeUpdated x480; FamilyCore.ClanPrestigeAdjusted x430; ConflictAndForce.ConflictResolved x371; ConflictAndForce.CommanderWounded x135; FamilyCore.FamilyMembersAged x120; ConflictAndForce.ForceReadinessChanged x116; WorldSettlements.WorldSettlements.SeasonPhaseAdvanced x50; WorldSettlements.WorldSettlements.SeasonalFestivalArrived x50; WorldSettlements.WorldSettlements.CanalWindowChanged x41; ConflictAndForce.MilitiaMobilized x15; WorldSettlements.SettlementPressureChanged x12; PopulationAndHouseholds.MigrationStarted x9
+ 声明可发布但120个月从未出现的事件:
+ - ConflictAndForce.DeathByViolence; EducationAndExams.TutorSecured; FamilyCore.BirthRegistered; FamilyCore.BranchSeparationApproved; FamilyCore.ClanMemberDied; FamilyCore.HeirSecurityWeakened; FamilyCore.LineageMediationOpened; OfficeAndCareer.OfficeLost; OrderAndBanditry.BlackRoutePressureRaised; OrderAndBanditry.SuppressionSucceeded; PersonRegistry.FidelityRingChanged; PersonRegistry.PersonCreated; PersonRegistry.PersonDeceased; PopulationAndHouseholds.DeathByIllness; PublicLifeAndRumor.RoadReportDelayed; PublicLifeAndRumor.StreetTalkSurged; SocialMemoryAndRelations.FavorIncurred; SocialMemoryAndRelations.GrudgeSoftened; WarfareCampaign.CampaignSupplyStrained; WorldSettlements.WorldSettlements.ComplianceModeShifted; WorldSettlements.WorldSettlements.ForceStationChanged; WorldSettlements.WorldSettlements.IllicitRouteExposed; WorldSettlements.WorldSettlements.ImperialRhythmChanged; WorldSettlements.WorldSettlements.NodeVisibilityDiscovered
+ 
+ 二、结构化 diff 输出
+ - WorldSettlements: diffEntries=1146
+ - PopulationAndHouseholds: diffEntries=972
+ - FamilyCore: diffEntries=554
+ - SocialMemoryAndRelations: diffEntries=492
+ - TradeAndIndustry: diffEntries=492
+ - ConflictAndForce: diffEntries=492
+ - OrderAndBanditry: diffEntries=492
+ - PublicLifeAndRumor: diffEntries=480
+ - WarfareCampaign: diffEntries=451
+ - OfficeAndCareer: diffEntries=360
+ - EducationAndExams: diffEntries=33
+ 
+ 三、聚落十年曲线
+ 聚落 兰溪(1)
+   - Security: first=53, last=0, delta=-53, min=0, max=53, unique=35, signChanges=30
+   - Prosperity: first=62, last=65, delta=3, min=58, max=69, unique=12, signChanges=45
+   - CommonerDistress: first=44, last=49, delta=5, min=43, max=57, unique=15, signChanges=48
+   - MigrationPressure: first=21, last=57, delta=36, min=20, max=57, unique=20, signChanges=3
+   - BanditThreat: first=22, last=0, delta=-22, min=0, max=34, unique=20, signChanges=26
+   - RoutePressure: first=21, last=100, delta=79, min=18, max=100, unique=42, signChanges=27
+   - DisorderPressure: first=15, last=0, delta=-15, min=0, max=15, unique=6, signChanges=2
+   - SuppressionDemand: first=1, last=20, delta=19, min=0, max=21, unique=21, signChanges=22
+   - ForceReadiness: first=62, last=47, delta=-15, min=42, max=64, unique=21, signChanges=77
+   - CommandCapacity: first=68, last=45, delta=-23, min=42, max=70, unique=28, signChanges=67
+   - CampaignSupplyState: first=100, last=100, delta=0, min=100, max=100, unique=1, signChanges=0
+   - CampaignFrontPressure: first=13, last=47, delta=34, min=3, max=48, unique=25, signChanges=45
+   - CampaignMoraleState: first=98, last=85, delta=-13, min=83, max=99, unique=17, signChanges=66
+   年度断面:
+   - M012: Sec=33, Pros=61, Supply=100, Bandit=29, Route=55, Distress=47, ActiveCampaign=True
+   - M024: Sec=24, Pros=63, Supply=100, Bandit=0, Route=52, Distress=49, ActiveCampaign=True
+   - M036: Sec=12, Pros=60, Supply=100, Bandit=0, Route=52, Distress=56, ActiveCampaign=True
+   - M048: Sec=0, Pros=64, Supply=100, Bandit=0, Route=51, Distress=53, ActiveCampaign=True
+   - M060: Sec=0, Pros=65, Supply=100, Bandit=0, Route=44, Distress=49, ActiveCampaign=True
+   - M072: Sec=0, Pros=64, Supply=100, Bandit=0, Route=46, Distress=50, ActiveCampaign=True
+   - M084: Sec=0, Pros=67, Supply=100, Bandit=0, Route=73, Distress=50, ActiveCampaign=True
+   - M096: Sec=1, Pros=68, Supply=100, Bandit=1, Route=97, Distress=50, ActiveCampaign=True
+   - M108: Sec=0, Pros=65, Supply=100, Bandit=1, Route=99, Distress=49, ActiveCampaign=True
+   - M120: Sec=0, Pros=65, Supply=100, Bandit=0, Route=100, Distress=49, ActiveCampaign=True
+ 聚落 永和(4)
+   - Security: first=37, last=2, delta=-35, min=0, max=37, unique=22, signChanges=33
+   - Prosperity: first=58, last=76, delta=18, min=56, max=82, unique=23, signChanges=37
+   - CommonerDistress: first=71, last=50, delta=-21, min=49, max=84, unique=35, signChanges=28
+   - MigrationPressure: first=60, last=100, delta=40, min=60, max=100, unique=16, signChanges=0
+   - BanditThreat: first=73, last=88, delta=15, min=73, max=100, unique=14, signChanges=5
+   - RoutePressure: first=65, last=100, delta=35, min=65, max=100, unique=6, signChanges=0
+   - DisorderPressure: first=70, last=100, delta=30, min=70, max=100, unique=8, signChanges=12
+   - SuppressionDemand: first=71, last=79, delta=8, min=71, max=100, unique=25, signChanges=43
+   - ForceReadiness: first=23, last=25, delta=2, min=2, max=32, unique=29, signChanges=76
+   - CommandCapacity: first=46, last=46, delta=0, min=41, max=59, unique=17, signChanges=70
+   - CampaignSupplyState: first=98, last=100, delta=2, min=84, max=100, unique=11, signChanges=5
+   - CampaignFrontPressure: first=35, last=45, delta=10, min=34, max=55, unique=19, signChanges=61
+   - CampaignMoraleState: first=64, last=71, delta=7, min=39, max=76, unique=36, signChanges=66
+   年度断面:
+   - M012: Sec=22, Pros=58, Supply=94, Bandit=100, Route=100, Distress=81, ActiveCampaign=True
+   - M024: Sec=9, Pros=60, Supply=100, Bandit=100, Route=100, Distress=83, ActiveCampaign=True
+   - M036: Sec=1, Pros=70, Supply=100, Bandit=100, Route=100, Distress=74, ActiveCampaign=True
+   - M048: Sec=0, Pros=72, Supply=100, Bandit=100, Route=100, Distress=69, ActiveCampaign=True
+   - M060: Sec=1, Pros=78, Supply=100, Bandit=100, Route=100, Distress=64, ActiveCampaign=True
+   - M072: Sec=1, Pros=78, Supply=100, Bandit=100, Route=100, Distress=56, ActiveCampaign=True
+   - M084: Sec=0, Pros=79, Supply=100, Bandit=100, Route=100, Distress=50, ActiveCampaign=True
+   - M096: Sec=1, Pros=81, Supply=100, Bandit=100, Route=100, Distress=50, ActiveCampaign=True
+   - M108: Sec=0, Pros=78, Supply=100, Bandit=99, Route=100, Distress=49, ActiveCampaign=True
+   - M120: Sec=2, Pros=76, Supply=100, Bandit=88, Route=100, Distress=50, ActiveCampaign=True
+ 
+ 四、十年后 PersonRegistry / SocialMemoryAndRelations / FamilyCore
+ PersonRegistry: total=4, living=4, deceased=0
+ - LifeStage.Adult: 4
+   Person 1: 张远, alive=True, stage=Adult, ring=Core
+   Person 2: 李文, alive=True, stage=Adult, ring=Local
+   Person 3: 吴成, alive=True, stage=Adult, ring=Local
+   Person 4: 陈睿, alive=True, stage=Adult, ring=Local
+ SocialMemory: clanNarratives=4, memories=13, dormantStubs=0
+   Clan 1: grudge=100, fear=0, shame=100, favor=100, text='张宗中分房之议渐炽。'
+   Clan 2: grudge=100, fear=100, shame=100, favor=100, text='李宗中分房之议渐炽。'
+   Clan 3: grudge=100, fear=100, shame=100, favor=100, text='吴宗中分房之议渐炽。'
+   Clan 4: grudge=100, fear=9, shame=100, favor=100, text='陈宗中分房之议渐炽。'
+   Memory 1: clan=1, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='兰溪战后余波把前线暂静与兰溪军务态势尚能持守，有主簿接应；前线13，粮道100，军心98。一并压进了张的旧忆里。'
+   Memory 2: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=62, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线持守与浮山军务态势尚能持守，暂无官署接应；前线35，粮道92，军心65。一并压进了吴的旧忆里。'
+   Memory 3: clan=4, kind=campaign-pressure, type=Fear/WarDread, intensity=67, weight=0, cause=campaign.pressure, summary='永和战后余波把前线持守与永和军务态势尚能持守，暂无官署接应；前线35，粮道98，军心64。一并压进了陈的旧忆里。'
+   Memory 4: clan=1, kind=campaign-aftermath, type=Fear/WarDread, intensity=2, weight=0, cause=campaign.aftermath, summary='兰溪战后余波把前线暂静与兰溪正在覆核战后余波：修补护运、消化积案，并围绕待整窗口稳住军心。一并压进了张的旧忆里。'
+   Memory 5: clan=1, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='兰溪战后余波把前线暂静与兰溪军务态势尚能持守，有县丞接应；前线22，粮道100，军心98。一并压进了张的旧忆里。'
+   Memory 6: clan=2, kind=campaign-pressure, type=Fear/WarDread, intensity=1, weight=0, cause=campaign.pressure, summary='清水战后余波把前线暂静与清水军务态势尚能持守，有县丞接应；前线17，粮道100，军心92。一并压进了李的旧忆里。'
+   Memory 7: clan=2, kind=hardship, type=Grudge/WealthGrudge, intensity=62, weight=0, cause=clan.hardship, summary='李因民困与家计艰难，旧怨更深。'
+   Memory 8: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道95，军心42。一并压进了吴的旧忆里。'
+   Memory 9: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=0, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道92，军心43。一并压进了吴的旧忆里。'
+   Memory 10: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=6, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道97，军心43。一并压进了吴的旧忆里。'
+   Memory 11: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=10, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道97，军心43。一并压进了吴的旧忆里。'
+   Memory 12: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=18, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道96，军心43。一并压进了吴的旧忆里。'
+   Memory 13: clan=3, kind=campaign-pressure, type=Fear/WarDread, intensity=100, weight=28, cause=campaign.pressure, summary='浮山战后余波把前线吃紧与浮山军务态势尚能持守，暂无官署接应；前线60，粮道94，军心43。一并压进了吴的旧忆里。'
+ FamilyCore: clans=4, people=4, deadFamilyPeople=0
+   Clan 1: prestige=0, support=100, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+   Clan 2: prestige=0, support=82, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+   Clan 3: prestige=0, support=88, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+   Clan 4: prestige=0, support=100, branchTension=100, inheritance=100, marriage=0, heirSecurity=55, mourning=0
+ 
+
+
+
+测试运行成功。
+测试总数: 1
+     通过数: 1
+总时间: 1.2413 秒
