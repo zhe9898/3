@@ -1,0 +1,95 @@
+{
+  "source": "CHGIS V6 (China Historical Geographic Information System)",
+  "publisher": "Harvard University & Fudan University",
+  "license": "Free for academic research, no commercial use",
+  "citation": "CHGIS, Version: 6. (c) Fairbank Center for Chinese Studies of Harvard University and the Center for Historical Geographical Studies at Fudan University, 2016.",
+  "download_url": "https://dataverse.harvard.edu/dataverse/chgis_v6",
+  "converted_files": {
+    "time_series": [
+      {
+        "source": "v6_time_cnty_pts_utf_wgs84.zip",
+        "shp": "v6_time_cnty_pts_utf_wgs84.shp",
+        "geojson": "time_series/v6_time_cnty_pts_utf_wgs84.geojson",
+        "desc": "县级治所点时间序列"
+      },
+      {
+        "source": "v6_time_pref_pts_utf_wgs84.zip",
+        "shp": "v6_time_pref_pts_utf_wgs84.shp",
+        "geojson": "time_series/v6_time_pref_pts_utf_wgs84.geojson",
+        "desc": "府级治所点时间序列"
+      },
+      {
+        "source": "v6_time_pref_pgn_utf_wgs84.zip",
+        "shp": "v6_time_pref_pgn_utf_wgs84.shp",
+        "geojson": "time_series/v6_time_pref_pgn_utf_wgs84.geojson",
+        "desc": "府级边界时间序列"
+      }
+    ],
+    "time_slice_1820": [
+      {
+        "source": "v6_1820_pref_pgn_utf.zip",
+        "shp": "v6_1820_pref_pgn_utf.shp",
+        "geojson": "time_slice_1820/v6_1820_pref_pgn_utf.geojson",
+        "desc": "1820府级边界"
+      },
+      {
+        "source": "v6_1820_prov_pgn_utf.zip",
+        "shp": "v6_1820_prov_pgn_utf.shp",
+        "geojson": "time_slice_1820/v6_1820_prov_pgn_utf.geojson",
+        "desc": "1820省级边界"
+      },
+      {
+        "source": "v6_1820_lks_pgn_utf.zip",
+        "shp": "v6_1820_lks_pgn_utf.shp",
+        "geojson": "time_slice_1820/v6_1820_lks_pgn_utf.geojson",
+        "desc": "1820湖泊"
+      },
+      {
+        "source": "v6_1820_coded_rvr_lin_utf.zip",
+        "shp": "v6_1820_coded_rvr_lin_utf.shp",
+        "geojson": "time_slice_1820/v6_1820_coded_rvr_lin_utf.geojson",
+        "desc": "1820编码河流"
+      }
+    ],
+    "time_slice_1911": [
+      {
+        "source": "v6_1911_cnty_pgn_utf.zip",
+        "shp": "v6_1911_cnty_pgn_utf.shp",
+        "geojson": "time_slice_1911/v6_1911_cnty_pgn_utf.geojson",
+        "desc": "1911县级边界"
+      },
+      {
+        "source": "v6_1911_pref_pgn_utf.zip",
+        "shp": "v6_1911_pref_pgn_utf.shp",
+        "geojson": "time_slice_1911/v6_1911_pref_pgn_utf.geojson",
+        "desc": "1911府级边界"
+      },
+      {
+        "source": "v6_1911_prov_pgn_utf.zip",
+        "shp": "v6_1911_prov_pgn_utf.shp",
+        "geojson": "time_slice_1911/v6_1911_prov_pgn_utf.geojson",
+        "desc": "1911省级边界"
+      }
+    ],
+    "time_slice_1990": [
+      {
+        "source": "v6_citas90_cnty_pgn_gbk.zip",
+        "shp": "v6_citas90_cnty_pgn_gbk.shp",
+        "geojson": "time_slice_1990/v6_citas90_cnty_pgn_gbk.geojson",
+        "desc": "1990县级边界"
+      },
+      {
+        "source": "v6_citas90_pref_pgn_gbk.zip",
+        "shp": "v6_citas90_pref_pgn_gbk.shp",
+        "geojson": "time_slice_1990/v6_citas90_pref_pgn_gbk.geojson",
+        "desc": "1990府级边界"
+      },
+      {
+        "source": "v6_citas90_prov_pgn_gbk.zip",
+        "shp": "v6_citas90_prov_pgn_gbk.shp",
+        "geojson": "time_slice_1990/v6_citas90_prov_pgn_gbk.geojson",
+        "desc": "1990省级边界"
+      }
+    ]
+  }
+}
