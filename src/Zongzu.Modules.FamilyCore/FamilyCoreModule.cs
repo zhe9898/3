@@ -42,6 +42,8 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         FamilyCoreEventNames.HeirSuccessionOccurred,
         // STEP2A / A5 — 婴幼儿夭折走 DeathByIllness 分流（= DeathCauseEventNames.DeathByIllness）。
         DeathCauseEventNames.DeathByIllness,
+        // STEP2A / A7 — Youth → Adult 跨阈。FamilyCore 自用：推 SeparationPressure / 开启婚议候选。
+        FamilyCoreEventNames.CameOfAge,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -117,15 +119,32 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 continue;
             }
 
+            int ageBefore = GetAgeMonths(person, registryQueries, currentDate);
+
             if (registryQueries.TryGetPerson(person.Id, out _))
             {
                 // Registry is authoritative for this person; local mirror is unused for age.
                 peopleAged += 1;
-                continue;
+            }
+            else
+            {
+                person.AgeMonths += 1;
+                peopleAged += 1;
             }
 
-            person.AgeMonths += 1;
-            peopleAged += 1;
+            // STEP2A / A7 — Youth → Adult 跨阈：发 CameOfAge。两路径均已推进
+            // 到本月龄：registry 权威者由 Phase 0 PersonRegistry 自增，本地镜像
+            // 由上一句 += 1。故本月龄 == AdultAgeMonths 即为跨阈首帧。
+            int ageAfter = registryQueries.TryGetPerson(person.Id, out _)
+                ? ageBefore
+                : person.AgeMonths;
+            if (ageAfter == AdultAgeMonths)
+            {
+                scope.Emit(
+                    FamilyCoreEventNames.CameOfAge,
+                    $"{person.GivenName}行冠礼，堂上以成丁视之。",
+                    person.Id.Value.ToString());
+            }
         }
 
         if (peopleAged > 0)
@@ -216,7 +235,9 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 0,
                 100);
             clan.SeparationPressure = Math.Clamp(
-                clan.SeparationPressure + ComputeSeparationPressureDelta(clan),
+                clan.SeparationPressure
+                    + ComputeSeparationPressureDelta(clan)
+                    + ComputeAdultMaleCrowdingSeparationDelta(scope.State, clan, registryQueries, currentDate),
                 0,
                 100);
             clan.MediationMomentum = Math.Max(0, clan.MediationMomentum - 1);

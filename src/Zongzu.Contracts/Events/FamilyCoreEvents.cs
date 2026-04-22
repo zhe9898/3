@@ -41,4 +41,13 @@ public static class FamilyCoreEventNames
     /// Entity key: the newly appointed <c>PersonId</c>.
     /// </summary>
     public const string HeirSuccessionOccurred = "HeirSuccessionOccurred";
+
+    /// <summary>
+    /// STEP2A / A7 — 成年仪式（Youth → Adult 跨阈）。FamilyCore 自己消费
+    /// 以推动 <c>SeparationPressure</c> / 婚议候选池；SocialMemory 可在后续
+    /// step 接入以落轻量 narrative。Entity key: 当事人 <see cref="Zongzu.Contracts.PersonId"/>。
+    /// 不由 PersonRegistry 出，因为它是 FamilyCore 对"家内权利—义务"跨阈的
+    /// 族内诠释，不是身份登记的账实变化。
+    /// </summary>
+    public const string CameOfAge = "CameOfAge";
 }

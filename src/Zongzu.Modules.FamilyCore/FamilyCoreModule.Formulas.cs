@@ -232,6 +232,36 @@ public sealed partial class FamilyCoreModule
         return delta;
     }
 
+    /// <summary>
+    /// STEP2A / A7 — 成年男性拥挤 + 无分房调停 → 分房之议逐月累积。
+    /// 触发条件：本 clan 在世成年男性（heir-eligible gender，未登记者默认男）
+    /// ≥ 3 人 且 <c>MediationMomentum &lt; 55</c>（族老尚未开分房议）。每月 +1。
+    /// skill <c>lineage-inheritance</c> / <c>household-separation</c>：分房是
+    /// 北宋多子家族真实压力，此 step 只累积信号，不执行 <c>PermitBranchSeparation</c>，
+    /// 那一步留给 Step 2-B 的玩家命令通道。
+    /// </summary>
+    internal static int ComputeAdultMaleCrowdingSeparationDelta(
+        FamilyCoreState state,
+        ClanStateData clan,
+        IPersonRegistryQueries registryQueries,
+        GameDate currentDate)
+    {
+        if (clan.MediationMomentum >= 55) return 0;
+
+        int adultMales = 0;
+        foreach (FamilyPersonState person in state.People)
+        {
+            if (person.ClanId != clan.Id) continue;
+            if (!IsPersonAlive(person, registryQueries)) continue;
+            int age = GetAgeMonths(person, registryQueries, currentDate);
+            if (age < AdultAgeMonths) continue;
+            if (!IsHeirEligibleGender(person.Id, registryQueries)) continue;
+            adultMales += 1;
+            if (adultMales >= 3) return 1;
+        }
+        return 0;
+    }
+
     internal static int ComputeCampaignPrestigeDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
     {
         int delta = 0;

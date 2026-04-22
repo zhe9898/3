@@ -670,6 +670,189 @@ public sealed class FamilyCoreModuleTests
         Assert.That(registryCommands.RegisteredIds, Is.Empty);
     }
 
+    [Test]
+    public void RunMonth_EmitsCameOfAge_WhenYouthCrossesAdultThreshold()
+    {
+        // STEP2A / A7 — Youth → Adult 跨阈发 CameOfAge。本测试让本地镜像
+        // 人员 AgeMonths = 16*12 - 1，RunMonth 自增 1 后恰为 AdultAgeMonths。
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 57,
+            Prosperity = 64,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 50,
+            SupportReserve = 50,
+        });
+        // 16 周岁前夜，本月将跨阈。
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(42),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Guan",
+            AgeMonths = (16 * 12) - 1,
+            IsAlive = true,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(7)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        familyModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(familyState, context));
+
+        IDomainEvent cameOfAge = context.DomainEvents.Events.Single(static evt => evt.EventType == FamilyCoreEventNames.CameOfAge);
+        Assert.That(cameOfAge.EntityKey, Is.EqualTo("42"));
+        Assert.That(familyState.People.Single(p => p.Id.Value == 42).AgeMonths, Is.EqualTo(16 * 12));
+    }
+
+    [Test]
+    public void RunMonth_AdultMaleCrowding_RaisesSeparationPressure_WhenNoMediation()
+    {
+        // STEP2A / A7 — ≥3 成年男 + MediationMomentum<55 → SeparationPressure 每月 +1。
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 57,
+            Prosperity = 64,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 50,
+            SupportReserve = 50,
+            BranchTension = 0,
+            MediationMomentum = 0,
+            SeparationPressure = 10,
+        });
+        for (int i = 1; i <= 3; i++)
+        {
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = new PersonId(i),
+                ClanId = new ClanId(1),
+                GivenName = $"Zhang Xiong {i}",
+                AgeMonths = (20 + i) * 12,
+                IsAlive = true,
+            });
+        }
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(7)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        int before = familyState.Clans[0].SeparationPressure;
+        familyModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(familyState, context));
+        int after = familyState.Clans[0].SeparationPressure;
+
+        // 基础 delta（BranchTension=0, ReliefSanction=0, Mourning=0, Mediation=0）= 0；
+        // A7 拥挤加成 +1。
+        Assert.That(after - before, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void RunMonth_AdultMaleCrowding_DoesNotRaiseSeparation_WhenMediationActive()
+    {
+        // STEP2A / A7 — 若 MediationMomentum ≥ 55（族老已开分房议），拥挤加成
+        // 归零。同时基础 delta 中 Mediation>=55 还会再 -1。
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 57,
+            Prosperity = 64,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 50,
+            SupportReserve = 50,
+            BranchTension = 0,
+            MediationMomentum = 60,
+            SeparationPressure = 20,
+        });
+        for (int i = 1; i <= 3; i++)
+        {
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = new PersonId(i),
+                ClanId = new ClanId(1),
+                GivenName = $"Zhang Xiong {i}",
+                AgeMonths = (20 + i) * 12,
+                IsAlive = true,
+            });
+        }
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(7)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        int before = familyState.Clans[0].SeparationPressure;
+        familyModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(familyState, context));
+        int after = familyState.Clans[0].SeparationPressure;
+
+        // 基础 delta -1（Mediation>=55）+ A7 加成 0（Mediation 已在场）= -1。
+        Assert.That(after - before, Is.EqualTo(-1));
+    }
+
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
     {
         private readonly IReadOnlyList<CampaignFrontSnapshot> _campaigns;
