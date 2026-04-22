@@ -7,5 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Zongzu.Application\Zongzu.Application.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Presentation.Unity\Zongzu.Presentation.Unity.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Presentation.Unity.ViewModels\Zongzu.Presentation.Unity.ViewModels.csproj" />
   </ItemGroup>
 </Project>

@@ -19,6 +19,8 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     [
         PlayerCommandNames.ArrangeMarriage,
         PlayerCommandNames.DesignateHeirPolicy,
+        PlayerCommandNames.SupportNewbornCare,
+        PlayerCommandNames.SetMourningOrder,
         PlayerCommandNames.SupportSeniorBranch,
         PlayerCommandNames.OrderFormalApology,
         PlayerCommandNames.PermitBranchSeparation,
@@ -158,15 +160,17 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         // MarriageAllianceArranged；未配上的走本族自议 fallback（下方循环）。
         // skill marriage-alliance-politics：联姻由两族合意而成，不是单方
         // 意愿；本 step 不做聘礼 / 债务 / 政治操盘。
-        TryArrangeCrossClanMarriages(scope, registryQueries, currentDate);
+        HashSet<ClanId> clansWithNewMarriage = TryArrangeCrossClanMarriages(scope, registryQueries, currentDate);
 
         foreach (ClanStateData clan in scope.State.Clans.OrderBy(static clan => clan.Id.Value))
         {
             SettlementSnapshot homeSettlement = settlementsQueries.GetRequiredSettlement(clan.HomeSettlementId);
             FamilyMonthSignals signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 
-            if (TryArrangeAutonomousMarriage(scope, clan, signals))
+            bool hadMarriageThisMonth = clansWithNewMarriage.Contains(clan.Id);
+            if (TryArrangeAutonomousMarriage(scope, clan, signals, registryQueries, currentDate))
             {
+                hadMarriageThisMonth = true;
                 signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
             }
 
@@ -185,7 +189,7 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
             TryReappointHeir(scope, clan, signals, registryQueries, hadDeathThisMonth);
             signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 
-            bool hadBirthThisMonth = TryResolveClanBirth(scope, clan, signals, registryQueries);
+            bool hadBirthThisMonth = !hadMarriageThisMonth && TryResolveClanBirth(scope, clan, signals, registryQueries);
             if (hadBirthThisMonth)
             {
                 signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);

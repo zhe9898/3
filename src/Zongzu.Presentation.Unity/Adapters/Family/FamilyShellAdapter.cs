@@ -31,6 +31,11 @@ internal static class FamilyShellAdapter
 		}
 
 		string lifecyclePrompt = BuildClanLifecyclePrompt(clan, affordances, includeClanName: false);
+		if (clan.MourningLoad > 0 && !clan.HeirPersonId.HasValue)
+		{
+			return $"{clan.ClanName}门望{clan.Prestige}，门内举哀未毕，承祧未稳，丧服之重{clan.MourningLoad}，可支宗务{clan.SupportReserve}。{lifecyclePrompt}";
+		}
+
 		if (clan.MourningLoad > 0)
 		{
 			return $"{clan.ClanName}门望{clan.Prestige}，门内举哀未毕，丧服之重{clan.MourningLoad}，可支宗务{clan.SupportReserve}。{lifecyclePrompt}";

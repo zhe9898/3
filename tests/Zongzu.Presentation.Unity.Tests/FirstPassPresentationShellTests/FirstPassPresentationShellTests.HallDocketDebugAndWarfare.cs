@@ -257,6 +257,166 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_DeathNoticeWithSevereSuccessionGap_PromptsHeirDesignationBeforeMourningOrder()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.Clans =
+        [
+            bundle.Clans[0] with
+            {
+                HeirPersonId = null,
+                HeirSecurity = 8,
+                InheritancePressure = 76,
+                BranchTension = 58,
+                MourningLoad = 32,
+                LastLifecycleTrace = "清河张氏按死者名分3阶、承祧缺口3阶、丧葬拖累2阶承受承祧人身故。",
+            },
+        ];
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.FamilyCore,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
+                    SettlementId = new SettlementId(1),
+                    ClanId = new ClanId(1),
+                    CommandName = PlayerCommandNames.SetMourningOrder,
+                    Label = "议定丧次",
+                    AvailabilitySummary = "门内丧服之重32，宜先定服序与支用。",
+                    TargetLabel = "清河张氏",
+                    IsEnabled = true,
+                },
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.FamilyCore,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
+                    SettlementId = new SettlementId(1),
+                    ClanId = new ClanId(1),
+                    CommandName = PlayerCommandNames.DesignateHeirPolicy,
+                    Label = "议定承祧",
+                    AvailabilitySummary = "堂上尚未举出承祧之人，宜先定后序。",
+                    TargetLabel = "清河张氏",
+                    IsEnabled = true,
+                },
+            ],
+            Receipts = [],
+        };
+        bundle.Notifications =
+        [
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(10),
+                CreatedAt = new GameDate(1200, 2),
+                Tier = NotificationTier.Urgent,
+                Surface = NarrativeSurface.AncestralHall,
+                Title = "门内举哀",
+                WhatNext = "先议定承祧名分，再理丧次、祭次与支用。",
+                SourceModuleKey = KnownModuleKeys.FamilyCore,
+                Traces =
+                [
+                    new NotificationTraceSnapshot
+                    {
+                        SourceModuleKey = KnownModuleKeys.FamilyCore,
+                        EventType = FamilyCoreEventNames.ClanMemberDied,
+                        EventSummary = "清河张氏门内举哀。",
+                        DiffDescription = "清河张氏承祧之人身故（承祧缺口3阶）。",
+                        EntityKey = "1",
+                    },
+                ],
+            },
+        ];
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+
+        Assert.That(shell.GreatHall.FamilySummary, Does.Contain("承祧未稳"));
+        Assert.That(shell.GreatHall.FamilySummary, Does.Contain("宜先议定承祧"));
+        Assert.That(shell.NotificationCenter.Items[0].WhatNext, Does.Contain("先议定承祧名分"));
+        Assert.That(shell.NotificationCenter.Items[0].WhatNext, Does.Contain("眼下最宜先命清河张氏议定承祧。"));
+    }
+
+    [Test]
+    public void Compose_DeathNoticeWithAdultSuccessor_PromptsMourningOrderBeforeHeirFollowup()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.Clans =
+        [
+            bundle.Clans[0] with
+            {
+                HeirPersonId = new PersonId(2),
+                HeirSecurity = 34,
+                InheritancePressure = 44,
+                BranchTension = 42,
+                MourningLoad = 26,
+                LastLifecycleTrace = "清河张氏按死者名分3阶、承祧缺口1阶、丧葬拖累2阶承受承祧人身故。",
+            },
+        ];
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.FamilyCore,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
+                    SettlementId = new SettlementId(1),
+                    ClanId = new ClanId(1),
+                    CommandName = PlayerCommandNames.SetMourningOrder,
+                    Label = "议定丧次",
+                    AvailabilitySummary = "门内丧服之重26，宜先定服序与支用。",
+                    TargetLabel = "清河张氏",
+                    IsEnabled = true,
+                },
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.FamilyCore,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
+                    SettlementId = new SettlementId(1),
+                    ClanId = new ClanId(1),
+                    CommandName = PlayerCommandNames.DesignateHeirPolicy,
+                    Label = "议定承祧",
+                    AvailabilitySummary = "承祧稳度34，名分若虚仍易再起后议。",
+                    TargetLabel = "清河张氏",
+                    IsEnabled = true,
+                },
+            ],
+            Receipts = [],
+        };
+        bundle.Notifications =
+        [
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(11),
+                CreatedAt = new GameDate(1200, 2),
+                Tier = NotificationTier.Urgent,
+                Surface = NarrativeSurface.AncestralHall,
+                Title = "门内举哀",
+                WhatNext = "先把丧次、祭次与支用议定，再把新承祧名分写稳。",
+                SourceModuleKey = KnownModuleKeys.FamilyCore,
+                Traces =
+                [
+                    new NotificationTraceSnapshot
+                    {
+                        SourceModuleKey = KnownModuleKeys.FamilyCore,
+                        EventType = FamilyCoreEventNames.ClanMemberDied,
+                        EventSummary = "清河张氏门内举哀。",
+                        DiffDescription = "清河张氏承祧之人身故（承祧缺口1阶）。",
+                        EntityKey = "1",
+                    },
+                ],
+            },
+        ];
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+
+        Assert.That(shell.GreatHall.FamilySummary, Does.Contain("门内举哀未毕"));
+        Assert.That(shell.GreatHall.FamilySummary, Does.Contain("宜先议定丧次"));
+        Assert.That(shell.NotificationCenter.Items[0].WhatNext, Does.Contain("新承祧名分"));
+        Assert.That(shell.NotificationCenter.Items[0].WhatNext, Does.Contain("眼下最宜先命清河张氏议定丧次。"));
+    }
+
+    [Test]
     public void Compose_ProjectsDebugSnapshotIntoDebugPanel()
     {
         PresentationReadModelBundle bundle = CreateBundle();

@@ -54,7 +54,9 @@ public sealed partial class PresentationReadModelBuilder
 
     private static HallDocketItemSnapshot? BuildFamilyHallDocketItem(PresentationReadModelBundle bundle)
     {
-        PlayerCommandAffordanceSnapshot? affordance = SelectPrimaryHallFamilyLifecycleAffordance(bundle.PlayerCommands.Affordances);
+        PlayerCommandAffordanceSnapshot? affordance = SelectPrimaryHallFamilyLifecycleAffordance(
+            bundle.PlayerCommands.Affordances,
+            bundle.Clans);
         ClanSnapshot? clan = affordance?.ClanId is { } clanId
             ? bundle.Clans.FirstOrDefault(candidate => candidate.Id == clanId)
             : bundle.Clans

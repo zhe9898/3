@@ -76,7 +76,13 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             FamilyCoreEventNames.BirthRegistered => BuildBirthNextStep(traces),
 
+            DeathCauseEventNames.DeathByIllness => BuildDeathNextStep(traces),
+
             FamilyCoreEventNames.ClanMemberDied => BuildDeathNextStep(traces),
+
+            FamilyCoreEventNames.HeirAppointed => BuildHeirSecurityNextStep(traces),
+
+            FamilyCoreEventNames.HeirSuccessionOccurred => BuildHeirSecurityNextStep(traces),
 
             FamilyCoreEventNames.HeirSecurityWeakened => BuildHeirSecurityNextStep(traces),
 
@@ -163,25 +169,51 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
     {
 
-        bool hasSuccessionShock = traces.Any(static trace =>
+        bool hasSevereSuccessionGap = TraceTextContains(traces, "承祧缺口3阶")
+            || TraceTextContains(traces, "尚未举出承祧")
+            || TraceTextContains(traces, "无人可继");
+        bool hasAdultSuccessor = TraceTextContains(traces, "承祧缺口1阶")
+            || TraceTextContains(traces, "承祧转房")
+            || TraceTextContains(traces, "承继宗祧");
+        bool hasSuccessionShock = TraceTextContains(traces, "承祧")
+            || TraceTextContains(traces, "继嗣")
+            || TraceTextContains(traces, "后议")
+            || TraceTextContains(traces, "房支");
+        bool hasBranchPressure = TraceTextContains(traces, "房支")
+            || TraceTextContains(traces, "分房")
+            || TraceTextContains(traces, "争执");
+        bool hasMourningLoad = TraceTextContains(traces, "丧服")
+            || TraceTextContains(traces, "丧葬")
+            || TraceTextContains(traces, "祭次")
+            || TraceTextContains(traces, "举哀")
+            || TraceTextContains(traces, "支用");
 
-            trace.DiffDescription.Contains("承祧", StringComparison.Ordinal)
 
-            || trace.DiffDescription.Contains("继嗣", StringComparison.Ordinal)
+        if (hasSevereSuccessionGap && hasBranchPressure)
 
-            || trace.DiffDescription.Contains("后议", StringComparison.Ordinal)
+        {
 
-            || trace.DiffDescription.Contains("房支", StringComparison.Ordinal));
+            return "先议定承祧名分，再理丧次、祭次与支用；同时请族老压住房支后议，别让举哀变成分房争先。";
 
-        bool hasMourningLoad = traces.Any(static trace =>
+        }
 
-            trace.DiffDescription.Contains("丧服", StringComparison.Ordinal)
 
-            || trace.DiffDescription.Contains("祭次", StringComparison.Ordinal)
+        if (hasSevereSuccessionGap)
 
-            || trace.DiffDescription.Contains("举哀", StringComparison.Ordinal)
+        {
 
-            || trace.DiffDescription.Contains("支用", StringComparison.Ordinal));
+            return "先议定承祧名分，再理丧次、祭次与支用；若只剩幼嗣，就把抚养、接济与谱内名分一并按住。";
+
+        }
+
+
+        if (hasAdultSuccessor && hasMourningLoad)
+
+        {
+
+            return "先把丧次、祭次与支用议定，再把新承祧名分写稳；有成年替补也要压住房支后议，免得转房之后再生争口。";
+
+        }
 
 
         if (hasSuccessionShock && hasMourningLoad)
@@ -203,6 +235,19 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
 
         return "先把丧次、发引与祭次理顺，再把承祧名分暂按住，随后看门内缺口落在口粮、劳力还是堂上支用。";
+
+    }
+
+
+    private static bool TraceTextContains(IReadOnlyList<NarrativeTraceState> traces, string value)
+
+    {
+
+        return traces.Any(trace =>
+
+            trace.DiffDescription.Contains(value, StringComparison.Ordinal)
+
+            || trace.EventSummary.Contains(value, StringComparison.Ordinal));
 
     }
 

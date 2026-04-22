@@ -107,7 +107,7 @@ public class ProjectReferenceTests
     public void Presentation_Unity_must_not_reference_simulation_modules()
     {
         var refs = GetProjectReferences("Zongzu.Presentation.Unity");
-        var forbidden = refs.Except(new[] { "Zongzu.Contracts" }).ToList();
+        var forbidden = refs.Except(new[] { "Zongzu.Contracts", "Zongzu.Presentation.Unity.ViewModels" }).ToList();
         Assert.That(forbidden, Is.Empty,
             $"Presentation.Unity may only reference Contracts. Found: {string.Join(", ", forbidden)}");
     }

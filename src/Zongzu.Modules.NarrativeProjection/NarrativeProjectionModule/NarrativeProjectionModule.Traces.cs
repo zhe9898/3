@@ -166,6 +166,7 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
                 break;
 
             case FamilyCoreEventNames.ClanMemberDied:
+            case DeathCauseEventNames.DeathByIllness:
 
                 TryAddContextDiff(selected, domainEvent, allDiffs, KnownModuleKeys.SocialMemoryAndRelations);
 
@@ -173,6 +174,8 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
                 break;
 
+            case FamilyCoreEventNames.HeirAppointed:
+            case FamilyCoreEventNames.HeirSuccessionOccurred:
             case FamilyCoreEventNames.HeirSecurityWeakened:
 
                 TryAddContextDiff(selected, domainEvent, allDiffs, KnownModuleKeys.PopulationAndHouseholds);
@@ -260,7 +263,13 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             && domainEvent.EventType is FamilyCoreEventNames.BirthRegistered
 
+                or DeathCauseEventNames.DeathByIllness
+
                 or FamilyCoreEventNames.ClanMemberDied
+
+                or FamilyCoreEventNames.HeirAppointed
+
+                or FamilyCoreEventNames.HeirSuccessionOccurred
 
                 or FamilyCoreEventNames.HeirSecurityWeakened;
 

@@ -535,6 +535,12 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(updatedClan.MediationMomentum, Is.GreaterThan(clan.MediationMomentum));
 
+        Assert.That(updatedClan.BranchTension, Is.LessThanOrEqualTo(clan.BranchTension));
+
+        Assert.That(result.Summary, Does.Contain("房支争势"));
+
+        Assert.That(result.Summary, Does.Contain("分房之压"));
+
         Assert.That(updatedClan.LastConflictOutcome, Is.Not.Empty);
 
         Assert.That(updatedClan.LastConflictCommandLabel, Is.EqualTo(result.Label));
@@ -554,6 +560,84 @@ public sealed partial class M2LiteIntegrationTests
         Assert.That(shell.FamilyCouncil.RecentReceipts.Any(static receipt => string.Equals(receipt.CommandName, PlayerCommandNames.InviteClanEldersMediation, StringComparison.Ordinal)), Is.True);
 
         Assert.That(shell.FamilyCouncil.Clans.Any(static entry => !string.IsNullOrWhiteSpace(entry.LastOrderSummary)), Is.True);
+
+    }
+
+
+    [Test]
+
+    public void PlayerCommandService_ClanEldersMediationProfile_RespondsToConflictBands()
+
+    {
+
+        GameSimulation calmSimulation = BuildFamilyConflictProfileScenario(20260625, branchTension: 25, separationPressure: 15, branchFavorPressure: 15, inheritancePressure: 20, supportReserve: 40, prestige: 40);
+
+        GameSimulation heatedSimulation = BuildFamilyConflictProfileScenario(20260625, branchTension: 70, separationPressure: 60, branchFavorPressure: 60, inheritancePressure: 70, supportReserve: 40, prestige: 80);
+
+        PresentationReadModelBuilder builder = new();
+
+        ClanSnapshot calmBefore = builder.BuildForM2(calmSimulation).Clans.Single();
+
+        ClanSnapshot heatedBefore = builder.BuildForM2(heatedSimulation).Clans.Single();
+
+        PlayerCommandService service = new();
+
+
+        PlayerCommandResult calmResult = service.IssueIntent(
+
+            calmSimulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = calmBefore.HomeSettlementId,
+
+                ClanId = calmBefore.Id,
+
+                CommandName = PlayerCommandNames.InviteClanEldersMediation,
+
+            });
+
+        PlayerCommandResult heatedResult = service.IssueIntent(
+
+            heatedSimulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = heatedBefore.HomeSettlementId,
+
+                ClanId = heatedBefore.Id,
+
+                CommandName = PlayerCommandNames.InviteClanEldersMediation,
+
+            });
+
+
+        ClanSnapshot calmAfter = builder.BuildForM2(calmSimulation).Clans.Single();
+
+        ClanSnapshot heatedAfter = builder.BuildForM2(heatedSimulation).Clans.Single();
+
+        int calmRelief = calmBefore.BranchTension - calmAfter.BranchTension;
+
+        int heatedRelief = heatedBefore.BranchTension - heatedAfter.BranchTension;
+
+
+        Assert.That(calmResult.Accepted, Is.True);
+
+        Assert.That(heatedResult.Accepted, Is.True);
+
+        Assert.That(calmResult.Summary, Does.Contain("房支争势1阶"));
+
+        Assert.That(heatedResult.Summary, Does.Contain("房支争势3阶"));
+
+        Assert.That(heatedRelief, Is.GreaterThan(calmRelief));
+
+        Assert.That(heatedAfter.MediationMomentum, Is.GreaterThan(calmAfter.MediationMomentum));
+
+        Assert.That(heatedAfter.SeparationPressure, Is.LessThan(heatedBefore.SeparationPressure));
 
     }
 
@@ -616,6 +700,14 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(updatedClan.LastLifecycleCommandLabel, Is.EqualTo(result.Label));
 
+        Assert.That(updatedClan.MarriageAlliancePressure, Is.LessThan(clan.MarriageAlliancePressure));
+
+        Assert.That(updatedClan.MarriageAllianceValue, Is.GreaterThan(clan.MarriageAllianceValue));
+
+        Assert.That(updatedClan.SupportReserve, Is.LessThan(clan.SupportReserve));
+
+        Assert.That(result.Summary, Does.Contain("婚议之压"));
+
         Assert.That(afterBundle.PlayerCommands.Receipts.Any(static receipt =>
 
             string.Equals(receipt.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal)
@@ -625,6 +717,154 @@ public sealed partial class M2LiteIntegrationTests
             && !string.IsNullOrWhiteSpace(receipt.OutcomeSummary)), Is.True);
 
         Assert.That(shell.FamilyCouncil.Clans.Any(entry => entry.LifecycleSummary.Contains(result.Label, StringComparison.Ordinal)), Is.True);
+
+    }
+
+
+    [Test]
+
+    public void PlayerCommandService_MarriageProfile_RespondsToPressureBands()
+
+    {
+
+        GameSimulation strainedSimulation = BuildMarriageProfileScenario(20260623, supportReserve: 6, marriagePressure: 70, marriageValue: 10, mourningLoad: 18, heirSecurity: 25, branchTension: 60, prestige: 28);
+
+        GameSimulation preparedSimulation = BuildMarriageProfileScenario(20260623, supportReserve: 70, marriagePressure: 70, marriageValue: 10, mourningLoad: 0, heirSecurity: 25, branchTension: 60, prestige: 82);
+
+        PresentationReadModelBuilder builder = new();
+
+        ClanSnapshot strainedBefore = builder.BuildForM2(strainedSimulation).Clans.Single();
+
+        ClanSnapshot preparedBefore = builder.BuildForM2(preparedSimulation).Clans.Single();
+
+        PlayerCommandService service = new();
+
+
+        PlayerCommandResult strainedResult = service.IssueIntent(
+
+            strainedSimulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = strainedBefore.HomeSettlementId,
+
+                ClanId = strainedBefore.Id,
+
+                CommandName = PlayerCommandNames.ArrangeMarriage,
+
+            });
+
+        PlayerCommandResult preparedResult = service.IssueIntent(
+
+            preparedSimulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = preparedBefore.HomeSettlementId,
+
+                ClanId = preparedBefore.Id,
+
+                CommandName = PlayerCommandNames.ArrangeMarriage,
+
+            });
+
+
+        ClanSnapshot strainedAfter = builder.BuildForM2(strainedSimulation).Clans.Single();
+
+        ClanSnapshot preparedAfter = builder.BuildForM2(preparedSimulation).Clans.Single();
+
+
+        Assert.That(strainedResult.Accepted, Is.True);
+
+        Assert.That(preparedResult.Accepted, Is.True);
+
+        Assert.That(strainedResult.Summary, Does.Contain("宗房余力0阶"));
+
+        Assert.That(preparedResult.Summary, Does.Contain("宗房余力3阶"));
+
+        Assert.That(preparedAfter.MarriageAlliancePressure, Is.LessThan(strainedAfter.MarriageAlliancePressure));
+
+        Assert.That(preparedAfter.HeirSecurity, Is.GreaterThan(strainedAfter.HeirSecurity));
+
+        Assert.That(preparedAfter.SupportReserve, Is.GreaterThan(strainedAfter.SupportReserve));
+
+    }
+
+
+    [Test]
+
+    public void PlayerCommandService_HeirPolicyProfile_RespondsToCandidateBands()
+
+    {
+
+        GameSimulation childSimulation = BuildHeirPolicyProfileScenario(20260624, candidateAgeMonths: 4 * 12, heirSecurity: 20, inheritancePressure: 70, branchTension: 60, mediationMomentum: 0);
+
+        GameSimulation adultSimulation = BuildHeirPolicyProfileScenario(20260624, candidateAgeMonths: 24 * 12, heirSecurity: 20, inheritancePressure: 70, branchTension: 60, mediationMomentum: 0);
+
+        PresentationReadModelBuilder builder = new();
+
+        ClanSnapshot childBefore = builder.BuildForM2(childSimulation).Clans.Single();
+
+        ClanSnapshot adultBefore = builder.BuildForM2(adultSimulation).Clans.Single();
+
+        PlayerCommandService service = new();
+
+
+        PlayerCommandResult childResult = service.IssueIntent(
+
+            childSimulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = childBefore.HomeSettlementId,
+
+                ClanId = childBefore.Id,
+
+                CommandName = PlayerCommandNames.DesignateHeirPolicy,
+
+            });
+
+        PlayerCommandResult adultResult = service.IssueIntent(
+
+            adultSimulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = adultBefore.HomeSettlementId,
+
+                ClanId = adultBefore.Id,
+
+                CommandName = PlayerCommandNames.DesignateHeirPolicy,
+
+            });
+
+
+        ClanSnapshot childAfter = builder.BuildForM2(childSimulation).Clans.Single();
+
+        ClanSnapshot adultAfter = builder.BuildForM2(adultSimulation).Clans.Single();
+
+
+        Assert.That(childResult.Accepted, Is.True);
+
+        Assert.That(adultResult.Accepted, Is.True);
+
+        Assert.That(childResult.Summary, Does.Contain("候选稳度1阶"));
+
+        Assert.That(adultResult.Summary, Does.Contain("候选稳度2阶"));
+
+        Assert.That(adultAfter.HeirSecurity, Is.GreaterThan(childAfter.HeirSecurity));
+
+        Assert.That(adultAfter.InheritancePressure, Is.LessThan(childAfter.InheritancePressure));
+
+        Assert.That(adultAfter.BranchTension, Is.LessThanOrEqualTo(childAfter.BranchTension));
 
     }
 
@@ -669,6 +909,10 @@ public sealed partial class M2LiteIntegrationTests
         });
 
         clanState.SupportReserve = Math.Max(clanState.SupportReserve, 12);
+        clanState.CareLoad = Math.Max(clanState.CareLoad, 32);
+        clanState.RemedyConfidence = Math.Max(clanState.RemedyConfidence, 40);
+        clanState.ReproductivePressure = Math.Max(clanState.ReproductivePressure, 42);
+        clanState.CharityObligation = Math.Max(clanState.CharityObligation, 8);
 
         saveRoot.ModuleStates[KnownModuleKeys.FamilyCore] = new ModuleStateEnvelope
 
@@ -676,7 +920,7 @@ public sealed partial class M2LiteIntegrationTests
 
             ModuleKey = KnownModuleKeys.FamilyCore,
 
-            ModuleSchemaVersion = 3,
+            ModuleSchemaVersion = saveRoot.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion,
 
             Payload = serializer.Serialize(typeof(FamilyCoreState), familyState),
 
@@ -743,9 +987,91 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(updatedClan.InfantCount, Is.GreaterThan(0));
 
+        Assert.That(updatedClan.CareLoad, Is.LessThan(clan.CareLoad));
+
+        Assert.That(updatedClan.SupportReserve, Is.LessThan(clan.SupportReserve));
+
+        Assert.That(updatedClan.CharityObligation, Is.GreaterThan(clan.CharityObligation));
+
+        Assert.That(result.Summary, Does.Contain("照料负担"));
+
         Assert.That(shell.FamilyCouncil.RecentReceipts.Any(static receipt => string.Equals(receipt.CommandName, PlayerCommandNames.SupportNewbornCare, StringComparison.Ordinal)), Is.True);
 
         Assert.That(shell.FamilyCouncil.Clans.Any(entry => entry.LifecycleSummary.Contains(result.Label, StringComparison.Ordinal)), Is.True);
+
+    }
+
+
+    [Test]
+
+    public void PlayerCommandService_NewbornCareProfile_RespondsToPressureBands()
+
+    {
+
+        GameSimulation strainedSimulation = BuildNewbornCareProfileScenario(20260622, supportReserve: 12, careLoad: 60, remedyConfidence: 10, mourningLoad: 24, branchTension: 40);
+
+        GameSimulation preparedSimulation = BuildNewbornCareProfileScenario(20260622, supportReserve: 70, careLoad: 60, remedyConfidence: 70, mourningLoad: 0, branchTension: 40);
+
+        PresentationReadModelBuilder builder = new();
+
+        ClanSnapshot strainedBefore = builder.BuildForM2(strainedSimulation).Clans.Single();
+
+        ClanSnapshot preparedBefore = builder.BuildForM2(preparedSimulation).Clans.Single();
+
+        PlayerCommandService service = new();
+
+
+        PlayerCommandResult strainedResult = service.IssueIntent(
+
+            strainedSimulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = strainedBefore.HomeSettlementId,
+
+                ClanId = strainedBefore.Id,
+
+                CommandName = PlayerCommandNames.SupportNewbornCare,
+
+            });
+
+        PlayerCommandResult preparedResult = service.IssueIntent(
+
+            preparedSimulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = preparedBefore.HomeSettlementId,
+
+                ClanId = preparedBefore.Id,
+
+                CommandName = PlayerCommandNames.SupportNewbornCare,
+
+            });
+
+
+        ClanSnapshot strainedAfter = builder.BuildForM2(strainedSimulation).Clans.Single();
+
+        ClanSnapshot preparedAfter = builder.BuildForM2(preparedSimulation).Clans.Single();
+
+
+        Assert.That(strainedResult.Accepted, Is.True);
+
+        Assert.That(preparedResult.Accepted, Is.True);
+
+        Assert.That(strainedResult.Summary, Does.Contain("宗房余力0阶"));
+
+        Assert.That(preparedResult.Summary, Does.Contain("宗房余力3阶"));
+
+        Assert.That(preparedAfter.CareLoad, Is.LessThan(strainedAfter.CareLoad));
+
+        Assert.That(preparedAfter.HeirSecurity, Is.GreaterThan(strainedAfter.HeirSecurity));
+
+        Assert.That(preparedAfter.SupportReserve, Is.GreaterThan(strainedAfter.SupportReserve));
 
     }
 
@@ -775,6 +1101,8 @@ public sealed partial class M2LiteIntegrationTests
 
         clanState.MourningLoad = 24;
 
+        clanState.FuneralDebt = 24;
+
         clanState.InheritancePressure = Math.Max(clanState.InheritancePressure, 28);
 
         clanState.SupportReserve = Math.Max(clanState.SupportReserve, 12);
@@ -785,7 +1113,7 @@ public sealed partial class M2LiteIntegrationTests
 
             ModuleKey = KnownModuleKeys.FamilyCore,
 
-            ModuleSchemaVersion = 3,
+            ModuleSchemaVersion = saveRoot.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion,
 
             Payload = serializer.Serialize(typeof(FamilyCoreState), familyState),
 
@@ -833,6 +1161,8 @@ public sealed partial class M2LiteIntegrationTests
 
         PresentationReadModelBundle afterBundle = builder.BuildForM2(simulation);
 
+        ClanSnapshot updatedClan = afterBundle.Clans.Single(updated => updated.Id == clan.Id);
+
         PresentationShellViewModel shell = FirstPassPresentationShell.Compose(afterBundle);
 
 
@@ -841,6 +1171,14 @@ public sealed partial class M2LiteIntegrationTests
         Assert.That(result.Label, Is.Not.Empty);
 
         Assert.That(result.Summary, Is.Not.Empty);
+
+        Assert.That(updatedClan.MourningLoad, Is.LessThan(clan.MourningLoad));
+
+        Assert.That(updatedClan.FuneralDebt, Is.LessThan(clan.FuneralDebt));
+
+        Assert.That(updatedClan.InheritancePressure, Is.LessThan(clan.InheritancePressure));
+
+        Assert.That(result.Summary, Does.Contain("礼法威望"));
 
         Assert.That(afterBundle.PlayerCommands.Receipts.Any(static receipt =>
 
@@ -856,6 +1194,142 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(shell.FamilyCouncil.Clans.Single().LifecycleSummary, Is.Not.Empty);
 
+    }
+
+
+    private static GameSimulation BuildFamilyConflictProfileScenario(
+        long seed,
+        int branchTension,
+        int separationPressure,
+        int branchFavorPressure,
+        int inheritancePressure,
+        int supportReserve,
+        int prestige)
+    {
+        return LoadM2WithFamilyState(seed, (_, clanState) =>
+        {
+            clanState.BranchTension = branchTension;
+            clanState.SeparationPressure = separationPressure;
+            clanState.BranchFavorPressure = branchFavorPressure;
+            clanState.InheritancePressure = inheritancePressure;
+            clanState.SupportReserve = supportReserve;
+            clanState.Prestige = prestige;
+            clanState.MediationMomentum = 0;
+        });
+    }
+
+
+    private static GameSimulation BuildMarriageProfileScenario(
+        long seed,
+        int supportReserve,
+        int marriagePressure,
+        int marriageValue,
+        int mourningLoad,
+        int heirSecurity,
+        int branchTension,
+        int prestige)
+    {
+        return LoadM2WithFamilyState(seed, (familyState, clanState) =>
+        {
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = new PersonId(9201),
+                ClanId = clanState.Id,
+                GivenName = "议亲候选",
+                AgeMonths = 24 * 12,
+                IsAlive = true,
+            });
+            clanState.SupportReserve = supportReserve;
+            clanState.MarriageAlliancePressure = marriagePressure;
+            clanState.MarriageAllianceValue = marriageValue;
+            clanState.MourningLoad = mourningLoad;
+            clanState.HeirSecurity = heirSecurity;
+            clanState.BranchTension = branchTension;
+            clanState.Prestige = prestige;
+        });
+    }
+
+
+    private static GameSimulation BuildHeirPolicyProfileScenario(
+        long seed,
+        int candidateAgeMonths,
+        int heirSecurity,
+        int inheritancePressure,
+        int branchTension,
+        int mediationMomentum)
+    {
+        return LoadM2WithFamilyState(seed, (familyState, clanState) =>
+        {
+            familyState.People.Clear();
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = new PersonId(9301),
+                ClanId = clanState.Id,
+                GivenName = candidateAgeMonths >= 16 * 12 ? "成人候选" : "幼嗣候选",
+                AgeMonths = candidateAgeMonths,
+                IsAlive = true,
+            });
+            clanState.HeirPersonId = null;
+            clanState.HeirSecurity = heirSecurity;
+            clanState.InheritancePressure = inheritancePressure;
+            clanState.BranchTension = branchTension;
+            clanState.MediationMomentum = mediationMomentum;
+        });
+    }
+
+
+    private static GameSimulation BuildNewbornCareProfileScenario(
+        long seed,
+        int supportReserve,
+        int careLoad,
+        int remedyConfidence,
+        int mourningLoad,
+        int branchTension)
+    {
+        return LoadM2WithFamilyState(seed, (familyState, clanState) =>
+        {
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = new PersonId(9101),
+                ClanId = clanState.Id,
+                GivenName = "谱中幼儿",
+                AgeMonths = 8,
+                IsAlive = true,
+            });
+            clanState.SupportReserve = supportReserve;
+            clanState.CareLoad = careLoad;
+            clanState.RemedyConfidence = remedyConfidence;
+            clanState.MourningLoad = mourningLoad;
+            clanState.BranchTension = branchTension;
+            clanState.HeirSecurity = 30;
+            clanState.ReproductivePressure = 55;
+            clanState.CharityObligation = 10;
+        });
+    }
+
+    private static GameSimulation LoadM2WithFamilyState(
+        long seed,
+        Action<FamilyCoreState, ClanStateData> configureFamily)
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(seed);
+        simulation.AdvanceMonths(2);
+
+        MessagePackModuleStateSerializer serializer = new();
+        SaveRoot saveRoot = simulation.ExportSave();
+        FamilyCoreState familyState = (FamilyCoreState)serializer.Deserialize(
+            typeof(FamilyCoreState),
+            saveRoot.ModuleStates[KnownModuleKeys.FamilyCore].Payload);
+        ClanStateData clanState = familyState.Clans.Single();
+        configureFamily(familyState, clanState);
+
+        saveRoot.ModuleStates[KnownModuleKeys.FamilyCore] = new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = saveRoot.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), familyState),
+        };
+
+        return SimulationBootstrapper.LoadM2(saveRoot);
     }
 
 
@@ -946,20 +1420,28 @@ public sealed partial class M2LiteIntegrationTests
 
                         or PlayerCommandNames.ArrangeMarriage)
 
-                .OrderBy(static command => command.CommandName switch
-
+                .OrderBy(command =>
                 {
+                    ClanSnapshot? clan = command.ClanId.HasValue
+                        ? checkpoint.AfterAdvanceBundle.Clans.FirstOrDefault(candidate => candidate.Id == command.ClanId.Value)
+                        : null;
+                    bool hasSuccessionGap = clan is not null
+                        && (!clan.HeirPersonId.HasValue
+                            || clan.LastLifecycleTrace.Contains("承祧缺口3阶", StringComparison.Ordinal));
 
-                    PlayerCommandNames.SetMourningOrder => 0,
+                    if (command.CommandName == PlayerCommandNames.DesignateHeirPolicy && hasSuccessionGap)
+                    {
+                        return 0;
+                    }
 
-                    PlayerCommandNames.SupportNewbornCare => 1,
-
-                    PlayerCommandNames.DesignateHeirPolicy => 2,
-
-                    PlayerCommandNames.ArrangeMarriage => 3,
-
-                    _ => 10,
-
+                    return command.CommandName switch
+                    {
+                        PlayerCommandNames.SetMourningOrder => hasSuccessionGap ? 1 : 0,
+                        PlayerCommandNames.SupportNewbornCare => 2,
+                        PlayerCommandNames.DesignateHeirPolicy => 3,
+                        PlayerCommandNames.ArrangeMarriage => 4,
+                        _ => 10,
+                    };
                 })
 
                 .ThenBy(static command => command.TargetLabel, StringComparer.Ordinal)

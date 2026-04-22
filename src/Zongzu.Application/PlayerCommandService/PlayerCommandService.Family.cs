@@ -3,8 +3,6 @@ using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Modules.FamilyCore;
-using Zongzu.Modules.OfficeAndCareer;
-using Zongzu.Modules.OrderAndBanditry;
 
 namespace Zongzu.Application;
 
@@ -32,42 +30,6 @@ public sealed partial class PlayerCommandService
             return BuildRejectedFamilyResult(command, $"此地暂无可裁断的宗房：{command.SettlementId.Value}。");
         }
 
-#if false
-        if (false && false && TryApplyOrderPublicLifeCommand(default!, command.CommandName))
-        {
-            simulation.RefreshReplayHash();
-            return new PlayerCommandResult
-            {
-                Accepted = true,
-                ModuleKey = KnownModuleKeys.OrderAndBanditry,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = command.SettlementId,
-                ClanId = command.ClanId,
-                CommandName = command.CommandName,
-                Label = DeterminePublicLifeCommandLabel(command.CommandName),
-                Summary = settlement.LastInterventionSummary,
-                TargetLabel = $"据点 {command.SettlementId.Value}",
-            };
-        }
-
-        if (false && TryApplyOrderPublicLifeCommand(default!, command.CommandName))
-        {
-            simulation.RefreshReplayHash();
-            return new PlayerCommandResult
-            {
-                Accepted = true,
-                ModuleKey = KnownModuleKeys.OrderAndBanditry,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = command.SettlementId,
-                ClanId = command.ClanId,
-                CommandName = command.CommandName,
-                Label = DeterminePublicLifeCommandLabel(command.CommandName),
-                Summary = settlement.LastInterventionSummary,
-                TargetLabel = $"据点 {command.SettlementId.Value}",
-            };
-        }
-
-#endif
         switch (command.CommandName)
         {
             case PlayerCommandNames.ArrangeMarriage:
@@ -82,13 +44,15 @@ public sealed partial class PlayerCommandService
                     return BuildRejectedFamilyResult(command, $"{clan.ClanName}眼下无可议亲之人，先看家内年龄与服丧轻重。");
                 }
 
-                clan.MarriageAllianceValue = Math.Clamp(Math.Max(clan.MarriageAllianceValue, 28) + 30, 0, 100);
-                clan.MarriageAlliancePressure = Math.Max(0, clan.MarriageAlliancePressure - 22);
-                clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 10, 0, 100);
-                clan.HeirSecurity = Math.Clamp(clan.HeirSecurity + 8, 0, 100);
-                clan.SupportReserve = Math.Max(0, clan.SupportReserve - 3);
-                clan.LastLifecycleOutcome = $"婚议已定，先借姻亲稳住香火与门面；婚议之压缓到{clan.MarriageAlliancePressure}，承祧稳度起到{clan.HeirSecurity}，只是聘财与往来之费已压上案头。";
-                clan.LastLifecycleTrace = $"{clan.ClanName}奉命议亲，已把媒妁往来、聘财轻重与堂内脸面一并料理，先借姻亲缓一缓承祧与分房后议。";
+                FamilyMarriageResolutionProfile profile = ResolveMarriageProfile(clan);
+                clan.MarriageAllianceValue = CommandResolutionMath.Clamp100(Math.Max(clan.MarriageAllianceValue, 28) + profile.MarriageAllianceValueLift);
+                clan.MarriageAlliancePressure = Math.Max(0, clan.MarriageAlliancePressure - profile.MarriageAlliancePressureRelief);
+                clan.ReproductivePressure = CommandResolutionMath.Clamp100(clan.ReproductivePressure + profile.ReproductivePressureLift);
+                clan.HeirSecurity = CommandResolutionMath.Clamp100(clan.HeirSecurity + profile.HeirSecurityLift);
+                clan.BranchTension = CommandResolutionMath.Clamp100(clan.BranchTension - profile.BranchTensionRelief + profile.BranchTensionBacklash);
+                clan.SupportReserve = Math.Max(0, clan.SupportReserve - profile.SupportCost);
+                clan.LastLifecycleOutcome = $"婚议已定，先借姻亲稳住香火与门面；婚议之压缓到{clan.MarriageAlliancePressure}，姻亲可资之势起到{clan.MarriageAllianceValue}，承祧稳度起到{clan.HeirSecurity}，宗房余力余{clan.SupportReserve}。{RenderBranchBacklash(profile.BranchTensionBacklash)}";
+                clan.LastLifecycleTrace = $"{clan.ClanName}按{profile.ExecutionSummary}裁量婚议，已把媒妁往来、聘财轻重与堂内脸面一并料理。";
                 clan.LastLifecycleCommandCode = command.CommandName;
                 clan.LastLifecycleCommandLabel = DetermineFamilyCommandLabel(command.CommandName);
                 simulation.RefreshReplayHash();
@@ -108,17 +72,18 @@ public sealed partial class PlayerCommandService
                     return BuildRejectedFamilyResult(command, $"{clan.ClanName}门内暂无人可立嗣，先看婚议与抚育能否续上。");
                 }
 
+                FamilyHeirResolutionProfile profile = ResolveHeirPolicyProfile(clan, candidate);
                 clan.HeirPersonId = candidate.Id;
-                clan.HeirSecurity = Math.Clamp(Math.Max(clan.HeirSecurity, candidate.AgeMonths >= 16 * 12 ? 62 : 36), 0, 100);
-                clan.InheritancePressure = Math.Max(0, clan.InheritancePressure - 12);
-                clan.BranchTension = Math.Clamp(clan.BranchTension + 3, 0, 100);
-                clan.MediationMomentum = Math.Clamp(clan.MediationMomentum + 2, 0, 100);
+                clan.HeirSecurity = CommandResolutionMath.Clamp100(Math.Max(clan.HeirSecurity + profile.HeirSecurityLift, profile.HeirSecurityFloor));
+                clan.InheritancePressure = Math.Max(0, clan.InheritancePressure - profile.InheritancePressureRelief);
+                clan.BranchTension = CommandResolutionMath.Clamp100(clan.BranchTension + profile.BranchTensionBacklash);
+                clan.MediationMomentum = CommandResolutionMath.Clamp100(clan.MediationMomentum + profile.MediationMomentumLift);
                 clan.LastLifecycleOutcome = candidate.AgeMonths >= 16 * 12
-                    ? $"承祧人已定，谱内名分先写稳了；承祧稳度{clan.HeirSecurity}，后议之压暂退到{clan.InheritancePressure}，只是诸房眼色未必尽平。"
-                    : $"嗣苗已记入谱案，香火名分暂有着落；只是人尚年幼，承祧稳度只到{clan.HeirSecurity}，堂上仍得分心护持。";
+                    ? $"承祧人已定，谱内名分先写稳了；承祧稳度{clan.HeirSecurity}，后议之压暂退到{clan.InheritancePressure}，调停势头到{clan.MediationMomentum}。{RenderBranchBacklash(profile.BranchTensionBacklash)}"
+                    : $"嗣苗已记入谱案，香火名分暂有着落；只是人尚年幼，承祧稳度只到{clan.HeirSecurity}，后议之压退到{clan.InheritancePressure}。{RenderBranchBacklash(profile.BranchTensionBacklash)}";
                 clan.LastLifecycleTrace = candidate.AgeMonths >= 16 * 12
-                    ? $"{clan.ClanName}已将承祧次序议定入谱，先把香火名分写明，免得诸房借机翻后议。"
-                    : $"{clan.ClanName}已先把嗣苗记入谱案，虽未成人，堂上总算先把香火名分定住。";
+                    ? $"{clan.ClanName}按{profile.ExecutionSummary}裁定承祧次序，先把香火名分写明，免得诸房借机翻后议。"
+                    : $"{clan.ClanName}按{profile.ExecutionSummary}先把嗣苗记入谱案，虽未成人，堂上总算先把香火名分定住。";
                 clan.LastLifecycleCommandCode = command.CommandName;
                 clan.LastLifecycleCommandLabel = DetermineFamilyCommandLabel(command.CommandName);
                 simulation.RefreshReplayHash();
@@ -141,12 +106,16 @@ public sealed partial class PlayerCommandService
                     return BuildRejectedFamilyResult(command, $"{clan.ClanName}宗房余力过浅，暂难另拨米药与乳养之费。");
                 }
 
-                clan.SupportReserve = Math.Max(0, clan.SupportReserve - 4);
-                clan.HeirSecurity = Math.Clamp(clan.HeirSecurity + 6, 0, 100);
-                clan.ReproductivePressure = Math.Max(0, clan.ReproductivePressure - 5);
-                clan.BranchTension = Math.Max(0, clan.BranchTension - 2);
-                clan.LastLifecycleOutcome = $"已拨米药护住产妇与襁褓；门内现有襁褓{infantCount}口，承祧稳度升到{clan.HeirSecurity}，只是宗房余力也减到{clan.SupportReserve}。";
-                clan.LastLifecycleTrace = $"{clan.ClanName}已先从宗房拨出养口与看护之资，把产后调护、乳哺与襁褓衣食先稳下来。";
+                FamilyLifecycleResolutionProfile profile = ResolveNewbornCareProfile(clan, infantCount);
+                clan.SupportReserve = Math.Max(0, clan.SupportReserve - profile.SupportCost);
+                clan.CareLoad = Math.Max(0, clan.CareLoad - profile.CareLoadRelief);
+                clan.HeirSecurity = CommandResolutionMath.Clamp100(clan.HeirSecurity + profile.HeirSecurityLift);
+                clan.ReproductivePressure = Math.Max(0, clan.ReproductivePressure - profile.ReproductivePressureRelief);
+                clan.BranchTension = CommandResolutionMath.Clamp100(clan.BranchTension - profile.BranchTensionRelief + profile.BranchTensionBacklash);
+                clan.RemedyConfidence = CommandResolutionMath.Clamp100(clan.RemedyConfidence + profile.RemedyConfidenceLift);
+                clan.CharityObligation = CommandResolutionMath.Clamp100(clan.CharityObligation + profile.CharityObligationLift);
+                clan.LastLifecycleOutcome = $"已拨米药护住产妇与襁褓；门内襁褓{infantCount}口，照料负担降到{clan.CareLoad}，承祧稳度升到{clan.HeirSecurity}，生育追压退到{clan.ReproductivePressure}，宗房余力余{clan.SupportReserve}。{RenderLifecycleBacklash(profile)}";
+                clan.LastLifecycleTrace = $"{clan.ClanName}按{profile.ExecutionSummary}裁量护婴，先把米药、乳养与照看人手拨到近亲身边。";
                 clan.LastLifecycleCommandCode = command.CommandName;
                 clan.LastLifecycleCommandLabel = DetermineFamilyCommandLabel(command.CommandName);
                 simulation.RefreshReplayHash();
@@ -160,12 +129,15 @@ public sealed partial class PlayerCommandService
                     return BuildRejectedFamilyResult(command, $"{clan.ClanName}门内暂无丧服之重，眼下不必另议丧次。");
                 }
 
-                clan.MourningLoad = Math.Max(0, clan.MourningLoad - 12);
-                clan.InheritancePressure = Math.Max(0, clan.InheritancePressure - 6);
-                clan.BranchTension = Math.Max(0, clan.BranchTension - 3);
-                clan.SupportReserve = Math.Max(0, clan.SupportReserve - 2);
-                clan.LastLifecycleOutcome = $"丧次与祭次已定，门内丧服之重缓到{clan.MourningLoad}，后议之压退到{clan.InheritancePressure}，只是祭需与支用仍在消磨宗房余力。";
-                clan.LastLifecycleTrace = $"{clan.ClanName}已把发引、祭次与服序议定，先让门内举哀有了规矩，不致一边办丧一边再起争执。";
+                FamilyLifecycleResolutionProfile profile = ResolveMourningOrderProfile(clan);
+                clan.MourningLoad = Math.Max(0, clan.MourningLoad - profile.MourningLoadRelief);
+                clan.FuneralDebt = Math.Max(0, clan.FuneralDebt - profile.FuneralDebtRelief);
+                clan.InheritancePressure = Math.Max(0, clan.InheritancePressure - profile.InheritancePressureRelief);
+                clan.BranchTension = CommandResolutionMath.Clamp100(clan.BranchTension - profile.BranchTensionRelief + profile.BranchTensionBacklash);
+                clan.MediationMomentum = CommandResolutionMath.Clamp100(clan.MediationMomentum + profile.MediationMomentumLift);
+                clan.SupportReserve = Math.Max(0, clan.SupportReserve - profile.SupportCost);
+                clan.LastLifecycleOutcome = $"丧次与祭次已定，丧服之重缓到{clan.MourningLoad}，丧葬拖欠降到{clan.FuneralDebt}，后议之压退到{clan.InheritancePressure}，宗房余力余{clan.SupportReserve}。{RenderLifecycleBacklash(profile)}";
+                clan.LastLifecycleTrace = $"{clan.ClanName}按{profile.ExecutionSummary}裁定发引、祭次与服序，先让举哀、支用和承祧后议都有规矩可循。";
                 clan.LastLifecycleCommandCode = command.CommandName;
                 clan.LastLifecycleCommandLabel = DetermineFamilyCommandLabel(command.CommandName);
                 simulation.RefreshReplayHash();
@@ -173,60 +145,53 @@ public sealed partial class PlayerCommandService
                 return BuildAcceptedFamilyLifecycleResult(command, clan);
             }
             case PlayerCommandNames.SupportSeniorBranch:
-                clan.BranchFavorPressure = Math.Clamp(clan.BranchFavorPressure + 18, 0, 100);
-                clan.BranchTension = Math.Clamp(clan.BranchTension + 10, 0, 100);
-                clan.InheritancePressure = Math.Clamp(clan.InheritancePressure + 6, 0, 100);
-                clan.MediationMomentum = Math.Max(0, clan.MediationMomentum - 4);
-                clan.SupportReserve = Math.Max(0, clan.SupportReserve - 2);
+            {
+                FamilyConflictResolutionProfile profile = ResolveSupportSeniorBranchProfile(clan);
+                ApplyFamilyConflictProfile(clan, profile);
                 clan.LastConflictOutcome = "嫡支得护，旁支怨气渐起。";
-                clan.LastConflictTrace = $"{clan.ClanName}奉命偏护嫡支，祠堂中的分房与承祧之争随之更紧。";
+                clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}偏护嫡支，祠堂中的分房与承祧之争随之更紧。";
                 break;
+            }
             case PlayerCommandNames.OrderFormalApology:
-                clan.BranchTension = Math.Max(0, clan.BranchTension - 12);
-                clan.SeparationPressure = Math.Max(0, clan.SeparationPressure - 6);
-                clan.MediationMomentum = Math.Clamp(clan.MediationMomentum + 10, 0, 100);
-                clan.BranchFavorPressure = Math.Max(0, clan.BranchFavorPressure - 4);
+            {
+                FamilyConflictResolutionProfile profile = ResolveFormalApologyProfile(clan);
+                ApplyFamilyConflictProfile(clan, profile);
                 clan.LastConflictOutcome = "责成赔礼，祠堂争声暂缓。";
-                clan.LastConflictTrace = $"{clan.ClanName}已责令赔礼，先压祠堂口角与房支积怨。";
+                clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}责令赔礼，先压祠堂口角与房支积怨。";
                 break;
+            }
             case PlayerCommandNames.PermitBranchSeparation:
-                clan.SeparationPressure = Math.Max(0, clan.SeparationPressure - 20);
-                clan.BranchTension = Math.Max(0, clan.BranchTension - 6);
-                clan.InheritancePressure = Math.Max(0, clan.InheritancePressure - 8);
-                clan.MediationMomentum = Math.Clamp(clan.MediationMomentum + 4, 0, 100);
-                clan.SupportReserve = Math.Max(0, clan.SupportReserve - 8);
-                clan.ReliefSanctionPressure = Math.Max(0, clan.ReliefSanctionPressure - 6);
+            {
+                FamilyConflictResolutionProfile profile = ResolveBranchSeparationProfile(clan);
+                ApplyFamilyConflictProfile(clan, profile);
                 clan.LastConflictOutcome = "准其分房，旧账改作分门户账。";
-                clan.LastConflictTrace = $"{clan.ClanName}已准分房，先将同火之争拆回两房自理。";
+                clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}准其分房，先将同火之争拆回两房自理。";
                 break;
+            }
             case PlayerCommandNames.SuspendClanRelief:
-                clan.ReliefSanctionPressure = Math.Clamp(clan.ReliefSanctionPressure + 18, 0, 100);
-                clan.BranchTension = Math.Clamp(clan.BranchTension + 9, 0, 100);
-                clan.SeparationPressure = Math.Clamp(clan.SeparationPressure + 7, 0, 100);
-                clan.MediationMomentum = Math.Max(0, clan.MediationMomentum - 4);
-                clan.SupportReserve = Math.Clamp(clan.SupportReserve + 4, 0, 100);
+            {
+                FamilyConflictResolutionProfile profile = ResolveSuspendReliefProfile(clan);
+                ApplyFamilyConflictProfile(clan, profile);
                 clan.LastConflictOutcome = "停其接济，房支怨望转深。";
-                clan.LastConflictTrace = $"{clan.ClanName}已停其接济，祠下怨望与分房之议都更紧。";
+                clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}停其接济，祠下怨望与分房之议都更紧。";
                 break;
+            }
             case PlayerCommandNames.InviteClanEldersMediation:
-                clan.MediationMomentum = Math.Clamp(clan.MediationMomentum + 18, 0, 100);
-                clan.BranchTension = Math.Max(0, clan.BranchTension - 8);
-                clan.SeparationPressure = Math.Max(0, clan.SeparationPressure - 5);
-                clan.BranchFavorPressure = Math.Max(0, clan.BranchFavorPressure - 6);
-                clan.InheritancePressure = Math.Max(0, clan.InheritancePressure - 2);
-                clan.SupportReserve = Math.Max(0, clan.SupportReserve - 2);
+            {
+                FamilyConflictResolutionProfile profile = ResolveClanEldersMediationProfile(clan, publicBroker: false);
+                ApplyFamilyConflictProfile(clan, profile);
                 clan.LastConflictOutcome = "请族老调停，堂议得以再开。";
-                clan.LastConflictTrace = $"{clan.ClanName}已请族老调停，先以长辈评断缓开祠堂争执。";
+                clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}请族老调停，先以长辈评断缓开祠堂争执。";
                 break;
+            }
             case PlayerCommandNames.InviteClanEldersPubliclyBroker:
-                clan.MediationMomentum = Math.Clamp(clan.MediationMomentum + 14, 0, 100);
-                clan.BranchTension = Math.Max(0, clan.BranchTension - 6);
-                clan.SeparationPressure = Math.Max(0, clan.SeparationPressure - 4);
-                clan.BranchFavorPressure = Math.Max(0, clan.BranchFavorPressure - 4);
-                clan.SupportReserve = Math.Max(0, clan.SupportReserve - 3);
+            {
+                FamilyConflictResolutionProfile profile = ResolveClanEldersMediationProfile(clan, publicBroker: true);
+                ApplyFamilyConflictProfile(clan, profile);
                 clan.LastConflictOutcome = "族老已出面压住街谈，先把堂外口舌与门前围观缓下来。";
-                clan.LastConflictTrace = $"{clan.ClanName}已请族老出面，在县门与街口先行解说，免得堂内争议扩成众口公议。";
+                clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}请族老出面，在县门与街口先行解说，免得堂内争议扩成众口公议。";
                 break;
+            }
             default:
                 return BuildRejectedFamilyResult(command, $"宗房不识此令：{command.CommandName}。");
         }

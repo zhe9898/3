@@ -14,7 +14,7 @@ internal static class FamilyLifecycleCommandSelector
 		return (from clan in clans
 			let affordance = SelectPrimaryLifecycleAffordance(clan, affordances)
 			where affordance != null
-			orderby GetLifecyclePriority(affordance), clan.ClanName
+			orderby GetLifecyclePriority(clan, affordance), clan.ClanName
 			select affordance)
 			.FirstOrDefault();
 	}
@@ -30,7 +30,7 @@ internal static class FamilyLifecycleCommandSelector
 				&& command.ClanId.Value == clan.Id
 				&& string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal)
 				&& IsLifecycleFamilyCommand(command.CommandName))
-			.OrderBy(GetLifecyclePriority)
+			.OrderBy(command => GetLifecyclePriority(clan, command))
 			.ThenBy(command => command.CommandName, StringComparer.Ordinal)
 			.FirstOrDefault();
 	}
@@ -44,14 +44,22 @@ internal static class FamilyLifecycleCommandSelector
 			PlayerCommandNames.SetMourningOrder;
 	}
 
-	private static int GetLifecyclePriority(PlayerCommandAffordanceSnapshot command)
+	private static int GetLifecyclePriority(ClanSnapshot clan, PlayerCommandAffordanceSnapshot command)
 	{
+		bool hasSuccessionGap = !clan.HeirPersonId.HasValue
+			|| clan.LastLifecycleTrace.Contains("承祧缺口3阶", StringComparison.Ordinal);
+
+		if (command.CommandName == PlayerCommandNames.DesignateHeirPolicy && hasSuccessionGap)
+		{
+			return 0;
+		}
+
 		return command.CommandName switch
 		{
-			PlayerCommandNames.SetMourningOrder => 0,
-			PlayerCommandNames.SupportNewbornCare => 1,
-			PlayerCommandNames.DesignateHeirPolicy => 2,
-			PlayerCommandNames.ArrangeMarriage => 3,
+			PlayerCommandNames.SetMourningOrder => hasSuccessionGap ? 1 : 0,
+			PlayerCommandNames.SupportNewbornCare => 2,
+			PlayerCommandNames.DesignateHeirPolicy => 3,
+			PlayerCommandNames.ArrangeMarriage => 4,
 			_ => 10
 		};
 	}

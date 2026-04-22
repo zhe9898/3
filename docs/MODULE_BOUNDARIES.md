@@ -87,6 +87,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - branch split/merge state
 - lineage-conflict pressure, mediation momentum, and branch-favor / relief-sanction pressure
 - marriage-alliance pressure/value, heir security, reproductive pressure, and mourning load
+- care burden, funeral debt, remedy confidence, and charity-obligation pressure inside the clan namespace
 - last family-command receipts that remain family-owned state
 - personality traits per clan member: ambition, prudence, loyalty, sociability
 - clan-scoped kinship references: spouseId, childrenIds, fatherId, motherId (only for persons who are or were clan members; FamilyCore does not track kinship for non-clan persons such as unaffiliated commoners, bandits, or officials from other lineages)
@@ -506,7 +507,7 @@ Current lite note:
 
 ## Dependency guidance
 - all modules may query `PersonRegistry` for identity, life stage, alive status, and fidelity ring
-- `FamilyCore` may query `PersonRegistry` and `SocialMemoryAndRelations`, not mutate them
+- `FamilyCore` may query `PersonRegistry` and `SocialMemoryAndRelations`; it may call the narrow `PersonRegistry` identity command surface for person creation/death, but must not directly mutate foreign module state
 - `TradeAndIndustry` may query `WorldSettlements` and `OrderAndBanditry`
 - `OrderAndBanditry` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `TradeAndIndustry`, `OfficeAndCareer`, and `ConflictAndForce`
 - `ConflictAndForce` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, and `TradeAndIndustry`

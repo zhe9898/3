@@ -283,8 +283,9 @@ public sealed class FamilyCoreModuleTests
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);
         familyModule.RegisterQueries(familyState, queries);
-        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
-        queries.Register<IPersonRegistryCommands>(new RecordingPersonRegistryCommands());
+        RecordingPersonRegistryCommands registryCommands = new();
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries(registryCommands));
+        queries.Register<IPersonRegistryCommands>(registryCommands);
 
         ModuleExecutionContext context = new(
             new GameDate(1200, 5),
@@ -299,6 +300,14 @@ public sealed class FamilyCoreModuleTests
         Assert.That(familyState.Clans[0].MarriageAllianceValue, Is.GreaterThanOrEqualTo(48));
         Assert.That(familyState.Clans[0].LastLifecycleOutcome, Is.Not.Empty);
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.MarriageAllianceArranged), Is.True);
+        Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.BirthRegistered), Is.False);
+        Assert.That(registryCommands.RegisteredIds, Has.Count.EqualTo(1));
+        PersonId spouseId = registryCommands.RegisteredIds[0];
+        FamilyPersonState anchor = familyState.People.Single(static person => person.Id == new PersonId(1));
+        FamilyPersonState spouse = familyState.People.Single(person => person.Id == spouseId);
+        Assert.That(anchor.SpouseId, Is.EqualTo(spouseId));
+        Assert.That(spouse.SpouseId, Is.EqualTo(anchor.Id));
+        Assert.That(registryCommands.Records[spouseId].Gender, Is.EqualTo(PersonGender.Female));
     }
 
     [Test]
@@ -370,6 +379,7 @@ public sealed class FamilyCoreModuleTests
         IReadOnlyList<FamilyPersonSnapshot> clanMembers = familyQueries.GetClanMembers(new ClanId(1));
         Assert.That(clanMembers.Count(static person => person.IsAlive), Is.EqualTo(1));
         Assert.That(familyState.Clans[0].MourningLoad, Is.GreaterThan(0));
+        Assert.That(familyState.Clans[0].FuneralDebt, Is.EqualTo(18));
         // STEP2A / A3：死一个 heir 立即递补（近 primogeniture），HeirSecurity 不再
         // 人为凹陷——由 Zhang Er 承祧。原断言（HeirSecurity<62 + HeirSecurityWeakened）
         // 预设 heir 空缺一月，与承祧链通电语义冲突，替换为立即补位断言。
@@ -378,6 +388,32 @@ public sealed class FamilyCoreModuleTests
         Assert.That(context.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.HeirSuccessionOccurred), Is.True);
         Assert.That(registryCommands.DeceasedIds, Has.Count.EqualTo(1));
         Assert.That(registryCommands.DeceasedIds[0], Is.EqualTo(new PersonId(1)));
+    }
+
+    [Test]
+    public void RunMonth_HeirDeathShock_IsHeavier_WhenNoAdultSuccessor()
+    {
+        (FamilyCoreState withSuccessorState, RecordingPersonRegistryCommands withSuccessorRegistry, FamilyCoreModule withSuccessorModule, ModuleExecutionContext withSuccessorContext) = BuildHeirDeathShockScenario(hasAdultSuccessor: true);
+        (FamilyCoreState noSuccessorState, RecordingPersonRegistryCommands noSuccessorRegistry, FamilyCoreModule noSuccessorModule, ModuleExecutionContext noSuccessorContext) = BuildHeirDeathShockScenario(hasAdultSuccessor: false);
+
+        withSuccessorModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(withSuccessorState, withSuccessorContext));
+        noSuccessorModule.RunMonth(new ModuleExecutionScope<FamilyCoreState>(noSuccessorState, noSuccessorContext));
+
+        ClanStateData withSuccessorClan = withSuccessorState.Clans.Single();
+        ClanStateData noSuccessorClan = noSuccessorState.Clans.Single();
+
+        Assert.That(withSuccessorRegistry.DeceasedIds, Is.EqualTo(new[] { new PersonId(1) }));
+        Assert.That(noSuccessorRegistry.DeceasedIds, Is.EqualTo(new[] { new PersonId(1) }));
+        Assert.That(withSuccessorClan.HeirPersonId, Is.EqualTo(new PersonId(2)));
+        Assert.That(noSuccessorClan.HeirPersonId, Is.Null);
+        Assert.That(withSuccessorClan.LastLifecycleTrace, Does.Contain("承祧缺口1阶"));
+        Assert.That(noSuccessorClan.LastLifecycleTrace, Does.Contain("承祧缺口3阶"));
+        Assert.That(noSuccessorClan.InheritancePressure, Is.GreaterThan(withSuccessorClan.InheritancePressure));
+        Assert.That(noSuccessorClan.SeparationPressure, Is.GreaterThan(withSuccessorClan.SeparationPressure));
+        Assert.That(noSuccessorClan.BranchTension, Is.GreaterThan(withSuccessorClan.BranchTension));
+        Assert.That(noSuccessorClan.MarriageAlliancePressure, Is.GreaterThan(withSuccessorClan.MarriageAlliancePressure));
+        Assert.That(noSuccessorContext.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.HeirSuccessionOccurred), Is.False);
+        Assert.That(withSuccessorContext.DomainEvents.Events.Any(static evt => evt.EventType == FamilyCoreEventNames.HeirSuccessionOccurred), Is.True);
     }
 
     [Test]
@@ -464,6 +500,89 @@ public sealed class FamilyCoreModuleTests
         // 副作用：MourningLoad / ReproductivePressure 均涨。
         Assert.That(familyState.Clans[0].MourningLoad, Is.GreaterThan(0));
         Assert.That(familyState.Clans[0].ReproductivePressure, Is.GreaterThan(reproductiveBefore));
+        Assert.That(familyState.Clans[0].FuneralDebt, Is.EqualTo(6));
+    }
+
+    private static (FamilyCoreState State, RecordingPersonRegistryCommands Registry, FamilyCoreModule Module, ModuleExecutionContext Context) BuildHeirDeathShockScenario(bool hasAdultSuccessor)
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 57,
+            Prosperity = 55,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 50,
+            SupportReserve = 35,
+            HeirPersonId = new PersonId(1),
+            HeirSecurity = 62,
+            MarriageAllianceValue = 20,
+            MarriageAlliancePressure = 18,
+            ReproductivePressure = 20,
+            InheritancePressure = 10,
+            SeparationPressure = 10,
+            BranchTension = 10,
+        });
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(1),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Heir",
+            AgeMonths = 40 * 12,
+            IsAlive = true,
+            FragilityLedger = 100,
+        });
+
+        if (hasAdultSuccessor)
+        {
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = new PersonId(2),
+                ClanId = new ClanId(1),
+                GivenName = "Zhang Successor",
+                AgeMonths = 24 * 12,
+                IsAlive = true,
+            });
+        }
+        else
+        {
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = new PersonId(3),
+                ClanId = new ClanId(1),
+                GivenName = "Zhang Child",
+                AgeMonths = 8 * 12,
+                IsAlive = true,
+            });
+        }
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        RecordingPersonRegistryCommands registryCommands = new();
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries(registryCommands));
+        queries.Register<IPersonRegistryCommands>(registryCommands);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(hasAdultSuccessor ? 71 : 72)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        return (familyState, registryCommands, familyModule, context);
     }
 
     [Test]
@@ -538,6 +657,12 @@ public sealed class FamilyCoreModuleTests
         Assert.That(registryCommands.RegisteredIds, Has.Count.EqualTo(1));
         PersonId registeredNewbornId = registryCommands.RegisteredIds[0];
         Assert.That(familyState.People.Any(person => person.Id == registeredNewbornId && person.ClanId.Value == 1), Is.True);
+        FamilyPersonState newborn = familyState.People.Single(person => person.Id == registeredNewbornId);
+        Assert.That(newborn.FatherId, Is.EqualTo(new PersonId(1)));
+        Assert.That(newborn.MotherId, Is.EqualTo(new PersonId(2)));
+        Assert.That(familyState.People.Single(static person => person.Id == new PersonId(1)).ChildrenIds, Does.Contain(registeredNewbornId));
+        Assert.That(familyState.People.Single(static person => person.Id == new PersonId(2)).ChildrenIds, Does.Contain(registeredNewbornId));
+        Assert.That(familyState.Clans[0].CareLoad, Is.EqualTo(8));
     }
 
     [Test]

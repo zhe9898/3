@@ -13,15 +13,28 @@ public sealed partial class PresentationReadModelBuilder
 {
 
     private static PlayerCommandAffordanceSnapshot? SelectPrimaryHallFamilyLifecycleAffordance(
-        IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances)
+        IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
+        IReadOnlyList<ClanSnapshot> clans)
     {
+        Dictionary<int, ClanSnapshot> clansById = clans
+            .ToDictionary(static entry => entry.Id.Value, static entry => entry);
+
         return affordances
+            .Select(entry => new
+            {
+                Affordance = entry,
+                Clan = entry.ClanId.HasValue && clansById.TryGetValue(entry.ClanId.Value.Value, out ClanSnapshot? clan)
+                    ? clan
+                    : null,
+            })
             .Where(static entry =>
-                entry.IsEnabled
-                && string.Equals(entry.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal)
-                && IsFamilyLifecycleCommand(entry.CommandName))
-            .OrderBy(entry => GetFamilyLifecycleCommandPriority(entry.CommandName))
-            .ThenBy(static entry => entry.TargetLabel, StringComparer.Ordinal)
+                entry.Clan is not null
+                && entry.Affordance.IsEnabled
+                && string.Equals(entry.Affordance.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal)
+                && IsFamilyLifecycleCommand(entry.Affordance.CommandName))
+            .OrderBy(entry => GetFamilyLifecycleCommandPriority(entry.Clan!, entry.Affordance.CommandName))
+            .ThenBy(static entry => entry.Affordance.TargetLabel, StringComparer.Ordinal)
+            .Select(static entry => entry.Affordance)
             .FirstOrDefault();
     }
 
@@ -60,6 +73,26 @@ public sealed partial class PresentationReadModelBuilder
             PlayerCommandNames.SupportNewbornCare => 1,
             PlayerCommandNames.DesignateHeirPolicy => 2,
             PlayerCommandNames.ArrangeMarriage => 3,
+            _ => 9,
+        };
+    }
+
+    private static int GetFamilyLifecycleCommandPriority(ClanSnapshot clan, string commandName)
+    {
+        bool hasSuccessionGap = !clan.HeirPersonId.HasValue
+            || clan.LastLifecycleTrace.Contains("承祧缺口3阶", StringComparison.Ordinal);
+
+        if (commandName == PlayerCommandNames.DesignateHeirPolicy && hasSuccessionGap)
+        {
+            return 0;
+        }
+
+        return commandName switch
+        {
+            PlayerCommandNames.SetMourningOrder => hasSuccessionGap ? 1 : 0,
+            PlayerCommandNames.SupportNewbornCare => 2,
+            PlayerCommandNames.DesignateHeirPolicy => 3,
+            PlayerCommandNames.ArrangeMarriage => 4,
             _ => 9,
         };
     }
@@ -107,6 +140,11 @@ public sealed partial class PresentationReadModelBuilder
         PlayerCommandAffordanceSnapshot? affordance,
         PlayerCommandReceiptSnapshot? receipt)
     {
+        if (clan.MourningLoad > 0 && !clan.HeirPersonId.HasValue)
+        {
+            return $"{clan.ClanName}承祧后议压堂";
+        }
+
         if (clan.MourningLoad > 0)
         {
             return $"{clan.ClanName}门内举哀未毕";
@@ -144,8 +182,10 @@ public sealed partial class PresentationReadModelBuilder
         ClanSnapshot clan,
         PlayerCommandAffordanceSnapshot? affordance)
     {
-        string pressureSummary = clan.MourningLoad > 0
-            ? $"门内丧服之重{clan.MourningLoad}，后议之压{clan.InheritancePressure}。"
+        string pressureSummary = clan.MourningLoad > 0 && !clan.HeirPersonId.HasValue
+            ? $"门内丧服之重{clan.MourningLoad}，承祧尚未定名，后议之压{clan.InheritancePressure}，房支争势{clan.BranchTension}。"
+            : clan.MourningLoad > 0
+            ? $"门内丧服之重{clan.MourningLoad}，承祧稳度{clan.HeirSecurity}，后议之压{clan.InheritancePressure}。"
             : !clan.HeirPersonId.HasValue || clan.HeirSecurity < 40
                 ? $"承祧稳度{clan.HeirSecurity}，后议之压{clan.InheritancePressure}。"
                 : clan.InfantCount > 0

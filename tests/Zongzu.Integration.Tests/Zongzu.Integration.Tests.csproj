@@ -30,5 +30,6 @@
     <ProjectReference Include="..\..\src\Zongzu.Modules.WorldSettlements\Zongzu.Modules.WorldSettlements.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Persistence\Zongzu.Persistence.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Scheduler\Zongzu.Scheduler.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Presentation.Unity.ViewModels\Zongzu.Presentation.Unity.ViewModels.csproj" />
   </ItemGroup>
 </Project>

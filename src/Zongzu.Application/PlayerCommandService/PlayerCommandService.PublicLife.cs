@@ -335,11 +335,11 @@ public sealed partial class PlayerCommandService
         switch (commandName)
         {
             case PlayerCommandNames.EscortRoadReport:
-                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - AdjustReduction(8, administrativeReach.BenefitShift));
-                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - AdjustReduction(5, administrativeReach.BenefitShift));
-                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - AdjustReduction(2, administrativeReach.BenefitShift, 0));
-                settlement.RouteShielding = Math.Clamp(settlement.RouteShielding + AdjustIncrease(12, administrativeReach.ShieldingShift), 0, 100);
-                settlement.ImplementationDrag = Math.Max(0, settlement.ImplementationDrag - AdjustReduction(4, Math.Max(0, administrativeReach.BenefitShift)));
+                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - CommandResolutionMath.AdjustReduction(8, administrativeReach.BenefitShift));
+                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - CommandResolutionMath.AdjustReduction(5, administrativeReach.BenefitShift));
+                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - CommandResolutionMath.AdjustReduction(2, administrativeReach.BenefitShift, 0));
+                settlement.RouteShielding = CommandResolutionMath.Clamp100(settlement.RouteShielding + CommandResolutionMath.AdjustIncrease(12, administrativeReach.ShieldingShift));
+                settlement.ImplementationDrag = Math.Max(0, settlement.ImplementationDrag - CommandResolutionMath.AdjustReduction(4, Math.Max(0, administrativeReach.BenefitShift)));
                 settlement.LastPressureReason = AppendReachSummary("已先护住路报往来，河埠脚路暂得照看。", administrativeReach);
                 ApplyOrderInterventionReceipt(
                     settlement,
@@ -348,11 +348,11 @@ public sealed partial class PlayerCommandService
                     AppendReachSummary($"路压缓到{settlement.RoutePressure}，镇压之需减到{settlement.SuppressionDemand}，护路得力升到{settlement.RouteShielding}。", administrativeReach));
                 return true;
             case PlayerCommandNames.FundLocalWatch:
-                settlement.BanditThreat = Math.Max(0, settlement.BanditThreat - AdjustReduction(3, administrativeReach.BenefitShift));
-                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - AdjustReduction(10, administrativeReach.BenefitShift));
-                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - AdjustReduction(4, administrativeReach.BenefitShift));
-                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - AdjustReduction(5, administrativeReach.BenefitShift));
-                settlement.RouteShielding = Math.Clamp(settlement.RouteShielding + AdjustIncrease(16, administrativeReach.ShieldingShift), 0, 100);
+                settlement.BanditThreat = Math.Max(0, settlement.BanditThreat - CommandResolutionMath.AdjustReduction(3, administrativeReach.BenefitShift));
+                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - CommandResolutionMath.AdjustReduction(10, administrativeReach.BenefitShift));
+                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - CommandResolutionMath.AdjustReduction(4, administrativeReach.BenefitShift));
+                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - CommandResolutionMath.AdjustReduction(5, administrativeReach.BenefitShift));
+                settlement.RouteShielding = CommandResolutionMath.Clamp100(settlement.RouteShielding + CommandResolutionMath.AdjustIncrease(16, administrativeReach.ShieldingShift));
                 settlement.ResponseActivationLevel = Math.Clamp(settlement.ResponseActivationLevel + 1, 0, 12);
                 settlement.LastPressureReason = AppendReachSummary("已添雇巡丁，先把路口、渡头与夜巡补起来。", administrativeReach);
                 ApplyOrderInterventionReceipt(
@@ -362,13 +362,13 @@ public sealed partial class PlayerCommandService
                     AppendReachSummary($"路压缓到{settlement.RoutePressure}，地面不靖退到{settlement.DisorderPressure}，护路得力升到{settlement.RouteShielding}。", administrativeReach));
                 return true;
             case PlayerCommandNames.SuppressBanditry:
-                settlement.BanditThreat = Math.Max(0, settlement.BanditThreat - AdjustReduction(12, administrativeReach.BenefitShift));
-                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - AdjustReduction(6, administrativeReach.BenefitShift));
-                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - AdjustReduction(8, administrativeReach.BenefitShift));
-                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - AdjustReduction(4, administrativeReach.BenefitShift));
-                settlement.CoercionRisk = Math.Clamp(settlement.CoercionRisk + AdjustIncrease(8, administrativeReach.BacklashShift), 0, 100);
-                settlement.RetaliationRisk = Math.Clamp(settlement.RetaliationRisk + AdjustIncrease(14, administrativeReach.BacklashShift), 0, 100);
-                settlement.SuppressionRelief = Math.Clamp(settlement.SuppressionRelief + AdjustIncrease(2, Math.Max(0, administrativeReach.BenefitShift)), 0, 12);
+                settlement.BanditThreat = Math.Max(0, settlement.BanditThreat - CommandResolutionMath.AdjustReduction(12, administrativeReach.BenefitShift));
+                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - CommandResolutionMath.AdjustReduction(6, administrativeReach.BenefitShift));
+                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - CommandResolutionMath.AdjustReduction(8, administrativeReach.BenefitShift));
+                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - CommandResolutionMath.AdjustReduction(4, administrativeReach.BenefitShift));
+                settlement.CoercionRisk = CommandResolutionMath.Clamp100(settlement.CoercionRisk + CommandResolutionMath.AdjustIncrease(8, administrativeReach.BacklashShift));
+                settlement.RetaliationRisk = CommandResolutionMath.Clamp100(settlement.RetaliationRisk + CommandResolutionMath.AdjustIncrease(14, administrativeReach.BacklashShift));
+                settlement.SuppressionRelief = Math.Clamp(settlement.SuppressionRelief + CommandResolutionMath.AdjustIncrease(2, Math.Max(0, administrativeReach.BenefitShift)), 0, 12);
                 settlement.LastPressureReason = AppendReachSummary("已严缉路匪，先压住明面扰动，但后手报复也会跟着抬头。", administrativeReach);
                 ApplyOrderInterventionReceipt(
                     settlement,
@@ -377,13 +377,13 @@ public sealed partial class PlayerCommandService
                     AppendReachSummary($"盗压降到{settlement.BanditThreat}，路压降到{settlement.RoutePressure}，但反噬险已升到{settlement.RetaliationRisk}。", administrativeReach));
                 return true;
             case PlayerCommandNames.NegotiateWithOutlaws:
-                settlement.BanditThreat = Math.Max(0, settlement.BanditThreat - AdjustReduction(4, administrativeReach.BenefitShift));
-                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - AdjustReduction(3, administrativeReach.BenefitShift));
-                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - AdjustReduction(10, administrativeReach.BenefitShift));
-                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - AdjustReduction(2, administrativeReach.BenefitShift, 0));
-                settlement.BlackRoutePressure = Math.Clamp(settlement.BlackRoutePressure + AdjustIncrease(6, administrativeReach.LeakageShift), 0, 100);
-                settlement.CoercionRisk = Math.Max(0, settlement.CoercionRisk - AdjustReduction(6, administrativeReach.BenefitShift));
-                settlement.RetaliationRisk = Math.Max(0, settlement.RetaliationRisk - AdjustReduction(12, administrativeReach.BenefitShift));
+                settlement.BanditThreat = Math.Max(0, settlement.BanditThreat - CommandResolutionMath.AdjustReduction(4, administrativeReach.BenefitShift));
+                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - CommandResolutionMath.AdjustReduction(3, administrativeReach.BenefitShift));
+                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - CommandResolutionMath.AdjustReduction(10, administrativeReach.BenefitShift));
+                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - CommandResolutionMath.AdjustReduction(2, administrativeReach.BenefitShift, 0));
+                settlement.BlackRoutePressure = CommandResolutionMath.Clamp100(settlement.BlackRoutePressure + CommandResolutionMath.AdjustIncrease(6, administrativeReach.LeakageShift));
+                settlement.CoercionRisk = Math.Max(0, settlement.CoercionRisk - CommandResolutionMath.AdjustReduction(6, administrativeReach.BenefitShift));
+                settlement.RetaliationRisk = Math.Max(0, settlement.RetaliationRisk - CommandResolutionMath.AdjustReduction(12, administrativeReach.BenefitShift));
                 settlement.LastPressureReason = AppendReachSummary("已遣人议路，先换一路暂安，但私下分流会更容易坐大。", administrativeReach);
                 ApplyOrderInterventionReceipt(
                     settlement,
@@ -392,12 +392,12 @@ public sealed partial class PlayerCommandService
                     AppendReachSummary($"镇压之需退到{settlement.SuppressionDemand}，反噬险降到{settlement.RetaliationRisk}，但私路压抬到{settlement.BlackRoutePressure}。", administrativeReach));
                 return true;
             case PlayerCommandNames.TolerateDisorder:
-                settlement.BanditThreat = Math.Clamp(settlement.BanditThreat + AdjustIncrease(4, administrativeReach.LeakageShift), 0, 100);
-                settlement.RoutePressure = Math.Clamp(settlement.RoutePressure + AdjustIncrease(6, administrativeReach.LeakageShift), 0, 100);
-                settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + AdjustIncrease(5, administrativeReach.LeakageShift), 0, 100);
-                settlement.BlackRoutePressure = Math.Clamp(settlement.BlackRoutePressure + AdjustIncrease(8, administrativeReach.LeakageShift), 0, 100);
-                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - AdjustReduction(6, administrativeReach.BenefitShift));
-                settlement.RetaliationRisk = Math.Max(0, settlement.RetaliationRisk - AdjustReduction(8, administrativeReach.BenefitShift));
+                settlement.BanditThreat = CommandResolutionMath.Clamp100(settlement.BanditThreat + CommandResolutionMath.AdjustIncrease(4, administrativeReach.LeakageShift));
+                settlement.RoutePressure = CommandResolutionMath.Clamp100(settlement.RoutePressure + CommandResolutionMath.AdjustIncrease(6, administrativeReach.LeakageShift));
+                settlement.DisorderPressure = CommandResolutionMath.Clamp100(settlement.DisorderPressure + CommandResolutionMath.AdjustIncrease(5, administrativeReach.LeakageShift));
+                settlement.BlackRoutePressure = CommandResolutionMath.Clamp100(settlement.BlackRoutePressure + CommandResolutionMath.AdjustIncrease(8, administrativeReach.LeakageShift));
+                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - CommandResolutionMath.AdjustReduction(6, administrativeReach.BenefitShift));
+                settlement.RetaliationRisk = Math.Max(0, settlement.RetaliationRisk - CommandResolutionMath.AdjustReduction(8, administrativeReach.BenefitShift));
                 settlement.RouteShielding = Math.Max(0, settlement.RouteShielding - Math.Max(0, 4 - Math.Max(0, administrativeReach.BenefitShift)));
                 settlement.LastPressureReason = AppendReachSummary("已暂缓穷追，先不把地面逼到立刻翻脸，但路面与私下手脚会继续滋长。", administrativeReach);
                 ApplyOrderInterventionReceipt(
@@ -409,16 +409,6 @@ public sealed partial class PlayerCommandService
             default:
                 return false;
         }
-    }
-
-    private static int AdjustReduction(int baseValue, int shift, int minimum = 1)
-    {
-        return Math.Max(minimum, baseValue + shift);
-    }
-
-    private static int AdjustIncrease(int baseValue, int shift)
-    {
-        return Math.Max(0, baseValue + shift);
     }
 
     private static string AppendReachSummary(string text, OrderAdministrativeReachProfile administrativeReach)

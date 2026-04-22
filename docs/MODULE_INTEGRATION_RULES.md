@@ -106,16 +106,18 @@ Until that seam exists, the Application services act as a temporary rule layer. 
 - bounded public-life responses may surface as read-only command affordances / receipts on hall or desk nodes, but command resolution must still route through `OfficeAndCareer`, `OrderAndBanditry`, or `FamilyCore` rather than `PublicLifeAndRumor`
 - both M2-lite modules emit deterministic domain events and keep outcome explanations derived from queryable state plus kernel RNG only
 - `NarrativeProjection` currently reads only the shared `WorldDiff` and `DomainEvent` streams plus its own saved history; it does not emit authority events or write foreign module state
+- `NarrativeProjection` may use `FamilyCore` death pressure phrases carried in death diffs, such as `承祧缺口1阶` or `承祧缺口3阶`, to shape family-facing next-step guidance; this remains projection text and must not become a hidden funeral, inheritance, or command-resolution lane
 - bounded narrative-history trimming may preserve the latest notification per source module before trimming older overflow, so cross-module visibility stays readable without creating a second authority channel
 - the current first-pass presentation shell consumes a read-model bundle only; it does not reference simulation modules directly and does not resolve commands or authority rules inside UI code
 
 ## Family-conflict vertical slice notes
 - `FamilyCore` now owns lineage-conflict pressure, mediation momentum, branch-favor pressure, relief-sanction pressure, and last family-command receipts inside the family namespace
-- `FamilyCore` schema `3` also owns marriage-alliance pressure/value, heir security, reproductive pressure, mourning load, and last lifecycle-command receipts inside the same namespace
+- `FamilyCore` schema `7` also owns marriage-alliance pressure/value, heir security, reproductive pressure, mourning load, care load, funeral debt, remedy confidence, charity obligation, clan-scoped spouse/parent/child links, and last lifecycle-command receipts inside the same namespace
+- `FamilyCore` may use `PersonRegistry` command interfaces only for identity-shaped writes when birth, marriage-in spouse creation, or death requires a canonical person anchor; all lineage facts and lifecycle pressures remain `FamilyCore`-owned
 - `SocialMemoryAndRelations` may read those family-conflict fields through queries only; it may not be written by the player-command service
 - a thin player-command service may now route bounded family intents such as branch favor, formal apology, branch separation, relief suspension, elder mediation, marriage arrangement, and heir designation into `FamilyCore` only
 - the family-council shell now reads clan conflict summaries, clan narratives, family affordances, and family receipts from read models only
-- built-in default loaders now migrate `FamilyCore` schema `1 -> 2 -> 3` without changing enabled-module or envelope-key sets
+- built-in default loaders now migrate legacy `FamilyCore` schemas through current schema `7` without changing enabled-module or envelope-key sets
 
 ## Current observability and migration notes
 - diagnostics harness reports and presentation debug snapshots now align on the same runtime-only metrics: diff entries, domain events, notifications, and save payload bytes

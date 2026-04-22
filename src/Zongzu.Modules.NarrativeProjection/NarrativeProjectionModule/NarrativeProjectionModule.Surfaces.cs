@@ -72,7 +72,13 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             FamilyCoreEventNames.BirthRegistered => NotificationTier.Consequential,
 
+            DeathCauseEventNames.DeathByIllness => NotificationTier.Urgent,
+
             FamilyCoreEventNames.ClanMemberDied => NotificationTier.Urgent,
+
+            FamilyCoreEventNames.HeirAppointed => NotificationTier.Consequential,
+
+            FamilyCoreEventNames.HeirSuccessionOccurred => NotificationTier.Consequential,
 
             FamilyCoreEventNames.HeirSecurityWeakened => NotificationTier.Urgent,
 
@@ -194,7 +200,13 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             FamilyCoreEventNames.BirthRegistered => "门内添丁",
 
+            DeathCauseEventNames.DeathByIllness => "门内伤幼",
+
             FamilyCoreEventNames.ClanMemberDied => "门内举哀",
+
+            FamilyCoreEventNames.HeirAppointed => "承祧立名",
+
+            FamilyCoreEventNames.HeirSuccessionOccurred => "承祧转房",
 
             FamilyCoreEventNames.HeirSecurityWeakened => "承祧未稳",
 

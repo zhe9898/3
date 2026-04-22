@@ -151,6 +151,10 @@ public sealed class ClanStateData {
     int HeirSecurity;
     int ReproductivePressure;
     int MourningLoad;
+    int CareLoad;
+    int FuneralDebt;
+    int RemedyConfidence;
+    int CharityObligation;
     string LastConflictCommandCode;
     string LastConflictCommandLabel;
     string LastConflictOutcome;
@@ -160,11 +164,30 @@ public sealed class ClanStateData {
     string LastLifecycleOutcome;
     string LastLifecycleTrace;
 }
+
+public sealed class FamilyPersonState {
+    PersonId Id;
+    ClanId ClanId;
+    string GivenName;
+    int AgeMonths;
+    bool IsAlive;
+    BranchPosition BranchPosition;
+    PersonId? SpouseId;
+    PersonId? FatherId;
+    PersonId? MotherId;
+    List<PersonId> ChildrenIds;
+    int Ambition;
+    int Prudence;
+    int Loyalty;
+    int Sociability;
+    int FragilityLedger;
+}
 ```
 
 Current note:
-- `FamilyCore` schema `3` now owns the first lineage-lifecycle lite state inside the family namespace
-- lineage-conflict plus marriage/heir/mourning pressures remain authoritative family state even when projected through the hall, family council, or social-memory read models
+- `FamilyCore` schema `7` owns lineage-conflict, lifecycle pressure, clan-scoped kinship, care burden, funeral debt, remedy confidence, and charity-obligation state inside the family namespace
+- marriage/heir/mourning/care/funeral pressures remain authoritative family state even when projected through the hall, family council, or social-memory read models
+- births and marriage-in spouses create identity anchors through `PersonRegistry` command surfaces, but `FamilyCore` owns the clan-scoped facts: `SpouseId`, `FatherId`, `MotherId`, and `ChildrenIds`
 
 ### PopulationAndHouseholds state
 Owns:

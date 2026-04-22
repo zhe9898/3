@@ -55,7 +55,7 @@ public sealed partial class FamilyCoreModule
     /// <para>skill <c>marriage-alliance-politics</c>：婚议是两族合意的联络，
     /// 本 step 不做聘礼 / 债务 / 政治操盘（后续 step 接）。</para>
     /// </summary>
-    internal static void TryArrangeCrossClanMarriages(
+    internal static HashSet<ClanId> TryArrangeCrossClanMarriages(
         ModuleExecutionScope<FamilyCoreState> scope,
         IPersonRegistryQueries registryQueries,
         GameDate currentDate)
@@ -66,12 +66,13 @@ public sealed partial class FamilyCoreModule
         const int YouthMinAgeMonths = 16 * 12;
         const int YouthMaxAgeMonths = 30 * 12;
 
+        HashSet<ClanId> matchedThisMonth = new();
         ClanStateData[] clans = scope.State.Clans
             .Where(c => c.MarriageAlliancePressure >= MatchPressureThreshold
                         && c.MourningLoad < MatchMourningCeiling)
             .OrderBy(static c => c.Id.Value)
             .ToArray();
-        if (clans.Length < 2) return;
+        if (clans.Length < 2) return matchedThisMonth;
 
         // 收集每个合格 clan 的未婚候选（按性别分桶）。
         Dictionary<ClanId, List<FamilyPersonState>> maleByClan = new();
@@ -101,7 +102,6 @@ public sealed partial class FamilyCoreModule
 
         // 配对：按 clan 对有序遍历（i<j），先吃一对合格男女则写定；已写入
         // 的 clan 本月不再配第二对（避免一月多婚与候选被重复选中）。
-        HashSet<ClanId> matchedThisMonth = new();
         for (int i = 0; i < clans.Length; i++)
         {
             ClanStateData a = clans[i];
@@ -143,6 +143,8 @@ public sealed partial class FamilyCoreModule
                 break;
             }
         }
+
+        return matchedThisMonth;
     }
 
     private static void ApplyCrossClanMarriageEffects(
@@ -163,7 +165,12 @@ public sealed partial class FamilyCoreModule
         scope.Emit(FamilyCoreEventNames.MarriageAllianceArranged, message, clan.Id.Value.ToString());
     }
 
-    internal static bool TryArrangeAutonomousMarriage(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals)
+    internal static bool TryArrangeAutonomousMarriage(
+        ModuleExecutionScope<FamilyCoreState> scope,
+        ClanStateData clan,
+        FamilyMonthSignals signals,
+        IPersonRegistryQueries registryQueries,
+        GameDate currentDate)
     {
         if (signals.AdultCount == 0
             || clan.MarriageAllianceValue >= 45
@@ -174,16 +181,123 @@ public sealed partial class FamilyCoreModule
             return false;
         }
 
+        FamilyPersonState? anchor = FindAutonomousMarriageAnchor(scope.State, clan.Id, registryQueries, currentDate);
+        if (anchor is null)
+        {
+            return false;
+        }
+
+        FamilyPersonState? spouse = CreateAutonomousMarriageSpouse(scope, clan, anchor, registryQueries, currentDate);
+        if (spouse is null)
+        {
+            return false;
+        }
+
+        anchor.SpouseId = spouse.Id;
+        spouse.SpouseId = anchor.Id;
+
         clan.MarriageAllianceValue = 48;
         clan.MarriageAlliancePressure = Math.Max(0, clan.MarriageAlliancePressure - 18);
         clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 10, 0, 100);
         clan.SupportReserve = Math.Max(0, clan.SupportReserve - 3);
         clan.LastLifecycleOutcome = "门内先自议亲，暂把承祧与分房的后议压住。";
-        clan.LastLifecycleTrace = $"{clan.ClanName}门内自行议定婚事，先借姻亲稳一稳香火与房支人情。";
+        clan.LastLifecycleTrace = $"{clan.ClanName}门内自行议定婚事，{anchor.GivenName}与{spouse.GivenName}已挂为夫妇，先借姻亲稳一稳香火与房支人情。";
 
-        scope.RecordDiff($"{clan.ClanName}门内先自议亲，婚事已定，祠堂与家内都盼其稳住香火。", clan.Id.Value.ToString());
+        scope.RecordDiff($"{clan.ClanName}门内先自议亲，{anchor.GivenName}与{spouse.GivenName}婚事已定，祠堂与家内都盼其稳住香火。", clan.Id.Value.ToString());
         scope.Emit(FamilyCoreEventNames.MarriageAllianceArranged, $"{clan.ClanName}门内议亲已定。", clan.Id.Value.ToString());
         return true;
+    }
+
+    private static FamilyPersonState? FindAutonomousMarriageAnchor(
+        FamilyCoreState state,
+        ClanId clanId,
+        IPersonRegistryQueries registryQueries,
+        GameDate currentDate)
+    {
+        foreach (FamilyPersonState person in state.People
+                     .Where(p => p.ClanId == clanId)
+                     .OrderByDescending(p => GetAgeMonths(p, registryQueries, currentDate))
+                     .ThenBy(p => p.Id.Value))
+        {
+            if (person.SpouseId is not null) continue;
+            if (!IsPersonAlive(person, registryQueries)) continue;
+
+            int ageMonths = GetAgeMonths(person, registryQueries, currentDate);
+            if (ageMonths < AdultAgeMonths || ageMonths > 45 * 12) continue;
+
+            return person;
+        }
+
+        return null;
+    }
+
+    private static FamilyPersonState? CreateAutonomousMarriageSpouse(
+        ModuleExecutionScope<FamilyCoreState> scope,
+        ClanStateData clan,
+        FamilyPersonState anchor,
+        IPersonRegistryQueries registryQueries,
+        GameDate currentDate)
+    {
+        PersonId spouseId = AllocateUnusedPersonId(scope, registryQueries);
+        bool anchorIsMale = IsHeirEligibleGender(anchor.Id, registryQueries);
+        PersonGender spouseGender = anchorIsMale ? PersonGender.Female : PersonGender.Male;
+        int anchorAgeMonths = GetAgeMonths(anchor, registryQueries, currentDate);
+        int spouseAgeMonths = anchorIsMale
+            ? Math.Clamp(anchorAgeMonths - 24, AdultAgeMonths, 32 * 12)
+            : Math.Clamp(anchorAgeMonths + 24, AdultAgeMonths, 40 * 12);
+        string spouseName = $"{clan.ClanName}姻亲{spouseId.Value}";
+
+        IPersonRegistryCommands registryCommands = scope.GetRequiredQuery<IPersonRegistryCommands>();
+        bool registered = registryCommands.Register(
+            scope.Context,
+            spouseId,
+            spouseName,
+            SubtractMonths(currentDate, spouseAgeMonths),
+            spouseGender,
+            FidelityRing.Local);
+        if (!registered)
+        {
+            return null;
+        }
+
+        FamilyPersonState spouse = new()
+        {
+            Id = spouseId,
+            ClanId = clan.Id,
+            GivenName = spouseName,
+            AgeMonths = spouseAgeMonths,
+            IsAlive = true,
+            BranchPosition = BranchPosition.DependentKin,
+            Ambition = 50,
+            Prudence = 50,
+            Loyalty = 50,
+            Sociability = 50,
+        };
+        scope.State.People.Add(spouse);
+        return spouse;
+    }
+
+    private static GameDate SubtractMonths(GameDate currentDate, int months)
+    {
+        int absoluteMonth = (currentDate.Year * 12) + currentDate.Month - 1 - Math.Max(0, months);
+        int year = absoluteMonth / 12;
+        int month = (absoluteMonth % 12) + 1;
+        return new GameDate(year, month);
+    }
+
+    private static PersonId AllocateUnusedPersonId(
+        ModuleExecutionScope<FamilyCoreState> scope,
+        IPersonRegistryQueries registryQueries)
+    {
+        PersonId id;
+        do
+        {
+            id = KernelIdAllocator.NextPerson(scope.Context.KernelState);
+        }
+        while (scope.State.People.Any(person => person.Id == id)
+               || registryQueries.TryGetPerson(id, out _));
+
+        return id;
     }
 
     /// <summary>
@@ -215,7 +329,7 @@ public sealed partial class FamilyCoreModule
             return false;
         }
 
-        PersonId newbornId = KernelIdAllocator.NextPerson(scope.Context.KernelState);
+        PersonId newbornId = AllocateUnusedPersonId(scope, registryQueries);
         string newbornName = $"{clan.ClanName}新丁{newbornId.Value}";
         // Register identity first (PersonRegistry is authoritative for age and
         // IsAlive since Phase 2b). FamilyCore still owns clan-scoped kinship
@@ -252,6 +366,7 @@ public sealed partial class FamilyCoreModule
         clan.ReproductivePressure = Math.Max(0, clan.ReproductivePressure - 26);
         clan.SupportReserve = Math.Max(0, clan.SupportReserve - 4);
         clan.HeirSecurity = Math.Clamp(Math.Max(clan.HeirSecurity, 32) + 4, 0, 100);
+        clan.CareLoad = Math.Clamp(clan.CareLoad + 8, 0, 100);
         clan.LastLifecycleOutcome = "门内添丁，香火暂得续望，但家中口粮与抚养之费也随之加重。";
         clan.LastLifecycleTrace = $"{clan.ClanName}门内新添襁褓之儿，堂上暂缓继嗣焦心，家内却更添抚养之累。";
 
@@ -319,20 +434,19 @@ public sealed partial class FamilyCoreModule
         // SocialMemory 侧再接 child_loss 记忆）；其余仍走 ClanMemberDied（A1 老死链）。
         bool isChildDeath = deathAgeMonths < AdultAgeMonths;
 
-        int mourningDelta = isChildDeath ? 18 : 24;
-        clan.MourningLoad = Math.Clamp(clan.MourningLoad + mourningDelta, 0, 100);
-        clan.InheritancePressure = Math.Clamp(clan.InheritancePressure + (wasHeir ? 18 : 8), 0, 100);
-        clan.SeparationPressure = Math.Clamp(clan.SeparationPressure + (wasHeir ? 8 : 2), 0, 100);
-        if (isChildDeath)
-        {
-            // 再育焦虑 —— 婴幼儿夭折后家内再添丁之望更紧。
-            clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 14, 0, 100);
-        }
+        FamilyDeathImpactProfile deathImpact = ComputeDeathImpactProfile(
+            clan,
+            signals,
+            deathTarget,
+            deathAgeMonths,
+            wasHeir,
+            registryQueries);
+        ApplyDeathImpactProfile(clan, deathImpact);
 
         if (isChildDeath)
         {
             clan.LastLifecycleOutcome = "襁褓未立，堂上添了一分白头人送黑头人的凄惶。";
-            clan.LastLifecycleTrace = $"{clan.ClanName}门内幼儿夭折，家中丧服之外又添再育之忧。";
+            clan.LastLifecycleTrace = $"{clan.ClanName}按{deathImpact.PressureSummary}承受幼儿夭折之痛，家中丧服之外又添再育之忧。";
         }
         else
         {
@@ -340,16 +454,16 @@ public sealed partial class FamilyCoreModule
                 ? "承祧之人忽逝，举哀之外，又添后议与房支觊觎。"
                 : "门内举哀，堂上先忙丧服与祭次，旁事都得让后。";
             clan.LastLifecycleTrace = wasHeir
-                ? $"{clan.ClanName}失了承祧之人，香火、后议与房支人心一时俱紧。"
-                : $"{clan.ClanName}门内有长者亡故，家中先忙丧服、发引与祭次。";
+                ? $"{clan.ClanName}按{deathImpact.PressureSummary}承受承祧人身故，香火、后议与房支人心一时俱紧。"
+                : $"{clan.ClanName}按{deathImpact.PressureSummary}举哀，家中先忙丧服、发引与祭次。";
         }
 
         scope.RecordDiff(
             isChildDeath
-                ? $"{clan.ClanName}门内幼儿夭折，家中丧服与再育之议一并上肩。"
+                ? $"{clan.ClanName}门内幼儿夭折，家中丧服与再育之议一并上肩（{deathImpact.PressureSummary}）。"
                 : wasHeir
-                    ? $"{clan.ClanName}承祧之人身故，门内举哀，继嗣之议与房支争执随即翻起。"
-                    : $"{clan.ClanName}门内举哀，丧服与祭次先压住家中诸事。",
+                    ? $"{clan.ClanName}承祧之人身故，门内举哀，继嗣之议与房支争执随即翻起（{deathImpact.PressureSummary}）。"
+                    : $"{clan.ClanName}门内举哀，丧服与祭次先压住家中诸事（{deathImpact.PressureSummary}）。",
             clan.Id.Value.ToString());
         // Entity key is PersonId so PersonRegistry can consolidate this into
         // the canonical PersonDeceased. See PERSON_OWNERSHIP_RULES.md.
