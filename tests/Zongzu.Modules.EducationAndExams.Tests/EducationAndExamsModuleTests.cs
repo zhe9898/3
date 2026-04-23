@@ -100,6 +100,16 @@ public sealed class EducationAndExamsModuleTests
         Assert.That(student.LastExplanation, Does.Contain("塾望"));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(EducationAndExamsEventNames.TutorSecured));
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(EducationAndExamsEventNames.ExamPassed));
+        IDomainEvent examPassed = context.DomainEvents.Events.Single(static entry => entry.EventType == EducationAndExamsEventNames.ExamPassed);
+        Assert.That(examPassed.Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseExamPass));
+        Assert.That(examPassed.Metadata[DomainEventMetadataKeys.ExamTier], Is.EqualTo(nameof(ExamTier.CountyExam)));
+        Assert.That(int.Parse(examPassed.Metadata[DomainEventMetadataKeys.ExamScore]), Is.GreaterThanOrEqualTo(75));
+        Assert.That(
+            examPassed.Metadata[DomainEventMetadataKeys.ExamAcademyPrestige],
+            Is.EqualTo(educationState.Academies.Single().Prestige.ToString()));
+        Assert.That(
+            examPassed.Metadata[DomainEventMetadataKeys.ExamClanSupportReserve],
+            Is.EqualTo(familyState.Clans.Single().SupportReserve.ToString()));
         Assert.That(student.LastResult, Is.EqualTo(ExamResult.Passed));
         Assert.That(student.CurrentTier, Is.EqualTo(ExamTier.PrefecturalExam));
         Assert.That(student.FallbackPath, Is.EqualTo(FallbackPath.ContinueStudy));

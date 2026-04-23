@@ -319,7 +319,7 @@ OrderAndBanditry (monthly)
 
 ### 链3：科举-教育-家户-官员-公共生活
 
-> **实现状态：薄切片（M2-lite）。完整版链3大量分支尚未实现，见下方 ✅/⏳ 标记。**
+> **实现状态：真实 scheduler 薄切片（M2-lite）+ 链三第一层规则加厚。已落 `ExamPassed -> FamilyCore.ClanPrestigeAdjusted`，并有真实 `MonthlyScheduler` drain 测试。`EducationAndExams` 现在随 `ExamPassed` 写入考阶、分数、学业、塾望、塾师、宗房支持、恩义/羞压、心气劳迫 metadata；`FamilyCore` 用 credential metadata + 本族 person/clan 状态计算门望与婚议价值增量并写入结构化 metadata。完整版的 `ExamAttemptResolved`、OfficeAndCareer waiting list、SocialMemory Favor/Shame、PublicLife 放榜/士论投影、失败与停学旁路仍未实现。**
 
 **Trigger**：`WorldSettlements` 进入 `ExamSeason`，或 `EducationAndExams` 检测到 eligible aspirant。
 
@@ -338,9 +338,10 @@ WorldSettlements (seasonal)
 EducationAndExams (monthly)
   └── EducationAndExams.ExamAttemptResolved { result: Pass }
       ├──→ FamilyCore（通过事件，非直接写）✅ THIN-SLICE DONE
-      │     更新 clan.Prestige（+5）
-      │     更新 clan.MarriageAllianceValue（+3）
-      │     发出 ClanPrestigeAdjusted { clanId, causeKey: "exam-pass" }
+      │     ✅ FIRST THICKENING DONE：按 credential-prestige profile 更新 clan.Prestige / MarriageAllianceValue
+      │     画像维度：examTier、score、academyPrestige、stress、
+      │              clan standing、heir/branch role、adult unmarried status、marriage pressure
+      │     发出 ClanPrestigeAdjusted { clanId, causeKey: "exam-pass", delta, profile metadata }
       │
       ├──→ OfficeAndCareer（通过事件）⏳ NOT IMPLEMENTED
       │     创建 WaitingListEntry { personId, qualificationTier: examTier, waitingMonths: 0 }
@@ -1077,6 +1078,7 @@ PublicLifeAndRumor (monthly, P5+)
    - ✅ 链2 第一层规则加厚 — `GrainPriceSubsistenceHandlerTests` 覆盖粮价/供需 metadata、多维家户生计压力画像、结构化 subsistence-profile metadata、settlement scope 负例
    - ⏳ 链2 完整版（yieldRatio/灾荒、granarySecurity/routeRisk、家户粮仓/生计类型、迁徙/病亡、路险、SocialMemory/PublicLife 饥荒叙事）
    - ✅ 链3 薄切片（ExamPassed → ClanPrestigeAdjusted）— `ExamPrestigeChainTests.cs`
+   - ✅ 链3 第一层规则加厚 — `ExamResultHandlerTests` 覆盖 credential metadata、多维宗族声望画像、结构化 exam-prestige metadata、off-scope clan 负例
    - ⏳ 链3 完整版（OfficeAndCareer waiting list / SocialMemory Favor-Shame / PublicLife 放榜投影）
    - ✅ 链4 薄切片（ImperialRhythmChanged → AmnestyApplied → DisorderSpike）— `ImperialAmnestyDisorderChainTests.cs`
    - ✅ 链6 薄切片（DisasterDeclared → DisorderSpike → PublicLife）— `DisasterDisorderPublicLifeChainTests.cs` + metadata-only / repeated-declaration tests
@@ -1086,6 +1088,7 @@ PublicLifeAndRumor (monthly, P5+)
 3. **P2**：补充事件 handler 的**空实现**（先存在接口，再填充逻辑）
    - ✅ 链1 thin handler 已落并加厚（`ApplyTaxSeasonPressure` 读取多维 household profile；`DispatchPopulationDebtEvents`, `HandleEvents(YamenOverloaded)`）
    - ✅ 链2 thin handler 已落并加厚（`ApplyHarvestPricePulse` 写入粮价/供需 metadata；`ApplyGrainPriceSubsistencePressure` 读取多维 household profile）
+   - ✅ 链3 thin handler 已落并加厚（`ExamPassed` 写入 credential metadata；`ApplyExamPassPrestige` 读取 credential metadata 与 family-owned profile）
 4. **P3**：填充**压力公式和阈值**
 5. **P4**：连接**Unity 壳层投影**
 

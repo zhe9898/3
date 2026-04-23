@@ -381,8 +381,9 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
             return;
         }
 
-        clan.Prestige = Math.Clamp(clan.Prestige + 5, 0, 100);
-        clan.MarriageAllianceValue = Math.Clamp(clan.MarriageAllianceValue + 3, 0, 100);
+        ExamPrestigeProfile profile = ComputeExamPrestigeProfile(clan, person, domainEvent);
+        clan.Prestige = Math.Clamp(clan.Prestige + profile.PrestigeDelta, 0, 100);
+        clan.MarriageAllianceValue = Math.Clamp(clan.MarriageAllianceValue + profile.MarriageAllianceDelta, 0, 100);
 
         scope.RecordDiff(
             $"{clan.ClanName}因{person.GivenName}场屋得捷，门望升至{clan.Prestige}，婚议价值升至{clan.MarriageAllianceValue}。",
@@ -390,6 +391,123 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         scope.Emit(
             FamilyCoreEventNames.ClanPrestigeAdjusted,
             $"{clan.ClanName}因场屋得捷，门望有变。",
-            clan.Id.Value.ToString());
+            clan.Id.Value.ToString(),
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseExamPass,
+                [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+                [DomainEventMetadataKeys.PersonId] = person.Id.Value.ToString(),
+                [DomainEventMetadataKeys.ExamTier] = profile.Tier.ToString(),
+                [DomainEventMetadataKeys.ExamScore] = profile.Score.ToString(),
+                [DomainEventMetadataKeys.ExamPrestigeDelta] = profile.PrestigeDelta.ToString(),
+                [DomainEventMetadataKeys.ExamMarriageAllianceDelta] = profile.MarriageAllianceDelta.ToString(),
+                [DomainEventMetadataKeys.ExamTierPrestigePressure] = profile.TierPrestigePressure.ToString(),
+                [DomainEventMetadataKeys.ExamDistinctionPressure] = profile.DistinctionPressure.ToString(),
+                [DomainEventMetadataKeys.ExamAcademySignal] = profile.AcademySignal.ToString(),
+                [DomainEventMetadataKeys.ExamClanStandingPressure] = profile.ClanStandingPressure.ToString(),
+                [DomainEventMetadataKeys.ExamKinshipRolePressure] = profile.KinshipRolePressure.ToString(),
+            });
     }
+
+    private static ExamPrestigeProfile ComputeExamPrestigeProfile(
+        ClanStateData clan,
+        FamilyPersonState person,
+        IDomainEvent domainEvent)
+    {
+        ExamTier tier = ReadMetadataExamTier(domainEvent);
+        int score = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ExamScore, 75);
+        int academyPrestige = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ExamAcademyPrestige, 50);
+        int stress = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ExamStress, 50);
+
+        int tierPrestigePressure = tier switch
+        {
+            ExamTier.MetropolitanExam => 8,
+            ExamTier.PrefecturalExam => 6,
+            ExamTier.CountyExam => 4,
+            _ => 4,
+        };
+
+        int distinctionPressure = score switch
+        {
+            >= 115 => 3,
+            >= 100 => 2,
+            >= 88 => 1,
+            _ => 0,
+        };
+
+        int academySignal = academyPrestige switch
+        {
+            >= 75 => 2,
+            >= 50 => 1,
+            < 35 => -1,
+            _ => 0,
+        };
+
+        int clanStandingPressure = clan.Prestige switch
+        {
+            <= 25 => 2,
+            <= 45 => 1,
+            >= 80 => -1,
+            _ => 0,
+        };
+
+        int kinshipRolePressure = person.BranchPosition switch
+        {
+            BranchPosition.MainLineHeir => 1,
+            BranchPosition.BranchHead => 1,
+            _ => clan.HeirPersonId == person.Id ? 1 : 0,
+        };
+
+        int stressDrag = stress >= 80 ? -1 : 0;
+        int prestigeDelta = Math.Clamp(
+            tierPrestigePressure + distinctionPressure + academySignal + clanStandingPressure + kinshipRolePressure + stressDrag,
+            3,
+            12);
+
+        int marriageBase = tier is ExamTier.PrefecturalExam or ExamTier.MetropolitanExam ? 3 : 2;
+        int unmarriedAdultSignal = person.SpouseId is null && person.AgeMonths >= AdultAgeMonths ? 1 : 0;
+        int marriageNeedSignal = clan.MarriageAlliancePressure >= 65 ? 1 : 0;
+        int marriageAllianceDelta = Math.Clamp(
+            marriageBase + unmarriedAdultSignal + (distinctionPressure >= 2 ? 1 : 0) + marriageNeedSignal,
+            1,
+            7);
+
+        return new ExamPrestigeProfile(
+            tier,
+            score,
+            tierPrestigePressure,
+            distinctionPressure,
+            academySignal,
+            clanStandingPressure,
+            kinshipRolePressure,
+            prestigeDelta,
+            marriageAllianceDelta);
+    }
+
+    private static ExamTier ReadMetadataExamTier(IDomainEvent domainEvent)
+    {
+        return domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.ExamTier, out string? value)
+            && Enum.TryParse(value, ignoreCase: true, out ExamTier parsed)
+            && parsed != ExamTier.Unknown
+            ? parsed
+            : ExamTier.CountyExam;
+    }
+
+    private static int ReadMetadataInt(IDomainEvent domainEvent, string key, int fallback)
+    {
+        return domainEvent.Metadata.TryGetValue(key, out string? value) && int.TryParse(value, out int parsed)
+            ? parsed
+            : fallback;
+    }
+
+    private readonly record struct ExamPrestigeProfile(
+        ExamTier Tier,
+        int Score,
+        int TierPrestigePressure,
+        int DistinctionPressure,
+        int AcademySignal,
+        int ClanStandingPressure,
+        int KinshipRolePressure,
+        int PrestigeDelta,
+        int MarriageAllianceDelta);
 }

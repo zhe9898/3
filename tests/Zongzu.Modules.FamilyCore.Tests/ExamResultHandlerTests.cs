@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
@@ -60,6 +61,79 @@ public sealed class ExamResultHandlerTests
                 e => e.EventType == FamilyCoreEventNames.ClanPrestigeAdjusted
                      && e.EntityKey == "1"),
             "FamilyCore must emit ClanPrestigeAdjusted after exam pass.");
+    }
+
+    [Test]
+    public void ExamPassed_UsesCredentialProfileAndStructuredMetadata()
+    {
+        FamilyCoreModule module = new();
+        FamilyCoreState state = new();
+        state.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 30,
+            MarriageAlliancePressure = 70,
+            MarriageAllianceValue = 20,
+            HeirPersonId = new PersonId(1),
+        });
+        state.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(1),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Yuan",
+            AgeMonths = 24 * 12,
+            IsAlive = true,
+            BranchPosition = BranchPosition.MainLineHeir,
+        });
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer buffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 5),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            queries,
+            buffer,
+            new WorldDiff());
+
+        buffer.Emit(new DomainEventRecord(
+            KnownModuleKeys.EducationAndExams,
+            EducationAndExamsEventNames.ExamPassed,
+            "Zhang Yuan passed a stronger exam tier.",
+            "1",
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.ExamTier] = nameof(ExamTier.PrefecturalExam),
+                [DomainEventMetadataKeys.ExamScore] = "116",
+                [DomainEventMetadataKeys.ExamAcademyPrestige] = "80",
+                [DomainEventMetadataKeys.ExamStress] = "35",
+            }));
+
+        module.HandleEvents(new ModuleEventHandlingScope<FamilyCoreState>(
+            state, context, buffer.Events.ToList()));
+
+        Assert.That(state.Clans[0].Prestige, Is.EqualTo(42),
+            "A higher-tier, high-score heir credential should produce a stronger prestige rise.");
+        Assert.That(state.Clans[0].MarriageAllianceValue, Is.EqualTo(26),
+            "Credential tier, distinction, adult availability, and marriage pressure should shape marriage value.");
+
+        IDomainEvent prestigeEvent = buffer.Events.Single(e => e.EventType == FamilyCoreEventNames.ClanPrestigeAdjusted);
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseExamPass));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.SourceEventType], Is.EqualTo(EducationAndExamsEventNames.ExamPassed));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.PersonId], Is.EqualTo("1"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamTier], Is.EqualTo(nameof(ExamTier.PrefecturalExam)));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamScore], Is.EqualTo("116"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamPrestigeDelta], Is.EqualTo("12"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamMarriageAllianceDelta], Is.EqualTo("6"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamTierPrestigePressure], Is.EqualTo("6"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamDistinctionPressure], Is.EqualTo("3"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamAcademySignal], Is.EqualTo("2"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamClanStandingPressure], Is.EqualTo("1"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamKinshipRolePressure], Is.EqualTo("1"));
     }
 
     [Test]
