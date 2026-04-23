@@ -172,11 +172,7 @@ public sealed partial class PresentationReadModelBuilder
         SettlementId settlementId,
         bool hasOrderAftermath)
     {
-        return affordances
-            .Where(command =>
-                command.IsEnabled
-                && command.SettlementId == settlementId
-                && string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.PublicLife, StringComparison.Ordinal))
+        return EnumerateAffordancesForSurface(affordances, PlayerCommandSurfaceKeys.PublicLife, settlementId)
             .OrderBy(command => GetGovernanceAffordancePriority(command.CommandName, hasOrderAftermath))
             .ThenBy(command => command.CommandName, StringComparer.Ordinal)
             .FirstOrDefault();
@@ -358,8 +354,7 @@ public sealed partial class PresentationReadModelBuilder
         SettlementId settlementId,
         SettlementGovernanceLaneSnapshot? lane)
     {
-        return receipts
-            .Where(receipt => receipt.SettlementId == settlementId)
+        return EnumerateReceiptsForSurface(receipts, PlayerCommandSurfaceKeys.PublicLife, settlementId)
             .OrderBy(receipt => GetGovernanceDocketReceiptPriority(receipt, lane))
             .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.ExecutionSummary))
             .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.OutcomeSummary))

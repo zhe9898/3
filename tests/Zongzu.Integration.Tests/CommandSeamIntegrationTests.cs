@@ -185,21 +185,42 @@ public sealed class CommandSeamIntegrationTests
             builder,
             KnownModuleKeys.FamilyCore);
 
-        GameSimulation governanceSimulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260429);
-        PlayerCommandReceiptSnapshot officeReceipt = IssueFirstEnabledAffordanceForModuleAndReadReceipt(
-            governanceSimulation,
+        GameSimulation officeSimulation = CreateOfficeOnlySimulation(20260429);
+        SeedOfficeJurisdiction(officeSimulation, new SettlementId(12));
+        PlayerCommandReceiptSnapshot officeReceipt = IssueAcceptedCommandAndReadReceipt(
+            officeSimulation,
             builder,
-            KnownModuleKeys.OfficeAndCareer);
-        PlayerCommandReceiptSnapshot orderReceipt = IssueFirstEnabledAffordanceForModuleAndReadReceipt(
-            governanceSimulation,
+            KnownModuleKeys.OfficeAndCareer,
+            new PlayerCommandRequest
+            {
+                SettlementId = new SettlementId(12),
+                CommandName = PlayerCommandNames.PetitionViaOfficeChannels,
+            });
+        GameSimulation orderSimulation = SimulationBootstrapper.CreateM3OrderAndBanditryBootstrap(20260431);
+        orderSimulation.AdvanceMonths(2);
+        SettlementId orderSettlementId = builder.BuildForM2(orderSimulation).PublicLifeSettlements.Single().SettlementId;
+        PlayerCommandReceiptSnapshot orderReceipt = IssueAcceptedCommandAndReadReceipt(
+            orderSimulation,
             builder,
-            KnownModuleKeys.OrderAndBanditry);
+            KnownModuleKeys.OrderAndBanditry,
+            new PlayerCommandRequest
+            {
+                SettlementId = orderSettlementId,
+                CommandName = PlayerCommandNames.FundLocalWatch,
+            });
 
         GameSimulation warfareSimulation = SimulationBootstrapper.CreateP3CampaignSandboxBootstrap(20260430);
-        PlayerCommandReceiptSnapshot warfareReceipt = IssueFirstEnabledAffordanceForModuleAndReadReceipt(
+        warfareSimulation.AdvanceMonths(3);
+        SettlementId warfareSettlementId = builder.BuildForM2(warfareSimulation).CampaignMobilizationSignals.Single().SettlementId;
+        PlayerCommandReceiptSnapshot warfareReceipt = IssueAcceptedCommandAndReadReceipt(
             warfareSimulation,
             builder,
-            KnownModuleKeys.WarfareCampaign);
+            KnownModuleKeys.WarfareCampaign,
+            new PlayerCommandRequest
+            {
+                SettlementId = warfareSettlementId,
+                CommandName = PlayerCommandNames.ProtectSupplyLine,
+            });
 
         foreach (PlayerCommandReceiptSnapshot receipt in new[] { familyReceipt, officeReceipt, orderReceipt, warfareReceipt })
         {
@@ -248,40 +269,80 @@ public sealed class CommandSeamIntegrationTests
             .ToHashSet(StringComparer.Ordinal);
     }
 
+    private static void SeedOfficeJurisdiction(GameSimulation simulation, SettlementId settlementId)
+    {
+        OfficeAndCareerState officeState = simulation.GetModuleStateForTesting<OfficeAndCareerState>(KnownModuleKeys.OfficeAndCareer);
+        officeState.People.Add(new OfficeCareerState
+        {
+            PersonId = new PersonId(1),
+            DisplayName = "Zhang Wen",
+            SettlementId = settlementId,
+            HasAppointment = true,
+            OfficeTitle = "County Clerk",
+            AuthorityTier = 2,
+            JurisdictionLeverage = 64,
+            PetitionBacklog = 12,
+            PetitionPressure = 24,
+            AdministrativeTaskLoad = 8,
+            OfficeReputation = 32,
+            PromotionMomentum = 3,
+            DemotionPressure = 7,
+            LastOutcome = "Serving",
+            LastPetitionOutcome = "Queued",
+        });
+    }
+
     private static PlayerCommandReceiptSnapshot IssueFirstEnabledAffordanceForModuleAndReadReceipt(
         GameSimulation simulation,
         PresentationReadModelBuilder builder,
         string moduleKey)
     {
-        PlayerCommandAffordanceSnapshot affordance = builder.BuildForM2(simulation).PlayerCommands.Affordances
+        PlayerCommandAffordanceSnapshot? affordance = builder.BuildForM2(simulation).PlayerCommands.Affordances
             .Where(affordance => affordance.IsEnabled && string.Equals(affordance.ModuleKey, moduleKey, StringComparison.Ordinal))
             .OrderBy(static affordance => affordance.SurfaceKey, StringComparer.Ordinal)
             .ThenBy(static affordance => affordance.CommandName, StringComparer.Ordinal)
-            .First();
+            .FirstOrDefault();
 
-        PlayerCommandResult result = new PlayerCommandService().IssueIntent(
+        Assert.That(affordance, Is.Not.Null, $"Expected an enabled affordance for module {moduleKey}.");
+
+        return IssueAcceptedCommandAndReadReceipt(
             simulation,
+            builder,
+            moduleKey,
             new PlayerCommandRequest
             {
-                SettlementId = affordance.SettlementId,
+                SettlementId = affordance!.SettlementId,
                 ClanId = affordance.ClanId,
                 CommandName = affordance.CommandName,
             });
+    }
 
-        Assert.That(result.Accepted, Is.True, $"Expected enabled affordance {affordance.CommandName} in {moduleKey} to be accepted.");
+    private static PlayerCommandReceiptSnapshot IssueAcceptedCommandAndReadReceipt(
+        GameSimulation simulation,
+        PresentationReadModelBuilder builder,
+        string moduleKey,
+        PlayerCommandRequest command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        PlayerCommandResult result = new PlayerCommandService().IssueIntent(
+            simulation,
+            command);
+
+        Assert.That(result.Accepted, Is.True, $"Expected accepted command {command.CommandName} in {moduleKey}.");
 
         PresentationReadModelBundle afterBundle = builder.BuildForM2(simulation);
         PlayerCommandReceiptSnapshot? receipt = afterBundle.PlayerCommands.Receipts
             .Where(candidate =>
                 string.Equals(candidate.ModuleKey, moduleKey, StringComparison.Ordinal)
-                && string.Equals(candidate.CommandName, affordance.CommandName, StringComparison.Ordinal)
-                && candidate.SettlementId.Equals(affordance.SettlementId)
-                && Nullable.Equals(candidate.ClanId, affordance.ClanId))
+                && string.Equals(candidate.CommandName, command.CommandName, StringComparison.Ordinal)
+                && candidate.SettlementId.Equals(command.SettlementId)
+                && Nullable.Equals(candidate.ClanId, command.ClanId))
             .OrderByDescending(static candidate => candidate.OutcomeSummary.Length)
             .ThenByDescending(static candidate => candidate.Summary.Length)
             .FirstOrDefault();
 
-        Assert.That(receipt, Is.Not.Null, $"Expected a receipt for accepted affordance {affordance.CommandName} in {moduleKey}.");
+        Assert.That(receipt, Is.Not.Null, $"Expected a receipt for accepted command {command.CommandName} in {moduleKey}.");
         return receipt!;
     }
 }
