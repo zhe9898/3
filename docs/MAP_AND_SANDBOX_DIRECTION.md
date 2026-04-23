@@ -2,14 +2,22 @@
 
 This document fixes the direction of Zongzu's map stack so the project does not drift into a flat strategy map, a decorative poster, or a detached overworld minigame.
 
+**Important:** Do not confuse "no detached map game" with "no big map." Large maps are valid and important when they project real module state, route pressure, public legitimacy, imperial reach, conflict heat, or historical momentum. The map stack is a sand-table pressure instrument at every scale, from county desk to realm overview.
+
+For modern game-engineering standards (Unity, performance, observability), see `MODERN_GAME_ENGINEERING_STANDARDS.md`.
+For the spatial skeleton backend spec, see `SPATIAL_SKELETON_SPEC.md`.
+
 ## Core thesis
 
 The map system is **sandboxes at multiple scales**, not a normal game map plus one sandbox.
 
 Zongzu should read as:
-- a macro sand table for route, prefecture, and regional pressure
-- a county sand table for lived local pressure
-- conflict surfaces for aftermath and escalation
+- a **realm / world sand table** (天下图) for imperial reach, frontier posture, dynasty-cycle strain, and historical-trend pressure
+- a **macro / regional sand table** for route, prefecture, and regional pressure
+- a **county desk sand table** for lived local pressure
+- **conflict surfaces** for aftermath and escalation
+
+Scale switching is part of play, not cinematic spectacle. Scale switches answer "how wide is this pressure." Overlay switches answer "which social chain is carrying it."
 
 It should not read as:
 - a modern province-and-highway atlas
@@ -19,10 +27,41 @@ It should not read as:
 
 ## Scale stack
 
-### 1. Macro sandbox
+### 1. Realm / world sandbox (天下图)
 
 Purpose:
-- read the wider situation
+- read dynasty-scale pressure: imperial legitimacy, frontier posture, historical trends, succession uncertainty
+- understand how court pressure, fiscal demand, and military burden reach the player's region
+- decide which region or frontier corridor deserves closer review
+
+Primary scale:
+- dynasty realm
+- frontier belts (辽 / 西夏边界)
+- major river systems and canal trunk lines
+- circuit / route-level administrative bands
+
+What belongs here:
+- imperial edict reach and delay bands
+- frontier garrison posture and campaign spillover
+- dynasty-cycle legitimacy markers (mandate confidence, succession uncertainty)
+- major grain-route corridors
+- historical-trend pressure fronts (reform, rebellion, disaster waves)
+- region-entry pins (路 / 道)
+
+What does not belong here:
+- county-level detail
+- household or lineage genealogy
+- street-level town dressing
+
+**Spatial receipts for dynasty-cycle play:**
+- `MandateConfidence` drop → grain-route markers show supply anxiety, office seals show fracture cracks
+- `SuccessionUncertainty` → frontier garrison nodes show readiness pins, courier routes show message-delay bands
+- `AmnestyWave` → prison/penal nodes change state, route checkpoints soften
+
+### 2. Macro sandbox
+
+Purpose:
+- read the wider regional situation
 - understand what pressure is moving toward the player's county slice
 - decide which county or route corridor deserves closer review
 
@@ -48,7 +87,7 @@ What does not belong here:
 - street-by-street town dressing
 - tactics HUD
 
-### 2. County desk sandbox
+### 3. County desk sandbox
 
 Purpose:
 - show lived society
@@ -73,7 +112,7 @@ What belongs here:
 - public-life signals
 - route risk at local resolution
 
-### 3. Conflict vignette and later campaign board
+### 4. Conflict vignette and later campaign board
 
 Purpose:
 - visualize local damage, consequence, and escalation
@@ -172,6 +211,34 @@ County desk sandbox node families:
 - bridge
 - gate
 
+## Mutable terrain and disaster state
+
+The sand table is not static. When the world changes, the table should visibly change:
+
+**Water and flood states:**
+- `FloodRisk` ≥ 70 → farmland nodes show water tint; embankment nodes show breach marks
+- `CanalWindow = Closed` → water routes turn white (icing in winter, silt in dry season)
+- `EmbankmentStrain` ≥ 80 → embankment nodes show crack tokens; repair tokens appear if corvée is active
+
+**Damage and destruction states:**
+- `RouteConstraintEmerged` (bandit/raid) → route band shows scorch marks; nearby village nodes show damage debris
+- Local conflict (scale 2) → affected node shows broken-building token; casualty tallies appear on conflict vignette
+- Market disruption → market-town node dims; trade-route bands thin
+
+**Growth and upgrade states:**
+- Market town prosperity rising → node flag grows taller; market bands widen
+- Road repaired → route band returns to normal color; repair token removed
+- New settlement established → new node marker placed; connected by new route thread
+- Settlement abandoned → node marker grayed and lowered; route thread frayed
+
+**Node status changes:**
+- Village → Abandoned hamlet (population collapse, disaster, or war damage)
+- Market town → Walled town (prosperity + security investment)
+- Ferry → Blocked crossing (flood, ice, or conflict)
+- Granary → Depleted / Restocked (grain movement)
+
+All terrain changes must come from module-owned state or read models. Do not fake permanent geographic change as flavor text if it affects routes, settlement reach, trade, tax, military movement, disease, or migration.
+
 ## Recommended overlay grammar
 
 Macro overlays:
@@ -182,6 +249,8 @@ Macro overlays:
 - bandit corridor risk
 - military spillover
 - prefecture pressure
+- **reform pressure** (historical-process overlay)
+- **legitimacy** (public-confidence overlay)
 
 County overlays:
 - lineage influence
@@ -191,18 +260,39 @@ County overlays:
 - public attention
 - conflict heat
 - subsistence strain
+- **tax and paperwork** (administrative overlay)
+- **public rumor** (information overlay)
+
+Realm overlays:
+- imperial reach
+- frontier posture
+- dynasty-cycle strain
+- historical-trend front
+
+**Overlay switching UI:** Overlays are selected through physical objects on the desk edge:
+- A tray of **map-lens tokens** (one per overlay)
+- The player places the desired lens token onto the sandbox surface
+- Only one overlay active at a time per sandbox
+- Overlay state is preserved when switching scales (cross-scale traceability)
 
 ## MVP implementation rule
 
-Do not spend MVP effort on expensive scale-switch spectacle.
+The MVP must support **at least two scales**: macro sandbox (regional) and county desk sandbox (local). A bounded transition between them is acceptable for MVP.
 
-Instead:
-- make the macro sandbox one stable top-level board
-- make county entry pins clear
-- let county drill-down happen through one bounded transition
-- keep the county desk sandbox as the main work surface
+Scale switching is a **core operational mechanic**, not optional polish. The player should be able to:
+- see a pressure on the macro board
+- touch the affected county entry pin
+- arrive at the county desk sandbox with the same pressure chain still highlighted
 
-The project should become playable before it becomes cinematically seamless.
+**Cross-scale traceability rule:** When the player switches from macro to county (or back), the same `PressureKind` + `SettlementId` / `RouteId` chain must remain visually active. The pressure does not become a different unrelated screen.
+
+For MVP:
+- macro sandbox = one stable top-level board
+- county entry pins = clear and touchable
+- county drill-down = one bounded transition that preserves selection
+- county desk sandbox = the main work surface
+
+Post-MVP scales (realm / world sandbox, frontier board, campaign board) may be added additively without replacing the two-scale MVP foundation.
 
 ## Module mapping
 
@@ -220,6 +310,29 @@ Inside the Unity shell:
 - it should own route bands, county entry pins, waterway emphasis, and regional pressure markers
 - it should not yet own authoritative simulation logic
 - it may read a dedicated read-model snapshot such as `macro-sandbox-snapshot.json`
+
+## Taskful map surfaces
+
+Every map scale must answer "why open this now?" A taskful map exposes at least one of:
+- Current pressure objective (what the player must respond to)
+- Visible route cost (travel time, grain expense, labor burden)
+- Information reach (what the player can actually know)
+- Travel/message delay (how stale is this report?)
+- Risk band (where is danger concentrated?)
+- Modifier/event (what seasonal or disaster condition is active?)
+- Next drill-down locus (where to look closer?)
+
+An overmap whose only job is choosing a decorative tile is not a Zongzu map.
+
+## Fog and uncertainty
+
+The player's view is bounded by influence footprint:
+- **Fog of distance**: beyond information-network range, nodes show only rumor-grade summaries
+- **Stale reports**: distant regions display last-known state with age tint
+- **Partial overlays**: without clerk access, administrative data shows rough bands only
+- **Rumor distortion**: public-life signals may contradict; player must judge reliability
+
+A physical **"you are here / your reach ends here"** marker sits at the player's current locus. Commands resolve through influence footprint, route access, office access, public visibility, and message delay—not through omniscient map clicking.
 
 ## One-line rule
 

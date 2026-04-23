@@ -1,5 +1,7 @@
 # ENGINEERING_RULES
 
+For the bridge between these project rules and modern C# / Unity / game-engineering practice, see `MODERN_GAME_ENGINEERING_STANDARDS.md`.
+
 ## 1. Determinism is mandatory
 Same seed + same commands + same code version must produce the same authoritative result.
 

@@ -8,6 +8,10 @@ Every release line must pass:
 - feature-manifest compatibility tests
 - module boundary tests where practical
 - scheduler cadence tests proving three deterministic `xun` pulses can run before month-end consolidation without changing module ownership rules
+- player-facing cadence tests or reviews proving xun pulses remain internal by default: the shell exposes one normal monthly review / command window, summarizes xun motion as trends or traces, and reserves interrupt windows for urgent irreversible thresholds only
+- immersion-protection review for player-facing shell changes: no slider-wall main interaction, no profession-label identity model, no xun report spam, object-anchored pressure, and delayed receipt/residue feedback instead of bare score bumps
+- imperial-pressure presentation review: imperial pressure appears through object / institution carriers such as edicts, postings, yamen documents, tax / corvee writs, mourning markers, amnesty proclamations, appointment notices, and border dispatches; no player-facing emperor button, edict editor, or unearned court-control surface
+- history-calibration review: Renzong-era data may seed initial institutional pressure, named carriers, and world tone, but no fixed-date historical rail may bypass deterministic rule resolution or player-earned counterfactual outcomes
 
 ## Phase M0
 - 12-month empty/minimal world replay equality
@@ -41,6 +45,7 @@ Every release line must pass:
 - notification history retention stays bounded, preserves the latest notice per source module, and trims the remaining oldest notices first
 - runtime-only debug traces reset after save/load and do not affect compatibility
 - first-pass shell composes from read-model bundles only
+- presentation bundle surfaces household social pressure and player influence footprint as read-only projections; stable M2 can distinguish the player's anchor household local agency from observed household pressure while disabled office, order, and force paths remain absent or watch-only
 - great hall and desk-sandbox public-life summaries compose from `PublicLifeAndRumor` read models only and remain read-only
 - venue-channel public-life summaries compose from `PublicLifeAndRumor` read models only and remain read-only
 - public-life surfaces can show how榜文、街谈、路报、州牒 differ without UI inventing new authority logic or private state
@@ -119,6 +124,8 @@ Every release line must pass:
 - birth registration must preserve parent links / parent child lists and increase clan-owned care burden
 - death registration must preserve cause-specific death events while increasing clan-owned funeral debt
 - death aftermath must distinguish child death, ordinary adult / elder death, and current-heir death; a current-heir death with no adult successor must create heavier inheritance, branch, separation, and marriage pressure than one with an adult successor
+- external violent / warlike deaths targeting a clan `PersonId` must enter the same `FamilyCore` death-pressure profile without FamilyCore re-emitting a duplicate cause-specific death event; adult-successor and no-adult-successor heir deaths must still produce different pressure bands
+- a current-heir death with no adult successor must produce an end-to-end readable loop: family notice / ancestral-hall guidance points to `议定承祧`, the bounded command writes a receipt, the deceased heir is not re-selected, and the following month still exposes readable lifecycle state
 - death aftermath pressure must project into notice and ancestral-hall guidance so adult-successor deaths point first toward `议定丧次` / stabilizing the new承祧, while no-adult-successor or only-young-heir gaps point first toward `议定承祧` and branch containment; this remains guidance only, not a full funeral or inheritance system
 - bounded lifecycle commands such as `议亲定婚`, `议定承祧`, `拨粮护婴`, and `议定丧次` must resolve through deterministic pressure profiles rather than fixed deltas, reading only `FamilyCore`-owned lifecycle state and surfacing the relevant pressure bands in receipts
 - house-branch conflict commands such as `偏护嫡支`, `责令赔礼`, `准其分房`, `停其接济`, `请族老调停`, and `请族老出面` must also resolve through deterministic pressure profiles rather than fixed deltas, reading only `FamilyCore`-owned conflict state and surfacing the relevant pressure bands in receipts
@@ -145,6 +152,8 @@ Every release line must pass:
 - legacy governance-lite office saves migrate from schema `1` to `2` to `3` without changing enabled-module or module-envelope key sets
 - legacy governance-lite office saves reconstruct v2-only task/petition/service descriptors first, then backfill queue pressure and clerk dependence conservatively enough to continue replay on the current schema path
 - governance-lite jurisdiction queries expose clerk dependence and administrative task load so order/trade slices can distinguish paper orders from actual local reach without direct office-state writes
+- future office-depth projections distinguish credential, actual post, clerk dependence, patron / family pull, evaluation pressure, and memorial attack risk rather than treating official rank as automatic authority
+- court-facing office context, if shown before the imperial pack exists, remains watch-only appointment rumor / reform talk / censor-pressure / dispatch wording and does not resolve court decisions inside `OfficeAndCareer`
 - `OrderAndBanditry` and `ConflictAndForce` may read office leverage only through queries, not direct mutation
 - first-pass presentation may surface office appointments, task tiers, petition categories, petition backlog, and promotion/demotion pressure summaries only when governance-lite is enabled, and must remain office-empty on stable M2/M3 paths
 - governance-lite presentation may surface bounded office command affordances and recent office command receipts only when governance-lite is enabled, and must remain command-empty on stable M2/M3 paths
@@ -194,6 +203,19 @@ Every release line must pass:
 - warfare-aftercare notifications can pull same-settlement fallout traces into `NarrativeProjection` so honors, blame, relief, and route-cleanup context remain explainable without changing authority ownership
 - read-only hall / desk / campaign-board surfaces may summarize aftermath dockets from warfare plus downstream fallout projections only; they must not add authority UI or synthetic save state
 - read-only office / warfare surfaces may show command affordances and recent receipts, but those surfaces must still not resolve authority inside UI code
+
+### Imperial / dynasty-cycle pack
+- imperial or court-facing state, if introduced, has an explicit owner such as a future `CourtAndThrone` / `WorldEvents` pack and does not live in UI or `NarrativeProjection`
+- imperial rhythm such as accession, mourning, amnesty, succession uncertainty, mandate confidence, or court-time disruption affects local modules only through queries / commands / domain events
+- imperial pressure remains mediated through office, public-life, world, warfare, market, household, memory, and projection surfaces until a court-facing pack explicitly grants higher influence reach
+- court-process state, if introduced, models memorial queues, audience or council attention, agenda pressure, censor pressure, appointment slates, policy windows, and dispatch targets as owned state or projections under the court pack, not as UI cutscenes
+- court-process outputs affect local modules only through appointments, policies, dispatches, rhythm bands, commands, queries, and domain events; they may not directly rewrite household, market, order, or settlement state
+- regime-authority state, if introduced, models recognition, appointment reach, tax reach, grain-route reach, force backing, ritual claim, public belief, office defection, and local compliance rather than a single dynasty-name flag
+- rebellion-to-polity escalation grows from protection failure, armed autonomy, force backing, grain-route control, office defection, public legitimacy, and memory pressure rather than a one-step event
+- succession struggle, usurpation, restoration, and dynasty repair remain deterministic from seed + state + player commands
+- player regime-scale agency resolves through bounded leverage: force, grain, logistics, office access, faction memory, public legitimacy, information reach, and succession conditions
+- historical counterfactuals expose cause traces and residue; no timeline-editor command or global year-trigger stat rewrite is accepted
+- imperial / dynasty-cycle pack saves/load preserve module-envelope ownership and can be disabled without corrupting lower-scope save paths
 
 ## Boundary tests
 At integration level, verify:

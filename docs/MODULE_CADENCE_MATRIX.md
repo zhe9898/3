@@ -14,6 +14,8 @@ Use this file when deciding whether a rule should resolve at `xun`, `month`, or 
 
 ### `xun`
 Use for near-life pressure, short-lived local drift, and high-frequency state that players may later read as lived momentum.
+It is an internal authoritative cadence, not a default player-facing turn.
+Xun outputs should normally become trend, pressure, hotspot, or month-end explanation; only urgent threshold crossings should request an interrupt window.
 
 ### `month`
 Use for consolidation, structured diffs, major household review, command intake, and formal projection.
@@ -117,6 +119,7 @@ Presentation does not own authoritative simulation state. It may preview xun-dri
 
 Do not:
 - make every module run at `xun` just because high frequency feels more alive
+- make `xun` a routine player turn or require the player to advance three sub-turns every month
 - hide authoritative `xun` state in presentation-only caches
 - let a module invent a private cadence that the scheduler cannot inspect
 - let projection become an alternate simulation layer

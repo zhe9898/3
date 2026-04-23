@@ -610,19 +610,65 @@ public sealed class PresentationReadModelBundle {
     IReadOnlyList<ClanNarrativeSnapshot> ClanNarratives;
     IReadOnlyList<SettlementSnapshot> Settlements;
     IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements;
+    IReadOnlyList<HouseholdPressureSnapshot> Households;
+    IReadOnlyList<HouseholdSocialPressureSnapshot> HouseholdSocialPressures;
     IReadOnlyList<EducationCandidateSnapshot> EducationCandidates;
     IReadOnlyList<AcademySnapshot> Academies;
     IReadOnlyList<ClanTradeSnapshot> ClanTrades;
     IReadOnlyList<MarketSnapshot> Markets;
-    IReadOnlyList<TradeRouteSnapshot> TradeRoutes;
+    IReadOnlyList<ClanTradeRouteSnapshot> ClanTradeRoutes;
     IReadOnlyList<SettlementPublicLifeSnapshot> PublicLifeSettlements;
+    IReadOnlyList<SettlementDisorderSnapshot> SettlementDisorder;
     IReadOnlyList<OfficeCareerSnapshot> OfficeCareers;
     IReadOnlyList<JurisdictionAuthoritySnapshot> OfficeJurisdictions;
+    IReadOnlyList<SettlementGovernanceLaneSnapshot> GovernanceSettlements;
+    GovernanceFocusSnapshot GovernanceFocus;
+    GovernanceDocketSnapshot GovernanceDocket;
+    HallDocketStackSnapshot HallDocket;
+    PlayerInfluenceFootprintSnapshot InfluenceFootprint;
     IReadOnlyList<CampaignFrontSnapshot> Campaigns;
     IReadOnlyList<CampaignMobilizationSignalSnapshot> CampaignMobilizationSignals;
     IReadOnlyList<NarrativeNotificationSnapshot> Notifications;
     PlayerCommandSurfaceSnapshot PlayerCommands;
     PresentationDebugSnapshot Debug;
+}
+
+public sealed class HouseholdSocialPressureSnapshot {
+    HouseholdId HouseholdId;
+    string HouseholdName;
+    SettlementId SettlementId;
+    ClanId? SponsorClanId;
+    LivelihoodType Livelihood;
+    string PrimaryDriftKey;
+    string PrimaryDriftLabel;
+    int PressureScore;
+    bool IsPlayerAnchor;
+    string AttachmentSummary;
+    string VisibleChainSummary;
+    IReadOnlyList<HouseholdSocialPressureSignalSnapshot> Signals;
+}
+
+public sealed class PlayerInfluenceFootprintSnapshot {
+    HouseholdId? AnchorHouseholdId;
+    string AnchorHouseholdName;
+    string AnchorHouseholdSummary;
+    string EntryPositionLabel;
+    string Summary;
+    IReadOnlyList<InfluenceReachSnapshot> Reaches;
+}
+
+public sealed class InfluenceReachSnapshot {
+    string ReachKey;
+    string Label;
+    bool IsActive;
+    bool HasCommandAffordance;
+    bool IsPlayerAnchor;
+    bool HasLocalAgency;
+    int ReachScore;
+    string LeverageSummary;
+    string LocalAgencySummary;
+    string ConstraintSummary;
+    string CommandSummary;
 }
 
 public sealed class PlayerCommandSurfaceSnapshot {
@@ -741,6 +787,8 @@ public sealed class ModulePayloadFootprintSnapshot {
 
 Current note:
 - the read-model bundle now carries `ClanNarratives` so lineage conflict, shame, and favor pressure can be shown in the family council without reading module state directly
+- the read-model bundle now also carries `Households`, `HouseholdSocialPressures`, and `InfluenceFootprint` as runtime-only joins across household, lineage, market, education, yamen, public-life, order, and force projections; these fields are not saved and do not create a player route system
+- `InfluenceFootprint` distinguishes the player's anchor household (`OwnHousehold`, local agency) from observed household pressure (`ObservedHouseholds`, indirect influence only)
 - `PlayerCommands` now spans family, office, and warfare affordances/receipts as read-only presentation data only
 - family command targeting is expressed through optional `ClanId` plus `TargetLabel`; it does not create a new save namespace
 
@@ -754,6 +802,7 @@ Diagnostics harness note:
 - scale summaries and top module payload footprints are also runtime-only diagnostics
 - payload-summary headlines and migration-consistency status are also runtime-only diagnostics
 - player-command affordances and receipts in the presentation bundle are also runtime-only read models
+- household social-pressure and influence-footprint snapshots in the presentation bundle are also runtime-only read models
 - they are not saved in authoritative module namespaces
 
 ## 5. Relationship and grudge data

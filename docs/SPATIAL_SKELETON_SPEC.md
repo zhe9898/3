@@ -10,6 +10,8 @@
 
 它遵循 `MODULE_BOUNDARIES §1`：所有权归 `WorldSettlements`。
 
+它遵循 `MODERN_GAME_ENGINEERING_STANDARDS.md` §3 System Standards 和 §4 Unity Presentation Standards。
+
 它是对 skill pack 全集（50+ references）的 Zongzu 项目化收敛。主要依据：
 
 **空间与地理**
@@ -1675,6 +1677,105 @@ public interface IImperialEventTestHarness
 | 力家族 | Force Family | jiading / lineage_guard / escort_band / militia / yamen_force 等 |
 | 神经末梢 | Domain Event | `WorldSettlementsEventNames` 下模块对外广播 |
 | 活世界自检 | Liveness Check | 第 22 章 12/60 月节律断言 |
+
+---
+
+## 第二十七章：壳层对象锚点与 2.5D 深度契约（UI-Shell 收敛）
+
+空间骨骼不是纯后端数据结构。它必须能在 Unity 壳层中**被玩家看见、触摸、解读**。本章把 backend spec 收敛到 `VISUAL_FORM_AND_INTERACTION.md` 和 `UI_AND_PRESENTATION.md` 的对象锚点系统。
+
+### 27.1 从 NodeKind 到 Object Anchor 的映射
+
+每个 `SettlementNodeKind` 在壳层中必须对应一个**物理对象**，不是浮动图标：
+
+| NodeKind | Shell object anchor | 2.5D depth hint | Player touch result |
+|----------|--------------------|-----------------|---------------------|
+| `CountySeat` | 县衙模型（微缩，置于沙盘边缘） | 中景（desk sandbox 边缘） | 打开衙门案牍面板 |
+| `MarketTown` | 市镇聚落块（带市集旗） | 中景 | 打开市集节律 + 牙行消息 |
+| `Village` | 村舍群（更小，带炊烟动画） | 远景（desk sandbox 深处） | 打开村情（徭役、收成、佃户） |
+| `LineageHall` | 祠堂建筑（玩家宗族为可交互主模型） | 近景（desk 近边缘） | 跳转祖堂表面 |
+| `Granary` | 粮仓（圆顶 / 方仓） | 中景 | 打开粮储 + 赈济开关 |
+| `Ferry` | 渡口（小船 + 码头） | 中景 | 打开过渡队列 + 水陆交接信息 |
+| `Temple` | 庙宇（塔 / 殿） | 中景 | 打开节庆 + 布施 + 谣传 |
+| `Academy` | 书院（门楼 + 讲堂） | 中景 | 打开科场流 + 师徒网 |
+| `CovertMeetPoint` | **不直接显示**；通过 rumor 或情报间接显形 | — | 不直接触摸 |
+| `SmugglingCache` | **不直接显示**；通过 `OrderAndBanditry` 情报或查获事件显形 | — | 不直接触摸 |
+
+### 27.2 Route 的壳层表现
+
+路线在 desk sandbox 上是**物理条带**，不是画线：
+
+- `LandRoad` → 土路纹理条带，宽度和颜色随 `Reliability` 变化
+- `WaterRiver` / `WaterCanal` → 水道纹理条带，冬季可能结冰变白
+- `FerryLink` → 渡口处有船形桥接物
+- `MountainPath` → 更窄、更高 z 的条带（山径感）
+
+路线条带的颜色 = `Reliability` 映射：
+- 70-100：土黄 / 水蓝（正常）
+- 40-70：赭色（有风险）
+- <40：暗红或断线（危险 / 不可通）
+
+`SmugglingCorridor` / `FugitivePath` **不绘制为可见条带**。它们的存在通过节点间 rumor 连接或情报纸片间接表示。
+
+### 27.3 前景 / 动作 / 背景三层分离（Desk Sandbox）
+
+Desk sandbox 必须遵守 `VISUAL_FORM_AND_INTERACTION.md` 的表面语法三层：
+
+**前景层（Foreground）**
+- 位置：沙盘中央偏玩家侧（z 最近）
+- 内容：`GetCurrentLocus()` 返回的节点 + 1–3 个关联命令标记
+- 表现：节点被轻微抬高（pop-up），周围有 Focus Ring 光晕；命令标记是小型令牌（可拾取）
+
+**动作层（Action）**
+- 位置：沙盘中央
+- 内容：Consequence Context 面板（展开的内核溯因链）
+- 表现：打开的书卷或折叠面板，从 focus 节点延伸出来；显示节点压力 → 路线传导 → 户房官牵连
+
+**背景层（Background）**
+- 位置：沙盘深处（z 最远）+ 沙盘外墙面
+- 内容： ambient 季节带、远处节点脉动、路线热纹
+- 表现：季节带以天空色或墙面色渐变表示；远处节点有微弱呼吸动画
+
+### 27.4 玩家触摸契约
+
+玩家与 desk sandbox 的交互必须是**物理触摸**，不是鼠标悬停：
+
+1. **单指触摸节点** → 节点轻微下沉 → 弹出 foreground 信息（当前焦点 + 可用命令）
+2. **双指捏合** → 缩放沙盘（但缩放范围受限，不能变成平面地图）
+3. **滑动路线** → 路线高亮，显示 route 详情（但不打开新屏幕）
+4. **长按节点** → 打开 consequence context 书卷（动作层）
+5. **拖动命令令牌到节点** → 触发对应命令（如把 "护送" 令牌拖到路线上）
+6. **按压沙盘边缘的 seal** → 确认本月决策，结束玩家回合
+
+### 27.5 2.5D 深度规范
+
+Desk sandbox 不是 2D 地图。它是**有深度的微缩场景**：
+
+- **z 分层**：前景（玩家侧）> 动作层 > 中景（主要节点）> 远景（边缘节点）> 背景墙
+- **高度**：县衙 > 市镇 > 村庄（行政等级对应物理高度，暗示权力层级）
+- **透视**：微缩透视（miniature diorama），不是正交投影。有轻微的俯视角度（约 30°）
+- **比例**：节点间距离被压缩（兰溪 9 节点在 1m × 0.6m 沙盘内），但相对位置正确
+- **材质**：沙盘底座 = 木质桌面 + 沙面纹理；节点 = 陶瓷 / 木质微缩建筑；路线 = 布条或画线
+
+### 27.6 与 NarrativeProjection 的接缝
+
+`NarrativeProjection` 产出的通知**必须映射到物理对象**：
+
+- Urgent notice → 红色 notice pin 插到对应节点上
+- Consequential notice → 白色 notice pin
+- Background rumor → 淡色纸片贴到沙盘边缘
+- 通知被玩家阅读后 → pin 变灰但不消失（留下阅读痕迹）
+
+### 27.7 壳层反模式（禁止）
+
+| 反模式 | 说明 | 检测方法 |
+|--------|------|----------|
+| 2D 平面地图 | 节点变成地图上的平面图标 | 检查是否有 z 分层 |
+| 浮动 HUD | 信息框悬浮在空中，不锚定对象 | 检查每个 UI 元素是否有物理父对象 |
+| 无限缩放 | 沙盘可缩放到失去比例感 | 检查缩放范围是否受限 |
+|  omnipresent status bar | 顶部/底部有常驻状态条 | 检查是否有全局 HUD；信息应在对象上 |
+| 点击即全屏 | 触摸节点后打开全屏新界面 | 检查信息是否在沙盘内展开 |
+| 路线 = 纯线段 | 路线没有宽度、材质、季节变化 | 检查 route renderer 是否有 texture 和 width |
 
 ---
 

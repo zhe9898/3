@@ -2,6 +2,8 @@
 
 ## Locked stack for the current production line
 
+The code, analyzer, module, system, Unity presentation, performance, and content-standard interpretation for this stack is defined in `MODERN_GAME_ENGINEERING_STANDARDS.md`.
+
 ### Engine / platform
 - Engine host: **Unity LTS**
 - Primary platform: **Windows desktop**

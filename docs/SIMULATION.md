@@ -5,6 +5,9 @@ This document defines the authoritative simulation cadence and monthly scheduler
 For the higher-level design rule that the world moves first, projection comes after diffs, and the player only acts late in the monthly cycle, see `RULES_DRIVEN_LIVING_WORLD.md`.
 For the rule that precision is allocated by focus ring rather than by a flat status ladder, see `SIMULATION_FIDELITY_MODEL.md`.
 For the per-module time contract, see `MODULE_CADENCE_MATRIX.md`.
+For the living-world structure that this loop serves, see `LIVING_WORLD_DESIGN.md`.
+For the development route and phase ownership, see `GAME_DEVELOPMENT_ROADMAP.md`.
+For modern game-engineering standards, see `MODERN_GAME_ENGINEERING_STANDARDS.md`.
 
 ## Core cadence rule
 
@@ -14,6 +17,12 @@ Use this cadence instead:
 
 - `month` is the outer review shell
 - `xun` (`early / mid / late month`) is the inner living pulse
+
+Non-negotiable player-facing rule:
+- `xun` is a scheduler cadence, not the normal player turn cadence
+- the player should not click through `early / mid / late month` as three routine turns
+- normal review, interpretation, and command happen at the monthly shell
+- only urgent red-band or irreversible items may interrupt the month, and those interrupts must be narrow response windows rather than a daily or xun alert treadmill
 
 In plain terms:
 - the player still receives a monthly review and major command window
@@ -44,6 +53,8 @@ This is where the game should resolve:
 
 The xun pulse is not a full player turn.
 It is the world's internal breathing rhythm.
+Most xun-level movement should be absorbed into trend state, pressure accumulation, hotspot staging, and later month-end explanation.
+If a xun event becomes visible immediately, it must be because it crossed a threshold such as death, flight, violence, office seizure, route collapse, disaster impact, or another irreversible / time-sensitive state.
 
 ### Monthly shell
 
@@ -71,6 +82,10 @@ These longer bands may still leak short-term pressure into xun and monthly play.
 
 ## Monthly shell with three xun pulses
 
+This section describes authoritative scheduler order.
+It is not a UI mandate to expose three separate player turns per month.
+The UI should normally present one monthly review, with xun motion summarized as trends, cause traces, and urgent exceptions.
+
 ### Phase 0: prepare month
 - current date known
 - `PersonRegistry` runs age progression and life-stage checks (so all modules in Phase 1 see current life stage)
@@ -81,9 +96,9 @@ These longer bands may still leak short-term pressure into xun and monthly play.
 ### Phase 1: run three xun pulses
 
 Each month contains:
-1. `上旬`
-2. `中旬`
-3. `下旬`
+1. `shangxun` / early-month pulse
+2. `zhongxun` / mid-month pulse
+3. `xiaxun` / late-month pulse
 
 Each xun pulse should run the same deterministic sub-order.
 
@@ -181,10 +196,13 @@ The player acts through bounded commands:
 The normal rule remains:
 - player review is monthly
 - player action is monthly
+- ordinary xun pulses are not separate player turns
+- the player should usually choose after seeing the month-end projection, not after every internal pulse
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window
 - these should stay rare and should not turn the game into a daily alert treadmill
+- an interrupt should offer only the command surface justified by the crisis, then return to the monthly shell
 
 ### Phase 6: finalize month
 - replay hash checkpoint
@@ -219,6 +237,61 @@ Projection should usually:
 - compress repeated pulse strain into one readable month-end summary
 - surface only the xun events that crossed an urgency or irreversibility threshold
 - keep background xun motion visible through trend wording, route heat, notices, and hotspot surfaces
+
+## MVP minimum monthly heartbeat
+
+For the MVP, the simulation must prove it can run the following minimal cycle deterministically:
+
+```
+Month N (example: 1100-03)
+├── 上旬
+│   ├── WorldSettlements: update route reliability, seasonal vulnerability
+│   ├── PopulationAndHouseholds: apply subsistence, labor strain, illness progression
+│   ├── FamilyCore: resolve support burden, check for urgent kin events
+│   └── SocialMemoryAndRelations: update rumor temperature, obligation decay
+├── 中旬 (same sub-order)
+│   ├── (modules repeat)
+│   └── EducationAndExams: exam-season check if applicable
+├── 下旬 (same sub-order)
+│   ├── (modules repeat)
+│   └── TradeAndIndustry: route profitability, debt pressure escalation
+├── Month-end
+│   ├── Domain event snapshot
+│   ├── Diff generation (people, households, clans, settlements)
+│   ├── NarrativeProjection: urgent / consequential / background grouping
+│   └── Player review window opens
+├── Player command phase
+│   ├── Bounded commands issued
+│   ├── Command receipts staged for Month N+1
+│   └── Optional: mark watch items
+└── Month finalization
+    ├── Replay hash checkpoint
+    ├── Autosave
+    └── Advance date → Month N+1
+```
+
+### MVP determinism check
+A 20-year headless run with the same seed must produce:
+- Identical replay hash at month 240
+- No divergence in `PersonRegistry` population count > 2%
+- No impossible kinship states (incest, negative ages, orphaned minors without guardian)
+- Valid save/load roundtrip at years 5, 10, 15, 20
+
+### MVP command window
+The player has a bounded command window each month. The MVP must support at least these command types:
+- Family lifecycle: `议定承祧`, `议定丧次`, `议亲定婚`, `拨粮护婴`
+- Trade/household: `GuaranteeDebt`, `FundStudy`, `EscortRoute`, `InvestEstate`
+- Public/local: `PetitionYamen`, `RecommendPerson`, `Endure`
+
+Each command is validated against:
+1. **Authority check** — Does the player have the required influence (prestige, credit, office, lineage position)?
+2. **Precondition check** — Does the world state satisfy the command's requirements?
+3. **Cost reservation** — Are resources available (cash, grain, labor, reputation)?
+4. **Autonomy check** — For commands targeting other households or adults, does the target accept or resist?
+5. **Resolution** — Deterministic outcome based on world state + command + small bounded randomness (seeded)
+6. **Receipt** — Structured receipt emitted as domain event, surfaced in projection next month
+
+Commands that fail any of checks 1–4 produce a `CommandRejected` receipt with explanation trace, not a silent failure.
 
 ## Scheduler extension rule
 

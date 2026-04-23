@@ -19,6 +19,9 @@ Post-MVP features must extend the same:
 - office-mediated authority
 - title-based resource access
 - office-family tension
+- living official pressure: credential, actual post, patronage, clerk dependence, family pull, evaluation risk, memorial attack exposure
+- yamen / document contact as an institution surface rather than a quest giver
+- court-facing rumors and dispatch language as watch-only pressure until the imperial pack exists
 
 Current lite note:
 - `OfficeAndCareer.Lite` is now active through a dedicated governance-lite bootstrap path as the first formal authority layer after local exams
@@ -26,6 +29,7 @@ Current lite note:
 - `OfficeAndCareer.Lite` now includes bounded appointment pressure, clerk dependence, promotion/demotion pressure, administrative task assignment, and petition handling inside the office-owned namespace
 - current lite office leverage may feed disorder or local-force modules only through read-only queries; it does not grant direct writes into those modules
 - the lighter office v2.1 slice still surfaces administrative-task tier, petition-outcome category, and authority-trajectory wording as read-only descriptors only; the later queue/dependence lift moves save schema to `3` but still does not add authority UI
+- future governance depth may show court attention, reform talk, censor pressure, appointment rumor, and dispatch phrasing as read-only context, but it must not resolve court decisions inside `OfficeAndCareer.Lite`
 
 ### Order and disorder pack
 - `OrderAndBanditry` full
@@ -89,6 +93,25 @@ Pre-implementation checklist:
 - multi-settlement projections
 - broader trade and order pressure
 
+### Imperial and dynasty-cycle pack
+- court and throne pressure
+- court process: memorial queue, audience/council attention, agenda pressure, censor pressure, appointment slate, policy window, and dispatch targets
+- succession uncertainty, accession, mourning, amnesty, and ritual legitimacy
+- factional appointment struggle and court-time disruption
+- official alignment and defection: office-holders, clerks, patrons, family obligations, faction labels, and local elites deciding whether pressure is carried, delayed, reinterpreted, or resisted
+- regime authority: recognition, appointment reach, tax reach, grain-route reach, force backing, ritual claim, public belief, office defection, and local compliance
+- rebellion-to-polity escalation
+- restoration, usurpation, regime repair, and dynasty consolidation arcs
+- mandate confidence, dynastic fatigue, regional fracture, and recognition pressure
+
+Integration seam:
+- this pack must not become a detached grand-strategy layer
+- throne-facing play must still read and write through module-owned state, commands, domain events, structured diffs, and projections
+- rebellion and polity formation must grow from `OrderAndBanditry`, `ConflictAndForce`, `WarfareCampaign`, `OfficeAndCareer`, `WorldSettlements`, `PublicLifeAndRumor`, and `SocialMemoryAndRelations`
+- player regime-scale agency must remain bounded by force, grain, logistics, office access, public legitimacy, faction memory, information reach, and succession conditions
+- court processes must produce appointment, policy, dispatch, faction, or rhythm pressure that downstream modules can read; they may not directly rewrite household, market, or settlement state
+- opening-era historical calibration may seed pressures and actors, but this pack must support rule-driven divergence, failed reforms, successful reforms, delayed crises, accelerated crises, usurpation, restoration, or repaired continuity when the causal chain earns it
+
 ### Presentation polish pack
 - richer room states
 - weddings, funerals, banquets
@@ -99,7 +122,9 @@ Pre-implementation checklist:
 Post-MVP may deepen:
 - exams into school networks, patronage, rank ladders
 - trade into guilds, caravan chains, goods categories, finance complexity
-- office into career tracks, appointments, formal authority
+- office into career tracks, appointments, formal authority, clerk blocs, memorial attacks, patronage, and family entanglement
+- court process into agenda pressure, memorial queues, appointment slates, censor / remonstrance pressure, and local dispatch chains
+- regime pressure into recognition, tax/grain reach, force backing, public belief, usurpation, restoration, and dynasty repair
 - outlaw/banditry into camps, black routes, coercive pressure, limited negotiation and suppression arcs
 - war into campaign-scale desk-sandbox play
 

@@ -12,6 +12,21 @@ For every module, define:
 - explicit non-responsibilities
 
 For the full person-data ownership model, see `PERSON_OWNERSHIP_RULES.md`.
+For the design rule that historical figures, reforms, wars, and great trends enter as pressure rather than rail scripts, see `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`.
+
+## Historical process is not currently a hidden module
+
+Named historical people and great trends may appear in design, projections, seed data, and later feature packs, but they do not justify bypassing module ownership.
+
+Until a dedicated historical-process pack exists:
+- office and appointment pressure belongs in `OfficeAndCareer`
+- exam and scholar pressure belongs in `EducationAndExams`
+- fiscal, tax, route, granary, and settlement pressure belongs in `WorldSettlements`, `TradeAndIndustry`, or `PopulationAndHouseholds` as appropriate
+- public legitimacy, edicts, reform rumor, and street interpretation belong in `PublicLifeAndRumor` / `NarrativeProjection` as projection or public-life state
+- war, frontier, and supply pressure belongs in `ConflictAndForce` / `WarfareCampaign`
+- memories, faction labels, obligations, and shame belong in `SocialMemoryAndRelations`
+
+A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
 ## 0. PersonRegistry (Kernel layer, identity-only)
 ### Owns

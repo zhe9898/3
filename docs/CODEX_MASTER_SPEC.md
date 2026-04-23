@@ -1,21 +1,25 @@
 # CODEX_MASTER_SPEC
 
 ## One-paragraph summary
-Build a Windows single-player living-society simulation inspired by Northern Song China, where the world advances through sub-month pulses inside a monthly review shell before the player acts. The player is a household-side or lineage-side actor using bounded leverage inside a spatialized shell: great hall or study, ancestral hall, desk sandbox, and conflict or campaign vignettes. The authoritative architecture is a modular monolith whose modules own their own state and communicate through Query, Command, and DomainEvent. Household life, lineage pressure, commoner survival, exams, trade, office, outlaw or banditry, conflict, and later campaign warfare are interlinked social pathways rather than isolated game modes.
+Build a Windows single-player living-society simulation inspired by Northern Song China, where the world advances through sub-month pulses inside a monthly review shell before the player acts. Those pulses are internal lived-time cadence, not three routine player turns; normal player review and command happen monthly, with only red-band irreversible crises allowed to interrupt. The player is a household-side or lineage-side actor using bounded leverage inside a spatialized shell: great hall or study, ancestral hall, desk sandbox, and conflict or campaign vignettes. The authoritative architecture is a modular monolith whose modules own their own state and communicate through Query, Command, and DomainEvent. Household life, lineage pressure, commoner survival, exams, trade, office, outlaw or banditry, conflict, later campaign warfare, and eventual imperial / dynasty-cycle pressure are interlinked social pathways rather than isolated game modes. The Renzong-era opening is a calibrated starting field, not a fixed historical rail; later outcomes may diverge through earned rule chains, institution constraints, people, locality, and player influence.
 
 ## Non-negotiable pillars
-- world-first living simulation with xun pulses inside a monthly review shell
+- world-first living simulation with xun pulses inside a monthly review shell, without turning xun into routine player turns
 - module-owned state namespaces
 - deterministic authority
 - explanation traces
 - high-cohesion, low-coupling code structure
+- modern game engineering standards apply to code, module, system, Unity presentation, content, performance, and observability layers
 - maintainable file and type size; split oversized source files by ownership or workflow seam
 - explicit boundary ownership
 - no blocking IO in authority hot paths
 - no authority or debug leakage into player-facing shell
+- no player-facing emperor button, edict editor, or unearned court-control surface; imperial pressure must arrive through mediated objects, institutions, and rule chains
 - no new deprecated libraries or weak glue-code layers
 - narrative downstream of simulation
 - MVP as the substrate for later versions
+- history can be changed by earned rule chains, not by free timeline editing
+- historical opening conditions are calibration, not fixed rails
 - spatialized shell
 - conflict integrated with lineage, economy, office, and grudge systems
 - backend structure and contracts stabilize before deep rule density
@@ -30,6 +34,7 @@ When writing code, assume these rules are hard:
 - presentation code may format and arrange, but must not resolve outcomes
 - saves and public read models must not leak secrets, local machine paths, stack traces, hidden future information, or debug-only traces
 - do not introduce deprecated libraries, weak glue layers, or stringly-typed cross-layer protocols where explicit contracts can exist
+- every non-trivial system should be describable as `inputs -> owned state -> cadence -> rules -> diffs/events -> projections -> player leverage -> tests`
 
 ## Core module map
 - WorldSettlements
@@ -55,6 +60,8 @@ Instead:
 - spatialized living-society simulation
 
 ## Scope ladder
+For the phase-by-phase implementation index, see `GAME_DEVELOPMENT_ROADMAP.md`.
+
 ### MVP
 - kernel + modular spine
 - household/lineage/commoner/social-memory substrate
@@ -68,6 +75,7 @@ Instead:
 - full force system
 - campaign sandbox
 - regional breadth
+- imperial / dynasty-cycle pressure, including rebellion, polity formation, succession struggle, usurpation, restoration, or dynasty repair when later packs exist
 - richer room states and analytics
 
 ## Architectural rule

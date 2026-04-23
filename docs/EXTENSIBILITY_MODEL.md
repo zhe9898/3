@@ -42,6 +42,7 @@ Note: `PersonRegistry` is Kernel-layer infrastructure, always present, and does 
 - `ForcePack`
 - `WarfareCampaignPack`
 - `RegionalExpansionPack`
+- `ImperialDynastyCyclePack`
 
 ## Module registration contract
 A module should register:
@@ -87,6 +88,11 @@ A pack must declare:
 - incompatible packs, if any
 - migration policy if added to an old save
 - acceptance tests it adds
+
+Special rule for imperial / dynasty-cycle packs:
+- they may allow regime-scale counterfactuals, including rebellion, polity formation, succession struggle, usurpation, restoration, or dynasty repair
+- they must not become runtime plugin marketplaces or detached grand-strategy layers
+- they must grow from existing module-owned pressure, force, logistics, office, public legitimacy, and memory seams unless a new state owner is explicitly documented
 
 ## Anti-patterns
 Do not:
