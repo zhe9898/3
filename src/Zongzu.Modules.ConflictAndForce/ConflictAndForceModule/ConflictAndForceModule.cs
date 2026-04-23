@@ -729,7 +729,7 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
 
             {
 
-                scope.Emit("MilitiaMobilized", $"{settlement.Name}乡勇已集。");
+                scope.Emit(ConflictAndForceEventNames.MilitiaMobilized, $"{settlement.Name}乡勇已集。");
 
             }
 
@@ -738,7 +738,7 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
 
             {
 
-                scope.Emit("ForceReadinessChanged", $"{settlement.Name}地面守备整备改为{force.Readiness}。");
+                scope.Emit(ConflictAndForceEventNames.ForceReadinessChanged, $"{settlement.Name}地面守备整备改为{force.Readiness}。");
 
             }
 
@@ -747,7 +747,7 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
 
             {
 
-                scope.Emit("ConflictResolved", $"{settlement.Name}地面冲突暂被按住。");
+                scope.Emit(ConflictAndForceEventNames.ConflictResolved, $"{settlement.Name}地面冲突暂被按住。");
 
             }
 
@@ -756,7 +756,7 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
 
             {
 
-                scope.Emit("CommanderWounded", $"{settlement.Name}弹压之际，有领队负创。");
+                scope.Emit(ConflictAndForceEventNames.CommanderWounded, $"{settlement.Name}弹压之际，有领队负创。");
 
             }
 
@@ -893,7 +893,7 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
 
                 scope.Emit(
 
-                    "ForceReadinessChanged",
+                    ConflictAndForceEventNames.ForceReadinessChanged,
 
                     $"{campaign.AnchorSettlementName}战后余波拖得地面整备降至{force.Readiness}。",
 

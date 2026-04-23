@@ -219,7 +219,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
             candidate.PersonId.Value.ToString());
 
-        scope.Emit("OfficeGranted", $"{candidate.DisplayName}得授{career.OfficeTitle}。");
+        scope.Emit(OfficeAndCareerEventNames.OfficeGranted, $"{candidate.DisplayName}得授{career.OfficeTitle}。");
 
     }
 
@@ -603,7 +603,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
                 candidate.PersonId.Value.ToString());
 
-            scope.Emit("OfficeLost", $"{candidate.DisplayName}因案牍壅滞而失官。");
+            scope.Emit(OfficeAndCareerEventNames.OfficeLost, $"{candidate.DisplayName}因案牍壅滞而失官。");
 
             return;
 
@@ -718,7 +718,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         {
 
-            scope.Emit("AuthorityChanged", $"{candidate.DisplayName}官阶改为第{updatedTier}等。");
+            scope.Emit(OfficeAndCareerEventNames.AuthorityChanged, $"{candidate.DisplayName}官阶改为第{updatedTier}等。");
 
         }
 
@@ -727,7 +727,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         {
 
-            scope.Emit("OfficeTransfer", $"{candidate.DisplayName}由{previousTitle}转为{career.OfficeTitle}。");
+            scope.Emit(OfficeAndCareerEventNames.OfficeTransfer, $"{candidate.DisplayName}由{previousTitle}转为{career.OfficeTitle}。");
 
         }
 

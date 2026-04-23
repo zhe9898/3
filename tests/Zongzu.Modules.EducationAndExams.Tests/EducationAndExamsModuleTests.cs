@@ -98,8 +98,8 @@ public sealed class EducationAndExamsModuleTests
         Assert.That(student.LastOutcome, Is.EqualTo("Passed"));
         Assert.That(student.LastExplanation, Does.Contain("得分"));
         Assert.That(student.LastExplanation, Does.Contain("塾望"));
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("TutorSecured"));
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("ExamPassed"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(EducationAndExamsEventNames.TutorSecured));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(EducationAndExamsEventNames.ExamPassed));
         Assert.That(student.LastResult, Is.EqualTo(ExamResult.Passed));
         Assert.That(student.CurrentTier, Is.EqualTo(ExamTier.PrefecturalExam));
         Assert.That(student.FallbackPath, Is.EqualTo(FallbackPath.ContinueStudy));

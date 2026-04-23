@@ -106,10 +106,10 @@ public sealed partial class OfficeAndCareerModuleTests
         Assert.That(snapshot.AdministrativeTaskTier, Is.Not.Empty);
         Assert.That(snapshot.PetitionOutcomeCategory, Is.EqualTo("Queued"));
         Assert.That(snapshot.AuthorityTrajectorySummary, Is.Not.Empty);
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("OfficeGranted"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OfficeAndCareerEventNames.OfficeGranted));
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.OfficeAndCareer));
         Assert.That(officeModule.AcceptedCommands, Does.Contain("PursuePosting"));
-        Assert.That(officeModule.PublishedEvents, Does.Contain("AuthorityChanged"));
+        Assert.That(officeModule.PublishedEvents, Does.Contain(OfficeAndCareerEventNames.AuthorityChanged));
     }
 
     [Test]
@@ -259,7 +259,7 @@ public sealed partial class OfficeAndCareerModuleTests
         Assert.That(career.LastOutcome, Is.AnyOf("候缺", "听差"));
         Assert.That(career.CurrentAdministrativeTask, Is.Not.Empty);
         Assert.That(career.LastExplanation, Does.Contain("场屋已捷"));
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Not.Contain("OfficeGranted"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Not.Contain(OfficeAndCareerEventNames.OfficeGranted));
     }
 
     [Test]
@@ -357,8 +357,8 @@ public sealed partial class OfficeAndCareerModuleTests
         Assert.That(career.LastPetitionOutcome, Does.Contain("已清"));
         Assert.That(career.PromotionMomentum, Is.GreaterThanOrEqualTo(24));
         Assert.That(career.DemotionPressure, Is.LessThan(10));
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("AuthorityChanged"));
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("OfficeTransfer"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OfficeAndCareerEventNames.AuthorityChanged));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OfficeAndCareerEventNames.OfficeTransfer));
         Assert.That(officeState.Jurisdictions.Single().LeadOfficeTitle, Is.EqualTo(career.OfficeTitle));
     }
 
@@ -455,7 +455,7 @@ public sealed partial class OfficeAndCareerModuleTests
         Assert.That(career.LastOutcome, Is.EqualTo("Lost"));
         Assert.That(career.CurrentAdministrativeTask, Is.EqualTo("候补听选"));
         Assert.That(career.LastExplanation, Does.Contain("遂失官身"));
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("OfficeLost"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OfficeAndCareerEventNames.OfficeLost));
         Assert.That(officeState.Jurisdictions, Is.Empty);
     }
 

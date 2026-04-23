@@ -113,7 +113,7 @@ public sealed partial class TradeAndIndustryModuleTests
         Assert.That(clanTrade.Debt, Is.GreaterThan(18));
         Assert.That(clanTrade.LastExplanation, Is.Not.Empty);
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.TradeAndIndustry));
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("RouteBusinessBlocked"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(TradeAndIndustryEventNames.RouteBusinessBlocked));
         Assert.That(context.DomainEvents.Events.All(static entry => entry.ModuleKey == KnownModuleKeys.TradeAndIndustry), Is.True);
     }
 

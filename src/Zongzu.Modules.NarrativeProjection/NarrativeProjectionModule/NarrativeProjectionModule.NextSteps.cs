@@ -22,33 +22,33 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
         {
 
-            "ExamPassed" => "先回宗房看谁可续供书资，再议是否借此经营官途。",
+            EducationAndExamsEventNames.ExamPassed => "先回宗房看谁可续供书资，再议是否借此经营官途。",
 
-            "ExamFailed" => "先定是否续供馆谷、缓其心火，还是转向别的出路。",
+            EducationAndExamsEventNames.ExamFailed => "先定是否续供馆谷、缓其心火，还是转向别的出路。",
 
-            "StudyAbandoned" => "先看宗房是否担得住声望挫折，再议改走别途。",
+            EducationAndExamsEventNames.StudyAbandoned => "先看宗房是否担得住声望挫折，再议改走别途。",
 
-            "TradeProspered" => "先看案上商路与市肆风色，再定守利还是添本。",
+            TradeAndIndustryEventNames.TradeProspered => "先看案上商路与市肆风色，再定守利还是添本。",
 
-            "TradeLossOccurred" => "先看路险、市价与宗房余力，再定是否继续下注。",
+            TradeAndIndustryEventNames.TradeLossOccurred => "先看路险、市价与宗房余力，再定是否继续下注。",
 
-            "TradeDebtDefaulted" => "先查民户与宗房余力，别让债压继续外溢。",
+            TradeAndIndustryEventNames.TradeDebtDefaulted => "先查民户与宗房余力，别让债压继续外溢。",
 
-            "RouteBusinessBlocked" => "先看路险落在何处，再定暂避、缓行还是硬着头皮通路。",
+            TradeAndIndustryEventNames.RouteBusinessBlocked => "先看路险落在何处，再定暂避、缓行还是硬着头皮通路。",
 
-            "BanditThreatRaised" => "先看此地盗压与商路，再定添巡、缓行还是暂且容忍市面迟滞。",
+            OrderAndBanditryEventNames.BanditThreatRaised => "先看此地盗压与商路，再定添巡、缓行还是暂且容忍市面迟滞。",
 
-            "OutlawGroupFormed" => "先看人心、旧怨与路口外露，再定是镇、抚还是先稳宗房。",
+            OrderAndBanditryEventNames.OutlawGroupFormed => "先看人心、旧怨与路口外露，再定是镇、抚还是先稳宗房。",
 
-            "RouteUnsafeDueToBanditry" => "先看商账与乡里情势，再定观望、镇压还是认下行路迟滞。",
+            OrderAndBanditryEventNames.RouteUnsafeDueToBanditry => "先看商账与乡里情势，再定观望、镇压还是认下行路迟滞。",
 
-            "ConflictResolved" => "先看冲突案卷，再定添护运、缓报复还是认下镇息之费。",
+            ConflictAndForceEventNames.ConflictResolved => "先看冲突案卷，再定添护运、缓报复还是认下镇息之费。",
 
-            "CommanderWounded" => "此事须立刻过目，负创最易牵动营伍与追责。",
+            ConflictAndForceEventNames.CommanderWounded => "此事须立刻过目，负创最易牵动营伍与追责。",
 
-            "ForceReadinessChanged" => "先看守丁、乡勇与护运气力，再定下月偏重何处。",
+            ConflictAndForceEventNames.ForceReadinessChanged => "先看守丁、乡勇与护运气力，再定下月偏重何处。",
 
-            "MilitiaMobilized" => "先定乡勇是暂留声势，还是尽早收回，以免地方不静久拖。",
+            ConflictAndForceEventNames.MilitiaMobilized => "先定乡勇是暂留声势，还是尽早收回，以免地方不静久拖。",
 
             PublicLifeAndRumorEventNames.StreetTalkSurged => "先看街谈所起是因民困、失礼还是市面波动，再定该压、该抚还是该缓。",
 

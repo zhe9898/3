@@ -138,7 +138,7 @@ public sealed class WorldSettlementsModuleTests
         Assert.That(state.Settlements[0].Security, Is.LessThan(62));
         Assert.That(state.Settlements[0].Prosperity, Is.LessThan(68));
         Assert.That(context.Diff.Entries.Single().Description, Does.Contain("战后余波"));
-        Assert.That(context.DomainEvents.Events.Single().EventType, Is.EqualTo("SettlementPressureChanged"));
+        Assert.That(context.DomainEvents.Events.Single().EventType, Is.EqualTo(WorldSettlementsEventNames.SettlementPressureChanged));
     }
 
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries

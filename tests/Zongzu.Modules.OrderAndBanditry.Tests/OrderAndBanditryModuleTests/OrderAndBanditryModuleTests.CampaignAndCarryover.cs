@@ -149,7 +149,7 @@ public sealed partial class OrderAndBanditryModuleTests
 
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.OrderAndBanditry));
 
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("RouteUnsafeDueToBanditry"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OrderAndBanditryEventNames.RouteUnsafeDueToBanditry));
 
         Assert.That(context.DomainEvents.Events.All(static entry => entry.ModuleKey == KnownModuleKeys.OrderAndBanditry), Is.True);
 

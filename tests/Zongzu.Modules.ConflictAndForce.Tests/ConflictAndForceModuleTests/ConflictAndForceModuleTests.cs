@@ -275,17 +275,17 @@ public sealed partial class ConflictAndForceModuleTests
 
         Assert.That(snapshot.LastConflictTrace, Does.Contain("已先被按住"));
 
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("MilitiaMobilized"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(ConflictAndForceEventNames.MilitiaMobilized));
 
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("ForceReadinessChanged"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(ConflictAndForceEventNames.ForceReadinessChanged));
 
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("ConflictResolved"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(ConflictAndForceEventNames.ConflictResolved));
 
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.ConflictAndForce));
 
         Assert.That(module.AcceptedCommands, Does.Contain("PrepareEscort"));
 
-        Assert.That(module.PublishedEvents, Does.Contain("CommanderWounded"));
+        Assert.That(module.PublishedEvents, Does.Contain(ConflictAndForceEventNames.CommanderWounded));
 
     }
 

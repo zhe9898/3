@@ -10,7 +10,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 {
     private static readonly string[] EventNames =
     [
-        "SettlementPressureChanged",
+        WorldSettlementsEventNames.SettlementPressureChanged,
         WorldSettlementsEventNames.SeasonPhaseAdvanced,
         WorldSettlementsEventNames.CanalWindowChanged,
         WorldSettlementsEventNames.CorveeWindowChanged,
@@ -218,7 +218,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             scope.RecordDiff(
                 $"{settlement.Name}受战后余波所压，安宁减{securityDelta}，丰实减{prosperityDelta}；{campaign.FrontLabel}、{campaign.SupplyStateLabel}，{campaign.LastAftermathSummary}",
                 settlement.Id.Value.ToString());
-            scope.Emit("SettlementPressureChanged", $"{settlement.Name}受战后余波，乡面气象有变。", settlement.Id.Value.ToString());
+            scope.Emit(WorldSettlementsEventNames.SettlementPressureChanged, $"{settlement.Name}受战后余波，乡面气象有变。", settlement.Id.Value.ToString());
         }
     }
 

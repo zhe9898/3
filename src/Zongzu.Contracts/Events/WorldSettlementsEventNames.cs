@@ -25,6 +25,8 @@ namespace Zongzu.Contracts;
 /// </summary>
 public static class WorldSettlementsEventNames
 {
+    public const string SettlementPressureChanged = "SettlementPressureChanged";
+
     // Natural-axis rhythm
     public const string SeasonPhaseAdvanced = "WorldSettlements.SeasonPhaseAdvanced";
     public const string CanalWindowChanged = "WorldSettlements.CanalWindowChanged";

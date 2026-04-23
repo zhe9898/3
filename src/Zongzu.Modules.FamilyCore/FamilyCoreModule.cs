@@ -55,10 +55,10 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
         // Step 1b gap 1: trade shock → clan pressure (no-op dispatch, rule density 留给 Step 2)
-        TradeShockEventTypes.RouteBusinessBlocked,
-        TradeShockEventTypes.TradeLossOccurred,
-        TradeShockEventTypes.TradeDebtDefaulted,
-        TradeShockEventTypes.TradeProspered,
+        TradeAndIndustryEventNames.RouteBusinessBlocked,
+        TradeAndIndustryEventNames.TradeLossOccurred,
+        TradeAndIndustryEventNames.TradeDebtDefaulted,
+        TradeAndIndustryEventNames.TradeProspered,
         // Step 1b gap 2: violent death → clan mourning / heir security / grudge (no-op dispatch)
         DeathCauseEventNames.DeathByViolence,
     ];

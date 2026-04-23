@@ -233,17 +233,17 @@ public sealed partial class OrderAndBanditryModuleTests
 
         Assert.That(snapshot.LastPressureReason, Does.Contain("民困"));
 
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("BanditThreatRaised"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OrderAndBanditryEventNames.BanditThreatRaised));
 
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("OutlawGroupFormed"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OrderAndBanditryEventNames.OutlawGroupFormed));
 
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("RouteUnsafeDueToBanditry"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OrderAndBanditryEventNames.RouteUnsafeDueToBanditry));
 
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.OrderAndBanditry));
 
         Assert.That(module.AcceptedCommands, Does.Contain("FundLocalWatch"));
 
-        Assert.That(module.PublishedEvents, Does.Contain("RouteUnsafeDueToBanditry"));
+        Assert.That(module.PublishedEvents, Does.Contain(OrderAndBanditryEventNames.RouteUnsafeDueToBanditry));
 
     }
 
@@ -492,7 +492,7 @@ public sealed partial class OrderAndBanditryModuleTests
 
         Assert.That(snapshot.LastPressureTrace, Does.Contain("民困"));
 
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("BlackRoutePressureRaised"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OrderAndBanditryEventNames.BlackRoutePressureRaised));
 
     }
 

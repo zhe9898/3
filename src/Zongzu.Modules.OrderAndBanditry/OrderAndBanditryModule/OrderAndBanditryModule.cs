@@ -941,7 +941,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("BanditThreatRaised", $"{settlement.Name}盗警骤起。");
+                scope.Emit(OrderAndBanditryEventNames.BanditThreatRaised, $"{settlement.Name}盗警骤起。");
 
             }
 
@@ -950,7 +950,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("OutlawGroupFormed", $"{settlement.Name}啸聚之势渐成。");
+                scope.Emit(OrderAndBanditryEventNames.OutlawGroupFormed, $"{settlement.Name}啸聚之势渐成。");
 
             }
 
@@ -959,7 +959,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("RouteUnsafeDueToBanditry", $"{settlement.Name}行路已不稳。");
+                scope.Emit(OrderAndBanditryEventNames.RouteUnsafeDueToBanditry, $"{settlement.Name}行路已不稳。");
 
             }
 
@@ -968,7 +968,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("SuppressionSucceeded", $"{settlement.Name}镇压之需稍缓。");
+                scope.Emit(OrderAndBanditryEventNames.SuppressionSucceeded, $"{settlement.Name}镇压之需稍缓。");
 
             }
 
@@ -977,7 +977,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("BlackRoutePressureRaised", $"{settlement.Name}私路压力已起。", settlement.Id.Value.ToString());
+                scope.Emit(OrderAndBanditryEventNames.BlackRoutePressureRaised, $"{settlement.Name}私路压力已起。", settlement.Id.Value.ToString());
 
             }
 
@@ -993,7 +993,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
         {
             if (!priorBandIds.Contains(band.BandId, StringComparer.Ordinal))
             {
-                scope.Emit("OutlawGroupFormed", $"{band.BandName}聚众成势。", band.BaseSettlementId.Value.ToString());
+                scope.Emit(OrderAndBanditryEventNames.OutlawGroupFormed, $"{band.BandName}聚众成势。", band.BaseSettlementId.Value.ToString());
             }
         }
 
@@ -1199,7 +1199,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("BanditThreatRaised", $"战事外溢使{campaign.AnchorSettlementName}盗警更紧。", bundle.SettlementId.Value.ToString());
+                scope.Emit(OrderAndBanditryEventNames.BanditThreatRaised, $"战事外溢使{campaign.AnchorSettlementName}盗警更紧。", bundle.SettlementId.Value.ToString());
 
             }
 
@@ -1208,7 +1208,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("OutlawGroupFormed", $"战事外溢使{campaign.AnchorSettlementName}啸聚更成形。", bundle.SettlementId.Value.ToString());
+                scope.Emit(OrderAndBanditryEventNames.OutlawGroupFormed, $"战事外溢使{campaign.AnchorSettlementName}啸聚更成形。", bundle.SettlementId.Value.ToString());
 
             }
 
@@ -1217,7 +1217,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("RouteUnsafeDueToBanditry", $"战事外溢使{campaign.AnchorSettlementName}行路更险。", bundle.SettlementId.Value.ToString());
+                scope.Emit(OrderAndBanditryEventNames.RouteUnsafeDueToBanditry, $"战事外溢使{campaign.AnchorSettlementName}行路更险。", bundle.SettlementId.Value.ToString());
 
             }
 
@@ -1226,7 +1226,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
             {
 
-                scope.Emit("BlackRoutePressureRaised", $"战事外溢使{campaign.AnchorSettlementName}私路更炽。", bundle.SettlementId.Value.ToString());
+                scope.Emit(OrderAndBanditryEventNames.BlackRoutePressureRaised, $"战事外溢使{campaign.AnchorSettlementName}私路更炽。", bundle.SettlementId.Value.ToString());
 
             }
 

@@ -804,7 +804,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
             {
 
-                scope.Emit("TradeProspered", $"{clan.ClanName}本月市利有进。");
+                scope.Emit(TradeAndIndustryEventNames.TradeProspered, $"{clan.ClanName}本月市利有进。");
 
             }
 
@@ -812,7 +812,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
             {
 
-                scope.Emit("TradeLossOccurred", $"{clan.ClanName}本月商账受亏。");
+                scope.Emit(TradeAndIndustryEventNames.TradeLossOccurred, $"{clan.ClanName}本月商账受亏。");
 
             }
 
@@ -821,7 +821,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
             {
 
-                scope.Emit("TradeDebtDefaulted", $"{clan.ClanName}商债压门。");
+                scope.Emit(TradeAndIndustryEventNames.TradeDebtDefaulted, $"{clan.ClanName}商债压门。");
 
             }
 
@@ -830,7 +830,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
             {
 
-                scope.Emit("RouteBusinessBlocked", $"{clan.ClanName}所行商路受阻。");
+                scope.Emit(TradeAndIndustryEventNames.RouteBusinessBlocked, $"{clan.ClanName}所行商路受阻。");
 
             }
 

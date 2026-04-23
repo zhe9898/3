@@ -85,7 +85,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
             {
                 student.HasTutor = true;
                 student.TutorQuality = 10 + scope.Context.Random.NextInt(0, 8);
-                scope.Emit("TutorSecured", $"{student.DisplayName}已得塾师指授。");
+                scope.Emit(EducationAndExamsEventNames.TutorSecured, $"{student.DisplayName}已得塾师指授。");
             }
 
             int supportFactor = clan.SupportReserve >= 60 ? 2 : clan.SupportReserve >= 45 ? 1 : -1;
@@ -133,7 +133,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 scope.RecordDiff(
                     $"{student.DisplayName}场屋得捷。{student.LastExplanation}",
                     student.PersonId.Value.ToString());
-                scope.Emit("ExamPassed", $"{student.DisplayName}场屋得捷。");
+                scope.Emit(EducationAndExamsEventNames.ExamPassed, $"{student.DisplayName}场屋得捷。");
             }
             else
             {
@@ -148,7 +148,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 scope.RecordDiff(
                     $"{student.DisplayName}场屋失利。{student.LastExplanation}",
                     student.PersonId.Value.ToString());
-                scope.Emit("ExamFailed", $"{student.DisplayName}场屋失利。");
+                scope.Emit(EducationAndExamsEventNames.ExamFailed, $"{student.DisplayName}场屋失利。");
 
                 if (student.ExamAttempts >= 3 && student.Stress >= 70)
                 {
@@ -156,7 +156,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                     student.LastOutcome = "Abandoned";
                     student.LastResult = ExamResult.Abandoned;
                     student.LastExplanation = $"屡试不捷，心气劳迫至{student.Stress}，遂停塾罢读。";
-                    scope.Emit("StudyAbandoned", $"{student.DisplayName}停塾罢读。");
+                    scope.Emit(EducationAndExamsEventNames.StudyAbandoned, $"{student.DisplayName}停塾罢读。");
                 }
             }
         }

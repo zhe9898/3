@@ -18,8 +18,8 @@ public sealed class NarrativeProjectionModuleTests
         module.RegisterQueries(state, queries);
 
         DomainEventBuffer domainEvents = new();
-        domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.EducationAndExams, "ExamPassed", "Scholar Zhang Yuan passed the local exam."));
-        domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.TradeAndIndustry, "TradeProspered", "Clan Zhang trade prospered."));
+        domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.EducationAndExams, EducationAndExamsEventNames.ExamPassed, "Scholar Zhang Yuan passed the local exam."));
+        domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.TradeAndIndustry, TradeAndIndustryEventNames.TradeProspered, "Clan Zhang trade prospered."));
 
         WorldDiff diff = new();
         diff.Record(KnownModuleKeys.EducationAndExams, "Scholar Zhang Yuan passed with strong study progress and tutor support.", "1");
@@ -59,7 +59,7 @@ public sealed class NarrativeProjectionModuleTests
         for (int month = 0; month < NarrativeProjectionModule.NotificationRetentionLimit + 6; month += 1)
         {
             DomainEventBuffer domainEvents = new();
-            domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.TradeAndIndustry, "TradeProspered", $"Trade prospered in month {month}."));
+            domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.TradeAndIndustry, TradeAndIndustryEventNames.TradeProspered, $"Trade prospered in month {month}."));
 
             WorldDiff diff = new();
             diff.Record(KnownModuleKeys.TradeAndIndustry, $"Margin improved in month {month}.", month.ToString());
@@ -116,7 +116,7 @@ public sealed class NarrativeProjectionModuleTests
             DomainEventBuffer tradeEvents = new();
             tradeEvents.Emit(new DomainEventRecord(
                 KnownModuleKeys.TradeAndIndustry,
-                "TradeProspered",
+                TradeAndIndustryEventNames.TradeProspered,
                 $"Trade prospered in month {month}."));
 
             WorldDiff tradeDiff = new();

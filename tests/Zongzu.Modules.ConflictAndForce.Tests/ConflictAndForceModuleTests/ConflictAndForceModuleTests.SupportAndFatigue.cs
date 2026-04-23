@@ -1076,7 +1076,7 @@ public sealed partial class ConflictAndForceModuleTests
 
         Assert.That(context.Diff.Entries.Single().Description, Does.Contain("疲敝"));
 
-        Assert.That(context.DomainEvents.Events.Any(static entry => entry.EventType == "ForceReadinessChanged"), Is.True);
+        Assert.That(context.DomainEvents.Events.Any(static entry => entry.EventType == ConflictAndForceEventNames.ForceReadinessChanged), Is.True);
 
     }
 

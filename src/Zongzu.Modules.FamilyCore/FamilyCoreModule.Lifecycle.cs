@@ -123,10 +123,10 @@ public sealed partial class FamilyCoreModule
         {
             switch (domainEvent.EventType)
             {
-                case TradeShockEventTypes.RouteBusinessBlocked:
-                case TradeShockEventTypes.TradeLossOccurred:
-                case TradeShockEventTypes.TradeDebtDefaulted:
-                case TradeShockEventTypes.TradeProspered:
+                case TradeAndIndustryEventNames.RouteBusinessBlocked:
+                case TradeAndIndustryEventNames.TradeLossOccurred:
+                case TradeAndIndustryEventNames.TradeDebtDefaulted:
+                case TradeAndIndustryEventNames.TradeProspered:
                     // TODO Step 2: 按维度入口调整 clan Prestige / Shame / SupportReserve / BranchTension。
                     break;
             }

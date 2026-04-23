@@ -16,35 +16,35 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
         {
 
-            "TradeDebtDefaulted" => NotificationTier.Urgent,
+            TradeAndIndustryEventNames.TradeDebtDefaulted => NotificationTier.Urgent,
 
-            "LivelihoodCollapsed" => NotificationTier.Urgent,
+            PopulationEventNames.LivelihoodCollapsed => NotificationTier.Urgent,
 
-            "ExamPassed" => NotificationTier.Consequential,
+            EducationAndExamsEventNames.ExamPassed => NotificationTier.Consequential,
 
-            "ExamFailed" => NotificationTier.Consequential,
+            EducationAndExamsEventNames.ExamFailed => NotificationTier.Consequential,
 
-            "StudyAbandoned" => NotificationTier.Consequential,
+            EducationAndExamsEventNames.StudyAbandoned => NotificationTier.Consequential,
 
-            "TradeProspered" => NotificationTier.Consequential,
+            TradeAndIndustryEventNames.TradeProspered => NotificationTier.Consequential,
 
-            "TradeLossOccurred" => NotificationTier.Consequential,
+            TradeAndIndustryEventNames.TradeLossOccurred => NotificationTier.Consequential,
 
-            "RouteBusinessBlocked" => NotificationTier.Consequential,
+            TradeAndIndustryEventNames.RouteBusinessBlocked => NotificationTier.Consequential,
 
-            "BanditThreatRaised" => NotificationTier.Consequential,
+            OrderAndBanditryEventNames.BanditThreatRaised => NotificationTier.Consequential,
 
-            "OutlawGroupFormed" => NotificationTier.Consequential,
+            OrderAndBanditryEventNames.OutlawGroupFormed => NotificationTier.Consequential,
 
-            "RouteUnsafeDueToBanditry" => NotificationTier.Consequential,
+            OrderAndBanditryEventNames.RouteUnsafeDueToBanditry => NotificationTier.Consequential,
 
-            "ConflictResolved" => NotificationTier.Consequential,
+            ConflictAndForceEventNames.ConflictResolved => NotificationTier.Consequential,
 
-            "CommanderWounded" => NotificationTier.Urgent,
+            ConflictAndForceEventNames.CommanderWounded => NotificationTier.Urgent,
 
-            "ForceReadinessChanged" => NotificationTier.Consequential,
+            ConflictAndForceEventNames.ForceReadinessChanged => NotificationTier.Consequential,
 
-            "MilitiaMobilized" => NotificationTier.Consequential,
+            ConflictAndForceEventNames.MilitiaMobilized => NotificationTier.Consequential,
 
             PublicLifeAndRumorEventNames.StreetTalkSurged => NotificationTier.Consequential,
 
@@ -64,9 +64,9 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             WarfareCampaignEventNames.CampaignAftermathRegistered => NotificationTier.Consequential,
 
-            "MigrationStarted" => NotificationTier.Consequential,
+            PopulationEventNames.MigrationStarted => NotificationTier.Consequential,
 
-            "GrudgeEscalated" => NotificationTier.Consequential,
+            SocialMemoryAndRelationsEventNames.GrudgeEscalated => NotificationTier.Consequential,
 
             FamilyCoreEventNames.MarriageAllianceArranged => NotificationTier.Consequential,
 
@@ -140,33 +140,33 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
         {
 
-            "ExamPassed" => "场屋得捷",
+            EducationAndExamsEventNames.ExamPassed => "场屋得捷",
 
-            "ExamFailed" => "场屋失利",
+            EducationAndExamsEventNames.ExamFailed => "场屋失利",
 
-            "StudyAbandoned" => "停馆罢读",
+            EducationAndExamsEventNames.StudyAbandoned => "停馆罢读",
 
-            "TradeProspered" => "市利有进",
+            TradeAndIndustryEventNames.TradeProspered => "市利有进",
 
-            "TradeLossOccurred" => "商账受亏",
+            TradeAndIndustryEventNames.TradeLossOccurred => "商账受亏",
 
-            "TradeDebtDefaulted" => "债主压门",
+            TradeAndIndustryEventNames.TradeDebtDefaulted => "债主压门",
 
-            "RouteBusinessBlocked" => "行路受阻",
+            TradeAndIndustryEventNames.RouteBusinessBlocked => "行路受阻",
 
-            "BanditThreatRaised" => "盗警渐起",
+            OrderAndBanditryEventNames.BanditThreatRaised => "盗警渐起",
 
-            "OutlawGroupFormed" => "啸聚成股",
+            OrderAndBanditryEventNames.OutlawGroupFormed => "啸聚成股",
 
-            "RouteUnsafeDueToBanditry" => "商路不靖",
+            OrderAndBanditryEventNames.RouteUnsafeDueToBanditry => "商路不靖",
 
-            "ConflictResolved" => "乡斗暂息",
+            ConflictAndForceEventNames.ConflictResolved => "乡斗暂息",
 
-            "CommanderWounded" => "领队负创",
+            ConflictAndForceEventNames.CommanderWounded => "领队负创",
 
-            "ForceReadinessChanged" => "营伍更张",
+            ConflictAndForceEventNames.ForceReadinessChanged => "营伍更张",
 
-            "MilitiaMobilized" => "乡勇应募",
+            ConflictAndForceEventNames.MilitiaMobilized => "乡勇应募",
 
             PublicLifeAndRumorEventNames.StreetTalkSurged => "街谈渐热",
 

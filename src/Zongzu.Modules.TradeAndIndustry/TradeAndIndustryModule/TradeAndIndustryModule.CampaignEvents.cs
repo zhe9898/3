@@ -182,7 +182,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
             {
 
-                scope.Emit("RouteBusinessBlocked", $"{campaign.AnchorSettlementName}战事压得商路难行。", bundle.SettlementId.Value.ToString());
+                scope.Emit(TradeAndIndustryEventNames.RouteBusinessBlocked, $"{campaign.AnchorSettlementName}战事压得商路难行。", bundle.SettlementId.Value.ToString());
 
             }
 
@@ -199,7 +199,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
                     .First();
 
-                scope.Emit("TradeDebtDefaulted", $"{campaign.AnchorSettlementName}战事所逼，宗房{defaultingTrade.ClanId.Value}商债愈急。", bundle.SettlementId.Value.ToString());
+                scope.Emit(TradeAndIndustryEventNames.TradeDebtDefaulted, $"{campaign.AnchorSettlementName}战事所逼，宗房{defaultingTrade.ClanId.Value}商债愈急。", bundle.SettlementId.Value.ToString());
 
             }
 

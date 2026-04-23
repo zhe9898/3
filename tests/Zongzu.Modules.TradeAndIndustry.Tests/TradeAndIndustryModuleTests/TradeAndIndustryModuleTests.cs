@@ -332,7 +332,7 @@ public sealed partial class TradeAndIndustryModuleTests
         Assert.That(clanTrade.LastOutcome, Is.EqualTo("Profit"));
         Assert.That(clanTrade.LastExplanation, Is.Not.Empty);
         Assert.That(clanTrade.CashReserve, Is.GreaterThan(82));
-        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain("TradeProspered"));
+        Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(TradeAndIndustryEventNames.TradeProspered));
     }
 
     [Test]
