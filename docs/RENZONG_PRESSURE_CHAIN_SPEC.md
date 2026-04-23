@@ -499,7 +499,7 @@ PublicLifeAndRumor (monthly, 通过 query)
 
 ### 链5：边防-军需-家户-市场-衙门
 
-> **实现状态：薄切片（M2-lite）。已落 `WorldSettlements.FrontierStrainEscalated -> OfficeAndCareer.OfficialSupplyRequisition -> PopulationAndHouseholds.HouseholdBurdenIncreased` 的最小 scheduler 链；完整版的边防 sector、WarfareCampaign mobilization、ConflictAndForce readiness、TradeAndIndustry market diversion、胥吏执行扭曲和公共生活投影仍未实现。**
+> **实现状态：薄切片（M2-lite）+ 第一层规则加厚。已落 `WorldSettlements.FrontierStrainEscalated -> OfficeAndCareer.OfficialSupplyRequisition -> PopulationAndHouseholds.HouseholdBurdenIncreased` 的真实 scheduler 链；`OfficeAndCareer` 已把边防压力转成辖区侧军需执行 profile，`PopulationAndHouseholds` 已按家户生计/储备/劳力/债压/迁徙风险计算负担 profile。完整版的边防 sector、WarfareCampaign mobilization、ConflictAndForce readiness、TradeAndIndustry market diversion、正式配额/现金公式、公共生活军需投影和长期记忆残留仍未实现。**
 
 **Trigger**：`WorldSettlements` 长期 `FrontierEmergency` + `WarfareCampaign` 若启用。
 
@@ -513,8 +513,8 @@ WorldSettlements (seasonal)
       │     发出 WarfareCampaign.MobilizationWindowOpened { sector, grainNeed, laborNeed, forceNeed }
       │
       ├──→ OfficeAndCareer
-      │     更新 military supply quota
-      │     发出 OfficeAndCareer.OfficialSupplyRequisition { settlementId, grainQuota, cashQuota }
+      │     更新 military supply quota / docket pressure / clerk distortion risk
+      │     发出 OfficeAndCareer.OfficialSupplyRequisition { settlementId, supplyPressure, quotaPressure, docketPressure, clerkDistortionPressure, authorityBuffer }
       │
       └──→ ConflictAndForce（若启用）
             更新 readiness demand
@@ -530,7 +530,8 @@ OfficeAndCareer (monthly)
   └── OfficeAndCareer.OfficialSupplyRequisition
       ├──→ PopulationAndHouseholds
       │     强制征粮/征役
-      │     发出 HouseholdBurdenIncreased { householdId, kind: "military-supply", delta }
+      │     当前薄切片 + 加厚：按 livelihood exposure、grain/tool/shelter buffer、labor/dependent load、debt/distress fragility、migration pressure 计算家户负担
+      │     发出 HouseholdBurdenIncreased { householdId, kind: "military-supply", distressDelta, debtDelta, laborDrop, migrationDelta, profileMetadata }
       │
       ├──→ TradeAndIndustry
       │     军需采购优先
@@ -569,7 +570,8 @@ WarfareCampaign（若启用，monthly）
 **Thin-slice constraints (implemented)**：
 - 当前 `FrontierStrainEscalated` 使用 `EntityKey = settlementId`，不是 `frontier` 这类全局 token；`OfficeAndCareer` 只对匹配 jurisdiction 发 `OfficialSupplyRequisition`。
 - `WorldSettlements.LastDeclaredFrontierStrainBand` 是 schema `8` 的模块内水位，边防压力持续高位时不重复发同一档升级事件；未来若改成周期军需，应另起 `FrontierSupplyDemand` 或配额 cadence，不复用升级事件。
-- `PopulationAndHouseholds.HouseholdBurdenIncreased` 只作为家户负担跨阈值 receipt；当前只覆盖 distress 跨 80 的最薄事实，不代表完整军需征发公式完成。
+- `OfficeAndCareer.OfficialSupplyRequisition` 当前携带第一层军需执行 profile：`FrontierPressure` / `Severity` 进入辖区侧 `SupplyPressure`、`QuotaPressure`、`DocketPressure`、`ClerkDistortionPressure`、`AuthorityBuffer`，并只在本模块内留下 office task / backlog / authority pressure，不直接改家户。
+- `PopulationAndHouseholds.HouseholdBurdenIncreased` 只作为家户负担跨阈值 receipt；当前携带第一层 household burden profile metadata，证明军需压力会被家户生计、储备、劳力、债压、迁徙风险重新解释，但不代表完整军需征发公式完成。
 
 **Player Window**：
 - `ProtectSupplyLine` — 保护军粮路线（消耗 force / cash，若 warfare 启用）
@@ -1086,7 +1088,7 @@ PublicLifeAndRumor (monthly, P5+)
    - ✅ 链4 薄切片 + 第一层规则加厚（ImperialRhythmChanged → AmnestyApplied(metadata) → amnesty-disorder profile → DisorderSpike）— `ImperialAmnestyDisorderChainTests.cs` + `AmnestyDispatchHandlerTests.cs` + `AmnestyDisorderHandlerTests.cs`
    - ✅ 链6 薄切片（DisasterDeclared → DisorderSpike → PublicLife）— `DisasterDisorderPublicLifeChainTests.cs` + metadata-only / repeated-declaration tests
    - ⏳ 链6 完整版（赈济决策、市场恐慌、家户生存/迁徙、路险、疫病、SocialMemory 灾后记忆、PublicLife 合法性）
-   - ✅ 链5 薄切片（FrontierStrainEscalated → OfficialSupplyRequisition → HouseholdBurden）— `FrontierSupplyHouseholdChainTests.cs`
+   - ✅ 链5 薄切片 + 第一层规则加厚（FrontierStrainEscalated → OfficialSupplyRequisition(profile metadata) → household burden profile → HouseholdBurdenIncreased）— `FrontierSupplyHouseholdChainTests.cs` + `FrontierSupplyHandlerTests.cs` + `OfficialSupplyBurdenHandlerTests.cs`
    - ⏳ 链5 完整版（WarfareCampaign mobilization、ConflictAndForce readiness、TradeAndIndustry market diversion）
 3. **P2**：补充事件 handler 的**空实现**（先存在接口，再填充逻辑）
    - ✅ 链1 thin handler 已落并加厚（`ApplyTaxSeasonPressure` 读取多维 household profile；`DispatchPopulationDebtEvents`, `HandleEvents(YamenOverloaded)`）

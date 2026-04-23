@@ -599,18 +599,140 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 continue;
             }
 
+            OfficialSupplyRequisitionProfile profile = ComputeOfficialSupplyRequisitionProfile(domainEvent, jurisdiction);
+            ApplyOfficialSupplyOfficeLoad(scope.State, settlementId, profile);
+
             scope.Emit(
                 OfficeAndCareerEventNames.OfficialSupplyRequisition,
                 $"{jurisdiction.LeadOfficeTitle}奉边报征粮，{jurisdiction.SettlementId.Value}地界需筹军需。",
                 jurisdiction.SettlementId.Value.ToString(),
-                new Dictionary<string, string>
-                {
-                    [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseOfficialSupply,
-                    [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
-                    [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
-                });
+                BuildOfficialSupplyRequisitionMetadata(domainEvent, jurisdiction, profile));
+        }
+
+        scope.State.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(scope.State.People);
+    }
+
+    private static void ApplyOfficialSupplyOfficeLoad(
+        OfficeAndCareerState state,
+        SettlementId settlementId,
+        OfficialSupplyRequisitionProfile profile)
+    {
+        foreach (OfficeCareerState career in state.People
+            .Where(person => person.HasAppointment && person.SettlementId == settlementId)
+            .OrderBy(static person => person.PersonId.Value))
+        {
+            career.CurrentAdministrativeTask = "frontier supply requisition";
+            career.AdministrativeTaskLoad = Math.Clamp(
+                career.AdministrativeTaskLoad + Math.Max(1, profile.DocketPressure / 3),
+                0,
+                100);
+            career.PetitionBacklog = Math.Clamp(
+                career.PetitionBacklog + Math.Max(1, profile.DocketPressure / 4),
+                0,
+                100);
+            career.PetitionPressure = Math.Clamp(
+                career.PetitionPressure + Math.Max(1, profile.QuotaPressure / 4),
+                0,
+                100);
+            career.DemotionPressure = Math.Clamp(
+                career.DemotionPressure + Math.Max(0, profile.ClerkDistortionPressure / 4),
+                0,
+                100);
+            career.JurisdictionLeverage = Math.Clamp(
+                career.JurisdictionLeverage - Math.Max(0, profile.SupplyPressure / 12),
+                0,
+                100);
+            career.LastExplanation =
+                $"{career.LastExplanation} Frontier supply requisition: pressure {profile.SupplyPressure}, quota {profile.QuotaPressure}, clerk distortion {profile.ClerkDistortionPressure}.";
         }
     }
+
+    private static Dictionary<string, string> BuildOfficialSupplyRequisitionMetadata(
+        IDomainEvent sourceEvent,
+        JurisdictionAuthorityState jurisdiction,
+        OfficialSupplyRequisitionProfile profile)
+    {
+        return new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseOfficialSupply,
+            [DomainEventMetadataKeys.SourceEventType] = sourceEvent.EventType,
+            [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
+            [DomainEventMetadataKeys.FrontierPressure] = profile.FrontierPressure.ToString(),
+            [DomainEventMetadataKeys.Severity] = profile.Severity,
+            [DomainEventMetadataKeys.AuthorityTier] = jurisdiction.AuthorityTier.ToString(),
+            [DomainEventMetadataKeys.JurisdictionLeverage] = jurisdiction.JurisdictionLeverage.ToString(),
+            [DomainEventMetadataKeys.ClerkDependence] = jurisdiction.ClerkDependence.ToString(),
+            [DomainEventMetadataKeys.PetitionBacklog] = jurisdiction.PetitionBacklog.ToString(),
+            [DomainEventMetadataKeys.AdministrativeTaskLoad] = jurisdiction.AdministrativeTaskLoad.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = profile.SupplyPressure.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = profile.QuotaPressure.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = profile.DocketPressure.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = profile.ClerkDistortionPressure.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = profile.AuthorityBuffer.ToString(),
+        };
+    }
+
+    private static OfficialSupplyRequisitionProfile ComputeOfficialSupplyRequisitionProfile(
+        IDomainEvent sourceEvent,
+        JurisdictionAuthorityState jurisdiction)
+    {
+        int frontierPressure = ReadMetadataInt(sourceEvent, DomainEventMetadataKeys.FrontierPressure, 60);
+        string severity = sourceEvent.Metadata.TryGetValue(DomainEventMetadataKeys.Severity, out string? rawSeverity)
+            ? rawSeverity
+            : DomainEventMetadataValues.SeverityFrontierModerate;
+
+        int severityPressure = severity switch
+        {
+            DomainEventMetadataValues.SeverityFrontierSevere => 3,
+            DomainEventMetadataValues.SeverityFrontierModerate => 1,
+            _ => frontierPressure >= 70 ? 3 : frontierPressure >= 50 ? 1 : 0,
+        };
+        int quotaPressure = Math.Clamp(
+            (frontierPressure / 10) + severityPressure + (jurisdiction.AdministrativeTaskLoad / 20),
+            5,
+            16);
+        int docketPressure = Math.Clamp(
+            severityPressure + (jurisdiction.AdministrativeTaskLoad / 12) + (jurisdiction.PetitionBacklog / 14),
+            1,
+            14);
+        int clerkDistortionPressure = Math.Clamp(
+            (jurisdiction.ClerkDependence / 12) + (jurisdiction.PetitionBacklog / 20),
+            0,
+            10);
+        int authorityBuffer = Math.Clamp(
+            (jurisdiction.AuthorityTier * 2) + (jurisdiction.JurisdictionLeverage / 20),
+            0,
+            10);
+        int supplyPressure = Math.Clamp(
+            quotaPressure + docketPressure + clerkDistortionPressure - authorityBuffer,
+            4,
+            26);
+
+        return new OfficialSupplyRequisitionProfile(
+            Math.Clamp(frontierPressure, 0, 100),
+            severity,
+            supplyPressure,
+            quotaPressure,
+            docketPressure,
+            clerkDistortionPressure,
+            authorityBuffer);
+    }
+
+    private static int ReadMetadataInt(IDomainEvent domainEvent, string key, int fallback)
+    {
+        return domainEvent.Metadata.TryGetValue(key, out string? value) && int.TryParse(value, out int parsed)
+            ? parsed
+            : fallback;
+    }
+
+    private readonly record struct OfficialSupplyRequisitionProfile(
+        int FrontierPressure,
+        string Severity,
+        int SupplyPressure,
+        int QuotaPressure,
+        int DocketPressure,
+        int ClerkDistortionPressure,
+        int AuthorityBuffer);
 
     private static void DispatchCourtAgendaEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
     {

@@ -823,7 +823,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
 
     private static void DispatchOfficeSupplyEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
     {
-        // Chain 5 thin slice: official supply requisition raises household burden.
+        // Chain 5: official supply requisition becomes household-owned burden.
         foreach (IDomainEvent domainEvent in scope.Events)
         {
             if (domainEvent.EventType != OfficeAndCareerEventNames.OfficialSupplyRequisition)
@@ -831,20 +831,36 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 continue;
             }
 
-            if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
+            SettlementId? scopedSettlementId = ResolveSettlementScope(domainEvent);
+            if (scopedSettlementId is null)
             {
                 continue;
             }
 
-            SettlementId settlementId = new(settlementIdValue);
+            SettlementId settlementId = scopedSettlementId.Value;
+            OfficialSupplySignal signal = ResolveOfficialSupplySignal(domainEvent);
+            bool anyHouseholdChanged = false;
+
             foreach (PopulationHouseholdState household in scope.State.Households
                 .Where(h => h.SettlementId == settlementId)
                 .OrderBy(static h => h.Id.Value))
             {
                 int oldDistress = household.Distress;
                 int oldDebt = household.DebtPressure;
-                household.Distress = Math.Clamp(household.Distress + 5, 0, 100);
-                household.DebtPressure = Math.Clamp(household.DebtPressure + 3, 0, 100);
+                int oldLabor = household.LaborCapacity;
+                int oldMigration = household.MigrationRisk;
+                OfficialSupplyBurdenProfile burdenProfile = ComputeOfficialSupplyBurdenProfile(household, signal);
+
+                household.Distress = Math.Clamp(household.Distress + burdenProfile.DistressDelta, 0, 100);
+                household.DebtPressure = Math.Clamp(household.DebtPressure + burdenProfile.DebtDelta, 0, 100);
+                household.LaborCapacity = Math.Clamp(household.LaborCapacity - burdenProfile.LaborDrop, 0, 100);
+                household.MigrationRisk = Math.Clamp(household.MigrationRisk + burdenProfile.MigrationDelta, 0, 100);
+                household.IsMigrating = household.IsMigrating || household.MigrationRisk >= 80;
+                anyHouseholdChanged = anyHouseholdChanged
+                    || oldDistress != household.Distress
+                    || oldDebt != household.DebtPressure
+                    || oldLabor != household.LaborCapacity
+                    || oldMigration != household.MigrationRisk;
 
                 if (oldDistress < 80 && household.Distress >= 80)
                 {
@@ -861,10 +877,273 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                             [DomainEventMetadataKeys.DistressAfter] = household.Distress.ToString(),
                             [DomainEventMetadataKeys.DebtBefore] = oldDebt.ToString(),
                             [DomainEventMetadataKeys.DebtAfter] = household.DebtPressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyPressure] = signal.SupplyPressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = signal.QuotaPressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = signal.DocketPressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = signal.ClerkDistortionPressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = signal.AuthorityBuffer.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyDistressDelta] = burdenProfile.DistressDelta.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyDebtDelta] = burdenProfile.DebtDelta.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyLaborDrop] = burdenProfile.LaborDrop.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyMigrationDelta] = burdenProfile.MigrationDelta.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure] = burdenProfile.LivelihoodExposurePressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyResourceBuffer] = burdenProfile.ResourceBuffer.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyLaborPressure] = burdenProfile.LaborPressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyLiquidityPressure] = burdenProfile.LiquidityPressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyFragilityPressure] = burdenProfile.FragilityPressure.ToString(),
+                            [DomainEventMetadataKeys.OfficialSupplyInteractionPressure] = burdenProfile.InteractionPressure.ToString(),
+                            [DomainEventMetadataKeys.FrontierPressure] = signal.FrontierPressure.ToString(),
+                            [DomainEventMetadataKeys.Livelihood] = household.Livelihood.ToString(),
                         });
                 }
             }
+
+            if (anyHouseholdChanged)
+            {
+                RebuildSettlementSummaries(scope.State);
+            }
         }
+    }
+
+    private static OfficialSupplySignal ResolveOfficialSupplySignal(IDomainEvent domainEvent)
+    {
+        int frontierPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.FrontierPressure, 60);
+        int quotaPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.OfficialSupplyQuotaPressure, 7);
+        int docketPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.OfficialSupplyDocketPressure, 1);
+        int clerkDistortionPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure, 0);
+        int authorityBuffer = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer, 4);
+        int supplyPressure = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.OfficialSupplyPressure,
+            Math.Clamp(quotaPressure + docketPressure + clerkDistortionPressure - authorityBuffer, 4, 26));
+
+        return new OfficialSupplySignal(
+            Math.Clamp(frontierPressure, 0, 100),
+            Math.Clamp(supplyPressure, 0, 30),
+            Math.Clamp(quotaPressure, 0, 20),
+            Math.Clamp(docketPressure, 0, 20),
+            Math.Clamp(clerkDistortionPressure, 0, 15),
+            Math.Clamp(authorityBuffer, 0, 12));
+    }
+
+    private static OfficialSupplyBurdenProfile ComputeOfficialSupplyBurdenProfile(
+        PopulationHouseholdState household,
+        OfficialSupplySignal signal)
+    {
+        return new OfficialSupplyBurdenProfile(
+            signal.SupplyPressure,
+            signal.QuotaPressure,
+            signal.DocketPressure,
+            signal.ClerkDistortionPressure,
+            signal.AuthorityBuffer,
+            ComputeOfficialSupplyLivelihoodExposurePressure(household),
+            ComputeOfficialSupplyResourceBuffer(household),
+            ComputeOfficialSupplyLaborPressure(household),
+            ComputeOfficialSupplyLiquidityPressure(household),
+            ComputeOfficialSupplyFragilityPressure(household),
+            ComputeOfficialSupplyInteractionPressure(household, signal));
+    }
+
+    private static int ComputeOfficialSupplyLivelihoodExposurePressure(PopulationHouseholdState household)
+    {
+        int livelihoodExposure = household.Livelihood switch
+        {
+            LivelihoodType.Boatman => 5,
+            LivelihoodType.HiredLabor => 4,
+            LivelihoodType.SeasonalMigrant => 4,
+            LivelihoodType.Smallholder => 3,
+            LivelihoodType.Tenant => 3,
+            LivelihoodType.Artisan => 2,
+            LivelihoodType.PettyTrader => 2,
+            LivelihoodType.YamenRunner => 2,
+            LivelihoodType.Unknown => 2,
+            LivelihoodType.DomesticServant => 1,
+            LivelihoodType.Vagrant => 1,
+            _ => 2,
+        };
+
+        int landVisibility = household.LandHolding switch
+        {
+            >= 70 => 2,
+            >= 35 => 1,
+            _ => 0,
+        };
+
+        return Math.Clamp(livelihoodExposure + landVisibility, 1, 7);
+    }
+
+    private static int ComputeOfficialSupplyResourceBuffer(PopulationHouseholdState household)
+    {
+        int grainBuffer = household.GrainStore switch
+        {
+            >= 85 => 5,
+            >= 65 => 4,
+            >= 45 => 2,
+            >= 25 => 1,
+            _ => 0,
+        };
+
+        int toolBuffer = household.ToolCondition >= 70 ? 1 : 0;
+        int shelterBuffer = household.ShelterQuality >= 60 ? 1 : 0;
+        return Math.Clamp(grainBuffer + toolBuffer + shelterBuffer, 0, 7);
+    }
+
+    private static int ComputeOfficialSupplyLaborPressure(PopulationHouseholdState household)
+    {
+        int laborPressure = household.LaborCapacity switch
+        {
+            >= 80 => -1,
+            >= 60 => 0,
+            >= 40 => 1,
+            >= 25 => 3,
+            _ => 4,
+        };
+
+        int dependentPressure = household.DependentCount switch
+        {
+            >= 5 => 2,
+            >= 3 => 1,
+            _ => 0,
+        };
+
+        if (household.LaborerCount > 0 && household.DependentCount > household.LaborerCount * 2)
+        {
+            dependentPressure += 1;
+        }
+
+        return Math.Clamp(laborPressure + dependentPressure, -1, 7);
+    }
+
+    private static int ComputeOfficialSupplyLiquidityPressure(PopulationHouseholdState household)
+    {
+        int grainStrain = household.GrainStore switch
+        {
+            >= 80 => -2,
+            >= 55 => -1,
+            >= 25 => 1,
+            > 0 => 3,
+            _ => 2,
+        };
+
+        int cashNeed = IsCashNeedLivelihood(household.Livelihood) ? 2 : 0;
+        int toolDrag = household.ToolCondition is > 0 and < 35 ? 1 : 0;
+        int debtDrag = household.DebtPressure >= 65 ? 2 : household.DebtPressure >= 50 ? 1 : 0;
+        return Math.Clamp(grainStrain + cashNeed + toolDrag + debtDrag, -2, 7);
+    }
+
+    private static int ComputeOfficialSupplyFragilityPressure(PopulationHouseholdState household)
+    {
+        int distressPressure = household.Distress switch
+        {
+            >= 80 => 3,
+            >= 65 => 2,
+            >= 50 => 1,
+            _ => 0,
+        };
+
+        int debtPressure = household.DebtPressure switch
+        {
+            >= 80 => 3,
+            >= 65 => 2,
+            >= 50 => 1,
+            _ => 0,
+        };
+
+        int migrationPressure = household.IsMigrating || household.MigrationRisk >= 70 ? 1 : 0;
+        int shelterDrag = household.ShelterQuality is > 0 and < 35 ? 1 : 0;
+        return Math.Clamp(distressPressure + debtPressure + migrationPressure + shelterDrag, 0, 8);
+    }
+
+    private static int ComputeOfficialSupplyInteractionPressure(
+        PopulationHouseholdState household,
+        OfficialSupplySignal signal)
+    {
+        int interaction = 0;
+
+        if (household.Livelihood == LivelihoodType.Boatman && signal.SupplyPressure >= 12)
+        {
+            interaction += 2;
+        }
+
+        if (household.Livelihood is LivelihoodType.HiredLabor or LivelihoodType.SeasonalMigrant
+            && household.LaborCapacity < 40)
+        {
+            interaction += 2;
+        }
+
+        if (household.Livelihood == LivelihoodType.Tenant && household.DebtPressure >= 60)
+        {
+            interaction += 1;
+        }
+
+        if (household.GrainStore >= 75
+            && household.LaborCapacity >= 75
+            && household.DebtPressure < 55
+            && household.Distress < 55)
+        {
+            interaction -= 3;
+        }
+
+        return Math.Clamp(interaction, -3, 5);
+    }
+
+    private readonly record struct OfficialSupplySignal(
+        int FrontierPressure,
+        int SupplyPressure,
+        int QuotaPressure,
+        int DocketPressure,
+        int ClerkDistortionPressure,
+        int AuthorityBuffer);
+
+    private readonly record struct OfficialSupplyBurdenProfile(
+        int SupplyPressure,
+        int QuotaPressure,
+        int DocketPressure,
+        int ClerkDistortionPressure,
+        int AuthorityBuffer,
+        int LivelihoodExposurePressure,
+        int ResourceBuffer,
+        int LaborPressure,
+        int LiquidityPressure,
+        int FragilityPressure,
+        int InteractionPressure)
+    {
+        public int DistressDelta => Math.Clamp(
+            (SupplyPressure / 4)
+            + LivelihoodExposurePressure
+            + LaborPressure
+            + FragilityPressure
+            + (ClerkDistortionPressure / 3)
+            + InteractionPressure
+            - ResourceBuffer
+            - (AuthorityBuffer / 3),
+            0,
+            24);
+
+        public int DebtDelta => Math.Clamp(
+            (QuotaPressure / 4)
+            + LiquidityPressure
+            + (FragilityPressure / 2)
+            + Math.Max(0, InteractionPressure)
+            + (ClerkDistortionPressure / 4)
+            - (ResourceBuffer / 2),
+            0,
+            18);
+
+        public int LaborDrop => Math.Clamp(
+            (SupplyPressure / 8)
+            + Math.Max(0, LaborPressure)
+            + (DocketPressure / 6)
+            - (ResourceBuffer / 4),
+            0,
+            8);
+
+        public int MigrationDelta => Math.Clamp(
+            (DistressDelta / 5)
+            + (DebtDelta / 6)
+            + (FragilityPressure >= 5 ? 1 : 0),
+            0,
+            8);
     }
 
     private static int GetClanSupportReserve(IFamilyCoreQueries familyQueries, ClanId? sponsorClanId)
