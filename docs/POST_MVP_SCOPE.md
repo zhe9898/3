@@ -73,7 +73,7 @@ Integration seam:
 
 Current lite note:
 - the repository now has an active `WarfareCampaign.Lite` slice behind a dedicated campaign-enabled bootstrap/load path
-- the active lite implementation owns bounded campaign boards, mobilization signals, supply/morale/front summaries, command-fit wording, commander summaries, bounded route descriptors, aftermath summaries, application-routed directive descriptors, an 8-step `CampaignPhase` projection, and bounded `AftermathDocket` records (merits / blames / relief needs / route repairs) inside `WarfareCampaign`
+- the active lite implementation owns bounded campaign boards, mobilization signals, supply/morale/front summaries, command-fit wording, commander summaries, bounded route descriptors, aftermath summaries, module-owned directive descriptors, an 8-step `CampaignPhase` projection, and bounded `AftermathDocket` records (merits / blames / relief needs / route repairs) inside `WarfareCampaign`
 - current mobilization signals carry order-support, office-authority-tier, administrative-leverage, petition-backlog, mobilization-window, and office-coordination summaries as upstream precursors only
 - the current lite aftermath slice now also pushes bounded downstream consequences into trade, order, office, and clan-memory modules through event handlers only
 - the current lite projection slice now also lets warfare notices and read-only hall / desk / campaign-board surfaces summarize merit claims, blame memorials, relief dockets, and local cleanup pressure without adding authority UI or a new schema

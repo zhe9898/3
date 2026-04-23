@@ -111,19 +111,19 @@ Correct approach:
 - `FamilyCore` handles the event to update its own prestige state
 - `OfficeAndCareer` handles the event to open or advance office eligibility
 
-## Current command-routing gap (documented, to be closed)
+## Current command-routing seam
 
-`ModuleRunner<TState>` currently does **not** expose a command-handling interface (no `HandleCommand` / `ExecuteCommand` method).  Therefore most thin player-command services in `Zongzu.Application` (`PlayerCommandService`, `WarfareCampaignCommandService`) still retrieve module state via `GameSimulation.GetMutableModuleState<T>()` and route mutations directly.
+`ModuleRunner<TState>` now exposes a module-owned command seam through `HandleCommand(ModuleCommandHandlingScope<TState>)`. `GameSimulation.IssueModuleCommand(...)` builds the normal query registry, delegates the request to the owning module, and refreshes the replay hash only after an accepted mutation.
 
-Family commands are the first partially closed seam: `PlayerCommandService` now routes family intents into `FamilyCoreCommandResolver` inside `Zongzu.Modules.FamilyCore`. The application layer still selects/routes the command and refreshes replay hash, but family consequence formulas and FamilyCore state mutation now live in the owning module.
+`PlayerCommandService` is now dispatch glue: it maps existing `PlayerCommandRequest` names to module keys, reports disabled-module rejection, and does not own consequence formulas for the migrated command slices.
 
-This is a **known structural gap**, not an intended permanent design.  The plan is:
-1. add a command-handling seam to `ModuleRunner<TState>` (or a parallel `ICommandHandler<TState>` contract);
-2. continue moving command resolution logic out of `PlayerCommandService` and into owning modules, following the `FamilyCoreCommandResolver` pattern;
-3. migrate Office / Order / Warfare command slices;
-4. make `GetMutableModuleState` truly internal-only for bootstrapping and testing.
+Current migrated command owners:
+- `FamilyCoreCommandResolver` owns family lifecycle and lineage-conflict commands.
+- `OfficeAndCareerCommandResolver` owns office / yamen public-life commands.
+- `OrderAndBanditryCommandResolver` owns order public-life interventions and office-aware administrative reach scaling.
+- `WarfareCampaignCommandResolver` owns campaign directive commands.
 
-Until that seam exists, the remaining Application services act as a temporary rule layer.  All direct state mutations are confined to Application-layer command services and do not leak into UI or projection code. New family command depth should be added in `FamilyCoreCommandResolver`, not in `PlayerCommandService`.
+New command depth must be added to the owning module resolver and exposed through module `AcceptedCommands`. Application code may route, compose read models, and record receipts, but it must not become a second domain-rule layer. `GetMutableModuleState` should remain a testing / bootstrap escape hatch, not a normal player-command write path.
 
 ## Current M2-lite integration notes
 - Renzong chain-1 is currently a **real scheduler thin slice with a first household-profile thickening**, not the full tax/corvee society chain: `WorldSettlements.TaxSeasonOpened` drains through `PopulationAndHouseholds.HouseholdDebtSpiked` and `OfficeAndCareer.YamenOverloaded` into `PublicLifeAndRumor` street-talk heat. `PopulationAndHouseholds` now converts tax season into debt pressure through existing multi-dimensional household state: livelihood exposure, land visibility, grain/cash buffer, labor/dependency load, debt/distress fragility, and interaction terms. The handler accepts settlement scope when present and preserves the existing symbolic global thin signal until `WorldSettlements` emits precise settlement tax events. The full chain still needs formal household-grade/tax-kind formulas, client/tenant rent cascade, market cash squeeze, long memory, and precise settlement/jurisdiction payloads.
@@ -176,11 +176,11 @@ Until that seam exists, the remaining Application services act as a temporary ru
 - `FamilyCore` schema `7` also owns marriage-alliance pressure/value, heir security, reproductive pressure, mourning load, care load, funeral debt, remedy confidence, charity obligation, clan-scoped spouse/parent/child links, and last lifecycle-command receipts inside the same namespace
 - `FamilyCore` may use `PersonRegistry` command interfaces only for identity-shaped writes when birth, marriage-in spouse creation, or death requires a canonical person anchor; all lineage facts and lifecycle pressures remain `FamilyCore`-owned
 - `FamilyCore` may consume `DeathByViolence` from conflict / order / warfare producers only as a lineage-pressure bridge: it parses the event `EntityKey` as `PersonId`, reads identity facts through `PersonRegistry`, updates only clan-owned mourning / inheritance / branch / heir-security pressures, and must not emit a second cause-specific death event from that handler
-- family command routing is now a partial module-owned seam: `PlayerCommandService` selects/routes the existing `PlayerCommandRequest` and refreshes replay hash after accepted mutation, while `FamilyCoreCommandResolver` owns family consequence formulas and mutates only `FamilyCore` state
+- family command routing now uses the shared module command seam: `PlayerCommandService` selects the `FamilyCore` module, while `FamilyCoreCommandResolver` owns family consequence formulas and mutates only `FamilyCore` state
 - `FamilyCoreCommandResolver` may read `PersonRegistry` queries for identity-only facts such as alive / age when choosing candidates; it must not mutate `PersonRegistry` except through already authorized birth/death identity paths
 - `FamilyCoreCommandResolver` may read `SocialMemoryAndRelations` clan climate and adult pressure-tempering snapshots as deterministic command-friction inputs; missing SocialMemory queries remain neutral
 - `SocialMemoryAndRelations` may read those family-conflict fields through queries only; it may not be written by the player-command service or by the family command resolver
-- a thin player-command service may route bounded family intents such as branch favor, formal apology, branch separation, relief suspension, elder mediation, marriage arrangement, heir designation, newborn care, and mourning order into `FamilyCore` only
+- bounded family intents such as branch favor, formal apology, branch separation, relief suspension, elder mediation, marriage arrangement, heir designation, newborn care, and mourning order must route into `FamilyCore` through the shared module command seam
 - the family-council shell now reads clan conflict summaries, clan narratives, family affordances, and family receipts from read models only
 - built-in default loaders now migrate legacy `FamilyCore` schemas through current schema `7` without changing enabled-module or envelope-key sets
 
@@ -231,14 +231,14 @@ Until that seam exists, the remaining Application services act as a temporary ru
 - calm or standing-but-untriggered `ConflictAndForce.Lite` posture must not leak support, escort relief, or militia relief into `OrderAndBanditry` until the response is actually activated by local-conflict pressure
 - `ConflictAndForce.Lite` emits deterministic readiness and local-conflict events while still updating only its own state
 - `OrderAndBanditry.Lite` remains available through an order-enabled M3 bridge bootstrap path
-- the current public-life order lane already supports `催护一路`, `添雇巡丁`, `严缉路匪`, `遣人议路`, and `暂缓穷追` through `PlayerCommandService`; later work should deepen consequences through the same lane rather than invent a second order surface
+- the current public-life order lane already supports `催护一路`, `添雇巡丁`, `严缉路匪`, `遣人议路`, and `暂缓穷追` through `OrderAndBanditryCommandResolver`; later work should deepen consequences through the same lane rather than invent a second order surface
 - `ConflictAndForce.Lite` is available through a conflict-enabled M3 local-conflict bootstrap path and remains absent from active M2 manifests
 
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace
 - `OfficeAndCareer.Lite` now reads `EducationAndExams`, `SocialMemoryAndRelations`, and optional `OrderAndBanditry` projections only
 - the new governance-lite bootstrap path enables `OfficeAndCareer` without mutating the stable M2 or M3 manifests
-- a thin player-command service may now route bounded office intents such as petition review or administrative leverage into `OfficeAndCareer` only; it may not write family, trade, order, or force state directly
+- bounded office intents such as petition review, administrative leverage, county notice, and road dispatch now route through `OfficeAndCareerCommandResolver`; they may not write family, trade, order, or force state directly
 - governance-lite now treats local-exam success as entry into a bounded office funnel rather than direct appointment: recommendation, waiting for openings, and attached yamen service stay office-owned and deterministic
 - the lighter office v2.1 slice now exposes petition-outcome category, administrative-task tier, promotion/demotion labels, and authority-trajectory wording as derived read-model/query fields only; it does not add new office-owned save fields
 - office influence stays bounded: downstream modules may read leverage or petition pressure, but only `OfficeAndCareer` mutates office appointments and jurisdiction authority
@@ -255,8 +255,8 @@ Until that seam exists, the remaining Application services act as a temporary ru
 - warfare-lite events now also carry settlement-targeting metadata so downstream handlers can update their own state without parsing narrative strings
 - current warfare-lite contracts already carry order-support, office-authority-tier, administrative-leverage, petition-backlog, mobilization-window, command-fit, route-flow, and office-coordination precursor fields so later campaign depth can stay query-first
 - the current board-depth refinement persists commander summaries plus bounded route descriptors inside `WarfareCampaign` rather than synthesizing them in UI-only code
-- a thin application-routed warfare-intent service now stages `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` into `WarfareCampaign`-owned directive state only
-- the current player-command vertical slice may expose those same warfare directives as read-only affordances and receipts in presentation, but the routing still stays in application services and the writes still stay inside `WarfareCampaign`
+- `WarfareCampaignCommandResolver` now stages `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` into `WarfareCampaign`-owned directive state only
+- the current player-command vertical slice may expose those same warfare directives as read-only affordances and receipts in presentation, but authoritative resolution stays in the module command seam and writes stay inside `WarfareCampaign`
 - current warfare-lite state now persists active directive code/label/summary and last directive trace inside the warfare namespace instead of inventing a cross-module command ledger
 - built-in `WarfareCampaign` migration now upgrades schema `1 -> 2 -> 3 -> 4` by backfilling labels, route descriptors, directive descriptors, and campaign phasing plus aftermath dockets without changing enabled-module or envelope-key sets
 - current warfare-lite aftermath now propagates into `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, and `SocialMemoryAndRelations` through the event-handling seam only

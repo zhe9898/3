@@ -14,22 +14,7 @@ public sealed partial class PlayerCommandService
             return BuildDisabledFamilyResult(command, "当前存档未启用宗房裁断。");
         }
 
-        QueryRegistry queries = BuildQueries(simulation);
-        PlayerCommandResult result = FamilyCoreCommandResolver.IssueIntent(new FamilyCoreCommandContext
-        {
-            State = simulation.GetMutableModuleState<FamilyCoreState>(KnownModuleKeys.FamilyCore),
-            Command = command,
-            CurrentDate = simulation.CurrentDate,
-            PersonRegistryQueries = TryGetQuery<IPersonRegistryQueries>(queries),
-            SocialMemoryQueries = TryGetQuery<ISocialMemoryAndRelationsQueries>(queries),
-        });
-
-        if (result.Accepted)
-        {
-            simulation.RefreshReplayHash();
-        }
-
-        return result;
+        return simulation.IssueModuleCommand(KnownModuleKeys.FamilyCore, command);
     }
 
     internal static string DetermineFamilyCommandLabel(string commandName)
@@ -51,18 +36,5 @@ public sealed partial class PlayerCommandService
             Label = isPublicLife ? DeterminePublicLifeCommandLabel(command.CommandName) : DetermineFamilyCommandLabel(command.CommandName),
             Summary = summary,
         };
-    }
-
-    private static TQuery? TryGetQuery<TQuery>(QueryRegistry queries)
-        where TQuery : class
-    {
-        try
-        {
-            return queries.GetRequired<TQuery>();
-        }
-        catch (InvalidOperationException)
-        {
-            return null;
-        }
     }
 }

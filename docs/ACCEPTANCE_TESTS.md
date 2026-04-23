@@ -61,6 +61,7 @@ Every release line must pass:
 - venue-channel public-life summaries compose from `PublicLifeAndRumor` read models only and remain read-only
 - public-life surfaces can show how榜文、街谈、路报、州牒 differ without UI inventing new authority logic or private state
 - player-command affordances and receipts also compose from read-model bundles only
+- player-command execution routes through the shared module command seam: Application selects the owning module and disabled-path rejection, while command formulas and authoritative mutation live in module resolvers
 - bounded public-life affordances / receipts such as `张榜晓谕`, `遣吏催报`, `催护一路`, `添雇巡丁`, `严缉路匪`, `遣人议路`, `暂缓穷追`, and `请族老出面` appear on settlement nodes only when their owning modules project them; UI still does not resolve authority rules
 - stable M2 and later paths may surface family-council command affordances and receipts from `FamilyCore` read models only
 - family-council surfaces remain read-only and must not resolve lineage-conflict authority inside UI code
@@ -142,7 +143,7 @@ Every release line must pass:
 - bounded lifecycle commands such as `议亲定婚`, `议定承祧`, `拨粮护婴`, and `议定丧次` must resolve through deterministic pressure profiles rather than fixed deltas, reading only `FamilyCore`-owned lifecycle state and surfacing the relevant pressure bands in receipts
 - house-branch conflict commands such as `偏护嫡支`, `责令赔礼`, `准其分房`, `停其接济`, `请族老调停`, and `请族老出面` must also resolve through deterministic pressure profiles rather than fixed deltas, reading only `FamilyCore`-owned conflict state and surfacing the relevant pressure bands in receipts
 - missing `SocialMemoryAndRelations` query access must remain neutral for family command resolution, while high volatility / bitterness should make reconciliation weaker and trust / restraint should strengthen apology or mediation
-- shared command-resolution helpers may provide banding, profile-factor text, clamping, and delta adjustment, but domain ownership and command effects must remain in the owning module/application resolver rather than a universal decision engine
+- shared command-resolution helpers may provide banding, profile-factor text, clamping, and delta adjustment, but domain ownership and command effects must remain in the owning module resolver rather than Application or a universal decision engine
 - family lifecycle events such as `议亲定婚`, `门内添丁`, `门内举哀`, and `承祧未稳` should project dedicated ancestral-hall-facing notice text rather than generic module fallback titles
 - follow-up family commands such as `拨粮护婴` and `议定丧次` should remain bounded `FamilyCore` writes and surface as read-only receipts on hall / council projections
 - family lifecycle notices should also carry concrete next-step guidance about襁褓护持, 口粮与乳哺, 丧次祭次, and承祧名分 when relevant traces indicate those pressures
@@ -200,8 +201,8 @@ Every release line must pass:
 - `WarfareCampaign.Lite` presentation remains read-only and campaign-level
 - legacy campaign-enabled schema `1` saves migrate through schema `2` into schema `3` without replay drift
 - campaign boards surface command-fit, commander summary, and bounded route descriptors without adding unit-micro authority
-- thin application-routed warfare intent commands (`DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, `WithdrawToBarracks`) may update warfare-owned directive state only, without mutating upstream module state
-- a unified player-command service may route bounded office and warfare intents through application services only; disabled module paths must not leak their commands into the shell
+- warfare intent commands (`DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, `WithdrawToBarracks`) resolve through `WarfareCampaignCommandResolver` and may update warfare-owned directive state only, without mutating upstream module state
+- a unified player-command service may dispatch bounded family, office, order, and warfare intents to their owning module command handlers only; disabled module paths must not leak their commands into the shell
 - deterministic event-handling runs before `NarrativeProjection`, so projection can see warfare source events plus handler-emitted downstream follow-ons in the same month
 - warfare events carry settlement-targeting metadata without extending save compatibility
 - warfare read models surface directive label/summary/trace and Chinese-ancient desk-sandbox wording without moving authority rules into UI

@@ -12,13 +12,15 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
     [
 
-        "FundLocalWatch",
+        PlayerCommandNames.EscortRoadReport,
 
-        "SuppressBanditry",
+        PlayerCommandNames.FundLocalWatch,
 
-        "NegotiateWithOutlaws",
+        PlayerCommandNames.SuppressBanditry,
 
-        "TolerateDisorder",
+        PlayerCommandNames.NegotiateWithOutlaws,
+
+        PlayerCommandNames.TolerateDisorder,
 
     ];
 

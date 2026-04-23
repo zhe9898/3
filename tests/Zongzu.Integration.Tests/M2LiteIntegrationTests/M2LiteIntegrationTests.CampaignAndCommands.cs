@@ -225,8 +225,6 @@ public sealed partial class M2LiteIntegrationTests
         simulation.AdvanceMonths(3);
 
 
-        WarfareCampaignCommandService service = new();
-
         SettlementId anchorSettlementId = new PresentationReadModelBuilder()
 
             .BuildForM2(simulation)
@@ -238,11 +236,11 @@ public sealed partial class M2LiteIntegrationTests
             .SettlementId;
 
 
-        WarfareCampaignIntentResult result = service.IssueIntent(
+        PlayerCommandResult result = new PlayerCommandService().IssueIntent(
 
             simulation,
 
-            new WarfareCampaignIntentCommand
+            new PlayerCommandRequest
 
             {
 
@@ -262,17 +260,17 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(result.Accepted, Is.True);
 
-        Assert.That(result.DirectiveLabel, Is.Not.Empty);
+        Assert.That(result.Label, Is.Not.Empty);
 
         Assert.That(result.Summary, Is.Not.Empty);
 
-        Assert.That(campaign.ActiveDirectiveLabel, Is.EqualTo(result.DirectiveLabel));
+        Assert.That(campaign.ActiveDirectiveLabel, Is.EqualTo(result.Label));
 
         Assert.That(campaign.ActiveDirectiveSummary, Is.Not.Empty);
 
         Assert.That(campaign.LastDirectiveTrace, Is.Not.Empty);
 
-        Assert.That(signal.ActiveDirectiveLabel, Is.EqualTo(result.DirectiveLabel));
+        Assert.That(signal.ActiveDirectiveLabel, Is.EqualTo(result.Label));
 
         Assert.That(signal.ActiveDirectiveSummary, Is.Not.Empty);
 

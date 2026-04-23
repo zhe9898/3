@@ -4,6 +4,7 @@ using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Modules.NarrativeProjection;
+using Zongzu.Modules.OrderAndBanditry;
 using Zongzu.Modules.WarfareCampaign;
 using Zongzu.Persistence;
 
@@ -294,9 +295,9 @@ public sealed partial class PresentationReadModelBuilder
 
             if (disorderBySettlement.TryGetValue(publicLife.SettlementId.Value, out SettlementDisorderSnapshot? disorder))
             {
-                OrderAdministrativeReachProfile administrativeReach = OrderAdministrativeReachEvaluator.Evaluate(jurisdiction);
+                string administrativeReachSummary = OrderAndBanditryCommandResolver.DetermineAdministrativeReachExecutionSummary(jurisdiction);
 
-                foreach (PlayerCommandAffordanceSnapshot affordance in BuildSupplementalOrderPublicLifeAffordances(publicLife, disorder, administrativeReach))
+                foreach (PlayerCommandAffordanceSnapshot affordance in BuildSupplementalOrderPublicLifeAffordances(publicLife, disorder, administrativeReachSummary))
                 {
                     yield return affordance;
                 }
@@ -311,7 +312,7 @@ public sealed partial class PresentationReadModelBuilder
                     Summary = $"{publicLife.DominantVenueLabel}近来路情不稳，可先催护一路，保住津口与路报。",
                     IsEnabled = disorder.RoutePressure >= 28 || publicLife.CourierRisk >= 32,
                     AvailabilitySummary = $"路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。",
-                    ExecutionSummary = administrativeReach.ExecutionSummary,
+                    ExecutionSummary = administrativeReachSummary,
                     TargetLabel = publicLife.DominantVenueLabel,
                 };
             }
@@ -342,7 +343,7 @@ public sealed partial class PresentationReadModelBuilder
     private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildSupplementalOrderPublicLifeAffordances(
         SettlementPublicLifeSnapshot publicLife,
         SettlementDisorderSnapshot disorder,
-        OrderAdministrativeReachProfile administrativeReach)
+        string administrativeReachSummary)
     {
         yield return new PlayerCommandAffordanceSnapshot
         {
@@ -354,7 +355,7 @@ public sealed partial class PresentationReadModelBuilder
             Summary = $"{publicLife.DominantVenueLabel}近来脚路不稳，可先添雇巡丁，把路口与渡头补起来。",
             IsEnabled = disorder.RoutePressure >= 22 || disorder.DisorderPressure >= 24,
             AvailabilitySummary = $"路压{disorder.RoutePressure}，地面不靖{disorder.DisorderPressure}。",
-            ExecutionSummary = administrativeReach.ExecutionSummary,
+            ExecutionSummary = administrativeReachSummary,
             TargetLabel = publicLife.DominantVenueLabel,
         };
 
@@ -368,7 +369,7 @@ public sealed partial class PresentationReadModelBuilder
             Summary = $"{publicLife.NodeLabel}已见路匪踪迹，可先严缉，但后手报复也会更重。",
             IsEnabled = disorder.BanditThreat >= 36 || disorder.SuppressionDemand >= 32,
             AvailabilitySummary = $"盗压{disorder.BanditThreat}，镇压之需{disorder.SuppressionDemand}。",
-            ExecutionSummary = administrativeReach.ExecutionSummary,
+            ExecutionSummary = administrativeReachSummary,
             TargetLabel = publicLife.NodeLabel,
         };
 
@@ -382,7 +383,7 @@ public sealed partial class PresentationReadModelBuilder
             Summary = $"{publicLife.DominantVenueLabel}若先求一时通路，可遣人议路，换一段缓和。",
             IsEnabled = disorder.BanditThreat >= 24 || disorder.DisorderPressure >= 28,
             AvailabilitySummary = $"盗压{disorder.BanditThreat}，地面不靖{disorder.DisorderPressure}。",
-            ExecutionSummary = administrativeReach.ExecutionSummary,
+            ExecutionSummary = administrativeReachSummary,
             TargetLabel = publicLife.DominantVenueLabel,
         };
 
@@ -396,7 +397,7 @@ public sealed partial class PresentationReadModelBuilder
             Summary = $"{publicLife.NodeLabel}若眼下不宜再逼，也可先缓一缓穷追，把明面风声压住。",
             IsEnabled = disorder.BanditThreat >= 18 || disorder.RoutePressure >= 18 || disorder.DisorderPressure >= 18,
             AvailabilitySummary = $"盗压{disorder.BanditThreat}，路压{disorder.RoutePressure}，地面不靖{disorder.DisorderPressure}。",
-            ExecutionSummary = administrativeReach.ExecutionSummary,
+            ExecutionSummary = administrativeReachSummary,
             TargetLabel = publicLife.NodeLabel,
         };
     }

@@ -166,6 +166,5 @@ Complete. Current family commands now resolve through `FamilyCoreCommandResolver
 
 ## Residual Risk / Follow-Up
 
-- `ModuleRunner<TState>` still lacks a general command-handling seam, so the application service still retrieves mutable `FamilyCoreState` to call the resolver. The next structural step is an explicit module command handler contract.
-- Office, Order, and Warfare commands still have temporary application-routed logic and should follow this owning-module resolver pattern.
+- Follow-up update: the `technical-debt-command-seam-closeout` plan resolved the general `ModuleRunner<TState>` command seam and moved Office, Order, and Warfare command slices into owning module resolvers.
 - The social-memory modifier weights are first-pass deterministic bands. They are intentionally conservative, but long-run balance should watch whether volatility/bitterness makes reconciliation too hard in late-pressure saves.

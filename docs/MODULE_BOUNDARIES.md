@@ -134,7 +134,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 
 Current routing note:
 - family commands are resolved by `FamilyCoreCommandResolver` inside `Zongzu.Modules.FamilyCore`
-- `PlayerCommandService` remains thin routing glue for this slice and must not own family consequence formulas
+- `PlayerCommandService` remains thin module-selection glue for this slice and must not own family consequence formulas
 - the resolver may read `PersonRegistry` and `SocialMemoryAndRelations` query snapshots, but may mutate only `FamilyCore` state and receipt fields
 
 ### Emits events
@@ -349,6 +349,12 @@ Current routing note:
 - resign/refuse
 - petition via office channels
 - deploy legal/administrative leverage where allowed
+- post county notice
+- dispatch road report
+
+Current routing note:
+- these commands are resolved by `OfficeAndCareerCommandResolver` inside `Zongzu.Modules.OfficeAndCareer`
+- office public-life verbs may update only office-owned jurisdiction, petition, and trace state; order, family, trade, or public-life heat must move later through queries, events, or projections
 
 ### Emits events
 - `OfficeGranted`
@@ -390,10 +396,15 @@ Current routing note:
 - last intervention command / label / summary / outcome for public-life read models
 
 ### Accepts commands
+- escort road report
 - fund local watch
-- suppress
-- negotiate in limited later cases
+- suppress banditry
+- negotiate with outlaws in limited cases
 - tolerate/ignore at cost
+
+Current routing note:
+- these commands are resolved by `OrderAndBanditryCommandResolver` inside `Zongzu.Modules.OrderAndBanditry`
+- the resolver may read `OfficeAndCareer` jurisdiction authority through queries to shape administrative reach, but it may mutate only order-owned pressure, carryover, and receipt state
 
 ### Emits events
 - `BanditThreatRaised`
@@ -466,8 +477,8 @@ Current routing note:
 - withdraw to barracks
 
 Current routing note:
-- these commands are currently staged through a thin application-routed warfare-intent service
-- the service may write only `WarfareCampaign`-owned directive state; it may not mutate `ConflictAndForce`, `OfficeAndCareer`, or settlement state directly
+- these commands are resolved by `WarfareCampaignCommandResolver` inside `Zongzu.Modules.WarfareCampaign`
+- the resolver may write only `WarfareCampaign`-owned directive state; it may not mutate `ConflictAndForce`, `OfficeAndCareer`, or settlement state directly
 
 ### Emits events
 - `CampaignMobilized`

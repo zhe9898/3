@@ -26,6 +26,10 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         "DeployAdministrativeLeverage",
 
+        PlayerCommandNames.PostCountyNotice,
+
+        PlayerCommandNames.DispatchRoadReport,
+
     ];
 
 
