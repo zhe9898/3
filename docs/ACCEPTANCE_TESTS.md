@@ -12,6 +12,7 @@ Every release line must pass:
 - immersion-protection review for player-facing shell changes: no slider-wall main interaction, no profession-label identity model, no xun report spam, object-anchored pressure, and delayed receipt/residue feedback instead of bare score bumps
 - imperial-pressure presentation review: imperial pressure appears through object / institution carriers such as edicts, postings, yamen documents, tax / corvee writs, mourning markers, amnesty proclamations, appointment notices, and border dispatches; no player-facing emperor button, edict editor, or unearned court-control surface
 - history-calibration review: Renzong-era data may seed initial institutional pressure, named carriers, and world tone, but no fixed-date historical rail may bypass deterministic rule resolution or player-earned counterfactual outcomes
+- pressure-chain topology review: any Renzong pressure chain marked implemented must appear in `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` with locus, cadence, repetition guard, receipt/projection, proof test, and remaining full-chain debt
 
 ## Phase M0
 - 12-month empty/minimal world replay equality

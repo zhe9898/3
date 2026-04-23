@@ -53,6 +53,17 @@ Subscribers may update **their own** state only.
 - each drain round processes only fresh events emitted since the previous watermark, preserving stable module order and preventing replay of the whole month event list
 - handler-emitted follow-on events may trigger downstream handlers in the same month only within the bounded drain cap; if a chain cannot finish within the cap, the remaining pressure must be carried as traceable state rather than hidden recursion
 
+## Pressure-chain topology freeze
+
+Current Renzong thin chains are indexed in `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`.
+
+When changing one of those chains:
+- update the index in the same change as code or spec edits
+- keep the chain's pressure locus explicit before any local mutation
+- keep broad pressures such as frontier, court, regime, disaster, or imperial rhythm from fanning out to every jurisdiction unless the rule explicitly says it is realm-wide
+- document whether a same-month follow-on uses the bounded scheduler drain or deliberately carries pressure into the next month
+- preserve the distinction between a thin topology proof and the full social chain
+
 ## Projection rules
 - projections are read models
 - projections may be cached

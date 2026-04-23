@@ -38,6 +38,7 @@ This directory contains the authoritative specification for the project.
 33. `CODEX_TASK_PROMPTS.md`
 34. `CODEX_MASTER_SPEC.md`
 35. `RENZONG_PRESSURE_CHAIN_SPEC.md`
+36. `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`
 
 ## Document groups
 
@@ -73,6 +74,7 @@ This directory contains the authoritative specification for the project.
 - `INFLUENCE_POWER_AND_FACTIONS.md`
 - `SOCIAL_STRATA_AND_PATHWAYS.md`
 - `RENZONG_PRESSURE_CHAIN_SPEC.md`
+- `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`
 - `RELATIONSHIPS_AND_GRUDGES.md`
 - `CONFLICT_AND_FORCE.md`
 - `MAP_AND_SANDBOX_DIRECTION.md`
@@ -102,5 +104,6 @@ The higher-level design manifesto for how that living world should behave is cap
 The rule for historical figures, reforms, wars, policies, and great trends entering the simulation as pressure rather than rails is captured in `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`.
 The fidelity policy for who becomes a full agent, who remains household- or node-level, and how upper layers stay alive as pressure is captured in `SIMULATION_FIDELITY_MODEL.md`.
 The per-module time contract for `xun / month / seasonal` execution is captured in `MODULE_CADENCE_MATRIX.md`.
+The current Renzong thin-chain implementation topology, scope boundaries, watermarks, receipts, proof tests, and full-chain debt are captured in `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`.
 The code/module/system/Unity engineering standard bridge is captured in `MODERN_GAME_ENGINEERING_STANDARDS.md`.
 The backend implementation-order rule for keeping structure ahead of deep rules is captured in `STATIC_BACKEND_FIRST.md`.

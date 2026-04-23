@@ -22,7 +22,8 @@ flowchart TD
     B --> D["Architecture Spine\nARCHITECTURE\nMODULE_BOUNDARIES\nMODULE_INTEGRATION_RULES\nDATA_SCHEMA"]
     C --> D
     D --> E["Living-World Structure\nLIVING_WORLD_DESIGN\nSPATIAL_SKELETON_SPEC\nPERSON_OWNERSHIP_RULES"]
-    E --> F["Phase Route\nIMPLEMENTATION_PHASES\nPOST_MVP_SCOPE\nEXTENSIBILITY_MODEL"]
+    E --> E2["Pressure-Chain Topology\nRENZONG_PRESSURE_CHAIN_SPEC\nRENZONG_THIN_CHAIN_TOPOLOGY_INDEX"]
+    E2 --> F["Phase Route\nIMPLEMENTATION_PHASES\nPOST_MVP_SCOPE\nEXTENSIBILITY_MODEL"]
     F --> G["Acceptance\nACCEPTANCE_TESTS\nVERSION_ALIGNMENT\nCODEX_TASK_PROMPTS"]
     G --> H["Playable Shell\nVISUAL_FORM_AND_INTERACTION\nUI_AND_PRESENTATION\nMAP_AND_SANDBOX_DIRECTION"]
 H --> I["Monthly Game\ninternal xun pulses -> monthly review -> bounded commands -> next pressure"]
@@ -41,11 +42,12 @@ Every phase follows the same implementation ladder:
 5. define Query / Command / DomainEvent contracts
 6. place cadence in `xun`, month, seasonal, annual, setup, or command resolution
 7. prove one thin live rule chain
-8. emit structured diffs and read-only projections
-9. add tests and acceptance notes
-10. update docs and keep lower-scope bootstraps isolated
+8. record the live chain in `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` if it is part of the Renzong pressure web
+9. emit structured diffs and read-only projections
+10. add tests and acceptance notes
+11. update docs and keep lower-scope bootstraps isolated
 
-If a feature cannot pass those ten steps, it is not ready for implementation.
+If a feature cannot pass those steps, it is not ready for implementation.
 
 ## Phase Route Table
 
@@ -72,6 +74,7 @@ Do this before writing code:
 - state save/schema impact
 - state determinism risk
 - state which lower-scope bootstraps must stay unchanged
+- if the work touches Renzong pressure chains, check `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` first and state whether the change extends, replaces, or only observes an existing thin chain
 
 Do not start from UI or story text.
 Start from the rule chain:
