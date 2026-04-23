@@ -285,6 +285,83 @@ public sealed partial class M2LiteIntegrationTests
 
     [Test]
 
+    public void M2Bundle_SurfacesLivingSocietyPressureAndInfluenceFootprint()
+
+    {
+
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260422);
+
+        simulation.AdvanceMonths(1);
+
+
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(simulation);
+
+        HouseholdSocialPressureSnapshot sponsoredPressure = bundle.HouseholdSocialPressures.Single(static pressure => pressure.SponsorClanId.HasValue);
+
+        InfluenceReachSnapshot ownHouseholdReach = bundle.InfluenceFootprint.Reaches.Single(static reach => reach.ReachKey == InfluenceReachKeys.OwnHousehold);
+
+        InfluenceReachSnapshot observedHouseholdReach = bundle.InfluenceFootprint.Reaches.Single(static reach => reach.ReachKey == InfluenceReachKeys.ObservedHouseholds);
+
+        InfluenceReachSnapshot lineageReach = bundle.InfluenceFootprint.Reaches.Single(static reach => reach.ReachKey == InfluenceReachKeys.Lineage);
+
+        InfluenceReachSnapshot yamenReach = bundle.InfluenceFootprint.Reaches.Single(static reach => reach.ReachKey == InfluenceReachKeys.Yamen);
+
+
+        Assert.That(bundle.Households, Has.Count.GreaterThanOrEqualTo(2));
+
+        Assert.That(bundle.HouseholdSocialPressures, Has.Count.EqualTo(bundle.Households.Count));
+
+        Assert.That(sponsoredPressure.SourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
+
+        Assert.That(sponsoredPressure.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
+
+        Assert.That(sponsoredPressure.Signals.Any(static signal => string.Equals(signal.SignalKey, HouseholdSocialPressureSignalKeys.DebtAndSubsistence, StringComparison.Ordinal)), Is.True);
+
+        Assert.That(sponsoredPressure.Signals.Any(static signal => string.Equals(signal.SignalKey, HouseholdSocialPressureSignalKeys.LineageProtection, StringComparison.Ordinal)), Is.True);
+
+        Assert.That(sponsoredPressure.PrimaryDriftKey, Is.Not.Empty);
+
+        Assert.That(sponsoredPressure.IsPlayerAnchor, Is.True);
+
+        Assert.That(sponsoredPressure.AttachmentSummary, Is.Not.Empty);
+
+        Assert.That(sponsoredPressure.VisibleChainSummary, Is.Not.Empty);
+
+        Assert.That(ownHouseholdReach.IsActive, Is.True);
+
+        Assert.That(ownHouseholdReach.IsPlayerAnchor, Is.True);
+
+        Assert.That(ownHouseholdReach.HasLocalAgency, Is.True);
+
+        Assert.That(ownHouseholdReach.HasCommandAffordance, Is.False);
+
+        Assert.That(observedHouseholdReach.IsActive, Is.True);
+
+        Assert.That(observedHouseholdReach.HasLocalAgency, Is.False);
+
+        Assert.That(observedHouseholdReach.HasCommandAffordance, Is.False);
+
+        Assert.That(lineageReach.IsActive, Is.True);
+
+        Assert.That(lineageReach.HasCommandAffordance, Is.True);
+
+        Assert.That(yamenReach.IsActive, Is.False);
+
+        Assert.That(yamenReach.HasCommandAffordance, Is.False);
+
+        Assert.That(bundle.InfluenceFootprint.EntryPositionLabel, Is.Not.Empty);
+
+        Assert.That(bundle.InfluenceFootprint.AnchorHouseholdName, Is.EqualTo(sponsoredPressure.HouseholdName));
+
+        Assert.That(bundle.InfluenceFootprint.AnchorHouseholdSummary, Is.Not.Empty);
+
+        Assert.That(bundle.InfluenceFootprint.Summary, Is.Not.Empty);
+
+    }
+
+
+    [Test]
+
     public void DisabledM2LiteModules_RemainAbsentFromSaveState()
 
     {

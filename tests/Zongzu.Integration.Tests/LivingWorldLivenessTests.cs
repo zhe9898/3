@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
@@ -20,7 +20,7 @@ namespace Zongzu.Integration.Tests;
 ///   <item>§22.1 皇权轴：注入 Mourning ≥ 60 强制 CorveeWindow = Quiet，
 ///         并发 ImperialRhythmChanged。</item>
 ///   <item>§22.1 公域脉动 / 壳可见：Locus ReasonKey ≥ 3；PublicSurfaceSignal
-///         至少覆盖三条 OpinionStream；一年内至少一条 Urgent 通知（汛险破阈）。</item>
+///         至少覆盖三条 OpinionChannel；一年内至少一条 Urgent 通知（汛险破阈）。</item>
 ///   <item>§22.1 静态骨骼：10 节点 / 5 路 / covert + illicit 层必存。</item>
 ///   <item>Determinism：同 seed 的 replay hash 与 domain event 序列必等。</item>
 /// </list>
@@ -240,7 +240,7 @@ public sealed class LivingWorldLivenessTests
     public void FloodBreachMonth_EmitsMultipleStreamSignals_IncludingUrgentTier()
     {
         GameSimulation simulation = SimulationBootstrapper.CreatePhase1cLivenessBootstrap(LivenessSeed);
-        HashSet<OpinionStream> streamsSeenOverYear = new();
+        HashSet<OpinionChannel> streamsSeenOverYear = new();
         bool foundFloodBreachWithMultipleStreams = false;
         bool sawUrgentSignalThisYear = false;
 
@@ -276,7 +276,7 @@ public sealed class LivingWorldLivenessTests
         Assert.Multiple(() =>
         {
             Assert.That(streamsSeenOverYear.Count, Is.GreaterThanOrEqualTo(3),
-                "SPEC §22.1：PublicSurfaceSignal 必须覆盖至少三条 OpinionStream。");
+                "SPEC §22.1：PublicSurfaceSignal 必须覆盖至少三条 OpinionChannel。");
             Assert.That(foundFloodBreachWithMultipleStreams, Is.True,
                 "SPEC §22.1：同一次汛险破阈至少产出两条不同 stream 的 signal（流竞争的最小证据）。");
             Assert.That(sawUrgentSignalThisYear, Is.True,

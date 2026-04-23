@@ -1,4 +1,4 @@
-using Zongzu.Kernel;
+﻿using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
 
@@ -26,11 +26,11 @@ namespace Zongzu.Contracts;
 public interface IOpinionResidueQueries
 {
     /// <summary>
-    /// 0..100 — carried-over heat of one specific <see cref="OpinionStream"/>
+    /// 0..100 — carried-over heat of one specific <see cref="OpinionChannel"/>
     /// on a node, after monthly decay. Independent per stream — a shamed
     /// notice board may coexist with a calm teahouse.
     /// </summary>
-    int GetStreamHeat(SettlementId node, OpinionStream stream);
+    int GetStreamHeat(SettlementId node, OpinionChannel stream);
 
     /// <summary>
     /// 0..100 — composite negative residue across all streams on a node.

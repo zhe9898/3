@@ -17,6 +17,10 @@ public sealed class PresentationReadModelBundle
 
     public IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements { get; set; } = [];
 
+    public IReadOnlyList<HouseholdPressureSnapshot> Households { get; set; } = [];
+
+    public IReadOnlyList<HouseholdSocialPressureSnapshot> HouseholdSocialPressures { get; set; } = [];
+
     public IReadOnlyList<EducationCandidateSnapshot> EducationCandidates { get; set; } = [];
 
     public IReadOnlyList<AcademySnapshot> Academies { get; set; } = [];
@@ -42,6 +46,8 @@ public sealed class PresentationReadModelBundle
     public GovernanceDocketSnapshot GovernanceDocket { get; set; } = new();
 
     public HallDocketStackSnapshot HallDocket { get; set; } = new();
+
+    public PlayerInfluenceFootprintSnapshot InfluenceFootprint { get; set; } = new();
 
     public IReadOnlyList<CampaignFrontSnapshot> Campaigns { get; set; } = [];
 

@@ -1,4 +1,4 @@
-namespace Zongzu.Contracts;
+﻿namespace Zongzu.Contracts;
 
 /// <summary>
 /// SPATIAL_SKELETON_SPEC §6.4 decision J — the desk sandbox read order has
@@ -54,6 +54,6 @@ public static class AncientSandboxCausalChain
     /// <summary>Which households, branches, or offices are entangled.</summary>
     public const int HouseholdAndClanImplication = 30;
 
-    /// <summary>Which public surface (OpinionStream) has made it visible.</summary>
+    /// <summary>Which public surface (OpinionChannel) has made it visible.</summary>
     public const int PublicVisibleSurface = 40;
 }

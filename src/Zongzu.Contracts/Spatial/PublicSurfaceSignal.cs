@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -7,7 +7,7 @@ namespace Zongzu.Contracts;
 /// SPATIAL_SKELETON_SPEC §20.3 — the category dimension of a
 /// <see cref="PublicSurfaceSignal"/>.
 ///
-/// Separate from <see cref="OpinionStream"/> (which stream heard it) and from
+/// Separate from <see cref="OpinionChannel"/> (which stream heard it) and from
 /// <see cref="NotificationTier"/> (how loud it is). Category answers <i>what
 /// kind of public event</i>: an alarm, a rumor, a market posting, a ritual
 /// notice, or a petition surfacing.
@@ -35,15 +35,15 @@ public enum PublicSurfaceCategory
 /// <summary>
 /// SPATIAL_SKELETON_SPEC §20.3 — a public-surface signal emitted when a
 /// living-world event becomes visible on one of the five
-/// <see cref="OpinionStream"/> channels.
+/// <see cref="OpinionChannel"/> channels.
 ///
 /// <b>The same underlying event may produce multiple signals</b>, one per
 /// stream it reaches, with different <see cref="Sentiment"/> and potentially
 /// different <see cref="Category"/> on each. That is the definition of
 /// "stream competition" in SPEC §20.1 — a county execution reads positive on
-/// <see cref="OpinionStream.NoticeBoard"/>, skeptical on
-/// <see cref="OpinionStream.TeahouseChat"/>, feud-laden on
-/// <see cref="OpinionStream.HallPronouncement"/>.
+/// <see cref="OpinionChannel.NoticeBoard"/>, skeptical on
+/// <see cref="OpinionChannel.TeahouseChat"/>, feud-laden on
+/// <see cref="OpinionChannel.HallPronouncement"/>.
 ///
 /// <para>Covert nodes (<see cref="SettlementNodeKind.CovertMeetPoint"/>,
 /// <see cref="SettlementNodeKind.SmugglingCache"/>) deliberately emit no
@@ -72,7 +72,7 @@ public enum PublicSurfaceCategory
 public sealed record PublicSurfaceSignal(
     SettlementId NodeId,
     SettlementNodeKind NodeKind,
-    OpinionStream Stream,
+    OpinionChannel Stream,
     PublicSurfaceCategory Category,
     NotificationTier Tier,
     string HeadlineKey,

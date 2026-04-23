@@ -1,4 +1,4 @@
-namespace Zongzu.Contracts;
+﻿namespace Zongzu.Contracts;
 
 /// <summary>
 /// SPATIAL_SKELETON_SPEC §20.1 — not one "public opinion" value, but five
@@ -12,7 +12,7 @@ namespace Zongzu.Contracts;
 /// <see cref="SettlementNodeKind.SmugglingCache"/>) deliberately host no
 /// streams — that is the definition of covert.
 /// </summary>
-public enum OpinionStream
+public enum OpinionChannel
 {
     Unknown = 0,
 

@@ -1,8 +1,8 @@
-namespace Zongzu.Contracts;
+﻿namespace Zongzu.Contracts;
 
 /// <summary>
 /// SPATIAL_SKELETON_SPEC §20.5 — the minimum festival set the Lanxi seed
-/// world must recognize. On hit, the matching <see cref="OpinionStream"/>
+/// world must recognize. On hit, the matching <see cref="OpinionChannel"/>
 /// heat rises and <c>SeasonBand.MarketCadencePulse</c> bumps.
 ///
 /// Keys are short lowercase strings matched against

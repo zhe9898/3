@@ -11,12 +11,12 @@ namespace Zongzu.Modules.WorldSettlements;
 /// shape that a state change takes when it becomes publicly visible.
 ///
 /// <para><b>Stream competition</b> (SPEC 搂20.1): the same underlying
-/// transition can produce multiple signals, one per <see cref="OpinionStream"/>
+/// transition can produce multiple signals, one per <see cref="OpinionChannel"/>
 /// it reaches, with different <see cref="PublicSurfaceSignal.Sentiment"/>
 /// and possibly different <see cref="PublicSurfaceSignal.Category"/>. That
 /// is the definition of "streams compete" 鈥?a canal opening reads positive
-/// on <see cref="OpinionStream.NoticeBoard"/>, skeptical on
-/// <see cref="OpinionStream.MarketTalk"/>.</para>
+/// on <see cref="OpinionChannel.NoticeBoard"/>, skeptical on
+/// <see cref="OpinionChannel.MarketTalk"/>.</para>
 ///
 /// <para><b>Covert nodes emit nothing</b> (SPEC 搂20.6): callers must pass
 /// only nodes whose <see cref="SettlementStateData.Visibility"/> is not
@@ -37,10 +37,10 @@ internal static class PublicSurfaceSignalEmitter
     /// <summary>
     /// SPEC 搂20.3 canal-transition pattern. Emits either:
     /// <list type="bullet">
-    ///   <item>Opening (Closed/Limited 鈫?Open) 鈥?<see cref="OpinionStream.NoticeBoard"/>
+    ///   <item>Opening (Closed/Limited 鈫?Open) 鈥?<see cref="OpinionChannel.NoticeBoard"/>
     ///         <see cref="PublicSurfaceCategory.Commerce"/> +30 with
     ///         <see cref="PressureKind.GrainPressure"/> eased.</item>
-    ///   <item>Closing (Open/Limited 鈫?Closed) 鈥?<see cref="OpinionStream.NoticeBoard"/>
+    ///   <item>Closing (Open/Limited 鈫?Closed) 鈥?<see cref="OpinionChannel.NoticeBoard"/>
     ///         <see cref="PublicSurfaceCategory.Alarm"/> -40 exposing
     ///         <see cref="PressureKind.FloodPressure"/>.</item>
     ///   <item>Narrowing (Open 鈫?Limited) 鈥?single Alarm -20.</item>
@@ -65,7 +65,7 @@ internal static class PublicSurfaceSignalEmitter
             buffer.Add(new PublicSurfaceSignal(
                 NodeId: canalJunction.Id,
                 NodeKind: canalJunction.NodeKind,
-                Stream: OpinionStream.NoticeBoard,
+                Stream: OpinionChannel.NoticeBoard,
                 Category: PublicSurfaceCategory.Commerce,
                 Tier: NotificationTier.Consequential,
                 HeadlineKey: "canal-opening",
@@ -79,7 +79,7 @@ internal static class PublicSurfaceSignalEmitter
             buffer.Add(new PublicSurfaceSignal(
                 NodeId: canalJunction.Id,
                 NodeKind: canalJunction.NodeKind,
-                Stream: OpinionStream.NoticeBoard,
+                Stream: OpinionChannel.NoticeBoard,
                 Category: PublicSurfaceCategory.Alarm,
                 Tier: NotificationTier.Consequential,
                 HeadlineKey: "canal-closing",
@@ -92,7 +92,7 @@ internal static class PublicSurfaceSignalEmitter
         buffer.Add(new PublicSurfaceSignal(
             NodeId: canalJunction.Id,
             NodeKind: canalJunction.NodeKind,
-            Stream: OpinionStream.NoticeBoard,
+            Stream: OpinionChannel.NoticeBoard,
             Category: PublicSurfaceCategory.Alarm,
             Tier: NotificationTier.Consequential,
             HeadlineKey: "canal-limited",
@@ -135,7 +135,7 @@ internal static class PublicSurfaceSignalEmitter
             buffer.Add(new PublicSurfaceSignal(
                 NodeId: canalJunction.Id,
                 NodeKind: canalJunction.NodeKind,
-                Stream: OpinionStream.NoticeBoard,
+                Stream: OpinionChannel.NoticeBoard,
                 Category: PublicSurfaceCategory.Alarm,
                 Tier: NotificationTier.Urgent,
                 HeadlineKey: "flood-risk-official",
@@ -148,7 +148,7 @@ internal static class PublicSurfaceSignalEmitter
             buffer.Add(new PublicSurfaceSignal(
                 NodeId: ferry.Id,
                 NodeKind: ferry.NodeKind,
-                Stream: OpinionStream.MarketTalk,
+                Stream: OpinionChannel.MarketTalk,
                 Category: PublicSurfaceCategory.Alarm,
                 Tier: NotificationTier.Consequential,
                 HeadlineKey: "flood-risk-ferry-panic",
@@ -161,7 +161,7 @@ internal static class PublicSurfaceSignalEmitter
             buffer.Add(new PublicSurfaceSignal(
                 NodeId: temple.Id,
                 NodeKind: temple.NodeKind,
-                Stream: OpinionStream.TempleWhisper,
+                Stream: OpinionChannel.TempleWhisper,
                 Category: PublicSurfaceCategory.Rumor,
                 Tier: NotificationTier.Consequential,
                 HeadlineKey: "flood-risk-divine-anger",

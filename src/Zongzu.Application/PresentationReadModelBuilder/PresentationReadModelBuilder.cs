@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -42,7 +42,9 @@ public sealed partial class PresentationReadModelBuilder
 
         if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.PopulationAndHouseholds))
         {
-            bundle.PopulationSettlements = queries.GetRequired<IPopulationAndHouseholdsQueries>().GetSettlements();
+            IPopulationAndHouseholdsQueries populationQueries = queries.GetRequired<IPopulationAndHouseholdsQueries>();
+            bundle.Households = populationQueries.GetHouseholds();
+            bundle.PopulationSettlements = populationQueries.GetSettlements();
         }
 
         if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.EducationAndExams))
@@ -93,6 +95,7 @@ public sealed partial class PresentationReadModelBuilder
             bundle.Notifications = queries.GetRequired<INarrativeProjectionQueries>().GetNotifications();
         }
 
+        bundle.HouseholdSocialPressures = BuildHouseholdSocialPressures(bundle);
         bundle.PlayerCommands = BuildPlayerCommandSurface(bundle);
         bundle.GovernanceSettlements = BuildGovernanceSettlements(bundle);
         bundle.GovernanceFocus = BuildGovernanceFocus(bundle.GovernanceSettlements);
@@ -102,6 +105,7 @@ public sealed partial class PresentationReadModelBuilder
             bundle.Notifications,
             bundle.PlayerCommands.Receipts);
         bundle.HallDocket = BuildHallDocketStack(bundle);
+        bundle.InfluenceFootprint = BuildInfluenceFootprint(bundle);
         bundle.Debug = BuildDebugSnapshot(simulation, bundle.Notifications);
         return bundle;
     }
