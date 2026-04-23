@@ -111,6 +111,13 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(windows.Length, Is.EqualTo(1),
             "Court agenda pressure must not fan out into every jurisdiction.");
         Assert.That(windows[0].EntityKey, Is.EqualTo("10"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowPressure], Is.EqualTo("84"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowMandateDeficit], Is.EqualTo("10"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowAuthoritySignal], Is.EqualTo("54"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowLeverageSignal], Is.EqualTo("20"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowAdministrativeDrag], Is.EqualTo("0"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowClerkDrag], Is.EqualTo("0"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowBacklogDrag], Is.EqualTo("0"));
     }
 
     [Test]

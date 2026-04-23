@@ -768,7 +768,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             return;
         }
 
-        int pressureScore = ComputePolicyWindowScore(target, mandateConfidence);
+        PolicyWindowProfile profile = ComputePolicyWindowProfile(target, mandateConfidence);
         scope.Emit(
             OfficeAndCareerEventNames.PolicyWindowOpened,
             $"{target.LeadOfficeTitle}辖下因朝局紧张，政策窗口忽开。",
@@ -779,8 +779,21 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 [DomainEventMetadataKeys.SourceEventType] = courtAgendaPressure.EventType,
                 [DomainEventMetadataKeys.SettlementId] = target.SettlementId.Value.ToString(),
                 [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
-                [DomainEventMetadataKeys.PressureScore] = pressureScore.ToString(),
+                [DomainEventMetadataKeys.PressureScore] = profile.WindowPressure.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowPressure] = profile.WindowPressure.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowMandateDeficit] = profile.MandateDeficit.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowAuthoritySignal] = profile.AuthoritySignal.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowLeverageSignal] = profile.LeverageSignal.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowPetitionSignal] = profile.PetitionSignal.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowAdministrativeDrag] = profile.AdministrativeDrag.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowClerkDrag] = profile.ClerkDrag.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowBacklogDrag] = profile.BacklogDrag.ToString(),
                 [DomainEventMetadataKeys.AuthorityTier] = target.AuthorityTier.ToString(),
+                [DomainEventMetadataKeys.JurisdictionLeverage] = target.JurisdictionLeverage.ToString(),
+                [DomainEventMetadataKeys.ClerkDependence] = target.ClerkDependence.ToString(),
+                [DomainEventMetadataKeys.PetitionPressure] = target.PetitionPressure.ToString(),
+                [DomainEventMetadataKeys.PetitionBacklog] = target.PetitionBacklog.ToString(),
+                [DomainEventMetadataKeys.AdministrativeTaskLoad] = target.AdministrativeTaskLoad.ToString(),
             });
     }
 
@@ -880,24 +893,57 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         int mandateConfidence)
     {
         return jurisdictions
-            .Where(jurisdiction => jurisdiction.AuthorityTier >= CourtPolicyWindowAuthorityTierThreshold
-                                   && ComputePolicyWindowScore(jurisdiction, mandateConfidence) >= CourtPolicyWindowScoreThreshold)
-            .OrderByDescending(static jurisdiction => jurisdiction.AuthorityTier)
-            .ThenByDescending(static jurisdiction => jurisdiction.JurisdictionLeverage)
-            .ThenBy(static jurisdiction => jurisdiction.SettlementId.Value)
+            .Select(jurisdiction => new
+            {
+                Jurisdiction = jurisdiction,
+                Profile = ComputePolicyWindowProfile(jurisdiction, mandateConfidence),
+            })
+            .Where(candidate => candidate.Jurisdiction.AuthorityTier >= CourtPolicyWindowAuthorityTierThreshold
+                                && candidate.Profile.WindowPressure >= CourtPolicyWindowScoreThreshold)
+            .OrderByDescending(static candidate => candidate.Profile.WindowPressure)
+            .ThenByDescending(static candidate => candidate.Jurisdiction.AuthorityTier)
+            .ThenByDescending(static candidate => candidate.Jurisdiction.JurisdictionLeverage)
+            .ThenBy(static candidate => candidate.Jurisdiction.SettlementId.Value)
+            .Select(static candidate => candidate.Jurisdiction)
             .FirstOrDefault();
     }
 
     private static int ComputePolicyWindowScore(JurisdictionAuthorityState jurisdiction, int mandateConfidence)
     {
+        return ComputePolicyWindowProfile(jurisdiction, mandateConfidence).WindowPressure;
+    }
+
+    private static PolicyWindowProfile ComputePolicyWindowProfile(
+        JurisdictionAuthorityState jurisdiction,
+        int mandateConfidence)
+    {
         int mandateDeficit = Math.Max(0, 40 - mandateConfidence);
-        return Math.Clamp(
-            (jurisdiction.AuthorityTier * 18)
-            + (jurisdiction.JurisdictionLeverage / 3)
+        int authoritySignal = jurisdiction.AuthorityTier * 18;
+        int leverageSignal = jurisdiction.JurisdictionLeverage / 3;
+        int petitionSignal = jurisdiction.PetitionPressure / 5;
+        int administrativeDrag = jurisdiction.AdministrativeTaskLoad / 4;
+        int clerkDrag = jurisdiction.ClerkDependence / 5;
+        int backlogDrag = jurisdiction.PetitionBacklog / 6;
+        int windowPressure = Math.Clamp(
+            authoritySignal
+            + leverageSignal
+            + petitionSignal
             + mandateDeficit
-            - (jurisdiction.AdministrativeTaskLoad / 4),
+            - administrativeDrag
+            - clerkDrag
+            - backlogDrag,
             0,
             100);
+
+        return new PolicyWindowProfile(
+            windowPressure,
+            mandateDeficit,
+            authoritySignal,
+            leverageSignal,
+            petitionSignal,
+            administrativeDrag,
+            clerkDrag,
+            backlogDrag);
     }
 
     private static int ComputeDefectionRisk(OfficeCareerState career, int mandateConfidence)
@@ -935,4 +981,14 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         int TaskPressure,
         int PetitionPressure,
         int AuthorityBuffer);
+
+    private readonly record struct PolicyWindowProfile(
+        int WindowPressure,
+        int MandateDeficit,
+        int AuthoritySignal,
+        int LeverageSignal,
+        int PetitionSignal,
+        int AdministrativeDrag,
+        int ClerkDrag,
+        int BacklogDrag);
 }

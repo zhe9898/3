@@ -163,6 +163,14 @@ public static class DomainEventMetadataKeys
     public const string ExamKinshipRolePressure = "examKinshipRolePressure";
     public const string MandateConfidence = "mandateConfidence";
     public const string PressureScore = "pressureScore";
+    public const string PolicyWindowPressure = "policyWindowPressure";
+    public const string PolicyWindowMandateDeficit = "policyWindowMandateDeficit";
+    public const string PolicyWindowAuthoritySignal = "policyWindowAuthoritySignal";
+    public const string PolicyWindowLeverageSignal = "policyWindowLeverageSignal";
+    public const string PolicyWindowPetitionSignal = "policyWindowPetitionSignal";
+    public const string PolicyWindowAdministrativeDrag = "policyWindowAdministrativeDrag";
+    public const string PolicyWindowClerkDrag = "policyWindowClerkDrag";
+    public const string PolicyWindowBacklogDrag = "policyWindowBacklogDrag";
     public const string DefectionRisk = "defectionRisk";
     public const string AuthorityTier = "authorityTier";
     public const string PersonId = "personId";
