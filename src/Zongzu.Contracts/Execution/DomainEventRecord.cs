@@ -105,6 +105,17 @@ public static class DomainEventMetadataKeys
     public const string SubsistenceFragilityPressure = "subsistenceFragilityPressure";
     public const string SubsistenceInteractionPressure = "subsistenceInteractionPressure";
     public const string Livelihood = "livelihood";
+    public const string AmnestyWave = "amnestyWave";
+    public const string AmnestyReleasePressure = "amnestyReleasePressure";
+    public const string AmnestyDocketPressure = "amnestyDocketPressure";
+    public const string AmnestyClerkHandlingPressure = "amnestyClerkHandlingPressure";
+    public const string AmnestyAuthorityBuffer = "amnestyAuthorityBuffer";
+    public const string AmnestyLocalDisorderSoil = "amnestyLocalDisorderSoil";
+    public const string AmnestySuppressionBuffer = "amnestySuppressionBuffer";
+    public const string JurisdictionLeverage = "jurisdictionLeverage";
+    public const string ClerkDependence = "clerkDependence";
+    public const string PetitionBacklog = "petitionBacklog";
+    public const string AdministrativeTaskLoad = "administrativeTaskLoad";
     public const string ExamTier = "examTier";
     public const string ExamScore = "examScore";
     public const string ExamStudyProgress = "examStudyProgress";

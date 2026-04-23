@@ -406,7 +406,7 @@ PublicLifeAndRumor (monthly, 通过 query)
 
 ### 链4：皇权-任命-地方-公共生活
 
-> **实现状态：薄切片（M2-lite）。已落 `ImperialRhythmChanged -> OfficeAndCareer.AmnestyApplied -> OrderAndBanditry.DisorderSpike`，完整版的任命暂停、国丧、边防军需、公共生活诏令投影仍未实现。**
+> **实现状态：薄切片 + 链4第一层规则加厚（M2-lite）。已落 `ImperialRhythmChanged -> OfficeAndCareer.AmnestyApplied -> OrderAndBanditry.DisorderSpike`；`AmnestyApplied` 已携带衙门执行 metadata，`OrderAndBanditry` 已用本地治安土壤 + 衙门执行上下文计算失序 delta。完整版的任命暂停、国丧、边防军需、公共生活诏令投影仍未实现。**
 
 **Trigger**：`WorldSettlements` 的 `ImperialBand` 更新（大赦、国丧、储位摇动、边防急报）。
 
@@ -418,7 +418,7 @@ WorldSettlements (seasonal / month)
       ├──→ OfficeAndCareer
       │     若 AmnestyWave:
       │       释放部分在押人员，更新 yamen docket
-      │       发出 OfficeAndCareer.AmnestyApplied { settlementId, category, count }
+      │       发出 OfficeAndCareer.AmnestyApplied { settlementId, amnestyWave, authorityTier, jurisdictionLeverage, clerkDependence, petitionBacklog, administrativeTaskLoad }
       │     若 MourningInterruption:
       │       暂停 appointment / evaluation / marriage / public festivities
       │       发出 WorldSettlements.CourtMourning { settlementId, duration, affectedProcesses }
@@ -442,6 +442,9 @@ OfficeAndCareer (monthly)
   └── OfficeAndCareer.AmnestyApplied
       └──→ OrderAndBanditry（通过事件）
             OrderAndBanditry 处理实际治安后果：释放人员中惯犯的再犯风险、失序压力上升
+            ✅ FIRST THICKENING DONE：不再固定 +10；读取 AmnestyApplied metadata 与本地 order state，
+               按 releasePressure / docketPressure / clerkHandlingPressure / localDisorderSoil / authorityBuffer / suppressionBuffer 计算 delta；
+               若本地官威和镇压缓冲足够，delta 可为 0，不强制每次大赦都变成失序
             ✅ THIN-SLICE DONE：跨 50 阈值时复用 OrderAndBanditry.DisorderSpike { settlementId }
             ⏳ FULL CHAIN TODO：定期 summary 事件仍应使用 OrderAndBanditry.DisorderLevelChanged { settlementId, oldBand, newBand }
       注意：OfficeAndCareer 只处理文书和命令（发布赦令、更新案牍），不直接处理治安执行
@@ -1080,7 +1083,7 @@ PublicLifeAndRumor (monthly, P5+)
    - ✅ 链3 薄切片（ExamPassed → ClanPrestigeAdjusted）— `ExamPrestigeChainTests.cs`
    - ✅ 链3 第一层规则加厚 — `ExamResultHandlerTests` 覆盖 credential metadata、多维宗族声望画像、结构化 exam-prestige metadata、off-scope clan 负例
    - ⏳ 链3 完整版（OfficeAndCareer waiting list / SocialMemory Favor-Shame / PublicLife 放榜投影）
-   - ✅ 链4 薄切片（ImperialRhythmChanged → AmnestyApplied → DisorderSpike）— `ImperialAmnestyDisorderChainTests.cs`
+   - ✅ 链4 薄切片 + 第一层规则加厚（ImperialRhythmChanged → AmnestyApplied(metadata) → amnesty-disorder profile → DisorderSpike）— `ImperialAmnestyDisorderChainTests.cs` + `AmnestyDispatchHandlerTests.cs` + `AmnestyDisorderHandlerTests.cs`
    - ✅ 链6 薄切片（DisasterDeclared → DisorderSpike → PublicLife）— `DisasterDisorderPublicLifeChainTests.cs` + metadata-only / repeated-declaration tests
    - ⏳ 链6 完整版（赈济决策、市场恐慌、家户生存/迁徙、路险、疫病、SocialMemory 灾后记忆、PublicLife 合法性）
    - ✅ 链5 薄切片（FrontierStrainEscalated → OfficialSupplyRequisition → HouseholdBurden）— `FrontierSupplyHouseholdChainTests.cs`

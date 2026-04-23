@@ -43,6 +43,10 @@ public sealed class AmnestyDispatchHandlerTests
             HasAppointment = true,
             OfficeTitle = "县尉",
             AuthorityTier = 2,
+            JurisdictionLeverage = 45,
+            ClerkDependence = 55,
+            PetitionBacklog = 40,
+            AdministrativeTaskLoad = 30,
         });
         state.People.Add(new OfficeCareerState
         {
@@ -88,6 +92,16 @@ public sealed class AmnestyDispatchHandlerTests
             "Jurisdiction at settlement 10 must receive amnesty event.");
         Assert.That(emitted, Has.Some.Matches<IDomainEvent>(e => e.EntityKey == "20"),
             "Jurisdiction at settlement 20 must receive amnesty event.");
+        IDomainEvent settlement10Event = emitted.Single(static e => e.EntityKey == "10");
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseAmnesty));
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.SourceEventType], Is.EqualTo(WorldSettlementsEventNames.ImperialRhythmChanged));
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.SettlementId], Is.EqualTo("10"));
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.AmnestyWave], Is.EqualTo("60"));
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.AuthorityTier], Is.EqualTo("2"));
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.JurisdictionLeverage], Is.EqualTo("45"));
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.ClerkDependence], Is.EqualTo("55"));
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.PetitionBacklog], Is.EqualTo("40"));
+        Assert.That(settlement10Event.Metadata[DomainEventMetadataKeys.AdministrativeTaskLoad], Is.EqualTo("30"));
         Assert.That(state.LastAppliedAmnestyWave, Is.EqualTo(60),
             "Handled amnesty wave should be latched so unrelated imperial rhythm changes do not repeat it.");
     }

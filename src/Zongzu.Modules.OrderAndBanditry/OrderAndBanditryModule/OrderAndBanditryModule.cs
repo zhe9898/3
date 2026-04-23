@@ -1334,9 +1334,27 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
             return;
         }
 
-        const int delta = 10;
+        if (!TryReadMetadataInt(domainEvent, DomainEventMetadataKeys.AmnestyWave, out int amnestyWave))
+        {
+            return;
+        }
+
+        AmnestyDisorderProfile profile = ComputeAmnestyDisorderProfile(settlement, domainEvent, amnestyWave);
+        if (profile.DisorderDelta <= 0)
+        {
+            return;
+        }
+
         int oldDisorder = settlement.DisorderPressure;
-        settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + delta, 0, 100);
+        settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + profile.DisorderDelta, 0, 100);
+        settlement.LastPressureReason =
+            $"{settlementId.Value}地奉行大赦，释放重理压入街面，失序上升{profile.DisorderDelta}。";
+        settlement.LastPressureTrace =
+            $"赦波{amnestyWave}，案牍压{profile.DocketPressure}，吏胥处置压{profile.ClerkHandlingPressure}，本地失序土壤{profile.LocalDisorderSoil}，官威缓冲{profile.AuthorityBuffer}，镇压缓冲{profile.SuppressionBuffer}。";
+
+        scope.RecordDiff(
+            $"{settlementId.Value}地大赦执行后，失序由{oldDisorder}升至{settlement.DisorderPressure}；{settlement.LastPressureTrace}",
+            settlementId.Value.ToString());
 
         if (oldDisorder < 50 && settlement.DisorderPressure >= 50)
         {
@@ -1344,8 +1362,80 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
                 OrderAndBanditryEventNames.DisorderSpike,
                 $"{settlementId.Value}地大赦释囚，惯犯再犯，失序骤起。",
                 settlementId.Value.ToString(),
-                BuildDisorderSpikeMetadata(DomainEventMetadataValues.CauseAmnesty, domainEvent, delta));
+                BuildDisorderSpikeMetadata(
+                    DomainEventMetadataValues.CauseAmnesty,
+                    domainEvent,
+                    profile.DisorderDelta,
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.AmnestyWave] = amnestyWave.ToString(),
+                        [DomainEventMetadataKeys.AmnestyReleasePressure] = profile.ReleasePressure.ToString(),
+                        [DomainEventMetadataKeys.AmnestyDocketPressure] = profile.DocketPressure.ToString(),
+                        [DomainEventMetadataKeys.AmnestyClerkHandlingPressure] = profile.ClerkHandlingPressure.ToString(),
+                        [DomainEventMetadataKeys.AmnestyAuthorityBuffer] = profile.AuthorityBuffer.ToString(),
+                        [DomainEventMetadataKeys.AmnestyLocalDisorderSoil] = profile.LocalDisorderSoil.ToString(),
+                        [DomainEventMetadataKeys.AmnestySuppressionBuffer] = profile.SuppressionBuffer.ToString(),
+                    }));
         }
+    }
+
+    private static AmnestyDisorderProfile ComputeAmnestyDisorderProfile(
+        SettlementDisorderState settlement,
+        IDomainEvent domainEvent,
+        int amnestyWave)
+    {
+        int releasePressure = amnestyWave switch
+        {
+            >= 80 => 8,
+            >= 65 => 6,
+            _ => 4,
+        };
+
+        int petitionBacklog = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.PetitionBacklog);
+        int administrativeTaskLoad = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.AdministrativeTaskLoad);
+        int clerkDependence = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkDependence);
+        int authorityTier = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.AuthorityTier);
+        int jurisdictionLeverage = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.JurisdictionLeverage);
+
+        int docketPressure = Math.Clamp(Math.Max(0, petitionBacklog - 20) / 20, 0, 4)
+            + Math.Clamp(administrativeTaskLoad / 40, 0, 2);
+        int clerkHandlingPressure = Math.Clamp(clerkDependence / 25, 0, 4);
+        int authorityBuffer = Math.Clamp(authorityTier, 0, 3)
+            + Math.Clamp(jurisdictionLeverage / 35, 0, 2);
+        int localDisorderSoil =
+            BandedPressure(settlement.DisorderPressure, 30, 45)
+            + BandedPressure(settlement.BanditThreat, 30, 50)
+            + BandedPressure(settlement.BlackRoutePressure, 30, 50)
+            + BandedPressure(settlement.CoercionRisk, 20, 40)
+            + (settlement.RoutePressure >= 50 ? 1 : 0);
+        int suppressionBuffer =
+            Math.Clamp(settlement.SuppressionRelief / 35, 0, 2)
+            + Math.Clamp(settlement.RouteShielding / 35, 0, 2)
+            + Math.Clamp(settlement.ResponseActivationLevel / 40, 0, 2)
+            + Math.Clamp(settlement.AdministrativeSuppressionWindow / 35, 0, 2);
+        int disorderDelta = Math.Clamp(
+            releasePressure + docketPressure + clerkHandlingPressure + localDisorderSoil - authorityBuffer - suppressionBuffer,
+            0,
+            18);
+
+        return new AmnestyDisorderProfile(
+            disorderDelta,
+            releasePressure,
+            docketPressure,
+            clerkHandlingPressure,
+            authorityBuffer,
+            localDisorderSoil,
+            suppressionBuffer);
+    }
+
+    private static int BandedPressure(int value, int lowThreshold, int highThreshold)
+    {
+        if (value >= highThreshold)
+        {
+            return 2;
+        }
+
+        return value >= lowThreshold ? 1 : 0;
     }
 
     private static void ApplyDisasterDisorderPressure(
@@ -1438,4 +1528,27 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
             ? value
             : string.Empty;
     }
+
+    private static int ReadMetadataInt(IDomainEvent domainEvent, string key)
+    {
+        return TryReadMetadataInt(domainEvent, key, out int value)
+            ? value
+            : 0;
+    }
+
+    private static bool TryReadMetadataInt(IDomainEvent domainEvent, string key, out int value)
+    {
+        value = 0;
+        return domainEvent.Metadata.TryGetValue(key, out string? rawValue)
+            && int.TryParse(rawValue, out value);
+    }
+
+    private readonly record struct AmnestyDisorderProfile(
+        int DisorderDelta,
+        int ReleasePressure,
+        int DocketPressure,
+        int ClerkHandlingPressure,
+        int AuthorityBuffer,
+        int LocalDisorderSoil,
+        int SuppressionBuffer);
 }

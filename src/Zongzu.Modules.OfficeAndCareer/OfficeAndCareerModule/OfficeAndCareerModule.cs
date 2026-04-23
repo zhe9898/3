@@ -514,9 +514,9 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
     private static void DispatchImperialRhythmEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
     {
         // Chain 4 thin slice: imperial amnesty wave → office docket release → disorder reflux.
-        bool hasRhythmChange = scope.Events.Any(static e =>
+        IDomainEvent? rhythmEvent = scope.Events.FirstOrDefault(static e =>
             e.EventType == WorldSettlementsEventNames.ImperialRhythmChanged);
-        if (!hasRhythmChange)
+        if (rhythmEvent is null)
         {
             return;
         }
@@ -547,7 +547,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             scope.Emit(
                 OfficeAndCareerEventNames.AmnestyApplied,
                 $"{jurisdiction.LeadOfficeTitle}奉赦，{jurisdiction.SettlementId.Value}地界在押人犯减等释放，案牍重理。",
-                jurisdiction.SettlementId.Value.ToString());
+                jurisdiction.SettlementId.Value.ToString(),
+                BuildAmnestyAppliedMetadata(amnestyWave, jurisdiction, rhythmEvent));
             emitted = true;
         }
 
@@ -555,6 +556,25 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         {
             scope.State.LastAppliedAmnestyWave = amnestyWave;
         }
+    }
+
+    private static Dictionary<string, string> BuildAmnestyAppliedMetadata(
+        int amnestyWave,
+        JurisdictionAuthorityState jurisdiction,
+        IDomainEvent sourceEvent)
+    {
+        return new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseAmnesty,
+            [DomainEventMetadataKeys.SourceEventType] = sourceEvent.EventType,
+            [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
+            [DomainEventMetadataKeys.AmnestyWave] = amnestyWave.ToString(),
+            [DomainEventMetadataKeys.AuthorityTier] = jurisdiction.AuthorityTier.ToString(),
+            [DomainEventMetadataKeys.JurisdictionLeverage] = jurisdiction.JurisdictionLeverage.ToString(),
+            [DomainEventMetadataKeys.ClerkDependence] = jurisdiction.ClerkDependence.ToString(),
+            [DomainEventMetadataKeys.PetitionBacklog] = jurisdiction.PetitionBacklog.ToString(),
+            [DomainEventMetadataKeys.AdministrativeTaskLoad] = jurisdiction.AdministrativeTaskLoad.ToString(),
+        };
     }
 
     private static void DispatchFrontierStrainEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
