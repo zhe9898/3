@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Zongzu.Kernel;
 
+using System;
+
 namespace Zongzu.Contracts;
 
 public static class HallDocketLaneKeys
@@ -66,4 +68,51 @@ public sealed record HallDocketStackSnapshot
     public HallDocketItemSnapshot LeadItem { get; init; } = new();
 
     public IReadOnlyList<HallDocketItemSnapshot> SecondaryItems { get; init; } = [];
+
+    public bool HasLeadItem => !string.IsNullOrWhiteSpace(LeadItem.Headline);
+
+    public IEnumerable<HallDocketItemSnapshot> EnumeratePresentItems()
+    {
+        if (HasLeadItem)
+        {
+            yield return LeadItem;
+        }
+
+        foreach (HallDocketItemSnapshot item in SecondaryItems)
+        {
+            if (!string.IsNullOrWhiteSpace(item.Headline))
+            {
+                yield return item;
+            }
+        }
+    }
+
+    public bool HasLaneItem(string laneKey)
+    {
+        return TryGetLaneItem(laneKey) is not null;
+    }
+
+    public HallDocketItemSnapshot? TryGetLaneItem(string laneKey)
+    {
+        if (string.IsNullOrWhiteSpace(laneKey))
+        {
+            return null;
+        }
+
+        if (HasLeadItem && string.Equals(LeadItem.LaneKey, laneKey, StringComparison.Ordinal))
+        {
+            return LeadItem;
+        }
+
+        foreach (HallDocketItemSnapshot item in SecondaryItems)
+        {
+            if (!string.IsNullOrWhiteSpace(item.Headline)
+                && string.Equals(item.LaneKey, laneKey, StringComparison.Ordinal))
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
 }

@@ -69,6 +69,7 @@ When changing one of those chains:
 - projections may be cached
 - projections are rebuilt from authoritative state
 - projections are not a backdoor write channel
+- read-model snapshots may expose read-only traversal helpers such as lane/item lookup when they only normalize visible data access; they must not grow a second composition or ordering layer beyond the already-built projection payload
 
 ## Historical-process integration rules
 

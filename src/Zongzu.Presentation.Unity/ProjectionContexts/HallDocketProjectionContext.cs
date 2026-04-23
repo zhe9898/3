@@ -28,16 +28,15 @@ internal sealed class HallDocketProjectionContext
 	{
 		ArgumentNullException.ThrowIfNull(hallDocket);
 
-		HallDocketItemSnapshot? leadItem = string.IsNullOrWhiteSpace(hallDocket.LeadItem.Headline)
-			? null
-			: hallDocket.LeadItem;
-		HallDocketItemSnapshot[] secondaryItems = hallDocket.SecondaryItems
-			.Where(item => !string.IsNullOrWhiteSpace(item.Headline))
+		HallDocketItemSnapshot? leadItem = hallDocket.HasLeadItem
+			? hallDocket.LeadItem
+			: null;
+		HallDocketItemSnapshot[] allItems = hallDocket
+			.EnumeratePresentItems()
 			.ToArray();
-
-		HallDocketItemSnapshot[] allItems = leadItem is null
-			? secondaryItems
-			: [leadItem, .. secondaryItems];
+		HallDocketItemSnapshot[] secondaryItems = leadItem is null
+			? allItems
+			: allItems.Skip(1).ToArray();
 
 		Dictionary<int, HallDocketItemSnapshot[]> settlementItems = allItems
 			.GroupBy(item => item.SettlementId.Value)

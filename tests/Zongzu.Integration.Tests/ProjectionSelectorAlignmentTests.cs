@@ -10,6 +10,35 @@ namespace Zongzu.Integration.Tests;
 public sealed class ProjectionSelectorAlignmentTests
 {
     [Test]
+    public void HallDocketStackSnapshot_TryGetLaneItem_ignores_placeholder_items()
+    {
+        HallDocketStackSnapshot stack = new()
+        {
+            LeadItem = new HallDocketItemSnapshot
+            {
+                LaneKey = HallDocketLaneKeys.Family,
+            },
+            SecondaryItems =
+            [
+                new HallDocketItemSnapshot
+                {
+                    LaneKey = HallDocketLaneKeys.Family,
+                },
+                new HallDocketItemSnapshot
+                {
+                    LaneKey = HallDocketLaneKeys.Warfare,
+                    Headline = "前线有急报",
+                },
+            ],
+        };
+
+        Assert.That(stack.HasLeadItem, Is.False);
+        Assert.That(stack.HasLaneItem(HallDocketLaneKeys.Family), Is.False);
+        Assert.That(stack.TryGetLaneItem(HallDocketLaneKeys.Warfare)?.Headline, Is.EqualTo("前线有急报"));
+        Assert.That(stack.EnumeratePresentItems().Select(static item => item.LaneKey), Is.EquivalentTo(new[] { HallDocketLaneKeys.Warfare }));
+    }
+
+    [Test]
     public void PreviewScenario_SelectedFamilyLifecycleAffordance_aligns_with_family_hall_docket_suggestion()
     {
         MvpFamilyLifecyclePreviewResult preview = new MvpFamilyLifecyclePreviewScenario().Build(20260419, 2);
@@ -49,18 +78,12 @@ public sealed class ProjectionSelectorAlignmentTests
 
     private static HallDocketItemSnapshot GetFamilyHallDocketItem(PresentationReadModelBundle bundle)
     {
-        return TryGetFamilyHallDocketItem(bundle)
+        return bundle.HallDocket.TryGetLaneItem(HallDocketLaneKeys.Family)
             ?? throw new AssertionException("Expected a family hall-docket item in the preview bundle.");
     }
 
     private static HallDocketItemSnapshot? TryGetFamilyHallDocketItem(PresentationReadModelBundle bundle)
     {
-        if (string.Equals(bundle.HallDocket.LeadItem.LaneKey, HallDocketLaneKeys.Family, StringComparison.Ordinal))
-        {
-            return bundle.HallDocket.LeadItem;
-        }
-
-        return bundle.HallDocket.SecondaryItems.FirstOrDefault(item =>
-            string.Equals(item.LaneKey, HallDocketLaneKeys.Family, StringComparison.Ordinal));
+        return bundle.HallDocket.TryGetLaneItem(HallDocketLaneKeys.Family);
     }
 }

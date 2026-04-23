@@ -98,19 +98,10 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(bundle.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.LastAftermathSummary)), Is.True);
 
-        Assert.That(
+        Assert.That(bundle.HallDocket.HasLaneItem(HallDocketLaneKeys.Warfare), Is.True);
 
-            string.Equals(bundle.HallDocket.LeadItem.LaneKey, HallDocketLaneKeys.Warfare, StringComparison.Ordinal)
-
-            || bundle.HallDocket.SecondaryItems.Any(static item => string.Equals(item.LaneKey, HallDocketLaneKeys.Warfare, StringComparison.Ordinal)),
-
-            Is.True);
-
-        HallDocketItemSnapshot warfareItem = string.Equals(bundle.HallDocket.LeadItem.LaneKey, HallDocketLaneKeys.Warfare, StringComparison.Ordinal)
-
-            ? bundle.HallDocket.LeadItem
-
-            : bundle.HallDocket.SecondaryItems.Single(item => string.Equals(item.LaneKey, HallDocketLaneKeys.Warfare, StringComparison.Ordinal));
+        HallDocketItemSnapshot warfareItem = bundle.HallDocket.TryGetLaneItem(HallDocketLaneKeys.Warfare)
+            ?? throw new AssertionException("Expected a warfare hall-docket item.");
 
         Assert.That(warfareItem.OrderingSummary, Is.Not.Empty);
 
@@ -1406,11 +1397,8 @@ public sealed partial class M2LiteIntegrationTests
 
             && string.Equals(affordance.CommandName, PlayerCommandNames.DesignateHeirPolicy, StringComparison.Ordinal));
 
-        HallDocketItemSnapshot familyDocket = string.Equals(afterDeathBundle.HallDocket.LeadItem.LaneKey, HallDocketLaneKeys.Family, StringComparison.Ordinal)
-
-            ? afterDeathBundle.HallDocket.LeadItem
-
-            : afterDeathBundle.HallDocket.SecondaryItems.Single(item => string.Equals(item.LaneKey, HallDocketLaneKeys.Family, StringComparison.Ordinal));
+        HallDocketItemSnapshot familyDocket = afterDeathBundle.HallDocket.TryGetLaneItem(HallDocketLaneKeys.Family)
+            ?? throw new AssertionException("Expected a family hall-docket item after death.");
 
         NotificationItemViewModel? familyNotice = afterDeathShell.NotificationCenter.Items.FirstOrDefault(static item =>
 
