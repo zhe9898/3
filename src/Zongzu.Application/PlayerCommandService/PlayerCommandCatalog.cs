@@ -204,13 +204,6 @@ public static class PlayerCommandCatalog
 
     public static IReadOnlyList<PlayerCommandRoute> All => Routes;
 
-    public static string DetermineLabel(string commandName)
-    {
-        return TryGet(commandName, out PlayerCommandRoute? route)
-            ? route.Label
-            : commandName;
-    }
-
     public static PlayerCommandRoute GetRequired(string commandName)
     {
         return TryGet(commandName, out PlayerCommandRoute? route)

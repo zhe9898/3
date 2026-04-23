@@ -153,6 +153,62 @@ public sealed class CommandSeamIntegrationTests
             "Only current module-owned player-command handlers should advertise AcceptedCommands.");
     }
 
+    [Test]
+    public void Presentation_affordances_align_with_catalog_route_metadata()
+    {
+        PresentationReadModelBuilder builder = new();
+        PresentationReadModelBundle governanceBundle = builder.BuildForM2(SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260426));
+        PresentationReadModelBundle campaignBundle = builder.BuildForM2(SimulationBootstrapper.CreateP3CampaignSandboxBootstrap(20260427));
+        IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances = governanceBundle.PlayerCommands.Affordances
+            .Concat(campaignBundle.PlayerCommands.Affordances)
+            .ToArray();
+
+        Assert.That(affordances, Is.Not.Empty);
+
+        foreach (PlayerCommandAffordanceSnapshot affordance in affordances)
+        {
+            PlayerCommandRoute route = PlayerCommandCatalog.GetRequired(affordance.CommandName);
+            Assert.That(affordance.ModuleKey, Is.EqualTo(route.ModuleKey), $"Affordance {affordance.CommandName} drifted module ownership.");
+            Assert.That(affordance.SurfaceKey, Is.EqualTo(route.SurfaceKey), $"Affordance {affordance.CommandName} drifted surface ownership.");
+            Assert.That(affordance.Label, Is.EqualTo(route.Label), $"Affordance {affordance.CommandName} drifted default label metadata.");
+        }
+    }
+
+    [Test]
+    public void Presentation_receipts_align_with_catalog_route_metadata_after_accepted_commands()
+    {
+        PresentationReadModelBuilder builder = new();
+
+        GameSimulation familySimulation = SimulationBootstrapper.CreateM2Bootstrap(20260428);
+        PlayerCommandReceiptSnapshot familyReceipt = IssueFirstEnabledAffordanceForModuleAndReadReceipt(
+            familySimulation,
+            builder,
+            KnownModuleKeys.FamilyCore);
+
+        GameSimulation governanceSimulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260429);
+        PlayerCommandReceiptSnapshot officeReceipt = IssueFirstEnabledAffordanceForModuleAndReadReceipt(
+            governanceSimulation,
+            builder,
+            KnownModuleKeys.OfficeAndCareer);
+        PlayerCommandReceiptSnapshot orderReceipt = IssueFirstEnabledAffordanceForModuleAndReadReceipt(
+            governanceSimulation,
+            builder,
+            KnownModuleKeys.OrderAndBanditry);
+
+        GameSimulation warfareSimulation = SimulationBootstrapper.CreateP3CampaignSandboxBootstrap(20260430);
+        PlayerCommandReceiptSnapshot warfareReceipt = IssueFirstEnabledAffordanceForModuleAndReadReceipt(
+            warfareSimulation,
+            builder,
+            KnownModuleKeys.WarfareCampaign);
+
+        foreach (PlayerCommandReceiptSnapshot receipt in new[] { familyReceipt, officeReceipt, orderReceipt, warfareReceipt })
+        {
+            PlayerCommandRoute route = PlayerCommandCatalog.GetRequired(receipt.CommandName);
+            Assert.That(receipt.ModuleKey, Is.EqualTo(route.ModuleKey), $"Receipt {receipt.CommandName} drifted module ownership.");
+            Assert.That(receipt.SurfaceKey, Is.EqualTo(route.SurfaceKey), $"Receipt {receipt.CommandName} drifted surface ownership.");
+        }
+    }
+
     private static GameSimulation CreateOfficeOnlySimulation(int seed)
     {
         FeatureManifest manifest = new();
@@ -190,5 +246,42 @@ public sealed class CommandSeamIntegrationTests
             .Where(static field => field.IsLiteral && !field.IsInitOnly && field.FieldType == typeof(string))
             .Select(static field => (string)field.GetRawConstantValue()!)
             .ToHashSet(StringComparer.Ordinal);
+    }
+
+    private static PlayerCommandReceiptSnapshot IssueFirstEnabledAffordanceForModuleAndReadReceipt(
+        GameSimulation simulation,
+        PresentationReadModelBuilder builder,
+        string moduleKey)
+    {
+        PlayerCommandAffordanceSnapshot affordance = builder.BuildForM2(simulation).PlayerCommands.Affordances
+            .Where(affordance => affordance.IsEnabled && string.Equals(affordance.ModuleKey, moduleKey, StringComparison.Ordinal))
+            .OrderBy(static affordance => affordance.SurfaceKey, StringComparer.Ordinal)
+            .ThenBy(static affordance => affordance.CommandName, StringComparer.Ordinal)
+            .First();
+
+        PlayerCommandResult result = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = affordance.SettlementId,
+                ClanId = affordance.ClanId,
+                CommandName = affordance.CommandName,
+            });
+
+        Assert.That(result.Accepted, Is.True, $"Expected enabled affordance {affordance.CommandName} in {moduleKey} to be accepted.");
+
+        PresentationReadModelBundle afterBundle = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot? receipt = afterBundle.PlayerCommands.Receipts
+            .Where(candidate =>
+                string.Equals(candidate.ModuleKey, moduleKey, StringComparison.Ordinal)
+                && string.Equals(candidate.CommandName, affordance.CommandName, StringComparison.Ordinal)
+                && candidate.SettlementId.Equals(affordance.SettlementId)
+                && Nullable.Equals(candidate.ClanId, affordance.ClanId))
+            .OrderByDescending(static candidate => candidate.OutcomeSummary.Length)
+            .ThenByDescending(static candidate => candidate.Summary.Length)
+            .FirstOrDefault();
+
+        Assert.That(receipt, Is.Not.Null, $"Expected a receipt for accepted affordance {affordance.CommandName} in {moduleKey}.");
+        return receipt!;
     }
 }

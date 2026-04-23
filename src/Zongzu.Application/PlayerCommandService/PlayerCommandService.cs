@@ -33,21 +33,6 @@ public sealed class PlayerCommandService
         return simulation.IssueModuleCommand(route.ModuleKey, command);
     }
 
-    internal static string DetermineFamilyCommandLabel(string commandName)
-    {
-        return PlayerCommandCatalog.DetermineLabel(commandName);
-    }
-
-    internal static string DetermineOfficeCommandLabel(string commandName)
-    {
-        return PlayerCommandCatalog.DetermineLabel(commandName);
-    }
-
-    internal static string DeterminePublicLifeCommandLabel(string commandName)
-    {
-        return PlayerCommandCatalog.DetermineLabel(commandName);
-    }
-
     private static PlayerCommandResult BuildDisabledResult(PlayerCommandRequest command, PlayerCommandRoute route)
     {
         return new PlayerCommandResult
