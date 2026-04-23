@@ -311,6 +311,49 @@ public sealed class NarrativeProjectionModuleTests
     }
 
     [Test]
+    public void RunMonth_DeathByViolenceWithFamilyDiff_ProjectsAncestralHallGuidance()
+    {
+        NarrativeProjectionModule module = new();
+        NarrativeProjectionState state = module.CreateInitialState();
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer domainEvents = new();
+        domainEvents.Emit(new DomainEventRecord(
+            KnownModuleKeys.ConflictAndForce,
+            DeathCauseEventNames.DeathByViolence,
+            "Clan Zhang heir died in a violent clash.",
+            "1"));
+
+        WorldDiff diff = new();
+        diff.Record(KnownModuleKeys.FamilyCore, "张门承祧之人遭暴亡，门内举哀，继嗣之议与房支争执随即翻起（死者名分3阶、承祧缺口3阶、身后牵挂1阶、丧葬拖累2阶、宗房余力短处1阶）。", "1");
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 12),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(197)),
+            queries,
+            domainEvents,
+            diff,
+            KernelState.Create(197));
+
+        module.RunMonth(new ModuleExecutionScope<NarrativeProjectionState>(state, context));
+
+        NarrativeNotificationState violentNotice = state.Notifications.Single(static notification =>
+            notification.SourceModuleKey == KnownModuleKeys.ConflictAndForce);
+        NarrativeNotificationState familyNotice = state.Notifications.Single(static notification =>
+            notification.SourceModuleKey == KnownModuleKeys.FamilyCore);
+
+        Assert.That(violentNotice.Title, Is.EqualTo("暴亡入案"));
+        Assert.That(violentNotice.Tier, Is.EqualTo(NotificationTier.Urgent));
+        Assert.That(violentNotice.WhyItHappened, Does.Contain("承祧缺口3阶"));
+        Assert.That(violentNotice.WhatNext, Does.Contain("先议定承祧名分"));
+        Assert.That(familyNotice.Surface, Is.EqualTo(NarrativeSurface.AncestralHall));
+        Assert.That(familyNotice.WhatNext, Does.Contain("先议定承祧名分"));
+    }
+
+    [Test]
     public void RunMonth_DeathLifecycleEvent_ProjectsMourningAndSuccessionGuidance()
     {
         NarrativeProjectionModule module = new();

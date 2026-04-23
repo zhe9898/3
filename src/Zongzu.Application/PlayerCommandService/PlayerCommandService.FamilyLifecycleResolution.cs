@@ -76,12 +76,12 @@ public sealed partial class PlayerCommandService
             executionSummary);
     }
 
-    private static FamilyHeirResolutionProfile ResolveHeirPolicyProfile(ClanStateData clan, FamilyPersonState candidate)
+    private static FamilyHeirResolutionProfile ResolveHeirPolicyProfile(ClanStateData clan, int candidateAgeMonths)
     {
-        bool isAdultCandidate = candidate.AgeMonths >= 16 * 12;
+        bool isAdultCandidate = candidateAgeMonths >= 16 * 12;
         int candidateStabilityBand = isAdultCandidate
-            ? CommandResolutionBands.Score(candidate.AgeMonths, 16 * 12, 20 * 12, 28 * 12)
-            : CommandResolutionBands.Score(candidate.AgeMonths, 4 * 12, 8 * 12, 12 * 12);
+            ? CommandResolutionBands.Score(candidateAgeMonths, 16 * 12, 20 * 12, 28 * 12)
+            : CommandResolutionBands.Score(candidateAgeMonths, 4 * 12, 8 * 12, 12 * 12);
         int heirFragility = clan.HeirSecurity < 35 ? 2 : clan.HeirSecurity < 60 ? 1 : 0;
         int inheritancePressureBand = CommandResolutionBands.Score(clan.InheritancePressure, 20, 45, 70);
         int branchPressureBand = CommandResolutionBands.Score(clan.BranchTension, 20, 45, 70);

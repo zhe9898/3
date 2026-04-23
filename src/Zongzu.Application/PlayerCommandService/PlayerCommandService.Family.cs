@@ -16,6 +16,7 @@ public sealed partial class PlayerCommandService
         }
 
         FamilyCoreState state = simulation.GetMutableModuleState<FamilyCoreState>(KnownModuleKeys.FamilyCore);
+        IPersonRegistryQueries? personRegistryQueries = TryGetPersonRegistryQueries(simulation);
         ClanStateData[] localClans = state.Clans
             .Where(clan => clan.HomeSettlementId == command.SettlementId)
             .OrderByDescending(static clan => clan.Prestige)
@@ -36,9 +37,9 @@ public sealed partial class PlayerCommandService
             {
                 bool hasMarriageableAdult = state.People.Any(person =>
                     person.ClanId == clan.Id
-                    && person.IsAlive
-                    && person.AgeMonths >= 16 * 12
-                    && person.AgeMonths < 40 * 12);
+                    && IsFamilyCommandPersonAlive(person, personRegistryQueries)
+                    && GetFamilyCommandAgeMonths(person, personRegistryQueries, simulation.CurrentDate) >= 16 * 12
+                    && GetFamilyCommandAgeMonths(person, personRegistryQueries, simulation.CurrentDate) < 40 * 12);
                 if (!hasMarriageableAdult)
                 {
                     return BuildRejectedFamilyResult(command, $"{clan.ClanName}眼下无可议亲之人，先看家内年龄与服丧轻重。");
@@ -61,27 +62,34 @@ public sealed partial class PlayerCommandService
             }
             case PlayerCommandNames.DesignateHeirPolicy:
             {
-                FamilyPersonState? candidate = state.People
-                    .Where(person => person.ClanId == clan.Id && person.IsAlive)
-                    .OrderByDescending(static person => person.AgeMonths >= 16 * 12)
-                    .ThenByDescending(static person => person.AgeMonths)
-                    .ThenBy(static person => person.Id.Value)
+                var candidateEntry = state.People
+                    .Where(person => person.ClanId == clan.Id && IsFamilyCommandPersonAlive(person, personRegistryQueries))
+                    .Select(person => new
+                    {
+                        Person = person,
+                        AgeMonths = GetFamilyCommandAgeMonths(person, personRegistryQueries, simulation.CurrentDate),
+                    })
+                    .OrderByDescending(static entry => entry.AgeMonths >= 16 * 12)
+                    .ThenByDescending(static entry => entry.AgeMonths)
+                    .ThenBy(static entry => entry.Person.Id.Value)
                     .FirstOrDefault();
-                if (candidate is null)
+                if (candidateEntry is null)
                 {
                     return BuildRejectedFamilyResult(command, $"{clan.ClanName}门内暂无人可立嗣，先看婚议与抚育能否续上。");
                 }
 
-                FamilyHeirResolutionProfile profile = ResolveHeirPolicyProfile(clan, candidate);
+                FamilyPersonState candidate = candidateEntry.Person;
+                int candidateAgeMonths = candidateEntry.AgeMonths;
+                FamilyHeirResolutionProfile profile = ResolveHeirPolicyProfile(clan, candidateAgeMonths);
                 clan.HeirPersonId = candidate.Id;
                 clan.HeirSecurity = CommandResolutionMath.Clamp100(Math.Max(clan.HeirSecurity + profile.HeirSecurityLift, profile.HeirSecurityFloor));
                 clan.InheritancePressure = Math.Max(0, clan.InheritancePressure - profile.InheritancePressureRelief);
                 clan.BranchTension = CommandResolutionMath.Clamp100(clan.BranchTension + profile.BranchTensionBacklash);
                 clan.MediationMomentum = CommandResolutionMath.Clamp100(clan.MediationMomentum + profile.MediationMomentumLift);
-                clan.LastLifecycleOutcome = candidate.AgeMonths >= 16 * 12
+                clan.LastLifecycleOutcome = candidateAgeMonths >= 16 * 12
                     ? $"承祧人已定，谱内名分先写稳了；承祧稳度{clan.HeirSecurity}，后议之压暂退到{clan.InheritancePressure}，调停势头到{clan.MediationMomentum}。{RenderBranchBacklash(profile.BranchTensionBacklash)}"
                     : $"嗣苗已记入谱案，香火名分暂有着落；只是人尚年幼，承祧稳度只到{clan.HeirSecurity}，后议之压退到{clan.InheritancePressure}。{RenderBranchBacklash(profile.BranchTensionBacklash)}";
-                clan.LastLifecycleTrace = candidate.AgeMonths >= 16 * 12
+                clan.LastLifecycleTrace = candidateAgeMonths >= 16 * 12
                     ? $"{clan.ClanName}按{profile.ExecutionSummary}裁定承祧次序，先把香火名分写明，免得诸房借机翻后议。"
                     : $"{clan.ClanName}按{profile.ExecutionSummary}先把嗣苗记入谱案，虽未成人，堂上总算先把香火名分定住。";
                 clan.LastLifecycleCommandCode = command.CommandName;
@@ -94,8 +102,8 @@ public sealed partial class PlayerCommandService
             {
                 int infantCount = state.People.Count(person =>
                     person.ClanId == clan.Id
-                    && person.IsAlive
-                    && person.AgeMonths <= FamilyInfantAgeMonths);
+                    && IsFamilyCommandPersonAlive(person, personRegistryQueries)
+                    && GetFamilyCommandAgeMonths(person, personRegistryQueries, simulation.CurrentDate) <= FamilyInfantAgeMonths);
                 if (infantCount == 0)
                 {
                     return BuildRejectedFamilyResult(command, $"{clan.ClanName}门内眼下并无襁褓待护，先看婚议、承祧与丧服轻重。");
@@ -232,6 +240,42 @@ public sealed partial class PlayerCommandService
             Summary = $"{clan.LastLifecycleTrace} {clan.LastLifecycleOutcome}",
             TargetLabel = clan.ClanName,
         };
+    }
+
+    private static IPersonRegistryQueries? TryGetPersonRegistryQueries(GameSimulation simulation)
+    {
+        if (!simulation.FeatureManifest.IsEnabled(KnownModuleKeys.PersonRegistry))
+        {
+            return null;
+        }
+
+        try
+        {
+            return BuildQueries(simulation).GetRequired<IPersonRegistryQueries>();
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
+    private static bool IsFamilyCommandPersonAlive(FamilyPersonState person, IPersonRegistryQueries? registryQueries)
+    {
+        if (registryQueries is not null && registryQueries.TryGetPerson(person.Id, out PersonRecord record))
+        {
+            return record.IsAlive;
+        }
+
+        return person.IsAlive;
+    }
+
+    private static int GetFamilyCommandAgeMonths(
+        FamilyPersonState person,
+        IPersonRegistryQueries? registryQueries,
+        GameDate currentDate)
+    {
+        int registryAgeMonths = registryQueries?.GetAgeMonths(person.Id, currentDate) ?? -1;
+        return registryAgeMonths >= 0 ? registryAgeMonths : person.AgeMonths;
     }
 
     private static PlayerCommandResult BuildRejectedFamilyResult(PlayerCommandRequest command, string summary)

@@ -167,6 +167,9 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             case FamilyCoreEventNames.ClanMemberDied:
             case DeathCauseEventNames.DeathByIllness:
+            case DeathCauseEventNames.DeathByViolence:
+
+                TryAddContextDiff(selected, domainEvent, allDiffs, KnownModuleKeys.FamilyCore);
 
                 TryAddContextDiff(selected, domainEvent, allDiffs, KnownModuleKeys.SocialMemoryAndRelations);
 
@@ -258,6 +261,11 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
     private static bool ShouldPullFamilyLifecycleContext(IDomainEvent domainEvent)
 
     {
+
+        if (domainEvent.EventType == DeathCauseEventNames.DeathByViolence)
+        {
+            return true;
+        }
 
         return string.Equals(domainEvent.ModuleKey, KnownModuleKeys.FamilyCore, StringComparison.Ordinal)
 

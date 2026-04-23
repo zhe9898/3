@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
@@ -1330,6 +1330,177 @@ public sealed partial class M2LiteIntegrationTests
         };
 
         return SimulationBootstrapper.LoadM2(saveRoot);
+    }
+
+
+    [Test]
+
+    public void FamilyLifecycleDeathSuccessionScenario_ProjectsNoticeCommandReceiptAndNextMonthConsequence()
+
+    {
+
+        PersonId originalHeirId = default;
+
+        GameSimulation simulation = LoadM2WithFamilyState(20260625, (familyState, clanState) =>
+
+        {
+
+            PersonId heirId = clanState.HeirPersonId ?? throw new InvalidOperationException("Seed clan should have an heir.");
+
+            originalHeirId = heirId;
+
+            FamilyPersonState heir = familyState.People.Single(person => person.Id == heirId);
+
+            FamilyPersonState child = familyState.People
+
+                .Where(person => person.Id != heirId && person.AgeMonths < 16 * 12)
+
+                .OrderByDescending(static person => person.AgeMonths)
+
+                .ThenBy(static person => person.Id.Value)
+
+                .First();
+
+            familyState.People.RemoveAll(person => person.Id != heirId && person.Id != child.Id);
+
+            heir.FragilityLedger = 100;
+
+            heir.IsAlive = true;
+
+            child.AgeMonths = 8 * 12;
+
+            child.FragilityLedger = 0;
+
+            child.IsAlive = true;
+
+            clanState.HeirPersonId = heirId;
+
+            clanState.HeirSecurity = 24;
+
+            clanState.InheritancePressure = 55;
+
+            clanState.BranchTension = 52;
+
+            clanState.MourningLoad = 0;
+
+            clanState.FuneralDebt = 0;
+
+            clanState.SupportReserve = Math.Max(clanState.SupportReserve, 35);
+
+        });
+
+
+        PresentationReadModelBuilder builder = new();
+
+        simulation.AdvanceOneMonth();
+
+        PresentationReadModelBundle afterDeathBundle = builder.BuildForM2(simulation);
+
+        ClanSnapshot afterDeathClan = afterDeathBundle.Clans.Single();
+
+        PresentationShellViewModel afterDeathShell = FirstPassPresentationShell.Compose(afterDeathBundle);
+
+        PlayerCommandAffordanceSnapshot heirAffordance = afterDeathBundle.PlayerCommands.Affordances.Single(affordance =>
+
+            affordance.ClanId.HasValue
+
+            && affordance.ClanId.Value == afterDeathClan.Id
+
+            && string.Equals(affordance.CommandName, PlayerCommandNames.DesignateHeirPolicy, StringComparison.Ordinal));
+
+        HallDocketItemSnapshot familyDocket = string.Equals(afterDeathBundle.HallDocket.LeadItem.LaneKey, HallDocketLaneKeys.Family, StringComparison.Ordinal)
+
+            ? afterDeathBundle.HallDocket.LeadItem
+
+            : afterDeathBundle.HallDocket.SecondaryItems.Single(item => string.Equals(item.LaneKey, HallDocketLaneKeys.Family, StringComparison.Ordinal));
+
+        NotificationItemViewModel? familyNotice = afterDeathShell.NotificationCenter.Items.FirstOrDefault(static item =>
+
+            string.Equals(item.SourceModuleKey, KnownModuleKeys.FamilyCore, StringComparison.Ordinal));
+
+
+        Assert.That(afterDeathClan.HeirPersonId, Is.Null);
+
+        Assert.That(afterDeathClan.LastLifecycleTrace, Does.Contain("承祧缺口3阶"));
+
+        Assert.That(heirAffordance.IsEnabled, Is.True);
+
+        Assert.That(heirAffordance.Label, Is.EqualTo("议定承祧"));
+
+        Assert.That(familyDocket.SuggestedCommandName, Is.EqualTo(PlayerCommandNames.DesignateHeirPolicy));
+
+        Assert.That(familyDocket.SuggestedCommandLabel, Is.EqualTo("议定承祧"));
+
+        Assert.That(afterDeathShell.FamilyCouncil.Summary, Does.Contain("议定承祧"));
+
+        Assert.That(afterDeathShell.FamilyCouncil.Clans.Single().LifecycleSummary, Does.Contain("议定承祧"));
+
+        Assert.That(familyNotice, Is.Not.Null);
+
+        Assert.That(familyNotice!.WhatNext, Does.Contain("承祧"));
+
+
+        PlayerCommandResult result = new PlayerCommandService().IssueIntent(
+
+            simulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = afterDeathClan.HomeSettlementId,
+
+                ClanId = afterDeathClan.Id,
+
+                CommandName = PlayerCommandNames.DesignateHeirPolicy,
+
+            });
+
+        PresentationReadModelBundle afterCommandBundle = builder.BuildForM2(simulation);
+
+        ClanSnapshot afterCommandClan = afterCommandBundle.Clans.Single();
+
+        PresentationShellViewModel afterCommandShell = FirstPassPresentationShell.Compose(afterCommandBundle);
+
+
+        Assert.That(result.Accepted, Is.True);
+
+        Assert.That(result.CommandName, Is.EqualTo(PlayerCommandNames.DesignateHeirPolicy));
+
+        Assert.That(afterCommandClan.HeirPersonId.HasValue, Is.True);
+
+        Assert.That(afterCommandClan.HeirPersonId.GetValueOrDefault(), Is.Not.EqualTo(originalHeirId));
+
+        Assert.That(afterCommandClan.LastLifecycleOutcome, Does.Contain("嗣苗"));
+
+        Assert.That(afterCommandClan.InheritancePressure, Is.LessThan(afterDeathClan.InheritancePressure));
+
+        Assert.That(afterCommandBundle.PlayerCommands.Receipts.Any(static receipt =>
+
+            string.Equals(receipt.CommandName, PlayerCommandNames.DesignateHeirPolicy, StringComparison.Ordinal)
+
+            && !string.IsNullOrWhiteSpace(receipt.OutcomeSummary)), Is.True);
+
+        Assert.That(afterCommandShell.FamilyCouncil.RecentReceipts.Any(static receipt =>
+
+            string.Equals(receipt.CommandName, PlayerCommandNames.DesignateHeirPolicy, StringComparison.Ordinal)), Is.True);
+
+
+        simulation.AdvanceOneMonth();
+
+        PresentationReadModelBundle afterAdvanceBundle = builder.BuildForM2(simulation);
+
+        ClanSnapshot afterAdvanceClan = afterAdvanceBundle.Clans.Single();
+
+        PresentationShellViewModel afterAdvanceShell = FirstPassPresentationShell.Compose(afterAdvanceBundle);
+
+
+        Assert.That(afterAdvanceClan.HeirPersonId, Is.EqualTo(afterCommandClan.HeirPersonId));
+
+        Assert.That(afterAdvanceClan.LastLifecycleCommandCode, Is.EqualTo(PlayerCommandNames.DesignateHeirPolicy));
+
+        Assert.That(afterAdvanceShell.FamilyCouncil.Clans.Single().LifecycleSummary, Is.Not.Empty);
+
     }
 
 

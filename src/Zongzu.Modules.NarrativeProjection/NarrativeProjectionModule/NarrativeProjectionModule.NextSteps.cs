@@ -11,6 +11,12 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
     private static string BuildWhatNext(string moduleKey, string eventType, IReadOnlyList<NarrativeTraceState> traces)
 
     {
+        if (string.IsNullOrEmpty(eventType)
+            && string.Equals(moduleKey, KnownModuleKeys.FamilyCore, StringComparison.Ordinal)
+            && HasDeathLifecycleTrace(traces))
+        {
+            return BuildDeathNextStep(traces);
+        }
 
         return eventType switch
 
@@ -77,6 +83,8 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
             FamilyCoreEventNames.BirthRegistered => BuildBirthNextStep(traces),
 
             DeathCauseEventNames.DeathByIllness => BuildDeathNextStep(traces),
+
+            DeathCauseEventNames.DeathByViolence => BuildDeathNextStep(traces),
 
             FamilyCoreEventNames.ClanMemberDied => BuildDeathNextStep(traces),
 
@@ -248,6 +256,21 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
             trace.DiffDescription.Contains(value, StringComparison.Ordinal)
 
             || trace.EventSummary.Contains(value, StringComparison.Ordinal));
+
+    }
+
+
+    private static bool HasDeathLifecycleTrace(IReadOnlyList<NarrativeTraceState> traces)
+
+    {
+
+        return TraceTextContains(traces, "承祧缺口")
+            || TraceTextContains(traces, "身故")
+            || TraceTextContains(traces, "暴亡")
+            || TraceTextContains(traces, "横死")
+            || TraceTextContains(traces, "举哀")
+            || TraceTextContains(traces, "丧服")
+            || TraceTextContains(traces, "祭次");
 
     }
 

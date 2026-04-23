@@ -10,16 +10,108 @@ public sealed partial class FamilyCoreModule
 {
     internal static void DispatchViolentDeathEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
     {
-        // Step 1b gap 2 — thin dispatch only. No state change, no Emit, no diff.
-        // 维度入口：死者生前 LifeStage / 家族身份（宗子 / 分支 / 旁系）；家族 prestige / prosperity 支撑力；
-        // 战后恢复期（Warfare Phase == Aftermath）；既有 grudge 网络；季节带 / 治安。
+        // External violent deaths are already identity-owned by PersonRegistry.
+        // FamilyCore only translates a clan member's death into lineage pressure.
+        IPersonRegistryQueries? registryQueries = null;
+        HashSet<PersonId> handledPeople = new();
         foreach (IDomainEvent domainEvent in scope.Events)
         {
-            if (domainEvent.EventType == DeathCauseEventNames.DeathByViolence)
+            if (domainEvent.EventType != DeathCauseEventNames.DeathByViolence)
             {
-                // TODO Step 2: 按维度入口更新 MourningLoad / HeirSecurity 与发 ClanMemberDied / HeirSecurityWeakened。
+                continue;
             }
+
+            if (!TryParsePersonId(domainEvent.EntityKey, out PersonId personId)
+                || !handledPeople.Add(personId))
+            {
+                continue;
+            }
+
+            registryQueries ??= scope.GetRequiredQuery<IPersonRegistryQueries>();
+            ApplyExternalViolentDeathPressure(scope, personId, registryQueries);
         }
+    }
+
+    private static void ApplyExternalViolentDeathPressure(
+        ModuleEventHandlingScope<FamilyCoreState> scope,
+        PersonId personId,
+        IPersonRegistryQueries registryQueries)
+    {
+        FamilyPersonState? deathTarget = scope.State.People.FirstOrDefault(person => person.Id == personId);
+        if (deathTarget is null)
+        {
+            return;
+        }
+
+        ClanStateData? clan = scope.State.Clans.FirstOrDefault(candidate => candidate.Id == deathTarget.ClanId);
+        if (clan is null)
+        {
+            return;
+        }
+
+        GameDate currentDate = scope.Context.CurrentDate;
+        FamilyMonthSignals signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
+        int deathAgeMonths = GetAgeMonths(deathTarget, registryQueries, currentDate);
+        bool wasHeir = clan.HeirPersonId == deathTarget.Id;
+
+        if (!registryQueries.TryGetPerson(deathTarget.Id, out _))
+        {
+            deathTarget.IsAlive = false;
+        }
+
+        if (wasHeir)
+        {
+            clan.HeirPersonId = null;
+        }
+
+        FamilyDeathImpactProfile deathImpact = ComputeDeathImpactProfile(
+            clan,
+            signals,
+            deathTarget,
+            deathAgeMonths,
+            wasHeir,
+            registryQueries);
+        ApplyDeathImpactProfile(clan, deathImpact);
+
+        FamilyMonthSignals afterDeathSignals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
+        clan.HeirSecurity = ComputeHeirSecurity(clan, afterDeathSignals);
+
+        bool isChildDeath = deathAgeMonths < AdultAgeMonths;
+        clan.LastLifecycleOutcome = wasHeir
+            ? "承祧之人遭暴亡，门内先起举哀与继嗣后议。"
+            : isChildDeath
+                ? "门内幼者遭暴亡，丧服、惊惧与再育之议一并上肩。"
+                : "门内遭暴亡，丧次、祭次与房支声气一时压上来。";
+        clan.LastLifecycleTrace = wasHeir
+            ? $"{clan.ClanName}按{deathImpact.PressureSummary}承受承祧人暴亡，香火、后议与房支人心一时俱紧。"
+            : isChildDeath
+                ? $"{clan.ClanName}按{deathImpact.PressureSummary}承受幼者横死，家中丧服、惊惧与再育焦心一并上肩。"
+                : $"{clan.ClanName}按{deathImpact.PressureSummary}承受暴亡之事，家中先忙丧次、发引与祭次。";
+
+        scope.RecordDiff(
+            wasHeir
+                ? $"{clan.ClanName}承祧之人遭暴亡，门内举哀，继嗣之议与房支争执随即翻起（{deathImpact.PressureSummary}）。"
+                : isChildDeath
+                    ? $"{clan.ClanName}门内幼者遭暴亡，丧服、惊惧与再育之议一并上肩（{deathImpact.PressureSummary}）。"
+                    : $"{clan.ClanName}门内遭暴亡，丧服与祭次先压住家中诸事（{deathImpact.PressureSummary}）。",
+            deathTarget.Id.Value.ToString());
+    }
+
+    private static bool TryParsePersonId(string? entityKey, out PersonId personId)
+    {
+        personId = default;
+        if (string.IsNullOrWhiteSpace(entityKey))
+        {
+            return false;
+        }
+
+        if (!int.TryParse(entityKey, out int value))
+        {
+            return false;
+        }
+
+        personId = new PersonId(value);
+        return true;
     }
 
     internal static void DispatchTradeShockEvents(ModuleEventHandlingScope<FamilyCoreState> scope)

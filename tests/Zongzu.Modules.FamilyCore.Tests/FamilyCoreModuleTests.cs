@@ -417,6 +417,47 @@ public sealed class FamilyCoreModuleTests
     }
 
     [Test]
+    public void HandleEvents_DeathByViolence_ProjectsSameHeirDeathPressureBands()
+    {
+        (FamilyCoreState withSuccessorState, FamilyCoreModule withSuccessorModule, ModuleExecutionContext withSuccessorContext) = BuildViolentHeirDeathScenario(hasAdultSuccessor: true);
+        (FamilyCoreState noSuccessorState, FamilyCoreModule noSuccessorModule, ModuleExecutionContext noSuccessorContext) = BuildViolentHeirDeathScenario(hasAdultSuccessor: false);
+
+        DomainEventRecord violentDeath = new(
+            KnownModuleKeys.ConflictAndForce,
+            DeathCauseEventNames.DeathByViolence,
+            "Zhang heir died in a violent clash.",
+            "1");
+
+        withSuccessorModule.HandleEvents(new ModuleEventHandlingScope<FamilyCoreState>(
+            withSuccessorState,
+            withSuccessorContext,
+            [violentDeath]));
+        noSuccessorModule.HandleEvents(new ModuleEventHandlingScope<FamilyCoreState>(
+            noSuccessorState,
+            noSuccessorContext,
+            [violentDeath]));
+
+        ClanStateData withSuccessorClan = withSuccessorState.Clans.Single();
+        ClanStateData noSuccessorClan = noSuccessorState.Clans.Single();
+
+        Assert.That(withSuccessorClan.HeirPersonId, Is.Null);
+        Assert.That(noSuccessorClan.HeirPersonId, Is.Null);
+        Assert.That(withSuccessorClan.LastLifecycleTrace, Does.Contain("承祧缺口1阶"));
+        Assert.That(noSuccessorClan.LastLifecycleTrace, Does.Contain("承祧缺口3阶"));
+        Assert.That(noSuccessorClan.InheritancePressure, Is.GreaterThan(withSuccessorClan.InheritancePressure));
+        Assert.That(noSuccessorClan.SeparationPressure, Is.GreaterThan(withSuccessorClan.SeparationPressure));
+        Assert.That(noSuccessorClan.BranchTension, Is.GreaterThan(withSuccessorClan.BranchTension));
+        Assert.That(noSuccessorClan.MarriageAlliancePressure, Is.GreaterThan(withSuccessorClan.MarriageAlliancePressure));
+        Assert.That(withSuccessorContext.Diff.Entries.Single().EntityKey, Is.EqualTo("1"));
+        Assert.That(withSuccessorContext.Diff.Entries.Single().Description, Does.Contain("暴亡"));
+        Assert.That(
+            withSuccessorContext.DomainEvents.Events.Any(static evt =>
+                evt.EventType == FamilyCoreEventNames.ClanMemberDied
+                || evt.EventType == DeathCauseEventNames.DeathByIllness),
+            Is.False);
+    }
+
+    [Test]
     public void RunMonth_InfantDeath_EmitsDeathByIllness_AndRaisesReproductivePressure()
     {
         // STEP2A / A5 — 婴幼儿夭折走 DeathByIllness 分流；MourningLoad 上涨；
@@ -583,6 +624,100 @@ public sealed class FamilyCoreModuleTests
             new WorldDiff());
 
         return (familyState, registryCommands, familyModule, context);
+    }
+
+    private static (FamilyCoreState State, FamilyCoreModule Module, ModuleExecutionContext Context) BuildViolentHeirDeathScenario(bool hasAdultSuccessor)
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 50,
+            SupportReserve = 35,
+            HeirPersonId = new PersonId(1),
+            HeirSecurity = 62,
+            MarriageAllianceValue = 20,
+            MarriageAlliancePressure = 18,
+            ReproductivePressure = 20,
+            InheritancePressure = 10,
+            SeparationPressure = 10,
+            BranchTension = 10,
+        });
+        FamilyPersonState heir = new()
+        {
+            Id = new PersonId(1),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Heir",
+            AgeMonths = 40 * 12,
+            IsAlive = true,
+            BranchPosition = BranchPosition.MainLineHeir,
+        };
+        familyState.People.Add(heir);
+
+        if (hasAdultSuccessor)
+        {
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = new PersonId(2),
+                ClanId = new ClanId(1),
+                GivenName = "Zhang Successor",
+                AgeMonths = 24 * 12,
+                IsAlive = true,
+            });
+        }
+        else
+        {
+            PersonId childId = new(3);
+            heir.ChildrenIds.Add(childId);
+            familyState.People.Add(new FamilyPersonState
+            {
+                Id = childId,
+                ClanId = new ClanId(1),
+                GivenName = "Zhang Child",
+                AgeMonths = 8 * 12,
+                IsAlive = true,
+                FatherId = heir.Id,
+            });
+        }
+
+        RecordingPersonRegistryCommands registryCommands = new();
+        registryCommands.Seed(new PersonRecord
+        {
+            Id = new PersonId(1),
+            DisplayName = "Zhang Heir",
+            BirthDate = new GameDate(1160, 1),
+            Gender = PersonGender.Male,
+            FidelityRing = FidelityRing.Local,
+            IsAlive = false,
+            LifeStage = LifeStage.Deceased,
+        });
+        registryCommands.Seed(new PersonRecord
+        {
+            Id = hasAdultSuccessor ? new PersonId(2) : new PersonId(3),
+            DisplayName = hasAdultSuccessor ? "Zhang Successor" : "Zhang Child",
+            BirthDate = hasAdultSuccessor ? new GameDate(1176, 1) : new GameDate(1192, 1),
+            Gender = PersonGender.Male,
+            FidelityRing = FidelityRing.Local,
+            IsAlive = true,
+            LifeStage = hasAdultSuccessor ? LifeStage.Adult : LifeStage.Child,
+        });
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries(registryCommands));
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(hasAdultSuccessor ? 81 : 82)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        return (familyState, familyModule, context);
     }
 
     [Test]
