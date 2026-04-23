@@ -8,14 +8,6 @@ namespace Zongzu.Modules.SocialMemoryAndRelations;
 
 public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAndRelationsState>
 {
-    private static readonly string[] CommandNames =
-    [
-        "Apologize",
-        "Compensate",
-        "RestrainRetaliation",
-        "PubliclyHonorOrShame",
-    ];
-
     private static readonly string[] EventNames =
     [
         SocialMemoryAndRelationsEventNames.GrudgeEscalated,
@@ -63,8 +55,6 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
     public override int ExecutionOrder => 400;
 
     public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.XunAndMonth;
-
-    public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
 

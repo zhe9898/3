@@ -18,13 +18,9 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
     [
 
-        "PursuePosting",
+        PlayerCommandNames.PetitionViaOfficeChannels,
 
-        "ResignOrRefuse",
-
-        "PetitionViaOfficeChannels",
-
-        "DeployAdministrativeLeverage",
+        PlayerCommandNames.DeployAdministrativeLeverage,
 
         PlayerCommandNames.PostCountyNotice,
 

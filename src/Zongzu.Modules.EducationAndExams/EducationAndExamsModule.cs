@@ -8,14 +8,6 @@ namespace Zongzu.Modules.EducationAndExams;
 
 public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsState>
 {
-    private static readonly string[] CommandNames =
-    [
-        "FundStudy",
-        "HireTutor",
-        "RedirectEducationalSupport",
-        "WithdrawFromStudy",
-    ];
-
     private static readonly string[] EventNames =
     [
         EducationAndExamsEventNames.ExamPassed,
@@ -35,8 +27,6 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
     public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthAndSeasonal;
 
     public override FeatureMode DefaultMode => FeatureMode.Lite;
-
-    public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
 

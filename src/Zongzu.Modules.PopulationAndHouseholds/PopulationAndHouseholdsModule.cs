@@ -8,13 +8,6 @@ namespace Zongzu.Modules.PopulationAndHouseholds;
 
 public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHouseholdsState>
 {
-    private static readonly string[] CommandNames =
-    [
-        "HireLabor",
-        "AdjustTenancyBurden",
-        "ProvideRelief",
-    ];
-
     private static readonly string[] EventNames =
     [
         PopulationEventNames.HouseholdDebtSpiked,
@@ -61,8 +54,6 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
     public override int ExecutionOrder => 200;
 
     public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.XunAndMonth;
-
-    public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
 

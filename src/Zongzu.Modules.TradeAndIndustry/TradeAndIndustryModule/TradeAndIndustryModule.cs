@@ -8,23 +8,6 @@ namespace Zongzu.Modules.TradeAndIndustry;
 
 public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndustryState>
 {
-    private static readonly string[] CommandNames =
-
-    [
-
-        "OpenShop",
-
-        "CloseShop",
-
-        "ExpandTradeRoute",
-
-        "BorrowOrInvest",
-
-        "AppointManager",
-
-    ];
-
-
     private static readonly string[] EventNames =
 
     [
@@ -81,9 +64,6 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
 
     public override FeatureMode DefaultMode => FeatureMode.Lite;
-
-
-    public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;

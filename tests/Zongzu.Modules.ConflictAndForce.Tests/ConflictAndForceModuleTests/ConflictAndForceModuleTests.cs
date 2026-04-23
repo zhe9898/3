@@ -283,7 +283,7 @@ public sealed partial class ConflictAndForceModuleTests
 
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.ConflictAndForce));
 
-        Assert.That(module.AcceptedCommands, Does.Contain("PrepareEscort"));
+        Assert.That(module.AcceptedCommands, Is.Empty);
 
         Assert.That(module.PublishedEvents, Does.Contain(ConflictAndForceEventNames.CommanderWounded));
 
