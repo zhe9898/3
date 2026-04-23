@@ -1,7 +1,7 @@
 interface:
   display_name: "Zongzu UI Shell"
-  short_description: "Auto deepen Zongzu UI topics into a playable 2.5D shell instead of a poster or dashboard"
-  default_prompt: "Use $zongzu-ui-shell to turn this Zongzu UI topic into a whole-shell pass: identify the surface, player job, focal action, object grammar, density, and anti-poster corrections."
+  short_description: "Shape Zongzu UI into playable spatial shell surfaces and Unity-safe projections"
+  default_prompt: "Use $zongzu-ui-shell to turn this Zongzu UI topic into a whole-shell pass across surface, player job, object grammar, density, ViewModel or adapter ownership, and anti-poster corrections."
 
 policy:
   allow_implicit_invocation: true

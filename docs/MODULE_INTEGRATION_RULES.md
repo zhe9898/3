@@ -113,14 +113,17 @@ Correct approach:
 
 ## Current command-routing gap (documented, to be closed)
 
-`ModuleRunner<TState>` currently does **not** expose a command-handling interface (no `HandleCommand` / `ExecuteCommand` method).  Therefore the thin player-command services in `Zongzu.Application` (`PlayerCommandService`, `WarfareCampaignCommandService`) currently retrieve module state via `GameSimulation.GetMutableModuleState<T>()` and mutate it directly.
+`ModuleRunner<TState>` currently does **not** expose a command-handling interface (no `HandleCommand` / `ExecuteCommand` method).  Therefore most thin player-command services in `Zongzu.Application` (`PlayerCommandService`, `WarfareCampaignCommandService`) still retrieve module state via `GameSimulation.GetMutableModuleState<T>()` and route mutations directly.
+
+Family commands are the first partially closed seam: `PlayerCommandService` now routes family intents into `FamilyCoreCommandResolver` inside `Zongzu.Modules.FamilyCore`. The application layer still selects/routes the command and refreshes replay hash, but family consequence formulas and FamilyCore state mutation now live in the owning module.
 
 This is a **known structural gap**, not an intended permanent design.  The plan is:
 1. add a command-handling seam to `ModuleRunner<TState>` (or a parallel `ICommandHandler<TState>` contract);
-2. move command resolution logic out of `PlayerCommandService` and into the owning modules;
-3. make `GetMutableModuleState` truly internal-only for bootstrapping and testing.
+2. continue moving command resolution logic out of `PlayerCommandService` and into owning modules, following the `FamilyCoreCommandResolver` pattern;
+3. migrate Office / Order / Warfare command slices;
+4. make `GetMutableModuleState` truly internal-only for bootstrapping and testing.
 
-Until that seam exists, the Application services act as a temporary rule layer.  All direct state mutations are confined to Application-layer command services and do not leak into UI or projection code.
+Until that seam exists, the remaining Application services act as a temporary rule layer.  All direct state mutations are confined to Application-layer command services and do not leak into UI or projection code. New family command depth should be added in `FamilyCoreCommandResolver`, not in `PlayerCommandService`.
 
 ## Current M2-lite integration notes
 - Renzong chain-1 is currently a **real scheduler thin slice with a first household-profile thickening**, not the full tax/corvee society chain: `WorldSettlements.TaxSeasonOpened` drains through `PopulationAndHouseholds.HouseholdDebtSpiked` and `OfficeAndCareer.YamenOverloaded` into `PublicLifeAndRumor` street-talk heat. `PopulationAndHouseholds` now converts tax season into debt pressure through existing multi-dimensional household state: livelihood exposure, land visibility, grain/cash buffer, labor/dependency load, debt/distress fragility, and interaction terms. The handler accepts settlement scope when present and preserves the existing symbolic global thin signal until `WorldSettlements` emits precise settlement tax events. The full chain still needs formal household-grade/tax-kind formulas, client/tenant rent cascade, market cash squeeze, long memory, and precise settlement/jurisdiction payloads.
@@ -173,9 +176,11 @@ Until that seam exists, the Application services act as a temporary rule layer. 
 - `FamilyCore` schema `7` also owns marriage-alliance pressure/value, heir security, reproductive pressure, mourning load, care load, funeral debt, remedy confidence, charity obligation, clan-scoped spouse/parent/child links, and last lifecycle-command receipts inside the same namespace
 - `FamilyCore` may use `PersonRegistry` command interfaces only for identity-shaped writes when birth, marriage-in spouse creation, or death requires a canonical person anchor; all lineage facts and lifecycle pressures remain `FamilyCore`-owned
 - `FamilyCore` may consume `DeathByViolence` from conflict / order / warfare producers only as a lineage-pressure bridge: it parses the event `EntityKey` as `PersonId`, reads identity facts through `PersonRegistry`, updates only clan-owned mourning / inheritance / branch / heir-security pressures, and must not emit a second cause-specific death event from that handler
-- until command handlers move into modules, `PlayerCommandService` family lifecycle routes may read `PersonRegistry` queries for identity-only facts such as alive / age when choosing candidates, then write only `FamilyCore` lifecycle state and receipts
-- `SocialMemoryAndRelations` may read those family-conflict fields through queries only; it may not be written by the player-command service
-- a thin player-command service may now route bounded family intents such as branch favor, formal apology, branch separation, relief suspension, elder mediation, marriage arrangement, and heir designation into `FamilyCore` only
+- family command routing is now a partial module-owned seam: `PlayerCommandService` selects/routes the existing `PlayerCommandRequest` and refreshes replay hash after accepted mutation, while `FamilyCoreCommandResolver` owns family consequence formulas and mutates only `FamilyCore` state
+- `FamilyCoreCommandResolver` may read `PersonRegistry` queries for identity-only facts such as alive / age when choosing candidates; it must not mutate `PersonRegistry` except through already authorized birth/death identity paths
+- `FamilyCoreCommandResolver` may read `SocialMemoryAndRelations` clan climate and adult pressure-tempering snapshots as deterministic command-friction inputs; missing SocialMemory queries remain neutral
+- `SocialMemoryAndRelations` may read those family-conflict fields through queries only; it may not be written by the player-command service or by the family command resolver
+- a thin player-command service may route bounded family intents such as branch favor, formal apology, branch separation, relief suspension, elder mediation, marriage arrangement, heir designation, newborn care, and mourning order into `FamilyCore` only
 - the family-council shell now reads clan conflict summaries, clan narratives, family affordances, and family receipts from read models only
 - built-in default loaders now migrate legacy `FamilyCore` schemas through current schema `7` without changing enabled-module or envelope-key sets
 

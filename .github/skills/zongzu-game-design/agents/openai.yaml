@@ -1,7 +1,7 @@
 interface:
   display_name: "Zongzu Game Design"
-  short_description: "Auto deepen Zongzu design prompts into a rules-driven living-world loop"
-  default_prompt: "Use $zongzu-game-design to turn this Zongzu design topic into a whole-system pass: identify the loop, pressure chain, player leverage, shell projection, and cut discipline."
+  short_description: "Deepen Zongzu design into rules, pressure, leverage, shell, and codebase fit"
+  default_prompt: "Use $zongzu-game-design to turn this Zongzu topic into a whole-system pass across loop, pressure locus, player leverage, module contracts, shell projection, tests, and cut discipline."
 
 policy:
   allow_implicit_invocation: true

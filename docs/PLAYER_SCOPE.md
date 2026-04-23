@@ -200,17 +200,19 @@ They must pass through office, faction, document, ritual, force, logistics, publ
 
 The current first playable command slice stays thin and bounded.
 
-Enabled through application-routed services only:
-- stable M2 and later paths may expose family-council commands such as branch favor, formal apology, branch separation, relief suspension, and elder mediation through `FamilyCore`
-- stable M2 and later paths may also expose thin family-lifecycle commands such as `arrange betrothal`, `confirm heir adoption`, `allocate grain for infant care`, and `set mourning order` through `FamilyCore`
+Enabled through thin application routing plus module-owned resolvers where the seam has been migrated:
+- stable M2 and later paths may expose family-council commands such as branch favor, formal apology, branch separation, relief suspension, and elder mediation through `FamilyCoreCommandResolver`
+- stable M2 and later paths may also expose thin family-lifecycle commands such as `arrange betrothal`, `confirm heir adoption`, `allocate grain for infant care`, and `set mourning order` through `FamilyCoreCommandResolver`
 - governance-lite may expose petition review and administrative-leverage commands through the office surface
 - governance-lite office play should feel like candidate waiting, attached yamen service, recommendation, and formal appointment pressure rather than a one-click exam-to-office ladder
 - campaign-enabled warfare may expose plan drafting, mobilization, supply-line protection, and barracks withdrawal through the campaign board surface
 
 Rules:
-- these commands still resolve inside application/module code, not in UI
-- family commands may write only `FamilyCore`-owned lineage-conflict state directly; downstream memory or narrative changes still happen through later monthly simulation and projection
-- family lifecycle commands may still write only `FamilyCore`-owned marriage/heir/mourning state directly; births, deaths, and later public effects still emerge through later monthly simulation and projection
+- these commands still resolve inside owning module/application code, not in UI
+- family commands now resolve in `FamilyCore`; the application service only selects/routes the request and refreshes replay hash after accepted mutation
+- family commands may write only `FamilyCore`-owned lineage-conflict, marriage, heir, newborn-care, mourning, and receipt state directly; downstream memory or narrative changes still happen through later monthly simulation and projection
+- `SocialMemoryAndRelations` pressure tempering may be read as deterministic command friction, but it is never a player-facing emotion button and is not mutated by the command itself
+- office and warfare command slices remain temporary application-routed seams until their owning modules receive equivalent resolvers
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

@@ -1,131 +1,157 @@
 ---
 name: zongzu-game-design
-description: Use when working on Zongzu's game design, especially rules-driven living-world structure, monthly simulation loop, pressure chains, bounded player leverage, command resolution, explainable causality, vertical slices, MVP shaping, or when a proposal risks becoming an event pool, detached subsystem, or god-game instead of an integrated lineage simulation.
+description: Use when working on Zongzu's game design, especially rules-driven living-world structure, Northern Song/Renzong pressure chains, monthly and xun cadence, bounded player leverage, actor autonomy, command resolution, explainable causality, vertical slices, MVP shaping, feature-pack scope, module-boundary fit, or when a proposal risks becoming an event pool, detached subsystem, rigid route tree, locked timeline, spreadsheet, tactics game, or god-game instead of an integrated living society.
 ---
 
 # Zongzu Game Design
 
 ## Overview
 
-This skill keeps Zongzu game design anchored to the repo's actual product:
-- rules-driven
-- living-world
+Use this skill to keep Zongzu design anchored to the repo's actual product:
+- rules-driven living world
 - world moves before the player
+- notifications are projections of state changes
 - player acts through bounded leverage
-- text and flavor are downstream of state
-- conflict and warfare stay integrated with lineage simulation
+- adults and institutions can resist, delay, reinterpret, or exploit commands
+- clan memory, favors, shame, debt, fear, and grudges persist across generations
+- shell presentation is spatialized
+- conflict and warfare extend the lineage simulation rather than becoming a detached tactics game
 
-Use it to turn broad design prompts into a whole-design pass that connects:
-- monthly loop
-- module pressure
-- player commands
-- consequence flow
-- shell projection
-- MVP cut discipline
+Use it to turn broad design prompts into a connected pass across:
+- monthly loop and three-xun cadence
+- module-owned pressure
+- command and autonomy resolution
+- DomainEvent receipts and structured metadata
+- projection, notice, great hall, desk sandbox, and conflict/campaign surfaces
+- historical momentum and Renzong thin-chain topology
+- roadmap phase, feature pack, schema/save, and acceptance-test ownership
 
 ## Use This Skill When
 
-- designing or reviewing the main loop, monthly loop, or subsystem loop
+- designing or reviewing the main loop, monthly loop, xun cadence, or subsystem loop
 - deciding whether a feature is rules-driven enough
-- deciding how a mechanic becomes visible in the shell
-- shaping player commands, leverage, and limitations
-- planning a vertical slice or MVP cut
-- checking whether a proposal drifts into event-pool design, detached tactics design, or spreadsheet-with-flavor design
-- connecting family, commoners, office, trade, conflict, order, and warfare into one living-world field
+- shaping pressure chains, broad-to-local allocation, or Renzong thin-chain work
+- shaping player commands, influence circles, leverage, refusal, delay, and backlash
+- planning a vertical slice, MVP cut, post-MVP pack, or roadmap phase
+- checking whether a design fits module ownership, Query / Command / DomainEvent contracts, and save/version rules
+- deciding how a mechanic becomes visible in the great hall, lineage surface, desk sandbox, notice tray, conflict vignette, campaign board, or debug surface
+- comparing outside games or sources without importing their genre assumptions
+- checking whether a proposal drifts into event-pool design, detached tactics design, rigid route trees, spreadsheet-with-flavor design, or player-as-god design
 
 ## Workflow
 
 1. Read project truth first.
 
-   Start with:
+   Start with the repo docs that match the task. For broad or ambiguous prompts, read at least:
    - `docs/PRODUCT_SCOPE.md`
+   - `docs/MVP_SCOPE.md`
+   - `docs/POST_MVP_SCOPE.md`
    - `docs/SIMULATION.md`
    - `docs/PLAYER_SCOPE.md`
-   - `docs/MVP.md`
+   - `docs/RULES_DRIVEN_LIVING_WORLD.md`
+   - `docs/LIVING_WORLD_DESIGN.md`
+   - `docs/MODULE_BOUNDARIES.md`
+   - `docs/MODULE_INTEGRATION_RULES.md`
+   - `docs/ACCEPTANCE_TESTS.md`
 
-2. Identify the design layer.
+   When the prompt touches later scale, also read:
+   - `docs/GAME_DEVELOPMENT_ROADMAP.md`
+   - `docs/HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`
+   - `docs/RENZONG_PRESSURE_CHAIN_SPEC.md`
+   - `docs/RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`
+   - `docs/SPATIAL_SKELETON_SPEC.md`
+   - `docs/MODERN_GAME_ENGINEERING_STANDARDS.md`
+   - `docs/EXTENSIBILITY_MODEL.md`
+
+2. Check current implementation facts before proposing a design as "done".
+
+   Inspect code and tests when the design claims implementation fit:
+   - module runners, `ModuleSchemaVersion`, `PublishedEvents`, `ConsumedEvents`, and accepted commands
+   - `MonthlyScheduler` cadence and bounded event drain
+   - `SimulationBootstrapper` feature-pack module sets
+   - application command services
+   - presentation read-model builders, adapters, and Unity-facing ViewModels
+   - relevant tests under `tests/`
+
+3. Identify the design layer.
 
    Determine whether the task is mainly about:
    - loop structure
-   - pressure chain
-   - player leverage
-   - command resolution
-   - shell projection
-   - MVP cut or vertical slice
+   - pressure chain or pressure locus
+   - broad-to-local allocation and off-scope boundary
+   - player leverage and influence footprint
+   - command resolution or adult autonomy
+   - actor ladder and institutional incentives
+   - feature pack, topology, or roadmap phase
+   - shell projection and player comprehension
+   - balancing, diagnostics, scale budget, or long-run failure modes
+   - schema/save/module contract impact
 
-3. Load only the references you need.
+4. Load only the references you need.
 
    - Read [references/rules-driven-living-world.md](references/rules-driven-living-world.md) for the design thesis and anti-patterns.
    - Read [references/pressure-chains-and-causality.md](references/pressure-chains-and-causality.md) for how pressure starts, travels, and becomes visible.
    - Read [references/command-resolution-and-bounded-leverage.md](references/command-resolution-and-bounded-leverage.md) for player influence, command windows, and anti-god rules.
    - Read [references/vertical-slice-and-mvp-shaping.md](references/vertical-slice-and-mvp-shaping.md) for slice design, cut discipline, and MVP shaping.
 
-3a. Treat short design prompts as auto-deep-linked.
+5. Convert design talk into playable structure.
 
-   If the user says things like:
-   - `rules driven`
-   - `living world`
-   - `main loop`
-   - `MVP`
-   - `vertical slice`
-
-   do not stop at a shallow design summary.
-
-   Default to:
-   - identify the underlying loop
-   - identify which module pressure starts the chain
-   - identify who carries that pressure
-   - identify how the player can intervene
-   - identify how the result becomes visible in shell, notices, or vignettes
-   - identify what should be cut, deferred, or left as flavor
-
-3b. Treat broad design prompts as whole-system prompts.
-
-   If the user says things like:
-   - `game design`
-   - `full design pass`
-   - `rules-driven living world`
-   - `connect the design`
-
-   then connect:
-   - world simulation
-   - household and lineage pressure
-   - economy and mobility
-   - office and order
-   - force and conflict
-   - narrative projection
-   - player review and bounded command
-
-4. Convert design talk into playable structure.
-
-   A good result should answer:
+   A useful result answers:
    - what rule owns the change
-   - what pressure enters the month
-   - what module or phase resolves it
-   - what the player can actually do
-   - what the shell shows
-   - what stays out of scope for now
+   - what state and module own the pressure
+   - what cadence resolves it
+   - what structured event or diff records the result
+   - whether the pressure is an edge, ongoing demand, receipt, summary, or projection-only trace
+   - what the player can and cannot reach
+   - who can resist, delay, reinterpret, or exploit the player's intent
+   - what the shell shows first and what stays inspectable in the background
+   - what tests or diagnostics prove the chain
+   - what docs, schemas, boundaries, or acceptance criteria must change
+
+## Short Prompt Expansion
+
+Treat short prompts as whole-system prompts unless the user explicitly asks for a narrow definition.
+
+For prompts like `rules driven`, `living world`, `main loop`, `MVP`, `vertical slice`, `Renzong chain`, `bounded command`, `office pressure`, `public life`, `warfare`, or `route`, default to:
+- identify the underlying loop
+- identify where pressure starts and which module owns it
+- identify pressure locus, propagation radius, naming threshold, and no-touch boundary
+- identify who carries the pressure and who can distort it
+- identify player leverage and limits
+- identify shell projection and receipt
+- identify same-month vs delayed consequence
+- identify test and doc impact
 
 ## Output Rules
 
 - Do not design core play around random event pools.
+- Do not describe Zongzu as an event-driven game. It is rules-driven; DomainEvents record and propagate facts after rules resolve.
 - Do not let flavor text become the authoritative driver.
 - Do not give the player omnipotent direct control.
+- Do not design commands as guaranteed outcomes.
 - Do not treat every subsystem as its own game mode.
-- Do not solve missing structure with more narrative dressing.
+- Do not clone another game's genre frame just because it solves a neighboring problem.
 - Do not detach warfare into a separate tactics game.
-- Do not design commands as guaranteed outcomes; they are intents resolved against autonomy, institutions, resources, and risk.
+- Do not lock history into a scripted timeline the player can only watch.
+- Do not call a pressure chain complete unless scheduler-level behavior, structured metadata, off-scope entities, and projection receipts are covered or explicitly marked deferred.
+- Do not parse `DomainEvent.Summary` as rule input.
+- Do not let local pressure fan out globally by accident.
+- Do not let broad pressure become local consequence without an allocation rule.
+- Do not add balance knobs without owner, calibration source, expected band, and diagnostics/test.
+- Do not make mods or content packs a second event pool.
 - Prefer pressure chains over isolated features.
-- Prefer monthly consequences over instant gratification loops when the project fantasy depends on delayed outcomes.
+- Prefer edge events for changed conditions and recurring demand models for ongoing burdens.
 - Prefer readable cause traces over hidden simulation magic.
-- Prefer vertical slices that prove the living-world loop over broad but thin content coverage.
+- Prefer vertical slices that prove both causality and player response.
 
 ## Zongzu-Specific Guidance
 
 - The world advances before the player acts.
-- Review and interpretation are part of the game, not downtime between actions.
-- The player wins through leverage, preparation, timing, and judgment, not through universal command authority.
-- Family, commoner pressure, exams, trade, office, disorder, and force should behave like one linked field, even when some packs are still lite or disabled.
-- Conflict belongs to the same world and scheduler as household and office pressure.
-- A good Zongzu slice proves that structured diffs, projections, and bounded commands already make the shell feel alive.
-- MVP should feel like sitting in the hall and hearing the world arrive, not like sampling disconnected mechanics.
+- Review and interpretation are part of play, not downtime between actions.
+- The player wins through leverage, preparation, timing, judgment, and earned social reach.
+- Family, commoner pressure, exams, trade, office, public life, order, conflict, court rhythm, and force should behave like one linked field.
+- Full fidelity belongs near the player's current influence footprint; distant regions and later packs can begin as pressure summaries.
+- Renzong-era and historical-process work should become pressure carriers and windows of possibility, not untouchable cutscenes.
+- A good command asks who executes it, who benefits, who loses face, who remembers, and where backlash can surface.
+- MVP should feel like sitting in the hall and hearing the world arrive, not sampling disconnected mechanics.
+- Later regions, scenarios, wars, courts, and dynasty-cycle systems should extend the same cadence, pressure, projection, and bounded-command spine.

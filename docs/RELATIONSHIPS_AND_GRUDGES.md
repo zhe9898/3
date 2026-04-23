@@ -58,6 +58,8 @@ Repeated pressure should not vanish when the notification is dismissed. `SocialM
 
 This is not a mood event pool. Authoritative state changes first; emotional receipts are downstream social-memory facts. Later adult autonomy and command friction may read them through queries, but no module may directly edit another module's state to "make someone feel" a result.
 
+The first active command consumer is `FamilyCoreCommandResolver`. It may read clan climate and adult person-tempering snapshots to adjust family command pressure profiles: bitterness, volatility, anger, grief, or shame can make mediation and lifecycle decisions harder; trust, restraint, obligation, and hope can soften backlash or strengthen reconciliation. Missing SocialMemory queries are neutral. The resolver still mutates only `FamilyCore`, and any later memory residue must return through normal monthly simulation or event handling.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

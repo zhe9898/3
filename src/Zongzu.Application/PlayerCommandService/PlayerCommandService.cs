@@ -10,9 +10,6 @@ namespace Zongzu.Application;
 
 public sealed partial class PlayerCommandService
 {
-    private const int FamilyInfantAgeMonths = 2 * 12;
-
-
     private readonly WarfareCampaignCommandService _warfareCampaignCommandService = new();
 
 

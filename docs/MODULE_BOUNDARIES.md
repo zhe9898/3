@@ -121,6 +121,8 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 ### Accepts commands
 - `ArrangeMarriage`
 - `DesignateHeirPolicy`
+- `SupportNewbornCare`
+- `SetMourningOrder`
 - `SupportSeniorBranch`
 - `OrderFormalApology`
 - `PermitBranchSeparation`
@@ -129,6 +131,11 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `InviteClanEldersPubliclyBroker`
 
 > Note: `RedistributeHouseholdSupport` is not yet implemented in the active command surface.
+
+Current routing note:
+- family commands are resolved by `FamilyCoreCommandResolver` inside `Zongzu.Modules.FamilyCore`
+- `PlayerCommandService` remains thin routing glue for this slice and must not own family consequence formulas
+- the resolver may read `PersonRegistry` and `SocialMemoryAndRelations` query snapshots, but may mutate only `FamilyCore` state and receipt fields
 
 ### Emits events
 - `MarriageAllianceArranged`

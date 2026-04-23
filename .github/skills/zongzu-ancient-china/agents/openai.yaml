@@ -1,7 +1,7 @@
 interface:
   display_name: "Zongzu Ancient China"
-  short_description: "Auto deep-link ancient-China topics through the full Zongzu living-world stack"
-  default_prompt: "Use $zongzu-ancient-china to automatically deep-link this Chinese-ancient topic through the full Zongzu stack: era, region, household, office, conflict, legitimacy, and module/UI grounding."
+  short_description: "Ground Chinese-ancient topics in sources, Renzong pressure, modules, and shell surfaces"
+  default_prompt: "Use $zongzu-ancient-china to source-calibrate this historical topic and translate it into Zongzu period, region, pressure, module, shell, and confidence guidance."
 
 policy:
   allow_implicit_invocation: true

@@ -130,7 +130,7 @@ Every release line must pass:
 - post-MVP black-route migration tests stay inside `OrderAndBanditry` and `TradeAndIndustry` module envelopes and do not create a standalone module key
 - stable M2/M3 bootstraps remain isolated from `OfficeAndCareer` unless the governance-lite path is selected
 - legacy `FamilyCore` saves migrate through current schema `7` through the default loaders without changing enabled-module or module-envelope key sets
-- family command handling mutates only `FamilyCore` directly; `SocialMemoryAndRelations` may react later through family queries, not same-command cross-module writes
+- family command handling resolves through `FamilyCoreCommandResolver` and mutates only `FamilyCore` directly; `SocialMemoryAndRelations` may be read for deterministic pressure-tempering friction and may react later through family queries, not same-command cross-module writes
 - family lifecycle commands surface in family read models and hall / council projections without adding any authority logic to UI
 - autonomous marriage resolution must bind concrete spouse links before births can occur; newly arranged marriages do not also produce a same-month birth
 - birth registration must preserve parent links / parent child lists and increase clan-owned care burden
@@ -141,6 +141,7 @@ Every release line must pass:
 - death aftermath pressure must project into notice and ancestral-hall guidance so adult-successor deaths point first toward `议定丧次` / stabilizing the new承祧, while no-adult-successor or only-young-heir gaps point first toward `议定承祧` and branch containment; this remains guidance only, not a full funeral or inheritance system
 - bounded lifecycle commands such as `议亲定婚`, `议定承祧`, `拨粮护婴`, and `议定丧次` must resolve through deterministic pressure profiles rather than fixed deltas, reading only `FamilyCore`-owned lifecycle state and surfacing the relevant pressure bands in receipts
 - house-branch conflict commands such as `偏护嫡支`, `责令赔礼`, `准其分房`, `停其接济`, `请族老调停`, and `请族老出面` must also resolve through deterministic pressure profiles rather than fixed deltas, reading only `FamilyCore`-owned conflict state and surfacing the relevant pressure bands in receipts
+- missing `SocialMemoryAndRelations` query access must remain neutral for family command resolution, while high volatility / bitterness should make reconciliation weaker and trust / restraint should strengthen apology or mediation
 - shared command-resolution helpers may provide banding, profile-factor text, clamping, and delta adjustment, but domain ownership and command effects must remain in the owning module/application resolver rather than a universal decision engine
 - family lifecycle events such as `议亲定婚`, `门内添丁`, `门内举哀`, and `承祧未稳` should project dedicated ancestral-hall-facing notice text rather than generic module fallback titles
 - follow-up family commands such as `拨粮护婴` and `议定丧次` should remain bounded `FamilyCore` writes and surface as read-only receipts on hall / council projections
