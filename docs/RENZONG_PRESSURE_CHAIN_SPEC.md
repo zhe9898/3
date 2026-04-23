@@ -161,7 +161,7 @@
 
 ### 链1：税役-家户-衙门-公共生活
 
-> **实现状态：真实 scheduler 薄切片（M2-lite）。已落 `TaxSeasonOpened -> HouseholdDebtSpiked -> OfficeAndCareer.YamenOverloaded -> PublicLife heat`，并有真实 `MonthlyScheduler` drain 测试。完整版的户等/税种/额度公式、客户租压、佃户逃散、税季现金挤压到市场、SocialMemory 年度残留、精确 settlement-scoped 衙门 payload 仍未实现。**
+> **实现状态：真实 scheduler 薄切片（M2-lite）+ 链一第一层规则加厚。已落 `TaxSeasonOpened -> HouseholdDebtSpiked -> OfficeAndCareer.YamenOverloaded -> PublicLife heat`，并有真实 `MonthlyScheduler` drain 测试；`PopulationAndHouseholds` 现在用现有多维家户画像（生计、土地、粮储、劳力、依附人口、债压、民困）计算税季债务增量并写入结构化 metadata。完整版的正式户等/税种/额度公式、客户租压、佃户逃散、税季现金挤压到市场、SocialMemory 年度残留、精确 settlement-scoped 衙门 payload 仍未实现。**
 
 **Trigger**：`WorldSettlements` 季节推进进入 `TaxSeason` 或 `CorveeWindow`。
 
@@ -1069,7 +1069,8 @@ PublicLifeAndRumor (monthly, P5+)
 1. **P0**：确保上述9条链的**事件名**和**模块边界**在代码中已有定义或已规划 ✅
 2. **P1**：为每条链写**一条薄规则链测试**（如：TaxSeason → HouseholdDebtSpiked → PublicLifeHeated）
    - ✅ 链1 薄切片（税役-家户-衙门-公共生活）— `Chain1_TaxSeasonOpens_DebtsSpike_YamenOverloads_PublicLifeReacts` + `Chain1_RealMonthlyScheduler_DrainsTaxSeasonIntoYamenAndPublicLife`
-   - ⏳ 链1 完整版（户等/税种/额度公式、客户租压、税季现金挤压市场、SocialMemory/年度公共残留、精确 jurisdiction payload）
+   - ✅ 链1 第一层规则加厚 — `TaxSeasonBurdenHandlerTests` 覆盖多维家户画像、结构化 tax-profile metadata、settlement scope 负例、symbolic global thin 信号兼容
+   - ⏳ 链1 完整版（正式户等/税种/额度公式、客户租压/佃户逃散、税季现金挤压市场、SocialMemory/年度公共残留、精确 jurisdiction payload）
    - ✅ 链2 薄切片（粮价-市场-家户）— `Chain2_HarvestPhase_GrainPriceSpike_SubsistencePressureChanged` + `Chain2_RealMonthlyScheduler_DrainsHarvestPriceIntoLocalHouseholdPressure`
    - ⏳ 链2 完整版（yieldRatio/灾荒、granarySecurity/routeRisk、家户粮仓/生计类型、迁徙/病亡、路险、SocialMemory/PublicLife 饥荒叙事）
    - ✅ 链3 薄切片（ExamPassed → ClanPrestigeAdjusted）— `ExamPrestigeChainTests.cs`
@@ -1080,7 +1081,7 @@ PublicLifeAndRumor (monthly, P5+)
    - ✅ 链5 薄切片（FrontierStrainEscalated → OfficialSupplyRequisition → HouseholdBurden）— `FrontierSupplyHouseholdChainTests.cs`
    - ⏳ 链5 完整版（WarfareCampaign mobilization、ConflictAndForce readiness、TradeAndIndustry market diversion）
 3. **P2**：补充事件 handler 的**空实现**（先存在接口，再填充逻辑）
-   - ✅ 链1 thin handler 已落（`ApplyTaxSeasonPressure`, `DispatchPopulationDebtEvents`, `HandleEvents(YamenOverloaded)`）
+   - ✅ 链1 thin handler 已落并加厚（`ApplyTaxSeasonPressure` 读取多维 household profile；`DispatchPopulationDebtEvents`, `HandleEvents(YamenOverloaded)`）
    - ✅ 链2 thin handler 已落（`ApplyHarvestPricePulse`, `ApplyGrainPriceSubsistencePressure`）
 4. **P3**：填充**压力公式和阈值**
 5. **P4**：连接**Unity 壳层投影**

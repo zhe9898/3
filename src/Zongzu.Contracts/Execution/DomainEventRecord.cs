@@ -86,6 +86,13 @@ public static class DomainEventMetadataKeys
     public const string DistressAfter = "distressAfter";
     public const string DebtBefore = "debtBefore";
     public const string DebtAfter = "debtAfter";
+    public const string TaxDebtDelta = "taxDebtDelta";
+    public const string TaxVisibilityPressure = "taxVisibilityPressure";
+    public const string TaxLiquidityPressure = "taxLiquidityPressure";
+    public const string TaxLaborPressure = "taxLaborPressure";
+    public const string TaxFragilityPressure = "taxFragilityPressure";
+    public const string TaxInteractionPressure = "taxInteractionPressure";
+    public const string Livelihood = "livelihood";
     public const string MandateConfidence = "mandateConfidence";
     public const string PressureScore = "pressureScore";
     public const string DefectionRisk = "defectionRisk";
@@ -100,6 +107,7 @@ public static class DomainEventMetadataValues
     public const string CauseDisaster = "disaster";
     public const string CauseFrontier = "frontier";
     public const string CauseOfficialSupply = "official-supply";
+    public const string CauseTaxSeason = "tax-season";
     public const string DisasterFlood = "flood";
     public const string SeverityFloodModerate = "flood-moderate";
     public const string SeverityFloodSevere = "flood-severe";

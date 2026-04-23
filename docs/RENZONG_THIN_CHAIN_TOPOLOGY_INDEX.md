@@ -56,7 +56,7 @@ flowchart LR
 
 | Chain | Current thin path | Locus | Same-month? | Repetition guard | Receipt / projection | Current proof |
 |---|---|---|---|---|---|---|
-| 1. Tax/corvee household-yamen-public | `WorldSettlements.TaxSeasonOpened -> HouseholdDebtSpiked -> OfficeAndCareer.YamenOverloaded -> PublicLife heat` | tax season source, household and settlement consequences in seeded path | yes, bounded scheduler drain | scheduler fresh-event watermark; full precise tax locus still deferred | `YamenOverloaded` plus public-life street-talk heat | `RenzongPressureChainTests.Chain1_RealMonthlyScheduler_DrainsTaxSeasonIntoYamenAndPublicLife` |
+| 1. Tax/corvee household-yamen-public | `WorldSettlements.TaxSeasonOpened -> HouseholdDebtSpiked -> OfficeAndCareer.YamenOverloaded -> PublicLife heat` | symbolic tax-season source today; handler accepts settlement scope and mutates household debt by household-owned exposure profile | yes, bounded scheduler drain | scheduler fresh-event watermark; full precise tax locus still deferred | `HouseholdDebtSpiked` with tax-profile metadata, then `YamenOverloaded` plus public-life street-talk heat | `RenzongPressureChainTests.Chain1_RealMonthlyScheduler_DrainsTaxSeasonIntoYamenAndPublicLife`; `TaxSeasonBurdenHandlerTests` |
 | 2. Harvest/grain household pressure | `SeasonPhaseAdvanced(Harvest) -> TradeAndIndustry.GrainPriceSpike -> HouseholdSubsistencePressureChanged` | settlement market / household | yes, bounded scheduler drain | harvest phase edge plus local market event; off-scope household assertion | household subsistence-pressure event | `RenzongPressureChainTests.Chain2_RealMonthlyScheduler_DrainsHarvestPriceIntoLocalHouseholdPressure` |
 | 3. Exam prestige | `EducationAndExams.ExamPassed -> FamilyCore.ClanPrestigeAdjusted` | person to clan | yes, bounded scheduler drain | exam cadence and one exam result | clan prestige receipt | `ExamPrestigeChainTests.ExamPass_ThinChain_RealScheduler_DrainsIntoClanPrestige` |
 | 4. Imperial amnesty disorder | `ImperialRhythmChanged(amnesty axis) -> OfficeAndCareer.AmnestyApplied -> OrderAndBanditry.DisorderSpike` | imperial signal allocated to settlement jurisdiction | yes, bounded scheduler drain | office-owned `LastAppliedAmnestyWave`; handler must respect amnesty axis rather than any imperial change | cause-tagged `DisorderSpike` | `ImperialAmnestyDisorderChainTests.ImperialAmnesty_ThinChain_RealScheduler_DrainsIntoDisorderSpike` |
@@ -74,15 +74,16 @@ flowchart LR
 4. Same-month follow-on effects must pass through the bounded scheduler drain and process only fresh events. If a future link cannot finish inside the cap, carry traceable state into the next month.
 5. Every emitted event must be listed in `PublishedEvents`; every handled event must be listed in `ConsumedEvents`; every cross-module event name must come from `Zongzu.Contracts`.
 6. Concrete-locus handlers must filter before mutation and tests must include a comparable off-scope negative case.
-7. Generic downstream events must either carry cause metadata or keep projection wording cause-neutral.
-8. Projection may explain why-now and what-next, but it may not become a second authority layer.
-9. Application services may route commands and compose read models, but they may not absorb chain rules while the owning modules are still being shaped.
+7. Rule density must consume existing owner-state dimensions before inventing a second rule layer. For household pressure, prefer `Livelihood`, land, grain, labor, dependents, debt, distress, and migration fields owned by `PopulationAndHouseholds`.
+8. Generic downstream events must either carry cause metadata or keep projection wording cause-neutral.
+9. Projection may explain why-now and what-next, but it may not become a second authority layer.
+10. Application services may route commands and compose read models, but they may not absorb chain rules while the owning modules are still being shaped.
 
 ## Full-Chain Debt
 
 The thin topology leaves these fuller branches intentionally unimplemented:
 
-- Chain 1: household grade, tax kind, tenant/client pressure, cash squeeze into markets, long memory, precise jurisdiction payloads.
+- Chain 1: precise zhuhu / kehu household grade, tax kind, tenant/client rent cascade, cash squeeze into markets, long memory, precise jurisdiction payloads. The current handler already uses a multi-dimensional proxy profile from existing household state (`Livelihood`, `LandHolding`, `GrainStore`, `LaborCapacity`, `DependentCount`, `DebtPressure`, `Distress`) but it is not yet a full tax/corvee society formula.
 - Chain 2: yield ratio, granary security, route risk, household grain stores by livelihood, migration, death pressure, famine narrative residue.
 - Chain 3: office waiting list, recommendation, favor/shame memory, public-life exam projection, failure and study-abandon branches.
 - Chain 4: mourning, succession, appointment rhythm, dispatch wording, public legitimacy, and non-amnesty imperial axes.
@@ -100,4 +101,3 @@ After this freeze, deepen rule density in this order unless an explicit ExecPlan
 2. office/yamen implementation drag, because court and frontier pressure must arrive through documents, clerks, and local bargaining rather than direct imperial commands;
 3. public-life and map projection, because the player must see where pressure landed before issuing bounded commands;
 4. force/campaign and regime depth, only after local burden, legitimacy, and office execution are readable.
-
