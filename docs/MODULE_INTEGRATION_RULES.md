@@ -115,7 +115,7 @@ Correct approach:
 
 `ModuleRunner<TState>` now exposes a module-owned command seam through `HandleCommand(ModuleCommandHandlingScope<TState>)`. `GameSimulation.IssueModuleCommand(...)` builds the normal query registry, delegates the request to the owning module, and refreshes the replay hash only after an accepted mutation.
 
-`PlayerCommandService` is now dispatch glue: it maps existing `PlayerCommandRequest` names to module keys, reports disabled-module rejection, and does not own consequence formulas for the migrated command slices.
+`PlayerCommandService` is now dispatch glue over a shared player-command catalog: it resolves existing `PlayerCommandRequest` names to module/surface metadata, reports disabled-module rejection, and does not own consequence formulas for the migrated command slices.
 
 Current migrated command owners:
 - `FamilyCoreCommandResolver` owns family lifecycle and lineage-conflict commands.
@@ -126,6 +126,8 @@ Current migrated command owners:
 New command depth must be added to the owning module resolver and exposed through module `AcceptedCommands`. Application code may route, compose read models, and record receipts, but it must not become a second domain-rule layer. `GetMutableModuleState` should remain a testing / bootstrap escape hatch, not a normal player-command write path.
 
 Modules that do **not** yet implement live module-owned command handling must leave `AcceptedCommands` empty. Placeholder or future command names do not belong in the current command contract until the owning module actually resolves them through `HandleCommand(...)`.
+
+Application read-model builders and shell adapters should reuse that same shared player-command catalog for labels/surfaces when they need command metadata. They must not grow a parallel command-name switch that can drift away from the live routing contract.
 
 ## Current M2-lite integration notes
 - Renzong chain-1 is currently a **real scheduler thin slice with a first household-profile thickening**, not the full tax/corvee society chain: `WorldSettlements.TaxSeasonOpened` drains through `PopulationAndHouseholds.HouseholdDebtSpiked` and `OfficeAndCareer.YamenOverloaded` into `PublicLifeAndRumor` street-talk heat. `PopulationAndHouseholds` now converts tax season into debt pressure through existing multi-dimensional household state: livelihood exposure, land visibility, grain/cash buffer, labor/dependency load, debt/distress fragility, and interaction terms. The handler accepts settlement scope when present and preserves the existing symbolic global thin signal until `WorldSettlements` emits precise settlement tax events. The full chain still needs formal household-grade/tax-kind formulas, client/tenant rent cascade, market cash squeeze, long memory, and precise settlement/jurisdiction payloads.

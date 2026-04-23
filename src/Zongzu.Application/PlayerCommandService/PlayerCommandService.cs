@@ -1,50 +1,18 @@
 using System;
 using Zongzu.Contracts;
-using Zongzu.Kernel;
 
 namespace Zongzu.Application;
 
-public sealed partial class PlayerCommandService
+public sealed class PlayerCommandService
 {
     public PlayerCommandResult IssueIntent(GameSimulation simulation, PlayerCommandRequest command)
     {
         ArgumentNullException.ThrowIfNull(simulation);
         ArgumentNullException.ThrowIfNull(command);
 
-        return command.CommandName switch
+        if (!PlayerCommandCatalog.TryGet(command.CommandName, out PlayerCommandRoute? route))
         {
-            PlayerCommandNames.ArrangeMarriage
-                or PlayerCommandNames.DesignateHeirPolicy
-                or PlayerCommandNames.SupportNewbornCare
-                or PlayerCommandNames.SetMourningOrder
-                or PlayerCommandNames.SupportSeniorBranch
-                or PlayerCommandNames.OrderFormalApology
-                or PlayerCommandNames.PermitBranchSeparation
-                or PlayerCommandNames.SuspendClanRelief
-                or PlayerCommandNames.InviteClanEldersMediation
-                or PlayerCommandNames.InviteClanEldersPubliclyBroker
-                => IssueFamilyIntent(simulation, command),
-
-            PlayerCommandNames.PetitionViaOfficeChannels
-                or PlayerCommandNames.DeployAdministrativeLeverage
-                or PlayerCommandNames.PostCountyNotice
-                or PlayerCommandNames.DispatchRoadReport
-                => IssueOfficeIntent(simulation, command),
-
-            PlayerCommandNames.EscortRoadReport
-                or PlayerCommandNames.FundLocalWatch
-                or PlayerCommandNames.SuppressBanditry
-                or PlayerCommandNames.NegotiateWithOutlaws
-                or PlayerCommandNames.TolerateDisorder
-                => IssueExpandedOrderIntent(simulation, command),
-
-            PlayerCommandNames.DraftCampaignPlan
-                or PlayerCommandNames.CommitMobilization
-                or PlayerCommandNames.ProtectSupplyLine
-                or PlayerCommandNames.WithdrawToBarracks
-                => IssueWarfareIntent(simulation, command),
-
-            _ => new PlayerCommandResult
+            return new PlayerCommandResult
             {
                 Accepted = false,
                 ModuleKey = string.Empty,
@@ -54,7 +22,45 @@ public sealed partial class PlayerCommandService
                 CommandName = command.CommandName,
                 Label = command.CommandName,
                 Summary = $"Unknown player command: {command.CommandName}.",
-            },
+            };
+        }
+
+        if (!simulation.FeatureManifest.IsEnabled(route.ModuleKey))
+        {
+            return BuildDisabledResult(command, route);
+        }
+
+        return simulation.IssueModuleCommand(route.ModuleKey, command);
+    }
+
+    internal static string DetermineFamilyCommandLabel(string commandName)
+    {
+        return PlayerCommandCatalog.DetermineLabel(commandName);
+    }
+
+    internal static string DetermineOfficeCommandLabel(string commandName)
+    {
+        return PlayerCommandCatalog.DetermineLabel(commandName);
+    }
+
+    internal static string DeterminePublicLifeCommandLabel(string commandName)
+    {
+        return PlayerCommandCatalog.DetermineLabel(commandName);
+    }
+
+    private static PlayerCommandResult BuildDisabledResult(PlayerCommandRequest command, PlayerCommandRoute route)
+    {
+        return new PlayerCommandResult
+        {
+            Accepted = false,
+            ModuleKey = route.ModuleKey,
+            SurfaceKey = route.SurfaceKey,
+            SettlementId = command.SettlementId,
+            ClanId = command.ClanId,
+            CommandName = command.CommandName,
+            Label = route.Label,
+            Summary = route.DisabledSummary,
+            TargetLabel = route.BuildDisabledTargetLabel(command),
         };
     }
 }
