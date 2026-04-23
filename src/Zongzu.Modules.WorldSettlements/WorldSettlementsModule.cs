@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -26,6 +26,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
         WorldSettlementsEventNames.EpidemicOutbreak,
         WorldSettlementsEventNames.ReliefDelivered,
         WorldSettlementsEventNames.ReliefWithheld,
+        WorldSettlementsEventNames.TaxSeasonOpened,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -133,7 +134,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
     /// here we project them into one or more <see cref="PublicSurfaceSignal"/>s
     /// by selecting the relevant settlement nodes from <see cref="WorldSettlementsState.Settlements"/>.
     ///
-    /// <para>Canal transition → one <see cref="OpinionStream.NoticeBoard"/>
+    /// <para>Canal transition → one <see cref="OpinionChannel.NoticeBoard"/>
     /// signal on any <see cref="SettlementNodeKind.CanalJunction"/>.</para>
     ///
     /// <para>Flood breach → three concurrent signals (NoticeBoard / MarketTalk

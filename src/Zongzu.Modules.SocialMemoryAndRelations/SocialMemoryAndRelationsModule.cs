@@ -18,10 +18,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
     private static readonly string[] EventNames =
     [
-        "GrudgeEscalated",
-        "GrudgeSoftened",
-        "FavorIncurred",
-        "ClanNarrativeUpdated",
+        SocialMemoryAndRelationsEventNames.GrudgeEscalated,
+        SocialMemoryAndRelationsEventNames.GrudgeSoftened,
+        SocialMemoryAndRelationsEventNames.FavorIncurred,
+        SocialMemoryAndRelationsEventNames.ClanNarrativeUpdated,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -31,10 +31,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
         // Step 1b gap 1: trade shock → clan narrative memory (no-op dispatch)
-        TradeShockEventTypes.RouteBusinessBlocked,
-        TradeShockEventTypes.TradeLossOccurred,
-        TradeShockEventTypes.TradeDebtDefaulted,
-        TradeShockEventTypes.TradeProspered,
+        TradeAndIndustryEventNames.RouteBusinessBlocked,
+        TradeAndIndustryEventNames.TradeLossOccurred,
+        TradeAndIndustryEventNames.TradeDebtDefaulted,
+        TradeAndIndustryEventNames.TradeProspered,
         // Step 1b gap 2: violent death → cross-generation blood-feud memory (no-op dispatch)
         DeathCauseEventNames.DeathByViolence,
         // STEP2A / A5: infant/child illness death → child_loss memory + fear pressure.
@@ -46,13 +46,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         FamilyCoreEventNames.HeirSecurityWeakened,
     ];
 
-    private static class TradeShockEventTypes
-    {
-        public const string RouteBusinessBlocked = "RouteBusinessBlocked";
-        public const string TradeLossOccurred = "TradeLossOccurred";
-        public const string TradeDebtDefaulted = "TradeDebtDefaulted";
-        public const string TradeProspered = "TradeProspered";
-    }
+
 
     public override string ModuleKey => KnownModuleKeys.SocialMemoryAndRelations;
 
@@ -154,22 +148,22 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
             if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
             {
-                scope.Emit("GrudgeEscalated", $"{clan.ClanName}旧怨更深。");
+                scope.Emit(SocialMemoryAndRelationsEventNames.GrudgeEscalated, $"{clan.ClanName}旧怨更深。");
                 AddMemory(scope.State, clan.Id, "hardship", MemoryType.Grudge, MemorySubtype.WealthGrudge, "clan.hardship", 2, narrative.GrudgePressure, true, $"{clan.ClanName}因民困与家计艰难，旧怨更深。", scope.Context);
             }
 
             if (previousGrudge >= 45 && narrative.GrudgePressure < 45)
             {
-                scope.Emit("GrudgeSoftened", $"{clan.ClanName}旧怨稍缓。");
+                scope.Emit(SocialMemoryAndRelationsEventNames.GrudgeSoftened, $"{clan.ClanName}旧怨稍缓。");
                 AddMemory(scope.State, clan.Id, "conciliation", MemoryType.Favor, MemorySubtype.ReliefFavor, "clan.relief", 3, Math.Max(10, narrative.FavorBalance), true, $"{clan.ClanName}因接济与调处，怨气稍缓。", scope.Context);
             }
 
             if (previousFavor < 10 && narrative.FavorBalance >= 10)
             {
-                scope.Emit("FavorIncurred", $"{clan.ClanName}人情债渐著。");
+                scope.Emit(SocialMemoryAndRelationsEventNames.FavorIncurred, $"{clan.ClanName}人情债渐著。");
             }
 
-            scope.Emit("ClanNarrativeUpdated", $"{clan.ClanName}乡议口气有变。");
+            scope.Emit(SocialMemoryAndRelationsEventNames.ClanNarrativeUpdated, $"{clan.ClanName}乡议口气有变。");
         }
     }
 
@@ -237,7 +231,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
                 if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
                 {
-                    scope.Emit("GrudgeEscalated", $"战后余波使{clan.ClanName}旧怨更炽。", clan.Id.Value.ToString());
+                    scope.Emit(SocialMemoryAndRelationsEventNames.GrudgeEscalated, $"战后余波使{clan.ClanName}旧怨更炽。", clan.Id.Value.ToString());
                 }
             }
         }
@@ -338,7 +332,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
             if (previousFavor < 10 && narrative.FavorBalance >= 10)
             {
-                scope.Emit("FavorIncurred", $"{clanId.Value}族因议婚人情渐著。");
+                scope.Emit(SocialMemoryAndRelationsEventNames.FavorIncurred, $"{clanId.Value}族因议婚人情渐著。");
             }
         }
     }
@@ -352,10 +346,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         {
             switch (domainEvent.EventType)
             {
-                case TradeShockEventTypes.RouteBusinessBlocked:
-                case TradeShockEventTypes.TradeLossOccurred:
-                case TradeShockEventTypes.TradeDebtDefaulted:
-                case TradeShockEventTypes.TradeProspered:
+                case TradeAndIndustryEventNames.RouteBusinessBlocked:
+                case TradeAndIndustryEventNames.TradeLossOccurred:
+                case TradeAndIndustryEventNames.TradeDebtDefaulted:
+                case TradeAndIndustryEventNames.TradeProspered:
                     // TODO Step 2: 按维度入口更新 ClanNarrativeState / EventMemoryState。
                     break;
             }

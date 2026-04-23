@@ -247,6 +247,38 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
                 case PublicLifeAndRumorEventNames.RoadReportDelayed:
                     // TODO Step 2: 按维度入口调整路况 / 粮价 / 商路风险 / 发 RouteBusinessBlocked。
                     break;
+
+                case WorldSettlementsEventNames.SeasonPhaseAdvanced:
+                    ApplyHarvestPricePulse(scope, domainEvent);
+                    break;
+            }
+        }
+    }
+
+    private static void ApplyHarvestPricePulse(ModuleEventHandlingScope<TradeAndIndustryState> scope, IDomainEvent domainEvent)
+    {
+        // Thin chain: harvest phase reduces grain supply and may trigger price spike.
+        // Full formula (Step 3) will consider yield ratio, granary security, route risk.
+        if (domainEvent.EntityKey != nameof(AgrarianPhase.Harvest))
+        {
+            return;
+        }
+
+        foreach (SettlementMarketState market in scope.State.Markets)
+        {
+            MarketGoodsEntryState entry = GetOrCreateGrainEntry(scope.State, market.SettlementId);
+            int oldPrice = entry.CurrentPrice;
+
+            // Harvest tightens supply (hoarding, tribute, export pressure).
+            entry.Supply = Math.Clamp(entry.Supply - 25, 0, 100);
+            entry.CurrentPrice = Math.Clamp(entry.BasePrice + ((entry.Demand - entry.Supply) / 2), 50, 200);
+
+            if (oldPrice < 120 && entry.CurrentPrice >= 120)
+            {
+                scope.Emit(
+                    TradeAndIndustryEventNames.GrainPriceSpike,
+                    $"{market.MarketName}秋收后粮价陡起，现每石{entry.CurrentPrice}文。",
+                    market.SettlementId.Value.ToString());
             }
         }
     }

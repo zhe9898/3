@@ -48,6 +48,12 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
 
+    private static readonly string[] ConsumedEventNames =
+    [
+        OfficeAndCareerEventNames.YamenOverloaded,
+    ];
+
+    public override IReadOnlyCollection<string> ConsumedEvents => ConsumedEventNames;
 
     public override PublicLifeAndRumorState CreateInitialState()
 
@@ -84,6 +90,25 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
 
     }
 
+    public override void HandleEvents(ModuleEventHandlingScope<PublicLifeAndRumorState> scope)
+    {
+        // Renzong thin chain: yamen overload → public life heat.
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType != OfficeAndCareerEventNames.YamenOverloaded)
+            {
+                continue;
+            }
+
+            // Find or create settlement public-life state for the affected settlement.
+            // For thin-chain we attach heat to all settlements (no settlement id in payload yet).
+            foreach (SettlementPublicLifeState publicLife in scope.State.Settlements)
+            {
+                publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + 15, 0, 100);
+                publicLife.LastPublicTrace = $"衙门口因税役挤满请减之人，街谈热度升至{publicLife.StreetTalkHeat}。";
+            }
+        }
+    }
 
     private static void RunSettlementPulse(ModuleExecutionScope<PublicLifeAndRumorState> scope, bool emitReadableOutput)
 

@@ -14,6 +14,14 @@ public static class WarfareCampaignEventNames
     public const string CampaignSupplyStrained = "CampaignSupplyStrained";
 
     public const string CampaignAftermathRegistered = "CampaignAftermathRegistered";
+
+    // ---- Renzong pressure chain events (prefixed, new) ----
+
+    public const string MobilizationWindowOpened = "WarfareCampaign.MobilizationWindowOpened";
+
+    public const string CampaignCommitted = "WarfareCampaign.CampaignCommitted";
+
+    public const string RouteRepairNeed = "WarfareCampaign.RouteRepairNeed";
 }
 
 public sealed class WarfareCampaignEventBundle

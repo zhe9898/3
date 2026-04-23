@@ -50,4 +50,11 @@ public static class FamilyCoreEventNames
     /// 族内诠释，不是身份登记的账实变化。
     /// </summary>
     public const string CameOfAge = "CameOfAge";
+
+    /// <summary>
+    /// Retainers mobilised by a clan for escort, local guard, or campaign-lite.
+    /// Owned by FamilyCore because retainers are clan assets; ConflictAndForce
+    /// consumes this to update force posture.
+    /// </summary>
+    public const string RetainerMobilized = "FamilyCore.RetainerMobilized";
 }

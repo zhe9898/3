@@ -28,6 +28,8 @@
     <ProjectReference Include="..\..\src\Zongzu.Modules.TradeAndIndustry\Zongzu.Modules.TradeAndIndustry.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Modules.WarfareCampaign\Zongzu.Modules.WarfareCampaign.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Modules.WorldSettlements\Zongzu.Modules.WorldSettlements.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.PopulationAndHouseholds\Zongzu.Modules.PopulationAndHouseholds.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.PublicLifeAndRumor\Zongzu.Modules.PublicLifeAndRumor.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Persistence\Zongzu.Persistence.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Scheduler\Zongzu.Scheduler.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Presentation.Unity.ViewModels\Zongzu.Presentation.Unity.ViewModels.csproj" />

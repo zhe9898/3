@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 
@@ -115,6 +115,16 @@ internal static class SeasonBandAdvancer
 
         EmitSeasonalFestivalIfDue(date.Month, scope);
 
+        // Thin chain: tax season signal (Renzong pressure chain §1).
+        // Xia-tax roughly 5th lunar month, Qiu-tax roughly 9th.
+        if (date.Month is 5 or 9)
+        {
+            scope.Emit(
+                WorldSettlementsEventNames.TaxSeasonOpened,
+                $"{date.Month}月入税役期。",
+                "tax-season");
+        }
+
         return new MonthAdvanceReport(
             CanalWindowChanged: canalChanged,
             CanalFrom: previousCanal,
@@ -182,8 +192,8 @@ internal static class SeasonBandAdvancer
 
         // Message delay drifts with succession band (court backlog).
         int messageBase = season.Imperial.SuccessionUncertainty >= SuccessionDelayThreshold
-            ? CalibrationBands.MessageDelay_Slow
-            : CalibrationBands.MessageDelay_Normal;
+            ? CalibrationBands.MessageDelaySlow
+            : CalibrationBands.MessageDelayNormal;
         season.MessageDelayBand = Math.Clamp(messageBase + random.NextInt(0, 2), 0, 4);
 
         // Re-apply cross-axis rules (succession doubles delay; mourning may have latched).
@@ -304,7 +314,7 @@ internal static class SeasonBandAdvancer
         if (season.Imperial.SuccessionUncertainty >= SuccessionDelayThreshold)
         {
             // At minimum double the message delay band.
-            season.MessageDelayBand = Math.Clamp(Math.Max(season.MessageDelayBand, CalibrationBands.MessageDelay_Slow * 2), 0, 4);
+            season.MessageDelayBand = Math.Clamp(Math.Max(season.MessageDelayBand, CalibrationBands.MessageDelaySlow * 2), 0, 4);
         }
     }
 

@@ -41,7 +41,7 @@ public sealed class RouteStateData
     /// <summary>Ordered intermediate node path. Must include a water-land interface node when crossing water (SPEC §2.6; gray-zone routes exempt).</summary>
     public List<SettlementId> Waypoints { get; set; } = new();
 
-    /// <summary>0..5 band from <see cref="CalibrationBands"/> <c>TravelDays_*</c>.</summary>
+    /// <summary>0..5 band from <see cref="CalibrationBands"/> <c>TravelDays*</c>.</summary>
     public int TravelDaysBand { get; set; }
 
     /// <summary>0..100 — throughput capacity.</summary>

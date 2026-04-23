@@ -59,7 +59,7 @@ public sealed record RouteSnapshot
 
     /// <summary>
     /// Travel-time band (0..5, see <see cref="CalibrationBands"/>
-    /// <c>TravelDays_*</c>). Named band, not a day count.
+    /// <c>TravelDays*</c>). Named band, not a day count.
     /// </summary>
     public int TravelDaysBand { get; init; }
 

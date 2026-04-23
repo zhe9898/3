@@ -22,6 +22,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         PopulationEventNames.LaborShortage,
         PopulationEventNames.LivelihoodCollapsed,
         PopulationEventNames.DeathByIllness,
+        PopulationEventNames.HouseholdSubsistencePressureChanged,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -31,25 +32,22 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
         // Step 1b gap 1: trade shock → household livelihood pressure (no-op dispatch)
-        TradeShockEventTypes.RouteBusinessBlocked,
-        TradeShockEventTypes.TradeLossOccurred,
-        TradeShockEventTypes.TradeDebtDefaulted,
-        TradeShockEventTypes.TradeProspered,
+        TradeAndIndustryEventNames.RouteBusinessBlocked,
+        TradeAndIndustryEventNames.TradeLossOccurred,
+        TradeAndIndustryEventNames.TradeDebtDefaulted,
+        TradeAndIndustryEventNames.TradeProspered,
+        // Renzong thin chain: grain price spike → household subsistence pressure
+        TradeAndIndustryEventNames.GrainPriceSpike,
         // Step 1b gap 3: world pulse → labor / livelihood (no-op dispatch)
         WorldSettlementsEventNames.FloodRiskThresholdBreached,
         WorldSettlementsEventNames.CorveeWindowChanged,
+        WorldSettlementsEventNames.TaxSeasonOpened,
         // Step 1b gap 4: family branch / heir pressure → household count & sponsor shift (no-op dispatch)
         FamilyCoreEventNames.BranchSeparationApproved,
         FamilyCoreEventNames.HeirSecurityWeakened,
     ];
 
-    private static class TradeShockEventTypes
-    {
-        public const string RouteBusinessBlocked = "RouteBusinessBlocked";
-        public const string TradeLossOccurred = "TradeLossOccurred";
-        public const string TradeDebtDefaulted = "TradeDebtDefaulted";
-        public const string TradeProspered = "TradeProspered";
-    }
+
 
     public override string ModuleKey => KnownModuleKeys.PopulationAndHouseholds;
 
@@ -294,14 +292,52 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         {
             switch (domainEvent.EventType)
             {
-                case TradeShockEventTypes.RouteBusinessBlocked:
-                case TradeShockEventTypes.TradeLossOccurred:
-                case TradeShockEventTypes.TradeDebtDefaulted:
-                case TradeShockEventTypes.TradeProspered:
+                case TradeAndIndustryEventNames.RouteBusinessBlocked:
+                case TradeAndIndustryEventNames.TradeLossOccurred:
+                case TradeAndIndustryEventNames.TradeDebtDefaulted:
+                case TradeAndIndustryEventNames.TradeProspered:
                     // TODO Step 2: 按维度入口调整相关 household 的 DebtLoad / LivelihoodPressure / MigrationRisk。
+                    break;
+
+                case TradeAndIndustryEventNames.GrainPriceSpike:
+                    ApplyGrainPriceSubsistencePressure(scope, domainEvent);
                     break;
             }
         }
+    }
+
+    private static void ApplyGrainPriceSubsistencePressure(
+        ModuleEventHandlingScope<PopulationAndHouseholdsState> scope,
+        IDomainEvent domainEvent)
+    {
+        // Thin chain: grain price spike increases household distress.
+        // Full formula (Step 3) will consider household grain store, livelihood type, etc.
+        SettlementId? affectedSettlementId = TryParseSettlementId(domainEvent.EntityKey);
+        foreach (PopulationHouseholdState household in scope.State.Households)
+        {
+            if (affectedSettlementId.HasValue && household.SettlementId != affectedSettlementId.Value)
+            {
+                continue;
+            }
+
+            int oldDistress = household.Distress;
+            household.Distress = Math.Clamp(household.Distress + 12, 0, 100);
+
+            if (oldDistress < 60 && household.Distress >= 60)
+            {
+                scope.Emit(
+                    PopulationEventNames.HouseholdSubsistencePressureChanged,
+                    $"{household.HouseholdName}粮价陡起，生计吃紧。",
+                    household.Id.Value.ToString());
+            }
+        }
+    }
+
+    private static SettlementId? TryParseSettlementId(string? entityKey)
+    {
+        return int.TryParse(entityKey, out int settlementId)
+            ? new SettlementId(settlementId)
+            : null;
     }
 
     private static void DispatchWorldPulseEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
@@ -316,6 +352,29 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 case WorldSettlementsEventNames.CorveeWindowChanged:
                     // TODO Step 2: 按维度入口调整 LaborPressure / LivelihoodPressure / MigrationRisk。
                     break;
+
+                case WorldSettlementsEventNames.TaxSeasonOpened:
+                    ApplyTaxSeasonPressure(scope);
+                    break;
+            }
+        }
+    }
+
+    private static void ApplyTaxSeasonPressure(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Thin chain: tax season increases debt pressure for all households.
+        // Full formula (Step 3) will consider household grade, seasonal adjustment, etc.
+        foreach (PopulationHouseholdState household in scope.State.Households)
+        {
+            int oldDebt = household.DebtPressure;
+            household.DebtPressure = Math.Clamp(household.DebtPressure + 15, 0, 100);
+
+            if (oldDebt < 70 && household.DebtPressure >= 70)
+            {
+                scope.Emit(
+                    PopulationEventNames.HouseholdDebtSpiked,
+                    $"{household.HouseholdName}税役加急，债压陡起。",
+                    household.Id.Value.ToString());
             }
         }
     }

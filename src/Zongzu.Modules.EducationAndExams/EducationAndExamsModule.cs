@@ -18,10 +18,10 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
 
     private static readonly string[] EventNames =
     [
-        "ExamPassed",
-        "ExamFailed",
-        "StudyAbandoned",
-        "TutorSecured",
+        EducationAndExamsEventNames.ExamPassed,
+        EducationAndExamsEventNames.ExamFailed,
+        EducationAndExamsEventNames.StudyAbandoned,
+        EducationAndExamsEventNames.TutorSecured,
     ];
 
     public override string ModuleKey => KnownModuleKeys.EducationAndExams;

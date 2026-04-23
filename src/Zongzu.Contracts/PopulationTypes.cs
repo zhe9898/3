@@ -147,4 +147,22 @@ public static class PopulationEventNames
     /// flavor consumers can subscribe to this cause-specific event directly.
     /// </summary>
     public const string DeathByIllness = DeathCauseEventNames.DeathByIllness;
+
+    // ---- Renzong pressure chain events (prefixed, new) ----
+
+    public const string TenantFlightTriggered = "PopulationAndHouseholds.TenantFlightTriggered";
+
+    public const string HouseholdSubsistencePressureChanged = "PopulationAndHouseholds.HouseholdSubsistencePressureChanged";
+
+    public const string HouseholdLaborReabsorbed = "PopulationAndHouseholds.HouseholdLaborReabsorbed";
+
+    public const string LaborDraftPressure = "PopulationAndHouseholds.LaborDraftPressure";
+
+    public const string HouseholdBurdenIncreased = "PopulationAndHouseholds.HouseholdBurdenIncreased";
+
+    public const string HouseholdWarLoss = "PopulationAndHouseholds.HouseholdWarLoss";
+
+    public const string HouseholdComplianceShifted = "PopulationAndHouseholds.HouseholdComplianceShifted";
+
+    public const string HouseholdRegimeTransition = "PopulationAndHouseholds.HouseholdRegimeTransition";
 }

@@ -14,6 +14,13 @@ public static class PublicLifeAndRumorEventNames
     public const string RoadReportDelayed = "RoadReportDelayed";
 
     public const string PrefectureDispatchPressed = "PrefectureDispatchPressed";
+
+    /// <summary>
+    /// Fired when public legitimacy shifts due to regime events, ritual claims,
+    /// or policy outcomes (P5+). Owned by PublicLifeAndRumor as a downstream
+    /// signal that other modules may subscribe to for deterministic responses.
+    /// </summary>
+    public const string PublicLegitimacyShifted = "PublicLifeAndRumor.PublicLegitimacyShifted";
 }
 
 public sealed record SettlementPublicLifeSnapshot

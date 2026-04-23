@@ -27,15 +27,15 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
     [
 
-        "BanditThreatRaised",
+        OrderAndBanditryEventNames.BanditThreatRaised,
 
-        "OutlawGroupFormed",
+        OrderAndBanditryEventNames.OutlawGroupFormed,
 
-        "SuppressionSucceeded",
+        OrderAndBanditryEventNames.SuppressionSucceeded,
 
-        "RouteUnsafeDueToBanditry",
+        OrderAndBanditryEventNames.RouteUnsafeDueToBanditry,
 
-        "BlackRoutePressureRaised",
+        OrderAndBanditryEventNames.BlackRoutePressureRaised,
 
     ];
 

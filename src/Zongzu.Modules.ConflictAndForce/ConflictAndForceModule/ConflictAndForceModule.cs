@@ -27,13 +27,13 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
 
     [
 
-        "ConflictResolved",
+        ConflictAndForceEventNames.ConflictResolved,
 
-        "CommanderWounded",
+        ConflictAndForceEventNames.CommanderWounded,
 
-        "ForceReadinessChanged",
+        ConflictAndForceEventNames.ForceReadinessChanged,
 
-        "MilitiaMobilized",
+        ConflictAndForceEventNames.MilitiaMobilized,
 
         // Step 1b gap 2: declared only; source trigger 留给 Step 2。
         DeathCauseEventNames.DeathByViolence,

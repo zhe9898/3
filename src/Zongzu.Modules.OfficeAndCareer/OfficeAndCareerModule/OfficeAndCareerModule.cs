@@ -27,13 +27,14 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
     [
 
-        "OfficeGranted",
+        OfficeAndCareerEventNames.OfficeGranted,
 
-        "OfficeLost",
+        OfficeAndCareerEventNames.OfficeLost,
 
-        "OfficeTransfer",
+        OfficeAndCareerEventNames.OfficeTransfer,
 
-        "AuthorityChanged",
+        OfficeAndCareerEventNames.AuthorityChanged,
+        OfficeAndCareerEventNames.YamenOverloaded,
 
     ];
 
@@ -54,6 +55,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         PublicLifeAndRumorEventNames.PrefectureDispatchPressed,
         PublicLifeAndRumorEventNames.CountyGateCrowded,
         PublicLifeAndRumorEventNames.StreetTalkSurged,
+        // Renzong thin chain: population debt → yamen workload
+        PopulationEventNames.HouseholdDebtSpiked,
 
     ];
 
@@ -281,6 +284,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
     {
 
         DispatchPublicLifeEvents(scope);
+        DispatchPopulationDebtEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
 
@@ -393,6 +397,39 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
     }
 
+
+    private static void DispatchPopulationDebtEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
+    {
+        // Renzong thin chain: household debt spike → yamen petition backlog.
+        // Full formula (Step 3) will consider settlement capacity, official rank, etc.
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType != PopulationEventNames.HouseholdDebtSpiked)
+            {
+                continue;
+            }
+
+            // Find the official with jurisdiction over this settlement.
+            // For thin-chain, we pick the first appointed official.
+            OfficeCareerState? career = scope.State.People.FirstOrDefault(static p => p.HasAppointment);
+            if (career is null)
+            {
+                continue;
+            }
+
+            int oldBacklog = career.PetitionBacklog;
+            career.PetitionBacklog = Math.Clamp(career.PetitionBacklog + 8, 0, 100);
+            career.AdministrativeTaskLoad = Math.Clamp(career.AdministrativeTaskLoad + 5, 0, 100);
+
+            if (oldBacklog < 60 && career.PetitionBacklog >= 60)
+            {
+                scope.Emit(
+                    OfficeAndCareerEventNames.YamenOverloaded,
+                    $"{career.OfficeTitle}衙门口因欠税纠纷挤满请减之人，案牍骤增。",
+                    career.PersonId.Value.ToString());
+            }
+        }
+    }
 
     private static void DispatchPublicLifeEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
     {

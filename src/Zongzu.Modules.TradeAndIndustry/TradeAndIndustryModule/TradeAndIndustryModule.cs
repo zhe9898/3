@@ -29,13 +29,15 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
 
     [
 
-        "TradeProspered",
+        TradeAndIndustryEventNames.TradeProspered,
 
-        "TradeLossOccurred",
+        TradeAndIndustryEventNames.TradeLossOccurred,
 
-        "TradeDebtDefaulted",
+        TradeAndIndustryEventNames.TradeDebtDefaulted,
 
-        "RouteBusinessBlocked",
+        TradeAndIndustryEventNames.RouteBusinessBlocked,
+
+        TradeAndIndustryEventNames.GrainPriceSpike,
 
     ];
 
@@ -56,6 +58,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
         WorldSettlementsEventNames.FloodRiskThresholdBreached,
         WorldSettlementsEventNames.RouteConstraintEmerged,
         WorldSettlementsEventNames.CorveeWindowChanged,
+        WorldSettlementsEventNames.SeasonPhaseAdvanced,
         PublicLifeAndRumorEventNames.MarketBuzzRaised,
         PublicLifeAndRumorEventNames.RoadReportDelayed,
 

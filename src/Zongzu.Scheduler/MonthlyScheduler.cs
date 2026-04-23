@@ -8,6 +8,13 @@ namespace Zongzu.Scheduler;
 
 public sealed class MonthlyScheduler
 {
+    /// <summary>
+    /// Maximum number of event-drain rounds during month-end handling.
+    /// Prevents unbounded recursion when modules emit follow-on events.
+    /// See SIMULATION.md Phase 2: "follow-on events may reach projection,
+    /// but they do not trigger uncontrolled recursive month expansion".
+    /// </summary>
+    internal const int MaxEventDrainRounds = 5;
     private static readonly SimulationXun[] XunOrder =
     [
         SimulationXun.Shangxun,
@@ -191,16 +198,36 @@ public sealed class MonthlyScheduler
             kernelState,
             SimulationCadenceBand.Month,
             SimulationXun.None);
-        IDomainEvent[] eventSnapshot = domainEvents.Events.ToArray();
 
-        foreach (IModuleRunner module in authorityModules)
+        // Bounded event drain: process follow-on events across multiple rounds
+        // so that intra-month event cascades (e.g. TaxSeasonOpened ->
+        // HouseholdDebtSpiked -> YamenOverloaded -> PublicLife reaction)
+        // resolve deterministically within the same month.
+        // See SIMULATION.md Phase 2.
+        int processedCount = 0;
+        for (int round = 0; round < MaxEventDrainRounds; round++)
         {
-            if (!featureManifest.IsEnabled(module.ModuleKey) || module.ConsumedEvents.Count == 0)
+            int beforeCount = domainEvents.Events.Count;
+            IDomainEvent[] freshEvents = domainEvents.Events.Skip(processedCount).ToArray();
+            if (freshEvents.Length == 0)
             {
-                continue;
+                break;
             }
 
-            module.HandleEvents(context, moduleStates[module.ModuleKey], eventSnapshot);
+            foreach (IModuleRunner module in authorityModules)
+            {
+                if (!featureManifest.IsEnabled(module.ModuleKey) || module.ConsumedEvents.Count == 0)
+                {
+                    continue;
+                }
+
+                module.HandleEvents(context, moduleStates[module.ModuleKey], freshEvents);
+            }
+
+            // Advance watermark to the count *before* this round's handlers ran,
+            // so that follow-on events emitted during this round become the
+            // freshEvents for the next round.
+            processedCount = beforeCount;
         }
     }
 

@@ -60,7 +60,7 @@ public sealed record SeasonBandSnapshot
     // ── Information axis ─────────────────────────────────────────
     /// <summary>
     /// Message-delay band (0..4, see <see cref="CalibrationBands"/>
-    /// <c>MessageDelay_*</c>). MVP = official-dispatch delay only; private
+    /// <c>MessageDelay*</c>). MVP = official-dispatch delay only; private
     /// letter and rumor delay arrive with <c>PublicLifeAndRumor</c> phase 2+.
     /// </summary>
     public int MessageDelayBand { get; init; }

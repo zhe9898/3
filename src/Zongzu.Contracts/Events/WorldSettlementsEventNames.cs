@@ -63,4 +63,26 @@ public static class WorldSettlementsEventNames
     public const string EpidemicOutbreak = "WorldSettlements.EpidemicOutbreak";
     public const string ReliefDelivered = "WorldSettlements.ReliefDelivered";
     public const string ReliefWithheld = "WorldSettlements.ReliefWithheld";
+
+    // ---- Renzong pressure chain events (prefixed) ----
+
+    public const string TaxSeasonOpened = "WorldSettlements.TaxSeasonOpened";
+
+    public const string ExamSeasonOpened = "WorldSettlements.ExamSeasonOpened";
+
+    public const string CourtMourning = "WorldSettlements.CourtMourning";
+
+    public const string FrontierSupplyDemand = "WorldSettlements.FrontierSupplyDemand";
+
+    public const string FrontierStrainEscalated = "WorldSettlements.FrontierStrainEscalated";
+
+    public const string DisasterDeclared = "WorldSettlements.DisasterDeclared";
+
+    public const string CourtAgendaPressureAccumulated = "WorldSettlements.CourtAgendaPressureAccumulated";
+
+    public const string RegimeLegitimacyShifted = "WorldSettlements.RegimeLegitimacyShifted";
+
+    public const string GrainRouteControlDisputed = "WorldSettlements.GrainRouteControlDisputed";
+
+    public const string RitualClaimStaged = "WorldSettlements.RitualClaimStaged";
 }
