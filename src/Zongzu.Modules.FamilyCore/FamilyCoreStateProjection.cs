@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using Zongzu.Contracts;
+using Zongzu.Kernel;
 
 namespace Zongzu.Modules.FamilyCore;
 
@@ -84,5 +86,112 @@ public static class FamilyCoreStateProjection
         }
 
         return 28;
+    }
+
+    /// <summary>
+    /// Phase 2a schema v3→v4：为旧存档补齐 FamilyPersonState 新字段。
+    /// <list type="bullet">
+    ///   <item>Heir → <see cref="BranchPosition.MainLineHeir"/>；其余在世成人 →
+    ///         <see cref="BranchPosition.BranchMember"/>；在世幼童 →
+    ///         <see cref="BranchPosition.DependentKin"/>。</item>
+    ///   <item>性格四元组 Ambition/Prudence/Loyalty/Sociability 缺省 50。</item>
+    ///   <item>ChildrenIds 保持空（血亲图谱在后续 phase 补）。</item>
+    /// </list>
+    /// </summary>
+    public static void UpgradeFromSchemaV3ToV4(FamilyCoreState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        System.Collections.Generic.HashSet<PersonId> heirIds = state.Clans
+            .Where(clan => clan.HeirPersonId is not null)
+            .Select(clan => clan.HeirPersonId!.Value)
+            .ToHashSet();
+
+        foreach (FamilyPersonState person in state.People)
+        {
+            if (person.BranchPosition == BranchPosition.Unknown)
+            {
+                person.BranchPosition = heirIds.Contains(person.Id)
+                    ? BranchPosition.MainLineHeir
+                    : person.AgeMonths >= 16 * 12
+                        ? BranchPosition.BranchMember
+                        : BranchPosition.DependentKin;
+            }
+
+            if (person.Ambition == 0) person.Ambition = 50;
+            if (person.Prudence == 0) person.Prudence = 50;
+            if (person.Loyalty == 0) person.Loyalty = 50;
+            if (person.Sociability == 0) person.Sociability = 50;
+
+            person.ChildrenIds ??= new System.Collections.Generic.List<PersonId>();
+        }
+    }
+
+    /// <summary>
+    /// STEP2A / A0a — v4 → v5：家内照料 + 郎中药铺链字段入场。
+    /// <list type="bullet">
+    ///   <item><c>CareLoad</c>, <c>FuneralDebt</c> 默认 0（旧档没有葬债记账）。</item>
+    ///   <item><c>RemedyConfidence</c> 按 <c>Prestige/4 + 30</c> 推断并夹 0–60；
+    ///         旧档没有问医信心，但门望高的人家对请医更自信，给一点启动值。</item>
+    /// </list>
+    /// 本 step 不写规则；A1 老死风险带才会读 CareLoad/RemedyConfidence。
+    /// </summary>
+    public static void UpgradeFromSchemaV4ToV5(FamilyCoreState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        foreach (ClanStateData clan in state.Clans)
+        {
+            clan.CareLoad = Math.Clamp(clan.CareLoad, 0, 100);
+            clan.FuneralDebt = Math.Clamp(clan.FuneralDebt, 0, 100);
+            if (clan.RemedyConfidence <= 0)
+            {
+                clan.RemedyConfidence = Math.Clamp((clan.Prestige / 4) + 30, 0, 60);
+            }
+            else
+            {
+                clan.RemedyConfidence = Math.Clamp(clan.RemedyConfidence, 0, 100);
+            }
+        }
+    }
+
+    /// <summary>
+    /// STEP2A / A0d — v5 → v6：宗族救济链字段入场（skill
+    /// lineage-institutions-corporate-power）。救济是挑选性的，不是普惠，
+    /// 债主是宗（clan），不是官。<c>CharityObligation</c> 0–100：宗房越殷实，
+    /// 对"债主感"认知越重。旧档按 <c>SupportReserve/3 + 10</c> clamp 0–60
+    /// 推断，避免同质化。本 step 不写规则。
+    /// </summary>
+    public static void UpgradeFromSchemaV5ToV6(FamilyCoreState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        foreach (ClanStateData clan in state.Clans)
+        {
+            if (clan.CharityObligation <= 0)
+            {
+                clan.CharityObligation = Math.Clamp((clan.SupportReserve / 3) + 10, 0, 60);
+            }
+            else
+            {
+                clan.CharityObligation = Math.Clamp(clan.CharityObligation, 0, 100);
+            }
+        }
+    }
+
+    /// <summary>
+    /// STEP2A / A1 — v6 → v7：老死风险带账本入场（skill
+    /// <c>disease-lifespan-death</c>）。FragilityLedger 默认 0；旧档全部以"健康"
+    /// 重启，ledger 由后续月节拍按 band 累积。规则见
+    /// <c>FamilyCoreModule.ComputeFragilityDose</c>。
+    /// </summary>
+    public static void UpgradeFromSchemaV6ToV7(FamilyCoreState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        foreach (FamilyPersonState person in state.People)
+        {
+            person.FragilityLedger = Math.Clamp(person.FragilityLedger, 0, 100);
+        }
     }
 }

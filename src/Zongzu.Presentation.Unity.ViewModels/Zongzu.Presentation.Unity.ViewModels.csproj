@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zongzu.Contracts\Zongzu.Contracts.csproj" />
+  </ItemGroup>
+
+  <!--
+    This assembly contains only view-model DTOs consumed by both the .NET backend
+    and the Unity shell. Language version is locked to the highest C# level that
+    the current Unity editor / IL2CPP pipeline can compile, so the same files can
+    be synced into Assets/Zongzu/ViewModels/ and compiled by Unity.
+    When Unity upgrades its C# support, bump this version.
+  -->
+
+  <!-- Sync view-model sources into the Unity project after every build. -->
+  <Target Name="SyncViewModelsToUnity" AfterTargets="Build">
+    <PropertyGroup>
+      <UnityViewModelsDir>$(MSBuildThisFileDirectory)..\..\unity\Zongzu.UnityShell\Assets\Scripts\ReadModels\ViewModels\</UnityViewModelsDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <ViewModelCsFiles Include="$(MSBuildThisFileDirectory)**\*.cs"
+                        Exclude="$(MSBuildThisFileDirectory)obj\**\*;
+                                 $(MSBuildThisFileDirectory)bin\**\*" />
+    </ItemGroup>
+    <MakeDir Directories="$(UnityViewModelsDir)" />
+    <Copy SourceFiles="@(ViewModelCsFiles)"
+          DestinationFiles="@(ViewModelCsFiles->'$(UnityViewModelsDir)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

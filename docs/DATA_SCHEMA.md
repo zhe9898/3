@@ -30,51 +30,27 @@ Rules:
 public readonly record struct GameDate(int Year, int Month);
 ```
 
-### Core person identity
+### Kernel person identity
+`PersonRegistry` (Kernel layer) owns the thin identity anchor:
 ```csharp
-public sealed record PersonCoreData {
-    PersonId Id;
-    string GivenName;
-    string? CourtesyName;
-    Sex Sex;
-    int BirthAgeMonths;   // optional alternative to BirthDate depending on implementation
-    bool IsAlive;
-    ClanId ClanId;
-    HouseholdId HouseholdId;
-    SettlementId SettlementId;
-    List<string> CoreTraits;
+public sealed class PersonRecord {
+    public PersonId Id { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
+    public GameDate BirthDate { get; set; }
+    public Gender Gender { get; set; }
+    public LifeStage LifeStage { get; set; }
+    public bool IsAlive { get; set; }
+    public FidelityRing FidelityRing { get; set; }
 }
 ```
 
-### Core household identity
-```csharp
-public sealed record HouseholdCoreData {
-    HouseholdId Id;
-    ClanId? ClanId;
-    SettlementId SettlementId;
-    PersonId? HeadId;
-    List<PersonId> MemberIds;
-}
-```
+> No fat `PersonCoreData` exists in the codebase.  Module-owned per-person state lives inside each module's state namespace (e.g. `FamilyPersonState` in `FamilyCore`, `HouseholdMembership` in `PopulationAndHouseholds`, `OfficeCareerState` in `OfficeAndCareer`).
 
-### Core clan identity
-```csharp
-public sealed record ClanCoreData {
-    ClanId Id;
-    string ClanName;
-    SettlementId HomeSettlementId;
-}
-```
-
-### Core settlement identity
-```csharp
-public sealed record SettlementCoreData {
-    SettlementId Id;
-    string Name;
-    SettlementTier Tier;
-    SettlementId? ParentSettlementId;
-}
-```
+### Module-owned identity fragments
+Modules expose read-only *snapshots* via query interfaces, not shared core records:
+- `ClanSnapshot` — projection from `FamilyCore`
+- `SettlementSnapshot` — projection from `WorldSettlements`
+- `PopulationSettlementSnapshot` — projection from `PopulationAndHouseholds`
 
 ## 3. Module state model
 
@@ -95,11 +71,14 @@ public interface IDomainEvent {
     string EventType;
     string Summary;
     string? EntityKey;
+    IReadOnlyDictionary<string, string> Metadata;
 }
 ```
 
 Current note:
 - `EntityKey` is optional runtime-only targeting metadata used by deterministic handler passes and projection traces
+- `Metadata` is optional runtime-only structured cause / severity / source metadata used when a generic event type needs rule-readable context; modules must not parse `Summary` for authoritative formulas
+- runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
 ### Save root
@@ -126,6 +105,9 @@ Owns:
 public sealed class WorldSettlementsState {
     List<SettlementStateData> Settlements;
     List<RouteStateData> Routes;
+    SeasonBandData CurrentSeason;
+    int LastDeclaredFloodDisasterBand;
+    int LastDeclaredFrontierStrainBand;
 }
 
 public sealed class SettlementStateData {
@@ -142,6 +124,11 @@ public sealed class SettlementStateData {
 Current note:
 - `WorldSettlements` schema `2` now persists settlement tier so county seat, market town, village cluster, and prefecture-facing nodes stay module-owned rather than UI-invented
 - the built-in `1 -> 2` migration backfills conservative tiers for legacy saves inside the same namespace only
+- `WorldSettlements` schema `7` persists `LastDeclaredFloodDisasterBand` for the chain-6 thin slice so a persistent flood band does not re-emit `WorldSettlements.DisasterDeclared` every month
+- the built-in `6 -> 7` migration initializes that declaration watermark to `0`; this is module-local compatibility state, not a root-schema change
+- `WorldSettlements` schema `8` persists `LastDeclaredFrontierStrainBand` for the chain-5 thin slice so a persistent frontier pressure band does not re-emit `WorldSettlements.FrontierStrainEscalated` and re-trigger supply requisitions every month
+- the built-in `7 -> 8` migration initializes that frontier watermark to `0`; current thin allocation emits one settlement-scoped frontier fact, not a whole-realm demand
+- `SeasonBandData.Imperial.MandateConfidence` defaults to a neutral `70`; chain-8 / chain-9 pressure must be explicitly seeded or moved by an imperial/court owner, not inferred from an uninitialized zero
 
 ### FamilyCore state
 Owns:
@@ -175,6 +162,10 @@ public sealed class ClanStateData {
     int HeirSecurity;
     int ReproductivePressure;
     int MourningLoad;
+    int CareLoad;
+    int FuneralDebt;
+    int RemedyConfidence;
+    int CharityObligation;
     string LastConflictCommandCode;
     string LastConflictCommandLabel;
     string LastConflictOutcome;
@@ -184,11 +175,30 @@ public sealed class ClanStateData {
     string LastLifecycleOutcome;
     string LastLifecycleTrace;
 }
+
+public sealed class FamilyPersonState {
+    PersonId Id;
+    ClanId ClanId;
+    string GivenName;
+    int AgeMonths;
+    bool IsAlive;
+    BranchPosition BranchPosition;
+    PersonId? SpouseId;
+    PersonId? FatherId;
+    PersonId? MotherId;
+    List<PersonId> ChildrenIds;
+    int Ambition;
+    int Prudence;
+    int Loyalty;
+    int Sociability;
+    int FragilityLedger;
+}
 ```
 
 Current note:
-- `FamilyCore` schema `3` now owns the first lineage-lifecycle lite state inside the family namespace
-- lineage-conflict plus marriage/heir/mourning pressures remain authoritative family state even when projected through the hall, family council, or social-memory read models
+- `FamilyCore` schema `7` owns lineage-conflict, lifecycle pressure, clan-scoped kinship, care burden, funeral debt, remedy confidence, and charity-obligation state inside the family namespace
+- marriage/heir/mourning/care/funeral pressures remain authoritative family state even when projected through the hall, family council, or social-memory read models
+- births and marriage-in spouses create identity anchors through `PersonRegistry` command surfaces, but `FamilyCore` owns the clan-scoped facts: `SpouseId`, `FatherId`, `MotherId`, and `ChildrenIds`
 
 ### PopulationAndHouseholds state
 Owns:
@@ -378,6 +388,10 @@ Current note:
 public sealed class OfficeAndCareerState {
     List<OfficeCareerState> People;
     List<JurisdictionAuthorityState> Jurisdictions;
+    List<OfficialPostState> OfficialPosts;
+    List<WaitingListEntryState> WaitingList;
+    int LastAppliedAmnestyWave;
+    List<SettlementId> ActiveClerkCaptureSettlementIds;
 }
 
 public sealed class OfficeCareerState {
@@ -397,6 +411,7 @@ public sealed class OfficeCareerState {
     int ServiceMonths;
     int PromotionMomentum;
     int DemotionPressure;
+    int OfficialDefectionRisk;
     string CurrentAdministrativeTask;
     int AdministrativeTaskLoad;
     int OfficeReputation;
@@ -423,7 +438,7 @@ public sealed class JurisdictionAuthorityState {
 ```
 
 Current lite note:
-- the active governance-lite v3 slice persists office careers, candidate waiting pressure, clerk dependence, service progression, petition handling, settlement jurisdiction leverage, and jurisdiction-level administrative task load
+- the active governance-lite v6 slice persists office careers, candidate waiting pressure, clerk dependence, service progression, petition handling, settlement jurisdiction leverage, jurisdiction-level administrative task load, official post/waiting-list skeleton state, `LastAppliedAmnestyWave` for chain-4 amnesty de-duplication, `ActiveClerkCaptureSettlementIds` for chain-7 edge de-duplication, and `OfficialDefectionRisk` for chain-9 risk-before-receipt resolution
 - office leverage now remains owned by `OfficeAndCareer` while downstream order/force modules may read it through queries only
 - the lighter office v2.1 slice adds only derived query/read-model labels such as administrative-task tier, petition-outcome category, and authority-trajectory wording; it does not add new saved fields
 
@@ -611,19 +626,65 @@ public sealed class PresentationReadModelBundle {
     IReadOnlyList<ClanNarrativeSnapshot> ClanNarratives;
     IReadOnlyList<SettlementSnapshot> Settlements;
     IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements;
+    IReadOnlyList<HouseholdPressureSnapshot> Households;
+    IReadOnlyList<HouseholdSocialPressureSnapshot> HouseholdSocialPressures;
     IReadOnlyList<EducationCandidateSnapshot> EducationCandidates;
     IReadOnlyList<AcademySnapshot> Academies;
     IReadOnlyList<ClanTradeSnapshot> ClanTrades;
     IReadOnlyList<MarketSnapshot> Markets;
-    IReadOnlyList<TradeRouteSnapshot> TradeRoutes;
+    IReadOnlyList<ClanTradeRouteSnapshot> ClanTradeRoutes;
     IReadOnlyList<SettlementPublicLifeSnapshot> PublicLifeSettlements;
+    IReadOnlyList<SettlementDisorderSnapshot> SettlementDisorder;
     IReadOnlyList<OfficeCareerSnapshot> OfficeCareers;
     IReadOnlyList<JurisdictionAuthoritySnapshot> OfficeJurisdictions;
+    IReadOnlyList<SettlementGovernanceLaneSnapshot> GovernanceSettlements;
+    GovernanceFocusSnapshot GovernanceFocus;
+    GovernanceDocketSnapshot GovernanceDocket;
+    HallDocketStackSnapshot HallDocket;
+    PlayerInfluenceFootprintSnapshot InfluenceFootprint;
     IReadOnlyList<CampaignFrontSnapshot> Campaigns;
     IReadOnlyList<CampaignMobilizationSignalSnapshot> CampaignMobilizationSignals;
     IReadOnlyList<NarrativeNotificationSnapshot> Notifications;
     PlayerCommandSurfaceSnapshot PlayerCommands;
     PresentationDebugSnapshot Debug;
+}
+
+public sealed class HouseholdSocialPressureSnapshot {
+    HouseholdId HouseholdId;
+    string HouseholdName;
+    SettlementId SettlementId;
+    ClanId? SponsorClanId;
+    LivelihoodType Livelihood;
+    string PrimaryDriftKey;
+    string PrimaryDriftLabel;
+    int PressureScore;
+    bool IsPlayerAnchor;
+    string AttachmentSummary;
+    string VisibleChainSummary;
+    IReadOnlyList<HouseholdSocialPressureSignalSnapshot> Signals;
+}
+
+public sealed class PlayerInfluenceFootprintSnapshot {
+    HouseholdId? AnchorHouseholdId;
+    string AnchorHouseholdName;
+    string AnchorHouseholdSummary;
+    string EntryPositionLabel;
+    string Summary;
+    IReadOnlyList<InfluenceReachSnapshot> Reaches;
+}
+
+public sealed class InfluenceReachSnapshot {
+    string ReachKey;
+    string Label;
+    bool IsActive;
+    bool HasCommandAffordance;
+    bool IsPlayerAnchor;
+    bool HasLocalAgency;
+    int ReachScore;
+    string LeverageSummary;
+    string LocalAgencySummary;
+    string ConstraintSummary;
+    string CommandSummary;
 }
 
 public sealed class PlayerCommandSurfaceSnapshot {
@@ -742,6 +803,8 @@ public sealed class ModulePayloadFootprintSnapshot {
 
 Current note:
 - the read-model bundle now carries `ClanNarratives` so lineage conflict, shame, and favor pressure can be shown in the family council without reading module state directly
+- the read-model bundle now also carries `Households`, `HouseholdSocialPressures`, and `InfluenceFootprint` as runtime-only joins across household, lineage, market, education, yamen, public-life, order, and force projections; these fields are not saved and do not create a player route system
+- `InfluenceFootprint` distinguishes the player's anchor household (`OwnHousehold`, local agency) from observed household pressure (`ObservedHouseholds`, indirect influence only)
 - `PlayerCommands` now spans family, office, and warfare affordances/receipts as read-only presentation data only
 - family command targeting is expressed through optional `ClanId` plus `TargetLabel`; it does not create a new save namespace
 
@@ -755,6 +818,7 @@ Diagnostics harness note:
 - scale summaries and top module payload footprints are also runtime-only diagnostics
 - payload-summary headlines and migration-consistency status are also runtime-only diagnostics
 - player-command affordances and receipts in the presentation bundle are also runtime-only read models
+- household social-pressure and influence-footprint snapshots in the presentation bundle are also runtime-only read models
 - they are not saved in authoritative module namespaces
 
 ## 5. Relationship and grudge data

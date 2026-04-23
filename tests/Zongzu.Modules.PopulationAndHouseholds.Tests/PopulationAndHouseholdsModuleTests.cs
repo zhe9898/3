@@ -3,6 +3,7 @@ using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Modules.FamilyCore;
+using Zongzu.Modules.PersonRegistry;
 using Zongzu.Modules.PopulationAndHouseholds;
 using Zongzu.Modules.WorldSettlements;
 
@@ -215,6 +216,144 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(household.LaborCapacity, Is.LessThan(60));
         Assert.That(settlement.CommonerDistress, Is.EqualTo(household.Distress));
         Assert.That(context.Diff.Entries.Single().Description, Does.Contain("战后余波"));
+    }
+
+    [Test]
+    public void RunMonth_VagrantLivelihood_RaisesDistressAboveSmallholderBaseline()
+    {
+        PopulationHouseholdState smallholder = RunSingleHouseholdMonth(LivelihoodType.Smallholder);
+        PopulationHouseholdState vagrant = RunSingleHouseholdMonth(LivelihoodType.Vagrant);
+
+        Assert.That(vagrant.Distress, Is.GreaterThan(smallholder.Distress));
+    }
+
+    [Test]
+    public void RunMonth_MoribundMembership_MarksPersonDeceasedAndEmitsDeathByIllness()
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 38,
+            Prosperity = 43,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+
+        PersonRegistryModule registryModule = new();
+        PersonRegistryState registryState = registryModule.CreateInitialState();
+        registryState.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(9001),
+            DisplayName = "李病",
+            BirthDate = new GameDate(1170, 1),
+            Gender = PersonGender.Male,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Local,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.Tenant,
+            Distress = 85,
+            DebtPressure = 60,
+            LaborCapacity = 40,
+            MigrationRisk = 20,
+            DependentCount = 1,
+        });
+        populationState.Memberships.Add(new HouseholdMembershipState
+        {
+            PersonId = new PersonId(9001),
+            HouseholdId = new HouseholdId(1),
+            Livelihood = LivelihoodType.Tenant,
+            HealthResilience = 20,
+            Health = HealthStatus.Moribund,
+            IllnessMonths = 3,
+            Activity = PersonActivity.Convalescing,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        registryModule.RegisterQueries(registryState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+
+        DomainEventBuffer eventBuffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(73)),
+            queries,
+            eventBuffer,
+            new WorldDiff());
+
+        populationModule.RunMonth(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
+
+        PersonRecord registered = registryState.Persons.Single(person => person.Id == new PersonId(9001));
+        Assert.That(registered.IsAlive, Is.False);
+        Assert.That(populationState.Memberships, Is.Empty);
+        Assert.That(
+            eventBuffer.Events.Any(record =>
+                record.EventType == PopulationEventNames.DeathByIllness
+                && record.EntityKey == "9001"),
+            Is.True);
+    }
+
+    private static PopulationHouseholdState RunSingleHouseholdMonth(LivelihoodType livelihood)
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 50,
+            Prosperity = 50,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Test House",
+            SettlementId = new SettlementId(1),
+            Livelihood = livelihood,
+            Distress = 50,
+            DebtPressure = 40,
+            LaborCapacity = 50,
+            MigrationRisk = 20,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(17)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        populationModule.RunMonth(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
+        return populationState.Households[0];
     }
 
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries

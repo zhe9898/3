@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Zongzu.Contracts;
 
 namespace Zongzu.Modules.WarfareCampaign;
 
@@ -204,6 +205,165 @@ public static class WarfareCampaignStateProjection
             Security = security,
             FlowStateLabel = flowState,
             Summary = $"{summaryPrefix} 当前为{flowState}，压力{pressure}，护持{security}。",
+        };
+    }
+
+    public static WarfareCampaignState UpgradeFromSchemaV3(WarfareCampaignState state)
+    {
+        state.AftermathDockets ??= new List<AftermathDocketState>();
+        foreach (CampaignFrontState campaign in state.Campaigns)
+        {
+            campaign.ContestedRouteIds ??= new List<string>();
+        }
+        BuildCampaignPhasingAndAftermath(state);
+        return state;
+    }
+
+    public static void BuildCampaignPhasingAndAftermath(WarfareCampaignState state)
+    {
+        state.Campaigns ??= new List<CampaignFrontState>();
+        state.AftermathDockets ??= new List<AftermathDocketState>();
+
+        Dictionary<int, AftermathDocketState> priorDockets = state.AftermathDockets
+            .GroupBy(static docket => docket.CampaignId.Value)
+            .ToDictionary(static group => group.Key, static group => group.First());
+
+        List<AftermathDocketState> nextDockets = new();
+
+        foreach (CampaignFrontState campaign in state.Campaigns)
+        {
+            campaign.Routes ??= new List<CampaignRouteState>();
+            campaign.ContestedRouteIds ??= new List<string>();
+
+            campaign.Phase = ClassifyCampaignPhase(campaign);
+            campaign.CommittedForces = campaign.MobilizedForceCount;
+            campaign.SupplyStretch = System.Math.Clamp(100 - campaign.SupplyState, 0, 100);
+            campaign.CommandFit = ProjectCommandFitScore(campaign.CommandFitLabel);
+            campaign.CivilianExposure = System.Math.Clamp(
+                (campaign.FrontPressure * 2 / 3) + (campaign.SupplyStretch / 3),
+                0,
+                100);
+
+            campaign.ContestedRouteIds = campaign.Routes
+                .Where(static route => route.Pressure >= 55)
+                .OrderByDescending(static route => route.Pressure)
+                .Select(static route => route.RouteLabel)
+                .ToList();
+
+            if (campaign.Phase == Zongzu.Contracts.CampaignPhase.Aftermath)
+            {
+                priorDockets.TryGetValue(campaign.CampaignId.Value, out AftermathDocketState? prior);
+                nextDockets.Add(BuildAftermathDocket(campaign, prior));
+            }
+        }
+
+        state.AftermathDockets = nextDockets
+            .OrderBy(static docket => docket.CampaignId.Value)
+            .ToList();
+    }
+
+    private static Zongzu.Contracts.CampaignPhase ClassifyCampaignPhase(CampaignFrontState campaign)
+    {
+        if (!string.IsNullOrWhiteSpace(campaign.LastAftermathSummary))
+        {
+            return Zongzu.Contracts.CampaignPhase.Aftermath;
+        }
+
+        if (string.Equals(campaign.ActiveDirectiveCode, WarfareCampaignCommandNames.WithdrawToBarracks, System.StringComparison.Ordinal))
+        {
+            return Zongzu.Contracts.CampaignPhase.Withdrawing;
+        }
+
+        if (!campaign.IsActive && campaign.MobilizedForceCount <= 0)
+        {
+            return Zongzu.Contracts.CampaignPhase.Proposed;
+        }
+
+        if (campaign.MobilizedForceCount > 0 && campaign.FrontPressure < 25)
+        {
+            return campaign.MobilizedForceCount >= 120
+                ? Zongzu.Contracts.CampaignPhase.Marshalled
+                : Zongzu.Contracts.CampaignPhase.Mobilizing;
+        }
+
+        if (campaign.FrontPressure >= 80 && campaign.MoraleState >= 45)
+        {
+            return Zongzu.Contracts.CampaignPhase.Decisive;
+        }
+
+        if (campaign.FrontPressure >= 55)
+        {
+            return campaign.MoraleState <= 30
+                ? Zongzu.Contracts.CampaignPhase.Stalemate
+                : Zongzu.Contracts.CampaignPhase.Engaged;
+        }
+
+        return campaign.MobilizedForceCount >= 120
+            ? Zongzu.Contracts.CampaignPhase.Marshalled
+            : Zongzu.Contracts.CampaignPhase.Mobilizing;
+    }
+
+    private static int ProjectCommandFitScore(string commandFitLabel)
+    {
+        return commandFitLabel switch
+        {
+            "命出一辙" => 82,
+            "军令畅行" => 68,
+            "命令迟滞" => 42,
+            "案牍梗塞" => 22,
+            _ => 50,
+        };
+    }
+
+    private static AftermathDocketState BuildAftermathDocket(CampaignFrontState campaign, AftermathDocketState? prior)
+    {
+        List<string> merits = new();
+        List<string> blames = new();
+        List<string> reliefNeeds = new();
+        List<string> routeRepairs = new();
+
+        if (campaign.MoraleState >= 55)
+        {
+            merits.Add($"{campaign.AnchorSettlementName}行伍士气未堕，押队将佐宜录军功簿。");
+        }
+        if (campaign.SupplyState >= 55)
+        {
+            merits.Add($"{campaign.AnchorSettlementName}粮道未绝，转运司吏员合议叙劳。");
+        }
+
+        if (campaign.FrontPressure >= 70)
+        {
+            blames.Add($"{campaign.AnchorSettlementName}前沿压迫过甚，主将号令未能及时收束，宜入案待议。");
+        }
+        if (campaign.SupplyStretch >= 60)
+        {
+            blames.Add($"{campaign.AnchorSettlementName}粮道吃紧，转运与护送两处责任未清，宜以文移追究。");
+        }
+
+        if (campaign.CivilianExposure >= 55)
+        {
+            reliefNeeds.Add($"{campaign.AnchorSettlementName}百姓受战事牵连，宜先议免役、赈粮与安置流民。");
+        }
+        if (campaign.MoraleState <= 30)
+        {
+            reliefNeeds.Add($"{campaign.AnchorSettlementName}行伍疲敝，宜拨医药、抚恤与归休之资。");
+        }
+
+        foreach (string routeLabel in campaign.ContestedRouteIds)
+        {
+            routeRepairs.Add($"{routeLabel}久受冲压，宜遣工匠巡修桥渡、驿馆与粮仓。");
+        }
+
+        string summary = $"{campaign.AnchorSettlementName}战后案卷：功{merits.Count}条、责{blames.Count}条、恤{reliefNeeds.Count}条、修路{routeRepairs.Count}条。";
+
+        return new AftermathDocketState
+        {
+            CampaignId = campaign.CampaignId,
+            Merits = merits,
+            Blames = blames,
+            ReliefNeeds = reliefNeeds,
+            RouteRepairs = routeRepairs,
+            DocketSummary = summary,
         };
     }
 }

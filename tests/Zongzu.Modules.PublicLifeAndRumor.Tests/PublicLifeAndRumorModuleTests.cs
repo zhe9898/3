@@ -396,7 +396,7 @@ public sealed class PublicLifeAndRumorModuleTests
             },
         ],
         [
-            new TradeRouteSnapshot
+            new ClanTradeRouteSnapshot
             {
                 RouteId = 1,
                 ClanId = new ClanId(1),
@@ -514,6 +514,18 @@ public sealed class PublicLifeAndRumorModuleTests
         {
             return _settlements;
         }
+
+        // SPATIAL_SKELETON_SPEC §8 extensions — not exercised by these tests;
+        // any test that touches them should override in its own stub.
+        public IReadOnlyList<SettlementSnapshot> GetSettlementsByNodeKind(SettlementNodeKind kind) => [];
+        public IReadOnlyList<SettlementSnapshot> GetSettlementsByVisibility(NodeVisibility visibility) => [];
+        public IReadOnlyList<RouteSnapshot> GetRoutes() => [];
+        public IReadOnlyList<RouteSnapshot> GetRoutesByKind(RouteKind kind) => [];
+        public IReadOnlyList<RouteSnapshot> GetRoutesByLegitimacy(RouteLegitimacy legitimacy) => [];
+        public IReadOnlyList<RouteSnapshot> GetRoutesTouching(SettlementId settlementId) => [];
+        public SeasonBandSnapshot GetCurrentSeason() => new();
+        public LocusSnapshot? GetCurrentLocus() => null;
+        public IReadOnlyList<PublicSurfaceSignal> GetCurrentPulseSignals() => [];
     }
 
     private sealed class StubPopulationQueries : IPopulationAndHouseholdsQueries
@@ -550,12 +562,12 @@ public sealed class PublicLifeAndRumorModuleTests
     {
         private readonly IReadOnlyList<ClanTradeSnapshot> _clans;
         private readonly IReadOnlyList<MarketSnapshot> _markets;
-        private readonly IReadOnlyList<TradeRouteSnapshot> _routes;
+        private readonly IReadOnlyList<ClanTradeRouteSnapshot> _routes;
 
         public StubTradeQueries(
             IReadOnlyList<ClanTradeSnapshot> clans,
             IReadOnlyList<MarketSnapshot> markets,
-            IReadOnlyList<TradeRouteSnapshot> routes)
+            IReadOnlyList<ClanTradeRouteSnapshot> routes)
         {
             _clans = clans;
             _markets = markets;
@@ -577,7 +589,7 @@ public sealed class PublicLifeAndRumorModuleTests
             return _markets;
         }
 
-        public IReadOnlyList<TradeRouteSnapshot> GetRoutesForClan(ClanId clanId)
+        public IReadOnlyList<ClanTradeRouteSnapshot> GetRoutesForClan(ClanId clanId)
         {
             return _routes.Where(route => route.ClanId == clanId).ToArray();
         }
@@ -655,6 +667,11 @@ public sealed class PublicLifeAndRumorModuleTests
         {
             return _clans;
         }
+
+        public FamilyPersonSnapshot? FindPerson(PersonId personId) => null;
+
+        public IReadOnlyList<FamilyPersonSnapshot> GetClanMembers(ClanId clanId)
+            => System.Array.Empty<FamilyPersonSnapshot>();
     }
 
     private sealed class StubSocialQueries : ISocialMemoryAndRelationsQueries

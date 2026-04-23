@@ -10,6 +10,8 @@ It complements:
 - `INFLUENCE_POWER_AND_FACTIONS.md`
 - `SOCIAL_STRATA_AND_PATHWAYS.md`
 - `RELATIONSHIPS_AND_GRUDGES.md`
+- `LIVING_WORLD_DESIGN.md`
+- `GAME_DEVELOPMENT_ROADMAP.md`
 
 Use this file when evaluating whether a mechanic, UI surface, narrative wrapper, or roadmap proposal still feels like Zongzu.
 
@@ -18,6 +20,82 @@ Use this file when evaluating whether a mechanic, UI surface, narrative wrapper,
 Zongzu's world is not a fixed profession tree, a static family chart, or an event table.
 It is a society that keeps changing, splitting, recombining, and drifting under pressure.
 The player may bias part of that motion, but may not freeze it.
+
+## Rules-driven contract
+
+A rule is not a story beat, popup, or hidden script.
+A rule is allowed into the authoritative simulation only when it can answer:
+- which module owns the state it changes
+- which cadence runs it: xun, monthly, seasonal, annual, scenario setup, or command resolution
+- which input state, query, command, or domain event it reads
+- which deterministic calculation or table resolves it
+- which owned state, domain event, structured diff, or projection receipt it emits
+- which player command can influence it, if any
+- which trace explains the result afterward
+
+Short form:
+
+`owned state + cadence + pressure + deterministic resolution -> owned state / event / diff -> projection -> bounded command -> next pressure`
+
+If a mechanic cannot be placed on that chain, it is not yet a Zongzu rule.
+
+## Rule stack
+
+Most living-world mechanics should be decomposed into several small rule types instead of one large scripted event.
+
+State rule:
+- defines what exists and which module owns it
+
+Pressure rule:
+- converts circumstance into accumulating pressure, such as debt strain, heir insecurity, route exposure, faction heat, illness risk, or public shame
+
+Resolution rule:
+- resolves pressure at the declared cadence using deterministic inputs
+
+Transfer rule:
+- publishes cross-module consequences through query, command result, or domain event, never direct mutation
+
+Visibility rule:
+- turns structured diffs into notices, guidance, surfaces, and cause traces
+
+Intervention rule:
+- lets the player spend bounded leverage as an intent, then resolves that intent against autonomy, resources, institutions, risk, and world state
+
+Memory rule:
+- leaves residue: favor, shame, debt, fear, grudge, policy memory, faction label, or precedent
+
+The stack may be lite in MVP, but it should still exist conceptually.
+Do not compress everything into "event happened, stats changed, text appeared."
+
+## Rule-driven is not formula-only
+
+Rules may use formulas, tables, scenario data, authored descriptors, historical templates, or calibrated weights.
+What matters is ownership and causality:
+- data may configure a rule
+- prose may explain a rule
+- UI may expose a rule
+- scenario setup may seed a rule
+- only the owning module may apply the authoritative state change
+
+This lets the game use historical material and authored flavor without becoming an event-pool narrative engine.
+
+## Rule-driven is not history-locked
+
+Rules-driven does not mean the historical path is fixed.
+It means even large counterfactuals must be earned by state, pressure, leverage, and consequence.
+
+The same spine that handles debt, marriage, death, office pressure, and local violence must eventually be able to scale into:
+- protection failure
+- armed autonomy
+- rebel concentration
+- provisional governance
+- factional court struggle
+- succession crisis
+- usurpation, restoration, or regime repair
+- dynastic consolidation or fatigue
+
+The player may change history when the world-state path supports it.
+The player may not edit history without passing through people, institutions, logistics, legitimacy, force, public belief, and memory.
 
 ## One-sentence pitch
 
@@ -46,6 +124,11 @@ The game loop is:
 
 Events are not the driver of state.
 Events, letters, rumors, memorials, and reports are the readable layer built after state change.
+
+This does not mean every internal cadence becomes a player turn.
+The normal player rhythm is monthly review and bounded monthly command.
+`xun` exists so illness, debt, route trouble, rumor, office delay, and disorder can accumulate with lived texture before consolidation.
+Only red-band or irreversible pressure should interrupt the month, and even then the interrupt is a narrow response window rather than a replacement for the monthly shell.
 
 ### 2. The player's influence is always bounded
 
@@ -238,6 +321,79 @@ Importance should be computed from:
 - chain-reaction potential
 - whether the player can meaningfully intervene
 
+## MVP rule chain examples
+
+These are concrete, playable examples that the MVP must support. They are not abstract shapes; they are acceptance criteria.
+
+### MVP Example 1: Heir death → succession crisis → resolution
+1. **Owning module:** `PopulationAndHouseholds` (mortality) + `FamilyCore` (succession)
+2. **Cadence:** Monthly (death resolved at month-end; succession command in player phase)
+3. **Pressure:** Adult death + no confirmed heir = succession insecurity (0–100)
+4. **Deterministic resolution:** `FamilyCore` checks eligible heirs by branch rules (age, gender, proximity); if none, flag `UNSETTLED`
+5. **Cross-module:** `SocialMemoryAndRelations` records branch tension; `NarrativeProjection` surfaces notice
+6. **Player command:** `议定承祧` — spend prestige, select heir
+7. **Autonomy check:** Selected heir may resist if too young or from rival branch
+8. **Receipt:** `入谱定名` (confirmed) or `承祧未稳` (deferred)
+9. **Memory:** Branch tension decays over months; if unresolved, `SocialMemoryAndRelations` may register `succession_grudge`
+10. **Trace:** `death <- illness_progression <- age_vulnerability <- no_heir <- 承祧未定 <- 议定承祧 <- 入谱定名`
+
+### MVP Example 2: Grain price spike → household debt → player intervention
+1. **Owning module:** `WorldSettlements` (seasonal band) + `TradeAndIndustry` (price) + `PopulationAndHouseholds` (debt)
+2. **Cadence:** Xun pulse (price movement) → Monthly (debt consolidation)
+3. **Pressure:** `SeasonBand.HarvestWindowProgress` low + `LaborPinch` high → grain price band rises
+4. **Deterministic resolution:** Price band feeds `TradeAndIndustry` route profitability; household grain consumption exceeds income
+5. **Cross-module:** `PopulationAndHouseholds` accumulates debt strain; `FamilyCore` may receive support request
+6. **Player command:** `GuaranteeDebt` or `InvestEstate` or `Endure`
+7. **Autonomy check:** Debt guarantor (if external) may refuse if player credit low
+8. **Receipt:** `保状留底` (guarantee accepted) or `债压加深` (endured)
+9. **Memory:** Debt record persists; future `GuaranteeDebt` commands check against existing exposure
+10. **Trace:** `drought <- harvest_failure <- grain_spike <- consumption_exceeds_income <- debt_pressure <- GuaranteeDebt <- 保状留底`
+
+### MVP Example 3: Exam failure → social drift → household reabsorption
+1. **Owning module:** `EducationAndExams` (exam resolution) + `PopulationAndHouseholds` (labor)
+2. **Cadence:** Seasonal (exam season) → Monthly (result projection)
+3. **Pressure:** Study investment + exam attempt + random competence factor
+4. **Deterministic resolution:** Threshold check against exam difficulty, study quality, household support
+5. **Cross-module:** `FamilyCore` receives result; aspirant mood updated; `PopulationAndHouseholds` adds labor if aspirant returns to household work
+6. **Player command:** `FundStudy` (retry) or redirect to trade (implicit via `InvestEstate`) or `Endure`
+7. **Autonomy check:** Aspirant may refuse further study if morale too low; may autonomously drift to trade or clerical work
+8. **Receipt:** `科场未第` (failure) or `及第` (pass); labor change receipt
+9. **Memory:** Exam result recorded in personal history; affects marriage value and branch prestige
+10. **Trace:** `study_investment <- exam_attempt <- competence_roll <- failure <- 科场未第 <- FundStudy? <- 学业不继`
+
+## Rule chain examples (general shapes)
+
+Each example below is a shape, not a required exact formula.
+
+Heir death:
+- pressure starts as mortality / violence / illness in the owning cause module
+- `FamilyCore` receives death as a fact, resolves succession insecurity, mourning burden, branch tension, and elder fragility
+- `SocialMemoryAndRelations` records shame, favor, resentment, or succession grievance
+- `NarrativeProjection` shows hall guidance: stable adult substitute, infant-only heir pressure, or no-heir crisis
+- player can spend lineage authority, property, marriage leverage, adoption / succession commands when available, or mediation support
+
+Commoner debt slide:
+- `PopulationAndHouseholds` accumulates livelihood and debt strain
+- `TradeAndIndustry` and `WorldSettlements` contribute grain price, wage, route, and market opportunity
+- household may drift toward hired service, migration, study withdrawal, petition, patronage, or gray survival
+- projection shows the social chain, not a route label
+- player intervention depends on reachable leverage: grain, loan guarantee, work connection, lineage shelter, yamen document help, or doing nothing
+
+Frontier pressure:
+- seasonal / annual war posture raises fiscal, recruitment, transport, and public-rumor pressure
+- `WarfareCampaign` owns campaign fatigue and military burden
+- `WorldSettlements`, `TradeAndIndustry`, and `PopulationAndHouseholds` feel supply, price, labor, and route effects
+- `PublicLifeAndRumor` projects frontier talk and legitimacy strain
+- player can only respond through local support, escort, office leverage, grain, public stance, or later higher political reach
+
+Historical reform:
+- great-trend pressure accumulates before the famous policy year
+- actor carriers gain reputation, enemies, writings, and institutional access
+- a court or office window opens
+- local modules receive policy pressure through tax, loan, school, militia, purchasing, or paperwork rules
+- implementation may be delayed, captured, resisted, or remembered
+- the player can carry, localize, resist, or distort it only through valid influence circles
+
 ## Player leverage instead of god-buttons
 
 The player acts through four primary levers:
@@ -283,13 +439,13 @@ This is how one literate child can move toward office, trade, military service, 
 
 Zongzu should not become "a family game plus decorations."
 The living world should support several overlapping route families:
-- lineage management
-- commoner household survival
-- commercial management
-- official career and yamen service
-- social governance
-- bandit or shadow-power survival
-- later imperial or macro-governance pressure
+- lineage management **(MVP: full)**
+- commoner household survival **(MVP: full)**
+- commercial management **(MVP: lite)**
+- official career and yamen service **(MVP: projection only)**
+- social governance **(MVP: projection only)**
+- bandit or shadow-power survival **(MVP: lite if M3 enabled)**
+- later imperial or macro-governance pressure **(post-MVP)**
 
 These are not rigid classes, fixed campaigns, or isolated game modes.
 They are social positions and management fantasies that overlap in one society.
@@ -476,3 +632,19 @@ When using this design document:
 - keep MVP and post-MVP on the same structural spine
 
 If a proposal breaks those rules, it may be interesting, but it is no longer Zongzu.
+
+## Rule acceptance checklist
+
+Before adding a mechanic, scenario feature, historical process, or UI prompt, answer:
+- What state change would happen if the player did nothing?
+- Which module owns that change?
+- Which cadence runs it?
+- What pressure causes it?
+- What downstream module can read it, and through which query / command / event seam?
+- What diff proves that it happened?
+- What projection explains it?
+- What leverage can the player spend?
+- What friction or autonomy can block the player's intent?
+- What memory remains after the month closes?
+
+If the answer begins with "show an event where..." rather than "resolve a rule that...", the design is still too soft.

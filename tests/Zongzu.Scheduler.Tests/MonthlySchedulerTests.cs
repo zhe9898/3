@@ -252,4 +252,145 @@ public sealed class MonthlySchedulerTests
             scope.RecordDiff($"Projection saw {scope.Context.DomainEvents.Events.Count} events after handler processing.");
         }
     }
+
+    [Test]
+    public void AdvanceOneMonth_BoundedEventDrain_PropagatesIntraMonthFollowOnEvents()
+    {
+        // Verifies that a follow-on event emitted by a handler in round N
+        // is visible to downstream modules in round N+1 within the same
+        // month-end pass. See SIMULATION.md Phase 2.
+        FeatureManifest manifest = new();
+        manifest.Set("CascadeSource", FeatureMode.Full);
+        manifest.Set("CascadeMiddle", FeatureMode.Full);
+        manifest.Set("CascadeSink", FeatureMode.Full);
+
+        CascadeSourceModule source = new();
+        CascadeMiddleModule middle = new();
+        CascadeSinkModule sink = new();
+        IReadOnlyList<IModuleRunner> modules = [sink, middle, source];
+
+        Dictionary<string, object> states = modules.ToDictionary(
+            static module => module.ModuleKey,
+            static module => module.CreateInitialState(),
+            StringComparer.Ordinal);
+
+        MonthlyScheduler scheduler = new();
+        SimulationMonthResult result = scheduler.AdvanceOneMonth(
+            new GameDate(1200, 1),
+            manifest,
+            new DeterministicRandom(KernelState.Create(42)),
+            states,
+            modules);
+
+        string[] eventTypes = result.DomainEvents.Select(static e => e.EventType).ToArray();
+
+        Assert.That(
+            eventTypes,
+            Is.EqualTo(new[] { "FirstEvent", "SecondEvent" }),
+            "Sink must see the follow-on event emitted by Middle in the same month-end pass.");
+
+        // Verify sink state recorded the follow-on event.
+        CascadeSinkState? sinkState = states["CascadeSink"] as CascadeSinkState;
+        Assert.That(sinkState, Is.Not.Null);
+        Assert.That(sinkState!.SawSecondEvent, Is.True, "Sink should have handled SecondEvent.");
+    }
+
+    private sealed class CascadeSourceModule : ModuleRunner<CascadeSourceState>
+    {
+        public override string ModuleKey => "CascadeSource";
+
+        public override int ModuleSchemaVersion => 1;
+
+        public override SimulationPhase Phase => SimulationPhase.WorldBaseline;
+
+        public override int ExecutionOrder => 100;
+
+        public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthOnly;
+
+        public override IReadOnlyCollection<string> PublishedEvents => ["FirstEvent"];
+
+        public override CascadeSourceState CreateInitialState() => new();
+
+        public override void RunMonth(ModuleExecutionScope<CascadeSourceState> scope)
+        {
+            scope.Emit("FirstEvent", "Source raised first event.", "1");
+        }
+    }
+
+    private sealed class CascadeSourceState : IModuleStateDescriptor
+    {
+        public string ModuleKey => "CascadeSource";
+    }
+
+    private sealed class CascadeMiddleModule : ModuleRunner<CascadeMiddleState>
+    {
+        public override string ModuleKey => "CascadeMiddle";
+
+        public override int ModuleSchemaVersion => 1;
+
+        public override SimulationPhase Phase => SimulationPhase.FamilyStructure;
+
+        public override int ExecutionOrder => 200;
+
+        public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthOnly;
+
+        public override IReadOnlyCollection<string> ConsumedEvents => ["FirstEvent"];
+
+        public override IReadOnlyCollection<string> PublishedEvents => ["SecondEvent"];
+
+        public override CascadeMiddleState CreateInitialState() => new();
+
+        public override void RunMonth(ModuleExecutionScope<CascadeMiddleState> scope)
+        {
+        }
+
+        public override void HandleEvents(ModuleEventHandlingScope<CascadeMiddleState> scope)
+        {
+            if (scope.Events.Any(static e => e.EventType == "FirstEvent"))
+            {
+                scope.Emit("SecondEvent", "Middle raised follow-on event.", "2");
+            }
+        }
+    }
+
+    private sealed class CascadeMiddleState : IModuleStateDescriptor
+    {
+        public string ModuleKey => "CascadeMiddle";
+    }
+
+    private sealed class CascadeSinkModule : ModuleRunner<CascadeSinkState>
+    {
+        public override string ModuleKey => "CascadeSink";
+
+        public override int ModuleSchemaVersion => 1;
+
+        public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
+
+        public override int ExecutionOrder => 300;
+
+        public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthOnly;
+
+        public override IReadOnlyCollection<string> ConsumedEvents => ["SecondEvent"];
+
+        public override CascadeSinkState CreateInitialState() => new();
+
+        public override void RunMonth(ModuleExecutionScope<CascadeSinkState> scope)
+        {
+        }
+
+        public override void HandleEvents(ModuleEventHandlingScope<CascadeSinkState> scope)
+        {
+            if (scope.Events.Any(static e => e.EventType == "SecondEvent"))
+            {
+                scope.State.SawSecondEvent = true;
+            }
+        }
+    }
+
+    private sealed class CascadeSinkState : IModuleStateDescriptor
+    {
+        public string ModuleKey => "CascadeSink";
+
+        public bool SawSecondEvent { get; set; }
+    }
 }

@@ -38,6 +38,7 @@ public sealed class M0M1IntegrationTests
             Is.EqualTo(new[]
             {
                 KnownModuleKeys.FamilyCore,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.WorldSettlements,

@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\src\Zongzu.Contracts\Zongzu.Contracts.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Kernel\Zongzu.Kernel.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Modules.FamilyCore\Zongzu.Modules.FamilyCore.csproj" />
+    <ProjectReference Include="..\..\src\Zongzu.Modules.PersonRegistry\Zongzu.Modules.PersonRegistry.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Modules.PopulationAndHouseholds\Zongzu.Modules.PopulationAndHouseholds.csproj" />
     <ProjectReference Include="..\..\src\Zongzu.Modules.WorldSettlements\Zongzu.Modules.WorldSettlements.csproj" />
   </ItemGroup>

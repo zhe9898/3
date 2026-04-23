@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Zongzu.Contracts;
+using Zongzu.Kernel;
 
 namespace Zongzu.Modules.OfficeAndCareer;
 
@@ -492,5 +494,153 @@ public static class OfficeAndCareerStateProjection
         }
 
         return OfficeAndCareerDescriptors.FormatPetitionOutcome("Unknown", outcome.Trim());
+    }
+
+    // Phase 7 衙门骨骼 — LIVING_WORLD_DESIGN §2.7
+    public static OfficeAndCareerState UpgradeFromSchemaV3ToV4(OfficeAndCareerState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        state.OfficialPosts ??= new List<OfficialPostState>();
+        state.WaitingList ??= new List<WaitingListEntryState>();
+        BuildOfficialPostsAndWaitingList(state);
+        return state;
+    }
+
+    // Phase 7 衙门骨骼 — LIVING_WORLD_DESIGN §2.7：
+    // 依当前 People 重建官署缺目（在任者 / 空缺）与候补名册（合格未授官）。
+    // VacancyMonths / WaitingMonths 依既有条目增量累进，新条目从 0 起。
+    public static OfficeAndCareerState UpgradeFromSchemaV4ToV5(OfficeAndCareerState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        state.OfficialPosts ??= new List<OfficialPostState>();
+        state.WaitingList ??= new List<WaitingListEntryState>();
+        state.LastAppliedAmnestyWave = 0;
+        return state;
+    }
+
+    public static OfficeAndCareerState UpgradeFromSchemaV5ToV6(OfficeAndCareerState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        state.OfficialPosts ??= new List<OfficialPostState>();
+        state.WaitingList ??= new List<WaitingListEntryState>();
+        state.ActiveClerkCaptureSettlementIds ??= new List<SettlementId>();
+
+        foreach (OfficeCareerState career in state.People)
+        {
+            career.OfficialDefectionRisk = Math.Clamp(
+                Math.Max(career.OfficialDefectionRisk, InferLegacyDefectionRisk(career)),
+                0,
+                100);
+        }
+
+        state.ActiveClerkCaptureSettlementIds = state.ActiveClerkCaptureSettlementIds
+            .Distinct()
+            .OrderBy(static settlementId => settlementId.Value)
+            .ToList();
+        return state;
+    }
+
+    private static int InferLegacyDefectionRisk(OfficeCareerState career)
+    {
+        if (!career.HasAppointment)
+        {
+            return 0;
+        }
+
+        return Math.Clamp(
+            (career.DemotionPressure / 2)
+            + (career.ClerkDependence / 4)
+            + Math.Max(0, 30 - career.OfficeReputation) / 3
+            - (career.AuthorityTier * 2),
+            0,
+            70);
+    }
+
+    public static void BuildOfficialPostsAndWaitingList(OfficeAndCareerState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        state.OfficialPosts ??= new List<OfficialPostState>();
+        state.WaitingList ??= new List<WaitingListEntryState>();
+
+        Dictionary<string, OfficialPostState> priorPosts = state.OfficialPosts
+            .GroupBy(static post => post.PostId)
+            .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<PersonId, WaitingListEntryState> priorWaiters = state.WaitingList
+            .GroupBy(static entry => entry.PersonId)
+            .ToDictionary(static group => group.Key, static group => group.First());
+
+        List<OfficialPostState> rebuiltPosts = new();
+        List<WaitingListEntryState> rebuiltWaiters = new();
+
+        foreach (OfficeCareerState career in state.People.OrderBy(static person => person.PersonId.Value))
+        {
+            if (career.HasAppointment)
+            {
+                string postId = $"post:{career.SettlementId.Value}:{career.AuthorityTier}:{career.PersonId.Value}";
+                rebuiltPosts.Add(new OfficialPostState
+                {
+                    PostId = postId,
+                    Location = career.SettlementId,
+                    Rank = career.AuthorityTier,
+                    PostTitle = career.OfficeTitle,
+                    CurrentHolder = career.PersonId,
+                    VacancyMonths = 0,
+                    PetitionBacklog = career.PetitionBacklog,
+                    ClerkDependence = career.ClerkDependence,
+                    EvaluationPressure = Math.Clamp(career.DemotionPressure + (career.PetitionPressure / 2), 0, 100),
+                });
+                continue;
+            }
+
+            if (!career.IsEligible)
+            {
+                continue;
+            }
+
+            int priorWait = priorWaiters.TryGetValue(career.PersonId, out WaitingListEntryState? existing)
+                ? existing.WaitingMonths
+                : 0;
+            rebuiltWaiters.Add(new WaitingListEntryState
+            {
+                PersonId = career.PersonId,
+                SettlementId = career.SettlementId,
+                DisplayName = career.DisplayName,
+                QualificationTier = Math.Max(1, career.AuthorityTier > 0 ? career.AuthorityTier : 1),
+                WaitingMonths = priorWait + 1,
+                PatronageSupport = Math.Clamp(career.PromotionMomentum, 0, 100),
+            });
+        }
+
+        // 承接旧 posts：若其 holder 已不在任，则转为空缺态并累加 VacancyMonths；holder 改变亦同。
+        HashSet<string> rebuiltPostIds = rebuiltPosts.Select(static post => post.PostId).ToHashSet();
+        foreach (KeyValuePair<string, OfficialPostState> entry in priorPosts)
+        {
+            if (rebuiltPostIds.Contains(entry.Key))
+            {
+                continue;
+            }
+
+            OfficialPostState carried = entry.Value;
+            rebuiltPosts.Add(new OfficialPostState
+            {
+                PostId = carried.PostId,
+                Location = carried.Location,
+                Rank = carried.Rank,
+                PostTitle = carried.PostTitle,
+                CurrentHolder = null,
+                VacancyMonths = carried.VacancyMonths + 1,
+                PetitionBacklog = carried.PetitionBacklog,
+                ClerkDependence = carried.ClerkDependence,
+                EvaluationPressure = Math.Clamp(carried.EvaluationPressure + 2, 0, 100),
+            });
+        }
+
+        state.OfficialPosts = rebuiltPosts
+            .OrderBy(static post => post.Location.Value)
+            .ThenBy(static post => post.PostId, StringComparer.Ordinal)
+            .ToList();
+        state.WaitingList = rebuiltWaiters
+            .OrderBy(static entry => entry.PersonId.Value)
+            .ToList();
     }
 }

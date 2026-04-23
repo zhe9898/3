@@ -77,7 +77,7 @@ Example:
 - runtime debug snapshots, observability summaries, and latest-month diff traces remain outside the persisted compatibility surface
 - runtime load-migration reports and hotspot summaries are explanatory overlays only; they do not extend root or module save namespaces
 - runtime scale summaries, payload-footprint summaries, and migration-consistency warnings are also explanatory overlays only
-- runtime domain-event targeting metadata used by the event-handling seam is also non-persisted and does not extend save namespaces
+- runtime domain-event targeting and cause metadata used by the event-handling seam is also non-persisted and does not extend save namespaces
 - migration preparation must not mutate the caller's source save root; consistency reporting happens on cloned preparation data only
 
 ## Versioning rules
@@ -86,25 +86,26 @@ Example:
 - incompatible module changes do not justify hidden root changes
 
 ## Current implemented module versions
-- `WorldSettlements` uses namespace `WorldSettlements` with schema version `2`
-- `FamilyCore` uses namespace `FamilyCore` with schema version `3`
-- `PopulationAndHouseholds` uses namespace `PopulationAndHouseholds` with schema version `1`
-- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `1`
-- `EducationAndExams` uses namespace `EducationAndExams` with schema version `1`
-- `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `3`
+- `PersonRegistry` uses namespace `PersonRegistry` with schema version `1`
+- `WorldSettlements` uses namespace `WorldSettlements` with schema version `8` for the active world-settlement slice plus chain-6 flood-disaster and chain-5 frontier-strain declaration watermark state
+- `FamilyCore` uses namespace `FamilyCore` with schema version `7`
+- `PopulationAndHouseholds` uses namespace `PopulationAndHouseholds` with schema version `2`
+- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `2`
+- `EducationAndExams` uses namespace `EducationAndExams` with schema version `2`
+- `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `4`
 - `PublicLifeAndRumor` uses namespace `PublicLifeAndRumor` with schema version `4` for the active county-public-life slice plus monthly-cadence, venue-channel, and channel-contention descriptors
-- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `3` for the active governance-lite slice
+- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `6` for the active governance-lite slice plus chain-4 amnesty de-duplication state, chain-7 clerk-capture edge state, and chain-9 official-defection risk state
 - `NarrativeProjection` uses namespace `NarrativeProjection` with schema version `1`
-- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `6`
-- `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `3` for active M3 local-conflict lite integration plus campaign-fallout persistence
-- `WarfareCampaign` uses namespace `WarfareCampaign` with schema version `3` for the active campaign-lite slice
+- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `7`
+- `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `4` for active M3 local-conflict lite integration plus campaign-fallout persistence
+- `WarfareCampaign` uses namespace `WarfareCampaign` with schema version `4` for the active campaign-lite slice (phase + aftermath docket projection)
 
 ## M2-lite default-state policy
 - old saves without `EducationAndExams` or `TradeAndIndustry` load cleanly when those modules remain disabled in the feature manifest
 - old M0-M1 saves must continue to load through the M2 loader when `EducationAndExams`, `TradeAndIndustry`, and `NarrativeProjection` remain disabled in the manifest
 - enabling either M2-lite module requires creating its owned default state inside its own namespace only
 - built-in default loaders now migrate legacy `FamilyCore` schema `1 -> 2 -> 3` by first backfilling lineage-conflict defaults, then by conservatively backfilling marriage/heir/mourning lifecycle defaults inside the family namespace only
-- built-in default loaders now also migrate legacy `WorldSettlements` schema `1` saves to schema `2` by backfilling conservative settlement tiers inside the world-settlement namespace only
+- built-in default loaders now also migrate legacy `WorldSettlements` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8` inside the world-settlement namespace only; schema `7` backfills `LastDeclaredFloodDisasterBand = 0`, and schema `8` backfills `LastDeclaredFrontierStrainBand = 0` so old saves do not repeat a past flood or frontier declaration after load
 - `PublicLifeAndRumor` now defaults to schema `4` when enabled and owns its public-pulse plus monthly-cadence / venue-channel / channel-contention state inside its own namespace only
 - old saves still load cleanly while `PublicLifeAndRumor` remains disabled in the manifest
 - active M2 and later bootstrap paths may now enable `PublicLifeAndRumor`; that new envelope is intentional and documented rather than implicit schema drift
@@ -126,7 +127,7 @@ Example:
 
 ## Governance-lite namespace policy
 - `OfficeAndCareer` now has a dedicated governance-lite path that seeds its own office-career and jurisdiction-authority state only when the feature is enabled
-- legacy governance-lite saves with `OfficeAndCareer` schema `1` now migrate through built-in `1 -> 2 -> 3` module steps during default governance-lite load
+- legacy governance-lite saves with `OfficeAndCareer` schema `1` now migrate through built-in `1 -> 2 -> 3 -> 4 -> 5 -> 6` module steps during default governance-lite load
 - old M2 and M3 saves still load cleanly while `OfficeAndCareer` remains disabled in their manifests
 - no existing stable M2/M3 path gains an `OfficeAndCareer` envelope implicitly; only the governance-lite path does
 

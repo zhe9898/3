@@ -2,6 +2,8 @@
 
 本文档定义人物数据的所有权边界。
 
+> **相关骨骼**：`SPATIAL_SKELETON_SPEC.md` 是空间骨骼；本文件是人物骨骼。两者正交：空间不含人，人物不含节点；两者通过 `SettlementId`（人物在某地）/ `PersonId`（节点事件牵连某人）在 projection 层交汇。
+
 ## 核心决策
 
 **方案 B：Kernel 层 PersonRegistry + 各模块各自持有领域状态。**
@@ -250,12 +252,15 @@ MarriageAllianceArranged（FamilyCore 发出）
 ### 新建一个人
 
 ```
-1. PersonRegistry.Create(name, birthDate, gender)
-   → 返回 PersonId
-   → 默认 fidelityRing = Regional
+1. 领域模块通过 IPersonRegistryCommands.Register 建立身份:
+     registryCommands.Register(context, personId, displayName,
+                               birthDate, gender, fidelityRing)
+   → PersonRegistry 写入 PersonRecord 并发 PersonCreated
+   → PersonId 由调用方通过 KernelIdAllocator.NextPerson 预先分配
+   → 默认 fidelityRing 按调用方域（宗族新生 = Local，远方摘要 = Regional）
 
 2. 需要挂状态的模块各自创建领域记录:
-   FamilyCore.RegisterClanMember(personId, clanId, branchPosition)
+   FamilyCore.AddFamilyPersonState(personId, clanId, branchPosition)
    PopulationAndHouseholds.RegisterHouseholdMember(personId, householdId, livelihood)
    // 其他模块按需
 
@@ -267,19 +272,31 @@ MarriageAllianceArranged（FamilyCore 发出）
 ### 人物死亡
 
 ```
-1. 拥有死亡原因的模块发出领域死因事件:
+1. 拥有死亡原因的模块在本地裁决死亡后，先通过 IPersonRegistryCommands
+   权威写入 PersonRegistry：
+     registryCommands.MarkDeceased(context, personId)
+   → PersonRegistry 置 isAlive = false, lifeStage = Deceased
+   → PersonRegistry 发出 PersonDeceased
+
+2. 同一模块再发出领域死因事件作为下游 flavor/记忆/清理信号:
    PopulationAndHouseholds → DeathByIllness
    ConflictAndForce → DeathByViolence
    FamilyCore → ClanMemberDied (老死/难产等族内可见死因)
 
-2. PersonRegistry 听到任一死因事件 → isAlive = false, lifeStage = Deceased → 发出 PersonDeceased
+3. PersonRegistry 事件监听器保留为兜底路径：若某模块未走 MarkDeceased
+   而直接发出死因事件，也会在 HandleEvents 中消费并收敛成 PersonDeceased。
+   已处理的人物（!isAlive）会被自然去重，不会重复发射。
 
-3. 各模块各自清理:
+4. 各模块各自清理:
    FamilyCore → 触发继承/丧服逻辑
    OfficeAndCareer → 清空任命
    SocialMemoryAndRelations → 恩怨跨代传递
    ConflictAndForce → 清空武力编制
 ```
+
+**红线**：死亡不得只写领域模块本地镜像；必须经 `IPersonRegistryCommands.MarkDeceased`
+进入 PersonRegistry，或退而通过死因事件让 PersonRegistry 消费。本地 `IsAlive = false`
+仅作为过渡期的可读镜像，不构成权威。
 
 ### 人物升格（Regional → Local → Core）
 

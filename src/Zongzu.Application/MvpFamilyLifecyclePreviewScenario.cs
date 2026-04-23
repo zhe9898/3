@@ -7,14 +7,6 @@ namespace Zongzu.Application;
 
 public sealed class MvpFamilyLifecyclePreviewScenario
 {
-    private static readonly IReadOnlyDictionary<string, int> LifecycleCommandPriority = new Dictionary<string, int>(StringComparer.Ordinal)
-    {
-        [PlayerCommandNames.SetMourningOrder] = 0,
-        [PlayerCommandNames.SupportNewbornCare] = 1,
-        [PlayerCommandNames.DesignateHeirPolicy] = 2,
-        [PlayerCommandNames.ArrangeMarriage] = 3,
-    };
-
     public MvpFamilyLifecyclePreviewResult Build(long seed = 20260419, int warmupMonths = 2)
     {
         if (warmupMonths < 0)
@@ -146,14 +138,55 @@ public sealed class MvpFamilyLifecyclePreviewScenario
     {
         ArgumentNullException.ThrowIfNull(bundle);
 
+        Dictionary<int, ClanSnapshot> clansById = bundle.Clans
+            .ToDictionary(static entry => entry.Id.Value, static entry => entry);
+
         return bundle.PlayerCommands.Affordances
+            .Select(entry => new
+            {
+                Affordance = entry,
+                Clan = entry.ClanId.HasValue && clansById.TryGetValue(entry.ClanId.Value.Value, out ClanSnapshot? clan)
+                    ? clan
+                    : null,
+            })
             .Where(static entry =>
-                entry.IsEnabled
-                && string.Equals(entry.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal)
-                && LifecycleCommandPriority.ContainsKey(entry.CommandName))
-            .OrderBy(static entry => LifecycleCommandPriority[entry.CommandName])
-            .ThenBy(static entry => entry.TargetLabel, StringComparer.Ordinal)
+                entry.Clan is not null
+                && entry.Affordance.IsEnabled
+                && string.Equals(entry.Affordance.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal)
+                && IsLifecycleFamilyCommand(entry.Affordance.CommandName))
+            .OrderBy(entry => GetLifecycleCommandPriority(entry.Clan!, entry.Affordance.CommandName))
+            .ThenBy(static entry => entry.Affordance.TargetLabel, StringComparer.Ordinal)
+            .Select(static entry => entry.Affordance)
             .FirstOrDefault();
+    }
+
+    private static bool IsLifecycleFamilyCommand(string commandName)
+    {
+        return commandName is
+            PlayerCommandNames.SetMourningOrder or
+            PlayerCommandNames.SupportNewbornCare or
+            PlayerCommandNames.DesignateHeirPolicy or
+            PlayerCommandNames.ArrangeMarriage;
+    }
+
+    private static int GetLifecycleCommandPriority(ClanSnapshot clan, string commandName)
+    {
+        bool hasSuccessionGap = !clan.HeirPersonId.HasValue
+            || clan.LastLifecycleTrace.Contains("承祧缺口3阶", StringComparison.Ordinal);
+
+        if (commandName == PlayerCommandNames.DesignateHeirPolicy && hasSuccessionGap)
+        {
+            return 0;
+        }
+
+        return commandName switch
+        {
+            PlayerCommandNames.SetMourningOrder => hasSuccessionGap ? 1 : 0,
+            PlayerCommandNames.SupportNewbornCare => 2,
+            PlayerCommandNames.DesignateHeirPolicy => 3,
+            PlayerCommandNames.ArrangeMarriage => 4,
+            _ => 10,
+        };
     }
 }
 

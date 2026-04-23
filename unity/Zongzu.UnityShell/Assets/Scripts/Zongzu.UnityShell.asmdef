@@ -1,7 +1,11 @@
 {
   "name": "Zongzu.UnityShell",
   "rootNamespace": "Zongzu.UnityShell",
-  "references": [],
+  "references": [
+    "Zongzu.Presentation.Unity.ViewModels",
+    "Unity.Nuget.Newtonsoft-Json",
+    "Unity.TextMeshPro"
+  ],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

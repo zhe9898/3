@@ -26,6 +26,7 @@ public sealed class SaveCompatibilityGuardrailTests
             Is.EqualTo(new[]
             {
                 KnownModuleKeys.FamilyCore,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.WorldSettlements,

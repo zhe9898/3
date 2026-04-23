@@ -6,4 +6,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Zongzu.Contracts\Zongzu.Contracts.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zongzu.Presentation.Unity.ViewModels\Zongzu.Presentation.Unity.ViewModels.csproj" />
+  </ItemGroup>
 </Project>

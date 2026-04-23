@@ -17,7 +17,7 @@ internal sealed class WarfareProjectionContext
 
 	internal IReadOnlyDictionary<int, SettlementSnapshot> SettlementsById { get; private init; } = new Dictionary<int, SettlementSnapshot>();
 
-	internal ILookup<int, TradeRouteSnapshot> TradeRoutesBySettlement { get; private init; } = EmptyTradeRouteLookup.Instance;
+	internal ILookup<int, ClanTradeRouteSnapshot> ClanTradeRoutesBySettlement { get; private init; } = EmptyClanTradeRouteLookup.Instance;
 
 	internal CampaignFrontSnapshot[] OrderedCampaigns { get; private init; } = [];
 
@@ -31,7 +31,7 @@ internal sealed class WarfareProjectionContext
 
 	internal SettlementSnapshot? LeadCampaignSettlement { get; private init; }
 
-	internal TradeRouteSnapshot[] LeadCampaignTradeRoutes { get; private init; } = [];
+	internal ClanTradeRouteSnapshot[] LeadCampaignClanTradeRoutes { get; private init; } = [];
 
 	internal static WarfareProjectionContext Create(PresentationReadModelBundle bundle)
 	{
@@ -42,7 +42,7 @@ internal sealed class WarfareProjectionContext
 			.ThenByDescending(campaign => campaign.FrontPressure)
 			.ThenBy(campaign => campaign.CampaignId.Value)
 			.ToArray();
-		ILookup<int, TradeRouteSnapshot> tradeRoutesBySettlement = bundle.TradeRoutes
+		ILookup<int, ClanTradeRouteSnapshot> clanTradeRoutesBySettlement = bundle.ClanTradeRoutes
 			.ToLookup(route => route.SettlementId.Value);
 		IReadOnlyDictionary<int, SettlementSnapshot> settlementsById = bundle.Settlements
 			.ToDictionary(settlement => settlement.Id.Value, settlement => settlement);
@@ -52,11 +52,11 @@ internal sealed class WarfareProjectionContext
 			.ThenBy(campaign => campaign.CampaignId.Value)
 			.FirstOrDefault();
 		SettlementSnapshot? leadCampaignSettlement = null;
-		TradeRouteSnapshot[] leadCampaignTradeRoutes = [];
+		ClanTradeRouteSnapshot[] leadCampaignTradeRoutes = [];
 		if (leadCampaign != null)
 		{
 			settlementsById.TryGetValue(leadCampaign.AnchorSettlementId.Value, out leadCampaignSettlement);
-			leadCampaignTradeRoutes = tradeRoutesBySettlement[leadCampaign.AnchorSettlementId.Value]
+			leadCampaignTradeRoutes = clanTradeRoutesBySettlement[leadCampaign.AnchorSettlementId.Value]
 				.OrderBy(route => route.RouteName, StringComparer.Ordinal)
 				.ToArray();
 		}
@@ -68,7 +68,7 @@ internal sealed class WarfareProjectionContext
 				? 0
 				: bundle.Campaigns.Max(campaign => campaign.FrontPressure),
 			SettlementsById = settlementsById,
-			TradeRoutesBySettlement = tradeRoutesBySettlement,
+			ClanTradeRoutesBySettlement = clanTradeRoutesBySettlement,
 			OrderedCampaigns = orderedCampaigns,
 			OrderedMobilizationSignals = bundle.CampaignMobilizationSignals
 				.OrderByDescending(signal => signal.ResponseActivationLevel)
@@ -86,21 +86,21 @@ internal sealed class WarfareProjectionContext
 				.ToArray(),
 			LeadCampaign = leadCampaign,
 			LeadCampaignSettlement = leadCampaignSettlement,
-			LeadCampaignTradeRoutes = leadCampaignTradeRoutes
+			LeadCampaignClanTradeRoutes = leadCampaignTradeRoutes
 		};
 	}
 
-	private sealed class EmptyTradeRouteLookup : ILookup<int, TradeRouteSnapshot>
+	private sealed class EmptyClanTradeRouteLookup : ILookup<int, ClanTradeRouteSnapshot>
 	{
-		internal static readonly EmptyTradeRouteLookup Instance = new();
+		internal static readonly EmptyClanTradeRouteLookup Instance = new();
 
-		public IEnumerable<TradeRouteSnapshot> this[int key] => Array.Empty<TradeRouteSnapshot>();
+		public IEnumerable<ClanTradeRouteSnapshot> this[int key] => Array.Empty<ClanTradeRouteSnapshot>();
 
 		public int Count => 0;
 
 		public bool Contains(int key) => false;
 
-		public IEnumerator<IGrouping<int, TradeRouteSnapshot>> GetEnumerator() => Enumerable.Empty<IGrouping<int, TradeRouteSnapshot>>().GetEnumerator();
+		public IEnumerator<IGrouping<int, ClanTradeRouteSnapshot>> GetEnumerator() => Enumerable.Empty<IGrouping<int, ClanTradeRouteSnapshot>>().GetEnumerator();
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 	}

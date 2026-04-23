@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Zongzu.Host</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zongzu.Application\Zongzu.Application.csproj" />
+    <ProjectReference Include="..\Zongzu.Presentation.Unity\Zongzu.Presentation.Unity.csproj" />
+    <ProjectReference Include="..\Zongzu.Presentation.Unity.ViewModels\Zongzu.Presentation.Unity.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

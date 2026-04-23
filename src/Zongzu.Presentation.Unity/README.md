@@ -15,12 +15,14 @@ It exists to turn `Zongzu.Contracts` read models into stable surface view models
 ## Layering
 
 - root folder:
-  - surface view models
   - `FirstPassPresentationShell`
   - project entrypoint types
+- `ViewModels/`:
+  - shell view models grouped by surface or concern
+  - shared shell DTOs that multiple surfaces consume
 - `Adapters/`:
-  - thin surface mappers
-  - local text and command helpers
+  - thin surface mappers grouped by surface or concern
+  - local text and command helpers near their owning surface
 - `ProjectionContexts/`:
   - precomputed ordering, lookups, and shared projection selections
 

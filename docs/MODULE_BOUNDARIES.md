@@ -12,6 +12,21 @@ For every module, define:
 - explicit non-responsibilities
 
 For the full person-data ownership model, see `PERSON_OWNERSHIP_RULES.md`.
+For the design rule that historical figures, reforms, wars, and great trends enter as pressure rather than rail scripts, see `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`.
+
+## Historical process is not currently a hidden module
+
+Named historical people and great trends may appear in design, projections, seed data, and later feature packs, but they do not justify bypassing module ownership.
+
+Until a dedicated historical-process pack exists:
+- office and appointment pressure belongs in `OfficeAndCareer`
+- exam and scholar pressure belongs in `EducationAndExams`
+- fiscal, tax, route, granary, and settlement pressure belongs in `WorldSettlements`, `TradeAndIndustry`, or `PopulationAndHouseholds` as appropriate
+- public legitimacy, edicts, reform rumor, and street interpretation belong in `PublicLifeAndRumor` / `NarrativeProjection` as projection or public-life state
+- war, frontier, and supply pressure belongs in `ConflictAndForce` / `WarfareCampaign`
+- memories, faction labels, obligations, and shame belong in `SocialMemoryAndRelations`
+
+A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
 ## 0. PersonRegistry (Kernel layer, identity-only)
 ### Owns
@@ -53,6 +68,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - local prosperity/security/environment indicators
 - institution registry and baseline condition
 - settlement tier / node rank used by downstream projections
+- season-band declaration watermarks such as flood-disaster and frontier-strain bands
 
 ### Public queries
 - settlement security
@@ -70,6 +86,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `RouteDisrupted`
 - `InstitutionOpenedOrClosed`
 - `HarvestPressureChanged`
+- settlement-scoped pressure facts such as `WorldSettlements.DisasterDeclared` and `WorldSettlements.FrontierStrainEscalated`
 
 ### Does not own
 - family tree
@@ -87,6 +104,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - branch split/merge state
 - lineage-conflict pressure, mediation momentum, and branch-favor / relief-sanction pressure
 - marriage-alliance pressure/value, heir security, reproductive pressure, and mourning load
+- care burden, funeral debt, remedy confidence, and charity-obligation pressure inside the clan namespace
 - last family-command receipts that remain family-owned state
 - personality traits per clan member: ambition, prudence, loyalty, sociability
 - clan-scoped kinship references: spouseId, childrenIds, fatherId, motherId (only for persons who are or were clan members; FamilyCore does not track kinship for non-clan persons such as unaffiliated commoners, bandits, or officials from other lineages)
@@ -101,15 +119,16 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - clan-scoped kinship view (only for persons who are or were clan members; not a global kinship registry)
 
 ### Accepts commands
-- arrange marriage
-- designate heir policy
-- redistribute household support
-- approve/suppress branch split actions where allowed
-- favor senior branch
-- order formal apology
-- permit branch separation
-- suspend clan relief
-- invite clan elders mediation
+- `ArrangeMarriage`
+- `DesignateHeirPolicy`
+- `SupportSeniorBranch`
+- `OrderFormalApology`
+- `PermitBranchSeparation`
+- `SuspendClanRelief`
+- `InviteClanEldersMediation`
+- `InviteClanEldersPubliclyBroker`
+
+> Note: `RedistributeHouseholdSupport` is not yet implemented in the active command surface.
 
 ### Emits events
 - `MarriageAllianceArranged`
@@ -288,6 +307,8 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - administrative task assignment
 - petition backlog / petition outcomes
 - jurisdiction-level clerk dependence and administrative task load
+- clerk-capture edge watermarks for office-owned escalation receipts
+- official defection risk before office-owned appointment loss
 - official influence projections
 
 ### Public queries
@@ -301,6 +322,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - current administrative task tier and stable task label
 - petition outcome category plus latest petition outcome trace
 - promotion / demotion pressure labels and authority-trajectory summary
+- current official defection risk when governance-lite exposes regime pressure
 
 ### Accepts commands
 - pursue posting
@@ -313,6 +335,12 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `OfficeLost`
 - `OfficeTransfer`
 - `AuthorityChanged`
+- `YamenOverloaded`
+- `AmnestyApplied`
+- `OfficialSupplyRequisition`
+- `ClerkCaptureDeepened`
+- `PolicyWindowOpened`
+- `OfficeDefected`
 
 ### Does not own
 - school results
@@ -505,7 +533,7 @@ Current lite note:
 
 ## Dependency guidance
 - all modules may query `PersonRegistry` for identity, life stage, alive status, and fidelity ring
-- `FamilyCore` may query `PersonRegistry` and `SocialMemoryAndRelations`, not mutate them
+- `FamilyCore` may query `PersonRegistry` and `SocialMemoryAndRelations`; it may call the narrow `PersonRegistry` identity command surface for person creation/death, but must not directly mutate foreign module state
 - `TradeAndIndustry` may query `WorldSettlements` and `OrderAndBanditry`
 - `OrderAndBanditry` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `TradeAndIndustry`, `OfficeAndCareer`, and `ConflictAndForce`
 - `ConflictAndForce` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, and `TradeAndIndustry`

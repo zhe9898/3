@@ -23,22 +23,54 @@ Useful but non-blocking:
 - ambient reports
 
 ## Core screens / surfaces
-1. great hall / main hall report surface
-2. lineage surface
-3. person inspector
-4. household/clan inspector
-5. macro sandbox / regional pressure board
-6. desk sandbox settlement view
-7. ledgers, memorials, and route reports
-8. notice tray / notification center
-9. conflict result vignette
-10. campaign board surface later
+
+These are not "screens" in the modern UI sense. They are **spatial surfaces** anchored to physical objects in the shell.
+
+| # | Surface | Primary object anchor | What the player touches |
+|---|---------|----------------------|------------------------|
+| 1 | Great hall / main hall | Notice tray + visitor cushion | Notices, visitor, seal box, almanac |
+| 2 | Lineage surface | Ancestral tablet cluster | Tablets, branch ledgers, memorial pile, heir marker |
+| 3 | Person inspector | Individual portrait scroll | Scroll to unfurl; lineage relation thread |
+| 4 | Household/clan inspector | Household ledger book | Ledger pages, property tokens, debt tally |
+| 5 | Macro sandbox / regional board | Desk surface (sand table) | Route strips, county seal, spillover markers |
+| 6 | Desk sandbox settlement view | Desk surface (local sand table) | Settlement discs, route threads, focus cluster, notice pin |
+| 7 | Ledgers, memorials, route reports | Open book / scroll on desk | Page turns, wax seals, route annotations |
+| 8 | Notice tray / notification center | Physical tray or box on great hall table | Pick up notice, read, press seal to acknowledge |
+| 9 | Conflict result vignette | Aftermath scroll + casualty tally | Unroll scroll, examine tally, route thread to perpetrator |
+| 10 | Campaign board surface later | War overlay on desk sandbox | Front markers, supply-line threads, directive tokens |
+
+### Surface interaction contract
+Every surface must obey:
+1. **Touch before read** — The player touches a physical object; the information appears in response.
+2. **No floating HUD** — Information lives on or near the object that carries it. No omnipresent status bar.
+3. **Seal = commit** — Player decisions are confirmed by pressing a seal (lineage seal, office seal), not by clicking "OK."
+4. **Thread = connection** — Relationships between entities are shown as physical threads or route lines, not as abstract relationship matrices.
+5. **Lane discipline** — Foreground / action / background lanes apply to every surface (see `VISUAL_FORM_AND_INTERACTION.md`).
+
+### Time interaction contract
+- the normal playable rhythm is monthly review, monthly interpretation, and monthly bounded command
+- xun pulse state may appear as route heat, market bustle, illness trend, messenger delay, public-life drift, or hotspot motion, but not as three mandatory player turns
+- the shell should not expose `advance shangxun`, `advance zhongxun`, and `advance xiaxun` as the main progression buttons
+- urgent red-band items may interrupt the month only when the authoritative projection marks them as time-sensitive or irreversible
+- interrupt windows should expose only the narrow response justified by the crisis, then return the player to the monthly shell
+
+### Immersion protection rules
+- do not solve ordinary play with a wall of sliders
+- do not fill the shell with profession labels, career tags, or route badges
+- do not make every xun receipt a separate report
+- carry information through physical objects first: rice jar, account book, medicine packet, debt note, study text, road marker, temple gate, county gate, notice tray, seal box
+- carry imperial pressure through objects too: edict scroll, appointment notice, amnesty proclamation, mourning cloth, tax / corvee writ, border dispatch, county-gate posting, and yamen docket seal
+- monthly review should foreground the pressure closest to the player's current position, not every available metric
+- results should echo through later months as receipts, residue, obligation, rumor, debt, trust, shame, or changed reach; avoid immediate abstract rewards such as `+5 credit` as the primary feedback
+- commoner-facing pressure should feel like household life under strain; elite-facing pressure should feel like requests, reputation, obligation, scrutiny, and backlash, not free omnipotent control
+- imperial-facing pressure should feel like moral gravity, paperwork arrival, ritual interruption, appointment confidence, fiscal extraction, mercy / punishment tone, and distant court uncertainty reaching the county through mediated channels, not like an emperor-control button
 
 ## UI architecture rules
 - use view models or read models
 - presentation reads projections/query services
 - presentation sends commands
 - presentation does not hold authoritative logic
+- presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
 ## Wording lanes
 - detailed lane rules, ownership, and authoring workflow live in `WRITING_AND_COPY_GUIDELINES.md`
@@ -63,6 +95,9 @@ Useful but non-blocking:
 - family lifecycle receipts may now read as household dispositions such as聘财轻重, 入谱定名, and 丧服护持 instead of generic success text, but those phrases still come from `FamilyCore` state/read models rather than UI-owned logic
 - great hall and family-council lifecycle summaries may now also carry a read-only directional prompt such as `眼下宜先议定承祧` or `眼下宜先议定丧次`; the shell may choose which bounded family command to highlight from projected affordances, but it still may not resolve or mutate family state inside UI code
 - when the lead notice itself is a family-lifecycle notice, the great hall lead-notice guidance and notification-center `WhatNext` text should align to the same read-only directional prompt already chosen from projected lifecycle affordances
+- family death notices may now distinguish adult-successor deaths from severe承祧 gaps: the former should lead with丧次 / 祭次 and stabilizing the new承祧, while the latter should lead with议定承祧 and压住房支后议; this is notice / ancestral-hall guidance only, not a full funeral workflow
+- violent / warlike deaths that target a clan member may surface both the source conflict notice and the FamilyCore ancestral-hall pressure notice, but both must read from projected traces and must not let UI infer death, succession, or funeral authority on its own
+- the MVP lifecycle preview should preserve the same shell-facing loop: death pressure appears as notice / family-council guidance, `议定承祧` or `议定丧次` remains a projected affordance, and command receipts return to the hall without UI mutating authority state
 - the read-only office surface now exposes current appointment, current administrative task, petition backlog, petition outcome category, and promotion/demotion pressure wording without introducing any authority controls
 - the read-only office surface may now also expose bounded command affordances such as petition review and administrative leverage only when governance-lite is enabled
 - the read-only public-life surface now exposes county-public-life summaries on the hall and settlement nodes only; it does not resolve notices, rumors, or county pressure inside UI code

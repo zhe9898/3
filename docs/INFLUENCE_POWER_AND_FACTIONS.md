@@ -33,7 +33,42 @@ What matters is not only who has power, but:
 
 At minimum, the design should recognize these influence families.
 
-### 1. Lineage prestige
+### 1. Imperial legitimacy and court authority
+
+Power rooted in:
+- reign legitimacy
+- dynastic continuity
+- ritual center
+- edicts, amnesties, and punishment tone
+- appointment confidence
+- examination and policy authority
+
+It helps with:
+- making officials and degree-holders care about imperial language
+- shaping public readings of lawful order
+- opening or closing appointment, reform, relief, and military windows
+- lending moral weight to notices, rituals, and policy demands
+
+It weakens through:
+- succession doubt
+- factional paralysis
+- fiscal-military overstrain
+- failed relief
+- visible gap between edict and local compliance
+
+For the Renzong-era opening, this should mostly be a distant pressure field.
+It should not become direct emperor control in MVP.
+It becomes visible through object and institution carriers: sealed edict scrolls, appointment notices, amnesty proclamations, mourning markers, tax / corvee writs, relief language, border dispatches, county-gate postings, yamen docket seals, exam prestige, and public legitimacy talk.
+Local actors may comply, buffer, delay, reinterpret, exploit, or resist that pressure.
+The Renzong-era opening calibrates the initial field only; it must not force later historical outcomes if rule-driven pressure, people, regions, or player leverage plausibly change the path.
+
+Court authority should also be understood as **process power**:
+- deciding which memorials and accusations reach attention
+- deciding whether an issue appears as ritual, fiscal, frontier, appointment, law, exam, relief, or reform pressure
+- turning debate into appointment slates, dispatch language, policy windows, punishment tone, or delay
+- letting faction labels, censor pressure, patron backing, and emperor attention alter who can act without being destroyed
+
+### 2. Lineage prestige
 
 Power rooted in:
 - ancestral standing
@@ -53,7 +88,7 @@ It weakens through:
 - visible decline
 - failed protection
 
-### 2. Favor and obligation
+### 3. Favor and obligation
 
 Power rooted in:
 - help given
@@ -74,7 +109,7 @@ It weakens through:
 - unmet reciprocation
 - changed circumstance
 
-### 3. Office authority
+### 4. Office authority
 
 Power rooted in:
 - appointment
@@ -94,7 +129,18 @@ It weakens through:
 - faction loss
 - court/local mistrust
 
-### 4. Wealth and credit power
+Office authority is not only rank.
+Its usable strength depends on:
+- clerks and runners who can move or block papers
+- patron ties and faction exposure
+- evaluation and memorial attack risk
+- family obligations and private debt
+- the gap between seal-bearing order and local implementation
+
+A player with office reach may accelerate, delay, classify, summon, recommend, inspect, remit, or redirect.
+But every office act should also create a trace: gratitude, fear, resentment, paperwork, faction heat, or audit risk.
+
+### 5. Wealth and credit power
 
 Power rooted in:
 - liquidity
@@ -116,7 +162,7 @@ It weakens through:
 - debt spirals
 - confiscation
 
-### 5. Coercive power
+### 6. Coercive power
 
 Power rooted in:
 - guards
@@ -137,7 +183,7 @@ It weakens through:
 - cost
 - legitimacy loss
 
-### 6. Public legitimacy and moral face
+### 7. Public legitimacy and moral face
 
 Power rooted in:
 - visible fairness
@@ -158,7 +204,7 @@ It weakens through:
 - scandal
 - inability to protect dependents
 
-### 7. Informational reach
+### 8. Informational reach
 
 Power rooted in:
 - clerks
@@ -268,6 +314,7 @@ Owns or projects:
 - administrative leverage
 - petition handling pressure
 - authority trajectory
+- appointment and evaluation pressure as the nearest local face of imperial authority
 
 ### `TradeAndIndustry`
 Owns or projects:
@@ -303,6 +350,23 @@ It only renders:
 - labels
 - visible traces
 
+### Future imperial / court pack
+May eventually own or project:
+- reign legitimacy
+- court faction heat
+- imperial mercy or punishment tone
+- appointment window pressure
+- court-level reform pressure
+- court-process pressure such as memorial queue, agenda heat, censor pressure, emperor attention, appointment slate, and dispatch targets
+- regime-authority pressure such as recognition, tax reach, grain-route reach, force backing, office defection, ritual claim, and public belief
+
+Until such a pack exists, imperial pressure should be represented through existing office, warfare, world, and public-life projections rather than hidden UI state.
+
+### `Application` presentation read models
+Do not own power.
+They may join existing module projections into read-only surfaces such as `PlayerInfluenceFootprintSnapshot` and `InfluenceReachSnapshot`.
+Those joins may say which layers are active, watch-only, or commandable, but they must not create a hidden player class, route system, faction membership, authority state, or command-resolution lane.
+
 ## System rules
 
 - influence should be partially convertible, but never free to convert
@@ -311,6 +375,24 @@ It only renders:
 - office authority may solve one bottleneck while generating another enemy
 - coercive power should produce faster outcomes and slower damage
 - hidden influence should matter, but players still need enough readable traces to act intelligently
+
+## Influence And Great Trends
+
+Great trends need carriers.
+Historical pressure becomes local only when people and institutions spend influence to carry, interpret, resist, or capture it.
+
+A player with enough reach may:
+- make a reform look merciful or predatory in one county
+- turn a policy window into study, office, market, relief, or military opportunity
+- shield households from a trend's harshest edge
+- help a factional label attach to a person, lineage, yamen, or market bloc
+- accelerate public confidence or public distrust around an imperial order
+- create local residue that outlasts the formal policy
+- at later scale, convert force, grain, office access, public legitimacy, faction memory, and information reach into rebellion, polity formation, succession struggle, usurpation, restoration, or dynasty repair
+
+This is still bounded influence.
+The player does not own the great trend by default, but may become one of its carriers.
+Small reach makes local carriers; large reach can make regime-scale carriers.
 
 ## Shell and readability
 

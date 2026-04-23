@@ -11,7 +11,7 @@ internal sealed class DeskSandboxProjectionContext
 	private readonly Dictionary<int, PopulationSettlementSnapshot> _populationBySettlement;
 	private readonly ILookup<int, AcademySnapshot> _academiesBySettlement;
 	private readonly Dictionary<int, MarketSnapshot> _marketsBySettlement;
-	private readonly ILookup<int, TradeRouteSnapshot> _tradeRoutesBySettlement;
+	private readonly ILookup<int, ClanTradeRouteSnapshot> _tradeRoutesBySettlement;
 	private readonly Dictionary<int, SettlementPublicLifeSnapshot> _publicLifeBySettlement;
 	private readonly Dictionary<int, JurisdictionAuthoritySnapshot> _jurisdictionsBySettlement;
 	private readonly Dictionary<int, SettlementGovernanceLaneSnapshot> _governanceBySettlement;
@@ -23,7 +23,7 @@ internal sealed class DeskSandboxProjectionContext
 		Dictionary<int, PopulationSettlementSnapshot> populationBySettlement,
 		ILookup<int, AcademySnapshot> academiesBySettlement,
 		Dictionary<int, MarketSnapshot> marketsBySettlement,
-		ILookup<int, TradeRouteSnapshot> tradeRoutesBySettlement,
+		ILookup<int, ClanTradeRouteSnapshot> clanTradeRoutesBySettlement,
 		Dictionary<int, SettlementPublicLifeSnapshot> publicLifeBySettlement,
 		Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement,
 		Dictionary<int, SettlementGovernanceLaneSnapshot> governanceBySettlement,
@@ -34,7 +34,7 @@ internal sealed class DeskSandboxProjectionContext
 		_populationBySettlement = populationBySettlement;
 		_academiesBySettlement = academiesBySettlement;
 		_marketsBySettlement = marketsBySettlement;
-		_tradeRoutesBySettlement = tradeRoutesBySettlement;
+		_tradeRoutesBySettlement = clanTradeRoutesBySettlement;
 		_publicLifeBySettlement = publicLifeBySettlement;
 		_jurisdictionsBySettlement = jurisdictionsBySettlement;
 		_governanceBySettlement = governanceBySettlement;
@@ -53,7 +53,7 @@ internal sealed class DeskSandboxProjectionContext
 			bundle.PopulationSettlements.ToDictionary(settlement => settlement.SettlementId.Value, settlement => settlement),
 			bundle.Academies.ToLookup(academy => academy.SettlementId.Value),
 			bundle.Markets.ToDictionary(market => market.SettlementId.Value, market => market),
-			bundle.TradeRoutes.ToLookup(route => route.SettlementId.Value),
+			bundle.ClanTradeRoutes.ToLookup(route => route.SettlementId.Value),
 			bundle.PublicLifeSettlements.ToDictionary(settlement => settlement.SettlementId.Value, settlement => settlement),
 			bundle.OfficeJurisdictions.ToDictionary(jurisdiction => jurisdiction.SettlementId.Value, jurisdiction => jurisdiction),
 			bundle.GovernanceSettlements.ToDictionary(settlement => settlement.SettlementId.Value, settlement => settlement),
@@ -110,7 +110,7 @@ internal sealed class DeskSandboxProjectionContext
 		return signal;
 	}
 
-	internal TradeRouteSnapshot[] GetTradeRoutes(SettlementId settlementId)
+	internal ClanTradeRouteSnapshot[] GetClanTradeRoutes(SettlementId settlementId)
 	{
 		return _tradeRoutesBySettlement[settlementId.Value]
 			.OrderBy(route => route.RouteName, StringComparer.Ordinal)

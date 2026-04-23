@@ -11,6 +11,63 @@ public sealed class OfficeAndCareerState : IModuleStateDescriptor
     public List<OfficeCareerState> People { get; set; } = new();
 
     public List<JurisdictionAuthorityState> Jurisdictions { get; set; } = new();
+
+    // Phase 7 衙门骨骼 — LIVING_WORLD_DESIGN §2.7
+    public List<OfficialPostState> OfficialPosts { get; set; } = new();
+
+    public List<WaitingListEntryState> WaitingList { get; set; } = new();
+
+    /// <summary>
+    /// Highest amnesty-wave intensity already converted into local yamen
+    /// amnesty events. Prevents non-amnesty imperial rhythm changes from
+    /// re-emitting the same amnesty while the imperial band remains high.
+    /// </summary>
+    public int LastAppliedAmnestyWave { get; set; }
+
+    /// <summary>
+    /// Settlement-level watermark for clerk-capture escalation receipts.
+    /// A settlement leaves this set once the captured condition clears.
+    /// </summary>
+    public List<SettlementId> ActiveClerkCaptureSettlementIds { get; set; } = new();
+}
+
+// Phase 7 衙门骨骼 — LIVING_WORLD_DESIGN §2.7。
+// 官署一缺：由 postId 锚定，载 currentHolder / vacancyMonths 等空缺脉络。
+public sealed class OfficialPostState
+{
+    public string PostId { get; set; } = string.Empty;
+
+    public SettlementId Location { get; set; }
+
+    public int Rank { get; set; }
+
+    public string PostTitle { get; set; } = string.Empty;
+
+    public PersonId? CurrentHolder { get; set; }
+
+    public int VacancyMonths { get; set; }
+
+    public int PetitionBacklog { get; set; }
+
+    public int ClerkDependence { get; set; }
+
+    public int EvaluationPressure { get; set; }
+}
+
+// Phase 7 候补：合格/可选而未授官者，按等次等候。
+public sealed class WaitingListEntryState
+{
+    public PersonId PersonId { get; set; }
+
+    public SettlementId SettlementId { get; set; }
+
+    public string DisplayName { get; set; } = string.Empty;
+
+    public int QualificationTier { get; set; }
+
+    public int WaitingMonths { get; set; }
+
+    public int PatronageSupport { get; set; }
 }
 
 public sealed class OfficeCareerState
@@ -46,6 +103,8 @@ public sealed class OfficeCareerState
     public int PromotionMomentum { get; set; }
 
     public int DemotionPressure { get; set; }
+
+    public int OfficialDefectionRisk { get; set; }
 
     public string CurrentAdministrativeTask { get; set; } = "候补听选";
 

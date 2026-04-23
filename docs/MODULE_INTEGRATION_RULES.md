@@ -49,14 +49,36 @@ Subscribers may update **their own** state only.
 - event ordering is documented by scheduler phase
 - handlers must be side-effect limited to owned state
 - if a handler needs additional data, it must query published projections
-- the current scheduler now performs a thin deterministic post-simulation event-handling pass on a stable event snapshot before `NarrativeProjection` runs
-- handler-emitted follow-on events may enrich projection and diagnostics in the same month, but they do not recursively trigger another handler sweep that month
+- the current scheduler now performs a deterministic bounded post-simulation event drain before `NarrativeProjection` runs
+- each drain round processes only fresh events emitted since the previous watermark, preserving stable module order and preventing replay of the whole month event list
+- handler-emitted follow-on events may trigger downstream handlers in the same month only within the bounded drain cap; if a chain cannot finish within the cap, the remaining pressure must be carried as traceable state rather than hidden recursion
 
 ## Projection rules
 - projections are read models
 - projections may be cached
 - projections are rebuilt from authoritative state
 - projections are not a backdoor write channel
+
+## Historical-process integration rules
+
+Historical people, reforms, wars, policies, and great trends must use the same Query / Command / DomainEvent channels as ordinary simulation.
+
+They must not enter as:
+- UI-side writes
+- narrative-triggered authority changes
+- hidden global script state
+- one-off year triggers that bypass module ownership
+
+They should enter as:
+- upstream pressure in the owning modules
+- named-person or faction pressure exposed through queries
+- policy windows represented as commands, events, or module-owned state
+- structured diffs that describe local implementation and backlash
+- projection-only notices that explain why a trend is visible now
+
+The player may carry or bend a great trend only through valid influence channels: household, lineage, market, education, yamen, public-life, force, office, or later court-facing seams.
+That influence must still resolve through module-owned state and deterministic command/event handling.
+At later scale, the same rule applies to rebellion, polity formation, succession struggle, usurpation, restoration, and dynasty repair: no direct timeline rewrite, but earned counterfactual history is allowed when modules own the pressure, force, legitimacy, logistics, and memory state.
 
 ## Integration review checklist
 Before approving a cross-module change:
@@ -78,9 +100,40 @@ Correct approach:
 - `FamilyCore` handles the event to update its own prestige state
 - `OfficeAndCareer` handles the event to open or advance office eligibility
 
+## Current command-routing gap (documented, to be closed)
+
+`ModuleRunner<TState>` currently does **not** expose a command-handling interface (no `HandleCommand` / `ExecuteCommand` method).  Therefore the thin player-command services in `Zongzu.Application` (`PlayerCommandService`, `WarfareCampaignCommandService`) currently retrieve module state via `GameSimulation.GetMutableModuleState<T>()` and mutate it directly.
+
+This is a **known structural gap**, not an intended permanent design.  The plan is:
+1. add a command-handling seam to `ModuleRunner<TState>` (or a parallel `ICommandHandler<TState>` contract);
+2. move command resolution logic out of `PlayerCommandService` and into the owning modules;
+3. make `GetMutableModuleState` truly internal-only for bootstrapping and testing.
+
+Until that seam exists, the Application services act as a temporary rule layer.  All direct state mutations are confined to Application-layer command services and do not leak into UI or projection code.
+
 ## Current M2-lite integration notes
+- Renzong chain-1 is currently a **real scheduler thin slice**, not the full tax/corvee society chain: `WorldSettlements.TaxSeasonOpened` drains through `PopulationAndHouseholds.HouseholdDebtSpiked` and `OfficeAndCareer.YamenOverloaded` into `PublicLifeAndRumor` street-talk heat. The full chain still needs household-grade/tax-kind formulas, client/tenant pressure, market cash squeeze, long memory, and precise settlement/jurisdiction payloads.
+- Renzong chain-2 is currently a **real scheduler thin slice**, not the full grain/famine economy chain: `WorldSettlements.SeasonPhaseAdvanced(Harvest)` drains through `TradeAndIndustry.GrainPriceSpike` into `PopulationAndHouseholds.HouseholdSubsistencePressureChanged`, with off-scope settlement protection. The full chain still needs yield ratio, disaster inputs, granary security, route risk, household grain stores/livelihood formulas, migration/death pressure, order-route insecurity, and long public/memory residue.
 - `EducationAndExams.Lite` currently reads only `WorldSettlements`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces
 - `EducationAndExams.Lite` owns study progress, tutor quality, exam attempts, outcomes, and explanation text; it does not write family prestige or office state directly
+- `EducationAndExams.Lite` emits `ExamPassed` / `ExamFailed` / `StudyAbandoned` with `EntityKey = personId` (added 2026-04-23)
+- `FamilyCore` now **consumes** `ExamPassed` via `HandleEvents` (thin slice, 2026-04-23): looks up the person's clan, raises `Prestige (+5)` and `MarriageAllianceValue (+3)`, and emits `ClanPrestigeAdjusted`
+- **Design debt (P1-non-blocking)**: `IDomainEvent` now has a runtime-only metadata bag, but `ClanPrestigeAdjusted` has not yet been upgraded to populate structured cause / delta / prior-value metadata. Downstream modules must not add new rule formulas that parse `Summary`; when chain-3 expands past the current thin slice, populate metadata or introduce a typed event payload first.
+- `FamilyCore` does **not** yet consume `ExamFailed` or `StudyAbandoned`; `OfficeAndCareer` does **not** yet consume `ExamPassed`; `SocialMemoryAndRelations` does **not** yet record exam-related Favor/Shame — these remain **⏳ TODO** for full chain-3
+- `OfficeAndCareer` now **consumes** `WorldSettlementsEventNames.ImperialRhythmChanged` for the chain-4 thin slice (2026-04-23): it reads `IWorldSettlementsQueries.GetCurrentSeason().Imperial.AmnestyWave`, emits one settlement-scoped `OfficeAndCareer.AmnestyApplied` per jurisdiction only when the wave is newly above threshold, and persists `LastAppliedAmnestyWave` to avoid repeating the same amnesty when other imperial axes change.
+- `OrderAndBanditry` now **consumes** `OfficeAndCareer.AmnestyApplied` for the same chain-4 thin slice: it mutates only the matching settlement's `DisorderPressure` and emits `OrderAndBanditry.DisorderSpike` when the settlement crosses the public-spike threshold. `OrderAndBanditry.DisorderLevelChanged` remains the fuller periodic summary event for later expansion.
+- Renzong chain-5 is currently a **real scheduler thin slice**, not the full frontier/war economy chain: `WorldSettlements.FrontierStrainEscalated` drains through `OfficeAndCareer.OfficialSupplyRequisition` into `PopulationAndHouseholds.HouseholdBurdenIncreased` when household distress crosses the receipt threshold. The full chain still needs frontier sector allocation, WarfareCampaign mobilization, ConflictAndForce readiness, TradeAndIndustry market diversion, quota/cash formulas, clerk distortion, and public-life projection.
+- `WorldSettlements.FrontierStrainEscalated` is settlement-scoped in this slice: `EntityKey` must be a `SettlementId`, not a global `frontier` token. `OfficeAndCareer` must emit `OfficialSupplyRequisition` only for a matching jurisdiction and must not fan one frontier signal out to all jurisdictions.
+- `WorldSettlements` schema `8` persists `LastDeclaredFrontierStrainBand` as a module-owned watermark so the same active frontier band is not re-declared every month. Future multi-frontier work should replace this thin-slice scalar with per-sector/per-settlement watermarks before adding simultaneous fronts or recurring quota cadence.
+- `PopulationAndHouseholds.HouseholdBurdenIncreased` is a downstream receipt event for threshold-crossing household burden; it must be declared in `PublishedEvents` and must carry structured cause/source/settlement metadata rather than asking later modules to parse narrative summaries.
+- Renzong chain-6 is currently a **real scheduler thin slice**, not the full disaster-relief society chain: `WorldSettlements.DisasterDeclared` drains through `OrderAndBanditry.DisorderSpike` into `PublicLifeAndRumor` street-talk heat, with off-scope settlement protection.
+- `WorldSettlements.DisasterDeclared` must carry rule-readable metadata (`cause`, `disasterKind`, `severity`, `floodRisk`, `embankmentStrain`) and `OrderAndBanditry` must use that metadata rather than parsing `Summary`; the current slice implements flood only.
+- `WorldSettlements` schema `7` persists `LastDeclaredFloodDisasterBand` as a module-owned watermark so the same active flood band is not re-declared every month. Future multi-locus disasters should replace this thin-slice scalar with a per-disaster/per-settlement watermark before adding drought, locust, epidemic, or simultaneous flood fronts.
+- `OrderAndBanditry.DisorderSpike` now carries cause metadata (`corvee`, `amnesty`, or `disaster`) so `PublicLifeAndRumor` can project cause-appropriate guidance without hard-coding every disorder spike as corvee pressure. The full chain-6 still needs relief decisions, household subsistence / migration, market panic, route insecurity, SocialMemory residue, and public legitimacy.
+- Renzong chain-7 is currently a **real scheduler thin slice**, not the full official-clerk-execution chain: `OfficeAndCareer.ClerkCaptureDeepened` is emitted only on a newly crossed settlement clerk-capture edge and drains into scoped `PublicLifeAndRumor` heat. `OfficeAndCareer` schema `6` persists `ActiveClerkCaptureSettlementIds` as the module-owned watermark; repeated high clerk dependence must not re-emit until the condition clears, and off-scope settlements must stay untouched.
+- Renzong chain-8 is currently a **real scheduler thin slice**, not the full court-agenda/policy-dispatch chain: `WorldSettlements.CourtAgendaPressureAccumulated` remains court/global input, but `OfficeAndCareer` must allocate it to one selected court-facing jurisdiction before emitting `PolicyWindowOpened`. The handler must not fan one court pressure event into all known jurisdictions; tests should include at least two possible jurisdictions and prove only the chosen locus opens.
+- Renzong chain-9 is currently a **real scheduler thin slice**, not the full regime-recognition/compliance chain: `WorldSettlements.RegimeLegitimacyShifted` updates office-owned `OfficialDefectionRisk`, then `OfficeAndCareer.OfficeDefected` is emitted only as a receipt after one highest-risk appointed official actually loses appointment eligibility. Downstream household, market, public-life, memory, and force reactions remain deferred until their owning modules receive a fuller regime-pressure contract.
+- Chain-8 / chain-9 imperial pressure must be explicitly seeded or moved by an imperial/court owner. A default `WorldSettlements` state uses neutral `MandateConfidence = 70`; an uninitialized world must not generate court crisis or regime defection by accident.
 - `TradeAndIndustry.Lite` currently reads only `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces
 - `TradeAndIndustry.Lite` owns clan trade cash/debt state, market pressure, route pressure, outcomes, and explanation text; it does not write household or clan internals directly
 - `PublicLifeAndRumor.Lite` now reads `WorldSettlements`, `PopulationAndHouseholds`, `TradeAndIndustry`, `OrderAndBanditry`, optional `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces only
@@ -95,16 +148,23 @@ Correct approach:
 - bounded public-life responses may surface as read-only command affordances / receipts on hall or desk nodes, but command resolution must still route through `OfficeAndCareer`, `OrderAndBanditry`, or `FamilyCore` rather than `PublicLifeAndRumor`
 - both M2-lite modules emit deterministic domain events and keep outcome explanations derived from queryable state plus kernel RNG only
 - `NarrativeProjection` currently reads only the shared `WorldDiff` and `DomainEvent` streams plus its own saved history; it does not emit authority events or write foreign module state
+- `NarrativeProjection` may use `FamilyCore` death pressure phrases carried in death diffs, such as `承祧缺口1阶` or `承祧缺口3阶`, to shape family-facing next-step guidance; this remains projection text and must not become a hidden funeral, inheritance, or command-resolution lane
+- when a `DeathByViolence` source event targets a clan `PersonId`, `NarrativeProjection` may pull the matching `FamilyCore` death-pressure diff into the notice trace and may also create an ancestral-hall diff notice; both remain downstream projection and do not cause authority state changes
 - bounded narrative-history trimming may preserve the latest notification per source module before trimming older overflow, so cross-module visibility stays readable without creating a second authority channel
 - the current first-pass presentation shell consumes a read-model bundle only; it does not reference simulation modules directly and does not resolve commands or authority rules inside UI code
+- the application-layer presentation bundle may also compose `HouseholdSocialPressureSnapshot` and `PlayerInfluenceFootprintSnapshot` from existing household, family, trade, education, public-life, order, office, and warfare projections; this is runtime-only visibility, not a stored route tag, player class, module key, or authority shortcut
+- that influence footprint must distinguish the player's anchor household from observed household pressure: the anchor can carry local agency summaries, while outside households stay readable but not directly commandable unless a real social touchpoint exists
 
 ## Family-conflict vertical slice notes
 - `FamilyCore` now owns lineage-conflict pressure, mediation momentum, branch-favor pressure, relief-sanction pressure, and last family-command receipts inside the family namespace
-- `FamilyCore` schema `3` also owns marriage-alliance pressure/value, heir security, reproductive pressure, mourning load, and last lifecycle-command receipts inside the same namespace
+- `FamilyCore` schema `7` also owns marriage-alliance pressure/value, heir security, reproductive pressure, mourning load, care load, funeral debt, remedy confidence, charity obligation, clan-scoped spouse/parent/child links, and last lifecycle-command receipts inside the same namespace
+- `FamilyCore` may use `PersonRegistry` command interfaces only for identity-shaped writes when birth, marriage-in spouse creation, or death requires a canonical person anchor; all lineage facts and lifecycle pressures remain `FamilyCore`-owned
+- `FamilyCore` may consume `DeathByViolence` from conflict / order / warfare producers only as a lineage-pressure bridge: it parses the event `EntityKey` as `PersonId`, reads identity facts through `PersonRegistry`, updates only clan-owned mourning / inheritance / branch / heir-security pressures, and must not emit a second cause-specific death event from that handler
+- until command handlers move into modules, `PlayerCommandService` family lifecycle routes may read `PersonRegistry` queries for identity-only facts such as alive / age when choosing candidates, then write only `FamilyCore` lifecycle state and receipts
 - `SocialMemoryAndRelations` may read those family-conflict fields through queries only; it may not be written by the player-command service
 - a thin player-command service may now route bounded family intents such as branch favor, formal apology, branch separation, relief suspension, elder mediation, marriage arrangement, and heir designation into `FamilyCore` only
 - the family-council shell now reads clan conflict summaries, clan narratives, family affordances, and family receipts from read models only
-- built-in default loaders now migrate `FamilyCore` schema `1 -> 2 -> 3` without changing enabled-module or envelope-key sets
+- built-in default loaders now migrate legacy `FamilyCore` schemas through current schema `7` without changing enabled-module or envelope-key sets
 
 ## Current observability and migration notes
 - diagnostics harness reports and presentation debug snapshots now align on the same runtime-only metrics: diff entries, domain events, notifications, and save payload bytes
@@ -180,7 +240,7 @@ Correct approach:
 - a thin application-routed warfare-intent service now stages `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` into `WarfareCampaign`-owned directive state only
 - the current player-command vertical slice may expose those same warfare directives as read-only affordances and receipts in presentation, but the routing still stays in application services and the writes still stay inside `WarfareCampaign`
 - current warfare-lite state now persists active directive code/label/summary and last directive trace inside the warfare namespace instead of inventing a cross-module command ledger
-- built-in `WarfareCampaign` migration now upgrades schema `1 -> 2 -> 3` by backfilling labels, route descriptors, and directive descriptors without changing enabled-module or envelope-key sets
+- built-in `WarfareCampaign` migration now upgrades schema `1 -> 2 -> 3 -> 4` by backfilling labels, route descriptors, directive descriptors, and campaign phasing plus aftermath dockets without changing enabled-module or envelope-key sets
 - current warfare-lite aftermath now propagates into `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, and `SocialMemoryAndRelations` through the event-handling seam only
 - those downstream modules update only their own prosperity, livelihood, prestige, ledger, pressure, petition, or memory state; none of them write back into `WarfareCampaign`
 

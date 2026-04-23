@@ -18,8 +18,8 @@ public sealed class NarrativeProjectionModuleTests
         module.RegisterQueries(state, queries);
 
         DomainEventBuffer domainEvents = new();
-        domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.EducationAndExams, "ExamPassed", "Scholar Zhang Yuan passed the local exam."));
-        domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.TradeAndIndustry, "TradeProspered", "Clan Zhang trade prospered."));
+        domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.EducationAndExams, EducationAndExamsEventNames.ExamPassed, "Scholar Zhang Yuan passed the local exam."));
+        domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.TradeAndIndustry, TradeAndIndustryEventNames.TradeProspered, "Clan Zhang trade prospered."));
 
         WorldDiff diff = new();
         diff.Record(KnownModuleKeys.EducationAndExams, "Scholar Zhang Yuan passed with strong study progress and tutor support.", "1");
@@ -59,7 +59,7 @@ public sealed class NarrativeProjectionModuleTests
         for (int month = 0; month < NarrativeProjectionModule.NotificationRetentionLimit + 6; month += 1)
         {
             DomainEventBuffer domainEvents = new();
-            domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.TradeAndIndustry, "TradeProspered", $"Trade prospered in month {month}."));
+            domainEvents.Emit(new DomainEventRecord(KnownModuleKeys.TradeAndIndustry, TradeAndIndustryEventNames.TradeProspered, $"Trade prospered in month {month}."));
 
             WorldDiff diff = new();
             diff.Record(KnownModuleKeys.TradeAndIndustry, $"Margin improved in month {month}.", month.ToString());
@@ -116,7 +116,7 @@ public sealed class NarrativeProjectionModuleTests
             DomainEventBuffer tradeEvents = new();
             tradeEvents.Emit(new DomainEventRecord(
                 KnownModuleKeys.TradeAndIndustry,
-                "TradeProspered",
+                TradeAndIndustryEventNames.TradeProspered,
                 $"Trade prospered in month {month}."));
 
             WorldDiff tradeDiff = new();
@@ -311,6 +311,49 @@ public sealed class NarrativeProjectionModuleTests
     }
 
     [Test]
+    public void RunMonth_DeathByViolenceWithFamilyDiff_ProjectsAncestralHallGuidance()
+    {
+        NarrativeProjectionModule module = new();
+        NarrativeProjectionState state = module.CreateInitialState();
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer domainEvents = new();
+        domainEvents.Emit(new DomainEventRecord(
+            KnownModuleKeys.ConflictAndForce,
+            DeathCauseEventNames.DeathByViolence,
+            "Clan Zhang heir died in a violent clash.",
+            "1"));
+
+        WorldDiff diff = new();
+        diff.Record(KnownModuleKeys.FamilyCore, "张门承祧之人遭暴亡，门内举哀，继嗣之议与房支争执随即翻起（死者名分3阶、承祧缺口3阶、身后牵挂1阶、丧葬拖累2阶、宗房余力短处1阶）。", "1");
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 12),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(197)),
+            queries,
+            domainEvents,
+            diff,
+            KernelState.Create(197));
+
+        module.RunMonth(new ModuleExecutionScope<NarrativeProjectionState>(state, context));
+
+        NarrativeNotificationState violentNotice = state.Notifications.Single(static notification =>
+            notification.SourceModuleKey == KnownModuleKeys.ConflictAndForce);
+        NarrativeNotificationState familyNotice = state.Notifications.Single(static notification =>
+            notification.SourceModuleKey == KnownModuleKeys.FamilyCore);
+
+        Assert.That(violentNotice.Title, Is.EqualTo("暴亡入案"));
+        Assert.That(violentNotice.Tier, Is.EqualTo(NotificationTier.Urgent));
+        Assert.That(violentNotice.WhyItHappened, Does.Contain("承祧缺口3阶"));
+        Assert.That(violentNotice.WhatNext, Does.Contain("先议定承祧名分"));
+        Assert.That(familyNotice.Surface, Is.EqualTo(NarrativeSurface.AncestralHall));
+        Assert.That(familyNotice.WhatNext, Does.Contain("先议定承祧名分"));
+    }
+
+    [Test]
     public void RunMonth_DeathLifecycleEvent_ProjectsMourningAndSuccessionGuidance()
     {
         NarrativeProjectionModule module = new();
@@ -322,7 +365,7 @@ public sealed class NarrativeProjectionModuleTests
         DomainEventBuffer domainEvents = new();
         domainEvents.Emit(new DomainEventRecord(
             KnownModuleKeys.FamilyCore,
-            FamilyCoreEventNames.DeathRegistered,
+            FamilyCoreEventNames.ClanMemberDied,
             "Clan Zhang entered mourning.",
             "1"));
 
@@ -349,5 +392,85 @@ public sealed class NarrativeProjectionModuleTests
         Assert.That(notice.WhatNext, Does.Contain("丧次").And.Contain("承祧"));
         Assert.That(notice.WhatNext, Does.Contain("谱内名分").Or.Contain("继嗣"));
         Assert.That(notice.WhyItHappened, Does.Contain("后议"));
+    }
+
+    [Test]
+    public void RunMonth_HeirDeathWithAdultSuccessor_ProjectsMourningBeforeSuccessionFollowup()
+    {
+        NarrativeProjectionModule module = new();
+        NarrativeProjectionState state = module.CreateInitialState();
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer domainEvents = new();
+        domainEvents.Emit(new DomainEventRecord(
+            KnownModuleKeys.FamilyCore,
+            FamilyCoreEventNames.ClanMemberDied,
+            "Clan Zhang entered mourning after the heir died.",
+            "1"));
+
+        WorldDiff diff = new();
+        diff.Record(KnownModuleKeys.FamilyCore, "张氏承祧之人身故，门内举哀，继嗣之议与房支争执随即翻起（死者名分3阶、承祧缺口1阶、身后牵挂1阶、丧葬拖累2阶、宗房余力短处0阶）。", "1");
+        diff.Record(KnownModuleKeys.FamilyCore, "张氏承祧转房，张仲承继宗祧。", "1");
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 11),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(191)),
+            queries,
+            domainEvents,
+            diff,
+            KernelState.Create(191));
+
+        module.RunMonth(new ModuleExecutionScope<NarrativeProjectionState>(state, context));
+
+        NarrativeNotificationState notice = state.Notifications.Single(static notification =>
+            notification.SourceModuleKey == KnownModuleKeys.FamilyCore
+            && notification.Title == "门内举哀");
+
+        Assert.That(notice.WhatNext, Does.Contain("丧次").And.Contain("新承祧"));
+        Assert.That(notice.WhatNext, Does.Contain("成年替补"));
+        Assert.That(notice.WhatNext, Does.Contain("房支后议"));
+    }
+
+    [Test]
+    public void RunMonth_HeirDeathWithoutAdultSuccessor_ProjectsSuccessionGapAndBranchPressure()
+    {
+        NarrativeProjectionModule module = new();
+        NarrativeProjectionState state = module.CreateInitialState();
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer domainEvents = new();
+        domainEvents.Emit(new DomainEventRecord(
+            KnownModuleKeys.FamilyCore,
+            FamilyCoreEventNames.ClanMemberDied,
+            "Clan Zhang entered mourning after the heir died.",
+            "1"));
+
+        WorldDiff diff = new();
+        diff.Record(KnownModuleKeys.FamilyCore, "张氏承祧之人身故，门内举哀，继嗣之议与房支争执随即翻起（死者名分3阶、承祧缺口3阶、身后牵挂1阶、丧葬拖累2阶、宗房余力短处1阶）。", "1");
+        diff.Record(KnownModuleKeys.SocialMemoryAndRelations, "诸房都在看谁先开口争后议，分房声气已压到祠堂。", "1");
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 11),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(193)),
+            queries,
+            domainEvents,
+            diff,
+            KernelState.Create(193));
+
+        module.RunMonth(new ModuleExecutionScope<NarrativeProjectionState>(state, context));
+
+        NarrativeNotificationState notice = state.Notifications.Single(static notification =>
+            notification.SourceModuleKey == KnownModuleKeys.FamilyCore
+            && notification.Title == "门内举哀");
+
+        Assert.That(notice.WhatNext, Does.Contain("先议定承祧名分"));
+        Assert.That(notice.WhatNext, Does.Contain("丧次").And.Contain("祭次"));
+        Assert.That(notice.WhatNext, Does.Contain("族老").And.Contain("房支后议"));
     }
 }

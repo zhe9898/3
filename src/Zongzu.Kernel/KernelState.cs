@@ -16,6 +16,9 @@ public sealed class KernelState
 
     public int NextSettlementId { get; set; }
 
+    /// <summary>SPATIAL_SKELETON_SPEC 搂2 — allocator for <see cref="RouteId"/> values.</summary>
+    public int NextRouteId { get; set; }
+
     public int NextInstitutionId { get; set; }
 
     public int NextMemoryId { get; set; }
@@ -42,6 +45,7 @@ public sealed class KernelState
             NextHouseholdId = 1,
             NextClanId = 1,
             NextSettlementId = 1,
+            NextRouteId = 1,
             NextInstitutionId = 1,
             NextMemoryId = 1,
             NextRelationshipEdgeId = 1,
@@ -59,6 +63,7 @@ public sealed class KernelState
             NextHouseholdId = NextHouseholdId,
             NextClanId = NextClanId,
             NextSettlementId = NextSettlementId,
+            NextRouteId = NextRouteId,
             NextInstitutionId = NextInstitutionId,
             NextMemoryId = NextMemoryId,
             NextRelationshipEdgeId = NextRelationshipEdgeId,

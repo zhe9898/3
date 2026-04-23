@@ -9,6 +9,29 @@ public sealed class OrderAndBanditryState : IModuleStateDescriptor
     public string ModuleKey => KnownModuleKeys.OrderAndBanditry;
 
     public List<SettlementDisorderState> Settlements { get; set; } = new();
+
+    public List<OutlawBandState> OutlawBands { get; set; } = new();
+}
+
+public sealed class OutlawBandState
+{
+    public string BandId { get; set; } = string.Empty;
+
+    public string BandName { get; set; } = string.Empty;
+
+    public SettlementId BaseSettlementId { get; set; }
+
+    public int Strength { get; set; }
+
+    public int GrainReserve { get; set; }
+
+    public int Cohesion { get; set; }
+
+    public int Legitimacy { get; set; }
+
+    public BandConcentration Concentration { get; set; } = BandConcentration.Scattered;
+
+    public List<string> ControlledRoutes { get; set; } = new();
 }
 
 public sealed class SettlementDisorderState

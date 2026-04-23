@@ -17,10 +17,13 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
 
     private static readonly string[] EventNames =
     [
-        "HouseholdDebtSpiked",
-        "MigrationStarted",
-        "LaborShortage",
-        "LivelihoodCollapsed",
+        PopulationEventNames.HouseholdDebtSpiked,
+        PopulationEventNames.MigrationStarted,
+        PopulationEventNames.LaborShortage,
+        PopulationEventNames.LivelihoodCollapsed,
+        PopulationEventNames.DeathByIllness,
+        PopulationEventNames.HouseholdSubsistencePressureChanged,
+        PopulationEventNames.HouseholdBurdenIncreased,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -29,11 +32,29 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         WarfareCampaignEventNames.CampaignPressureRaised,
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
+        // Step 1b gap 1: trade shock → household livelihood pressure (no-op dispatch)
+        TradeAndIndustryEventNames.RouteBusinessBlocked,
+        TradeAndIndustryEventNames.TradeLossOccurred,
+        TradeAndIndustryEventNames.TradeDebtDefaulted,
+        TradeAndIndustryEventNames.TradeProspered,
+        // Renzong thin chain: grain price spike → household subsistence pressure
+        TradeAndIndustryEventNames.GrainPriceSpike,
+        // Step 1b gap 3: world pulse → labor / livelihood (no-op dispatch)
+        WorldSettlementsEventNames.FloodRiskThresholdBreached,
+        WorldSettlementsEventNames.CorveeWindowChanged,
+        WorldSettlementsEventNames.TaxSeasonOpened,
+        // Step 1b gap 4: family branch / heir pressure → household count & sponsor shift (no-op dispatch)
+        FamilyCoreEventNames.BranchSeparationApproved,
+        FamilyCoreEventNames.HeirSecurityWeakened,
+        // Chain 5 thin slice: frontier strain → official supply requisition → household burden
+        OfficeAndCareerEventNames.OfficialSupplyRequisition,
     ];
+
+
 
     public override string ModuleKey => KnownModuleKeys.PopulationAndHouseholds;
 
-    public override int ModuleSchemaVersion => 1;
+    public override int ModuleSchemaVersion => 2;
 
     public override SimulationPhase Phase => SimulationPhase.PopulationPressure;
 
@@ -89,10 +110,11 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
 
             int prosperityPressure = settlement.Prosperity < 50 ? 1 : settlement.Prosperity >= 60 ? -1 : 0;
             int securityPressure = settlement.Security < 45 ? 1 : settlement.Security >= 55 ? -1 : 0;
+            int livelihoodPressure = ComputeLivelihoodDistressBaseline(household.Livelihood);
             int relief = clanSupport >= 60 ? 1 : 0;
             int drift = scope.Context.Random.NextInt(-1, 2);
 
-            household.Distress = Math.Clamp(household.Distress + prosperityPressure + securityPressure + drift - relief, 0, 100);
+            household.Distress = Math.Clamp(household.Distress + prosperityPressure + securityPressure + livelihoodPressure + drift - relief, 0, 100);
             household.DebtPressure = Math.Clamp(household.DebtPressure + ComputeDebtDelta(household.Distress), 0, 100);
             household.LaborCapacity = Math.Clamp(household.LaborCapacity + ComputeLaborDelta(settlement.Prosperity, household.Distress), 0, 100);
             household.MigrationRisk = Math.Clamp(household.MigrationRisk + ComputeMigrationDelta(settlement.Security, household.Distress), 0, 100);
@@ -104,24 +126,26 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
 
             if (oldDebtPressure < 70 && household.DebtPressure >= 70)
             {
-                scope.Emit("HouseholdDebtSpiked", $"{household.HouseholdName}债压陡起。");
+                scope.Emit(PopulationEventNames.HouseholdDebtSpiked, $"{household.HouseholdName}债压陡起。");
             }
 
             if (oldLaborCapacity >= 30 && household.LaborCapacity < 30)
             {
-                scope.Emit("LaborShortage", $"{household.HouseholdName}丁力不继。");
+                scope.Emit(PopulationEventNames.LaborShortage, $"{household.HouseholdName}丁力不继。");
             }
 
             if (oldMigrationRisk < 80 && household.MigrationRisk >= 80 && !wasMigrating)
             {
-                scope.Emit("MigrationStarted", $"{household.HouseholdName}已起迁徙之念。");
+                scope.Emit(PopulationEventNames.MigrationStarted, $"{household.HouseholdName}已起迁徙之念。");
             }
 
             if (oldDebtPressure < 85 && household.DebtPressure >= 85 && household.Distress >= 80)
             {
-                scope.Emit("LivelihoodCollapsed", $"{household.HouseholdName}生计顿敝。");
+                scope.Emit(PopulationEventNames.LivelihoodCollapsed, $"{household.HouseholdName}生计顿敝。");
             }
         }
+
+        AdvanceIllnessAndAdjudicateDeaths(scope);
 
         RebuildSettlementSummaries(scope.State);
     }
@@ -186,6 +210,11 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
 
     public override void HandleEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
     {
+        DispatchTradeShockEvents(scope);
+        DispatchWorldPulseEvents(scope);
+        DispatchFamilyBranchEvents(scope);
+        DispatchOfficeSupplyEvents(scope);
+
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
         {
@@ -239,7 +268,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                     .OrderByDescending(static household => household.MigrationRisk)
                     .ThenBy(static household => household.Id.Value)
                     .First();
-                scope.Emit("MigrationStarted", $"{migratingHousehold.HouseholdName}受战后余波所逼，已有远徙之意。", bundle.SettlementId.Value.ToString());
+                scope.Emit(PopulationEventNames.MigrationStarted, $"{migratingHousehold.HouseholdName}受战后余波所逼，已有远徙之意。", bundle.SettlementId.Value.ToString());
             }
 
             if (households.Any(static household => household.DebtPressure >= 85 && household.Distress >= 80))
@@ -248,13 +277,172 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                     .OrderByDescending(static household => household.DebtPressure + household.Distress)
                     .ThenBy(static household => household.Id.Value)
                     .First();
-                scope.Emit("LivelihoodCollapsed", $"{collapsedHousehold.HouseholdName}受{campaign.AnchorSettlementName}战后余波牵压，生计顿敝。", bundle.SettlementId.Value.ToString());
+                scope.Emit(PopulationEventNames.LivelihoodCollapsed, $"{collapsedHousehold.HouseholdName}受{campaign.AnchorSettlementName}战后余波牵压，生计顿敝。", bundle.SettlementId.Value.ToString());
             }
         }
 
         if (anyHouseholdChanged)
         {
             RebuildSettlementSummaries(scope.State);
+        }
+    }
+
+    private static void DispatchTradeShockEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Step 1b gap 1 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口（Step 2 可吃）：违约方所属聚落的 debt/distress/livelihood；家户 sponsor clan 救济余力；
+        // 当地粮价波动；徭役窗口；灾害窗口；季节带。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case TradeAndIndustryEventNames.RouteBusinessBlocked:
+                case TradeAndIndustryEventNames.TradeLossOccurred:
+                case TradeAndIndustryEventNames.TradeDebtDefaulted:
+                case TradeAndIndustryEventNames.TradeProspered:
+                    // TODO Step 2: 按维度入口调整相关 household 的 DebtLoad / LivelihoodPressure / MigrationRisk。
+                    break;
+
+                case TradeAndIndustryEventNames.GrainPriceSpike:
+                    ApplyGrainPriceSubsistencePressure(scope, domainEvent);
+                    break;
+            }
+        }
+    }
+
+    private static void ApplyGrainPriceSubsistencePressure(
+        ModuleEventHandlingScope<PopulationAndHouseholdsState> scope,
+        IDomainEvent domainEvent)
+    {
+        // Thin chain: grain price spike increases household distress.
+        // Full formula (Step 3) will consider household grain store, livelihood type, etc.
+        SettlementId? affectedSettlementId = TryParseSettlementId(domainEvent.EntityKey);
+        foreach (PopulationHouseholdState household in scope.State.Households)
+        {
+            if (affectedSettlementId.HasValue && household.SettlementId != affectedSettlementId.Value)
+            {
+                continue;
+            }
+
+            int oldDistress = household.Distress;
+            household.Distress = Math.Clamp(household.Distress + 12, 0, 100);
+
+            if (oldDistress < 60 && household.Distress >= 60)
+            {
+                scope.Emit(
+                    PopulationEventNames.HouseholdSubsistencePressureChanged,
+                    $"{household.HouseholdName}粮价陡起，生计吃紧。",
+                    household.Id.Value.ToString());
+            }
+        }
+    }
+
+    private static SettlementId? TryParseSettlementId(string? entityKey)
+    {
+        return int.TryParse(entityKey, out int settlementId)
+            ? new SettlementId(settlementId)
+            : null;
+    }
+
+    private static void DispatchWorldPulseEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Step 1b gap 3 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：洪灾 / 徭役窗口落在哪个聚落；家户 sponsor clan 支撑力；家底 ratio；季节带。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case WorldSettlementsEventNames.FloodRiskThresholdBreached:
+                case WorldSettlementsEventNames.CorveeWindowChanged:
+                    // TODO Step 2: 按维度入口调整 LaborPressure / LivelihoodPressure / MigrationRisk。
+                    break;
+
+                case WorldSettlementsEventNames.TaxSeasonOpened:
+                    ApplyTaxSeasonPressure(scope);
+                    break;
+            }
+        }
+    }
+
+    private static void ApplyTaxSeasonPressure(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Thin chain: tax season increases debt pressure for all households.
+        // Full formula (Step 3) will consider household grade, seasonal adjustment, etc.
+        foreach (PopulationHouseholdState household in scope.State.Households)
+        {
+            int oldDebt = household.DebtPressure;
+            household.DebtPressure = Math.Clamp(household.DebtPressure + 15, 0, 100);
+
+            if (oldDebt < 70 && household.DebtPressure >= 70)
+            {
+                scope.Emit(
+                    PopulationEventNames.HouseholdDebtSpiked,
+                    $"{household.HouseholdName}税役加急，债压陡起。",
+                    household.Id.Value.ToString());
+            }
+        }
+    }
+
+    private static void DispatchFamilyBranchEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Step 1b gap 4 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：分房 clan 家底 / 聚落容纳；旧家 sponsor 关系；是否可迁移；新分出支系与原聚落距离；
+        // 四季带 / 战后恢复期。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case FamilyCoreEventNames.BranchSeparationApproved:
+                case FamilyCoreEventNames.HeirSecurityWeakened:
+                    // TODO Step 2: 按维度入口调整 household sponsor / 新增户 / MigrationRisk。
+                    break;
+            }
+        }
+    }
+
+    private static void DispatchOfficeSupplyEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Chain 5 thin slice: official supply requisition raises household burden.
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType != OfficeAndCareerEventNames.OfficialSupplyRequisition)
+            {
+                continue;
+            }
+
+            if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
+            {
+                continue;
+            }
+
+            SettlementId settlementId = new(settlementIdValue);
+            foreach (PopulationHouseholdState household in scope.State.Households
+                .Where(h => h.SettlementId == settlementId)
+                .OrderBy(static h => h.Id.Value))
+            {
+                int oldDistress = household.Distress;
+                int oldDebt = household.DebtPressure;
+                household.Distress = Math.Clamp(household.Distress + 5, 0, 100);
+                household.DebtPressure = Math.Clamp(household.DebtPressure + 3, 0, 100);
+
+                if (oldDistress < 80 && household.Distress >= 80)
+                {
+                    scope.Emit(
+                        PopulationEventNames.HouseholdBurdenIncreased,
+                        $"{household.HouseholdName}军需催迫，家户负担加重。",
+                        household.Id.Value.ToString(),
+                        new Dictionary<string, string>
+                        {
+                            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseOfficialSupply,
+                            [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+                            [DomainEventMetadataKeys.SettlementId] = settlementId.Value.ToString(),
+                            [DomainEventMetadataKeys.DistressBefore] = oldDistress.ToString(),
+                            [DomainEventMetadataKeys.DistressAfter] = household.Distress.ToString(),
+                            [DomainEventMetadataKeys.DebtBefore] = oldDebt.ToString(),
+                            [DomainEventMetadataKeys.DebtAfter] = household.DebtPressure.ToString(),
+                        });
+                }
+            }
         }
     }
 
@@ -363,6 +551,102 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         state.Settlements = summaries;
     }
 
+    private static int ComputeLivelihoodDistressBaseline(LivelihoodType livelihood)
+    {
+        return livelihood switch
+        {
+            LivelihoodType.Vagrant => 3,
+            LivelihoodType.SeasonalMigrant => 2,
+            LivelihoodType.Tenant => 1,
+            LivelihoodType.HiredLabor => 1,
+            LivelihoodType.Boatman => 1,
+            LivelihoodType.DomesticServant => 0,
+            LivelihoodType.YamenRunner => 0,
+            LivelihoodType.Smallholder => 0,
+            LivelihoodType.Artisan => -1,
+            LivelihoodType.PettyTrader => -1,
+            _ => 0,
+        };
+    }
+
+    private static void AdvanceIllnessAndAdjudicateDeaths(ModuleExecutionScope<PopulationAndHouseholdsState> scope)
+    {
+        if (scope.State.Memberships.Count == 0)
+        {
+            return;
+        }
+
+        IPersonRegistryCommands registryCommands = scope.GetRequiredQuery<IPersonRegistryCommands>();
+        Dictionary<HouseholdId, PopulationHouseholdState> householdsById = scope.State.Households
+            .ToDictionary(static household => household.Id, static household => household);
+
+        List<HouseholdMembershipState> deceased = new();
+
+        foreach (HouseholdMembershipState membership in scope.State.Memberships.OrderBy(static member => member.PersonId.Value))
+        {
+            if (!householdsById.TryGetValue(membership.HouseholdId, out PopulationHouseholdState? household))
+            {
+                continue;
+            }
+
+            int distressPressure = household.Distress >= 70 ? 2 : household.Distress >= 45 ? 1 : 0;
+            int resilienceBuffer = membership.HealthResilience >= 70 ? 1 : membership.HealthResilience <= 30 ? -1 : 0;
+            int healthScore = (int)membership.Health + distressPressure - resilienceBuffer;
+
+            HealthStatus nextHealth = healthScore switch
+            {
+                <= 1 => HealthStatus.Healthy,
+                2 => HealthStatus.Ailing,
+                3 => HealthStatus.Ill,
+                4 => HealthStatus.Bedridden,
+                _ => HealthStatus.Moribund,
+            };
+
+            if (nextHealth >= HealthStatus.Ill)
+            {
+                membership.IllnessMonths = Math.Min(membership.IllnessMonths + 1, 24);
+                membership.Activity = PersonActivity.Convalescing;
+            }
+            else
+            {
+                membership.IllnessMonths = Math.Max(membership.IllnessMonths - 1, 0);
+                if (membership.Activity == PersonActivity.Convalescing && nextHealth == HealthStatus.Healthy)
+                {
+                    membership.Activity = PersonActivity.Idle;
+                }
+            }
+
+            membership.Health = nextHealth;
+
+            if (nextHealth == HealthStatus.Moribund && membership.IllnessMonths >= 3)
+            {
+                if (registryCommands.MarkDeceased(scope.Context, membership.PersonId))
+                {
+                    scope.Emit(
+                        PopulationEventNames.DeathByIllness,
+                        $"{household.HouseholdName}一人病殁。",
+                        membership.PersonId.Value.ToString());
+                    scope.RecordDiff(
+                        $"{household.HouseholdName}一人病殁，宅内添一分丧气。",
+                        household.Id.Value.ToString());
+                    deceased.Add(membership);
+                }
+            }
+        }
+
+        if (deceased.Count > 0)
+        {
+            foreach (HouseholdMembershipState member in deceased)
+            {
+                scope.State.Memberships.Remove(member);
+                if (householdsById.TryGetValue(member.HouseholdId, out PopulationHouseholdState? household))
+                {
+                    household.DependentCount = Math.Max(0, household.DependentCount - 1);
+                }
+            }
+        }
+    }
+
     private sealed class PopulationQueries : IPopulationAndHouseholdsQueries
     {
         private readonly PopulationAndHouseholdsState _state;
@@ -400,6 +684,79 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 .ToArray();
         }
 
+        public IReadOnlyList<HouseholdMembershipSnapshot> GetMemberships()
+        {
+            return _state.Memberships
+                .OrderBy(static member => member.PersonId.Value)
+                .Select(CloneMembership)
+                .ToArray();
+        }
+
+        public IReadOnlyList<HouseholdMembershipSnapshot> GetMembershipsByHousehold(HouseholdId householdId)
+        {
+            return _state.Memberships
+                .Where(member => member.HouseholdId == householdId)
+                .OrderBy(static member => member.PersonId.Value)
+                .Select(CloneMembership)
+                .ToArray();
+        }
+
+        public bool TryGetMembership(PersonId personId, out HouseholdMembershipSnapshot membership)
+        {
+            HouseholdMembershipState? found = _state.Memberships.SingleOrDefault(member => member.PersonId == personId);
+            if (found is null)
+            {
+                membership = new HouseholdMembershipSnapshot();
+                return false;
+            }
+
+            membership = CloneMembership(found);
+            return true;
+        }
+
+        public IReadOnlyList<LaborPoolEntrySnapshot> GetLaborPools()
+        {
+            return _state.LaborPools
+                .OrderBy(static entry => entry.SettlementId.Value)
+                .Select(static entry => new LaborPoolEntrySnapshot
+                {
+                    SettlementId = entry.SettlementId,
+                    AvailableLabor = entry.AvailableLabor,
+                    LaborDemand = entry.LaborDemand,
+                    SeasonalSurplus = entry.SeasonalSurplus,
+                    WageLevel = entry.WageLevel,
+                })
+                .ToArray();
+        }
+
+        public IReadOnlyList<MarriagePoolEntrySnapshot> GetMarriagePools()
+        {
+            return _state.MarriagePools
+                .OrderBy(static entry => entry.SettlementId.Value)
+                .Select(static entry => new MarriagePoolEntrySnapshot
+                {
+                    SettlementId = entry.SettlementId,
+                    EligibleMales = entry.EligibleMales,
+                    EligibleFemales = entry.EligibleFemales,
+                    MatchDifficulty = entry.MatchDifficulty,
+                })
+                .ToArray();
+        }
+
+        public IReadOnlyList<MigrationPoolEntrySnapshot> GetMigrationPools()
+        {
+            return _state.MigrationPools
+                .OrderBy(static entry => entry.SettlementId.Value)
+                .Select(static entry => new MigrationPoolEntrySnapshot
+                {
+                    SettlementId = entry.SettlementId,
+                    OutflowPressure = entry.OutflowPressure,
+                    InflowPressure = entry.InflowPressure,
+                    FloatingPopulation = entry.FloatingPopulation,
+                })
+                .ToArray();
+        }
+
         private static HouseholdPressureSnapshot CloneHousehold(PopulationHouseholdState household)
         {
             return new HouseholdPressureSnapshot
@@ -408,11 +765,18 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 HouseholdName = household.HouseholdName,
                 SettlementId = household.SettlementId,
                 SponsorClanId = household.SponsorClanId,
+                Livelihood = household.Livelihood,
                 Distress = household.Distress,
                 DebtPressure = household.DebtPressure,
                 LaborCapacity = household.LaborCapacity,
                 MigrationRisk = household.MigrationRisk,
                 IsMigrating = household.IsMigrating,
+                LandHolding = household.LandHolding,
+                GrainStore = household.GrainStore,
+                ToolCondition = household.ToolCondition,
+                ShelterQuality = household.ShelterQuality,
+                DependentCount = household.DependentCount,
+                LaborerCount = household.LaborerCount,
             };
         }
 
@@ -425,6 +789,20 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 LaborSupply = settlement.LaborSupply,
                 MigrationPressure = settlement.MigrationPressure,
                 MilitiaPotential = settlement.MilitiaPotential,
+            };
+        }
+
+        private static HouseholdMembershipSnapshot CloneMembership(HouseholdMembershipState membership)
+        {
+            return new HouseholdMembershipSnapshot
+            {
+                PersonId = membership.PersonId,
+                HouseholdId = membership.HouseholdId,
+                Livelihood = membership.Livelihood,
+                HealthResilience = membership.HealthResilience,
+                Health = membership.Health,
+                IllnessMonths = membership.IllnessMonths,
+                Activity = membership.Activity,
             };
         }
     }

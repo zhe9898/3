@@ -10,6 +10,7 @@ It compresses them into one connected pass.
 
 Primary supporting documents remain:
 - `PRODUCT_SCOPE.md`
+- `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`
 - `RULES_DRIVEN_LIVING_WORLD.md`
 - `SIMULATION_FIDELITY_MODEL.md`
 - `SIMULATION.md`
@@ -26,6 +27,7 @@ Zongzu is a Northern Song-inspired, multi-route, rules-driven simulation of a li
 The player is not a god and not always a secure elite manager.
 The player enters the world through a household-side or lineage-side position inside a society that keeps moving on its own.
 Households, lineages, commoners, markets, offices, local order, conflict, and wider imperial pressure all remain part of one linked field.
+Long-run play may let that field bend history itself through rebellion, polity formation, succession struggle, usurpation, restoration, or dynasty repair, but only through earned rule chains rather than free timeline editing.
 The backend is a modular monolith with one scheduler, one save root, one world-state container, and multiple authoritative modules with owned state and explicit contracts.
 The shell must feel like a playable hall-and-desk game, not a dashboard, poster, or platform tool.
 
@@ -71,9 +73,14 @@ Important route families include:
 - social governance
 - disorder, shadow survival, and coercive routes
 - later military and macro-governance pressure
+- later rebellion / polity formation / dynasty-cycle pressure
 
 Downward mobility is mandatory.
 A world where everyone important stays above the floor is not alive.
+
+History-change is also in scope.
+The player may eventually alter regional or throne-facing history when household, lineage, office, force, logistics, legitimacy, public belief, and memory have created enough reach.
+This is not god control; it is bounded leverage at larger scale.
 
 ### 4. The backend must stay modular and low-coupling
 

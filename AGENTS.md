@@ -16,6 +16,7 @@ The game must preserve these engineering truths:
 - modules own their own state
 - cross-module coordination uses **Query / Command / DomainEvent**
 - authoritative simulation remains deterministic
+- modern code, module, system, Unity, and content standards are documented and enforced progressively
 - save data is versioned at both root and module levels
 - MVP foundations are the substrate for later releases
 
@@ -27,25 +28,26 @@ The game must preserve these engineering truths:
 5. `docs/VERSION_ALIGNMENT.md`
 6. `docs/TECH_STACK.md`
 7. `docs/ENGINEERING_RULES.md`
-8. `docs/STATIC_BACKEND_FIRST.md`
-9. `docs/ARCHITECTURE.md`
-10. `docs/MODULE_BOUNDARIES.md`
-11. `docs/EXTENSIBILITY_MODEL.md`
-12. `docs/MODULE_INTEGRATION_RULES.md`
-13. `docs/SCHEMA_NAMESPACE_RULES.md`
-14. `docs/DATA_SCHEMA.md`
-15. `docs/SOCIAL_STRATA_AND_PATHWAYS.md`
-16. `docs/SIMULATION.md`
-17. `docs/PLAYER_SCOPE.md`
-18. `docs/RELATIONSHIPS_AND_GRUDGES.md`
-19. `docs/CONFLICT_AND_FORCE.md`
-20. `docs/VISUAL_FORM_AND_INTERACTION.md`
-21. `docs/UI_AND_PRESENTATION.md`
-22. `docs/MVP.md`
-23. `docs/IMPLEMENTATION_PHASES.md`
-24. `docs/ACCEPTANCE_TESTS.md`
-25. `docs/CODEX_TASK_PROMPTS.md`
-26. `docs/CODEX_MASTER_SPEC.md`
+8. `docs/MODERN_GAME_ENGINEERING_STANDARDS.md`
+9. `docs/STATIC_BACKEND_FIRST.md`
+10. `docs/ARCHITECTURE.md`
+11. `docs/MODULE_BOUNDARIES.md`
+12. `docs/EXTENSIBILITY_MODEL.md`
+13. `docs/MODULE_INTEGRATION_RULES.md`
+14. `docs/SCHEMA_NAMESPACE_RULES.md`
+15. `docs/DATA_SCHEMA.md`
+16. `docs/SOCIAL_STRATA_AND_PATHWAYS.md`
+17. `docs/SIMULATION.md`
+18. `docs/PLAYER_SCOPE.md`
+19. `docs/RELATIONSHIPS_AND_GRUDGES.md`
+20. `docs/CONFLICT_AND_FORCE.md`
+21. `docs/VISUAL_FORM_AND_INTERACTION.md`
+22. `docs/UI_AND_PRESENTATION.md`
+23. `docs/MVP.md`
+24. `docs/IMPLEMENTATION_PHASES.md`
+25. `docs/ACCEPTANCE_TESTS.md`
+26. `docs/CODEX_TASK_PROMPTS.md`
+27. `docs/CODEX_MASTER_SPEC.md`
 
 For large tasks also read:
 - `PLANS.md`

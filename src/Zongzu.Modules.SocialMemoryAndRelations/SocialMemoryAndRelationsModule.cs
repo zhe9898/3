@@ -18,10 +18,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
     private static readonly string[] EventNames =
     [
-        "GrudgeEscalated",
-        "GrudgeSoftened",
-        "FavorIncurred",
-        "ClanNarrativeUpdated",
+        SocialMemoryAndRelationsEventNames.GrudgeEscalated,
+        SocialMemoryAndRelationsEventNames.GrudgeSoftened,
+        SocialMemoryAndRelationsEventNames.FavorIncurred,
+        SocialMemoryAndRelationsEventNames.ClanNarrativeUpdated,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -30,11 +30,27 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         WarfareCampaignEventNames.CampaignPressureRaised,
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
+        // Step 1b gap 1: trade shock → clan narrative memory (no-op dispatch)
+        TradeAndIndustryEventNames.RouteBusinessBlocked,
+        TradeAndIndustryEventNames.TradeLossOccurred,
+        TradeAndIndustryEventNames.TradeDebtDefaulted,
+        TradeAndIndustryEventNames.TradeProspered,
+        // Step 1b gap 2: violent death → cross-generation blood-feud memory (no-op dispatch)
+        DeathCauseEventNames.DeathByViolence,
+        // STEP2A / A5: infant/child illness death → child_loss memory + fear pressure.
+        // 来自 FamilyCore 的 DeathByIllness 表婴幼儿病殁（ModuleKey == FamilyCore），
+        // Population 的 DeathByIllness 表族外佃户 / 成人病殁，不在此通道。
+        DeathCauseEventNames.DeathByIllness,
+        // Step 1b gap 4: branch split / heir weakened → clan narrative (no-op dispatch)
+        FamilyCoreEventNames.BranchSeparationApproved,
+        FamilyCoreEventNames.HeirSecurityWeakened,
     ];
+
+
 
     public override string ModuleKey => KnownModuleKeys.SocialMemoryAndRelations;
 
-    public override int ModuleSchemaVersion => 1;
+    public override int ModuleSchemaVersion => 2;
 
     public override SimulationPhase Phase => SimulationPhase.SocialMemory;
 
@@ -105,6 +121,8 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
         IReadOnlyList<HouseholdPressureSnapshot> households = populationQueries.GetHouseholds();
 
+        AdvanceMemoryLifecycle(scope.State);
+
         foreach (ClanSnapshot clan in clans.OrderBy(static clan => clan.Id.Value))
         {
             ClanNarrativeState narrative = GetOrCreateNarrative(scope.State, clan.Id);
@@ -130,27 +148,32 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
             if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
             {
-                scope.Emit("GrudgeEscalated", $"{clan.ClanName}旧怨更深。");
-                AddMemory(scope.State, clan.Id, "hardship", narrative.GrudgePressure, true, $"{clan.ClanName}因民困与家计艰难，旧怨更深。", scope.Context);
+                scope.Emit(SocialMemoryAndRelationsEventNames.GrudgeEscalated, $"{clan.ClanName}旧怨更深。");
+                AddMemory(scope.State, clan.Id, "hardship", MemoryType.Grudge, MemorySubtype.WealthGrudge, "clan.hardship", 2, narrative.GrudgePressure, true, $"{clan.ClanName}因民困与家计艰难，旧怨更深。", scope.Context);
             }
 
             if (previousGrudge >= 45 && narrative.GrudgePressure < 45)
             {
-                scope.Emit("GrudgeSoftened", $"{clan.ClanName}旧怨稍缓。");
-                AddMemory(scope.State, clan.Id, "conciliation", Math.Max(10, narrative.FavorBalance), true, $"{clan.ClanName}因接济与调处，怨气稍缓。", scope.Context);
+                scope.Emit(SocialMemoryAndRelationsEventNames.GrudgeSoftened, $"{clan.ClanName}旧怨稍缓。");
+                AddMemory(scope.State, clan.Id, "conciliation", MemoryType.Favor, MemorySubtype.ReliefFavor, "clan.relief", 3, Math.Max(10, narrative.FavorBalance), true, $"{clan.ClanName}因接济与调处，怨气稍缓。", scope.Context);
             }
 
             if (previousFavor < 10 && narrative.FavorBalance >= 10)
             {
-                scope.Emit("FavorIncurred", $"{clan.ClanName}人情债渐著。");
+                scope.Emit(SocialMemoryAndRelationsEventNames.FavorIncurred, $"{clan.ClanName}人情债渐著。");
             }
 
-            scope.Emit("ClanNarrativeUpdated", $"{clan.ClanName}乡议口气有变。");
+            scope.Emit(SocialMemoryAndRelationsEventNames.ClanNarrativeUpdated, $"{clan.ClanName}乡议口气有变。");
         }
     }
 
     public override void HandleEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
     {
+        DispatchTradeShockEvents(scope);
+        DispatchViolentDeathEvents(scope);
+        DispatchFamilyBranchEvents(scope);
+        DispatchChildLossEvents(scope);
+
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
         {
@@ -197,6 +220,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                     scope.State,
                     clan.Id,
                     bundle.CampaignAftermathRegistered ? "campaign-aftermath" : "campaign-pressure",
+                    MemoryType.Fear,
+                    MemorySubtype.WarDread,
+                    bundle.CampaignAftermathRegistered ? "campaign.aftermath" : "campaign.pressure",
+                    bundle.CampaignAftermathRegistered ? 1 : 2,
                     Math.Max(narrative.FearPressure, narrative.GrudgePressure),
                     true,
                     $"{campaign.AnchorSettlementName}战后余波把{campaign.FrontLabel}与{campaign.LastAftermathSummary}一并压进了{clan.ClanName}的旧忆里。",
@@ -204,8 +231,127 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
                 if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
                 {
-                    scope.Emit("GrudgeEscalated", $"战后余波使{clan.ClanName}旧怨更炽。", clan.Id.Value.ToString());
+                    scope.Emit(SocialMemoryAndRelationsEventNames.GrudgeEscalated, $"战后余波使{clan.ClanName}旧怨更炽。", clan.Id.Value.ToString());
                 }
+            }
+        }
+    }
+
+    private static void DispatchViolentDeathEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        // Step 1b gap 2 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：加害方 / 受害方所属 clan；两家既有 grudge / favor；事件规模（群殴/单伤/命案）；
+        // 是否战时 / 战后余波；地方权威是否介入（Office AuthorityTier）。暴力致死在族叙事里应当比病死更
+        // 容易沉淀为跨代血仇——Step 2 填函数形状。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType == DeathCauseEventNames.DeathByViolence)
+            {
+                // TODO Step 2: 更新 ClanNarrativeState / 跨代 grudge / FeudMemory。
+            }
+        }
+    }
+
+    /// <summary>
+    /// STEP2A / A5 — 婴幼儿病殁（FamilyCore 发 <c>DeathByIllness</c> 且 EntityKey 为 PersonId）
+    /// 在死者所属 clan 沉淀 child_loss 记忆。skill
+    /// <c>fertility-demography-infant-mortality</c>：婴儿死不塌成单一 sadness，
+    /// 应产出 fear / ritual / inheritance anxiety。此处提 <c>FearPressure</c> 一跳，
+    /// 添一条 <see cref="MemoryType.Fear"/> / <see cref="MemorySubtype.MourningDebt"/> 记忆。
+    ///
+    /// <para>只消费来自 <see cref="KnownModuleKeys.FamilyCore"/> 的 DeathByIllness（婴幼儿通道）；
+    /// Population 发的同名事件是族外佃户 / 成人病殁，跳过。</para>
+    /// </summary>
+    private static void DispatchChildLossEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        IFamilyCoreQueries? familyQueries = null;
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType != DeathCauseEventNames.DeathByIllness) continue;
+            if (!string.Equals(domainEvent.ModuleKey, KnownModuleKeys.FamilyCore, StringComparison.Ordinal)) continue;
+            if (string.IsNullOrEmpty(domainEvent.EntityKey)) continue;
+            if (!int.TryParse(domainEvent.EntityKey, out int personIdValue)) continue;
+
+            familyQueries ??= scope.GetRequiredQuery<IFamilyCoreQueries>();
+            FamilyPersonSnapshot? person = familyQueries.FindPerson(new PersonId(personIdValue));
+            if (person is null) continue;
+
+            ClanNarrativeState narrative = GetOrCreateNarrative(scope.State, person.ClanId);
+            narrative.FearPressure = Math.Clamp(narrative.FearPressure + 3, 0, 100);
+
+            AddMemory(
+                scope.State,
+                person.ClanId,
+                "child_loss",
+                MemoryType.Fear,
+                MemorySubtype.MourningDebt,
+                "clan.child_loss",
+                2,
+                Math.Max(25, narrative.FearPressure),
+                true,
+                $"{person.GivenName}夭折，堂上哀惧未平，再育与祭次之议同压。",
+                scope.Context);
+        }
+    }
+
+    private static void DispatchFamilyBranchEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        // Step 1b gap 4 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口：分家规模（主房 / 旁支）；分出方与原房既有 grudge / favor；分家是否伴随 shame；
+        // 邻族是否围观；当地公议（PublicLife）热度。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case FamilyCoreEventNames.BranchSeparationApproved:
+                case FamilyCoreEventNames.HeirSecurityWeakened:
+                    // TODO Step 2: 更新 ClanNarrativeState / EventMemoryState。
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// STEP2A / A4 — 跨 clan 婚议 → 双方 clan 的 <c>FavorBalance</c> 各加一跳；
+    /// 若越过 10 的阈值发 <c>FavorIncurred</c>。婚议本身即人情债的生成事件。
+    /// EntityKey 即本 clan 的 ClanId（FamilyCore 发 MarriageAllianceArranged 时
+    /// 双方 clan 各发一条）。
+    /// </summary>
+    private static void DispatchMarriageAllianceEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType != FamilyCoreEventNames.MarriageAllianceArranged) continue;
+            if (string.IsNullOrEmpty(domainEvent.EntityKey)) continue;
+            if (!int.TryParse(domainEvent.EntityKey, out int clanIdValue)) continue;
+
+            ClanId clanId = new(clanIdValue);
+            ClanNarrativeState narrative = GetOrCreateNarrative(scope.State, clanId);
+            int previousFavor = narrative.FavorBalance;
+            narrative.FavorBalance = Math.Clamp(narrative.FavorBalance + 3, -100, 100);
+
+            if (previousFavor < 10 && narrative.FavorBalance >= 10)
+            {
+                scope.Emit(SocialMemoryAndRelationsEventNames.FavorIncurred, $"{clanId.Value}族因议婚人情渐著。");
+            }
+        }
+    }
+
+    private static void DispatchTradeShockEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
+    {
+        // Step 1b gap 1 — thin dispatch only. No state change, no Emit, no diff.
+        // 维度入口（Step 2 可吃）：违约方与被违约方既有 grudge/favor；事件规模；当地粮价与治安；
+        // 是否发生在灾害窗口；两家是否既有姻亲/世交。
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            switch (domainEvent.EventType)
+            {
+                case TradeAndIndustryEventNames.RouteBusinessBlocked:
+                case TradeAndIndustryEventNames.TradeLossOccurred:
+                case TradeAndIndustryEventNames.TradeDebtDefaulted:
+                case TradeAndIndustryEventNames.TradeProspered:
+                    // TODO Step 2: 按维度入口更新 ClanNarrativeState / EventMemoryState。
+                    break;
             }
         }
     }
@@ -439,6 +585,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         SocialMemoryAndRelationsState state,
         ClanId clanId,
         string kind,
+        MemoryType type,
+        MemorySubtype subtype,
+        string causeKey,
+        int monthlyDecay,
         int intensity,
         bool isPublic,
         string summary,
@@ -455,16 +605,45 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
             return;
         }
 
+        int clampedIntensity = Math.Clamp(intensity, 0, 100);
         state.Memories.Add(new MemoryRecordState
         {
             Id = KernelIdAllocator.NextMemory(context.KernelState),
             SubjectClanId = clanId,
             Kind = kind,
-            Intensity = Math.Clamp(intensity, 0, 100),
+            Intensity = clampedIntensity,
             IsPublic = isPublic,
             CreatedAt = context.CurrentDate,
             Summary = summary,
+            Type = type,
+            Subtype = subtype,
+            SourceKind = MemorySubjectKind.Clan,
+            SourceClanId = clanId,
+            TargetKind = MemorySubjectKind.Clan,
+            TargetClanId = clanId,
+            OriginDate = context.CurrentDate,
+            CauseKey = causeKey,
+            Weight = clampedIntensity,
+            MonthlyDecay = Math.Max(1, monthlyDecay),
+            LifecycleState = MemoryLifecycleState.Active,
         });
+    }
+
+    private static void AdvanceMemoryLifecycle(SocialMemoryAndRelationsState state)
+    {
+        foreach (MemoryRecordState memory in state.Memories)
+        {
+            if (memory.LifecycleState != MemoryLifecycleState.Active)
+            {
+                continue;
+            }
+
+            memory.Weight = Math.Max(0, memory.Weight - Math.Max(1, memory.MonthlyDecay));
+            if (memory.Weight == 0)
+            {
+                memory.LifecycleState = MemoryLifecycleState.Dormant;
+            }
+        }
     }
 
     private sealed class SocialMemoryQueries : ISocialMemoryAndRelationsQueries
@@ -488,6 +667,62 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                 .OrderBy(static narrative => narrative.ClanId.Value)
                 .Select(narrative => CloneNarrative(narrative, _state.Memories))
                 .ToArray();
+        }
+
+        public IReadOnlyList<SocialMemoryEntrySnapshot> GetMemories()
+        {
+            return _state.Memories
+                .OrderBy(static memory => memory.Id.Value)
+                .Select(CloneMemory)
+                .ToArray();
+        }
+
+        public IReadOnlyList<SocialMemoryEntrySnapshot> GetMemoriesByClan(ClanId clanId)
+        {
+            return _state.Memories
+                .Where(memory => memory.SubjectClanId == clanId)
+                .OrderBy(static memory => memory.Id.Value)
+                .Select(CloneMemory)
+                .ToArray();
+        }
+
+        public IReadOnlyList<DormantStubSnapshot> GetDormantStubs()
+        {
+            return _state.DormantStubs
+                .OrderBy(static stub => stub.PersonId.Value)
+                .Select(static stub => new DormantStubSnapshot
+                {
+                    PersonId = stub.PersonId,
+                    LastKnownSettlementId = stub.LastKnownSettlementId,
+                    LastKnownRole = stub.LastKnownRole,
+                    ActiveMemoryIds = stub.ActiveMemoryIds.ToArray(),
+                    LastSeen = stub.LastSeen,
+                    IsEligibleForReemergence = stub.IsEligibleForReemergence,
+                })
+                .ToArray();
+        }
+
+        private static SocialMemoryEntrySnapshot CloneMemory(MemoryRecordState memory)
+        {
+            return new SocialMemoryEntrySnapshot
+            {
+                Id = memory.Id,
+                Type = memory.Type,
+                Subtype = memory.Subtype,
+                SourceKind = memory.SourceKind,
+                SourcePersonId = memory.SourcePersonId,
+                SourceClanId = memory.SourceClanId,
+                TargetKind = memory.TargetKind,
+                TargetPersonId = memory.TargetPersonId,
+                TargetClanId = memory.TargetClanId,
+                OriginDate = memory.OriginDate,
+                CauseKey = memory.CauseKey,
+                Weight = memory.Weight,
+                MonthlyDecay = memory.MonthlyDecay,
+                IsPublic = memory.IsPublic,
+                State = memory.LifecycleState,
+                Summary = memory.Summary,
+            };
         }
 
         private static ClanNarrativeSnapshot CloneNarrative(ClanNarrativeState narrative, IReadOnlyCollection<MemoryRecordState> memories)

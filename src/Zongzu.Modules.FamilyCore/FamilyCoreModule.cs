@@ -6,18 +6,21 @@ using Zongzu.Kernel;
 
 namespace Zongzu.Modules.FamilyCore;
 
-public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
+public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 {
-    private const int AdultAgeMonths = 16 * 12;
-    private const int SecureHeirAgeMonths = 20 * 12;
-    private const int ElderAgeMonths = 55 * 12;
-    private const int DeathAgeMonths = 72 * 12;
-    private const int InfantAgeMonths = 2 * 12;
+    internal const int AdultAgeMonths = 16 * 12;
+    internal const int SecureHeirAgeMonths = 20 * 12;
+    internal const int ElderAgeMonths = 55 * 12;
+    // STEP2A / A1 之后老死走累积风险带（FragilityLedger），不再有固定悬崖。
+    // DeathAgeMonths 常量废止，保留 AccrueElderFragility 的 90 岁天花板。
+    internal const int InfantAgeMonths = 2 * 12;
 
     private static readonly string[] CommandNames =
     [
         PlayerCommandNames.ArrangeMarriage,
         PlayerCommandNames.DesignateHeirPolicy,
+        PlayerCommandNames.SupportNewbornCare,
+        PlayerCommandNames.SetMourningOrder,
         PlayerCommandNames.SupportSeniorBranch,
         PlayerCommandNames.OrderFormalApology,
         PlayerCommandNames.PermitBranchSeparation,
@@ -35,8 +38,14 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         FamilyCoreEventNames.BranchSeparationApproved,
         FamilyCoreEventNames.MarriageAllianceArranged,
         FamilyCoreEventNames.BirthRegistered,
-        FamilyCoreEventNames.DeathRegistered,
+        FamilyCoreEventNames.ClanMemberDied,
         FamilyCoreEventNames.HeirSecurityWeakened,
+        FamilyCoreEventNames.HeirAppointed,
+        FamilyCoreEventNames.HeirSuccessionOccurred,
+        // STEP2A / A5 — 婴幼儿夭折走 DeathByIllness 分流（= DeathCauseEventNames.DeathByIllness）。
+        DeathCauseEventNames.DeathByIllness,
+        // STEP2A / A7 — Youth → Adult 跨阈。FamilyCore 自用：推 SeparationPressure / 开启婚议候选。
+        FamilyCoreEventNames.CameOfAge,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -45,11 +54,20 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         WarfareCampaignEventNames.CampaignPressureRaised,
         WarfareCampaignEventNames.CampaignSupplyStrained,
         WarfareCampaignEventNames.CampaignAftermathRegistered,
+        // Step 1b gap 1: trade shock → clan pressure (no-op dispatch, rule density 留给 Step 2)
+        TradeAndIndustryEventNames.RouteBusinessBlocked,
+        TradeAndIndustryEventNames.TradeLossOccurred,
+        TradeAndIndustryEventNames.TradeDebtDefaulted,
+        TradeAndIndustryEventNames.TradeProspered,
+        // Step 1b gap 2: violent death → clan mourning / heir security / grudge (no-op dispatch)
+        DeathCauseEventNames.DeathByViolence,
+        // Chain 3 thin slice: exam pass → clan prestige
+        EducationAndExamsEventNames.ExamPassed,
     ];
 
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
 
-    public override int ModuleSchemaVersion => 3;
+    public override int ModuleSchemaVersion => 7;
 
     public override SimulationPhase Phase => SimulationPhase.FamilyStructure;
 
@@ -70,17 +88,19 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override void RegisterQueries(FamilyCoreState state, QueryRegistry queries)
     {
-        queries.Register<IFamilyCoreQueries>(new FamilyCoreQueries(state));
+        queries.Register<IFamilyCoreQueries>(new FamilyCoreQueries(state, queries));
     }
 
     public override void RunXun(ModuleExecutionScope<FamilyCoreState> scope)
     {
         IWorldSettlementsQueries settlementsQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        IPersonRegistryQueries registryQueries = scope.GetRequiredQuery<IPersonRegistryQueries>();
+        GameDate currentDate = scope.Context.CurrentDate;
 
         foreach (ClanStateData clan in scope.State.Clans.OrderBy(static clan => clan.Id.Value))
         {
             SettlementSnapshot homeSettlement = settlementsQueries.GetRequiredSettlement(clan.HomeSettlementId);
-            FamilyMonthSignals signals = AnalyzeClan(scope.State, clan);
+            FamilyMonthSignals signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
             ApplyXunClanPulse(scope.Context.CurrentXun, clan, signals, homeSettlement);
         }
     }
@@ -88,17 +108,47 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     public override void RunMonth(ModuleExecutionScope<FamilyCoreState> scope)
     {
         IWorldSettlementsQueries settlementsQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        IPersonRegistryQueries registryQueries = scope.GetRequiredQuery<IPersonRegistryQueries>();
+        GameDate currentDate = scope.Context.CurrentDate;
 
+        // Age progression for persons not yet registered in PersonRegistry
+        // (clan-internal mirror). Registered persons are aged by PersonRegistry
+        // in Phase 0 and FamilyCore reads via IPersonRegistryQueries.GetAgeMonths.
+        // See PERSON_OWNERSHIP_RULES.md — authority flows from PersonRegistry.
         int peopleAged = 0;
         foreach (FamilyPersonState person in scope.State.People.OrderBy(static person => person.Id.Value))
         {
-            if (!person.IsAlive)
+            if (!IsPersonAlive(person, registryQueries))
             {
                 continue;
             }
 
-            person.AgeMonths += 1;
-            peopleAged += 1;
+            int ageBefore = GetAgeMonths(person, registryQueries, currentDate);
+
+            if (registryQueries.TryGetPerson(person.Id, out _))
+            {
+                // Registry is authoritative for this person; local mirror is unused for age.
+                peopleAged += 1;
+            }
+            else
+            {
+                person.AgeMonths += 1;
+                peopleAged += 1;
+            }
+
+            // STEP2A / A7 — Youth → Adult 跨阈：发 CameOfAge。两路径均已推进
+            // 到本月龄：registry 权威者由 Phase 0 PersonRegistry 自增，本地镜像
+            // 由上一句 += 1。故本月龄 == AdultAgeMonths 即为跨阈首帧。
+            int ageAfter = registryQueries.TryGetPerson(person.Id, out _)
+                ? ageBefore
+                : person.AgeMonths;
+            if (ageAfter == AdultAgeMonths)
+            {
+                scope.Emit(
+                    FamilyCoreEventNames.CameOfAge,
+                    $"{person.GivenName}行冠礼，堂上以成丁视之。",
+                    person.Id.Value.ToString());
+            }
         }
 
         if (peopleAged > 0)
@@ -107,23 +157,44 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
             scope.Emit(FamilyCoreEventNames.FamilyMembersAged, $"宗房人口本月俱各长一月，共{peopleAged}人。");
         }
 
+        // STEP2A / A4 — 跨 clan 婚议通电。先做一轮跨族配对（同聚落 + 异性 +
+        // 未婚 + 适婚窗 + 双方压力阈值达到），配成则双边各写一次
+        // MarriageAllianceArranged；未配上的走本族自议 fallback（下方循环）。
+        // skill marriage-alliance-politics：联姻由两族合意而成，不是单方
+        // 意愿；本 step 不做聘礼 / 债务 / 政治操盘。
+        HashSet<ClanId> clansWithNewMarriage = TryArrangeCrossClanMarriages(scope, registryQueries, currentDate);
+
         foreach (ClanStateData clan in scope.State.Clans.OrderBy(static clan => clan.Id.Value))
         {
             SettlementSnapshot homeSettlement = settlementsQueries.GetRequiredSettlement(clan.HomeSettlementId);
-            FamilyMonthSignals signals = AnalyzeClan(scope.State, clan);
+            FamilyMonthSignals signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 
-            if (TryArrangeAutonomousMarriage(scope, clan, signals))
+            bool hadMarriageThisMonth = clansWithNewMarriage.Contains(clan.Id);
+            if (TryArrangeAutonomousMarriage(scope, clan, signals, registryQueries, currentDate))
             {
-                signals = AnalyzeClan(scope.State, clan);
+                hadMarriageThisMonth = true;
+                signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
             }
 
-            bool hadDeathThisMonth = TryResolveClanDeath(scope, clan, signals);
-            signals = AnalyzeClan(scope.State, clan);
+            // STEP2A / A1 — 老死风险带累积（先累账本，再判身亡）。
+            AccrueElderFragility(clan, signals, homeSettlement, currentDate);
+            // STEP2A / A5 — 婴幼儿病殁风险带累积（与 A1 同通道；累到 100 走
+            // DeathByIllness 分流，由 TryResolveClanDeath 按年龄分流发射）。
+            AccrueChildFragility(clan, signals, homeSettlement, currentDate);
+            bool hadDeathThisMonth = TryResolveClanDeath(scope, clan, signals, registryQueries);
+            signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
 
-            bool hadBirthThisMonth = TryResolveClanBirth(scope, clan, signals);
+            // STEP2A / A3 — Heir 自动指派 / 递补。死亡之后立即补位，避免
+            // HeirSecurity 的人为凹陷；初次沙盘里 HeirPersonId 为 null 的 clan
+            // 也会被填上。skill lineage-inheritance：近 primogeniture，但本
+            // step 不做过继 / 旁支孀 / 收养。
+            TryReappointHeir(scope, clan, signals, registryQueries, hadDeathThisMonth);
+            signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
+
+            bool hadBirthThisMonth = !hadMarriageThisMonth && TryResolveClanBirth(scope, clan, signals, registryQueries);
             if (hadBirthThisMonth)
             {
-                signals = AnalyzeClan(scope.State, clan);
+                signals = AnalyzeClan(scope.State, clan, registryQueries, currentDate);
             }
 
             int oldPrestige = clan.Prestige;
@@ -170,7 +241,9 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 0,
                 100);
             clan.SeparationPressure = Math.Clamp(
-                clan.SeparationPressure + ComputeSeparationPressureDelta(clan),
+                clan.SeparationPressure
+                    + ComputeSeparationPressureDelta(clan)
+                    + ComputeAdultMaleCrowdingSeparationDelta(scope.State, clan, registryQueries, currentDate),
                 0,
                 100);
             clan.MediationMomentum = Math.Max(0, clan.MediationMomentum - 1);
@@ -225,6 +298,10 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override void HandleEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
     {
+        DispatchTradeShockEvents(scope);
+        DispatchViolentDeathEvents(scope);
+        DispatchExamResultEvents(scope);
+
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
         {
@@ -267,391 +344,52 @@ public sealed class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         }
     }
 
-    private static void ApplyXunClanPulse(
-        SimulationXun currentXun,
-        ClanStateData clan,
-        FamilyMonthSignals signals,
-        SettlementSnapshot homeSettlement)
+    private static void DispatchExamResultEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
     {
-        switch (currentXun)
+        foreach (IDomainEvent domainEvent in scope.Events)
         {
-            case SimulationXun.Shangxun:
-                if (clan.MourningLoad >= 18 || signals.InfantCount > 0)
-                {
-                    clan.SupportReserve = Math.Max(0, clan.SupportReserve - 1);
-                }
-
-                if (clan.HeirSecurity < 40
-                    && signals.AdultCount <= 1
-                    && clan.MarriageAllianceValue < 45)
-                {
-                    clan.MarriageAlliancePressure = Math.Clamp(clan.MarriageAlliancePressure + 1, 0, 100);
-                }
-
-                break;
-            case SimulationXun.Zhongxun:
+            if (domainEvent.EventType == EducationAndExamsEventNames.ExamPassed)
             {
-                int branchDelta = 0;
-                if (clan.BranchFavorPressure >= 45 || clan.ReliefSanctionPressure >= 40)
-                {
-                    branchDelta += 1;
-                }
-
-                if (homeSettlement.Security < 45)
-                {
-                    branchDelta += 1;
-                }
-
-                if (clan.MediationMomentum >= 45 && branchDelta > 0)
-                {
-                    branchDelta -= 1;
-                }
-
-                clan.BranchTension = Math.Clamp(clan.BranchTension + branchDelta, 0, 100);
-                break;
+                ApplyExamPassPrestige(scope, domainEvent);
             }
-            case SimulationXun.Xiaxun:
-                if (clan.HeirSecurity < 40)
-                {
-                    clan.InheritancePressure = Math.Clamp(clan.InheritancePressure + 1, 0, 100);
-                }
-
-                if (clan.BranchTension >= 55)
-                {
-                    clan.SeparationPressure = Math.Clamp(clan.SeparationPressure + 1, 0, 100);
-                }
-
-                if (clan.MarriageAllianceValue >= 45
-                    && signals.ChildCount == 0
-                    && clan.MourningLoad < 18)
-                {
-                    clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 1, 0, 100);
-                }
-
-                break;
         }
     }
 
-    private static FamilyMonthSignals AnalyzeClan(FamilyCoreState state, ClanStateData clan)
+    private static void ApplyExamPassPrestige(
+        ModuleEventHandlingScope<FamilyCoreState> scope,
+        IDomainEvent domainEvent)
     {
-        FamilyPersonState[] livingPeople = state.People
-            .Where(person => person.ClanId == clan.Id && person.IsAlive)
-            .OrderByDescending(static person => person.AgeMonths)
-            .ThenBy(static person => person.Id.Value)
-            .ToArray();
-
-        FamilyPersonState? livingHeir = clan.HeirPersonId is null
-            ? null
-            : livingPeople.SingleOrDefault(person => person.Id == clan.HeirPersonId.Value);
-
-        int adultCount = livingPeople.Count(static person => person.AgeMonths >= AdultAgeMonths && person.AgeMonths < ElderAgeMonths);
-        int childCount = livingPeople.Count(static person => person.AgeMonths < AdultAgeMonths);
-        int elderCount = livingPeople.Count(static person => person.AgeMonths >= ElderAgeMonths);
-        int infantCount = livingPeople.Count(static person => person.AgeMonths <= InfantAgeMonths);
-
-        return new FamilyMonthSignals(livingPeople, livingHeir, adultCount, childCount, elderCount, infantCount);
-    }
-
-    private static bool TryArrangeAutonomousMarriage(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals)
-    {
-        if (signals.AdultCount == 0
-            || clan.MarriageAllianceValue >= 45
-            || clan.MarriageAlliancePressure < 72
-            || clan.MourningLoad >= 18
-            || clan.SupportReserve < 40)
+        if (!int.TryParse(domainEvent.EntityKey, out int personIdValue))
         {
-            return false;
+            return;
         }
 
-        clan.MarriageAllianceValue = 48;
-        clan.MarriageAlliancePressure = Math.Max(0, clan.MarriageAlliancePressure - 18);
-        clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 10, 0, 100);
-        clan.SupportReserve = Math.Max(0, clan.SupportReserve - 3);
-        clan.LastLifecycleOutcome = "门内先自议亲，暂把承祧与分房的后议压住。";
-        clan.LastLifecycleTrace = $"{clan.ClanName}门内自行议定婚事，先借姻亲稳一稳香火与房支人情。";
+        PersonId personId = new(personIdValue);
+        FamilyPersonState? person = scope.State.People
+            .FirstOrDefault(p => p.Id == personId);
 
-        scope.RecordDiff($"{clan.ClanName}门内先自议亲，婚事已定，祠堂与家内都盼其稳住香火。", clan.Id.Value.ToString());
-        scope.Emit(FamilyCoreEventNames.MarriageAllianceArranged, $"{clan.ClanName}门内议亲已定。", clan.Id.Value.ToString());
-        return true;
-    }
-
-    private static bool TryResolveClanBirth(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals)
-    {
-        if (signals.AdultCount == 0
-            || clan.MarriageAllianceValue < 55
-            || clan.ReproductivePressure < 52
-            || clan.MourningLoad >= 18
-            || signals.InfantCount > 0)
+        if (person is null)
         {
-            return false;
+            return;
         }
 
-        PersonId newbornId = KernelIdAllocator.NextPerson(scope.Context.KernelState);
-        scope.State.People.Add(new FamilyPersonState
+        ClanStateData? clan = scope.State.Clans
+            .FirstOrDefault(c => c.Id == person.ClanId);
+
+        if (clan is null)
         {
-            Id = newbornId,
-            ClanId = clan.Id,
-            GivenName = $"新丁{newbornId.Value}",
-            AgeMonths = 0,
-            IsAlive = true,
-        });
-
-        clan.ReproductivePressure = Math.Max(0, clan.ReproductivePressure - 26);
-        clan.SupportReserve = Math.Max(0, clan.SupportReserve - 4);
-        clan.HeirSecurity = Math.Clamp(Math.Max(clan.HeirSecurity, 32) + 4, 0, 100);
-        clan.LastLifecycleOutcome = "门内添丁，香火暂得续望，但家中口粮与抚养之费也随之加重。";
-        clan.LastLifecycleTrace = $"{clan.ClanName}门内新添襁褓之儿，堂上暂缓继嗣焦心，家内却更添抚养之累。";
-
-        scope.RecordDiff($"{clan.ClanName}门内添丁，襁褓初定，家中口粮、抚养与香火之望一并上肩。", clan.Id.Value.ToString());
-        scope.Emit(FamilyCoreEventNames.BirthRegistered, $"{clan.ClanName}门内添丁。", clan.Id.Value.ToString());
-        return true;
-    }
-
-    private static bool TryResolveClanDeath(ModuleExecutionScope<FamilyCoreState> scope, ClanStateData clan, FamilyMonthSignals signals)
-    {
-        FamilyPersonState? deathTarget = signals.LivingPeople
-            .Where(person => person.AgeMonths >= DeathAgeMonths)
-            .OrderByDescending(static person => person.AgeMonths)
-            .ThenBy(static person => person.Id.Value)
-            .FirstOrDefault();
-
-        if (deathTarget is null)
-        {
-            return false;
+            return;
         }
 
-        deathTarget.IsAlive = false;
-        bool wasHeir = clan.HeirPersonId == deathTarget.Id;
-        if (wasHeir)
-        {
-            clan.HeirPersonId = null;
-        }
-
-        clan.MourningLoad = Math.Clamp(clan.MourningLoad + 24, 0, 100);
-        clan.InheritancePressure = Math.Clamp(clan.InheritancePressure + (wasHeir ? 18 : 8), 0, 100);
-        clan.SeparationPressure = Math.Clamp(clan.SeparationPressure + (wasHeir ? 8 : 2), 0, 100);
-        if (deathTarget.AgeMonths < AdultAgeMonths)
-        {
-            clan.ReproductivePressure = Math.Clamp(clan.ReproductivePressure + 10, 0, 100);
-        }
-
-        clan.LastLifecycleOutcome = wasHeir
-            ? "承祧之人忽逝，举哀之外，又添后议与房支觊觎。"
-            : "门内举哀，堂上先忙丧服与祭次，旁事都得让后。";
-        clan.LastLifecycleTrace = wasHeir
-            ? $"{clan.ClanName}失了承祧之人，香火、后议与房支人心一时俱紧。"
-            : $"{clan.ClanName}门内有长者亡故，家中先忙丧服、发引与祭次。";
+        clan.Prestige = Math.Clamp(clan.Prestige + 5, 0, 100);
+        clan.MarriageAllianceValue = Math.Clamp(clan.MarriageAllianceValue + 3, 0, 100);
 
         scope.RecordDiff(
-            wasHeir
-                ? $"{clan.ClanName}承祧之人身故，门内举哀，继嗣之议与房支争执随即翻起。"
-                : $"{clan.ClanName}门内举哀，丧服与祭次先压住家中诸事。",
+            $"{clan.ClanName}因{person.GivenName}场屋得捷，门望升至{clan.Prestige}，婚议价值升至{clan.MarriageAllianceValue}。",
             clan.Id.Value.ToString());
-        scope.Emit(FamilyCoreEventNames.DeathRegistered, $"{clan.ClanName}门内举哀。", clan.Id.Value.ToString());
-        return true;
+        scope.Emit(
+            FamilyCoreEventNames.ClanPrestigeAdjusted,
+            $"{clan.ClanName}因场屋得捷，门望有变。",
+            clan.Id.Value.ToString());
     }
-
-    private static bool ClanStateUnchanged(
-        ClanStateData clan,
-        int oldPrestige,
-        int oldSupportReserve,
-        int oldBranchTension,
-        int oldInheritancePressure,
-        int oldSeparationPressure,
-        int oldMediationMomentum,
-        int oldMarriageAlliancePressure,
-        int oldMarriageAllianceValue,
-        int oldHeirSecurity,
-        int oldReproductivePressure,
-        int oldMourningLoad)
-    {
-        return clan.Prestige == oldPrestige
-               && clan.SupportReserve == oldSupportReserve
-               && clan.BranchTension == oldBranchTension
-               && clan.InheritancePressure == oldInheritancePressure
-               && clan.SeparationPressure == oldSeparationPressure
-               && clan.MediationMomentum == oldMediationMomentum
-               && clan.MarriageAlliancePressure == oldMarriageAlliancePressure
-               && clan.MarriageAllianceValue == oldMarriageAllianceValue
-               && clan.HeirSecurity == oldHeirSecurity
-               && clan.ReproductivePressure == oldReproductivePressure
-               && clan.MourningLoad == oldMourningLoad;
-    }
-
-    private static int ComputeMarriageAlliancePressureDelta(ClanStateData clan, FamilyMonthSignals signals)
-    {
-        int delta = 0;
-        delta += signals.AdultCount <= 1 && clan.MarriageAllianceValue < 45 ? 2 : 0;
-        delta += clan.HeirSecurity < 40 ? 1 : 0;
-        delta += signals.ChildCount == 0 ? 1 : 0;
-        delta -= clan.MarriageAllianceValue >= 45 ? 2 : 0;
-        delta -= clan.MourningLoad >= 18 ? 1 : 0;
-        return delta;
-    }
-
-    private static int ComputeReproductivePressureDelta(ClanStateData clan, FamilyMonthSignals signals)
-    {
-        int delta = 0;
-        delta += clan.MarriageAllianceValue >= 45 && signals.ChildCount == 0 ? 2 : 0;
-        delta += clan.HeirSecurity < 45 ? 1 : 0;
-        delta -= signals.InfantCount > 0 ? 3 : 0;
-        delta -= signals.ChildCount > 0 ? 1 : 0;
-        delta -= clan.MourningLoad >= 18 ? 1 : 0;
-        return delta;
-    }
-
-    private static int ComputeHeirSecurity(ClanStateData clan, FamilyMonthSignals signals)
-    {
-        int score;
-        if (signals.LivingHeir is null)
-        {
-            score = 18;
-        }
-        else if (signals.LivingHeir.AgeMonths >= SecureHeirAgeMonths)
-        {
-            score = 72;
-        }
-        else if (signals.LivingHeir.AgeMonths >= AdultAgeMonths)
-        {
-            score = 54;
-        }
-        else
-        {
-            score = 32;
-        }
-
-        score += clan.MarriageAllianceValue / 6;
-        score += signals.ChildCount > 0 ? 4 : 0;
-        score -= clan.InheritancePressure / 4;
-        score -= clan.MourningLoad / 5;
-        return Math.Clamp(score, 0, 100);
-    }
-
-    private static int ComputeBranchTensionDelta(ClanStateData clan, SettlementSnapshot settlement)
-    {
-        int delta = 0;
-        delta += clan.BranchFavorPressure >= 45 ? 2 : clan.BranchFavorPressure >= 20 ? 1 : 0;
-        delta += clan.ReliefSanctionPressure >= 40 ? 2 : clan.ReliefSanctionPressure >= 18 ? 1 : 0;
-        delta += clan.InheritancePressure >= 55 ? 1 : 0;
-        delta += clan.SeparationPressure >= 60 ? 1 : 0;
-        delta += clan.MourningLoad >= 22 ? 1 : 0;
-        delta += settlement.Security < 45 ? 1 : 0;
-        delta -= clan.MediationMomentum >= 55 ? 2 : clan.MediationMomentum >= 28 ? 1 : 0;
-        return delta;
-    }
-
-    private static int ComputeInheritancePressureDelta(ClanStateData clan, FamilyMonthSignals signals)
-    {
-        int delta = 0;
-        delta += signals.LivingHeir is null ? 2 : 1;
-        delta += clan.HeirSecurity < 40 ? 1 : 0;
-        delta += clan.Prestige >= 60 ? 1 : 0;
-        delta -= clan.MediationMomentum >= 50 ? 1 : 0;
-        return delta;
-    }
-
-    private static int ComputeSeparationPressureDelta(ClanStateData clan)
-    {
-        int delta = 0;
-        delta += clan.BranchTension >= 65 ? 2 : clan.BranchTension >= 45 ? 1 : 0;
-        delta += clan.ReliefSanctionPressure >= 45 ? 1 : 0;
-        delta += clan.MourningLoad >= 22 ? 1 : 0;
-        delta -= clan.MediationMomentum >= 55 ? 1 : 0;
-        return delta;
-    }
-
-    private static int ComputeCampaignPrestigeDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
-    {
-        int delta = 0;
-        if (campaign.MoraleState >= 62 && campaign.SupplyState >= 50 && !bundle.CampaignSupplyStrained)
-        {
-            delta += 1;
-        }
-
-        delta -= bundle.CampaignPressureRaised ? 1 : 0;
-        delta -= bundle.CampaignSupplyStrained ? 2 : 0;
-        delta -= bundle.CampaignAftermathRegistered ? 1 : 0;
-        return Math.Clamp(delta, -3, 1);
-    }
-
-    private static int ComputeCampaignSupportDelta(WarfareCampaignEventBundle bundle, CampaignFrontSnapshot campaign)
-    {
-        int delta = 0;
-        delta -= bundle.CampaignMobilized ? 2 : 0;
-        delta -= bundle.CampaignPressureRaised ? 1 : 0;
-        delta -= bundle.CampaignSupplyStrained ? 2 : 0;
-        delta -= bundle.CampaignAftermathRegistered ? 1 : 0;
-        delta -= Math.Max(0, campaign.MobilizedForceCount - 24) / 24;
-        return Math.Clamp(delta, -8, 0);
-    }
-
-    private sealed class FamilyCoreQueries : IFamilyCoreQueries
-    {
-        private readonly FamilyCoreState _state;
-
-        public FamilyCoreQueries(FamilyCoreState state)
-        {
-            _state = state;
-        }
-
-        public ClanSnapshot GetRequiredClan(ClanId clanId)
-        {
-            ClanStateData clan = _state.Clans.Single(clan => clan.Id == clanId);
-            return Clone(_state, clan);
-        }
-
-        public IReadOnlyList<ClanSnapshot> GetClans()
-        {
-            return _state.Clans
-                .OrderBy(static clan => clan.Id.Value)
-                .Select(clan => Clone(_state, clan))
-                .ToArray();
-        }
-
-        private static ClanSnapshot Clone(FamilyCoreState state, ClanStateData clan)
-        {
-            int infantCount = state.People.Count(person =>
-                person.ClanId == clan.Id
-                && person.IsAlive
-                && person.AgeMonths <= InfantAgeMonths);
-
-            return new ClanSnapshot
-            {
-                Id = clan.Id,
-                ClanName = clan.ClanName,
-                HomeSettlementId = clan.HomeSettlementId,
-                Prestige = clan.Prestige,
-                SupportReserve = clan.SupportReserve,
-                HeirPersonId = clan.HeirPersonId,
-                BranchTension = clan.BranchTension,
-                InheritancePressure = clan.InheritancePressure,
-                SeparationPressure = clan.SeparationPressure,
-                MediationMomentum = clan.MediationMomentum,
-                BranchFavorPressure = clan.BranchFavorPressure,
-                ReliefSanctionPressure = clan.ReliefSanctionPressure,
-                MarriageAlliancePressure = clan.MarriageAlliancePressure,
-                MarriageAllianceValue = clan.MarriageAllianceValue,
-                HeirSecurity = clan.HeirSecurity,
-                ReproductivePressure = clan.ReproductivePressure,
-                MourningLoad = clan.MourningLoad,
-                InfantCount = infantCount,
-                LastConflictCommandCode = clan.LastConflictCommandCode,
-                LastConflictCommandLabel = clan.LastConflictCommandLabel,
-                LastConflictOutcome = clan.LastConflictOutcome,
-                LastConflictTrace = clan.LastConflictTrace,
-                LastLifecycleCommandCode = clan.LastLifecycleCommandCode,
-                LastLifecycleCommandLabel = clan.LastLifecycleCommandLabel,
-                LastLifecycleOutcome = clan.LastLifecycleOutcome,
-                LastLifecycleTrace = clan.LastLifecycleTrace,
-            };
-        }
-    }
-
-    private readonly record struct FamilyMonthSignals(
-        IReadOnlyList<FamilyPersonState> LivingPeople,
-        FamilyPersonState? LivingHeir,
-        int AdultCount,
-        int ChildCount,
-        int ElderCount,
-        int InfantCount);
 }

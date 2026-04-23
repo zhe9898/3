@@ -31,6 +31,7 @@ public sealed class SaveRoundtripTests
             Is.EqualTo(new[]
             {
                 KnownModuleKeys.FamilyCore,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.SocialMemoryAndRelations,
                 KnownModuleKeys.WorldSettlements,
@@ -66,6 +67,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.EducationAndExams,
                 KnownModuleKeys.FamilyCore,
                 KnownModuleKeys.NarrativeProjection,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
@@ -77,7 +79,7 @@ public sealed class SaveRoundtripTests
         FamilyCoreState reloadedState = (FamilyCoreState)serializer.Deserialize(
             typeof(FamilyCoreState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(7));
         Assert.That(reloadedState.Clans.Any(static clanState => clanState.MediationMomentum > 0), Is.True);
         Assert.That(reloadedState.Clans.Any(static clanState => string.Equals(clanState.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersMediation, System.StringComparison.Ordinal)), Is.True);
         Assert.That(reloadedState.Clans.Any(static clanState => !string.IsNullOrWhiteSpace(clanState.LastConflictOutcome)), Is.True);
@@ -114,6 +116,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.FamilyCore,
                 KnownModuleKeys.NarrativeProjection,
                 KnownModuleKeys.OrderAndBanditry,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
@@ -128,8 +131,8 @@ public sealed class SaveRoundtripTests
         TradeAndIndustryState tradeState = (TradeAndIndustryState)serializer.Deserialize(
             typeof(TradeAndIndustryState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(6));
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(7));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(orderState.Settlements.Any(static settlement => settlement.PaperCompliance >= 0), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => settlement.ImplementationDrag >= 0), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => settlement.RouteShielding >= 0), Is.True);
@@ -163,6 +166,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.FamilyCore,
                 KnownModuleKeys.NarrativeProjection,
                 KnownModuleKeys.OrderAndBanditry,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
@@ -174,7 +178,7 @@ public sealed class SaveRoundtripTests
         ConflictAndForceState reloadedState = (ConflictAndForceState)serializer.Deserialize(
             typeof(ConflictAndForceState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(reloadedState.Settlements.Any(static settlement => settlement.ResponseActivationLevel > 0), Is.True);
     }
 
@@ -200,6 +204,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.NarrativeProjection,
                 KnownModuleKeys.OfficeAndCareer,
                 KnownModuleKeys.OrderAndBanditry,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
@@ -211,11 +216,12 @@ public sealed class SaveRoundtripTests
         OfficeAndCareerState reloadedState = (OfficeAndCareerState)serializer.Deserialize(
             typeof(OfficeAndCareerState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(6));
         Assert.That(reloadedState.People.Any(static career => career.HasAppointment), Is.True);
         Assert.That(reloadedState.People.Any(static career => career.ServiceMonths > 0), Is.True);
         Assert.That(reloadedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.LastPetitionOutcome)), Is.True);
         Assert.That(reloadedState.People.Any(static career => career.AppointmentPressure >= 0), Is.True);
+        Assert.That(reloadedState.ActiveClerkCaptureSettlementIds, Is.Not.Null);
     }
 
     [Test]
@@ -240,6 +246,7 @@ public sealed class SaveRoundtripTests
                 KnownModuleKeys.NarrativeProjection,
                 KnownModuleKeys.OfficeAndCareer,
                 KnownModuleKeys.OrderAndBanditry,
+                KnownModuleKeys.PersonRegistry,
                 KnownModuleKeys.PopulationAndHouseholds,
                 KnownModuleKeys.PublicLifeAndRumor,
                 KnownModuleKeys.SocialMemoryAndRelations,
@@ -255,8 +262,8 @@ public sealed class SaveRoundtripTests
         ConflictAndForceState conflictState = (ConflictAndForceState)serializer.Deserialize(
             typeof(ConflictAndForceState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(3));
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.ConflictAndForce].ModuleSchemaVersion, Is.EqualTo(4));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.WarfareCampaign].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(reloadedState.Campaigns, Is.Not.Empty);
         Assert.That(reloadedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.CommandFitLabel)), Is.True);
         Assert.That(reloadedState.Campaigns.Any(static campaign => !string.IsNullOrWhiteSpace(campaign.ActiveDirectiveLabel)), Is.True);

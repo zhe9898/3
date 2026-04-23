@@ -2,6 +2,8 @@
 
 This document formalizes Zongzu's multi-route society design.
 
+Terminology note: "route" in this document means an architectural / design pathway for social pressure and module growth. It must not become a player-facing route system, job tree, or class picker. In code and presentation, prefer concrete projections such as household social pressure, social drift, influence footprint, module presence, or command affordance.
+
 It exists to prevent the project from collapsing into:
 - one family-management lane with decorative side systems
 - a small set of rigid class trees
@@ -9,6 +11,7 @@ It exists to prevent the project from collapsing into:
 
 Read this together with:
 - `RULES_DRIVEN_LIVING_WORLD.md`
+- `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`
 - `SOCIAL_STRATA_AND_PATHWAYS.md`
 - `PLAYER_SCOPE.md`
 - `SIMULATION.md`
@@ -26,6 +29,25 @@ A person, household, branch, or lineage may:
 - drift from one route into another
 - fall downward rather than rise upward
 - use one route to support another
+
+## Player-facing translation
+
+Do not surface this as a "route system."
+The player should read:
+- which social chain is moving
+- what pressure pushed it
+- which influence circles can touch it
+- what cost or backlash may carry into next month
+
+The intended monthly chain is:
+- world pressure moves first
+- modules produce structured diffs and state changes
+- projections show household, market, study, lineage, yamen, public-life, disorder, military, and imperial/court pressure as readable social chains
+- player commands enter only through available influence circles
+- delayed consequences return as credit loss, public-face change, obligations, official attention, lineage resentment, household drift, or disorder pressure
+
+This keeps multi-route design as a living-world grammar rather than a class tree.
+It also lets historical figures and great trends enter as pressure that people can carry, resist, or distort, not as a separate scripted route.
 
 ## Route matrix
 
@@ -188,6 +210,9 @@ Main pressures:
 - office risk
 - family pull
 - reputation exposure
+- clerk dependence
+- memorial attack risk
+- court agenda pressure
 
 Main modules:
 - `EducationAndExams`
@@ -205,6 +230,15 @@ Typical transitions:
 - official route -> social governance through local order and public works
 - official route -> imperial route through rank and appointment reach
 - official route -> household stress through distance, posting risk, faction loss, or dismissal
+- official route -> court-facing pressure through memorials, appointment slates, faction backing, or censor attack
+
+Official route depth should split four things that are often collapsed:
+- **credential**: degree, recommendation, document literacy, or yamen attachment
+- **post**: whether the actor actually holds an office or service position
+- **reach**: whether clerks, runners, patrons, and local elites let the office act
+- **exposure**: whether memorials, faction labels, family obligations, and evaluation pressure make action dangerous
+
+This route should produce living officials, not disembodied offices.
 
 ## 5. Social governance
 
@@ -299,13 +333,15 @@ Typical transitions:
 ## 7. Imperial or macro-governance pressure
 
 Fantasy:
-- hold a realm together through appointments, extraction, grain security, military burden, legitimacy, and succession continuity
+- hold a realm together through legitimacy, appointments, examination policy, extraction, grain security, military burden, ritual confidence, reform debate, and succession continuity
 
 Typical actors:
 - throne-centered authority
 - court-aligned office holders
 - provincial command actors
 - dynasty-maintenance institutions
+- remonstrance and policy officials
+- degree-holders outside office
 
 Core verbs:
 - appoint
@@ -322,10 +358,16 @@ Main pressures:
 - regional fracture
 - succession crisis
 - military overstretch
+- examination and appointment bottlenecks
+- edict-to-county implementation drag
+- reform faction dispute
+- ritual legitimacy loss or repair
 
 Main modules:
 - `OfficeAndCareer`
 - `WarfareCampaign`
+- `PublicLifeAndRumor`
+- `WorldSettlements`
 - world-layer summaries
 - `NarrativeProjection`
 
@@ -334,11 +376,36 @@ Primary surfaces:
 - campaign-lite board
 - high-order notices
 - legitimacy or succession summaries
+- exam / appointment pressure summaries
+- county notice and yamen report overlays
 
 Typical transitions:
 - imperial pressure -> local governance burden
 - imperial pressure -> office opportunity or collapse
 - imperial pressure -> rebellion, regional militarization, or taxation shock
+- imperial pressure -> household strain through tax, labor service, relief, or military supply
+- imperial pressure -> public-life legitimacy wave through edicts, amnesties, ritual confidence, or reform rumors
+
+Renzong-era opening rule:
+- imperial authority is credible and morally legible, but it reaches the player through bureaucratic, ritual, military, fiscal, and public channels
+- Qingli-style reform pressure may appear as court debate, examination/administrative pressure, and local implementation strain
+- Wang Anshi / Shenzong-era New Policies and baojia-style household organization are later chronological material and must not be treated as default opening institutions
+
+Sub-lanes inside imperial / macro pressure:
+- **court process lane**: memorial queue, audience or council attention, censor pressure, appointment slate, policy window, court-time disruption
+- **official alignment lane**: office-holders, clerks, patrons, local elites, and faction labels deciding whether to carry, delay, reinterpret, or sabotage court pressure
+- **regime authority lane**: recognition, appointment reach, tax reach, grain-route reach, ritual claim, public belief, force backing, office defection
+- **dynasty-cycle lane**: dynastic fatigue, succession clarity, restoration momentum, usurpation risk, repair after crisis
+- **historical-carrier lane**: named figures, reform cohorts, conservative opposition, frontier commanders, and local implementers carrying great trends into ordinary society
+
+These sub-lanes are not new player classes.
+They are route lenses that decide which pressure chain is moving and which influence circles can touch it.
+
+Renzong-era calibration:
+- the opening should emphasize credible imperial legitimacy, scholar-official visibility, exam prestige, fiscal / military strain, and Qingli-era reform pressure as start conditions, not as a locked timeline
+- it should avoid treating later Wang Anshi / Shenzong institutions as already active default structures
+- it should let court debate and named officials matter as pressure carriers, while local households still experience the result through taxes, labor service, education cost, yamen documents, prices, relief, and rumor
+- after the opening, rule resolution may bend, delay, intensify, localize, or derail historical tendencies; historical plausibility comes from pressure chains and institution constraints, not from forced event dates
 
 ## Route interaction rules
 
@@ -436,6 +503,7 @@ For this repo, route design must also survive:
 - if a new route deepening needs new authoritative state, bump the owning module schema version rather than inventing side blobs
 - route-aware projections must degrade gracefully when an upstream pack is absent in older saves
 - feature-manifest entries must remain the source of truth for whether route-related systems are active, lite, or absent
+- current first living-society slice uses `HouseholdSocialPressureSnapshot` and `PlayerInfluenceFootprintSnapshot` as presentation read models only; they recompute from existing module queries, add no save fields, and must degrade to absent/watch-only when optional packs are not enabled
 
 ## Data ownership and schema shape
 

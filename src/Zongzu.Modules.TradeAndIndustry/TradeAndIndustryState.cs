@@ -12,6 +12,8 @@ public sealed class TradeAndIndustryState : IModuleStateDescriptor
 
     public List<SettlementMarketState> Markets { get; set; } = new();
 
+    public List<MarketGoodsEntryState> MarketGoods { get; set; } = new();
+
     public List<RouteTradeState> Routes { get; set; } = new();
 
     public List<SettlementBlackRouteLedgerState> BlackRouteLedgers { get; set; } = new();
@@ -78,6 +80,31 @@ public sealed class RouteTradeState
     public string RouteConstraintLabel { get; set; } = string.Empty;
 
     public string LastRouteTrace { get; set; } = string.Empty;
+
+    public GoodsCategory PrimaryGoods { get; set; } = GoodsCategory.Grain;
+
+    public int Throughput { get; set; }
+
+    public int RiskPremium { get; set; }
+}
+
+/// <summary>
+/// Phase 5 商贸骨骼 — 某镇场上某类物品的供需价位。
+/// 当前仅 <see cref="GoodsCategory.Grain"/> 由收成链路真实驱动。
+/// </summary>
+public sealed class MarketGoodsEntryState
+{
+    public SettlementId SettlementId { get; set; }
+
+    public GoodsCategory Goods { get; set; } = GoodsCategory.Unknown;
+
+    public int Supply { get; set; }
+
+    public int Demand { get; set; }
+
+    public int BasePrice { get; set; } = 100;
+
+    public int CurrentPrice { get; set; } = 100;
 }
 
 public sealed class SettlementBlackRouteLedgerState

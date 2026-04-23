@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -8,7 +8,30 @@ namespace Zongzu.Modules.WorldSettlements;
 
 public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 {
-    private static readonly string[] EventNames = ["SettlementPressureChanged"];
+    private static readonly string[] EventNames =
+    [
+        WorldSettlementsEventNames.SettlementPressureChanged,
+        WorldSettlementsEventNames.SeasonPhaseAdvanced,
+        WorldSettlementsEventNames.CanalWindowChanged,
+        WorldSettlementsEventNames.CorveeWindowChanged,
+        WorldSettlementsEventNames.ImperialRhythmChanged,
+        WorldSettlementsEventNames.ComplianceModeShifted,
+        WorldSettlementsEventNames.RouteConstraintEmerged,
+        WorldSettlementsEventNames.IllicitRouteExposed,
+        WorldSettlementsEventNames.NodeVisibilityDiscovered,
+        WorldSettlementsEventNames.FloodRiskThresholdBreached,
+        WorldSettlementsEventNames.ForceStationChanged,
+        WorldSettlementsEventNames.SeasonalFestivalArrived,
+        // STEP2A / A0c — 契约登记，规则发射留给后续 step。
+        WorldSettlementsEventNames.EpidemicOutbreak,
+        WorldSettlementsEventNames.ReliefDelivered,
+        WorldSettlementsEventNames.ReliefWithheld,
+        WorldSettlementsEventNames.TaxSeasonOpened,
+        WorldSettlementsEventNames.DisasterDeclared,
+        WorldSettlementsEventNames.FrontierStrainEscalated,
+        WorldSettlementsEventNames.CourtAgendaPressureAccumulated,
+        WorldSettlementsEventNames.RegimeLegitimacyShifted,
+    ];
 
     private static readonly string[] ConsumedEventNames =
     [
@@ -20,7 +43,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
     public override string ModuleKey => KnownModuleKeys.WorldSettlements;
 
-    public override int ModuleSchemaVersion => 2;
+    public override int ModuleSchemaVersion => 8;
 
     public override SimulationPhase Phase => SimulationPhase.WorldBaseline;
 
@@ -40,10 +63,18 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
     public override void RegisterQueries(WorldSettlementsState state, QueryRegistry queries)
     {
         queries.Register<IWorldSettlementsQueries>(new WorldSettlementsQueries(state));
+        queries.Register<IImperialEventTestHarness>(new WorldSettlementsImperialTestHarness(state));
     }
 
     public override void RunXun(ModuleExecutionScope<WorldSettlementsState> scope)
     {
+        // SPEC §20.3: pulse signals have tick lifetime — reset before this
+        // tick's emissions.
+        scope.State.CurrentPulseSignals.Clear();
+
+        // SPATIAL_SKELETON_SPEC §3.2 — xun advances labor/market/message axes.
+        SeasonBandAdvancer.AdvanceXun(scope.State.CurrentSeason, scope);
+
         foreach (SettlementStateData settlement in scope.State.Settlements.OrderBy(static settlement => settlement.Id.Value))
         {
             int oldSecurity = settlement.Security;
@@ -80,8 +111,262 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
 
     public override void RunMonth(ModuleExecutionScope<WorldSettlementsState> scope)
     {
-        // Short-band settlement drift now lives in the three xun pulses.
-        // A later month-end owned-state slice can add explicit consolidation traces if needed.
+        // SPEC §20.3: pulse signals have tick lifetime — reset before this
+        // tick's emissions.
+        scope.State.CurrentPulseSignals.Clear();
+
+        // SPATIAL_SKELETON_SPEC §3.2 — month advances the slow axes and
+        // returns a transition report so we can derive public-surface
+        // signals that need settlement-graph context (canal junction, ferry,
+        // temple nodes) which the advancer does not hold.
+        SeasonBandAdvancer.MonthAdvanceReport report =
+            SeasonBandAdvancer.AdvanceMonth(scope.State.CurrentSeason, scope);
+
+        // SPEC §22.1 / STATIC_BACKEND_FIRST.md — one live pressure chain,
+        // in-module only: routes react to the season band their own module
+        // just advanced. Must run after SeasonBandAdvancer so routes see the
+        // new CanalWindow / FloodRisk.
+        RouteAdvancer.AdvanceMonth(scope.State, scope);
+
+        EmitCanalAndFloodSignals(scope.State, report);
+        EmitDisasterIfDue(scope, report);
+        EmitFrontierStrainIfDue(scope, report);
+        EmitCourtAgendaPressureIfDue(scope);
+        EmitRegimeLegitimacyShiftIfDue(scope);
+    }
+
+    /// <summary>
+    /// SPATIAL_SKELETON_SPEC §20.3 Phase 1c minimum signal emission.
+    /// State transitions on the season band have already fired their
+    /// authoritative domain events inside <see cref="SeasonBandAdvancer"/>;
+    /// here we project them into one or more <see cref="PublicSurfaceSignal"/>s
+    /// by selecting the relevant settlement nodes from <see cref="WorldSettlementsState.Settlements"/>.
+    ///
+    /// <para>Canal transition → one <see cref="OpinionChannel.NoticeBoard"/>
+    /// signal on any <see cref="SettlementNodeKind.CanalJunction"/>.</para>
+    ///
+    /// <para>Flood breach → three concurrent signals (NoticeBoard / MarketTalk
+    /// / TempleWhisper) — the canonical stream-competition demonstration.</para>
+    /// </summary>
+    private static void EmitCanalAndFloodSignals(WorldSettlementsState state, SeasonBandAdvancer.MonthAdvanceReport report)
+    {
+        if (report.CanalWindowChanged)
+        {
+            foreach (SettlementStateData canalJunction in state.Settlements
+                .Where(static node => node.NodeKind == SettlementNodeKind.CanalJunction)
+                .OrderBy(static node => node.Id.Value))
+            {
+                PublicSurfaceSignalEmitter.EmitCanalWindowChanged(
+                    state.CurrentPulseSignals,
+                    canalJunction,
+                    report.CanalFrom,
+                    report.CanalTo);
+            }
+        }
+
+        if (report.FloodRiskBreached)
+        {
+            SettlementStateData? canalJunction = state.Settlements
+                .Where(static node => node.NodeKind == SettlementNodeKind.CanalJunction)
+                .OrderBy(static node => node.Id.Value)
+                .FirstOrDefault();
+            SettlementStateData? ferry = state.Settlements
+                .Where(static node => node.NodeKind == SettlementNodeKind.Ferry)
+                .OrderBy(static node => node.Id.Value)
+                .FirstOrDefault();
+            SettlementStateData? temple = state.Settlements
+                .Where(static node => node.NodeKind == SettlementNodeKind.Temple)
+                .OrderBy(static node => node.Id.Value)
+                .FirstOrDefault();
+
+            PublicSurfaceSignalEmitter.EmitFloodRiskBreach(
+                state.CurrentPulseSignals,
+                report.FloodRisk,
+                canalJunction,
+                ferry,
+                temple);
+        }
+    }
+
+    private static void EmitDisasterIfDue(
+        ModuleExecutionScope<WorldSettlementsState> scope,
+        SeasonBandAdvancer.MonthAdvanceReport report)
+    {
+        // Chain 6 thin slice: disaster → disorder → public life.
+        // Only flood is implemented in this slice; drought/locust/epidemic are TODO.
+        int floodRisk = report.FloodRisk;
+        int floodBand = floodRisk switch
+        {
+            >= 70 => 2,
+            >= 50 => 1,
+            _ => 0,
+        };
+
+        if (floodBand == 0)
+        {
+            scope.State.LastDeclaredFloodDisasterBand = 0;
+            return;
+        }
+
+        if (floodBand <= scope.State.LastDeclaredFloodDisasterBand)
+        {
+            return;
+        }
+
+        string severity = floodBand == 2
+            ? DomainEventMetadataValues.SeverityFloodSevere
+            : DomainEventMetadataValues.SeverityFloodModerate;
+
+        SettlementStateData? affected = scope.State.Settlements
+            .Where(s => s.NodeKind == SettlementNodeKind.CanalJunction)
+            .OrderBy(s => s.Id.Value)
+            .FirstOrDefault()
+            ?? scope.State.Settlements
+                .Where(s => s.NodeKind == SettlementNodeKind.CountySeat)
+                .OrderBy(s => s.Id.Value)
+                .FirstOrDefault();
+
+        if (affected is null)
+        {
+            return;
+        }
+
+        scope.State.LastDeclaredFloodDisasterBand = floodBand;
+
+        scope.Emit(
+            WorldSettlementsEventNames.DisasterDeclared,
+            $"{affected.Name}水患告急：汛险{floodRisk}，堤压{scope.State.CurrentSeason.EmbankmentStrain}，severity {severity}。",
+            affected.Id.Value.ToString(),
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseDisaster,
+                [DomainEventMetadataKeys.DisasterKind] = DomainEventMetadataValues.DisasterFlood,
+                [DomainEventMetadataKeys.Severity] = severity,
+                [DomainEventMetadataKeys.FloodRisk] = floodRisk.ToString(),
+                [DomainEventMetadataKeys.EmbankmentStrain] = scope.State.CurrentSeason.EmbankmentStrain.ToString(),
+            });
+    }
+
+    private static void EmitFrontierStrainIfDue(
+        ModuleExecutionScope<WorldSettlementsState> scope,
+        SeasonBandAdvancer.MonthAdvanceReport report)
+    {
+        // Chain 5 thin slice: frontier strain -> official supply -> household burden.
+        // This is a local declared fact, not a recurring global demand. The
+        // full route/sector allocator can replace SelectFrontierAffectedSettlement
+        // later without changing the downstream contract.
+        int frontierPressure = report.FrontierPressure;
+        int frontierBand = frontierPressure switch
+        {
+            >= 70 => 2,
+            >= 50 => 1,
+            _ => 0,
+        };
+
+        if (frontierBand == 0)
+        {
+            scope.State.LastDeclaredFrontierStrainBand = 0;
+            return;
+        }
+
+        if (frontierBand <= scope.State.LastDeclaredFrontierStrainBand)
+        {
+            return;
+        }
+
+        SettlementStateData? affected = SelectFrontierAffectedSettlement(scope.State);
+        if (affected is null)
+        {
+            return;
+        }
+
+        scope.State.LastDeclaredFrontierStrainBand = frontierBand;
+
+        string severity = frontierBand == 2
+            ? DomainEventMetadataValues.SeverityFrontierSevere
+            : DomainEventMetadataValues.SeverityFrontierModerate;
+
+        scope.Emit(
+            WorldSettlementsEventNames.FrontierStrainEscalated,
+            $"{affected.Name}边防告急：边防压力{frontierPressure}，severity {severity}。",
+            affected.Id.Value.ToString(),
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseFrontier,
+                [DomainEventMetadataKeys.Severity] = severity,
+                [DomainEventMetadataKeys.FrontierPressure] = frontierPressure.ToString(),
+            });
+    }
+
+    private static void EmitCourtAgendaPressureIfDue(ModuleExecutionScope<WorldSettlementsState> scope)
+    {
+        // Chain 8 thin slice: court agenda pressure → policy window opened.
+        int mandateConfidence = scope.State.CurrentSeason.Imperial.MandateConfidence;
+        bool belowThreshold = mandateConfidence < 40;
+
+        if (!belowThreshold)
+        {
+            scope.State.LastCourtAgendaPressureDeclared = false;
+            return;
+        }
+
+        if (scope.State.LastCourtAgendaPressureDeclared)
+        {
+            return;
+        }
+
+        scope.State.LastCourtAgendaPressureDeclared = true;
+
+        scope.Emit(
+            WorldSettlementsEventNames.CourtAgendaPressureAccumulated,
+            $"朝局紧张：天命信心降至{mandateConfidence}，政策窗口受压。",
+            "court",
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseCourt,
+                [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
+            });
+    }
+
+    private static void EmitRegimeLegitimacyShiftIfDue(ModuleExecutionScope<WorldSettlementsState> scope)
+    {
+        // Chain 9 thin slice: regime legitimacy shift → office defected.
+        int mandateConfidence = scope.State.CurrentSeason.Imperial.MandateConfidence;
+        bool belowThreshold = mandateConfidence < 25;
+
+        if (!belowThreshold)
+        {
+            scope.State.LastRegimeLegitimacyShiftDeclared = false;
+            return;
+        }
+
+        if (scope.State.LastRegimeLegitimacyShiftDeclared)
+        {
+            return;
+        }
+
+        scope.State.LastRegimeLegitimacyShiftDeclared = true;
+
+        scope.Emit(
+            WorldSettlementsEventNames.RegimeLegitimacyShifted,
+            $"天命摇动：皇权合法性降至{mandateConfidence}，官场去就之心渐起。",
+            "regime",
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseRegime,
+                [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
+            });
+    }
+
+    private static SettlementStateData? SelectFrontierAffectedSettlement(WorldSettlementsState state)
+    {
+        return state.Settlements
+            .Where(static settlement => settlement.NodeKind == SettlementNodeKind.CountySeat)
+            .OrderBy(static settlement => settlement.Id.Value)
+            .FirstOrDefault()
+            ?? state.Settlements
+                .OrderBy(static settlement => settlement.Id.Value)
+                .FirstOrDefault();
     }
 
     public override void HandleEvents(ModuleEventHandlingScope<WorldSettlementsState> scope)
@@ -122,7 +407,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             scope.RecordDiff(
                 $"{settlement.Name}受战后余波所压，安宁减{securityDelta}，丰实减{prosperityDelta}；{campaign.FrontLabel}、{campaign.SupplyStateLabel}，{campaign.LastAftermathSummary}",
                 settlement.Id.Value.ToString());
-            scope.Emit("SettlementPressureChanged", $"{settlement.Name}受战后余波，乡面气象有变。", settlement.Id.Value.ToString());
+            scope.Emit(WorldSettlementsEventNames.SettlementPressureChanged, $"{settlement.Name}受战后余波，乡面气象有变。", settlement.Id.Value.ToString());
         }
     }
 
@@ -179,6 +464,77 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
                 .ToArray();
         }
 
+        public IReadOnlyList<SettlementSnapshot> GetSettlementsByNodeKind(SettlementNodeKind kind)
+        {
+            return _state.Settlements
+                .Where(settlement => settlement.NodeKind == kind)
+                .OrderBy(static settlement => settlement.Id.Value)
+                .Select(Clone)
+                .ToArray();
+        }
+
+        public IReadOnlyList<SettlementSnapshot> GetSettlementsByVisibility(NodeVisibility visibility)
+        {
+            return _state.Settlements
+                .Where(settlement => settlement.Visibility == visibility)
+                .OrderBy(static settlement => settlement.Id.Value)
+                .Select(Clone)
+                .ToArray();
+        }
+
+        public IReadOnlyList<RouteSnapshot> GetRoutes()
+        {
+            return _state.Routes
+                .OrderBy(static route => route.Id.Value)
+                .Select(CloneRoute)
+                .ToArray();
+        }
+
+        public IReadOnlyList<RouteSnapshot> GetRoutesByKind(RouteKind kind)
+        {
+            return _state.Routes
+                .Where(route => route.Kind == kind)
+                .OrderBy(static route => route.Id.Value)
+                .Select(CloneRoute)
+                .ToArray();
+        }
+
+        public IReadOnlyList<RouteSnapshot> GetRoutesByLegitimacy(RouteLegitimacy legitimacy)
+        {
+            return _state.Routes
+                .Where(route => route.Legitimacy == legitimacy)
+                .OrderBy(static route => route.Id.Value)
+                .Select(CloneRoute)
+                .ToArray();
+        }
+
+        public IReadOnlyList<RouteSnapshot> GetRoutesTouching(SettlementId settlementId)
+        {
+            return _state.Routes
+                .Where(route =>
+                    route.Origin == settlementId
+                    || route.Destination == settlementId
+                    || route.Waypoints.Contains(settlementId))
+                .OrderBy(static route => route.Id.Value)
+                .Select(CloneRoute)
+                .ToArray();
+        }
+
+        public SeasonBandSnapshot GetCurrentSeason() => CloneSeason(_state.CurrentSeason);
+
+        // SPATIAL_SKELETON_SPEC §6.4 / §8 — deterministic locus cascade.
+        // Pure function of current state; see LocusScorer for the priority
+        // ladder. Null only when the seed has produced no settlements yet.
+        public LocusSnapshot? GetCurrentLocus() => LocusScorer.Score(_state);
+
+        public IReadOnlyList<PublicSurfaceSignal> GetCurrentPulseSignals()
+        {
+            // Snapshot-copy the tick-lifetime buffer so callers cannot mutate
+            // the authoritative list, and so a mid-tick consumer reads a
+            // stable value. List is already in deterministic emission order.
+            return _state.CurrentPulseSignals.ToArray();
+        }
+
         private static SettlementSnapshot Clone(SettlementStateData settlement)
         {
             return new SettlementSnapshot
@@ -186,8 +542,63 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
                 Id = settlement.Id,
                 Name = settlement.Name,
                 Tier = settlement.Tier,
+                NodeKind = settlement.NodeKind,
+                Visibility = settlement.Visibility,
+                EcoZone = settlement.EcoZone,
                 Security = settlement.Security,
                 Prosperity = settlement.Prosperity,
+                HealerAccess = settlement.HealerAccess,
+                TempleHealingPresence = settlement.TempleHealingPresence,
+                GranaryTrust = settlement.GranaryTrust,
+                ReliefReach = settlement.ReliefReach,
+            };
+        }
+
+        private static RouteSnapshot CloneRoute(RouteStateData route)
+        {
+            return new RouteSnapshot
+            {
+                Id = route.Id,
+                Kind = route.Kind,
+                Medium = route.Medium,
+                Legitimacy = route.Legitimacy,
+                ComplianceMode = route.ComplianceMode,
+                Origin = route.Origin,
+                Destination = route.Destination,
+                // Defensive copy: consumers must not see internal list.
+                Waypoints = route.Waypoints.ToArray(),
+                TravelDaysBand = route.TravelDaysBand,
+                Capacity = route.Capacity,
+                Reliability = route.Reliability,
+                SeasonalVulnerability = route.SeasonalVulnerability,
+                CurrentConstraintLabel = route.CurrentConstraintLabel,
+            };
+        }
+
+        private static SeasonBandSnapshot CloneSeason(SeasonBandData season)
+        {
+            return new SeasonBandSnapshot
+            {
+                AsOf = season.AsOf,
+                AgrarianPhase = season.AgrarianPhase,
+                LaborPinch = season.LaborPinch,
+                HarvestWindowProgress = season.HarvestWindowProgress,
+                WaterControlConfidence = season.WaterControlConfidence,
+                EmbankmentStrain = season.EmbankmentStrain,
+                FloodRisk = season.FloodRisk,
+                CanalWindow = season.CanalWindow,
+                MarketCadencePulse = season.MarketCadencePulse,
+                CorveeWindow = season.CorveeWindow,
+                MessageDelayBand = season.MessageDelayBand,
+                FrontierPressure = season.FrontierPressure,
+                Imperial = new ImperialBandSnapshot
+                {
+                    MourningInterruption = season.Imperial.MourningInterruption,
+                    AmnestyWave = season.Imperial.AmnestyWave,
+                    SuccessionUncertainty = season.Imperial.SuccessionUncertainty,
+                    MandateConfidence = season.Imperial.MandateConfidence,
+                    CourtTimeDisruption = season.Imperial.CourtTimeDisruption,
+                },
             };
         }
     }
