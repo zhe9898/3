@@ -50,17 +50,11 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<NarrativeNotificationSnapshot> notifications,
         SettlementId settlementId)
     {
-        string settlementKey = settlementId.Value.ToString();
-
-        return notifications
-            .Where(notification =>
-                string.Equals(notification.SourceModuleKey, KnownModuleKeys.WarfareCampaign, StringComparison.Ordinal)
-                && notification.Traces.Any(trace => string.Equals(trace.EntityKey, settlementKey, StringComparison.Ordinal)))
-            .OrderBy(static notification => notification.Tier)
-            .ThenByDescending(static notification => notification.CreatedAt.Year)
-            .ThenByDescending(static notification => notification.CreatedAt.Month)
-            .ThenByDescending(static notification => notification.Id.Value)
-            .FirstOrDefault();
+        return SelectPrimarySettlementNotification(
+            notifications,
+            settlementId,
+            static _ => 0,
+            KnownModuleKeys.WarfareCampaign);
     }
 
     private static int ComputeWarfareHallDocketUrgencyScore(CampaignFrontSnapshot campaign)

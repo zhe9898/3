@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
+using Zongzu.Kernel;
 using Zongzu.Presentation.Unity;
 
 namespace Zongzu.Integration.Tests;
@@ -74,6 +75,88 @@ public sealed class ProjectionSelectorAlignmentTests
                 Assert.That(leadClan.LifecycleSummary, Does.Contain(familyDocket.SuggestedCommandLabel));
             }
         }
+    }
+
+    [Test]
+    public void SelectPrimarySettlementNotification_respects_scope_module_and_priority()
+    {
+        SettlementId targetSettlementId = new(7);
+        NarrativeNotificationSnapshot[] notifications =
+        [
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(1),
+                CreatedAt = new GameDate(1200, 1),
+                Tier = NotificationTier.Background,
+                SourceModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+                Title = "public life",
+                Traces =
+                [
+                    new NotificationTraceSnapshot
+                    {
+                        EntityKey = targetSettlementId.Value.ToString(),
+                    },
+                ],
+            },
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(2),
+                CreatedAt = new GameDate(1200, 2),
+                Tier = NotificationTier.Urgent,
+                SourceModuleKey = KnownModuleKeys.WarfareCampaign,
+                Title = "other settlement",
+                Traces =
+                [
+                    new NotificationTraceSnapshot
+                    {
+                        EntityKey = new SettlementId(8).Value.ToString(),
+                    },
+                ],
+            },
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(3),
+                CreatedAt = new GameDate(1200, 3),
+                Tier = NotificationTier.Consequential,
+                SourceModuleKey = KnownModuleKeys.WarfareCampaign,
+                Title = "front report",
+                Traces =
+                [
+                    new NotificationTraceSnapshot
+                    {
+                        EntityKey = targetSettlementId.Value.ToString(),
+                    },
+                ],
+            },
+            new NarrativeNotificationSnapshot
+            {
+                Id = new NotificationId(4),
+                CreatedAt = new GameDate(1200, 4),
+                Tier = NotificationTier.Background,
+                SourceModuleKey = KnownModuleKeys.WarfareCampaign,
+                Title = "aftermath",
+                Traces =
+                [
+                    new NotificationTraceSnapshot
+                    {
+                        EntityKey = targetSettlementId.Value.ToString(),
+                    },
+                ],
+            },
+        ];
+
+        NarrativeNotificationSnapshot? warfare = PresentationReadModelBuilder.SelectPrimarySettlementNotification(
+            notifications,
+            targetSettlementId,
+            static notification => string.Equals(notification.Title, "aftermath", StringComparison.Ordinal) ? 0 : 1,
+            KnownModuleKeys.WarfareCampaign);
+        NarrativeNotificationSnapshot? governance = PresentationReadModelBuilder.SelectPrimarySettlementNotification(
+            notifications,
+            targetSettlementId,
+            static notification => string.Equals(notification.SourceModuleKey, KnownModuleKeys.PublicLifeAndRumor, StringComparison.Ordinal) ? 0 : 1);
+
+        Assert.That(warfare?.Id, Is.EqualTo(new NotificationId(4)));
+        Assert.That(governance?.Id, Is.EqualTo(new NotificationId(1)));
     }
 
     private static HallDocketItemSnapshot GetFamilyHallDocketItem(PresentationReadModelBundle bundle)

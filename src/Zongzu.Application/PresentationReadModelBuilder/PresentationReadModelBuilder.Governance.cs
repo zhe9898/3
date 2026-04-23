@@ -18,10 +18,12 @@ public sealed partial class PresentationReadModelBuilder
             return [];
         }
 
-        Dictionary<int, SettlementPublicLifeSnapshot> publicLifeBySettlement = bundle.PublicLifeSettlements
-            .ToDictionary(static entry => entry.SettlementId.Value, static entry => entry);
-        Dictionary<int, SettlementDisorderSnapshot> disorderBySettlement = bundle.SettlementDisorder
-            .ToDictionary(static entry => entry.SettlementId.Value, static entry => entry);
+        Dictionary<int, SettlementPublicLifeSnapshot> publicLifeBySettlement = IndexFirstBySettlement(
+            bundle.PublicLifeSettlements,
+            static entry => entry.SettlementId);
+        Dictionary<int, SettlementDisorderSnapshot> disorderBySettlement = IndexFirstBySettlement(
+            bundle.SettlementDisorder,
+            static entry => entry.SettlementId);
 
         return bundle.OfficeJurisdictions
             .OrderBy(static jurisdiction => jurisdiction.SettlementId.Value)
@@ -336,17 +338,10 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<NarrativeNotificationSnapshot> notifications,
         SettlementId settlementId)
     {
-        string settlementKey = settlementId.Value.ToString();
-
-        return notifications
-            .Where(notification => notification.Traces.Any(trace =>
-                string.Equals(trace.EntityKey, settlementKey, StringComparison.Ordinal)))
-            .OrderBy(GetGovernanceDocketNotificationPriority)
-            .ThenBy(static notification => notification.Tier)
-            .ThenByDescending(static notification => notification.CreatedAt.Year)
-            .ThenByDescending(static notification => notification.CreatedAt.Month)
-            .ThenByDescending(static notification => notification.Id.Value)
-            .FirstOrDefault();
+        return SelectPrimarySettlementNotification(
+            notifications,
+            settlementId,
+            GetGovernanceDocketNotificationPriority);
     }
 
     private static PlayerCommandReceiptSnapshot? SelectGovernanceDocketReceipt(

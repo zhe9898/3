@@ -809,15 +809,6 @@ public sealed partial class PresentationReadModelBuilder
         return $"当前可见{activeCount}层社会触面，其中{localAgencyCount}层是本地能动性、{commandCount}层已有正式命令杠杆；最强压力在「{lead.Label}」，分数{lead.ReachScore}。";
     }
 
-    private static Dictionary<int, T> IndexFirstBySettlement<T>(
-        IEnumerable<T> values,
-        Func<T, SettlementId> getSettlementId)
-    {
-        return values
-            .GroupBy(value => getSettlementId(value).Value)
-            .ToDictionary(static group => group.Key, static group => group.First());
-    }
-
     private static HouseholdId? SelectPlayerAnchorHouseholdId(IReadOnlyList<HouseholdPressureSnapshot> households)
     {
         if (households.Count == 0)

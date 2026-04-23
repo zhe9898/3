@@ -50,6 +50,15 @@ public sealed partial class PresentationReadModelBuilder
             .FirstOrDefault();
     }
 
+    private static Dictionary<int, T> IndexFirstBySettlement<T>(
+        IEnumerable<T> values,
+        Func<T, SettlementId> getSettlementId)
+    {
+        return values
+            .GroupBy(value => getSettlementId(value).Value)
+            .ToDictionary(static group => group.Key, static group => group.First());
+    }
+
     private static HashSet<string> IndexEnabledAffordanceSurfaces(
         IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances)
     {
@@ -86,6 +95,29 @@ public sealed partial class PresentationReadModelBuilder
         return receipts.Where(receipt =>
             string.Equals(receipt.SurfaceKey, surfaceKey, StringComparison.Ordinal)
             && (!settlementId.HasValue || receipt.SettlementId == settlementId.Value));
+    }
+
+    internal static NarrativeNotificationSnapshot? SelectPrimarySettlementNotification(
+        IReadOnlyList<NarrativeNotificationSnapshot> notifications,
+        SettlementId settlementId,
+        Func<NarrativeNotificationSnapshot, int> priority,
+        string? sourceModuleKey = null)
+    {
+        ArgumentNullException.ThrowIfNull(priority);
+
+        string settlementKey = settlementId.Value.ToString();
+
+        return notifications
+            .Where(notification =>
+                (string.IsNullOrWhiteSpace(sourceModuleKey)
+                 || string.Equals(notification.SourceModuleKey, sourceModuleKey, StringComparison.Ordinal))
+                && notification.Traces.Any(trace => string.Equals(trace.EntityKey, settlementKey, StringComparison.Ordinal)))
+            .OrderBy(priority)
+            .ThenBy(static notification => notification.Tier)
+            .ThenByDescending(static notification => notification.CreatedAt.Year)
+            .ThenByDescending(static notification => notification.CreatedAt.Month)
+            .ThenByDescending(static notification => notification.Id.Value)
+            .FirstOrDefault();
     }
 
     private static bool IsFamilyLifecycleCommand(string commandName)

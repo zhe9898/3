@@ -193,10 +193,12 @@ public sealed partial class PresentationReadModelBuilder
 
     private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildPublicLifeAffordances(PresentationReadModelBundle bundle)
     {
-        Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = bundle.OfficeJurisdictions
-            .ToDictionary(static entry => entry.SettlementId.Value, static entry => entry);
-        Dictionary<int, SettlementDisorderSnapshot> disorderBySettlement = bundle.SettlementDisorder
-            .ToDictionary(static entry => entry.SettlementId.Value, static entry => entry);
+        Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = IndexFirstBySettlement(
+            bundle.OfficeJurisdictions,
+            static entry => entry.SettlementId);
+        Dictionary<int, SettlementDisorderSnapshot> disorderBySettlement = IndexFirstBySettlement(
+            bundle.SettlementDisorder,
+            static entry => entry.SettlementId);
         ILookup<int, ClanSnapshot> clansBySettlement = bundle.Clans.ToLookup(static entry => entry.HomeSettlementId.Value);
 
         foreach (SettlementPublicLifeSnapshot publicLife in bundle.PublicLifeSettlements.OrderBy(static entry => entry.SettlementId.Value))

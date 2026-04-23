@@ -14,8 +14,9 @@ public sealed partial class PresentationReadModelBuilder
 
     private static IEnumerable<PlayerCommandReceiptSnapshot> BuildPublicLifeReceipts(PresentationReadModelBundle bundle)
     {
-        Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = bundle.OfficeJurisdictions
-            .ToDictionary(static entry => entry.SettlementId.Value, static entry => entry);
+        Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = IndexFirstBySettlement(
+            bundle.OfficeJurisdictions,
+            static entry => entry.SettlementId);
 
         foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
         {
