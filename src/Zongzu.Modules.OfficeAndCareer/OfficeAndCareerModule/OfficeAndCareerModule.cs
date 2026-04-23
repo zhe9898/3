@@ -819,8 +819,9 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             .ToList();
         foreach (OfficeCareerState career in appointed)
         {
+            DefectionProfile profile = ComputeDefectionProfile(career, mandateConfidence);
             career.OfficialDefectionRisk = Math.Clamp(
-                Math.Max(career.OfficialDefectionRisk, ComputeDefectionRisk(career, mandateConfidence)),
+                Math.Max(career.OfficialDefectionRisk, profile.DefectionRisk),
                 0,
                 100);
         }
@@ -836,6 +837,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             return;
         }
 
+        DefectionProfile defectionProfile = ComputeDefectionProfile(defector, mandateConfidence);
         defector.HasAppointment = false;
         defector.IsEligible = false;
         defector.LastOutcome = "Defected";
@@ -853,6 +855,16 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 [DomainEventMetadataKeys.PersonId] = defector.PersonId.Value.ToString(),
                 [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
                 [DomainEventMetadataKeys.DefectionRisk] = defector.OfficialDefectionRisk.ToString(),
+                [DomainEventMetadataKeys.DefectionBaselinePressure] = defectionProfile.BaselinePressure.ToString(),
+                [DomainEventMetadataKeys.DefectionMandateDeficit] = defectionProfile.MandateDeficit.ToString(),
+                [DomainEventMetadataKeys.DefectionDemotionPressure] = defectionProfile.DemotionPressure.ToString(),
+                [DomainEventMetadataKeys.DefectionClerkPressure] = defectionProfile.ClerkPressure.ToString(),
+                [DomainEventMetadataKeys.DefectionPetitionPressure] = defectionProfile.PetitionPressure.ToString(),
+                [DomainEventMetadataKeys.DefectionReputationStrain] = defectionProfile.ReputationStrain.ToString(),
+                [DomainEventMetadataKeys.DefectionAuthorityBuffer] = defectionProfile.AuthorityBuffer.ToString(),
+                [DomainEventMetadataKeys.AuthorityTier] = defector.AuthorityTier.ToString(),
+                [DomainEventMetadataKeys.ClerkDependence] = defector.ClerkDependence.ToString(),
+                [DomainEventMetadataKeys.PetitionPressure] = defector.PetitionPressure.ToString(),
             });
 
         scope.State.People = scope.State.People
@@ -948,18 +960,39 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
     private static int ComputeDefectionRisk(OfficeCareerState career, int mandateConfidence)
     {
+        return ComputeDefectionProfile(career, mandateConfidence).DefectionRisk;
+    }
+
+    private static DefectionProfile ComputeDefectionProfile(OfficeCareerState career, int mandateConfidence)
+    {
         int mandateDeficit = Math.Max(0, 25 - mandateConfidence);
+        const int baselinePressure = 35;
+        int demotionPressure = career.DemotionPressure / 2;
+        int clerkPressure = career.ClerkDependence / 3;
+        int petitionPressure = career.PetitionPressure / 4;
         int reputationStrain = Math.Max(0, 40 - career.OfficeReputation);
-        return Math.Clamp(
-            35
+        int reputationPressure = reputationStrain / 2;
+        int authorityBuffer = (career.AuthorityTier * 4) + (Math.Max(0, career.OfficeReputation - 60) / 5);
+        int defectionRisk = Math.Clamp(
+            baselinePressure
             + mandateDeficit
-            + (career.DemotionPressure / 2)
-            + (career.ClerkDependence / 3)
-            + (career.PetitionPressure / 4)
-            + (reputationStrain / 2)
-            - (career.AuthorityTier * 4),
+            + demotionPressure
+            + clerkPressure
+            + petitionPressure
+            + reputationPressure
+            - authorityBuffer,
             0,
             100);
+
+        return new DefectionProfile(
+            defectionRisk,
+            baselinePressure,
+            mandateDeficit,
+            demotionPressure,
+            clerkPressure,
+            petitionPressure,
+            reputationPressure,
+            authorityBuffer);
     }
 
     private static int GetMandateConfidence(ModuleEventHandlingScope<OfficeAndCareerState> scope, IDomainEvent domainEvent)
@@ -991,4 +1024,14 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         int AdministrativeDrag,
         int ClerkDrag,
         int BacklogDrag);
+
+    private readonly record struct DefectionProfile(
+        int DefectionRisk,
+        int BaselinePressure,
+        int MandateDeficit,
+        int DemotionPressure,
+        int ClerkPressure,
+        int PetitionPressure,
+        int ReputationStrain,
+        int AuthorityBuffer);
 }

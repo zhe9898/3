@@ -172,6 +172,13 @@ public static class DomainEventMetadataKeys
     public const string PolicyWindowClerkDrag = "policyWindowClerkDrag";
     public const string PolicyWindowBacklogDrag = "policyWindowBacklogDrag";
     public const string DefectionRisk = "defectionRisk";
+    public const string DefectionBaselinePressure = "defectionBaselinePressure";
+    public const string DefectionMandateDeficit = "defectionMandateDeficit";
+    public const string DefectionDemotionPressure = "defectionDemotionPressure";
+    public const string DefectionClerkPressure = "defectionClerkPressure";
+    public const string DefectionPetitionPressure = "defectionPetitionPressure";
+    public const string DefectionReputationStrain = "defectionReputationStrain";
+    public const string DefectionAuthorityBuffer = "defectionAuthorityBuffer";
     public const string AuthorityTier = "authorityTier";
     public const string PersonId = "personId";
 }

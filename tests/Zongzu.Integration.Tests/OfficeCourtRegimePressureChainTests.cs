@@ -169,6 +169,14 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(defections.Length, Is.EqualTo(1),
             "Regime pressure must resolve through risk allocation, not all-official defection.");
         Assert.That(defections[0].EntityKey, Is.EqualTo("1"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionRisk], Is.EqualTo("100"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionBaselinePressure], Is.EqualTo("35"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionMandateDeficit], Is.EqualTo("5"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionDemotionPressure], Is.EqualTo("45"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionClerkPressure], Is.EqualTo("20"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionPetitionPressure], Is.EqualTo("17"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionReputationStrain], Is.EqualTo("20"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionAuthorityBuffer], Is.EqualTo("8"));
         Assert.That(officeState.People.Single(static p => p.PersonId == new PersonId(1)).HasAppointment, Is.False);
         Assert.That(officeState.People.Single(static p => p.PersonId == new PersonId(2)).HasAppointment, Is.True);
     }
