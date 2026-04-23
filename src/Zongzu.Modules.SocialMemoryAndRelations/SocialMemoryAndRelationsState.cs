@@ -13,6 +13,10 @@ public sealed class SocialMemoryAndRelationsState : IModuleStateDescriptor
     public List<MemoryRecordState> Memories { get; set; } = new();
 
     public List<DormantStubState> DormantStubs { get; set; } = new();
+
+    public List<ClanEmotionalClimateState> ClanEmotionalClimates { get; set; } = new();
+
+    public List<PersonPressureTemperingState> PersonTemperings { get; set; } = new();
 }
 
 public sealed class ClanNarrativeState
@@ -94,4 +98,76 @@ public sealed class DormantStubState
     public GameDate LastSeen { get; set; }
 
     public bool IsEligibleForReemergence { get; set; }
+}
+
+public sealed class ClanEmotionalClimateState
+{
+    public ClanId ClanId { get; set; }
+
+    public int Fear { get; set; }
+
+    public int Shame { get; set; }
+
+    public int Grief { get; set; }
+
+    public int Anger { get; set; }
+
+    public int Obligation { get; set; }
+
+    public int Hope { get; set; }
+
+    public int Trust { get; set; }
+
+    public int Restraint { get; set; }
+
+    public int Hardening { get; set; }
+
+    public int Bitterness { get; set; }
+
+    public int Volatility { get; set; }
+
+    public int LastPressureScore { get; set; }
+
+    public int LastPressureBand { get; set; }
+
+    public int LastTemperingBand { get; set; }
+
+    public GameDate LastUpdated { get; set; } = new(1, 1);
+
+    public string LastTrace { get; set; } = string.Empty;
+}
+
+public sealed class PersonPressureTemperingState
+{
+    public PersonId PersonId { get; set; }
+
+    public ClanId ClanId { get; set; }
+
+    public int Fear { get; set; }
+
+    public int Shame { get; set; }
+
+    public int Grief { get; set; }
+
+    public int Anger { get; set; }
+
+    public int Obligation { get; set; }
+
+    public int Hope { get; set; }
+
+    public int Trust { get; set; }
+
+    public int Restraint { get; set; }
+
+    public int Hardening { get; set; }
+
+    public int Bitterness { get; set; }
+
+    public int Volatility { get; set; }
+
+    public int LastPressureScore { get; set; }
+
+    public GameDate LastUpdated { get; set; } = new(1, 1);
+
+    public string LastTrace { get; set; } = string.Empty;
 }

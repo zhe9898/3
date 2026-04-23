@@ -221,14 +221,63 @@ Owns:
 - memory records
 - grudge tracks
 - clan narrative records
+- clan emotional climate records
+- person pressure-tempering records
 
 ```csharp
-public sealed record SocialMemoryState {
-    Dictionary<RelationshipEdgeId, RelationshipEdgeData> Relationships;
-    Dictionary<MemoryId, MemoryData> Memories;
-    Dictionary<ClanId, ClanNarrativeState> ClanNarratives;
+public sealed class SocialMemoryAndRelationsState {
+    List<ClanNarrativeState> ClanNarratives;
+    List<MemoryRecordState> Memories;
+    List<DormantStubState> DormantStubs;
+    List<ClanEmotionalClimateState> ClanEmotionalClimates;
+    List<PersonPressureTemperingState> PersonTemperings;
+}
+
+public sealed class ClanEmotionalClimateState {
+    ClanId ClanId;
+    int Fear;
+    int Shame;
+    int Grief;
+    int Anger;
+    int Obligation;
+    int Hope;
+    int Trust;
+    int Restraint;
+    int Hardening;
+    int Bitterness;
+    int Volatility;
+    int LastPressureScore;
+    int LastPressureBand;
+    int LastTemperingBand;
+    GameDate LastUpdated;
+    string LastTrace;
+}
+
+public sealed class PersonPressureTemperingState {
+    PersonId PersonId;
+    ClanId ClanId;
+    int Fear;
+    int Shame;
+    int Grief;
+    int Anger;
+    int Obligation;
+    int Hope;
+    int Trust;
+    int Restraint;
+    int Hardening;
+    int Bitterness;
+    int Volatility;
+    int LastPressureScore;
+    GameDate LastUpdated;
+    string LastTrace;
 }
 ```
+
+Current note:
+- `SocialMemoryAndRelations` schema `3` persists pressure-tempering state. Clan climates and person tempering ledgers are module-owned residue from household distress, lineage conflict, trade pressure, exam outcomes, death, marriage, and warfare aftermath.
+- `SocialMemoryAndRelations` reads foreign pressure through queries or scoped domain events only. It does not write family, population, trade, education, office, order, force, or campaign state.
+- `LastUpdated` on climate / tempering records must be a valid `GameDate` even for default or migrated state; default `0000-00` dates are invalid save data.
+- `SocialMemoryAndRelations.PressureTempered` and `SocialMemoryAndRelations.EmotionalPressureShifted` are runtime receipts after owned state mutation; their metadata does not extend save schema.
 
 ### EducationAndExams state
 ```csharp

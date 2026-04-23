@@ -122,6 +122,8 @@ Each xun pulse should run the same deterministic sub-order.
 `SocialMemoryAndRelations`
 - update short-band obligation, fear, shame, rumor attachment, and feud temperature
 - promote or cool memories when pressure was actually carried during the pulse
+- update clan emotional climate quietly from existing family, household, and optional trade query inputs
+- nudge pressure-tempering residues such as restraint, hardening, bitterness, trust, and volatility without creating xun report spam
 
 #### Xun Phase E: enabled local and upward modules
 Enabled modules run in deterministic order for xun-visible local pressure:
@@ -156,6 +158,7 @@ The pulse should handle short-band pressure, not replace the monthly shell.
 - handlers update only owning module state
 - the active handler seam runs after authority modules finish their monthly pass and before `NarrativeProjection` builds notices
 - follow-on events may reach projection, but they do not trigger uncontrolled recursive month expansion
+- `SocialMemoryAndRelations` may consume scoped trade, exam, death, branch, marriage, and warfare events here; it mutates only memory/climate/tempering state and emits terminal social-memory receipts such as `EmotionalPressureShifted` or `PressureTempered`
 
 Current M3 local-conflict note:
 - `ConflictAndForce.Lite` may refresh force posture before `OrderAndBanditry.Lite` reads same-month response support

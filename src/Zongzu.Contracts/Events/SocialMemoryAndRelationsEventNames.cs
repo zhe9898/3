@@ -19,4 +19,10 @@ public static class SocialMemoryAndRelationsEventNames
     public const string FavorIncurred = "FavorIncurred";
 
     public const string ClanNarrativeUpdated = "ClanNarrativeUpdated";
+
+    // ---- Pressure-tempering kernel receipts (prefixed, new) ----
+
+    public const string PressureTempered = "SocialMemoryAndRelations.PressureTempered";
+
+    public const string EmotionalPressureShifted = "SocialMemoryAndRelations.EmotionalPressureShifted";
 }

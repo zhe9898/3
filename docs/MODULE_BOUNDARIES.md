@@ -201,12 +201,16 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - memory records
 - clan narrative promotion
 - grudge escalation state
+- clan emotional climate: fear, shame, grief, anger, obligation, hope, trust, restraint, hardening, bitterness, volatility
+- person pressure tempering for clan-linked adults, keyed by `PersonId`
 
 ### Public queries
 - relation summaries
 - grudge pressure
 - obligation/favor summaries
 - public vs private memory projections
+- clan emotional climate snapshots
+- person pressure-tempering snapshots by person or clan
 
 ### Accepts commands
 - apologize
@@ -221,11 +225,20 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `FavorIncurred`
 - `DebtOfHonorCreated`
 - `ClanNarrativeUpdated`
+- `SocialMemoryAndRelations.EmotionalPressureShifted`
+- `SocialMemoryAndRelations.PressureTempered`
+
+### Upstream reads / event inputs
+- reads `FamilyCore` clan pressure and personality traits through `IFamilyCoreQueries`
+- reads sponsored household pressure through `IPopulationAndHouseholdsQueries`
+- reads optional clan trade pressure through `ITradeAndIndustryQueries`
+- consumes scoped trade shock, exam, death, marriage, branch, heir, and warfare events to mutate only its own climate, memory, narrative, and tempering state
 
 ### Does not own
 - direct conflict resolution
 - exam or trade state
 - office appointments
+- household distress, market price, education progress, family lineage, force posture, or public-life heat
 
 ## 5. EducationAndExams
 ### Owns

@@ -641,7 +641,10 @@ public sealed partial class M2LiteIntegrationTests
 
                 // 父母 ChildrenIds + PersonRegistry 条目 约再增 ~6 KB 峰值。
 
-                SavePayloadBytes = 60000,
+                // Pressure tempering kernel: SocialMemory schema v3 persists
+                // clan climates and personal tempering ledgers, adding about
+                // 4 KB on this minimal long-run slice.
+                SavePayloadBytes = 66000,
 
             },
 
@@ -655,7 +658,7 @@ public sealed partial class M2LiteIntegrationTests
 
                 NotificationCount = NarrativeProjectionModule.NotificationRetentionLimit,
 
-                SavePayloadBytes = 52000,
+                SavePayloadBytes = 58000,
 
             },
 
@@ -742,7 +745,9 @@ public sealed partial class M2LiteIntegrationTests
 
                 NotificationCount = NarrativeProjectionModule.NotificationRetentionLimit,
 
-                SavePayloadBytes = 120000,
+                // Pressure tempering kernel: schema v3 SocialMemory ledgers add
+                // bounded per-clan/per-person payload to the stress slice.
+                SavePayloadBytes = 126000,
 
             },
 
@@ -879,7 +884,9 @@ public sealed partial class M2LiteIntegrationTests
 
                 NotificationCount = NarrativeProjectionModule.NotificationRetentionLimit,
 
-                SavePayloadBytes = 130000,
+                // Pressure tempering kernel: schema v3 SocialMemory ledgers add
+                // bounded per-clan/per-person payload over 360 months.
+                SavePayloadBytes = 140000,
 
             },
 

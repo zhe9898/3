@@ -181,6 +181,12 @@ public static class DomainEventMetadataKeys
     public const string DefectionAuthorityBuffer = "defectionAuthorityBuffer";
     public const string AuthorityTier = "authorityTier";
     public const string PersonId = "personId";
+    public const string ClanId = "clanId";
+    public const string EmotionalAxis = "emotionalAxis";
+    public const string SocialPressureScore = "socialPressureScore";
+    public const string TemperingScore = "temperingScore";
+    public const string PressureBand = "pressureBand";
+    public const string TemperingBand = "temperingBand";
 }
 
 public static class DomainEventMetadataValues
@@ -202,4 +208,6 @@ public static class DomainEventMetadataValues
     public const string CauseCourt = "court";
     public const string CauseRegime = "regime";
     public const string CauseClerkCapture = "clerk-capture";
+    public const string CauseSocialPressure = "social-pressure";
+    public const string CausePressureTempering = "pressure-tempering";
 }
