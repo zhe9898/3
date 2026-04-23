@@ -50,6 +50,23 @@ public sealed partial class PresentationReadModelBuilder
             .FirstOrDefault();
     }
 
+    private static HashSet<string> IndexEnabledAffordanceSurfaces(
+        IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances)
+    {
+        return affordances
+            .Where(static affordance => affordance.IsEnabled && !string.IsNullOrWhiteSpace(affordance.SurfaceKey))
+            .Select(static affordance => affordance.SurfaceKey)
+            .ToHashSet(StringComparer.Ordinal);
+    }
+
+    private static bool HasEnabledAffordanceForSurface(
+        IReadOnlySet<string> enabledSurfaceKeys,
+        string surfaceKey)
+    {
+        return !string.IsNullOrWhiteSpace(surfaceKey)
+            && enabledSurfaceKeys.Contains(surfaceKey);
+    }
+
     private static IEnumerable<PlayerCommandAffordanceSnapshot> EnumerateAffordancesForSurface(
         IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
         string surfaceKey,

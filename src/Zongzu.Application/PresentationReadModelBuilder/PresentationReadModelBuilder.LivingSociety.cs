@@ -492,17 +492,18 @@ public sealed partial class PresentationReadModelBuilder
     private static PlayerInfluenceFootprintSnapshot BuildInfluenceFootprint(PresentationReadModelBundle bundle)
     {
         HouseholdSocialPressureSnapshot? anchorHousehold = SelectPlayerAnchorHouseholdPressure(bundle.HouseholdSocialPressures);
+        HashSet<string> enabledCommandSurfaces = IndexEnabledAffordanceSurfaces(bundle.PlayerCommands.Affordances);
         InfluenceReachSnapshot[] reaches =
         [
             BuildOwnHouseholdReach(anchorHousehold),
             BuildObservedHouseholdReach(bundle, anchorHousehold),
-            BuildLineageReach(bundle),
+            BuildLineageReach(bundle, enabledCommandSurfaces),
             BuildMarketReach(bundle),
             BuildEducationReach(bundle),
-            BuildYamenReach(bundle),
-            BuildPublicLifeReach(bundle),
-            BuildOrderReach(bundle),
-            BuildForceReach(bundle),
+            BuildYamenReach(bundle, enabledCommandSurfaces),
+            BuildPublicLifeReach(bundle, enabledCommandSurfaces),
+            BuildOrderReach(bundle, enabledCommandSurfaces),
+            BuildForceReach(bundle, enabledCommandSurfaces),
         ];
 
         InfluenceReachSnapshot? lead = reaches
@@ -574,24 +575,27 @@ public sealed partial class PresentationReadModelBuilder
         };
     }
 
-    private static InfluenceReachSnapshot BuildLineageReach(PresentationReadModelBundle bundle)
+    private static InfluenceReachSnapshot BuildLineageReach(
+        PresentationReadModelBundle bundle,
+        IReadOnlySet<string> enabledCommandSurfaces)
     {
         int score = bundle.Clans.Count == 0
             ? 0
             : Math.Clamp(bundle.Clans.Max(static clan => (clan.Prestige + clan.SupportReserve + Math.Max(0, 100 - clan.BranchTension)) / 3), 0, 100);
+        bool hasCommandAffordance = HasEnabledAffordanceForSurface(enabledCommandSurfaces, PlayerCommandSurfaceKeys.Family);
 
         return new InfluenceReachSnapshot
         {
             ReachKey = InfluenceReachKeys.Lineage,
             Label = "宗族",
             IsActive = bundle.Clans.Count > 0,
-            HasCommandAffordance = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.Family),
+            HasCommandAffordance = hasCommandAffordance,
             ReachScore = score,
             LeverageSummary = bundle.Clans.Count == 0
                 ? "未见可用宗族节点。"
                 : $"可见{bundle.Clans.Count}个宗族节点，族望、支用、房支张力会影响庇护与压制。",
             ConstraintSummary = "宗族只是社会强节点，不是世界本体；它能吸附家户，也会被市场、官府和舆论反压。",
-            CommandSummary = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.Family)
+            CommandSummary = hasCommandAffordance
                 ? "可借族老、婚配、救济、丧次与承祧议程施力。"
                 : "当前宗族面只读。",
             SourceModuleKeys = [KnownModuleKeys.FamilyCore],
@@ -643,7 +647,9 @@ public sealed partial class PresentationReadModelBuilder
         };
     }
 
-    private static InfluenceReachSnapshot BuildYamenReach(PresentationReadModelBundle bundle)
+    private static InfluenceReachSnapshot BuildYamenReach(
+        PresentationReadModelBundle bundle,
+        IReadOnlySet<string> enabledCommandSurfaces)
     {
         int score = bundle.OfficeJurisdictions.Count == 0
             ? 0
@@ -651,76 +657,85 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.JurisdictionLeverage
                 + jurisdiction.PetitionPressure / 2
                 + jurisdiction.ClerkDependence / 2), 0, 100);
+        bool hasCommandAffordance = HasEnabledAffordanceForSurface(enabledCommandSurfaces, PlayerCommandSurfaceKeys.Office);
 
         return new InfluenceReachSnapshot
         {
             ReachKey = InfluenceReachKeys.Yamen,
             Label = "衙门文书",
             IsActive = bundle.OfficeJurisdictions.Count > 0,
-            HasCommandAffordance = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.Office),
+            HasCommandAffordance = hasCommandAffordance,
             ReachScore = score,
             LeverageSummary = bundle.OfficeJurisdictions.Count == 0
                 ? "未见县署文书触面。"
                 : $"可见{bundle.OfficeJurisdictions.Count}个文书触面，案牍、税契、诉状和吏胥中介会改变地方判断。",
             ConstraintSummary = "仁宗朝开局不默认王安石以后那套保甲压法；地方接触先从案牍、税契和人情中介走。",
-            CommandSummary = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.Office)
+            CommandSummary = hasCommandAffordance
                 ? "可通过请托、呈文或行政杠杆间接施力。"
                 : "当前衙门面只读。",
             SourceModuleKeys = [KnownModuleKeys.OfficeAndCareer],
         };
     }
 
-    private static InfluenceReachSnapshot BuildPublicLifeReach(PresentationReadModelBundle bundle)
+    private static InfluenceReachSnapshot BuildPublicLifeReach(
+        PresentationReadModelBundle bundle,
+        IReadOnlySet<string> enabledCommandSurfaces)
     {
         int score = bundle.PublicLifeSettlements.Count == 0
             ? 0
             : Math.Clamp(bundle.PublicLifeSettlements.Max(static entry =>
                 entry.StreetTalkHeat + entry.PublicLegitimacy / 2 + entry.MarketRumorFlow / 2), 0, 100);
+        bool hasCommandAffordance = HasEnabledAffordanceForSurface(enabledCommandSurfaces, PlayerCommandSurfaceKeys.PublicLife);
 
         return new InfluenceReachSnapshot
         {
             ReachKey = InfluenceReachKeys.PublicLife,
             Label = "公共生活",
             IsActive = bundle.PublicLifeSettlements.Count > 0,
-            HasCommandAffordance = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.PublicLife),
+            HasCommandAffordance = hasCommandAffordance,
             ReachScore = score,
             LeverageSummary = bundle.PublicLifeSettlements.Count == 0
                 ? "寺院、茶肆、告示与街谈尚未投出。"
                 : $"可见{bundle.PublicLifeSettlements.Count}处公共面，街谈、告示、寺院义举和市声会放大或缓冲压力。",
             ConstraintSummary = "公共生活是社会信任节点，不是魔法舆论池。",
-            CommandSummary = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.PublicLife)
+            CommandSummary = hasCommandAffordance
                 ? "可借告示、调停、路报或地方义举影响可见面。"
                 : "当前公共生活面只读。",
             SourceModuleKeys = [KnownModuleKeys.PublicLifeAndRumor],
         };
     }
 
-    private static InfluenceReachSnapshot BuildOrderReach(PresentationReadModelBundle bundle)
+    private static InfluenceReachSnapshot BuildOrderReach(
+        PresentationReadModelBundle bundle,
+        IReadOnlySet<string> enabledCommandSurfaces)
     {
         int score = bundle.SettlementDisorder.Count == 0
             ? 0
             : Math.Clamp(bundle.SettlementDisorder.Max(static entry =>
                 entry.BanditThreat + entry.RoutePressure + entry.SuppressionDemand) / 2, 0, 100);
+        bool hasCommandAffordance = HasEnabledAffordanceForSurface(enabledCommandSurfaces, PlayerCommandSurfaceKeys.PublicLife);
 
         return new InfluenceReachSnapshot
         {
             ReachKey = InfluenceReachKeys.Order,
             Label = "灰色失序",
             IsActive = bundle.SettlementDisorder.Count > 0,
-            HasCommandAffordance = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.PublicLife),
+            HasCommandAffordance = hasCommandAffordance,
             ReachScore = score,
             LeverageSummary = bundle.SettlementDisorder.Count == 0
                 ? "尚未投出治安与灰色压力。"
                 : $"可见{bundle.SettlementDisorder.Count}处失序压力，逃散、小盗、私贩和保护关系会成为压力出口。",
             ConstraintSummary = "灰色层不是开局匪帮玩法，而是债、饥、路况、官府迟滞共同挤出的出口。",
-            CommandSummary = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.PublicLife)
+            CommandSummary = hasCommandAffordance
                 ? "可借地方看守、告示、调停或镇压间接处理。"
                 : "当前失序面只读。",
             SourceModuleKeys = [KnownModuleKeys.OrderAndBanditry],
         };
     }
 
-    private static InfluenceReachSnapshot BuildForceReach(PresentationReadModelBundle bundle)
+    private static InfluenceReachSnapshot BuildForceReach(
+        PresentationReadModelBundle bundle,
+        IReadOnlySet<string> enabledCommandSurfaces)
     {
         int score = bundle.Campaigns.Count == 0
             ? 0
@@ -728,19 +743,20 @@ public sealed partial class PresentationReadModelBuilder
                 campaign.FrontPressure
                 + campaign.SupplyStretch / 2
                 + campaign.CivilianExposure / 2), 0, 100);
+        bool hasCommandAffordance = HasEnabledAffordanceForSurface(enabledCommandSurfaces, PlayerCommandSurfaceKeys.Warfare);
 
         return new InfluenceReachSnapshot
         {
             ReachKey = InfluenceReachKeys.Force,
             Label = "军伍边防",
             IsActive = bundle.Campaigns.Count > 0,
-            HasCommandAffordance = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.Warfare),
+            HasCommandAffordance = hasCommandAffordance,
             ReachScore = score,
             LeverageSummary = bundle.Campaigns.Count == 0
                 ? "暂无军伍边防触面。"
                 : $"可见{bundle.Campaigns.Count}个军务面，军费、招募、伤亡回流和边讯会压回地方社会。",
             ConstraintSummary = "仁宗朝可有西夏压力，但不变成全战；军务是家户、财政、路况和士气的外压。",
-            CommandSummary = HasEnabledCommand(bundle, PlayerCommandSurfaceKeys.Warfare)
+            CommandSummary = hasCommandAffordance
                 ? "可通过军议、护运、动员或撤防做有限处置。"
                 : "当前军务面只读。",
             SourceModuleKeys = [KnownModuleKeys.WarfareCampaign],
@@ -791,12 +807,6 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         return $"当前可见{activeCount}层社会触面，其中{localAgencyCount}层是本地能动性、{commandCount}层已有正式命令杠杆；最强压力在「{lead.Label}」，分数{lead.ReachScore}。";
-    }
-
-    private static bool HasEnabledCommand(PresentationReadModelBundle bundle, string surfaceKey)
-    {
-        return bundle.PlayerCommands.Affordances.Any(affordance =>
-            affordance.IsEnabled && string.Equals(affordance.SurfaceKey, surfaceKey, StringComparison.Ordinal));
     }
 
     private static Dictionary<int, T> IndexFirstBySettlement<T>(
