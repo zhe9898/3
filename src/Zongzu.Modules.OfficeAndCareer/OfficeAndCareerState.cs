@@ -16,6 +16,19 @@ public sealed class OfficeAndCareerState : IModuleStateDescriptor
     public List<OfficialPostState> OfficialPosts { get; set; } = new();
 
     public List<WaitingListEntryState> WaitingList { get; set; } = new();
+
+    /// <summary>
+    /// Highest amnesty-wave intensity already converted into local yamen
+    /// amnesty events. Prevents non-amnesty imperial rhythm changes from
+    /// re-emitting the same amnesty while the imperial band remains high.
+    /// </summary>
+    public int LastAppliedAmnestyWave { get; set; }
+
+    /// <summary>
+    /// Settlement-level watermark for clerk-capture escalation receipts.
+    /// A settlement leaves this set once the captured condition clears.
+    /// </summary>
+    public List<SettlementId> ActiveClerkCaptureSettlementIds { get; set; } = new();
 }
 
 // Phase 7 衙门骨骼 — LIVING_WORLD_DESIGN §2.7。
@@ -90,6 +103,8 @@ public sealed class OfficeCareerState
     public int PromotionMomentum { get; set; }
 
     public int DemotionPressure { get; set; }
+
+    public int OfficialDefectionRisk { get; set; }
 
     public string CurrentAdministrativeTask { get; set; } = "候补听选";
 

@@ -83,6 +83,18 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 2
                 && step.TargetVersion == 3),
             Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OfficeAndCareer
+                && step.SourceVersion == 4
+                && step.TargetVersion == 5),
+            Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OfficeAndCareer
+                && step.SourceVersion == 5
+                && step.TargetVersion == 6),
+            Is.True);
         Assert.That(reloaded.LoadMigrationReport.ConsistencyPassed, Is.True);
 
         SaveRoot reloadedSave = reloaded.ExportSave();
@@ -90,11 +102,12 @@ public sealed partial class SaveMigrationPipelineTests
             typeof(OfficeAndCareerState),
             reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
 
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(4));
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(6));
         Assert.That(migratedState.People.Any(static career => career.ServiceMonths > 0), Is.True);
         Assert.That(migratedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.CurrentAdministrativeTask)), Is.True);
         Assert.That(migratedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.LastPetitionOutcome)), Is.True);
         Assert.That(migratedState.People.Any(static career => career.AppointmentPressure >= 0), Is.True);
+        Assert.That(migratedState.ActiveClerkCaptureSettlementIds, Is.Not.Null);
     }
 
     [Test]
@@ -171,6 +184,12 @@ public sealed partial class SaveMigrationPipelineTests
                 step.ModuleKey == KnownModuleKeys.OfficeAndCareer
                 && step.SourceVersion == 2
                 && step.TargetVersion == 3),
+            Is.True);
+        Assert.That(
+            migratedReloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OfficeAndCareer
+                && step.SourceVersion == 4
+                && step.TargetVersion == 5),
             Is.True);
         MessagePackModuleStateSerializer migratedSerializer = new();
         OfficeAndCareerState currentOfficeState = (OfficeAndCareerState)migratedSerializer.Deserialize(

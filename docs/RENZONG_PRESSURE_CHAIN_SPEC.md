@@ -159,6 +159,8 @@
 
 ### 链1：税役-家户-衙门-公共生活
 
+> **实现状态：真实 scheduler 薄切片（M2-lite）。已落 `TaxSeasonOpened -> HouseholdDebtSpiked -> OfficeAndCareer.YamenOverloaded -> PublicLife heat`，并有真实 `MonthlyScheduler` drain 测试。完整版的户等/税种/额度公式、客户租压、佃户逃散、税季现金挤压到市场、SocialMemory 年度残留、精确 settlement-scoped 衙门 payload 仍未实现。**
+
 **Trigger**：`WorldSettlements` 季节推进进入 `TaxSeason` 或 `CorveeWindow`。
 
 **Event Flow**：
@@ -238,6 +240,8 @@ OfficeAndCareer (monthly)
 
 ### 链2：粮价-市场-家户-贸易
 
+> **实现状态：真实 scheduler 薄切片（M2-lite）。已落 `SeasonPhaseAdvanced(Harvest) -> TradeAndIndustry.GrainPriceSpike -> PopulationAndHouseholds.HouseholdSubsistencePressureChanged`，并有真实 `MonthlyScheduler` drain 测试和 off-scope 聚落负例。完整版的 `HarvestPressureChanged/yieldRatio`、灾荒输入、granarySecurity/routeRisk、家户粮仓/生计类型公式、迁徙/病亡、OrderAndBanditry 路险、SocialMemory 与 PublicLife 长期饥荒叙事仍未实现。**
+
 **Trigger**：`WorldSettlements` 秋收结算（`HarvestPressureChanged`）或灾荒判定（`Drought`/`Flood`）。
 
 **Event Flow**：
@@ -311,6 +315,8 @@ OrderAndBanditry (monthly)
 
 ### 链3：科举-教育-家户-官员-公共生活
 
+> **实现状态：薄切片（M2-lite）。完整版链3大量分支尚未实现，见下方 ✅/⏳ 标记。**
+
 **Trigger**：`WorldSettlements` 进入 `ExamSeason`，或 `EducationAndExams` 检测到 eligible aspirant。
 
 **Event Flow**：
@@ -322,47 +328,49 @@ WorldSettlements (seasonal)
             遍历 eligible aspirants（studyProgress + age + academyAccess）
             计算 passProbability = f(studyProgress, tutorQuality, stress, academyPrestige, quota, competition)
             对每个 aspirant 发出 EducationAndExams.ExamAttemptResolved { personId, examTier, result, passProbability }
+            ⏳ 当前未消费 ExamSeasonOpened；EducationAndExams 自行检查考试窗口 (month 3/9)
+            ⏳ 当前未发出 ExamAttemptResolved；直接发 ExamPassed / ExamFailed / StudyAbandoned
 
 EducationAndExams (monthly)
   └── EducationAndExams.ExamAttemptResolved { result: Pass }
-      ├──→ FamilyCore（通过事件，非直接写）
-      │     更新 clan.Prestige（适度上升，非自动）
-      │     更新 clan.MarriageAllianceValue（科举成功提升婚配价值）
-      │     发出 ClanPrestigeAdjusted { clanId, causeKey: "exam-pass", delta }
+      ├──→ FamilyCore（通过事件，非直接写）✅ THIN-SLICE DONE
+      │     更新 clan.Prestige（+5）
+      │     更新 clan.MarriageAllianceValue（+3）
+      │     发出 ClanPrestigeAdjusted { clanId, causeKey: "exam-pass" }
       │
-      ├──→ OfficeAndCareer（通过事件）
+      ├──→ OfficeAndCareer（通过事件）⏳ NOT IMPLEMENTED
       │     创建 WaitingListEntry { personId, qualificationTier: examTier, waitingMonths: 0 }
       │     若 queue 长:
       │       发出 OfficeAndCareer.AppointmentQueuePressure { settlementId, tier: examTier, queueLength }
       │
-      └──→ SocialMemoryAndRelations
+      └──→ SocialMemoryAndRelations ⏳ NOT IMPLEMENTED
             记忆: FavorIncurred（赞助人-考生关系加深）
             若考生来自平民家户: 记录 "寒门出贵子" narrative
 
 EducationAndExams (monthly)
   └── EducationAndExams.ExamAttemptResolved { result: Fail }
-      ├──→ FamilyCore（通过事件）
+      ├──→ FamilyCore（通过事件）⏳ NOT IMPLEMENTED
       │     若 study investment 大:
       │       发出 PopulationAndHouseholds.HouseholdLaborReabsorbed { personId, householdId }
       │       clan.SupportReserve 可能因沉没成本而紧张
       │
-      ├──→ PopulationAndHouseholds（通过事件）
+      ├──→ PopulationAndHouseholds（通过事件）⏳ NOT IMPLEMENTED
       │     更新 person.activity = Idle / Farming / Laboring
       │     若连续失败 >= 3:
       │       发出 StudyAbandoned { personId, fallbackPath }
       │
-      └──→ SocialMemoryAndRelations
+      └──→ SocialMemoryAndRelations ⏳ NOT IMPLEMENTED
             记忆: Shame 或 Resignation（取决于家庭期望和社会压力）
 
 OfficeAndCareer (monthly)
-  └── OfficeAndCareer.AppointmentQueuePressure
+  └── OfficeAndCareer.AppointmentQueuePressure ⏳ NOT IMPLEMENTED
       └──→ 若 patronageSupport 足够 + vacancy 出现:
             发出 OfficeGranted { personId, postId, location, rank }
             否则:
             更新 waitingMonths（状态字段，PublicLifeAndRumor 通过 Query 投影）
 
 PublicLifeAndRumor (monthly, 通过 query)
-  └── 读取 exam results + appointment news
+  └── 读取 exam results + appointment news ⏳ NOT IMPLEMENTED
       更新 notice wall: 放榜
       更新 street talk: "今年县学又中了几个"
       若 waiting list 长: 更新 rumor: "候补的人排到了衙门口"
@@ -392,6 +400,8 @@ PublicLifeAndRumor (monthly, 通过 query)
 ---
 
 ### 链4：皇权-任命-地方-公共生活
+
+> **实现状态：薄切片（M2-lite）。已落 `ImperialRhythmChanged -> OfficeAndCareer.AmnestyApplied -> OrderAndBanditry.DisorderSpike`，完整版的任命暂停、国丧、边防军需、公共生活诏令投影仍未实现。**
 
 **Trigger**：`WorldSettlements` 的 `ImperialBand` 更新（大赦、国丧、储位摇动、边防急报）。
 
@@ -427,7 +437,8 @@ OfficeAndCareer (monthly)
   └── OfficeAndCareer.AmnestyApplied
       └──→ OrderAndBanditry（通过事件）
             OrderAndBanditry 处理实际治安后果：释放人员中惯犯的再犯风险、失序压力上升
-            可能发出 OrderAndBanditry.DisorderLevelChanged { settlementId, oldBand, newBand }
+            ✅ THIN-SLICE DONE：跨 50 阈值时复用 OrderAndBanditry.DisorderSpike { settlementId }
+            ⏳ FULL CHAIN TODO：定期 summary 事件仍应使用 OrderAndBanditry.DisorderLevelChanged { settlementId, oldBand, newBand }
       注意：OfficeAndCareer 只处理文书和命令（发布赦令、更新案牍），不直接处理治安执行
 
 OfficeAndCareer (monthly)
@@ -479,6 +490,8 @@ PublicLifeAndRumor (monthly, 通过 query)
 ---
 
 ### 链5：边防-军需-家户-市场-衙门
+
+> **实现状态：薄切片（M2-lite）。已落 `WorldSettlements.FrontierStrainEscalated -> OfficeAndCareer.OfficialSupplyRequisition -> PopulationAndHouseholds.HouseholdBurdenIncreased` 的最小 scheduler 链；完整版的边防 sector、WarfareCampaign mobilization、ConflictAndForce readiness、TradeAndIndustry market diversion、胥吏执行扭曲和公共生活投影仍未实现。**
 
 **Trigger**：`WorldSettlements` 长期 `FrontierEmergency` + `WarfareCampaign` 若启用。
 
@@ -545,6 +558,11 @@ WarfareCampaign（若启用，monthly）
             若 blames > merits: 记录 Grudge（"朝廷打输了，还征了我们的粮"）
 ```
 
+**Thin-slice constraints (implemented)**：
+- 当前 `FrontierStrainEscalated` 使用 `EntityKey = settlementId`，不是 `frontier` 这类全局 token；`OfficeAndCareer` 只对匹配 jurisdiction 发 `OfficialSupplyRequisition`。
+- `WorldSettlements.LastDeclaredFrontierStrainBand` 是 schema `8` 的模块内水位，边防压力持续高位时不重复发同一档升级事件；未来若改成周期军需，应另起 `FrontierSupplyDemand` 或配额 cadence，不复用升级事件。
+- `PopulationAndHouseholds.HouseholdBurdenIncreased` 只作为家户负担跨阈值 receipt；当前只覆盖 distress 跨 80 的最薄事实，不代表完整军需征发公式完成。
+
 **Player Window**：
 - `ProtectSupplyLine` — 保护军粮路线（消耗 force / cash，若 warfare 启用）
 - `EscortRoadReport` — 护送边报/军粮（消耗 labor，有 casualty 风险）
@@ -571,6 +589,8 @@ WarfareCampaign（若启用，monthly）
 
 ### 链6：灾荒-赈济-家户-市场-匪患-秩序
 
+> **实现状态：真实 scheduler 薄切片（M2-lite）。已落 `WorldSettlements.DisasterDeclared -> OrderAndBanditry.DisorderSpike -> PublicLife heat`，并有真实 `MonthlyScheduler` drain 测试、off-scope 聚落负例、metadata-only 规则测试和重复灾荒宣告水位测试。完整版的赈济决策、市场恐慌、家户生存/迁徙、路险、疫病、SocialMemory 灾后记忆、PublicLife 合法性仍未实现。**
+
 **Trigger**：`WorldSettlements` 灾荒判定（`Drought` / `Flood` / `Locust` / `Epidemic`）。
 
 **Event Flow**：
@@ -578,16 +598,22 @@ WarfareCampaign（若启用，monthly）
 ```
 WorldSettlements (seasonal)
   └── WorldSettlements.DisasterDeclared { settlementId, disasterKind, severity, durationEstimate }
+      ✅ THIN-SLICE DONE：当前仅 flood，payload 通过 DomainEvent.Metadata 携带
+         { cause: disaster, disasterKind: flood, severity, floodRisk, embankmentStrain }
+      ✅ THIN-SLICE DONE：WorldSettlements schema 7 用 LastDeclaredFloodDisasterBand 防止同一活动水患每月重复宣告
       ├──→ PopulationAndHouseholds
+      │     ⏳ FULL CHAIN TODO
       │     更新 harvestForecast = 0（或严重减损）
       │     更新 illness risk（epidemic 时）
       │     发出 PopulationAndHouseholds.HouseholdSubsistencePressureChanged { settlementId, severity }
       │
       ├──→ TradeAndIndustry
+      │     ⏳ FULL CHAIN TODO
       │     粮价预测暴涨
       │     发出 TradeAndIndustry.MarketPanicRisk { settlementId, goods: grain }
       │
       └──→ PublicLifeAndRumor
+            ⏳ FULL CHAIN TODO：直接灾异/赈济公告投影尚未落地；当前薄切片通过 DisorderSpike 间接加热街谈
             更新 notice: "灾异示警" / "开仓赈济"
             更新 street talk: "今年颗粒无收"
             若 epidemic: 更新 temple activity（祈福、避疫）
@@ -609,7 +635,12 @@ TradeAndIndustry (monthly)
               发出 TradeDebtDefaulted { traderId, causeKey: "disaster-panic" }
 
 OrderAndBanditry (monthly)
-  └── 读取 PopulationAndHouseholds migration + TradeAndIndustry route risk
+  └── ✅ THIN-SLICE DONE：消费 WorldSettlements.DisasterDeclared
+      - 只按 EntityKey 修改指定 settlement
+      - 只读 Metadata[severity] 决定 +15 / +8，不解析 Summary
+      - 跨 50 阈值时发 OrderAndBanditry.DisorderSpike
+      - DisorderSpike 继续携带 cause/source/severity 等 metadata 供 PublicLife 投影
+  └── ⏳ FULL CHAIN TODO：读取 PopulationAndHouseholds migration + TradeAndIndustry route risk
       若 refugee influx > capacity:
         更新 settlementDisorder
         发出 OrderAndBanditry.DisorderSpike { settlementId, causeKey: "refugee-influx" }
@@ -1035,13 +1066,20 @@ PublicLifeAndRumor (monthly, P5+)
 
 1. **P0**：确保上述9条链的**事件名**和**模块边界**在代码中已有定义或已规划 ✅
 2. **P1**：为每条链写**一条薄规则链测试**（如：TaxSeason → HouseholdDebtSpiked → PublicLifeHeated）
-   - ✅ 链1（税役-家户-衙门）：`ThinChain_TaxSeasonOpens_DebtsSpike_YamenOverloads_PublicLifeReacts`
-   - ✅ 链2（粮价-市场-家户）：`Chain2_HarvestPhase_GrainPriceSpike_SubsistencePressureChanged`
-   - ⏳ 链3（科举-教育-官员）
-   - ⏳ 链6（灾荒-赈济-秩序）
+   - ✅ 链1 薄切片（税役-家户-衙门-公共生活）— `Chain1_TaxSeasonOpens_DebtsSpike_YamenOverloads_PublicLifeReacts` + `Chain1_RealMonthlyScheduler_DrainsTaxSeasonIntoYamenAndPublicLife`
+   - ⏳ 链1 完整版（户等/税种/额度公式、客户租压、税季现金挤压市场、SocialMemory/年度公共残留、精确 jurisdiction payload）
+   - ✅ 链2 薄切片（粮价-市场-家户）— `Chain2_HarvestPhase_GrainPriceSpike_SubsistencePressureChanged` + `Chain2_RealMonthlyScheduler_DrainsHarvestPriceIntoLocalHouseholdPressure`
+   - ⏳ 链2 完整版（yieldRatio/灾荒、granarySecurity/routeRisk、家户粮仓/生计类型、迁徙/病亡、路险、SocialMemory/PublicLife 饥荒叙事）
+   - ✅ 链3 薄切片（ExamPassed → ClanPrestigeAdjusted）— `ExamPrestigeChainTests.cs`
+   - ⏳ 链3 完整版（OfficeAndCareer waiting list / SocialMemory Favor-Shame / PublicLife 放榜投影）
+   - ✅ 链4 薄切片（ImperialRhythmChanged → AmnestyApplied → DisorderSpike）— `ImperialAmnestyDisorderChainTests.cs`
+   - ✅ 链6 薄切片（DisasterDeclared → DisorderSpike → PublicLife）— `DisasterDisorderPublicLifeChainTests.cs` + metadata-only / repeated-declaration tests
+   - ⏳ 链6 完整版（赈济决策、市场恐慌、家户生存/迁徙、路险、疫病、SocialMemory 灾后记忆、PublicLife 合法性）
+   - ✅ 链5 薄切片（FrontierStrainEscalated → OfficialSupplyRequisition → HouseholdBurden）— `FrontierSupplyHouseholdChainTests.cs`
+   - ⏳ 链5 完整版（WarfareCampaign mobilization、ConflictAndForce readiness、TradeAndIndustry market diversion）
 3. **P2**：补充事件 handler 的**空实现**（先存在接口，再填充逻辑）
-   - ✅ 链1 handler 已落（`ApplyTaxSeasonPressure`, `DispatchPopulationDebtEvents`, `HandleEvents(YamenOverloaded)`）
-   - ✅ 链2 handler 已落（`ApplyHarvestPricePulse`, `ApplyGrainPriceSubsistencePressure`）
+   - ✅ 链1 thin handler 已落（`ApplyTaxSeasonPressure`, `DispatchPopulationDebtEvents`, `HandleEvents(YamenOverloaded)`）
+   - ✅ 链2 thin handler 已落（`ApplyHarvestPricePulse`, `ApplyGrainPriceSubsistencePressure`）
 4. **P3**：填充**压力公式和阈值**
 5. **P4**：连接**Unity 壳层投影**
 
@@ -1076,6 +1114,13 @@ PublicLifeAndRumor (monthly, P5+)
 - **合并为枚举**：`RapidImplementation`/`ImplementationDrag`/`ImplementationCaptured`/`ImplementationDistorted` → `PolicyImplemented` + `outcome = Rapid | Dragged | Captured | PaperCompliance`；`HouseholdSubsistenceStrain`/`Crisis` → `HouseholdSubsistencePressureChanged` + `band` enum；`HouseholdResistance`/`Compliance` → `HouseholdComplianceShifted` + `direction` enum
 - **复用现有名称**：`ImperialBandChanged` → `ImperialRhythmChanged`；`ReliefDistributed` → `ReliefDelivered`；`ReliefFailed` → `ReliefWithheld`；`CampaignAftermath` → `CampaignAftermathRegistered`；`OfficialArrived` → `OfficeGranted`；`PostVacated` → `OfficeLost`
 - **模块引用迁移**：6 个模块的内部裸字符串全部迁入 `Zongzu.Contracts`
+
+### v0.4 (2026-04-23) Chain 7/8/9 thin-slice hardening
+- Chain 7 is implemented only as a real-scheduler thin slice: `OfficeAndCareer.ClerkCaptureDeepened -> PublicLifeAndRumor` with settlement scope, structured metadata, off-scope protection, and module-owned repeated-edge suppression through `ActiveClerkCaptureSettlementIds`.
+- Chain 8 is implemented only as a real-scheduler thin slice: `WorldSettlements.CourtAgendaPressureAccumulated -> OfficeAndCareer.PolicyWindowOpened`. The current rule allocates one court/global pressure event to one selected court-facing jurisdiction; it must not open all jurisdictions at once.
+- Chain 9 is implemented only as a real-scheduler thin slice: `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected`. `OfficeDefected` is a receipt after office-owned state mutation, not a standalone event-pool outcome; only the highest-risk appointed official defects in the current slice.
+- Default `MandateConfidence` is neutral (`70`). Court / regime pressure must be explicitly seeded or moved by an imperial/court owner; an uninitialized world must not behave like a regime crisis.
+- The full versions still need court-process state, policy dispatch, faction / public-life / household compliance propagation, market and force consequences, memory residue, and future imperial/dynasty-cycle ownership.
 
 ### v0.2 (2026-04-21)
 - 新增 3 条链（official-clerk-execution, court-agenda-dispatch, regime-recognition-compliance）

@@ -65,6 +65,10 @@ public sealed record SeasonBandSnapshot
     /// </summary>
     public int MessageDelayBand { get; init; }
 
+    // ── Frontier axis ────────────────────────────────────────────
+    /// <summary>0..100 — frontier / border sector pressure (drives supply requisition).</summary>
+    public int FrontierPressure { get; init; }
+
     // ── Imperial axis (decision I) ───────────────────────────────
     /// <summary>Third axis — mostly externally driven (not self-advancing in Phase 1c).</summary>
     public ImperialBandSnapshot Imperial { get; init; } = new();

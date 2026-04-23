@@ -61,6 +61,8 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         TradeAndIndustryEventNames.TradeProspered,
         // Step 1b gap 2: violent death → clan mourning / heir security / grudge (no-op dispatch)
         DeathCauseEventNames.DeathByViolence,
+        // Chain 3 thin slice: exam pass → clan prestige
+        EducationAndExamsEventNames.ExamPassed,
     ];
 
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
@@ -298,6 +300,7 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     {
         DispatchTradeShockEvents(scope);
         DispatchViolentDeathEvents(scope);
+        DispatchExamResultEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
@@ -339,5 +342,54 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 bundle.SettlementId.Value.ToString());
             scope.Emit(FamilyCoreEventNames.ClanPrestigeAdjusted, $"{campaign.AnchorSettlementName}战后余波改动了宗房声势。", bundle.SettlementId.Value.ToString());
         }
+    }
+
+    private static void DispatchExamResultEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
+    {
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType == EducationAndExamsEventNames.ExamPassed)
+            {
+                ApplyExamPassPrestige(scope, domainEvent);
+            }
+        }
+    }
+
+    private static void ApplyExamPassPrestige(
+        ModuleEventHandlingScope<FamilyCoreState> scope,
+        IDomainEvent domainEvent)
+    {
+        if (!int.TryParse(domainEvent.EntityKey, out int personIdValue))
+        {
+            return;
+        }
+
+        PersonId personId = new(personIdValue);
+        FamilyPersonState? person = scope.State.People
+            .FirstOrDefault(p => p.Id == personId);
+
+        if (person is null)
+        {
+            return;
+        }
+
+        ClanStateData? clan = scope.State.Clans
+            .FirstOrDefault(c => c.Id == person.ClanId);
+
+        if (clan is null)
+        {
+            return;
+        }
+
+        clan.Prestige = Math.Clamp(clan.Prestige + 5, 0, 100);
+        clan.MarriageAllianceValue = Math.Clamp(clan.MarriageAllianceValue + 3, 0, 100);
+
+        scope.RecordDiff(
+            $"{clan.ClanName}因{person.GivenName}场屋得捷，门望升至{clan.Prestige}，婚议价值升至{clan.MarriageAllianceValue}。",
+            clan.Id.Value.ToString());
+        scope.Emit(
+            FamilyCoreEventNames.ClanPrestigeAdjusted,
+            $"{clan.ClanName}因场屋得捷，门望有变。",
+            clan.Id.Value.ToString());
     }
 }

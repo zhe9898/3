@@ -71,11 +71,14 @@ public interface IDomainEvent {
     string EventType;
     string Summary;
     string? EntityKey;
+    IReadOnlyDictionary<string, string> Metadata;
 }
 ```
 
 Current note:
 - `EntityKey` is optional runtime-only targeting metadata used by deterministic handler passes and projection traces
+- `Metadata` is optional runtime-only structured cause / severity / source metadata used when a generic event type needs rule-readable context; modules must not parse `Summary` for authoritative formulas
+- runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
 ### Save root
@@ -102,6 +105,9 @@ Owns:
 public sealed class WorldSettlementsState {
     List<SettlementStateData> Settlements;
     List<RouteStateData> Routes;
+    SeasonBandData CurrentSeason;
+    int LastDeclaredFloodDisasterBand;
+    int LastDeclaredFrontierStrainBand;
 }
 
 public sealed class SettlementStateData {
@@ -118,6 +124,11 @@ public sealed class SettlementStateData {
 Current note:
 - `WorldSettlements` schema `2` now persists settlement tier so county seat, market town, village cluster, and prefecture-facing nodes stay module-owned rather than UI-invented
 - the built-in `1 -> 2` migration backfills conservative tiers for legacy saves inside the same namespace only
+- `WorldSettlements` schema `7` persists `LastDeclaredFloodDisasterBand` for the chain-6 thin slice so a persistent flood band does not re-emit `WorldSettlements.DisasterDeclared` every month
+- the built-in `6 -> 7` migration initializes that declaration watermark to `0`; this is module-local compatibility state, not a root-schema change
+- `WorldSettlements` schema `8` persists `LastDeclaredFrontierStrainBand` for the chain-5 thin slice so a persistent frontier pressure band does not re-emit `WorldSettlements.FrontierStrainEscalated` and re-trigger supply requisitions every month
+- the built-in `7 -> 8` migration initializes that frontier watermark to `0`; current thin allocation emits one settlement-scoped frontier fact, not a whole-realm demand
+- `SeasonBandData.Imperial.MandateConfidence` defaults to a neutral `70`; chain-8 / chain-9 pressure must be explicitly seeded or moved by an imperial/court owner, not inferred from an uninitialized zero
 
 ### FamilyCore state
 Owns:
@@ -377,6 +388,10 @@ Current note:
 public sealed class OfficeAndCareerState {
     List<OfficeCareerState> People;
     List<JurisdictionAuthorityState> Jurisdictions;
+    List<OfficialPostState> OfficialPosts;
+    List<WaitingListEntryState> WaitingList;
+    int LastAppliedAmnestyWave;
+    List<SettlementId> ActiveClerkCaptureSettlementIds;
 }
 
 public sealed class OfficeCareerState {
@@ -396,6 +411,7 @@ public sealed class OfficeCareerState {
     int ServiceMonths;
     int PromotionMomentum;
     int DemotionPressure;
+    int OfficialDefectionRisk;
     string CurrentAdministrativeTask;
     int AdministrativeTaskLoad;
     int OfficeReputation;
@@ -422,7 +438,7 @@ public sealed class JurisdictionAuthorityState {
 ```
 
 Current lite note:
-- the active governance-lite v3 slice persists office careers, candidate waiting pressure, clerk dependence, service progression, petition handling, settlement jurisdiction leverage, and jurisdiction-level administrative task load
+- the active governance-lite v6 slice persists office careers, candidate waiting pressure, clerk dependence, service progression, petition handling, settlement jurisdiction leverage, jurisdiction-level administrative task load, official post/waiting-list skeleton state, `LastAppliedAmnestyWave` for chain-4 amnesty de-duplication, `ActiveClerkCaptureSettlementIds` for chain-7 edge de-duplication, and `OfficialDefectionRisk` for chain-9 risk-before-receipt resolution
 - office leverage now remains owned by `OfficeAndCareer` while downstream order/force modules may read it through queries only
 - the lighter office v2.1 slice adds only derived query/read-model labels such as administrative-task tier, petition-outcome category, and authority-trajectory wording; it does not add new saved fields
 

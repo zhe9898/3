@@ -32,6 +32,8 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             TradeAndIndustryEventNames.RouteBusinessBlocked => NotificationTier.Consequential,
 
+            OrderAndBanditryEventNames.DisorderSpike => NotificationTier.Urgent,
+
             OrderAndBanditryEventNames.BanditThreatRaised => NotificationTier.Consequential,
 
             OrderAndBanditryEventNames.OutlawGroupFormed => NotificationTier.Consequential,
@@ -67,6 +69,8 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
             PopulationEventNames.MigrationStarted => NotificationTier.Consequential,
 
             SocialMemoryAndRelationsEventNames.GrudgeEscalated => NotificationTier.Consequential,
+
+            FamilyCoreEventNames.ClanPrestigeAdjusted => NotificationTier.Consequential,
 
             FamilyCoreEventNames.MarriageAllianceArranged => NotificationTier.Consequential,
 
@@ -154,6 +158,8 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             TradeAndIndustryEventNames.RouteBusinessBlocked => "行路受阻",
 
+            OrderAndBanditryEventNames.DisorderSpike => "失序骤起",
+
             OrderAndBanditryEventNames.BanditThreatRaised => "盗警渐起",
 
             OrderAndBanditryEventNames.OutlawGroupFormed => "啸聚成股",
@@ -191,6 +197,8 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
             "LivelihoodCollapsed" => "生计顿敝",
 
             "GrudgeEscalated" => "旧怨益深",
+
+            FamilyCoreEventNames.ClanPrestigeAdjusted => "门望有变",
 
             FamilyCoreEventNames.LineageDisputeHardened => "祠堂争议渐炽",
 

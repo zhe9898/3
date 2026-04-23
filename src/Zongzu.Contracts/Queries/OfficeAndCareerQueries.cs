@@ -37,6 +37,8 @@ public sealed record OfficeCareerSnapshot
 
     public int DemotionPressure { get; init; }
 
+    public int OfficialDefectionRisk { get; init; }
+
     public string CurrentAdministrativeTask { get; init; } = string.Empty;
 
     public string AdministrativeTaskTier { get; init; } = string.Empty;

@@ -8,6 +8,12 @@ namespace Zongzu.Modules.OfficeAndCareer;
 
 public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareerState>
 {
+    private const int ClerkCaptureDependenceThreshold = 30;
+    private const int ClerkCaptureBacklogThreshold = 15;
+    private const int CourtPolicyWindowAuthorityTierThreshold = 3;
+    private const int CourtPolicyWindowScoreThreshold = 60;
+    private const int OfficialDefectionRiskThreshold = 80;
+
     private static readonly string[] CommandNames =
 
     [
@@ -35,6 +41,16 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         OfficeAndCareerEventNames.AuthorityChanged,
         OfficeAndCareerEventNames.YamenOverloaded,
+        // Chain 4 thin slice: imperial amnesty → disorder
+        OfficeAndCareerEventNames.AmnestyApplied,
+        // Chain 5 thin slice: frontier strain → supply requisition
+        OfficeAndCareerEventNames.OfficialSupplyRequisition,
+        // Chain 7 thin slice: clerk capture deepened
+        OfficeAndCareerEventNames.ClerkCaptureDeepened,
+        // Chain 8 thin slice: policy window opened
+        OfficeAndCareerEventNames.PolicyWindowOpened,
+        // Chain 9 thin slice: office defected
+        OfficeAndCareerEventNames.OfficeDefected,
 
     ];
 
@@ -57,6 +73,14 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         PublicLifeAndRumorEventNames.StreetTalkSurged,
         // Renzong thin chain: population debt → yamen workload
         PopulationEventNames.HouseholdDebtSpiked,
+        // Chain 4 thin slice: imperial rhythm → amnesty → disorder
+        WorldSettlementsEventNames.ImperialRhythmChanged,
+        // Chain 5 thin slice: frontier strain → supply requisition
+        WorldSettlementsEventNames.FrontierStrainEscalated,
+        // Chain 8 thin slice: court agenda pressure → policy window
+        WorldSettlementsEventNames.CourtAgendaPressureAccumulated,
+        // Chain 9 thin slice: regime legitimacy shift → office defection
+        WorldSettlementsEventNames.RegimeLegitimacyShifted,
 
     ];
 
@@ -64,7 +88,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
     public override string ModuleKey => KnownModuleKeys.OfficeAndCareer;
 
 
-    public override int ModuleSchemaVersion => 4;
+    public override int ModuleSchemaVersion => 6;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -276,6 +300,40 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         OfficeAndCareerStateProjection.BuildOfficialPostsAndWaitingList(scope.State);
 
+        // Chain 7 thin slice: clerk-capture escalation edge.
+        HashSet<SettlementId> activeClerkCapture = scope.State.ActiveClerkCaptureSettlementIds.ToHashSet();
+        List<SettlementId> currentCapturedSettlements = new();
+        foreach (JurisdictionAuthorityState jurisdiction in scope.State.Jurisdictions
+            .OrderBy(static j => j.SettlementId.Value))
+        {
+            if (jurisdiction.ClerkDependence < ClerkCaptureDependenceThreshold
+                || jurisdiction.PetitionBacklog < ClerkCaptureBacklogThreshold)
+            {
+                continue;
+            }
+
+            currentCapturedSettlements.Add(jurisdiction.SettlementId);
+            if (activeClerkCapture.Contains(jurisdiction.SettlementId))
+            {
+                continue;
+            }
+
+            int pressureScore = ComputeClerkCapturePressure(jurisdiction);
+            scope.Emit(
+                OfficeAndCareerEventNames.ClerkCaptureDeepened,
+                $"{jurisdiction.LeadOfficeTitle}衙门书吏坐大，案牍渐被架空。",
+                jurisdiction.SettlementId.Value.ToString(),
+                new Dictionary<string, string>
+                {
+                    [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseClerkCapture,
+                    [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
+                    [DomainEventMetadataKeys.PressureScore] = pressureScore.ToString(),
+                });
+        }
+
+        scope.State.ActiveClerkCaptureSettlementIds = currentCapturedSettlements
+            .OrderBy(static settlementId => settlementId.Value)
+            .ToList();
     }
 
 
@@ -285,6 +343,10 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         DispatchPublicLifeEvents(scope);
         DispatchPopulationDebtEvents(scope);
+        DispatchImperialRhythmEvents(scope);
+        DispatchFrontierStrainEvents(scope);
+        DispatchCourtAgendaEvents(scope);
+        DispatchRegimeEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
 
@@ -447,5 +509,253 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                     break;
             }
         }
+    }
+
+    private static void DispatchImperialRhythmEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
+    {
+        // Chain 4 thin slice: imperial amnesty wave → office docket release → disorder reflux.
+        bool hasRhythmChange = scope.Events.Any(static e =>
+            e.EventType == WorldSettlementsEventNames.ImperialRhythmChanged);
+        if (!hasRhythmChange)
+        {
+            return;
+        }
+
+        IWorldSettlementsQueries worldQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        SeasonBandSnapshot season = worldQueries.GetCurrentSeason();
+        int amnestyWave = season.Imperial.AmnestyWave;
+
+        // Thin-slice threshold: amnesty wave must be strong enough to trigger
+        // a tangible docket release. Full chain will use banded thresholds.
+        if (amnestyWave < 50)
+        {
+            scope.State.LastAppliedAmnestyWave = 0;
+            return;
+        }
+
+        if (amnestyWave <= scope.State.LastAppliedAmnestyWave)
+        {
+            return;
+        }
+
+        // Emit per jurisdiction — OfficeAndCareer owns the yamen touch-points.
+        // No jurisdiction = no amnesty command reaches this settlement.
+        bool emitted = false;
+        foreach (JurisdictionAuthorityState jurisdiction in scope.State.Jurisdictions
+            .OrderBy(static j => j.SettlementId.Value))
+        {
+            scope.Emit(
+                OfficeAndCareerEventNames.AmnestyApplied,
+                $"{jurisdiction.LeadOfficeTitle}奉赦，{jurisdiction.SettlementId.Value}地界在押人犯减等释放，案牍重理。",
+                jurisdiction.SettlementId.Value.ToString());
+            emitted = true;
+        }
+
+        if (emitted)
+        {
+            scope.State.LastAppliedAmnestyWave = amnestyWave;
+        }
+    }
+
+    private static void DispatchFrontierStrainEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
+    {
+        // Chain 5 thin slice: frontier strain → official supply requisition.
+        foreach (IDomainEvent domainEvent in scope.Events
+            .Where(static e => e.EventType == WorldSettlementsEventNames.FrontierStrainEscalated)
+            .OrderBy(static e => e.EntityKey, StringComparer.Ordinal))
+        {
+            if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
+            {
+                continue;
+            }
+
+            SettlementId settlementId = new(settlementIdValue);
+            JurisdictionAuthorityState? jurisdiction = scope.State.Jurisdictions
+                .Where(j => j.SettlementId == settlementId)
+                .OrderBy(static j => j.SettlementId.Value)
+                .FirstOrDefault();
+            if (jurisdiction is null)
+            {
+                continue;
+            }
+
+            scope.Emit(
+                OfficeAndCareerEventNames.OfficialSupplyRequisition,
+                $"{jurisdiction.LeadOfficeTitle}奉边报征粮，{jurisdiction.SettlementId.Value}地界需筹军需。",
+                jurisdiction.SettlementId.Value.ToString(),
+                new Dictionary<string, string>
+                {
+                    [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseOfficialSupply,
+                    [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+                    [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
+                });
+        }
+    }
+
+    private static void DispatchCourtAgendaEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
+    {
+        // Chain 8 thin slice: court agenda pressure → policy window opened.
+        IDomainEvent? courtAgendaPressure = scope.Events.FirstOrDefault(static e =>
+            e.EventType == WorldSettlementsEventNames.CourtAgendaPressureAccumulated);
+        if (courtAgendaPressure is null)
+        {
+            return;
+        }
+
+        int mandateConfidence = GetMandateConfidence(scope, courtAgendaPressure);
+        if (mandateConfidence >= 40)
+        {
+            return;
+        }
+
+        JurisdictionAuthorityState? target = SelectPolicyWindowJurisdiction(scope.State.Jurisdictions, mandateConfidence);
+        if (target is null)
+        {
+            return;
+        }
+
+        int pressureScore = ComputePolicyWindowScore(target, mandateConfidence);
+        scope.Emit(
+            OfficeAndCareerEventNames.PolicyWindowOpened,
+            $"{target.LeadOfficeTitle}辖下因朝局紧张，政策窗口忽开。",
+            target.SettlementId.Value.ToString(),
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseCourt,
+                [DomainEventMetadataKeys.SourceEventType] = courtAgendaPressure.EventType,
+                [DomainEventMetadataKeys.SettlementId] = target.SettlementId.Value.ToString(),
+                [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
+                [DomainEventMetadataKeys.PressureScore] = pressureScore.ToString(),
+                [DomainEventMetadataKeys.AuthorityTier] = target.AuthorityTier.ToString(),
+            });
+    }
+
+    private static void DispatchRegimeEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
+    {
+        // Chain 9 thin slice: regime legitimacy shift → office defection.
+        IDomainEvent? regimeShift = scope.Events.FirstOrDefault(static e =>
+            e.EventType == WorldSettlementsEventNames.RegimeLegitimacyShifted);
+        if (regimeShift is null)
+        {
+            return;
+        }
+
+        int mandateConfidence = GetMandateConfidence(scope, regimeShift);
+        if (mandateConfidence >= 25)
+        {
+            return;
+        }
+
+        List<OfficeCareerState> appointed = scope.State.People
+            .Where(static p => p.HasAppointment)
+            .OrderBy(static p => p.PersonId.Value)
+            .ToList();
+        foreach (OfficeCareerState career in appointed)
+        {
+            career.OfficialDefectionRisk = Math.Clamp(
+                Math.Max(career.OfficialDefectionRisk, ComputeDefectionRisk(career, mandateConfidence)),
+                0,
+                100);
+        }
+
+        OfficeCareerState? defector = appointed
+            .Where(static career => career.OfficialDefectionRisk >= OfficialDefectionRiskThreshold)
+            .OrderByDescending(static career => career.OfficialDefectionRisk)
+            .ThenByDescending(static career => career.DemotionPressure)
+            .ThenBy(static career => career.PersonId.Value)
+            .FirstOrDefault();
+        if (defector is null)
+        {
+            return;
+        }
+
+        defector.HasAppointment = false;
+        defector.IsEligible = false;
+        defector.LastOutcome = "Defected";
+        defector.DemotionPressure = Math.Max(defector.DemotionPressure, defector.OfficialDefectionRisk);
+        defector.LastExplanation = $"Regime legitimacy shift raised defection risk to {defector.OfficialDefectionRisk}.";
+
+        scope.Emit(
+            OfficeAndCareerEventNames.OfficeDefected,
+            $"{defector.DisplayName}因天命摇动，生去就之心。",
+            defector.PersonId.Value.ToString(),
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseRegime,
+                [DomainEventMetadataKeys.SourceEventType] = regimeShift.EventType,
+                [DomainEventMetadataKeys.PersonId] = defector.PersonId.Value.ToString(),
+                [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
+                [DomainEventMetadataKeys.DefectionRisk] = defector.OfficialDefectionRisk.ToString(),
+            });
+
+        scope.State.People = scope.State.People
+            .OrderBy(static person => person.PersonId.Value)
+            .ToList();
+        scope.State.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(scope.State.People);
+        OfficeAndCareerStateProjection.BuildOfficialPostsAndWaitingList(scope.State);
+    }
+
+    private static int ComputeClerkCapturePressure(JurisdictionAuthorityState jurisdiction)
+    {
+        return Math.Clamp(
+            jurisdiction.ClerkDependence
+            + (jurisdiction.PetitionBacklog / 2)
+            + (jurisdiction.AdministrativeTaskLoad / 3)
+            - (jurisdiction.AuthorityTier * 3),
+            0,
+            100);
+    }
+
+    private static JurisdictionAuthorityState? SelectPolicyWindowJurisdiction(
+        IReadOnlyList<JurisdictionAuthorityState> jurisdictions,
+        int mandateConfidence)
+    {
+        return jurisdictions
+            .Where(jurisdiction => jurisdiction.AuthorityTier >= CourtPolicyWindowAuthorityTierThreshold
+                                   && ComputePolicyWindowScore(jurisdiction, mandateConfidence) >= CourtPolicyWindowScoreThreshold)
+            .OrderByDescending(static jurisdiction => jurisdiction.AuthorityTier)
+            .ThenByDescending(static jurisdiction => jurisdiction.JurisdictionLeverage)
+            .ThenBy(static jurisdiction => jurisdiction.SettlementId.Value)
+            .FirstOrDefault();
+    }
+
+    private static int ComputePolicyWindowScore(JurisdictionAuthorityState jurisdiction, int mandateConfidence)
+    {
+        int mandateDeficit = Math.Max(0, 40 - mandateConfidence);
+        return Math.Clamp(
+            (jurisdiction.AuthorityTier * 18)
+            + (jurisdiction.JurisdictionLeverage / 3)
+            + mandateDeficit
+            - (jurisdiction.AdministrativeTaskLoad / 4),
+            0,
+            100);
+    }
+
+    private static int ComputeDefectionRisk(OfficeCareerState career, int mandateConfidence)
+    {
+        int mandateDeficit = Math.Max(0, 25 - mandateConfidence);
+        int reputationStrain = Math.Max(0, 40 - career.OfficeReputation);
+        return Math.Clamp(
+            35
+            + mandateDeficit
+            + (career.DemotionPressure / 2)
+            + (career.ClerkDependence / 3)
+            + (career.PetitionPressure / 4)
+            + (reputationStrain / 2)
+            - (career.AuthorityTier * 4),
+            0,
+            100);
+    }
+
+    private static int GetMandateConfidence(ModuleEventHandlingScope<OfficeAndCareerState> scope, IDomainEvent domainEvent)
+    {
+        if (domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.MandateConfidence, out string? raw)
+            && int.TryParse(raw, out int mandateConfidence))
+        {
+            return mandateConfidence;
+        }
+
+        IWorldSettlementsQueries worldQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        return worldQueries.GetCurrentSeason().Imperial.MandateConfidence;
     }
 }

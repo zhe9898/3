@@ -82,6 +82,207 @@ public sealed class WorldSettlementsModuleTests
     }
 
     [Test]
+    public void RunMonth_FloodDisasterDeclared_CarriesMetadataAndLatchesBand()
+    {
+        WorldSettlementsModule module = new();
+        WorldSettlementsState state = module.CreateInitialState();
+        state.CurrentSeason.FloodRisk = 75;
+        state.CurrentSeason.EmbankmentStrain = 40;
+        state.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Tier = SettlementTier.CountySeat,
+            NodeKind = SettlementNodeKind.CountySeat,
+            Visibility = NodeVisibility.StateVisible,
+            EcoZone = SettlementEcoZone.JiangnanWaterNetwork,
+            Security = 50,
+            Prosperity = 50,
+        });
+
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            new QueryRegistry(),
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.RunMonth(new ModuleExecutionScope<WorldSettlementsState>(state, context));
+
+        IDomainEvent disaster = context.DomainEvents.Events.Single(
+            static e => e.EventType == WorldSettlementsEventNames.DisasterDeclared);
+        Assert.That(disaster.EntityKey, Is.EqualTo("1"));
+        Assert.That(disaster.Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseDisaster));
+        Assert.That(disaster.Metadata[DomainEventMetadataKeys.DisasterKind], Is.EqualTo(DomainEventMetadataValues.DisasterFlood));
+        Assert.That(disaster.Metadata[DomainEventMetadataKeys.Severity], Is.EqualTo(DomainEventMetadataValues.SeverityFloodSevere));
+        Assert.That(state.LastDeclaredFloodDisasterBand, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void RunMonth_ActiveFloodDisasterBand_DoesNotRedeclare()
+    {
+        WorldSettlementsModule module = new();
+        WorldSettlementsState state = module.CreateInitialState();
+        state.CurrentSeason.FloodRisk = 75;
+        state.CurrentSeason.EmbankmentStrain = 40;
+        state.LastDeclaredFloodDisasterBand = 2;
+        state.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Tier = SettlementTier.CountySeat,
+            NodeKind = SettlementNodeKind.CountySeat,
+            Visibility = NodeVisibility.StateVisible,
+            EcoZone = SettlementEcoZone.JiangnanWaterNetwork,
+            Security = 50,
+            Prosperity = 50,
+        });
+
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            new QueryRegistry(),
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.RunMonth(new ModuleExecutionScope<WorldSettlementsState>(state, context));
+
+        Assert.That(
+            context.DomainEvents.Events,
+            Has.None.Matches<IDomainEvent>(static e => e.EventType == WorldSettlementsEventNames.DisasterDeclared),
+            "A persistent severe flood band must not re-declare the same disaster every month.");
+        Assert.That(state.LastDeclaredFloodDisasterBand, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void RunMonth_FloodRiskFallsBelowDisasterBand_ClearsDisasterWatermark()
+    {
+        WorldSettlementsModule module = new();
+        WorldSettlementsState state = module.CreateInitialState();
+        state.CurrentSeason.FloodRisk = 20;
+        state.CurrentSeason.EmbankmentStrain = 10;
+        state.LastDeclaredFloodDisasterBand = 2;
+
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 1),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            new QueryRegistry(),
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.RunMonth(new ModuleExecutionScope<WorldSettlementsState>(state, context));
+
+        Assert.That(state.LastDeclaredFloodDisasterBand, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void RunMonth_FrontierStrainEscalated_CarriesSettlementEntityKeyAndLatchesBand()
+    {
+        WorldSettlementsModule module = new();
+        WorldSettlementsState state = module.CreateInitialState();
+        state.CurrentSeason.FrontierPressure = 60;
+        state.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Tier = SettlementTier.CountySeat,
+            NodeKind = SettlementNodeKind.CountySeat,
+            Visibility = NodeVisibility.StateVisible,
+            EcoZone = SettlementEcoZone.JiangnanWaterNetwork,
+            Security = 50,
+            Prosperity = 50,
+        });
+        state.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(2),
+            Name = "Market",
+            Tier = SettlementTier.MarketTown,
+            NodeKind = SettlementNodeKind.MarketTown,
+            Visibility = NodeVisibility.StateVisible,
+            EcoZone = SettlementEcoZone.JiangnanWaterNetwork,
+            Security = 50,
+            Prosperity = 50,
+        });
+
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            new QueryRegistry(),
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.RunMonth(new ModuleExecutionScope<WorldSettlementsState>(state, context));
+
+        IDomainEvent frontier = context.DomainEvents.Events.Single(
+            static e => e.EventType == WorldSettlementsEventNames.FrontierStrainEscalated);
+        Assert.That(frontier.EntityKey, Is.EqualTo("1"));
+        Assert.That(frontier.Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseFrontier));
+        Assert.That(frontier.Metadata[DomainEventMetadataKeys.Severity], Is.EqualTo(DomainEventMetadataValues.SeverityFrontierModerate));
+        Assert.That(state.LastDeclaredFrontierStrainBand, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void RunMonth_ActiveFrontierStrainBand_DoesNotRedeclare()
+    {
+        WorldSettlementsModule module = new();
+        WorldSettlementsState state = module.CreateInitialState();
+        state.CurrentSeason.FrontierPressure = 60;
+        state.LastDeclaredFrontierStrainBand = 1;
+        state.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Tier = SettlementTier.CountySeat,
+            NodeKind = SettlementNodeKind.CountySeat,
+            Visibility = NodeVisibility.StateVisible,
+            EcoZone = SettlementEcoZone.JiangnanWaterNetwork,
+            Security = 50,
+            Prosperity = 50,
+        });
+
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            new QueryRegistry(),
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.RunMonth(new ModuleExecutionScope<WorldSettlementsState>(state, context));
+
+        Assert.That(
+            context.DomainEvents.Events,
+            Has.None.Matches<IDomainEvent>(static e => e.EventType == WorldSettlementsEventNames.FrontierStrainEscalated),
+            "A persistent frontier band must not re-trigger supply requisitions every month.");
+        Assert.That(state.LastDeclaredFrontierStrainBand, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void RunMonth_FrontierPressureFallsBelowBand_ClearsFrontierWatermark()
+    {
+        WorldSettlementsModule module = new();
+        WorldSettlementsState state = module.CreateInitialState();
+        state.CurrentSeason.FrontierPressure = 20;
+        state.LastDeclaredFrontierStrainBand = 2;
+
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            new QueryRegistry(),
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.RunMonth(new ModuleExecutionScope<WorldSettlementsState>(state, context));
+
+        Assert.That(state.LastDeclaredFrontierStrainBand, Is.EqualTo(0));
+    }
+
+    [Test]
     public void HandleEvents_AppliesCampaignScarsToSettlementBaseline()
     {
         WorldSettlementsModule module = new();

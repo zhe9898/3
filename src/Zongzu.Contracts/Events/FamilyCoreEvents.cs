@@ -2,6 +2,15 @@ namespace Zongzu.Contracts;
 
 public static class FamilyCoreEventNames
 {
+    /// <summary>
+    /// Clan prestige or marriage value changed as a result of an upstream event
+    /// (exam, warfare, marriage, etc.). Entity key: <see cref="ClanId"/>.
+    /// <para><b>Design debt (P1-non-blocking)</b>: this event currently carries
+    /// no structured payload (cause key, delta, prior value). Consumers must infer
+    /// cause from <c>Summary</c> + <c>EntityKey</c>. Add typed payload or metadata
+    /// bag on <see cref="IDomainEvent"/> once downstream needs to distinguish
+    /// "exam prestige" from "war prestige" or "marriage prestige".</para>
+    /// </summary>
     public const string ClanPrestigeAdjusted = "ClanPrestigeAdjusted";
     public const string FamilyMembersAged = "FamilyMembersAged";
     public const string LineageDisputeHardened = "LineageDisputeHardened";

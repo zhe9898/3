@@ -509,6 +509,53 @@ public static class OfficeAndCareerStateProjection
     // Phase 7 衙门骨骼 — LIVING_WORLD_DESIGN §2.7：
     // 依当前 People 重建官署缺目（在任者 / 空缺）与候补名册（合格未授官）。
     // VacancyMonths / WaitingMonths 依既有条目增量累进，新条目从 0 起。
+    public static OfficeAndCareerState UpgradeFromSchemaV4ToV5(OfficeAndCareerState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        state.OfficialPosts ??= new List<OfficialPostState>();
+        state.WaitingList ??= new List<WaitingListEntryState>();
+        state.LastAppliedAmnestyWave = 0;
+        return state;
+    }
+
+    public static OfficeAndCareerState UpgradeFromSchemaV5ToV6(OfficeAndCareerState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        state.OfficialPosts ??= new List<OfficialPostState>();
+        state.WaitingList ??= new List<WaitingListEntryState>();
+        state.ActiveClerkCaptureSettlementIds ??= new List<SettlementId>();
+
+        foreach (OfficeCareerState career in state.People)
+        {
+            career.OfficialDefectionRisk = Math.Clamp(
+                Math.Max(career.OfficialDefectionRisk, InferLegacyDefectionRisk(career)),
+                0,
+                100);
+        }
+
+        state.ActiveClerkCaptureSettlementIds = state.ActiveClerkCaptureSettlementIds
+            .Distinct()
+            .OrderBy(static settlementId => settlementId.Value)
+            .ToList();
+        return state;
+    }
+
+    private static int InferLegacyDefectionRisk(OfficeCareerState career)
+    {
+        if (!career.HasAppointment)
+        {
+            return 0;
+        }
+
+        return Math.Clamp(
+            (career.DemotionPressure / 2)
+            + (career.ClerkDependence / 4)
+            + Math.Max(0, 30 - career.OfficeReputation) / 3
+            - (career.AuthorityTier * 2),
+            0,
+            70);
+    }
+
     public static void BuildOfficialPostsAndWaitingList(OfficeAndCareerState state)
     {
         ArgumentNullException.ThrowIfNull(state);

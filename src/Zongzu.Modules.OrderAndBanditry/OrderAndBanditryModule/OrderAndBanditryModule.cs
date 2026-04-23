@@ -37,6 +37,8 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
         OrderAndBanditryEventNames.BlackRoutePressureRaised,
 
+        OrderAndBanditryEventNames.DisorderSpike,
+
     ];
 
 
@@ -56,11 +58,14 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
         WorldSettlementsEventNames.FloodRiskThresholdBreached,
         WorldSettlementsEventNames.RouteConstraintEmerged,
         WorldSettlementsEventNames.CorveeWindowChanged,
+        WorldSettlementsEventNames.DisasterDeclared,
         PublicLifeAndRumorEventNames.PrefectureDispatchPressed,
         PublicLifeAndRumorEventNames.CountyGateCrowded,
         PublicLifeAndRumorEventNames.StreetTalkSurged,
         PublicLifeAndRumorEventNames.MarketBuzzRaised,
         PublicLifeAndRumorEventNames.RoadReportDelayed,
+        // Chain 4 thin slice: amnesty → disorder reflux
+        OfficeAndCareerEventNames.AmnestyApplied,
 
     ];
 
@@ -1244,9 +1249,20 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
         {
             switch (domainEvent.EventType)
             {
+                case WorldSettlementsEventNames.CorveeWindowChanged:
+                    ApplyCorveeWindowDisorderPressure(scope, domainEvent);
+                    break;
+
+                case WorldSettlementsEventNames.DisasterDeclared:
+                    ApplyDisasterDisorderPressure(scope, domainEvent);
+                    break;
+
+                case OfficeAndCareerEventNames.AmnestyApplied:
+                    ApplyAmnestyDisorderPressure(scope, domainEvent);
+                    break;
+
                 case WorldSettlementsEventNames.FloodRiskThresholdBreached:
                 case WorldSettlementsEventNames.RouteConstraintEmerged:
-                case WorldSettlementsEventNames.CorveeWindowChanged:
                 case PublicLifeAndRumorEventNames.PrefectureDispatchPressed:
                 case PublicLifeAndRumorEventNames.CountyGateCrowded:
                 case PublicLifeAndRumorEventNames.StreetTalkSurged:
@@ -1256,5 +1272,170 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
                     break;
             }
         }
+    }
+
+    private static void ApplyCorveeWindowDisorderPressure(
+        ModuleEventHandlingScope<OrderAndBanditryState> scope,
+        IDomainEvent domainEvent)
+    {
+        int delta = domainEvent.EntityKey switch
+        {
+            nameof(CorveeWindow.Pressed) => 8,
+            nameof(CorveeWindow.Emergency) => 15,
+            _ => 0,
+        };
+
+        if (delta == 0)
+        {
+            return;
+        }
+
+        foreach (SettlementDisorderState settlement in scope.State.Settlements
+            .OrderBy(static s => s.SettlementId.Value))
+        {
+            int oldDisorder = settlement.DisorderPressure;
+            settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + delta, 0, 100);
+
+            if (oldDisorder < 50 && settlement.DisorderPressure >= 50)
+            {
+                scope.Emit(
+                    OrderAndBanditryEventNames.DisorderSpike,
+                    $"聚落{settlement.SettlementId.Value}因徭役加急，失序骤起。",
+                    settlement.SettlementId.Value.ToString(),
+                    BuildDisorderSpikeMetadata(
+                        DomainEventMetadataValues.CauseCorvee,
+                        domainEvent,
+                        delta,
+                        new Dictionary<string, string>
+                        {
+                            [DomainEventMetadataKeys.CorveeWindow] = domainEvent.EntityKey ?? string.Empty,
+                        }));
+            }
+        }
+    }
+
+    private static void ApplyAmnestyDisorderPressure(
+        ModuleEventHandlingScope<OrderAndBanditryState> scope,
+        IDomainEvent domainEvent)
+    {
+        // Chain 4 thin slice: amnesty releases inmates → some re-offend → local disorder rises.
+        // Scoped to the settlement named in EntityKey; off-scope settlements are untouched.
+        if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
+        {
+            return;
+        }
+
+        SettlementId settlementId = new(settlementIdValue);
+        SettlementDisorderState? settlement = scope.State.Settlements
+            .FirstOrDefault(s => s.SettlementId == settlementId);
+
+        if (settlement is null)
+        {
+            return;
+        }
+
+        const int delta = 10;
+        int oldDisorder = settlement.DisorderPressure;
+        settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + delta, 0, 100);
+
+        if (oldDisorder < 50 && settlement.DisorderPressure >= 50)
+        {
+            scope.Emit(
+                OrderAndBanditryEventNames.DisorderSpike,
+                $"{settlementId.Value}地大赦释囚，惯犯再犯，失序骤起。",
+                settlementId.Value.ToString(),
+                BuildDisorderSpikeMetadata(DomainEventMetadataValues.CauseAmnesty, domainEvent, delta));
+        }
+    }
+
+    private static void ApplyDisasterDisorderPressure(
+        ModuleEventHandlingScope<OrderAndBanditryState> scope,
+        IDomainEvent domainEvent)
+    {
+        // Chain 6 thin slice: disaster raises local disorder (refugee influx, supply disruption).
+        // Scoped to the settlement named in EntityKey; off-scope settlements are untouched.
+        if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
+        {
+            return;
+        }
+
+        SettlementId settlementId = new(settlementIdValue);
+        SettlementDisorderState? settlement = scope.State.Settlements
+            .FirstOrDefault(s => s.SettlementId == settlementId);
+
+        if (settlement is null)
+        {
+            return;
+        }
+
+        if (!domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.Severity, out string? severity))
+        {
+            return;
+        }
+
+        int delta = severity switch
+        {
+            DomainEventMetadataValues.SeverityFloodSevere => 15,
+            DomainEventMetadataValues.SeverityFloodModerate => 8,
+            _ => 0,
+        };
+
+        if (delta == 0)
+        {
+            return;
+        }
+
+        int oldDisorder = settlement.DisorderPressure;
+        settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + delta, 0, 100);
+
+        if (oldDisorder < 50 && settlement.DisorderPressure >= 50)
+        {
+            scope.Emit(
+                OrderAndBanditryEventNames.DisorderSpike,
+                $"聚落{settlementId.Value}因水患告急，流民涌入，失序骤起。",
+                settlementId.Value.ToString(),
+                BuildDisorderSpikeMetadata(
+                    DomainEventMetadataValues.CauseDisaster,
+                    domainEvent,
+                    delta,
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.DisasterKind] = GetMetadataValue(domainEvent, DomainEventMetadataKeys.DisasterKind),
+                        [DomainEventMetadataKeys.Severity] = severity,
+                        [DomainEventMetadataKeys.FloodRisk] = GetMetadataValue(domainEvent, DomainEventMetadataKeys.FloodRisk),
+                        [DomainEventMetadataKeys.EmbankmentStrain] = GetMetadataValue(domainEvent, DomainEventMetadataKeys.EmbankmentStrain),
+                    }));
+        }
+    }
+
+    private static Dictionary<string, string> BuildDisorderSpikeMetadata(
+        string cause,
+        IDomainEvent sourceEvent,
+        int disorderDelta,
+        IReadOnlyDictionary<string, string>? extra = null)
+    {
+        Dictionary<string, string> metadata = new(StringComparer.Ordinal)
+        {
+            [DomainEventMetadataKeys.Cause] = cause,
+            [DomainEventMetadataKeys.SourceEventType] = sourceEvent.EventType,
+            [DomainEventMetadataKeys.DisorderDelta] = disorderDelta.ToString(),
+        };
+
+        if (extra is not null)
+        {
+            foreach (KeyValuePair<string, string> pair in extra)
+            {
+                metadata[pair.Key] = pair.Value;
+            }
+        }
+
+        return metadata;
+    }
+
+    private static string GetMetadataValue(IDomainEvent domainEvent, string key)
+    {
+        return domainEvent.Metadata.TryGetValue(key, out string? value)
+            ? value
+            : string.Empty;
     }
 }

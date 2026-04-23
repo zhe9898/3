@@ -153,6 +153,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
                 DemotionPressure = career.DemotionPressure,
 
+                OfficialDefectionRisk = career.OfficialDefectionRisk,
+
                 CurrentAdministrativeTask = career.CurrentAdministrativeTask,
 
                 AdministrativeTaskTier = OfficeAndCareerDescriptors.DetermineAdministrativeTaskTier(career.CurrentAdministrativeTask, career.AuthorityTier),

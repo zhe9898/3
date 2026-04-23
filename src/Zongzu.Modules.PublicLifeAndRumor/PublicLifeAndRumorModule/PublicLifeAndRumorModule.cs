@@ -51,6 +51,8 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
     private static readonly string[] ConsumedEventNames =
     [
         OfficeAndCareerEventNames.YamenOverloaded,
+        OrderAndBanditryEventNames.DisorderSpike,
+        OfficeAndCareerEventNames.ClerkCaptureDeepened,
     ];
 
     public override IReadOnlyCollection<string> ConsumedEvents => ConsumedEventNames;
@@ -92,22 +94,111 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
 
     public override void HandleEvents(ModuleEventHandlingScope<PublicLifeAndRumorState> scope)
     {
-        // Renzong thin chain: yamen overload → public life heat.
         foreach (IDomainEvent domainEvent in scope.Events)
         {
-            if (domainEvent.EventType != OfficeAndCareerEventNames.YamenOverloaded)
+            switch (domainEvent.EventType)
             {
-                continue;
-            }
+                case OfficeAndCareerEventNames.YamenOverloaded:
+                    ApplyYamenOverloadHeat(scope);
+                    break;
 
-            // Find or create settlement public-life state for the affected settlement.
-            // For thin-chain we attach heat to all settlements (no settlement id in payload yet).
-            foreach (SettlementPublicLifeState publicLife in scope.State.Settlements)
-            {
-                publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + 15, 0, 100);
-                publicLife.LastPublicTrace = $"衙门口因税役挤满请减之人，街谈热度升至{publicLife.StreetTalkHeat}。";
+                case OrderAndBanditryEventNames.DisorderSpike:
+                    ApplyDisorderSpikeHeat(scope, domainEvent);
+                    break;
+
+                case OfficeAndCareerEventNames.ClerkCaptureDeepened:
+                    ApplyClerkCaptureHeat(scope, domainEvent);
+                    break;
             }
         }
+    }
+
+    private static void ApplyYamenOverloadHeat(ModuleEventHandlingScope<PublicLifeAndRumorState> scope)
+    {
+        // Renzong thin chain: yamen overload → public life heat.
+        // For thin-chain we attach heat to all settlements (no settlement id in payload yet).
+        foreach (SettlementPublicLifeState publicLife in scope.State.Settlements)
+        {
+            publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + 15, 0, 100);
+            publicLife.LastPublicTrace = $"衙门口因税役挤满请减之人，街谈热度升至{publicLife.StreetTalkHeat}。";
+        }
+    }
+
+    private static void ApplyDisorderSpikeHeat(
+        ModuleEventHandlingScope<PublicLifeAndRumorState> scope,
+        IDomainEvent domainEvent)
+    {
+        if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
+        {
+            return;
+        }
+
+        SettlementId settlementId = new(settlementIdValue);
+        SettlementPublicLifeState? publicLife = scope.State.Settlements
+            .FirstOrDefault(s => s.SettlementId == settlementId);
+
+        if (publicLife is null)
+        {
+            return;
+        }
+
+        publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + 12, 0, 100);
+
+        string causeHint = ResolveDisorderCauseHint(domainEvent);
+
+        publicLife.LastPublicTrace = $"{causeHint}，街面不安，街谈热度升至{publicLife.StreetTalkHeat}。";
+    }
+
+    private static void ApplyClerkCaptureHeat(
+        ModuleEventHandlingScope<PublicLifeAndRumorState> scope,
+        IDomainEvent domainEvent)
+    {
+        if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
+        {
+            return;
+        }
+
+        SettlementId settlementId = new(settlementIdValue);
+        SettlementPublicLifeState? publicLife = scope.State.Settlements
+            .FirstOrDefault(s => s.SettlementId == settlementId);
+
+        if (publicLife is null)
+        {
+            return;
+        }
+
+        publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + 12, 0, 100);
+        publicLife.LastPublicTrace = $"书吏坐大，街谈渐热，街谈热度升至{publicLife.StreetTalkHeat}。";
+    }
+
+    private static string ResolveDisorderCauseHint(IDomainEvent domainEvent)
+    {
+        if (!domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.Cause, out string? cause))
+        {
+            return "街面失序";
+        }
+
+        return cause switch
+        {
+            DomainEventMetadataValues.CauseCorvee => "徭役加急",
+            DomainEventMetadataValues.CauseAmnesty => "大赦释囚",
+            DomainEventMetadataValues.CauseDisaster => ResolveDisasterCauseHint(domainEvent),
+            _ => "街面失序",
+        };
+    }
+
+    private static string ResolveDisasterCauseHint(IDomainEvent domainEvent)
+    {
+        if (!domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.DisasterKind, out string? disasterKind))
+        {
+            return "灾荒告急";
+        }
+
+        return disasterKind switch
+        {
+            DomainEventMetadataValues.DisasterFlood => "水患告急",
+            _ => "灾荒告急",
+        };
     }
 
     private static void RunSettlementPulse(ModuleExecutionScope<PublicLifeAndRumorState> scope, bool emitReadableOutput)

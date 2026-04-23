@@ -38,6 +38,13 @@ Every release line must pass:
 - exam outcomes explainable
 - trade outcomes explainable
 - disabled M2-lite modules stay absent from save output
+- Renzong chain-1 thin slice must prove real scheduler drain from `TaxSeasonOpened` to `HouseholdDebtSpiked`, `YamenOverloaded`, and public-life heat; this acceptance does not imply the full tax/corvee society chain is complete
+- Renzong chain-2 thin slice must prove real scheduler drain from harvest phase to `GrainPriceSpike` and local `HouseholdSubsistencePressureChanged`, including an off-scope settlement negative assertion; this acceptance does not imply the full famine/market/route/memory chain is complete
+- Renzong chain-5 thin slice must prove real scheduler drain from settlement-scoped `FrontierStrainEscalated` to matching-jurisdiction `OfficialSupplyRequisition` and household burden, including an off-scope jurisdiction/household negative assertion, `HouseholdBurdenIncreased` receipt emission, and repeated-frontier declaration suppression; this acceptance does not imply the full frontier/war economy chain is complete
+- Renzong chain-6 thin slice must prove real scheduler drain from `DisasterDeclared` to `DisorderSpike` and public-life heat, including an off-scope settlement negative assertion, metadata-only rule handling, and repeated-disaster declaration suppression; this acceptance does not imply the full disaster-relief / market / migration / memory chain is complete
+- Renzong chain-7 thin slice must prove real scheduler drain from `ClerkCaptureDeepened` to scoped public-life heat, including an off-scope settlement negative assertion and repeated-clerk-capture declaration suppression; this acceptance does not imply the full official-clerk-execution chain is complete
+- Renzong chain-8 thin slice must prove real scheduler handling of `CourtAgendaPressureAccumulated` into exactly one allocated `PolicyWindowOpened` when multiple jurisdictions exist; this acceptance does not imply the full court-agenda / policy-dispatch chain is complete
+- Renzong chain-9 thin slice must prove real scheduler handling of `RegimeLegitimacyShifted` into exactly one highest-risk `OfficeDefected` receipt after office-owned state mutation, while lower-risk appointed officials remain untouched; this acceptance does not imply the full regime-recognition / compliance chain is complete
 - explicit default MVP bootstraps/loaders keep `PublicLifeAndRumor`, `OrderAndBanditry`, `ConflictAndForce`, `OfficeAndCareer`, and `WarfareCampaign` disabled unless a non-MVP path is explicitly selected
 - explicit default MVP bootstraps remain deterministic across a 20-year headless run
 - MVP preview artifacts can also stretch the default bootstrap across a 10-year family-lifecycle run while keeping hall, family council, and notification guidance aligned on the same next family action
@@ -69,7 +76,7 @@ Every release line must pass:
   - `PublicLifeAndRumor` xun passes may now distinguish hot and calm yamen surfaces through office task-load / clerk-dependence queries without emitting xun diffs/events or writing office state
   - legacy `PublicLifeAndRumor` schema `1 -> 2 -> 3 -> 4` saves migrate through the default loaders and backfill cadence, venue-channel, plus channel-contention descriptors conservatively enough to keep current M2+ paths loadable
 - legacy `OrderAndBanditry` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6` saves migrate through the default loaders and backfill black-route pressure, paper reach, shielding / retaliation, empty intervention-receipt fields, plus clamped one-month intervention-follow-through state conservatively enough to keep current M3+ paths loadable
-- legacy `WorldSettlements` schema `1` saves migrate to schema `2` through the default loaders and backfill settlement tiers conservatively enough to continue load on current M2+ paths
+- legacy `WorldSettlements` schema `1` saves migrate through schema `7` through the default loaders, backfilling settlement tiers and the chain-6 flood-disaster declaration watermark conservatively enough to continue load on current M2+ paths
 
 ## Phase M3
 - active M2 bootstraps remain isolated from `OrderAndBanditry` and `ConflictAndForce`
@@ -149,8 +156,8 @@ Every release line must pass:
 - `OfficeAndCareer.Lite` can grant explainable appointments and jurisdiction leverage deterministically once queue pressure and backing cross threshold
 - governance-lite office service can progress through bounded promotion/demotion pressure, administrative tasks, and petition outcomes deterministically
 - governance-lite office service may also absorb recent order-command aftermath into office-owned task load, petition backlog, petition pressure, and leverage drift through query seams only
-- legacy governance-lite office saves migrate from schema `1` to `2` to `3` without changing enabled-module or module-envelope key sets
-- legacy governance-lite office saves reconstruct v2-only task/petition/service descriptors first, then backfill queue pressure and clerk dependence conservatively enough to continue replay on the current schema path
+- legacy governance-lite office saves migrate from schema `1` through schema `6` without changing enabled-module or module-envelope key sets
+- legacy governance-lite office saves reconstruct v2-only task/petition/service descriptors first, then backfill queue pressure, clerk dependence, amnesty de-duplication, office post / waiting-list state, clerk-capture watermarks, and official-defection risk conservatively enough to continue replay on the current schema path
 - governance-lite jurisdiction queries expose clerk dependence and administrative task load so order/trade slices can distinguish paper orders from actual local reach without direct office-state writes
 - future office-depth projections distinguish credential, actual post, clerk dependence, patron / family pull, evaluation pressure, and memorial attack risk rather than treating official rank as automatic authority
 - court-facing office context, if shown before the imperial pack exists, remains watch-only appointment rumor / reform talk / censor-pressure / dispatch wording and does not resolve court decisions inside `OfficeAndCareer`

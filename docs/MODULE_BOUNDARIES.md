@@ -68,6 +68,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - local prosperity/security/environment indicators
 - institution registry and baseline condition
 - settlement tier / node rank used by downstream projections
+- season-band declaration watermarks such as flood-disaster and frontier-strain bands
 
 ### Public queries
 - settlement security
@@ -85,6 +86,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `RouteDisrupted`
 - `InstitutionOpenedOrClosed`
 - `HarvestPressureChanged`
+- settlement-scoped pressure facts such as `WorldSettlements.DisasterDeclared` and `WorldSettlements.FrontierStrainEscalated`
 
 ### Does not own
 - family tree
@@ -305,6 +307,8 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - administrative task assignment
 - petition backlog / petition outcomes
 - jurisdiction-level clerk dependence and administrative task load
+- clerk-capture edge watermarks for office-owned escalation receipts
+- official defection risk before office-owned appointment loss
 - official influence projections
 
 ### Public queries
@@ -318,6 +322,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - current administrative task tier and stable task label
 - petition outcome category plus latest petition outcome trace
 - promotion / demotion pressure labels and authority-trajectory summary
+- current official defection risk when governance-lite exposes regime pressure
 
 ### Accepts commands
 - pursue posting
@@ -330,6 +335,12 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `OfficeLost`
 - `OfficeTransfer`
 - `AuthorityChanged`
+- `YamenOverloaded`
+- `AmnestyApplied`
+- `OfficialSupplyRequisition`
+- `ClerkCaptureDeepened`
+- `PolicyWindowOpened`
+- `OfficeDefected`
 
 ### Does not own
 - school results

@@ -67,6 +67,9 @@ public sealed class SeasonBandData
     // ── Information axis ─────────────────────────────────────────
     public int MessageDelayBand { get; set; }
 
+    // ── Frontier axis ────────────────────────────────────────────
+    public int FrontierPressure { get; set; }
+
     // ── Imperial axis (decision I; not self-advanced) ────────────
     public ImperialBandData Imperial { get; set; } = new();
 
@@ -96,7 +99,7 @@ public sealed class ImperialBandData
 
     public int SuccessionUncertainty { get; set; }
 
-    public int MandateConfidence { get; set; }
+    public int MandateConfidence { get; set; } = 70;
 
     public int CourtTimeDisruption { get; set; }
 }

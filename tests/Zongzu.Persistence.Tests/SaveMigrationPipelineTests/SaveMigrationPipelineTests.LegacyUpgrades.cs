@@ -231,8 +231,26 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 5
                 && step.TargetVersion == 6),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(6));
+        // Chain 6: WorldSettlements schema raised 6→7 so disaster-declaration
+        // watermarks prevent repeated DisasterDeclared emissions.
+        Assert.That(
+            reloaded.LoadMigrationReport!.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WorldSettlements
+                && step.SourceVersion == 6
+                && step.TargetVersion == 7),
+            Is.True);
+        // Chain 5: WorldSettlements schema raised 7→8 so frontier-strain
+        // watermarks prevent repeated FrontierStrainEscalated emissions.
+        Assert.That(
+            reloaded.LoadMigrationReport!.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.WorldSettlements
+                && step.SourceVersion == 7
+                && step.TargetVersion == 8),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.WorldSettlements].ModuleSchemaVersion, Is.EqualTo(8));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
+        Assert.That(migratedState.LastDeclaredFloodDisasterBand, Is.EqualTo(0));
+        Assert.That(migratedState.LastDeclaredFrontierStrainBand, Is.EqualTo(0));
         Assert.That(migratedState.Settlements.All(static settlement => settlement.Tier == SettlementTier.CountySeat), Is.True);
         // v2閳姵3 migration must populate the new NodeKind / Visibility / EcoZone
         // fields with sensible defaults (SPEC 鎼?3.2).

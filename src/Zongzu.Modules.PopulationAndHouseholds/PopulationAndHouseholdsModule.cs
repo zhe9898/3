@@ -23,6 +23,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         PopulationEventNames.LivelihoodCollapsed,
         PopulationEventNames.DeathByIllness,
         PopulationEventNames.HouseholdSubsistencePressureChanged,
+        PopulationEventNames.HouseholdBurdenIncreased,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -45,6 +46,8 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         // Step 1b gap 4: family branch / heir pressure → household count & sponsor shift (no-op dispatch)
         FamilyCoreEventNames.BranchSeparationApproved,
         FamilyCoreEventNames.HeirSecurityWeakened,
+        // Chain 5 thin slice: frontier strain → official supply requisition → household burden
+        OfficeAndCareerEventNames.OfficialSupplyRequisition,
     ];
 
 
@@ -210,6 +213,7 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         DispatchTradeShockEvents(scope);
         DispatchWorldPulseEvents(scope);
         DispatchFamilyBranchEvents(scope);
+        DispatchOfficeSupplyEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);
         if (warfareEvents.Count == 0)
@@ -392,6 +396,52 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 case FamilyCoreEventNames.HeirSecurityWeakened:
                     // TODO Step 2: 按维度入口调整 household sponsor / 新增户 / MigrationRisk。
                     break;
+            }
+        }
+    }
+
+    private static void DispatchOfficeSupplyEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    {
+        // Chain 5 thin slice: official supply requisition raises household burden.
+        foreach (IDomainEvent domainEvent in scope.Events)
+        {
+            if (domainEvent.EventType != OfficeAndCareerEventNames.OfficialSupplyRequisition)
+            {
+                continue;
+            }
+
+            if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
+            {
+                continue;
+            }
+
+            SettlementId settlementId = new(settlementIdValue);
+            foreach (PopulationHouseholdState household in scope.State.Households
+                .Where(h => h.SettlementId == settlementId)
+                .OrderBy(static h => h.Id.Value))
+            {
+                int oldDistress = household.Distress;
+                int oldDebt = household.DebtPressure;
+                household.Distress = Math.Clamp(household.Distress + 5, 0, 100);
+                household.DebtPressure = Math.Clamp(household.DebtPressure + 3, 0, 100);
+
+                if (oldDistress < 80 && household.Distress >= 80)
+                {
+                    scope.Emit(
+                        PopulationEventNames.HouseholdBurdenIncreased,
+                        $"{household.HouseholdName}军需催迫，家户负担加重。",
+                        household.Id.Value.ToString(),
+                        new Dictionary<string, string>
+                        {
+                            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseOfficialSupply,
+                            [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+                            [DomainEventMetadataKeys.SettlementId] = settlementId.Value.ToString(),
+                            [DomainEventMetadataKeys.DistressBefore] = oldDistress.ToString(),
+                            [DomainEventMetadataKeys.DistressAfter] = household.Distress.ToString(),
+                            [DomainEventMetadataKeys.DebtBefore] = oldDebt.ToString(),
+                            [DomainEventMetadataKeys.DebtAfter] = household.DebtPressure.ToString(),
+                        });
+                }
             }
         }
     }

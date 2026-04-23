@@ -36,6 +36,8 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
 
             TradeAndIndustryEventNames.RouteBusinessBlocked => "先看路险落在何处，再定暂避、缓行还是硬着头皮通路。",
 
+            OrderAndBanditryEventNames.DisorderSpike => "先看失序落在何聚落、由何压力引起，再定是安抚、添巡、缓征还是暂认眼前乱势。",
+
             OrderAndBanditryEventNames.BanditThreatRaised => "先看此地盗压与商路，再定添巡、缓行还是暂且容忍市面迟滞。",
 
             OrderAndBanditryEventNames.OutlawGroupFormed => "先看人心、旧怨与路口外露，再定是镇、抚还是先稳宗房。",
@@ -71,6 +73,8 @@ public sealed partial class NarrativeProjectionModule : ModuleRunner<NarrativePr
             "MigrationStarted" => "先看民困与佣作去路，再定赈恤、缓征还是另觅安顿。",
 
             "LivelihoodCollapsed" => "此事须立刻过堂，民困最易化成怨气与流徙。",
+
+            FamilyCoreEventNames.ClanPrestigeAdjusted => "回看宗族声势与婚议去留，再定是借势扩张还是稳住根基。",
 
             FamilyCoreEventNames.LineageDisputeHardened => "先回祠堂看房支争端落在承祧、接济还是分房，再定偏护、责礼还是请族老出面。",
 

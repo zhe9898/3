@@ -133,7 +133,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 scope.RecordDiff(
                     $"{student.DisplayName}场屋得捷。{student.LastExplanation}",
                     student.PersonId.Value.ToString());
-                scope.Emit(EducationAndExamsEventNames.ExamPassed, $"{student.DisplayName}场屋得捷。");
+                scope.Emit(EducationAndExamsEventNames.ExamPassed, $"{student.DisplayName}场屋得捷。", student.PersonId.Value.ToString());
             }
             else
             {
@@ -148,7 +148,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 scope.RecordDiff(
                     $"{student.DisplayName}场屋失利。{student.LastExplanation}",
                     student.PersonId.Value.ToString());
-                scope.Emit(EducationAndExamsEventNames.ExamFailed, $"{student.DisplayName}场屋失利。");
+                scope.Emit(EducationAndExamsEventNames.ExamFailed, $"{student.DisplayName}场屋失利。", student.PersonId.Value.ToString());
 
                 if (student.ExamAttempts >= 3 && student.Stress >= 70)
                 {
@@ -156,7 +156,7 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                     student.LastOutcome = "Abandoned";
                     student.LastResult = ExamResult.Abandoned;
                     student.LastExplanation = $"屡试不捷，心气劳迫至{student.Stress}，遂停塾罢读。";
-                    scope.Emit(EducationAndExamsEventNames.StudyAbandoned, $"{student.DisplayName}停塾罢读。");
+                    scope.Emit(EducationAndExamsEventNames.StudyAbandoned, $"{student.DisplayName}停塾罢读。", student.PersonId.Value.ToString());
                 }
             }
         }

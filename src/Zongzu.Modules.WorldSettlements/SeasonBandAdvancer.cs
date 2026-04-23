@@ -130,7 +130,8 @@ internal static class SeasonBandAdvancer
             CanalFrom: previousCanal,
             CanalTo: season.CanalWindow,
             FloodRiskBreached: floodBreached,
-            FloodRisk: season.FloodRisk);
+            FloodRisk: season.FloodRisk,
+            FrontierPressure: season.FrontierPressure);
     }
 
     /// <summary>
@@ -143,7 +144,8 @@ internal static class SeasonBandAdvancer
         CanalWindow CanalFrom,
         CanalWindow CanalTo,
         bool FloodRiskBreached,
-        int FloodRisk);
+        int FloodRisk,
+        int FrontierPressure);
 
     private static ImperialBandData CloneImperial(ImperialBandData source) => new()
     {
@@ -293,6 +295,12 @@ internal static class SeasonBandAdvancer
         // Confidence is the inverse pressure — climbs during slack months.
         int confidenceDelta = isFloodSeason ? -random.NextInt(5, 12) : random.NextInt(2, 8);
         season.WaterControlConfidence = Math.Clamp(season.WaterControlConfidence + confidenceDelta, 0, 100);
+
+        // Frontier pressure: autumn/winter (months 9-12, 1-2) sees higher threat;
+        // spring/summer (months 3-8) drains slowly.
+        bool isFrontierSeason = month is >= 9 or <= 2;
+        int frontierDelta = isFrontierSeason ? random.NextInt(6, 18) : random.NextInt(-6, 3);
+        season.FrontierPressure = Math.Clamp(season.FrontierPressure + frontierDelta, 0, 100);
     }
 
     private static void DecayImperial(ImperialBandData imperial)

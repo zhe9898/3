@@ -26,6 +26,34 @@ public sealed class WorldSettlementsState : IModuleStateDescriptor
     public SeasonBandData CurrentSeason { get; set; } = new();
 
     /// <summary>
+    /// Chain 6 declaration watermark. 0 = no active flood disaster, 1 =
+    /// moderate declared, 2 = severe declared. Prevents a persistent high
+    /// flood band from re-declaring the same disaster every month.
+    /// </summary>
+    public int LastDeclaredFloodDisasterBand { get; set; }
+
+    /// <summary>
+    /// Chain 5 declaration watermark. 0 = no active frontier strain, 1 =
+    /// moderate declared, 2 = severe declared. Prevents a persistent high
+    /// frontier band from re-triggering supply requisitions every month.
+    /// </summary>
+    public int LastDeclaredFrontierStrainBand { get; set; }
+
+    /// <summary>
+    /// Chain 8 declaration watermark. true = CourtAgendaPressureAccumulated
+    /// has been declared while MandateConfidence &lt; 40. Prevents persistent
+    /// low mandate confidence from re-emitting every month.
+    /// </summary>
+    public bool LastCourtAgendaPressureDeclared { get; set; }
+
+    /// <summary>
+    /// Chain 9 declaration watermark. true = RegimeLegitimacyShifted has been
+    /// declared while MandateConfidence &lt; 25. Prevents persistent very low
+    /// mandate confidence from re-emitting every month.
+    /// </summary>
+    public bool LastRegimeLegitimacyShiftDeclared { get; set; }
+
+    /// <summary>
     /// SPATIAL_SKELETON_SPEC §20.3 — public-surface signals emitted during the
     /// current tick (xun or month). Derived from state transitions by
     /// <see cref="PublicSurfaceSignalEmitter"/>; consumers read via

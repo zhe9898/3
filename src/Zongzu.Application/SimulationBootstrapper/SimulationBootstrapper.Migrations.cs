@@ -69,6 +69,8 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 3, 4, MigrateWorldSettlementsStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 4, 5, MigrateWorldSettlementsStateV4ToV5);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 5, 6, MigrateWorldSettlementsStateV5ToV6);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 6, 7, MigrateWorldSettlementsStateV6ToV7);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.WorldSettlements, 7, 8, MigrateWorldSettlementsStateV7ToV8);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 1, 2, MigrateFamilyCoreStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 2, 3, MigrateFamilyCoreStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 3, 4, MigrateFamilyCoreStateV3ToV4);
@@ -81,6 +83,8 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 1, 2, MigrateOfficeAndCareerStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 2, 3, MigrateOfficeAndCareerStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 3, 4, MigrateOfficeAndCareerStateV3ToV4);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 4, 5, MigrateOfficeAndCareerStateV4ToV5);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 5, 6, MigrateOfficeAndCareerStateV5ToV6);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 1, 2, MigrateTradeAndIndustryStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 2, 3, MigrateTradeAndIndustryStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 3, 4, MigrateTradeAndIndustryStateV3ToV4);
@@ -368,6 +372,42 @@ public static partial class SimulationBootstrapper
         };
     }
 
+    /// <summary>
+    /// Chain 6 v6 -> v7: add the disaster-declaration watermark. Legacy saves
+    /// start clear so the next qualifying flood band can declare once.
+    /// </summary>
+    private static ModuleStateEnvelope MigrateWorldSettlementsStateV6ToV7(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(typeof(WorldSettlementsState), envelope.Payload);
+        migratedState.LastDeclaredFloodDisasterBand = 0;
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 7,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
+        };
+    }
+
+    /// <summary>
+    /// Chain 5 v7 -> v8: add the frontier-strain declaration watermark. Legacy
+    /// saves start clear so the next qualifying frontier band can declare once.
+    /// </summary>
+    private static ModuleStateEnvelope MigrateWorldSettlementsStateV7ToV8(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        WorldSettlementsState migratedState = (WorldSettlementsState)serializer.Deserialize(typeof(WorldSettlementsState), envelope.Payload);
+        migratedState.LastDeclaredFrontierStrainBand = 0;
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.WorldSettlements,
+            ModuleSchemaVersion = 8,
+            Payload = serializer.Serialize(typeof(WorldSettlementsState), migratedState),
+        };
+    }
+
     private static ModuleStateEnvelope MigrateFamilyCoreStateV1ToV2(ModuleStateEnvelope envelope)
     {
         MessagePackModuleStateSerializer serializer = new();
@@ -569,6 +609,34 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.OfficeAndCareer,
             ModuleSchemaVersion = 4,
+            Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOfficeAndCareerStateV4ToV5(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OfficeAndCareerState migratedState = (OfficeAndCareerState)serializer.Deserialize(typeof(OfficeAndCareerState), envelope.Payload);
+        OfficeAndCareerStateProjection.UpgradeFromSchemaV4ToV5(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OfficeAndCareer,
+            ModuleSchemaVersion = 5,
+            Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOfficeAndCareerStateV5ToV6(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OfficeAndCareerState migratedState = (OfficeAndCareerState)serializer.Deserialize(typeof(OfficeAndCareerState), envelope.Payload);
+        OfficeAndCareerStateProjection.UpgradeFromSchemaV5ToV6(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OfficeAndCareer,
+            ModuleSchemaVersion = 6,
             Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
         };
     }

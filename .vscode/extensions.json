@@ -2,6 +2,7 @@
   "recommendations": [
     "ms-dotnettools.csharp",
     "ms-dotnettools.csdevkit",
-    "EditorConfig.EditorConfig"
+    "EditorConfig.EditorConfig",
+    "moonshot-ai.kimi-code"
   ]
 }
