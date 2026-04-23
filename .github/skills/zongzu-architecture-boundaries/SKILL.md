@@ -119,6 +119,7 @@ For prompts like `模块边界`, `架构`, `解耦`, `command seam`, `scheduler`
 - Do not treat `GetMutableModuleState(...)` as a normal command-resolution path. It is bootstrap / seeding / narrow test infrastructure, not the preferred home for gameplay rules.
 - Do not add runtime plugin loading, reflection-heavy discovery, or ad hoc foreign save writes as the default extensibility model.
 - Do not claim a chain is end-to-end complete unless the real scheduler path, event contracts, off-scope entities, and projection/receipt behavior are covered or explicitly deferred.
+- Do allow small read-only projection conveniences such as snapshot accessors, lane/item lookup helpers, and one-pass indexes/caches when they only normalize access to already-built payloads and do not create a second composition or policy layer.
 
 ## Zongzu-Specific Guidance
 
@@ -129,6 +130,7 @@ For prompts like `模块边界`, `架构`, `解耦`, `command seam`, `scheduler`
 - Simulation modules own state and rules. They may query other modules, react to events, and emit facts, but they do not directly rewrite another module.
 - The current command seam already exists through module-owned `HandleCommand(...)`; new command logic should prefer that path.
 - Application code may route, seed, and assemble, but it should stay thin and avoid becoming a second rules engine.
+- When application or presentation code starts repeating the same visible-selection logic, prefer a projection-local helper or read-only snapshot accessor over copying `LeadItem` / `SecondaryItems` or affordance-scan logic into every caller.
 - `NarrativeProjection` and Unity shell code are projection surfaces only; they do not author consequences.
 - Feature packs are additive and manifest-gated. Data/content mods and runtime code plugins are different promises with different trust boundaries.
 - Strong Zongzu architecture is not just "many files." It is clear ownership, explicit seams, deterministic cadence, readable projections, and startup/load discipline that still preserves the world-first simulation.

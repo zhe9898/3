@@ -79,9 +79,10 @@ Use it to turn broad UI requests into a whole-shell pass that connects:
    - what the main spatial anchor is
    - what consequence or pressure is being projected
    - what stays secondary, ambient, or debug-only
-   - which module/read model owns the information
-   - which adapter/ViewModel should carry the display shape
-   - what test or screenshot/check should protect the behavior
+- which module/read model owns the information
+- which adapter/ViewModel should carry the display shape
+- what test or screenshot/check should protect the behavior
+- whether repeated shell-side lookup should become a shared projection context or read-only snapshot helper instead of being re-derived in every adapter/test
 
 ## Short Prompt Expansion
 
@@ -106,6 +107,7 @@ For prompts like `great hall`, `desk sandbox`, `hall surface`, `notice tray`, `2
 - Do not make every surface a giant overview panel.
 - Do not use campaign board as the answer for every conflict.
 - Do not create Unity-only facts that cannot be traced to projection/read-model state.
+- Do allow read-only snapshot or projection-context helpers when they only normalize traversal of an already-built payload, such as finding the current hall-docket lane item, and do not become a second composition layer.
 - Prefer room, desk, notice, ledger, seal, route, marker, tray, and visitor logic over abstract dashboard blocks.
 - Prefer one strong focal action cluster over many equal buttons.
 - Prefer visible object anchors over pure panel geometry.
