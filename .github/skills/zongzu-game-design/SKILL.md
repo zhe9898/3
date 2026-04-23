@@ -34,6 +34,7 @@ Use it to turn broad design prompts into a connected pass across:
 - shaping player commands, influence circles, leverage, refusal, delay, and backlash
 - planning a vertical slice, MVP cut, post-MVP pack, or roadmap phase
 - checking whether a design fits module ownership, Query / Command / DomainEvent contracts, and save/version rules
+- pairing design work with `zongzu-architecture-boundaries` when the task is mainly about code placement, scheduler/event contracts, command seams, save compatibility, or coupling review
 - deciding how a mechanic becomes visible in the great hall, lineage surface, desk sandbox, notice tray, conflict vignette, campaign board, or debug surface
 - comparing outside games or sources without importing their genre assumptions
 - checking whether a proposal drifts into event-pool design, detached tactics design, rigid route trees, spreadsheet-with-flavor design, or player-as-god design
@@ -69,7 +70,8 @@ Use it to turn broad design prompts into a connected pass across:
    - module runners, `ModuleSchemaVersion`, `PublishedEvents`, `ConsumedEvents`, and accepted commands
    - `MonthlyScheduler` cadence and bounded event drain
    - `SimulationBootstrapper` feature-pack module sets
-   - application command services
+   - module-owned `HandleCommand(...)` implementations and their command resolver/helpers
+   - application orchestration code only where it still routes, seeds, or assembles rather than owning rules
    - presentation read-model builders, adapters, and Unity-facing ViewModels
    - relevant tests under `tests/`
 

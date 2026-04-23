@@ -1,0 +1,7 @@
+interface:
+  display_name: "Zongzu Architecture Boundaries"
+  short_description: "Keep Zongzu code, modules, scheduler, saves, and extensions aligned to current ownership seams"
+  default_prompt: "Use $zongzu-architecture-boundaries to review this Zongzu implementation task for module ownership, command/query/event seams, scheduler fit, save impact, startup/load cost, and extension safety."
+
+policy:
+  allow_implicit_invocation: true
