@@ -69,7 +69,7 @@ public sealed class DisasterDisorderPublicLifeChainTests
         orderState.Settlements.Add(new SettlementDisorderState
         {
             SettlementId = new SettlementId(1),
-            DisorderPressure = 42, // 42 + 15 = 57, crosses threshold
+            DisorderPressure = 42, // profile delta crosses threshold
         });
         orderState.Settlements.Add(new SettlementDisorderState
         {
@@ -85,7 +85,10 @@ public sealed class DisasterDisorderPublicLifeChainTests
             disorderEvents,
             Has.Some.Matches<IDomainEvent>(
                 e => e.EventType == OrderAndBanditryEventNames.DisorderSpike
-                     && e.EntityKey == "1"),
+                     && e.EntityKey == "1"
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterHazardPressure)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterLocalDisorderSoil)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterSuppressionBuffer)),
             "OrderAndBanditry must emit DisorderSpike when settlement 1 crosses threshold.");
         Assert.That(
             disorderEvents,
@@ -227,7 +230,7 @@ public sealed class DisasterDisorderPublicLifeChainTests
         orderState.Settlements.Add(new SettlementDisorderState
         {
             SettlementId = new SettlementId(1),
-            DisorderPressure = 46, // 46 + 15 = 61, crosses 50 after real scheduler xun drift
+            DisorderPressure = 46, // profile delta crosses 50 after real scheduler xun drift
         });
         orderState.Settlements.Add(new SettlementDisorderState
         {
@@ -268,7 +271,10 @@ public sealed class DisasterDisorderPublicLifeChainTests
             events,
             Has.Some.Matches<IDomainEvent>(
                 e => e.EventType == OrderAndBanditryEventNames.DisorderSpike
-                     && e.EntityKey == "1"),
+                     && e.EntityKey == "1"
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterHazardPressure)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterLocalDisorderSoil)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterSuppressionBuffer)),
             "Real scheduler must drain DisasterDeclared into DisorderSpike for settlement 1.");
         Assert.That(
             events,

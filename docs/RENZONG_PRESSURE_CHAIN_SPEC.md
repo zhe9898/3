@@ -599,7 +599,7 @@ WarfareCampaign（若启用，monthly）
 
 ### 链6：灾荒-赈济-家户-市场-匪患-秩序
 
-> **实现状态：真实 scheduler 薄切片（M2-lite）。已落 `WorldSettlements.DisasterDeclared -> OrderAndBanditry.DisorderSpike -> PublicLife heat`，并有真实 `MonthlyScheduler` drain 测试、off-scope 聚落负例、metadata-only 规则测试和重复灾荒宣告水位测试。完整版的赈济决策、市场恐慌、家户生存/迁徙、路险、疫病、SocialMemory 灾后记忆、PublicLife 合法性仍未实现。**
+> **实现状态：真实 scheduler 薄切片（M2-lite）+ 第一层规则加厚。已落 `WorldSettlements.DisasterDeclared -> OrderAndBanditry.DisorderSpike -> PublicLife heat`，并有真实 `MonthlyScheduler` drain 测试、off-scope 聚落负例、metadata-only 规则测试和重复灾荒宣告水位测试。`OrderAndBanditry` 已将固定 severity delta 改为灾害失序 profile：读取 `severity/floodRisk/embankmentStrain`，再叠本地失序土壤、路面裂口和镇压缓冲。完整版的赈济决策、市场恐慌、家户生存/迁徙、路险、疫病、SocialMemory 灾后记忆、PublicLife 合法性仍未实现。**
 
 **Trigger**：`WorldSettlements` 灾荒判定（`Drought` / `Flood` / `Locust` / `Epidemic`）。
 
@@ -645,11 +645,15 @@ TradeAndIndustry (monthly)
               发出 TradeDebtDefaulted { traderId, causeKey: "disaster-panic" }
 
 OrderAndBanditry (monthly)
-  └── ✅ THIN-SLICE DONE：消费 WorldSettlements.DisasterDeclared
+  └── ✅ THIN-SLICE + FIRST THICKENING DONE：消费 WorldSettlements.DisasterDeclared
       - 只按 EntityKey 修改指定 settlement
-      - 只读 Metadata[severity] 决定 +15 / +8，不解析 Summary
+      - 只读 Metadata，不解析 Summary
+      - 失序 delta = 灾害压力(severity/floodRisk/embankmentStrain)
+                   + 本地失序土壤(disorder/bandit/black-route/coercion)
+                   + 路面裂口(route/retaliation/implementation drag)
+                   - 镇压缓冲(suppression relief/route shielding/response/admin window)
       - 跨 50 阈值时发 OrderAndBanditry.DisorderSpike
-      - DisorderSpike 继续携带 cause/source/severity 等 metadata 供 PublicLife 投影
+      - DisorderSpike 继续携带 cause/source/severity/disaster-disorder profile metadata 供 PublicLife 投影
   └── ⏳ FULL CHAIN TODO：读取 PopulationAndHouseholds migration + TradeAndIndustry route risk
       若 refugee influx > capacity:
         更新 settlementDisorder
@@ -1086,7 +1090,7 @@ PublicLifeAndRumor (monthly, P5+)
    - ✅ 链3 第一层规则加厚 — `ExamResultHandlerTests` 覆盖 credential metadata、多维宗族声望画像、结构化 exam-prestige metadata、off-scope clan 负例
    - ⏳ 链3 完整版（OfficeAndCareer waiting list / SocialMemory Favor-Shame / PublicLife 放榜投影）
    - ✅ 链4 薄切片 + 第一层规则加厚（ImperialRhythmChanged → AmnestyApplied(metadata) → amnesty-disorder profile → DisorderSpike）— `ImperialAmnestyDisorderChainTests.cs` + `AmnestyDispatchHandlerTests.cs` + `AmnestyDisorderHandlerTests.cs`
-   - ✅ 链6 薄切片（DisasterDeclared → DisorderSpike → PublicLife）— `DisasterDisorderPublicLifeChainTests.cs` + metadata-only / repeated-declaration tests
+   - ✅ 链6 薄切片 + 第一层规则加厚（DisasterDeclared → disaster-disorder profile → DisorderSpike → PublicLife）— `DisasterDisorderPublicLifeChainTests.cs` + `DisasterDisorderHandlerTests.cs` + metadata-only / repeated-declaration tests
    - ⏳ 链6 完整版（赈济决策、市场恐慌、家户生存/迁徙、路险、疫病、SocialMemory 灾后记忆、PublicLife 合法性）
    - ✅ 链5 薄切片 + 第一层规则加厚（FrontierStrainEscalated → OfficialSupplyRequisition(profile metadata) → household burden profile → HouseholdBurdenIncreased）— `FrontierSupplyHouseholdChainTests.cs` + `FrontierSupplyHandlerTests.cs` + `OfficialSupplyBurdenHandlerTests.cs`
    - ⏳ 链5 完整版（WarfareCampaign mobilization、ConflictAndForce readiness、TradeAndIndustry market diversion）

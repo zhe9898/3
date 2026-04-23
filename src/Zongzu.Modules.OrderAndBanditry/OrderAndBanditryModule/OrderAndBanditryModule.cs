@@ -1463,20 +1463,22 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
             return;
         }
 
-        int delta = severity switch
-        {
-            DomainEventMetadataValues.SeverityFloodSevere => 15,
-            DomainEventMetadataValues.SeverityFloodModerate => 8,
-            _ => 0,
-        };
-
-        if (delta == 0)
+        DisasterDisorderProfile profile = ComputeDisasterDisorderProfile(settlement, domainEvent, severity);
+        if (profile.DisorderDelta <= 0)
         {
             return;
         }
 
         int oldDisorder = settlement.DisorderPressure;
-        settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + delta, 0, 100);
+        settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + profile.DisorderDelta, 0, 100);
+        settlement.LastPressureReason =
+            $"{settlementId.Value}地水患告急，堤防与路面压力入街面，失序上升{profile.DisorderDelta}。";
+        settlement.LastPressureTrace =
+            $"灾害压{profile.HazardPressure}，汛险压{profile.FloodPressure}，堤压{profile.EmbankmentPressure}，本地失序土壤{profile.LocalDisorderSoil}，路面裂口{profile.RouteRupturePressure}，镇压缓冲{profile.SuppressionBuffer}。";
+
+        scope.RecordDiff(
+            $"{settlementId.Value}地灾害扰动后，失序由{oldDisorder}升至{settlement.DisorderPressure}；{settlement.LastPressureTrace}",
+            settlementId.Value.ToString());
 
         if (oldDisorder < 50 && settlement.DisorderPressure >= 50)
         {
@@ -1487,15 +1489,85 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
                 BuildDisorderSpikeMetadata(
                     DomainEventMetadataValues.CauseDisaster,
                     domainEvent,
-                    delta,
+                    profile.DisorderDelta,
                     new Dictionary<string, string>
                     {
                         [DomainEventMetadataKeys.DisasterKind] = GetMetadataValue(domainEvent, DomainEventMetadataKeys.DisasterKind),
                         [DomainEventMetadataKeys.Severity] = severity,
                         [DomainEventMetadataKeys.FloodRisk] = GetMetadataValue(domainEvent, DomainEventMetadataKeys.FloodRisk),
                         [DomainEventMetadataKeys.EmbankmentStrain] = GetMetadataValue(domainEvent, DomainEventMetadataKeys.EmbankmentStrain),
+                        [DomainEventMetadataKeys.DisasterDisorderDelta] = profile.DisorderDelta.ToString(),
+                        [DomainEventMetadataKeys.DisasterHazardPressure] = profile.HazardPressure.ToString(),
+                        [DomainEventMetadataKeys.DisasterFloodPressure] = profile.FloodPressure.ToString(),
+                        [DomainEventMetadataKeys.DisasterEmbankmentPressure] = profile.EmbankmentPressure.ToString(),
+                        [DomainEventMetadataKeys.DisasterLocalDisorderSoil] = profile.LocalDisorderSoil.ToString(),
+                        [DomainEventMetadataKeys.DisasterRouteRupturePressure] = profile.RouteRupturePressure.ToString(),
+                        [DomainEventMetadataKeys.DisasterSuppressionBuffer] = profile.SuppressionBuffer.ToString(),
                     }));
         }
+    }
+
+    private static DisasterDisorderProfile ComputeDisasterDisorderProfile(
+        SettlementDisorderState settlement,
+        IDomainEvent domainEvent,
+        string severity)
+    {
+        int severityPressure = severity switch
+        {
+            DomainEventMetadataValues.SeverityFloodSevere => 11,
+            DomainEventMetadataValues.SeverityFloodModerate => 4,
+            _ => 0,
+        };
+
+        if (severityPressure == 0)
+        {
+            return default;
+        }
+
+        int floodRisk = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.FloodRisk);
+        int embankmentStrain = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.EmbankmentStrain);
+        int floodPressure = floodRisk switch
+        {
+            >= 85 => 4,
+            >= 70 => 2,
+            >= 50 => 1,
+            _ => 0,
+        };
+        int embankmentPressure = embankmentStrain switch
+        {
+            >= 75 => 4,
+            >= 50 => 2,
+            >= 30 => 1,
+            _ => 0,
+        };
+        int localDisorderSoil =
+            BandedPressure(settlement.DisorderPressure, 30, 50)
+            + BandedPressure(settlement.BanditThreat, 35, 60)
+            + BandedPressure(settlement.BlackRoutePressure, 35, 60)
+            + BandedPressure(settlement.CoercionRisk, 25, 45);
+        int routeRupturePressure =
+            BandedPressure(settlement.RoutePressure, 35, 60)
+            + BandedPressure(settlement.RetaliationRisk, 35, 60)
+            + BandedPressure(settlement.ImplementationDrag, 40, 70);
+        int suppressionBuffer =
+            Math.Clamp(settlement.SuppressionRelief / 35, 0, 2)
+            + Math.Clamp(settlement.RouteShielding / 35, 0, 2)
+            + Math.Clamp(settlement.ResponseActivationLevel / 40, 0, 2)
+            + Math.Clamp(settlement.AdministrativeSuppressionWindow / 35, 0, 2);
+        int hazardPressure = severityPressure + floodPressure + embankmentPressure;
+        int disorderDelta = Math.Clamp(
+            hazardPressure + localDisorderSoil + routeRupturePressure - suppressionBuffer,
+            0,
+            24);
+
+        return new DisasterDisorderProfile(
+            disorderDelta,
+            hazardPressure,
+            floodPressure,
+            embankmentPressure,
+            localDisorderSoil,
+            routeRupturePressure,
+            suppressionBuffer);
     }
 
     private static Dictionary<string, string> BuildDisorderSpikeMetadata(
@@ -1550,5 +1622,14 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
         int ClerkHandlingPressure,
         int AuthorityBuffer,
         int LocalDisorderSoil,
+        int SuppressionBuffer);
+
+    private readonly record struct DisasterDisorderProfile(
+        int DisorderDelta,
+        int HazardPressure,
+        int FloodPressure,
+        int EmbankmentPressure,
+        int LocalDisorderSoil,
+        int RouteRupturePressure,
         int SuppressionBuffer);
 }

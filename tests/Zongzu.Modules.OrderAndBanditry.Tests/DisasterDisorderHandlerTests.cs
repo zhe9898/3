@@ -47,6 +47,7 @@ public sealed class DisasterDisorderHandlerTests
             buffer.Events.Select(static e => e.EventType),
             Does.Not.Contain(OrderAndBanditryEventNames.DisorderSpike),
             "Disorder below 50 should not trigger DisorderSpike.");
+        Assert.That(state.Settlements[0].LastPressureTrace, Does.Contain("灾害压"));
     }
 
     [Test]
@@ -93,7 +94,10 @@ public sealed class DisasterDisorderHandlerTests
             buffer.Events,
             Has.Some.Matches<IDomainEvent>(
                 e => e.EventType == OrderAndBanditryEventNames.DisorderSpike
-                     && e.EntityKey == "1"),
+                     && e.EntityKey == "1"
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterHazardPressure)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterLocalDisorderSoil)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.DisasterSuppressionBuffer)),
             "Settlement 1 should emit DisorderSpike when crossing threshold.");
 
         // Settlement 2: 60, off-scope → no change, no spike
@@ -148,6 +152,94 @@ public sealed class DisasterDisorderHandlerTests
             "Affected settlement should receive +15 from severe flood.");
         Assert.That(state.Settlements[1].DisorderPressure, Is.EqualTo(40),
             "Off-scope settlement must remain untouched.");
+    }
+
+    [Test]
+    public void DisasterDeclared_LocalFragilityRaisesProfileAboveFlatSeverity()
+    {
+        OrderAndBanditryModule module = new();
+        OrderAndBanditryState state = new();
+        state.Settlements.Add(new SettlementDisorderState
+        {
+            SettlementId = new SettlementId(1),
+            DisorderPressure = 20,
+            BanditThreat = 70,
+            RoutePressure = 70,
+            BlackRoutePressure = 70,
+            CoercionRisk = 55,
+            RetaliationRisk = 65,
+            ImplementationDrag = 75,
+        });
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer buffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            queries,
+            buffer,
+            new WorldDiff());
+
+        buffer.Emit(new DomainEventRecord(
+            KnownModuleKeys.WorldSettlements,
+            WorldSettlementsEventNames.DisasterDeclared,
+            "moderate flood with fragile local order",
+            "1",
+            FloodMetadata(DomainEventMetadataValues.SeverityFloodModerate)));
+
+        module.HandleEvents(new ModuleEventHandlingScope<OrderAndBanditryState>(
+            state, context, buffer.Events.ToList()));
+
+        Assert.That(state.Settlements[0].DisorderPressure, Is.GreaterThan(28),
+            "Local bandit, route, black-route, coercion, and drag pressure should make a moderate disaster heavier than the old flat +8.");
+        Assert.That(state.Settlements[0].LastPressureTrace, Does.Contain("路面裂口"));
+    }
+
+    [Test]
+    public void DisasterDeclared_StrongSuppressionBufferCanAbsorbModerateDisaster()
+    {
+        OrderAndBanditryModule module = new();
+        OrderAndBanditryState state = new();
+        state.Settlements.Add(new SettlementDisorderState
+        {
+            SettlementId = new SettlementId(1),
+            DisorderPressure = 42,
+            SuppressionRelief = 100,
+            RouteShielding = 100,
+            ResponseActivationLevel = 100,
+            AdministrativeSuppressionWindow = 100,
+        });
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer buffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 6),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            queries,
+            buffer,
+            new WorldDiff());
+
+        buffer.Emit(new DomainEventRecord(
+            KnownModuleKeys.WorldSettlements,
+            WorldSettlementsEventNames.DisasterDeclared,
+            "moderate flood with prepared order response",
+            "1",
+            FloodMetadata(DomainEventMetadataValues.SeverityFloodModerate)));
+
+        module.HandleEvents(new ModuleEventHandlingScope<OrderAndBanditryState>(
+            state, context, buffer.Events.ToList()));
+
+        Assert.That(state.Settlements[0].DisorderPressure, Is.EqualTo(42),
+            "A strong local suppression/route response should be able to absorb a moderate disaster without forced spike.");
+        Assert.That(
+            buffer.Events.Select(static e => e.EventType),
+            Does.Not.Contain(OrderAndBanditryEventNames.DisorderSpike));
     }
 
     [Test]

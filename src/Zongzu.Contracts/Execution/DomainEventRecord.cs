@@ -80,6 +80,13 @@ public static class DomainEventMetadataKeys
     public const string EmbankmentStrain = "embankmentStrain";
     public const string FrontierPressure = "frontierPressure";
     public const string DisorderDelta = "disorderDelta";
+    public const string DisasterDisorderDelta = "disasterDisorderDelta";
+    public const string DisasterHazardPressure = "disasterHazardPressure";
+    public const string DisasterFloodPressure = "disasterFloodPressure";
+    public const string DisasterEmbankmentPressure = "disasterEmbankmentPressure";
+    public const string DisasterLocalDisorderSoil = "disasterLocalDisorderSoil";
+    public const string DisasterRouteRupturePressure = "disasterRouteRupturePressure";
+    public const string DisasterSuppressionBuffer = "disasterSuppressionBuffer";
     public const string CorveeWindow = "corveeWindow";
     public const string SettlementId = "settlementId";
     public const string DistressBefore = "distressBefore";
