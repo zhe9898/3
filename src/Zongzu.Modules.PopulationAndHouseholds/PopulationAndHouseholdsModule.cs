@@ -314,10 +314,11 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         ModuleEventHandlingScope<PopulationAndHouseholdsState> scope,
         IDomainEvent domainEvent)
     {
-        // Thin chain: grain price spike increases household distress.
-        // Full formula (Step 3) will consider household grain store, livelihood type, etc.
-        SettlementId? affectedSettlementId = TryParseSettlementId(domainEvent.EntityKey);
-        foreach (PopulationHouseholdState household in scope.State.Households)
+        SettlementId? affectedSettlementId = ResolveSettlementScope(domainEvent);
+        GrainPriceShockSignal signal = ResolveGrainPriceShockSignal(domainEvent);
+        bool anyHouseholdChanged = false;
+
+        foreach (PopulationHouseholdState household in scope.State.Households.OrderBy(static household => household.Id.Value))
         {
             if (affectedSettlementId.HasValue && household.SettlementId != affectedSettlementId.Value)
             {
@@ -325,15 +326,43 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
             }
 
             int oldDistress = household.Distress;
-            household.Distress = Math.Clamp(household.Distress + 12, 0, 100);
+            SubsistencePressureProfile subsistenceProfile = ComputeSubsistencePressureProfile(household, signal);
+            int distressDelta = subsistenceProfile.DistressDelta;
+            household.Distress = Math.Clamp(household.Distress + distressDelta, 0, 100);
+            anyHouseholdChanged = true;
 
             if (oldDistress < 60 && household.Distress >= 60)
             {
                 scope.Emit(
                     PopulationEventNames.HouseholdSubsistencePressureChanged,
                     $"{household.HouseholdName}粮价陡起，生计吃紧。",
-                    household.Id.Value.ToString());
+                    household.Id.Value.ToString(),
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseGrainPriceSpike,
+                        [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+                        [DomainEventMetadataKeys.SettlementId] = household.SettlementId.Value.ToString(),
+                        [DomainEventMetadataKeys.DistressBefore] = oldDistress.ToString(),
+                        [DomainEventMetadataKeys.DistressAfter] = household.Distress.ToString(),
+                        [DomainEventMetadataKeys.SubsistenceDistressDelta] = distressDelta.ToString(),
+                        [DomainEventMetadataKeys.SubsistencePricePressure] = subsistenceProfile.PricePressure.ToString(),
+                        [DomainEventMetadataKeys.SubsistenceGrainBufferPressure] = subsistenceProfile.GrainBufferPressure.ToString(),
+                        [DomainEventMetadataKeys.SubsistenceMarketDependencyPressure] = subsistenceProfile.MarketDependencyPressure.ToString(),
+                        [DomainEventMetadataKeys.SubsistenceLaborPressure] = subsistenceProfile.LaborPressure.ToString(),
+                        [DomainEventMetadataKeys.SubsistenceFragilityPressure] = subsistenceProfile.FragilityPressure.ToString(),
+                        [DomainEventMetadataKeys.SubsistenceInteractionPressure] = subsistenceProfile.InteractionPressure.ToString(),
+                        [DomainEventMetadataKeys.GrainCurrentPrice] = signal.CurrentPrice.ToString(),
+                        [DomainEventMetadataKeys.GrainPriceDelta] = signal.PriceDelta.ToString(),
+                        [DomainEventMetadataKeys.GrainSupply] = signal.Supply.ToString(),
+                        [DomainEventMetadataKeys.GrainDemand] = signal.Demand.ToString(),
+                        [DomainEventMetadataKeys.Livelihood] = household.Livelihood.ToString(),
+                    });
             }
+        }
+
+        if (anyHouseholdChanged)
+        {
+            RebuildSettlementSummaries(scope.State);
         }
     }
 
@@ -342,6 +371,189 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
         return int.TryParse(entityKey, out int settlementId)
             ? new SettlementId(settlementId)
             : null;
+    }
+
+    private static GrainPriceShockSignal ResolveGrainPriceShockSignal(IDomainEvent domainEvent)
+    {
+        int currentPrice = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.GrainCurrentPrice, 130);
+        int oldPrice = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.GrainOldPrice, 100);
+        int priceDelta = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.GrainPriceDelta,
+            Math.Max(0, currentPrice - oldPrice));
+        int supply = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.GrainSupply, 50);
+        int demand = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.GrainDemand, 70);
+
+        return new GrainPriceShockSignal(
+            Math.Clamp(currentPrice, 50, 200),
+            Math.Clamp(Math.Max(0, priceDelta), 0, 150),
+            Math.Clamp(supply, 0, 100),
+            Math.Clamp(demand, 0, 100));
+    }
+
+    private static int ReadMetadataInt(IDomainEvent domainEvent, string key, int fallback)
+    {
+        return domainEvent.Metadata.TryGetValue(key, out string? value) && int.TryParse(value, out int parsed)
+            ? parsed
+            : fallback;
+    }
+
+    private static SubsistencePressureProfile ComputeSubsistencePressureProfile(
+        PopulationHouseholdState household,
+        GrainPriceShockSignal signal)
+    {
+        return new SubsistencePressureProfile(
+            ComputePricePressure(signal),
+            ComputeGrainBufferPressure(household),
+            ComputeMarketDependencyPressure(household),
+            ComputeSubsistenceLaborPressure(household),
+            ComputeSubsistenceFragilityPressure(household),
+            ComputeSubsistenceInteractionPressure(household));
+    }
+
+    private static int ComputePricePressure(GrainPriceShockSignal signal)
+    {
+        int priceLevel = signal.CurrentPrice switch
+        {
+            >= 170 => 7,
+            >= 150 => 5,
+            >= 130 => 3,
+            >= 120 => 2,
+            _ => 1,
+        };
+
+        int priceJump = signal.PriceDelta switch
+        {
+            >= 45 => 5,
+            >= 30 => 4,
+            >= 18 => 2,
+            >= 8 => 1,
+            _ => 0,
+        };
+
+        int marketTightness = Math.Max(0, signal.Demand - signal.Supply) switch
+        {
+            >= 60 => 4,
+            >= 40 => 3,
+            >= 20 => 2,
+            >= 8 => 1,
+            _ => 0,
+        };
+
+        return Math.Clamp(priceLevel + priceJump + marketTightness, 4, 14);
+    }
+
+    private static int ComputeGrainBufferPressure(PopulationHouseholdState household)
+    {
+        return household.GrainStore switch
+        {
+            >= 85 => -5,
+            >= 65 => -3,
+            >= 45 => -1,
+            >= 25 => 2,
+            > 0 => 5,
+            _ => 6,
+        };
+    }
+
+    private static int ComputeMarketDependencyPressure(PopulationHouseholdState household)
+    {
+        return household.Livelihood switch
+        {
+            LivelihoodType.PettyTrader => 4,
+            LivelihoodType.Boatman => 4,
+            LivelihoodType.Artisan => 3,
+            LivelihoodType.HiredLabor => 3,
+            LivelihoodType.SeasonalMigrant => 3,
+            LivelihoodType.DomesticServant => 2,
+            LivelihoodType.YamenRunner => 2,
+            LivelihoodType.Vagrant => 2,
+            LivelihoodType.Tenant => 2,
+            LivelihoodType.Unknown => 2,
+            LivelihoodType.Smallholder => 1,
+            _ => 2,
+        };
+    }
+
+    private static int ComputeSubsistenceLaborPressure(PopulationHouseholdState household)
+    {
+        int laborPressure = household.LaborCapacity switch
+        {
+            >= 80 => -2,
+            >= 60 => -1,
+            >= 40 => 0,
+            >= 25 => 1,
+            _ => 2,
+        };
+
+        int dependentPressure = household.DependentCount switch
+        {
+            >= 5 => 2,
+            >= 3 => 1,
+            _ => 0,
+        };
+
+        return Math.Clamp(laborPressure + dependentPressure, -2, 4);
+    }
+
+    private static int ComputeSubsistenceFragilityPressure(PopulationHouseholdState household)
+    {
+        int distressPressure = household.Distress switch
+        {
+            >= 80 => 3,
+            >= 65 => 2,
+            >= 50 => 1,
+            _ => 0,
+        };
+
+        int debtPressure = household.DebtPressure switch
+        {
+            >= 80 => 3,
+            >= 65 => 2,
+            >= 50 => 1,
+            _ => 0,
+        };
+
+        int migrationPressure = household.IsMigrating || household.MigrationRisk >= 70 ? 1 : 0;
+        return Math.Clamp(distressPressure + debtPressure + migrationPressure, 0, 7);
+    }
+
+    private static int ComputeSubsistenceInteractionPressure(PopulationHouseholdState household)
+    {
+        int interaction = 0;
+
+        if (household.GrainStore is > 0 and < 25 && IsCashNeedLivelihood(household.Livelihood))
+        {
+            interaction += 2;
+        }
+
+        if (household.GrainStore is > 0 and < 25 && household.DebtPressure >= 60)
+        {
+            interaction += 1;
+        }
+
+        if (household.GrainStore >= 75 && household.LandHolding >= 35 && household.LaborCapacity >= 60)
+        {
+            interaction -= 2;
+        }
+
+        return Math.Clamp(interaction, -2, 4);
+    }
+
+    private readonly record struct GrainPriceShockSignal(int CurrentPrice, int PriceDelta, int Supply, int Demand);
+
+    private readonly record struct SubsistencePressureProfile(
+        int PricePressure,
+        int GrainBufferPressure,
+        int MarketDependencyPressure,
+        int LaborPressure,
+        int FragilityPressure,
+        int InteractionPressure)
+    {
+        public int DistressDelta => Math.Clamp(
+            PricePressure + GrainBufferPressure + MarketDependencyPressure + LaborPressure + FragilityPressure + InteractionPressure,
+            4,
+            30);
     }
 
     private static void DispatchWorldPulseEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)

@@ -242,7 +242,7 @@ OfficeAndCareer (monthly)
 
 ### 链2：粮价-市场-家户-贸易
 
-> **实现状态：真实 scheduler 薄切片（M2-lite）。已落 `SeasonPhaseAdvanced(Harvest) -> TradeAndIndustry.GrainPriceSpike -> PopulationAndHouseholds.HouseholdSubsistencePressureChanged`，并有真实 `MonthlyScheduler` drain 测试和 off-scope 聚落负例。完整版的 `HarvestPressureChanged/yieldRatio`、灾荒输入、granarySecurity/routeRisk、家户粮仓/生计类型公式、迁徙/病亡、OrderAndBanditry 路险、SocialMemory 与 PublicLife 长期饥荒叙事仍未实现。**
+> **实现状态：真实 scheduler 薄切片（M2-lite）+ 链二第一层规则加厚。已落 `SeasonPhaseAdvanced(Harvest) -> TradeAndIndustry.GrainPriceSpike -> PopulationAndHouseholds.HouseholdSubsistencePressureChanged`，并有真实 `MonthlyScheduler` drain 测试和 off-scope 聚落负例。`TradeAndIndustry` 现在随 `GrainPriceSpike` 写入粮价/供需 metadata；`PopulationAndHouseholds` 用现有多维家户画像（生计、粮储、劳力、依附人口、债压、民困、迁徙风险）计算生计压力增量并写入结构化 metadata。完整版的 `HarvestPressureChanged/yieldRatio`、灾荒输入、granarySecurity/routeRisk、迁徙/病亡、OrderAndBanditry 路险、SocialMemory 与 PublicLife 长期饥荒叙事仍未实现。**
 
 **Trigger**：`WorldSettlements` 秋收结算（`HarvestPressureChanged`）或灾荒判定（`Drought`/`Flood`）。
 
@@ -255,14 +255,16 @@ WorldSettlements (seasonal)
             更新 MarketGoodsEntry[Grain].supply = baseSupply * yieldRatio
             重新计算 currentPrice = basePrice * f(supply/demand, routeRisk, granarySecurity)
             若 priceDelta > threshold:
-              发出 TradeAndIndustry.GrainPriceSpike { settlementId, oldPrice, newPrice, causeKey }
+              发出 TradeAndIndustry.GrainPriceSpike { settlementId, oldPrice, newPrice, priceDelta, supply, demand, causeKey }
 
 TradeAndIndustry (monthly)
   └── TradeAndIndustry.GrainPriceSpike
       ├──→ PopulationAndHouseholds
-      │     每个 household 重新计算 subsistenceCost
-      │     若 grainStore < safetyThreshold:
-      │       发出 PopulationAndHouseholds.HouseholdSubsistencePressureChanged { householdId, strainLevel }
+      │     ✅ FIRST THICKENING DONE：每个 household 按 household-owned profile 重新计算 subsistence pressure
+      │     画像维度：price pressure、grain-store buffer、livelihood market dependency、
+      │              labor/dependency load、debt/distress fragility、interaction terms
+      │     若 Distress 跨过 60：
+      │       发出 PopulationAndHouseholds.HouseholdSubsistencePressureChanged { householdId, delta, profile metadata }
       │     若 strainLevel >= Critical:
       │       发出 MigrationStarted { householdId, direction: "toward_market_town" }
       │
@@ -1072,6 +1074,7 @@ PublicLifeAndRumor (monthly, P5+)
    - ✅ 链1 第一层规则加厚 — `TaxSeasonBurdenHandlerTests` 覆盖多维家户画像、结构化 tax-profile metadata、settlement scope 负例、symbolic global thin 信号兼容
    - ⏳ 链1 完整版（正式户等/税种/额度公式、客户租压/佃户逃散、税季现金挤压市场、SocialMemory/年度公共残留、精确 jurisdiction payload）
    - ✅ 链2 薄切片（粮价-市场-家户）— `Chain2_HarvestPhase_GrainPriceSpike_SubsistencePressureChanged` + `Chain2_RealMonthlyScheduler_DrainsHarvestPriceIntoLocalHouseholdPressure`
+   - ✅ 链2 第一层规则加厚 — `GrainPriceSubsistenceHandlerTests` 覆盖粮价/供需 metadata、多维家户生计压力画像、结构化 subsistence-profile metadata、settlement scope 负例
    - ⏳ 链2 完整版（yieldRatio/灾荒、granarySecurity/routeRisk、家户粮仓/生计类型、迁徙/病亡、路险、SocialMemory/PublicLife 饥荒叙事）
    - ✅ 链3 薄切片（ExamPassed → ClanPrestigeAdjusted）— `ExamPrestigeChainTests.cs`
    - ⏳ 链3 完整版（OfficeAndCareer waiting list / SocialMemory Favor-Shame / PublicLife 放榜投影）
@@ -1082,7 +1085,7 @@ PublicLifeAndRumor (monthly, P5+)
    - ⏳ 链5 完整版（WarfareCampaign mobilization、ConflictAndForce readiness、TradeAndIndustry market diversion）
 3. **P2**：补充事件 handler 的**空实现**（先存在接口，再填充逻辑）
    - ✅ 链1 thin handler 已落并加厚（`ApplyTaxSeasonPressure` 读取多维 household profile；`DispatchPopulationDebtEvents`, `HandleEvents(YamenOverloaded)`）
-   - ✅ 链2 thin handler 已落（`ApplyHarvestPricePulse`, `ApplyGrainPriceSubsistencePressure`）
+   - ✅ 链2 thin handler 已落并加厚（`ApplyHarvestPricePulse` 写入粮价/供需 metadata；`ApplyGrainPriceSubsistencePressure` 读取多维 household profile）
 4. **P3**：填充**压力公式和阈值**
 5. **P4**：连接**Unity 壳层投影**
 

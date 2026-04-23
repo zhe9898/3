@@ -92,6 +92,18 @@ public static class DomainEventMetadataKeys
     public const string TaxLaborPressure = "taxLaborPressure";
     public const string TaxFragilityPressure = "taxFragilityPressure";
     public const string TaxInteractionPressure = "taxInteractionPressure";
+    public const string GrainOldPrice = "grainOldPrice";
+    public const string GrainCurrentPrice = "grainCurrentPrice";
+    public const string GrainPriceDelta = "grainPriceDelta";
+    public const string GrainSupply = "grainSupply";
+    public const string GrainDemand = "grainDemand";
+    public const string SubsistenceDistressDelta = "subsistenceDistressDelta";
+    public const string SubsistencePricePressure = "subsistencePricePressure";
+    public const string SubsistenceGrainBufferPressure = "subsistenceGrainBufferPressure";
+    public const string SubsistenceMarketDependencyPressure = "subsistenceMarketDependencyPressure";
+    public const string SubsistenceLaborPressure = "subsistenceLaborPressure";
+    public const string SubsistenceFragilityPressure = "subsistenceFragilityPressure";
+    public const string SubsistenceInteractionPressure = "subsistenceInteractionPressure";
     public const string Livelihood = "livelihood";
     public const string MandateConfidence = "mandateConfidence";
     public const string PressureScore = "pressureScore";
@@ -106,6 +118,8 @@ public static class DomainEventMetadataValues
     public const string CauseCorvee = "corvee";
     public const string CauseDisaster = "disaster";
     public const string CauseFrontier = "frontier";
+    public const string CauseGrainPriceSpike = "grain-price-spike";
+    public const string CauseHarvest = "harvest";
     public const string CauseOfficialSupply = "official-supply";
     public const string CauseTaxSeason = "tax-season";
     public const string DisasterFlood = "flood";
