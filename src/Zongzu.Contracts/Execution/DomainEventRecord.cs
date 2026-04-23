@@ -121,8 +121,15 @@ public static class DomainEventMetadataKeys
     public const string AmnestySuppressionBuffer = "amnestySuppressionBuffer";
     public const string JurisdictionLeverage = "jurisdictionLeverage";
     public const string ClerkDependence = "clerkDependence";
+    public const string PetitionPressure = "petitionPressure";
     public const string PetitionBacklog = "petitionBacklog";
     public const string AdministrativeTaskLoad = "administrativeTaskLoad";
+    public const string ClerkCapturePressure = "clerkCapturePressure";
+    public const string ClerkCaptureDependencePressure = "clerkCaptureDependencePressure";
+    public const string ClerkCaptureBacklogPressure = "clerkCaptureBacklogPressure";
+    public const string ClerkCaptureTaskPressure = "clerkCaptureTaskPressure";
+    public const string ClerkCapturePetitionPressure = "clerkCapturePetitionPressure";
+    public const string ClerkCaptureAuthorityBuffer = "clerkCaptureAuthorityBuffer";
     public const string OfficialSupplyPressure = "officialSupplyPressure";
     public const string OfficialSupplyQuotaPressure = "officialSupplyQuotaPressure";
     public const string OfficialSupplyDocketPressure = "officialSupplyDocketPressure";

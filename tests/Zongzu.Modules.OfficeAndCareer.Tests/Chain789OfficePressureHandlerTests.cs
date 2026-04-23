@@ -68,6 +68,10 @@ public sealed class Chain789OfficePressureHandlerTests
             emitted[0].Metadata[DomainEventMetadataKeys.Cause],
             Is.EqualTo(DomainEventMetadataValues.CauseClerkCapture),
             "Clerk capture receipts must carry structured cause metadata.");
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.ClerkCapturePressure], Is.Not.Empty);
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.ClerkCaptureDependencePressure], Is.EqualTo("35"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.ClerkCaptureBacklogPressure], Is.EqualTo("10"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer], Is.EqualTo("9"));
         Assert.That(
             state.ActiveClerkCaptureSettlementIds,
             Does.Contain(new SettlementId(10)),

@@ -167,8 +167,42 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
             return;
         }
 
-        publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + 12, 0, 100);
-        publicLife.LastPublicTrace = $"书吏坐大，街谈渐热，街谈热度升至{publicLife.StreetTalkHeat}。";
+        int heatDelta = ResolveClerkCaptureHeatDelta(domainEvent);
+        publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + heatDelta, 0, 100);
+        string pressureTrace = ResolveClerkCaptureTrace(domainEvent, heatDelta);
+        publicLife.LastPublicTrace = $"{pressureTrace}，街谈热度升至{publicLife.StreetTalkHeat}。";
+    }
+
+    private static int ResolveClerkCaptureHeatDelta(IDomainEvent domainEvent)
+    {
+        if (!domainEvent.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCapturePressure))
+        {
+            return 12;
+        }
+
+        int capturePressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkCapturePressure);
+        int backlogPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkCaptureBacklogPressure);
+        int taskPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkCaptureTaskPressure);
+        int authorityBuffer = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer);
+
+        return Math.Clamp(
+            8 + (capturePressure / 10) + (backlogPressure / 8) + (taskPressure / 8) - (authorityBuffer / 12),
+            6,
+            20);
+    }
+
+    private static string ResolveClerkCaptureTrace(IDomainEvent domainEvent, int heatDelta)
+    {
+        if (!domainEvent.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCapturePressure))
+        {
+            return "书吏坐大，街谈渐热";
+        }
+
+        int capturePressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkCapturePressure);
+        int backlogPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkCaptureBacklogPressure);
+        int taskPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkCaptureTaskPressure);
+        int authorityBuffer = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer);
+        return $"书吏坐大，案牍压{backlogPressure}，差遣压{taskPressure}，捕获势{capturePressure}，官威缓冲{authorityBuffer}，街谈升温{heatDelta}";
     }
 
     private static string ResolveDisorderCauseHint(IDomainEvent domainEvent)
@@ -199,6 +233,13 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
             DomainEventMetadataValues.DisasterFlood => "水患告急",
             _ => "灾荒告急",
         };
+    }
+
+    private static int ReadMetadataInt(IDomainEvent domainEvent, string key)
+    {
+        return domainEvent.Metadata.TryGetValue(key, out string? value) && int.TryParse(value, out int parsed)
+            ? parsed
+            : 0;
     }
 
     private static void RunSettlementPulse(ModuleExecutionScope<PublicLifeAndRumorState> scope, bool emitReadableOutput)

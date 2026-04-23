@@ -47,7 +47,10 @@ public sealed class OfficeCourtRegimePressureChainTests
             firstEvents,
             Has.Some.Matches<IDomainEvent>(
                 e => e.EventType == OfficeAndCareerEventNames.ClerkCaptureDeepened
-                     && e.EntityKey == "10"));
+                     && e.EntityKey == "10"
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCapturePressure)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCaptureBacklogPressure)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer)));
         Assert.That(
             firstEvents,
             Has.None.Matches<IDomainEvent>(

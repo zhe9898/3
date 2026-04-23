@@ -811,6 +811,8 @@ CommandAvailable =
 
 ### 链7：官员-胥吏-案牍-地方执行
 
+> **实现状态：真实 scheduler 薄切片（M2-lite）+ 第一层规则加厚。已落 `OfficeAndCareer.ClerkCaptureDeepened -> PublicLifeAndRumor heat`，并有真实 scheduler drain、off-scope 聚落负例和水位防重复。`OfficeAndCareer` 现在写入 clerk-capture profile metadata；`PublicLifeAndRumor` 用该 profile 缩放街谈升温。完整版的考课、弹章、请托延误、商事纠纷、胥吏派系、师爷/可靠胥吏干预、家户/市场/记忆后果仍未实现。**
+
 **Trigger**：`OfficeAndCareer` 中官员到任、考课周期到达、或 petition backlog 超过 threshold。
 
 **Event Flow**：
@@ -844,7 +846,8 @@ OfficeAndCareer (xun pulse)
       └──→ OfficeAndCareer 内部
             更新 clerkDependence（案牍积压 → 胥吏权力上升）
             若 clerkDependence > captureThreshold:
-              发出 OfficeAndCareer.ClerkCaptureDeepened { postId, clerkFactionId, capturedProcesses }
+              ✅ THIN-SLICE + FIRST THICKENING DONE
+              发出 OfficeAndCareer.ClerkCaptureDeepened { settlementId, capturePressure, dependencePressure, backlogPressure, taskPressure, petitionPressure, authorityBuffer }
             发出 OfficeAndCareer.YamenOverloaded { settlementId, taskKind: "petition-backlog", delayMonths }
 
 OfficeAndCareer (monthly)
@@ -1134,7 +1137,7 @@ PublicLifeAndRumor (monthly, P5+)
 - **模块引用迁移**：6 个模块的内部裸字符串全部迁入 `Zongzu.Contracts`
 
 ### v0.4 (2026-04-23) Chain 7/8/9 thin-slice hardening
-- Chain 7 is implemented only as a real-scheduler thin slice: `OfficeAndCareer.ClerkCaptureDeepened -> PublicLifeAndRumor` with settlement scope, structured metadata, off-scope protection, and module-owned repeated-edge suppression through `ActiveClerkCaptureSettlementIds`.
+- Chain 7 is implemented as a real-scheduler thin slice plus first clerk-capture profile thickening: `OfficeAndCareer.ClerkCaptureDeepened -> PublicLifeAndRumor` with settlement scope, structured profile metadata, profile-scaled public-life heat, off-scope protection, and module-owned repeated-edge suppression through `ActiveClerkCaptureSettlementIds`.
 - Chain 8 is implemented only as a real-scheduler thin slice: `WorldSettlements.CourtAgendaPressureAccumulated -> OfficeAndCareer.PolicyWindowOpened`. The current rule allocates one court/global pressure event to one selected court-facing jurisdiction; it must not open all jurisdictions at once.
 - Chain 9 is implemented only as a real-scheduler thin slice: `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected`. `OfficeDefected` is a receipt after office-owned state mutation, not a standalone event-pool outcome; only the highest-risk appointed official defects in the current slice.
 - Default `MandateConfidence` is neutral (`70`). Court / regime pressure must be explicitly seeded or moved by an imperial/court owner; an uninitialized world must not behave like a regime crisis.

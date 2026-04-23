@@ -318,7 +318,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 continue;
             }
 
-            int pressureScore = ComputeClerkCapturePressure(jurisdiction);
+            ClerkCaptureProfile profile = ComputeClerkCaptureProfile(jurisdiction);
             scope.Emit(
                 OfficeAndCareerEventNames.ClerkCaptureDeepened,
                 $"{jurisdiction.LeadOfficeTitle}衙门书吏坐大，案牍渐被架空。",
@@ -327,7 +327,19 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 {
                     [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseClerkCapture,
                     [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
-                    [DomainEventMetadataKeys.PressureScore] = pressureScore.ToString(),
+                    [DomainEventMetadataKeys.PressureScore] = profile.CapturePressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkDependence] = jurisdiction.ClerkDependence.ToString(),
+                    [DomainEventMetadataKeys.PetitionBacklog] = jurisdiction.PetitionBacklog.ToString(),
+                    [DomainEventMetadataKeys.AdministrativeTaskLoad] = jurisdiction.AdministrativeTaskLoad.ToString(),
+                    [DomainEventMetadataKeys.PetitionPressure] = jurisdiction.PetitionPressure.ToString(),
+                    [DomainEventMetadataKeys.AuthorityTier] = jurisdiction.AuthorityTier.ToString(),
+                    [DomainEventMetadataKeys.JurisdictionLeverage] = jurisdiction.JurisdictionLeverage.ToString(),
+                    [DomainEventMetadataKeys.ClerkCapturePressure] = profile.CapturePressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCaptureDependencePressure] = profile.DependencePressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCaptureBacklogPressure] = profile.BacklogPressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCaptureTaskPressure] = profile.TaskPressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCapturePetitionPressure] = profile.PetitionPressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer] = profile.AuthorityBuffer.ToString(),
                 });
         }
 
@@ -839,13 +851,28 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
     private static int ComputeClerkCapturePressure(JurisdictionAuthorityState jurisdiction)
     {
-        return Math.Clamp(
-            jurisdiction.ClerkDependence
-            + (jurisdiction.PetitionBacklog / 2)
-            + (jurisdiction.AdministrativeTaskLoad / 3)
-            - (jurisdiction.AuthorityTier * 3),
+        return ComputeClerkCaptureProfile(jurisdiction).CapturePressure;
+    }
+
+    private static ClerkCaptureProfile ComputeClerkCaptureProfile(JurisdictionAuthorityState jurisdiction)
+    {
+        int dependencePressure = jurisdiction.ClerkDependence;
+        int backlogPressure = jurisdiction.PetitionBacklog / 2;
+        int taskPressure = jurisdiction.AdministrativeTaskLoad / 3;
+        int petitionPressure = jurisdiction.PetitionPressure / 4;
+        int authorityBuffer = (jurisdiction.AuthorityTier * 3) + (jurisdiction.JurisdictionLeverage / 10);
+        int capturePressure = Math.Clamp(
+            dependencePressure + backlogPressure + taskPressure + petitionPressure - authorityBuffer,
             0,
             100);
+
+        return new ClerkCaptureProfile(
+            capturePressure,
+            dependencePressure,
+            backlogPressure,
+            taskPressure,
+            petitionPressure,
+            authorityBuffer);
     }
 
     private static JurisdictionAuthorityState? SelectPolicyWindowJurisdiction(
@@ -900,4 +927,12 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         IWorldSettlementsQueries worldQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
         return worldQueries.GetCurrentSeason().Imperial.MandateConfidence;
     }
+
+    private readonly record struct ClerkCaptureProfile(
+        int CapturePressure,
+        int DependencePressure,
+        int BacklogPressure,
+        int TaskPressure,
+        int PetitionPressure,
+        int AuthorityBuffer);
 }
