@@ -4,7 +4,7 @@ This is the anti-drift contract between MVP and later releases.
 
 | Foundation | MVP | Post-MVP | Must never change |
 |---|---|---|---|
-| Time | one authoritative monthly tick | same tick, more modules and projections | no parallel hidden clocks |
+| Time | monthly review shell with day-level internal authority | same shell and authority path, more modules and projections | no parallel hidden clocks; `xun` remains calendar/projection grouping unless explicitly migrated |
 | Identity | stable typed IDs | same IDs with more modules and migrations | IDs never recycled |
 | Architecture | modular monolith | same modular monolith, more packs | no giant world-manager rewrite |
 | State ownership | module-owned namespaces | more namespaces and migrations | no cross-module direct mutation |

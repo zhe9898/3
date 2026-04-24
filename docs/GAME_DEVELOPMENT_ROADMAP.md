@@ -25,7 +25,7 @@ flowchart TD
     E --> F["Phase Route\nIMPLEMENTATION_PHASES\nPOST_MVP_SCOPE\nEXTENSIBILITY_MODEL"]
     F --> G["Acceptance\nACCEPTANCE_TESTS\nVERSION_ALIGNMENT\nCODEX_TASK_PROMPTS"]
     G --> H["Playable Shell\nVISUAL_FORM_AND_INTERACTION\nUI_AND_PRESENTATION\nMAP_AND_SANDBOX_DIRECTION"]
-H --> I["Monthly Game\ninternal xun pulses -> monthly review -> bounded commands -> next pressure"]
+H --> I["Monthly Game\nday-level inner motion -> monthly review -> bounded commands -> next pressure"]
 ```
 
 ## One-Line Development Spine
@@ -39,7 +39,7 @@ Every phase follows the same implementation ladder:
 3. define state shape and typed IDs
 4. update schema and migration rules if saved state changes
 5. define Query / Command / DomainEvent contracts
-6. place cadence in `xun`, month, seasonal, annual, setup, or command resolution
+6. place cadence in `day`, month, seasonal, annual, setup, or command resolution
 7. prove one thin live rule chain
 8. emit structured diffs and read-only projections
 9. add tests and acceptance notes
@@ -79,7 +79,8 @@ Start from the rule chain:
 `owned state + cadence + pressure + deterministic resolution -> event/diff -> projection -> bounded command -> next pressure`
 
 Time UX rule:
-- xun cadence gives the world lived texture
+- day-level cadence gives nearby life lived texture
+- xun labels may group almanac/projection wording, but are not the bottom authority grid
 - monthly review remains the normal player-facing turn
 - red-band interrupts are rare crisis windows, not a second routine turn loop
 
@@ -153,7 +154,7 @@ Do not:
 Build order:
 1. `OrderAndBanditry.Lite` pressure, black-route fields, paper compliance, implementation drag
 2. `TradeAndIndustry` gray-route / illicit ledger mirrors
-3. bounded public-life order affordances
+3. bounded public-life order affordances with `OrderAndBanditry`-owned receipts/refusals
 4. `ConflictAndForce.Lite` force posture, activation, readiness, violent outcomes
 5. death-by-violence bridge into person/family lifecycle
 6. local conflict vignette projection
@@ -163,6 +164,7 @@ Thin proof:
 - route disorder squeezes trade
 - trade pressure hurts households
 - a local response can shield routes or create retaliation
+- a public-life order command can be issued from hall/desk pressure, resolve inside `OrderAndBanditry`, and read back next month through governance/order projections
 - violent death enters FamilyCore as aftermath pressure without duplicate cause ownership
 
 Do not:
@@ -301,6 +303,7 @@ Build these chains in this order after the skeleton exists:
 
 | Job | Start Here | Then Read |
 | --- | --- | --- |
+| Documentation navigation | `DOCUMENTATION_MAP.md` | `README.md`, `CODEX_MASTER_SPEC.md`, `FULL_SYSTEM_SPEC.md` |
 | Product direction | `PRODUCT_SCOPE.md` | `FULL_SYSTEM_SPEC.md`, `RULES_DRIVEN_LIVING_WORLD.md` |
 | Historical / regime-scale design | `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md` | `SOCIAL_STRATA_AND_PATHWAYS.md`, `INFLUENCE_POWER_AND_FACTIONS.md`, `RENZONG_PRESSURE_CHAIN_SPEC.md` |
 | MVP cut decisions | `MVP_SCOPE.md` | `MVP.md`, `ACCEPTANCE_TESTS.md` |

@@ -1,8 +1,18 @@
 # PLAYER_SCOPE
 
-The player is a situated social actor, not a god.
+The player is a situated household-seat actor, not a god and not a single-person RPG protagonist.
 
-The default MVP camera can lean household-side or lineage-side, but the product should not imply that the player is permanently "the clan head" or that society outside the lineage is decorative. The player is better understood as a bounded influence footprint inside a living local society.
+The default play camera is the **home-household seat**: the continuing viewpoint of one household, branch, or doorway of obligation inside a living local society.
+This seat may be poor, middling, elite-adjacent, lineage-centered, or precarious.
+It is not automatically a great-house view, not permanently the clan head, and not a license to command every person in the lineage.
+
+People are the emotional and tactical entry points.
+The player reads people, sends people, favors people, fears for people, and suffers when people die or resist.
+But the player's continuity is the household seat: its rice, debt, labor, marriage prospects, kin ties, reputation, memories, grudges, documents, and reachable obligations.
+When a household spokesperson dies, loses authority, marries out, takes office, or becomes irrelevant, play should continue through the household seat unless the household itself is absorbed, extinguished, migrated, or transformed by rules.
+
+Player-continuity rule:
+玩家持续经营的是本户的家计、人口、名声、债务、亲缘与位置；人物是感受和执行这些压力的入口，而不是玩家本体。玩家的可用权力随本户处境向宗族、地方与官面外扩，但始终不能脱离具体关系链变成上帝视角。
 
 For the broader design framing of bounded leverage, limited reach, downward mobility, and multi-generational consequence, see `RULES_DRIVEN_LIVING_WORLD.md`.
 
@@ -17,10 +27,33 @@ The player primarily acts through:
 - office leverage if available
 - force resources if available
 
+## Playable perspective doctrine
+
+In play, Zongzu should feel like:
+
+`manage the days of this household -> hold this branch's face -> survive and rise inside clan, county, market, yamen, and historical pressure`
+
+It should not feel like:
+- "I am one fixed character forever"
+- "I am the whole clan's omnipotent controller"
+- "I choose a profession route and the world waits"
+
+The home-household seat means:
+- the player starts from a bounded household situation
+- the household's people, accounts, debts, illnesses, marriages, study costs, tools, animals, fields, shops, clients, and kin obligations are primary play material
+- the lineage is a powerful surrounding institution and sometimes a command channel, not the player's whole body
+- the county, yamen, market, temple, road, and public-life surfaces matter because they press on the household and create opportunities or threats
+- the player may later climb into office, force, faction, or regime-scale pressure only by accumulating concrete reach, exposure, legitimacy, and obligations
+- that expansion is always mediated by concrete relationship chains, documents, offices, debts, favors, public face, or force carriers
+
+Identity labels such as student, merchant, official, branch heir, widow, debtor, client, clerk, or exile are projections of a person's current social position.
+They may change often.
+They should guide understanding and command availability, but they are not the player's permanent identity.
+
 ## Player influence footprint
 
 The shell may expose a read-only `PlayerInfluenceFootprintSnapshot`.
-It summarizes which layers are currently visible or commandable:
+It summarizes which layers the current home-household seat can currently see, touch, or command:
 - own-household local agency
 - observed household pressure
 - lineage authority
@@ -37,7 +70,7 @@ This is not a class picker, faction allegiance, or route system. It is a project
 ## Influence-circle doctrine
 
 The player is not permanently a clan head, merchant, scholar, official, or household manager.
-The player is a situated actor with a changing influence circle.
+The player is a household-seat actor with a changing influence circle.
 
 What the player can affect is determined by:
 - what people and institutions the player can reach
@@ -138,6 +171,10 @@ They resolve through:
 - available resources
 - risk
 - current world state
+
+The player usually does not command as an abstract soul.
+The player commits through a concrete household-facing channel: current householder, elder, spouse, heir, agent, clerk contact, kin mediator, hired hand, guarantor, office seal if earned, or force representative if available.
+That channel can fail, delay, reinterpret, or create backlash.
 
 ## Command categories
 

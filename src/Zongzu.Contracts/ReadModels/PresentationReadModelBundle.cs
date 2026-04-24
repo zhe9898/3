@@ -13,6 +13,8 @@ public sealed class PresentationReadModelBundle
 
     public IReadOnlyList<ClanNarrativeSnapshot> ClanNarratives { get; set; } = [];
 
+    public IReadOnlyList<PersonDossierSnapshot> PersonDossiers { get; set; } = [];
+
     public IReadOnlyList<SettlementSnapshot> Settlements { get; set; } = [];
 
     public IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements { get; set; } = [];

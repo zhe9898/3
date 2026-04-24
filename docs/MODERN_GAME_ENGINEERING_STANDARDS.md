@@ -88,7 +88,7 @@ Every module-level change must answer:
 - which queries expose safe read-only information
 - which commands enter as intents
 - which events leave as structured facts
-- which cadence runs it: `xun`, `month`, `seasonal`, or combined
+- which cadence runs it: `day`, `month`, `seasonal`, command resolution, or combined; `xun` is projection/calendar grouping unless a transitional implementation note says otherwise
 - what schema version and migration effect changed
 
 Rules:
@@ -264,7 +264,7 @@ Never leak into normal player-facing surfaces:
 ## Performance Standard
 
 Authority hot paths include:
-- `xun`
+- `day`
 - `month`
 - `seasonal`
 - event handling

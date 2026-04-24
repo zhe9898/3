@@ -7,9 +7,12 @@ Every release line must pass:
 - invariant tests
 - feature-manifest compatibility tests
 - module boundary tests where practical
-- scheduler cadence tests proving three deterministic `xun` pulses can run before month-end consolidation without changing module ownership rules
-- player-facing cadence tests or reviews proving xun pulses remain internal by default: the shell exposes one normal monthly review / command window, summarizes xun motion as trends or traces, and reserves interrupt windows for urgent irreversible thresholds only
-- immersion-protection review for player-facing shell changes: no slider-wall main interaction, no profession-label identity model, no xun report spam, object-anchored pressure, and delayed receipt/residue feedback instead of bare score bumps
+- scheduler cadence tests proving deterministic day-level authority steps can run before month-end consolidation without changing module ownership rules, including safe batching/skipping of quiet spans when implemented
+- player-facing cadence tests or reviews proving day-level motion remains internal by default: the shell exposes one normal monthly review / command window, summarizes day movement as trends, traces, urgency, or xun-labeled calendar bands, and reserves interrupt windows for urgent irreversible thresholds only
+- playable-loop acceptance for any gameplay slice: visible pressure leads to readable leverage, a bounded command, module-owned resolution, receipt/refusal/residue, and a changed next-month read; read models alone are not enough
+- perspective acceptance for player-facing shell changes: the player reads and acts from a home-household seat, while people are emotional/tactical entry points; the shell must not imply fixed-person RPG identity or clan-god control
+- relationship-chain acceptance for expanded player power: clan, locality, office, force, or court-facing leverage must remain mediated by concrete kin, debt, document, favor, office, public-face, or force-carrier chains rather than free global control
+- immersion-protection review for player-facing shell changes: no slider-wall main interaction, no profession-label identity model, no daily/xun report spam, object-anchored pressure, and delayed receipt/residue feedback instead of bare score bumps
 - imperial-pressure presentation review: imperial pressure appears through object / institution carriers such as edicts, postings, yamen documents, tax / corvee writs, mourning markers, amnesty proclamations, appointment notices, and border dispatches; no player-facing emperor button, edict editor, or unearned court-control surface
 - history-calibration review: Renzong-era data may seed initial institutional pressure, named carriers, and world tone, but no fixed-date historical rail may bypass deterministic rule resolution or player-earned counterfactual outcomes
 
@@ -52,6 +55,9 @@ Every release line must pass:
 - notification history retention stays bounded, preserves the latest notice per source module, and trims the remaining oldest notices first
 - runtime-only debug traces reset after save/load and do not affect compatibility
 - first-pass shell composes from read-model bundles only
+- presentation bundle surfaces runtime-only `PersonDossiers` from identity, family, household, education, clan-trade, office, and optional social-memory queries; registry-only persons still appear, missing optional module data falls back without failure, and shell adapters read those dossiers from the bundle rather than module state
+- lineage/person-inspector ViewModels can expose one focused person from those dossiers as a portrait-scroll / kinship-thread read surface without new authority rules, module reads, or save compatibility impact
+- transient shell selection may request a focused person by id, but the lineage shell must choose only from existing `PersonDossiers` and fall back without authority reads or mutations
 - presentation bundle surfaces household social pressure and player influence footprint as read-only projections; stable M2 can distinguish the player's anchor household local agency from observed household pressure while disabled office, order, and force paths remain absent or watch-only
 - great hall and desk-sandbox public-life summaries compose from `PublicLifeAndRumor` read models only and remain read-only
 - venue-channel public-life summaries compose from `PublicLifeAndRumor` read models only and remain read-only
@@ -73,7 +79,7 @@ Every release line must pass:
   - county-public-life summaries can surface street talk, county-gate crowding, market bustle, road-report lag, and prefecture pressure without introducing authority UI
   - county-public-life summaries can also surface monthly cadence and crowd mix on hall / desk nodes without introducing authority UI
   - county-public-life summaries can also surface official-notice, street-talk, road-report, prefecture-dispatch, and contention wording on hall / desk nodes without introducing authority UI
-  - `PublicLifeAndRumor` xun passes may now distinguish hot and calm yamen surfaces through office task-load / clerk-dependence queries without emitting xun diffs/events or writing office state
+  - `PublicLifeAndRumor` day-facing short-band passes may distinguish hot and calm yamen surfaces through office task-load / clerk-dependence queries without emitting short-band diffs/events or writing office state
   - legacy `PublicLifeAndRumor` schema `1 -> 2 -> 3 -> 4` saves migrate through the default loaders and backfill cadence, venue-channel, plus channel-contention descriptors conservatively enough to keep current M2+ paths loadable
 - legacy `OrderAndBanditry` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6` saves migrate through the default loaders and backfill black-route pressure, paper reach, shielding / retaliation, empty intervention-receipt fields, plus clamped one-month intervention-follow-through state conservatively enough to keep current M3+ paths loadable
 - legacy `WorldSettlements` schema `1` saves migrate through schema `7` through the default loaders, backfilling settlement tiers and the chain-6 flood-disaster declaration watermark conservatively enough to continue load on current M2+ paths
@@ -91,11 +97,12 @@ Every release line must pass:
 - recent bounded order interventions can echo into the next monthly pass through order-owned carryover state, and trade may only react by reading the corresponding order queries
 - bounded public-life order interventions may also scale against office-owned jurisdiction reach when governance-lite is enabled, while order-only paths remain neutral
 - those same public-life order affordances may also surface a read-only office-aware execution summary without introducing UI-owned authority logic
+- public-life order closure must prove a full playable-thin loop: Month N public-life/order pressure appears on a settlement surface, the player issues one bounded order command, `OrderAndBanditry` resolves acceptance/refusal and receipt state, and Month N+1 governance/order readback changes without UI authority or cross-module mutation
 - governance-lite office runs may also convert recent order-intervention carryover into office-owned backlog / petition / task-load fallout on the next month, but only by reading order queries and without writing order state back
 - those same public-life order receipts may also surface a read-only office-aftermath execution summary when next-month jurisdiction traces still carry that order command’s follow-through
 - runtime-only interaction-pressure and hotspot summaries may also surface that same order-linked office aftermath as read-only administrative-task / backlog context without entering save compatibility
 - the application-layer presentation bundle may also surface a read-only settlement governance-lane summary that joins public-life, order, and office fallout for the same settlement without introducing module-owned synthetic state
-- that same governance-lane summary may now also surface a read-only xun-facing public-momentum summary so hall / desk projections can see whether a county gate is tightening or still has room to buffer, without introducing module-owned cadence state
+- that same governance-lane summary may now also surface a read-only day-facing public-momentum summary so hall / desk projections can see whether a county gate is tightening or still has room to buffer, without introducing module-owned cadence state
 - that same governance-lane summary may also surface one read-only next-step public-life prompt, but only by selecting from the existing projected affordances for that settlement rather than inventing a second command lane
 - the application-layer presentation bundle may also derive one read-only lead governance focus from those governance lanes so future hall surfaces can consume a single monthly governance docket without re-sorting in UI
 - `ConflictAndForce.Lite` produces traceable readiness/conflict diffs and conflict-vignette notifications

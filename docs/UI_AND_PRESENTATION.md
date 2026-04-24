@@ -49,19 +49,22 @@ Every surface must obey:
 
 ### Time interaction contract
 - the normal playable rhythm is monthly review, monthly interpretation, and monthly bounded command
-- xun pulse state may appear as route heat, market bustle, illness trend, messenger delay, public-life drift, or hotspot motion, but not as three mandatory player turns
+- day-level state may appear as route heat, market bustle, illness trend, messenger delay, public-life drift, hotspot motion, or xun-labeled almanac summaries, but not as daily turns or three mandatory player turns
 - the shell should not expose `advance shangxun`, `advance zhongxun`, and `advance xiaxun` as the main progression buttons
 - urgent red-band items may interrupt the month only when the authoritative projection marks them as time-sensitive or irreversible
 - interrupt windows should expose only the narrow response justified by the crisis, then return the player to the monthly shell
 
 ### Immersion protection rules
 - do not solve ordinary play with a wall of sliders
-- do not fill the shell with profession labels, career tags, or route badges
-- do not make every xun receipt a separate report
+- do not fill the shell with profession labels, career tags, or route badges as if they were the player's permanent identity
+- preserve the player as a home-household seat: people are emotional, tactical, and legal entry points, while the continuing play perspective is the household/branch seat
+- person surfaces should show how a person feels, carries, or executes pressure for the household; they should not imply that the player has become that person
+- do not make every day receipt or xun-labeled summary a separate report
 - carry information through physical objects first: rice jar, account book, medicine packet, debt note, study text, road marker, temple gate, county gate, notice tray, seal box
 - carry imperial pressure through objects too: edict scroll, appointment notice, amnesty proclamation, mourning cloth, tax / corvee writ, border dispatch, county-gate posting, and yamen docket seal
 - monthly review should foreground the pressure closest to the player's current position, not every available metric
 - results should echo through later months as receipts, residue, obligation, rumor, debt, trust, shame, or changed reach; avoid immediate abstract rewards such as `+5 credit` as the primary feedback
+- a playable shell slice is incomplete until a visible pressure can lead to a readable leverage surface, a bounded command, a module-owned receipt or refusal, and a changed next-month read
 - commoner-facing pressure should feel like household life under strain; elite-facing pressure should feel like requests, reputation, obligation, scrutiny, and backlash, not free omnipotent control
 - imperial-facing pressure should feel like moral gravity, paperwork arrival, ritual interruption, appointment confidence, fiscal extraction, mercy / punishment tone, and distant court uncertainty reaching the county through mediated channels, not like an emperor-control button
 
@@ -89,6 +92,8 @@ Every surface must obey:
 - great hall and desk sandbox may now also surface county-public-life summaries such as street talk, county-gate crowding, market bustle, road-report lag, and prefecture pressure from read models only
 - the current shell now also carries a first thin player-command layer through read-only affordances and receipts for office and warfare slices; it may show what can be ordered and what was last acknowledged, but command resolution still lives outside UI
 - the current shell now also carries a read-only family-council surface, exposing lineage-conflict summaries, clan-memory wording, family command affordances, and recent receipts without adding authority UI
+- the lineage surface now also carries read-only `PersonDossiers` and a focused person-inspector object so a lineage tablet / portrait scroll can answer "who is this person?" from projected identity, clan placement, temperament, household livelihood / activity / health, education, clan trade footing, office position, and social-memory context without letting UI infer inheritance, marriage, death, office authority, or command results
+- the shell may pass a transient `FocusedPersonId` selection into first-pass composition; this only chooses one existing dossier for the portrait scroll and must fall back safely when the requested person is absent
 - stable M2 and later paths may now surface bounded family commands such as elder mediation, branch favor, apology, relief suspension, and branch separation when `FamilyCore` projects them
 - the same family-council surface may now also expose thin marriage / heir / mourning lifecycle wording such as `议亲定婚`, `拨粮护婴`, `议定承祧`, `议定丧次`, `承祧未稳`, and `门内举哀`, but those remain `FamilyCore` read models rather than UI-owned rules
 - the great hall family line may now also summarize whether a clan is pressed by婚议, 承祧, or 举哀, and that wording must still come from family read models rather than UI-side rule inference
@@ -104,7 +109,8 @@ Every surface must obey:
 - the read-only public-life surface may now also expose monthly cadence and crowd-mix wording such as fair days, docket-choked county gates, or road-report bustle on the hall and settlement nodes, but that wording still comes from `PublicLifeAndRumor` read models only
 - the read-only public-life surface may now also expose venue-channel summaries such as榜示分量、市语流势、查验周折、递报险数 on settlement nodes, but those numbers and summaries still come from `PublicLifeAndRumor` read models only
 - the read-only public-life surface may now also expose who says what:榜文如何写、街谈如何传、路报如何失真、州牒如何压下来, and that contention wording must still come from `PublicLifeAndRumor` read models only
-- hall / desk settlement nodes may now show bounded public-life affordances and receipts such as `张榜晓谕`, `遣吏催报`, `催护一路`, and `请族老出面`, but those remain read-only UI projections; authority resolution still lives in the owning application/domain service
+- hall / desk settlement nodes may now show bounded public-life affordances and receipts such as `张榜晓谕`, `遣吏催报`, `催护一路`, and `请族老出面`, but those remain read-only UI projections; public-life order verbs resolve through `OrderAndBanditry` while other command lanes must likewise route to their owning module/domain service
+- the current playable-thin public-life order closure is complete only when the shell can show pressure, expose a bounded order affordance, receive an order-owned receipt/refusal, and read the next-month governance/order aftermath back from projections; merely showing a public-life read model is not sufficient
 - the read-only warfare surface now exposes campaign boards, mobilization windows, front labels, command-fit labels, commander summaries, active directive label/summary/trace, bounded route summaries, supply-line summaries, office coordination traces, and aftermath summaries without introducing any authority controls
 - the read-only warfare surface may now also expose bounded command affordances such as plan drafting, mobilization, supply-line protection, and barracks withdrawal only when the campaign-enabled path is active
 - the read-only warfare surface now also derives board-environment labels, board-surface labels, marker summaries, and atmosphere summaries from front pressure, supply state, morale state, active directive, and route posture so the campaign sandbox no longer reads like one static board

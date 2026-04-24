@@ -14,10 +14,11 @@ Rules:
 
 ## 2. Time model
 - the player-facing authoritative review shell is monthly
-- inside each month, the living world may pulse through `upper xun / middle xun / lower xun`
-- module cadence must be declared as `xun`, `month`, `both`, or `seasonal`
+- inside each month, nearby lived pressure targets day-level authority steps, with quiet spans batched or skipped deterministically
+- `xun` labels may exist as almanac wording, projection grouping, or loose schedule windows, not as the preferred bottom authority grid
+- module cadence must be declared as `day`, `month`, `seasonal`, command-resolution, or an explicit combination
 - `GameDate` must preserve deterministic month identity and support deterministic sub-month cadence
-- age may remain stored in months even when pressure pulses inside the month
+- age may remain stored in months even when pressure moves inside the month
 - no subsystem may invent hidden clocks or bypass the scheduler cadence contract
 
 ## 3. Backend implementation order
@@ -101,7 +102,7 @@ Treat the following as explicit implementation rules rather than style advice.
 
 ### Authority hot path definition
 Authority hot paths include:
-- module `xun`, `month`, and `seasonal` execution
+- module `day`, `month`, and `seasonal` execution
 - deterministic domain-event handling
 - month-end consolidation
 - authority diff generation
@@ -140,7 +141,7 @@ The following must never appear in committed player-facing projections, saves, o
 ## 12. IO and hot-path discipline
 - authoritative hot paths must not perform ad hoc blocking IO
 - save/load, import/export, diagnostics flushes, and other filesystem work belong at explicit boundaries, not inside per-agent or per-node resolution loops
-- external reads and writes must be batched, deferred, or staged so they cannot silently stall `xun` or month authority passes
+- external reads and writes must be batched, deferred, or staged so they cannot silently stall day-level or month authority passes
 - if a feature requires heavy IO, it must declare where the stall is allowed and how authority stays deterministic
 
 ## 13. Dependency and library hygiene

@@ -24,6 +24,79 @@ public class ViewModelJsonRoundTripTests
                 CurrentDateLabel = "正月上旬",
                 FamilySummary = "宗族安泰",
             },
+            Lineage = new LineageSurfaceViewModel
+            {
+                FocusedPerson = new PersonInspectorViewModel
+                {
+                    ObjectAnchorLabel = "画像卷轴",
+                    TabletLabel = "Qinghe Zhang · Zhang Yuan",
+                    PortraitScrollLine = "Zhang Yuan · Main-line heir",
+                    KinshipThreadLine = "spouse Li; children 1",
+                    LivelihoodThreadLine = "Zhang household; livelihood PettyTrader",
+                    EducationThreadLine = "local exam passed; tier CountyExam",
+                    OfficeThreadLine = "appointed 主簿; authority 2",
+                    MemoryThreadLine = "pressure 38; fear 22, obligation 16",
+                    StatusLedgerLine = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
+                    Dossier = new PersonDossierViewModel
+                    {
+                        PersonId = 1,
+                        DisplayName = "Zhang Yuan",
+                        LifeStage = "Adult",
+                        Gender = "Male",
+                        IsAlive = true,
+                        FidelityRing = "Core",
+                        ClanId = 1,
+                        ClanName = "Qinghe Zhang",
+                        BranchPositionLabel = "Main-line heir",
+                        KinshipSummary = "spouse Li; children 1",
+                        TemperamentSummary = "ambition 64, prudence 53, loyalty 71, sociability 47",
+                        HouseholdId = 1,
+                        HouseholdName = "Zhang household",
+                        LivelihoodSummary = "Zhang household; livelihood PettyTrader",
+                        HealthSummary = "health Healthy; resilience 64",
+                        ActivitySummary = "activity Studying",
+                        EducationSummary = "local exam passed; tier CountyExam",
+                        TradeSummary = "clan trade cash 92, grain 71",
+                        OfficeSummary = "appointed 主簿; authority 2",
+                        MemoryPressureSummary = "pressure 38; fear 22, obligation 16",
+                        DormantMemorySummary = "No dormant social-memory stub.",
+                        SocialPositionLabel = "Main-line heir, 主簿, local-exam passer",
+                        CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
+                        SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
+                    },
+                    SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
+                },
+                PersonDossiers = new[]
+                {
+                    new PersonDossierViewModel
+                    {
+                        PersonId = 1,
+                        DisplayName = "Zhang Yuan",
+                        LifeStage = "Adult",
+                        Gender = "Male",
+                        IsAlive = true,
+                        FidelityRing = "Core",
+                        ClanId = 1,
+                        ClanName = "Qinghe Zhang",
+                        BranchPositionLabel = "Main-line heir",
+                        KinshipSummary = "spouse Li; children 1",
+                        TemperamentSummary = "ambition 64, prudence 53, loyalty 71, sociability 47",
+                        HouseholdId = 1,
+                        HouseholdName = "Zhang household",
+                        LivelihoodSummary = "Zhang household; livelihood PettyTrader",
+                        HealthSummary = "health Healthy; resilience 64",
+                        ActivitySummary = "activity Studying",
+                        EducationSummary = "local exam passed; tier CountyExam",
+                        TradeSummary = "clan trade cash 92, grain 71",
+                        OfficeSummary = "appointed 主簿; authority 2",
+                        MemoryPressureSummary = "pressure 38; fear 22, obligation 16",
+                        DormantMemorySummary = "No dormant social-memory stub.",
+                        SocialPositionLabel = "Main-line heir, 主簿, local-exam passer",
+                        CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
+                        SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
+                    },
+                },
+            },
             DeskSandbox = new DeskSandboxViewModel
             {
                 Settlements = new[]
@@ -61,6 +134,23 @@ public class ViewModelJsonRoundTripTests
         Assert.That(roundTripped, Is.Not.Null);
         Assert.That(roundTripped.GreatHall.CurrentDateLabel, Is.EqualTo(original.GreatHall.CurrentDateLabel));
         Assert.That(roundTripped.GreatHall.FamilySummary, Is.EqualTo(original.GreatHall.FamilySummary));
+        Assert.That(roundTripped.Lineage.PersonDossiers, Is.Not.Null);
+        Assert.That(roundTripped.Lineage.PersonDossiers.Count, Is.EqualTo(1));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].DisplayName, Is.EqualTo("Zhang Yuan"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].ClanId, Is.EqualTo(1));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].HouseholdId, Is.EqualTo(1));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].LivelihoodSummary, Does.Contain("PettyTrader"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].EducationSummary, Does.Contain("local exam passed"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].OfficeSummary, Does.Contain("appointed"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("SocialMemoryAndRelations"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("OfficeAndCareer"));
+        Assert.That(roundTripped.Lineage.FocusedPerson, Is.Not.Null);
+        Assert.That(roundTripped.Lineage.FocusedPerson!.ObjectAnchorLabel, Is.EqualTo("画像卷轴"));
+        Assert.That(roundTripped.Lineage.FocusedPerson.Dossier.DisplayName, Is.EqualTo("Zhang Yuan"));
+        Assert.That(roundTripped.Lineage.FocusedPerson.LivelihoodThreadLine, Does.Contain("PettyTrader"));
+        Assert.That(roundTripped.Lineage.FocusedPerson.EducationThreadLine, Does.Contain("CountyExam"));
+        Assert.That(roundTripped.Lineage.FocusedPerson.OfficeThreadLine, Does.Contain("appointed"));
+        Assert.That(roundTripped.Lineage.FocusedPerson.SourceModuleKeys, Does.Contain("FamilyCore"));
         Assert.That(roundTripped.DeskSandbox.Settlements, Is.Not.Null);
         Assert.That(roundTripped.DeskSandbox.Settlements.Count, Is.EqualTo(1));
         Assert.That(roundTripped.DeskSandbox.Settlements[0].SettlementName, Is.EqualTo("兰溪县"));
@@ -92,5 +182,22 @@ public class ViewModelJsonRoundTripTests
 
         Assert.That(roundTripped!.Items.Count, Is.EqualTo(2));
         Assert.That(roundTripped.Items[1].Title, Is.EqualTo("B"));
+    }
+
+    [Test]
+    public void PresentationShellSelectionViewModel_Array_RoundTrip()
+    {
+        var original = new PresentationShellSelectionViewModel
+        {
+            FocusedPersonId = 2,
+        };
+
+        var systemTextOptions = new JsonSerializerOptions { PropertyNamingPolicy = null };
+        string json = System.Text.Json.JsonSerializer.Serialize(original, systemTextOptions);
+
+        var roundTripped = JsonConvert.DeserializeObject<PresentationShellSelectionViewModel>(json);
+
+        Assert.That(roundTripped, Is.Not.Null);
+        Assert.That(roundTripped!.FocusedPersonId, Is.EqualTo(2));
     }
 }

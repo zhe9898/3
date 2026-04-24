@@ -14,6 +14,8 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
         "FundLocalWatch",
 
+        "EscortRoadReport",
+
         "SuppressBanditry",
 
         "NegotiateWithOutlaws",

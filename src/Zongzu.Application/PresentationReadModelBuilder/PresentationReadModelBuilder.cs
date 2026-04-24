@@ -35,6 +35,8 @@ public sealed partial class PresentationReadModelBuilder
             bundle.ClanNarratives = queries.GetRequired<ISocialMemoryAndRelationsQueries>().GetClanNarratives();
         }
 
+        bundle.PersonDossiers = BuildPersonDossiers(simulation.FeatureManifest, queries);
+
         if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.WorldSettlements))
         {
             bundle.Settlements = queries.GetRequired<IWorldSettlementsQueries>().GetSettlements();

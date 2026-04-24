@@ -5,6 +5,7 @@ Build a **Windows single-player lineage simulation game** whose authoritative ar
 
 The game must preserve these product truths:
 - the world advances before the player acts
+- the player continuity is a home-household seat, not a fixed-person RPG identity and not clan-god control
 - notifications are projections of state changes, not the driver of state changes
 - the player influences the world through bounded local leverage, not omnipotent buttons
 - adults are partially autonomous
@@ -19,35 +20,37 @@ The game must preserve these engineering truths:
 - modern code, module, system, Unity, and content standards are documented and enforced progressively
 - save data is versioned at both root and module levels
 - MVP foundations are the substrate for later releases
+- day-level authority can move inside the monthly review shell; `xun` is a calendar/projection band unless a transitional implementation hook says otherwise
 
 ## Mandatory read order before non-trivial work
 1. `docs/README.md`
-2. `docs/PRODUCT_SCOPE.md`
-3. `docs/MVP_SCOPE.md`
-4. `docs/POST_MVP_SCOPE.md`
-5. `docs/VERSION_ALIGNMENT.md`
-6. `docs/TECH_STACK.md`
-7. `docs/ENGINEERING_RULES.md`
-8. `docs/MODERN_GAME_ENGINEERING_STANDARDS.md`
-9. `docs/STATIC_BACKEND_FIRST.md`
-10. `docs/ARCHITECTURE.md`
-11. `docs/MODULE_BOUNDARIES.md`
-12. `docs/EXTENSIBILITY_MODEL.md`
-13. `docs/MODULE_INTEGRATION_RULES.md`
-14. `docs/SCHEMA_NAMESPACE_RULES.md`
-15. `docs/DATA_SCHEMA.md`
-16. `docs/SOCIAL_STRATA_AND_PATHWAYS.md`
-17. `docs/SIMULATION.md`
-18. `docs/PLAYER_SCOPE.md`
-19. `docs/RELATIONSHIPS_AND_GRUDGES.md`
-20. `docs/CONFLICT_AND_FORCE.md`
-21. `docs/VISUAL_FORM_AND_INTERACTION.md`
-22. `docs/UI_AND_PRESENTATION.md`
-23. `docs/MVP.md`
-24. `docs/IMPLEMENTATION_PHASES.md`
-25. `docs/ACCEPTANCE_TESTS.md`
-26. `docs/CODEX_TASK_PROMPTS.md`
-27. `docs/CODEX_MASTER_SPEC.md`
+2. `docs/DOCUMENTATION_MAP.md`
+3. `docs/PRODUCT_SCOPE.md`
+4. `docs/MVP_SCOPE.md`
+5. `docs/POST_MVP_SCOPE.md`
+6. `docs/VERSION_ALIGNMENT.md`
+7. `docs/TECH_STACK.md`
+8. `docs/ENGINEERING_RULES.md`
+9. `docs/MODERN_GAME_ENGINEERING_STANDARDS.md`
+10. `docs/STATIC_BACKEND_FIRST.md`
+11. `docs/ARCHITECTURE.md`
+12. `docs/MODULE_BOUNDARIES.md`
+13. `docs/EXTENSIBILITY_MODEL.md`
+14. `docs/MODULE_INTEGRATION_RULES.md`
+15. `docs/SCHEMA_NAMESPACE_RULES.md`
+16. `docs/DATA_SCHEMA.md`
+17. `docs/SOCIAL_STRATA_AND_PATHWAYS.md`
+18. `docs/SIMULATION.md`
+19. `docs/PLAYER_SCOPE.md`
+20. `docs/RELATIONSHIPS_AND_GRUDGES.md`
+21. `docs/CONFLICT_AND_FORCE.md`
+22. `docs/VISUAL_FORM_AND_INTERACTION.md`
+23. `docs/UI_AND_PRESENTATION.md`
+24. `docs/MVP.md`
+25. `docs/IMPLEMENTATION_PHASES.md`
+26. `docs/ACCEPTANCE_TESTS.md`
+27. `docs/CODEX_TASK_PROMPTS.md`
+28. `docs/CODEX_MASTER_SPEC.md`
 
 For large tasks also read:
 - `PLANS.md`
@@ -79,9 +82,9 @@ Do not default to web-first skills for this repo:
 - `frontend-skill`, `react-best-practices`, and `web-design-guidelines` are helpers only after `zongzu-ui-shell` when the task is about the actual Zongzu shell; they are mainly relevant for auxiliary tooling, documentation sites, launchers, or future web surfaces
 
 Unity MCP note:
-- This repository currently does not contain a full Unity project root with `Assets/`, `Packages/`, and `ProjectSettings/`
-- do not assume Unity Editor MCP workflows are available yet
-- if a real Unity project root is added later, Unity-specific MCP setup should be added at that time
+- This repository now contains a Unity host shell at `unity/Zongzu.UnityShell` with `Assets/`, `Packages/`, and `ProjectSettings/`
+- do not assume Unity Editor MCP workflows are available unless a real Unity editor/MCP target is explicitly configured for the task
+- authoritative simulation still lives under `src/` and must not reference Unity APIs
 
 Encoding and language note:
 - this repository contains meaningful Chinese text in docs, descriptors, and narrative-facing content
@@ -116,7 +119,7 @@ Encoding and language note:
    - no detached RTS or unit micro layer
 
 8. **MVP and post-MVP must align structurally**
-   - later releases extend the same kernel, commands, events, projections, save IDs, and monthly tick
+   - later releases extend the same kernel, commands, events, projections, save IDs, monthly review shell, and day-level authority path
 
 ## Non-negotiable architecture constraints
 1. The project is a **modular monolith**, not a giant world manager and not a runtime plugin marketplace.
