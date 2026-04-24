@@ -41,4 +41,4 @@ The repository now includes two GitHub Actions workflows:
 - `dotnet-ci.yml`
   Builds the solution on push and pull request, runs `Zongzu.Integration.Tests` as an explicit gate, then runs the remaining test projects and uploads `.trx` results.
 - `release-artifacts.yml`
-  Runs on `workflow_dispatch` and `v*` tags, builds the solution in `Release`, and uploads a zipped binary artifact bundle from `src/*/bin/Release/net8.0`.
+  Runs on `workflow_dispatch` and `v*` tags, builds the solution in `Release`, and uploads a zipped binary artifact bundle from `src/*/bin/Release/net10.0`.

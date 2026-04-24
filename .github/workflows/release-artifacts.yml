@@ -59,7 +59,7 @@ jobs:
           New-Item -ItemType Directory -Path $artifactRoot -Force | Out-Null
 
           foreach ($projectDir in Get-ChildItem .\src -Directory) {
-            $releaseOutput = Join-Path $projectDir.FullName 'bin\Release\net8.0'
+            $releaseOutput = Join-Path $projectDir.FullName 'bin\Release\net10.0'
             if (-not (Test-Path $releaseOutput)) {
               continue
             }
