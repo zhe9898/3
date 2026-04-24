@@ -141,4 +141,77 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(withoutHeir.SupportReserve, Is.EqualTo(27));
     }
 
+    [Test]
+    public void Compose_ProjectsPersonDossiersIntoLineageSurface()
+    {
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(CreateBundle());
+
+        Assert.That(shell.Lineage.PersonDossiers, Has.Count.EqualTo(1));
+        PersonDossierViewModel dossier = shell.Lineage.PersonDossiers[0];
+        Assert.That(dossier.PersonId, Is.EqualTo(1));
+        Assert.That(dossier.DisplayName, Is.EqualTo("Zhang Yuan"));
+        Assert.That(dossier.BranchPositionLabel, Is.EqualTo("Main-line heir"));
+        Assert.That(dossier.MemoryPressureSummary, Does.Contain("pressure 38"));
+        Assert.That(dossier.CurrentStatusSummary, Does.Contain("Living Adult"));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.SocialMemoryAndRelations));
+        Assert.That(shell.Lineage.FocusedPerson, Is.Not.Null);
+        Assert.That(shell.Lineage.FocusedPerson!.ObjectAnchorLabel, Is.EqualTo("画像卷轴"));
+        Assert.That(shell.Lineage.FocusedPerson.TabletLabel, Does.Contain("Zhang Yuan"));
+        Assert.That(shell.Lineage.FocusedPerson.PortraitScrollLine, Does.Contain("Main-line heir"));
+        Assert.That(shell.Lineage.FocusedPerson.KinshipThreadLine, Is.EqualTo(dossier.KinshipSummary));
+        Assert.That(shell.Lineage.FocusedPerson.MemoryThreadLine, Is.EqualTo(dossier.MemoryPressureSummary));
+        Assert.That(shell.Lineage.FocusedPerson.Dossier.PersonId, Is.EqualTo(dossier.PersonId));
+    }
+
+    [Test]
+    public void Compose_SelectionFocusesRequestedPersonDossier()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.PersonDossiers =
+        [
+            bundle.PersonDossiers[0],
+            new PersonDossierSnapshot
+            {
+                PersonId = new PersonId(2),
+                DisplayName = "Li Wen",
+                LifeStage = LifeStage.Adult,
+                Gender = PersonGender.Male,
+                IsAlive = true,
+                FidelityRing = FidelityRing.Local,
+                ClanId = new ClanId(1),
+                ClanName = "娓呮渤寮犳皬",
+                BranchPositionLabel = "Branch member",
+                KinshipSummary = "children 0",
+                TemperamentSummary = "ambition 42, prudence 61, loyalty 48, sociability 55",
+                MemoryPressureSummary = "pressure 12; trust 8, hope 6",
+                CurrentStatusSummary = "Living Adult; Local ring; clan Qinghe Zhang; Branch member; pressure 12.",
+                SourceModuleKeys = [KnownModuleKeys.PersonRegistry, KnownModuleKeys.FamilyCore],
+            },
+        ];
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(
+            bundle,
+            new PresentationShellSelectionViewModel { FocusedPersonId = 2 });
+
+        Assert.That(shell.Lineage.PersonDossiers, Has.Count.EqualTo(2));
+        Assert.That(shell.Lineage.FocusedPerson, Is.Not.Null);
+        Assert.That(shell.Lineage.FocusedPerson!.Dossier.PersonId, Is.EqualTo(2));
+        Assert.That(shell.Lineage.FocusedPerson.TabletLabel, Does.Contain("Li Wen"));
+        Assert.That(shell.Lineage.FocusedPerson.PortraitScrollLine, Does.Contain("Branch member"));
+    }
+
+    [Test]
+    public void Compose_SelectionFallsBackWhenRequestedPersonIsMissing()
+    {
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(
+            CreateBundle(),
+            new PresentationShellSelectionViewModel { FocusedPersonId = 999 });
+
+        Assert.That(shell.Lineage.FocusedPerson, Is.Not.Null);
+        Assert.That(shell.Lineage.FocusedPerson!.Dossier.PersonId, Is.EqualTo(1));
+        Assert.That(shell.Lineage.FocusedPerson.Dossier.DisplayName, Is.EqualTo("Zhang Yuan"));
+    }
+
 }

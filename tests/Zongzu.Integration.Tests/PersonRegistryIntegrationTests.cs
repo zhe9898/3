@@ -34,6 +34,81 @@ public sealed class PersonRegistryIntegrationTests
     }
 
     [Test]
+    public void M0M1Bootstrap_BuildsPersonDossiers_WithSeededHeirFamilyContext()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM0M1Bootstrap(20260514);
+        FamilyCoreState familyState = GetModuleState<FamilyCoreState>(simulation, KnownModuleKeys.FamilyCore);
+        FamilyPersonState heir = familyState.People.Single(p => p.BranchPosition == BranchPosition.MainLineHeir);
+        PersonRegistryState registryState = GetModuleState<PersonRegistryState>(simulation, KnownModuleKeys.PersonRegistry);
+        PersonRecord heirRecord = registryState.Persons.Single(p => p.Id == heir.Id);
+
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(simulation);
+        PersonDossierSnapshot dossier = bundle.PersonDossiers.Single(dossier => dossier.PersonId == heir.Id);
+
+        Assert.That(dossier.DisplayName, Is.EqualTo(heirRecord.DisplayName));
+        Assert.That(dossier.ClanId, Is.EqualTo(heir.ClanId));
+        Assert.That(dossier.BranchPositionLabel, Is.EqualTo("Main-line heir"));
+        Assert.That(dossier.KinshipSummary, Does.Contain("children"));
+        Assert.That(dossier.TemperamentSummary, Does.Contain("ambition"));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
+    }
+
+    [Test]
+    public void M0M1Bootstrap_AfterMonth_IncludesSocialMemoryClanContextInPersonDossier()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM0M1Bootstrap(20260515);
+        FamilyCoreState familyState = GetModuleState<FamilyCoreState>(simulation, KnownModuleKeys.FamilyCore);
+        FamilyPersonState heir = familyState.People.Single(p => p.BranchPosition == BranchPosition.MainLineHeir);
+
+        simulation.AdvanceOneMonth();
+        ClanNarrativeSnapshot narrative = simulation
+            .GetQueryForTesting<ISocialMemoryAndRelationsQueries>()
+            .GetRequiredClanNarrative(heir.ClanId);
+
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(simulation);
+        PersonDossierSnapshot dossier = bundle.PersonDossiers.Single(dossier => dossier.PersonId == heir.Id);
+
+        Assert.That(dossier.MemoryPressureSummary, Does.Contain("clan memory count"));
+        Assert.That(dossier.MemoryPressureSummary, Does.Contain(narrative.GrudgePressure.ToString()));
+        Assert.That(dossier.CurrentStatusSummary, Does.Contain("social memory entries"));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.SocialMemoryAndRelations));
+    }
+
+    [Test]
+    public void RegistryOnlyBootstrap_BuildsDossier_WhenOptionalFamilyAndSocialMemoryModulesAreMissing()
+    {
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.PersonRegistry, FeatureMode.Full);
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1200, 1),
+            KernelState.Create(20260516),
+            manifest,
+            [new PersonRegistryModule()]);
+        PersonRegistryState registryState = GetModuleState<PersonRegistryState>(simulation, KnownModuleKeys.PersonRegistry);
+        registryState.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(99),
+            DisplayName = "Registry Only",
+            BirthDate = new GameDate(1180, 1),
+            Gender = PersonGender.Unspecified,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Local,
+        });
+
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(simulation);
+        PersonDossierSnapshot dossier = bundle.PersonDossiers.Single();
+
+        Assert.That(dossier.PersonId, Is.EqualTo(new PersonId(99)));
+        Assert.That(dossier.DisplayName, Is.EqualTo("Registry Only"));
+        Assert.That(dossier.ClanId, Is.Null);
+        Assert.That(dossier.KinshipSummary, Is.EqualTo("No clan kinship projection."));
+        Assert.That(dossier.MemoryPressureSummary, Is.EqualTo("No social-memory pressure projection."));
+        Assert.That(dossier.SourceModuleKeys, Is.EqualTo(new[] { KnownModuleKeys.PersonRegistry }));
+    }
+
+    [Test]
     public void ClanMemberDied_IsConsolidated_Into_PersonDeceased_ByPersonRegistry()
     {
         GameSimulation simulation = SimulationBootstrapper.CreateM0M1Bootstrap(20260513);

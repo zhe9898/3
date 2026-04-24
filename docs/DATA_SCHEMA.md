@@ -624,6 +624,7 @@ public sealed class PresentationReadModelBundle {
     string ReplayHash;
     IReadOnlyList<ClanSnapshot> Clans;
     IReadOnlyList<ClanNarrativeSnapshot> ClanNarratives;
+    IReadOnlyList<PersonDossierSnapshot> PersonDossiers;
     IReadOnlyList<SettlementSnapshot> Settlements;
     IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements;
     IReadOnlyList<HouseholdPressureSnapshot> Households;
@@ -662,6 +663,23 @@ public sealed class HouseholdSocialPressureSnapshot {
     string AttachmentSummary;
     string VisibleChainSummary;
     IReadOnlyList<HouseholdSocialPressureSignalSnapshot> Signals;
+}
+
+public sealed class PersonDossierSnapshot {
+    PersonId PersonId;
+    string DisplayName;
+    LifeStage LifeStage;
+    PersonGender Gender;
+    bool IsAlive;
+    FidelityRing FidelityRing;
+    ClanId? ClanId;
+    string ClanName;
+    string BranchPositionLabel;
+    string KinshipSummary;
+    string TemperamentSummary;
+    string MemoryPressureSummary;
+    string CurrentStatusSummary;
+    IReadOnlyList<string> SourceModuleKeys;
 }
 
 public sealed class PlayerInfluenceFootprintSnapshot {
@@ -803,6 +821,7 @@ public sealed class ModulePayloadFootprintSnapshot {
 
 Current note:
 - the read-model bundle now carries `ClanNarratives` so lineage conflict, shame, and favor pressure can be shown in the family council without reading module state directly
+- the read-model bundle now also carries runtime-only `PersonDossiers` composed from existing `PersonRegistry`, `FamilyCore`, and optional `SocialMemoryAndRelations` queries; this does not add a root schema, module schema, save namespace, migration, or authoritative person table
 - the read-model bundle now also carries `Households`, `HouseholdSocialPressures`, and `InfluenceFootprint` as runtime-only joins across household, lineage, market, education, yamen, public-life, order, and force projections; these fields are not saved and do not create a player route system
 - `InfluenceFootprint` distinguishes the player's anchor household (`OwnHousehold`, local agency) from observed household pressure (`ObservedHouseholds`, indirect influence only)
 - `PlayerCommands` now spans family, office, and warfare affordances/receipts as read-only presentation data only
@@ -819,6 +838,7 @@ Diagnostics harness note:
 - payload-summary headlines and migration-consistency status are also runtime-only diagnostics
 - player-command affordances and receipts in the presentation bundle are also runtime-only read models
 - household social-pressure and influence-footprint snapshots in the presentation bundle are also runtime-only read models
+- person dossiers in the presentation bundle are also runtime-only read models
 - they are not saved in authoritative module namespaces
 
 ## 5. Relationship and grudge data
