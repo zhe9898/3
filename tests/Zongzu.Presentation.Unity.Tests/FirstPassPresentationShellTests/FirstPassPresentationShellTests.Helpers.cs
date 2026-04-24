@@ -49,6 +49,31 @@ public sealed partial class FirstPassPresentationShellTests
                     FavorBalance = 12,
                 },
             ],
+            PersonDossiers =
+            [
+                new PersonDossierSnapshot
+                {
+                    PersonId = new PersonId(1),
+                    DisplayName = "Zhang Yuan",
+                    LifeStage = LifeStage.Adult,
+                    Gender = PersonGender.Male,
+                    IsAlive = true,
+                    FidelityRing = FidelityRing.Core,
+                    ClanId = new ClanId(1),
+                    ClanName = "娓呮渤寮犳皬",
+                    BranchPositionLabel = "Main-line heir",
+                    KinshipSummary = "spouse Li; children 1",
+                    TemperamentSummary = "ambition 64, prudence 53, loyalty 71, sociability 47",
+                    MemoryPressureSummary = "pressure 38; fear 22, obligation 16",
+                    CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
+                    SourceModuleKeys =
+                    [
+                        KnownModuleKeys.PersonRegistry,
+                        KnownModuleKeys.FamilyCore,
+                        KnownModuleKeys.SocialMemoryAndRelations,
+                    ],
+                },
+            ],
             Settlements =
             [
                 new SettlementSnapshot

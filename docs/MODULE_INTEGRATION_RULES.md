@@ -70,6 +70,7 @@ When changing one of those chains:
 - projections are rebuilt from authoritative state
 - projections are not a backdoor write channel
 - read-model snapshots may expose read-only traversal helpers such as lane/item lookup when they only normalize visible data access; they must not grow a second composition or ordering layer beyond the already-built projection payload
+- `PersonDossiers` are a presentation-layer join over `PersonRegistry`, `FamilyCore`, and optional `SocialMemoryAndRelations` queries. They are not a person master table, do not expand `PersonRegistry`, do not own commands/events, and must be rebuilt from source projections each read.
 
 ## Historical-process integration rules
 

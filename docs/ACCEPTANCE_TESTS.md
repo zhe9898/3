@@ -56,6 +56,9 @@ Every release line must pass:
 - notification history retention stays bounded, preserves the latest notice per source module, and trims the remaining oldest notices first
 - runtime-only debug traces reset after save/load and do not affect compatibility
 - first-pass shell composes from read-model bundles only
+- presentation bundle surfaces runtime-only `PersonDossiers` from identity, family, and optional social-memory queries; registry-only persons still appear, missing optional family/social-memory data falls back without failure, and shell adapters read those dossiers from the bundle rather than module state
+- lineage/person-inspector ViewModels can expose one focused person from those dossiers as a portrait-scroll / kinship-thread read surface without new authority rules, module reads, or save compatibility impact
+- transient shell selection may request a focused person by id, but the lineage shell must choose only from existing `PersonDossiers` and fall back without authority reads or mutations
 - presentation bundle surfaces household social pressure and player influence footprint as read-only projections; stable M2 can distinguish the player's anchor household local agency from observed household pressure while disabled office, order, and force paths remain absent or watch-only
 - great hall and desk-sandbox public-life summaries compose from `PublicLifeAndRumor` read models only and remain read-only
 - venue-channel public-life summaries compose from `PublicLifeAndRumor` read models only and remain read-only
