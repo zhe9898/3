@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -121,4 +122,60 @@ public sealed record PlayerCommandSurfaceSnapshot
     public IReadOnlyList<PlayerCommandAffordanceSnapshot> Affordances { get; init; } = [];
 
     public IReadOnlyList<PlayerCommandReceiptSnapshot> Receipts { get; init; } = [];
+
+    public IEnumerable<PlayerCommandAffordanceSnapshot> EnumerateAffordances(
+        string surfaceKey,
+        SettlementId? settlementId = null,
+        bool enabledOnly = false)
+    {
+        if (string.IsNullOrWhiteSpace(surfaceKey))
+        {
+            yield break;
+        }
+
+        foreach (PlayerCommandAffordanceSnapshot affordance in Affordances)
+        {
+            if (!string.Equals(affordance.SurfaceKey, surfaceKey, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (settlementId.HasValue && affordance.SettlementId != settlementId.Value)
+            {
+                continue;
+            }
+
+            if (enabledOnly && !affordance.IsEnabled)
+            {
+                continue;
+            }
+
+            yield return affordance;
+        }
+    }
+
+    public IEnumerable<PlayerCommandReceiptSnapshot> EnumerateReceipts(
+        string surfaceKey,
+        SettlementId? settlementId = null)
+    {
+        if (string.IsNullOrWhiteSpace(surfaceKey))
+        {
+            yield break;
+        }
+
+        foreach (PlayerCommandReceiptSnapshot receipt in Receipts)
+        {
+            if (!string.Equals(receipt.SurfaceKey, surfaceKey, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (settlementId.HasValue && receipt.SettlementId != settlementId.Value)
+            {
+                continue;
+            }
+
+            yield return receipt;
+        }
+    }
 }

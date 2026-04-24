@@ -12,42 +12,14 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
         IReadOnlyList<ClanSnapshot> clans)
     {
-        Dictionary<int, ClanSnapshot> clansById = clans
-            .ToDictionary(static entry => entry.Id.Value, static entry => entry);
-
-        return EnumerateAffordancesForSurface(affordances, PlayerCommandSurfaceKeys.Family)
-            .Select(entry => new
-            {
-                Affordance = entry,
-                Clan = entry.ClanId.HasValue && clansById.TryGetValue(entry.ClanId.Value.Value, out ClanSnapshot? clan)
-                    ? clan
-                    : null,
-            })
-            .Where(static entry =>
-                entry.Clan is not null
-                && IsFamilyLifecycleCommand(entry.Affordance.CommandName))
-            .OrderBy(entry => GetFamilyLifecycleCommandPriority(entry.Clan!, entry.Affordance.CommandName))
-            .ThenBy(static entry => entry.Affordance.TargetLabel, StringComparer.Ordinal)
-            .Select(static entry => entry.Affordance)
-            .FirstOrDefault();
+        return FamilyLifecycleProjectionSelectors.SelectLeadLifecycleAffordance(clans, affordances);
     }
 
     internal static PlayerCommandReceiptSnapshot? SelectPrimaryFamilyLifecycleReceipt(
         IReadOnlyList<PlayerCommandReceiptSnapshot> receipts,
         ClanId? clanId)
     {
-        if (!clanId.HasValue)
-        {
-            return null;
-        }
-
-        return EnumerateReceiptsForSurface(receipts, PlayerCommandSurfaceKeys.Family)
-            .Where(receipt =>
-                receipt.ClanId == clanId
-                && IsFamilyLifecycleCommand(receipt.CommandName))
-            .OrderBy(receipt => GetFamilyLifecycleCommandPriority(receipt.CommandName))
-            .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.OutcomeSummary))
-            .FirstOrDefault();
+        return FamilyLifecycleProjectionSelectors.SelectPrimaryLifecycleReceipt(receipts, clanId);
     }
 
     private static Dictionary<int, T> IndexFirstBySettlement<T>(
@@ -118,45 +90,5 @@ public sealed partial class PresentationReadModelBuilder
             .ThenByDescending(static notification => notification.CreatedAt.Month)
             .ThenByDescending(static notification => notification.Id.Value)
             .FirstOrDefault();
-    }
-
-    private static bool IsFamilyLifecycleCommand(string commandName)
-    {
-        return commandName is PlayerCommandNames.SetMourningOrder
-            or PlayerCommandNames.SupportNewbornCare
-            or PlayerCommandNames.DesignateHeirPolicy
-            or PlayerCommandNames.ArrangeMarriage;
-    }
-
-    private static int GetFamilyLifecycleCommandPriority(string commandName)
-    {
-        return commandName switch
-        {
-            PlayerCommandNames.SetMourningOrder => 0,
-            PlayerCommandNames.SupportNewbornCare => 1,
-            PlayerCommandNames.DesignateHeirPolicy => 2,
-            PlayerCommandNames.ArrangeMarriage => 3,
-            _ => 9,
-        };
-    }
-
-    private static int GetFamilyLifecycleCommandPriority(ClanSnapshot clan, string commandName)
-    {
-        bool hasSuccessionGap = !clan.HeirPersonId.HasValue
-            || clan.LastLifecycleTrace.Contains("承祧缺口3阶", StringComparison.Ordinal);
-
-        if (commandName == PlayerCommandNames.DesignateHeirPolicy && hasSuccessionGap)
-        {
-            return 0;
-        }
-
-        return commandName switch
-        {
-            PlayerCommandNames.SetMourningOrder => hasSuccessionGap ? 1 : 0,
-            PlayerCommandNames.SupportNewbornCare => 2,
-            PlayerCommandNames.DesignateHeirPolicy => 3,
-            PlayerCommandNames.ArrangeMarriage => 4,
-            _ => 9,
-        };
     }
 }

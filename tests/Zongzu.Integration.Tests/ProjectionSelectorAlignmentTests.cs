@@ -50,6 +50,19 @@ public sealed class ProjectionSelectorAlignmentTests
     }
 
     [Test]
+    public void SharedFamilyLifecycleSelector_matches_preview_affordance_selection()
+    {
+        MvpFamilyLifecyclePreviewResult preview = new MvpFamilyLifecyclePreviewScenario().Build(20260419, 2);
+
+        PlayerCommandAffordanceSnapshot? affordance = FamilyLifecycleProjectionSelectors.SelectLeadLifecycleAffordance(
+            preview.BeforeBundle.Clans,
+            preview.BeforeBundle.PlayerCommands.Affordances);
+
+        Assert.That(affordance?.CommandName, Is.EqualTo(preview.SelectedAffordance.CommandName));
+        Assert.That(affordance?.Label, Is.EqualTo(preview.SelectedAffordance.Label));
+    }
+
+    [Test]
     public void PreviewScenario_AfterAdvanceFamilyGuidance_tracks_family_hall_docket_suggestion()
     {
         MvpFamilyLifecycleTenYearPreviewResult preview = new MvpFamilyLifecyclePreviewScenario().BuildTenYear(20260419, 3);
@@ -157,6 +170,76 @@ public sealed class ProjectionSelectorAlignmentTests
 
         Assert.That(warfare?.Id, Is.EqualTo(new NotificationId(4)));
         Assert.That(governance?.Id, Is.EqualTo(new NotificationId(1)));
+    }
+
+    [Test]
+    public void PlayerCommandSurfaceSnapshot_enumerators_filter_by_surface_and_settlement()
+    {
+        PlayerCommandSurfaceSnapshot surface = new()
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PostCountyNotice,
+                    IsEnabled = true,
+                },
+                new PlayerCommandAffordanceSnapshot
+                {
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.DispatchRoadReport,
+                    IsEnabled = false,
+                },
+                new PlayerCommandAffordanceSnapshot
+                {
+                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.ArrangeMarriage,
+                    IsEnabled = true,
+                },
+                new PlayerCommandAffordanceSnapshot
+                {
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(2),
+                    CommandName = PlayerCommandNames.FundLocalWatch,
+                    IsEnabled = true,
+                },
+            ],
+            Receipts =
+            [
+                new PlayerCommandReceiptSnapshot
+                {
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PostCountyNotice,
+                },
+                new PlayerCommandReceiptSnapshot
+                {
+                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.ArrangeMarriage,
+                },
+                new PlayerCommandReceiptSnapshot
+                {
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(2),
+                    CommandName = PlayerCommandNames.FundLocalWatch,
+                },
+            ],
+        };
+
+        Assert.That(
+            surface.EnumerateAffordances(PlayerCommandSurfaceKeys.PublicLife, new SettlementId(1)).Select(static command => command.CommandName),
+            Is.EquivalentTo(new[] { PlayerCommandNames.PostCountyNotice, PlayerCommandNames.DispatchRoadReport }));
+        Assert.That(
+            surface.EnumerateAffordances(PlayerCommandSurfaceKeys.PublicLife, new SettlementId(1), enabledOnly: true).Select(static command => command.CommandName),
+            Is.EquivalentTo(new[] { PlayerCommandNames.PostCountyNotice }));
+        Assert.That(
+            surface.EnumerateReceipts(PlayerCommandSurfaceKeys.PublicLife, new SettlementId(1)).Select(static receipt => receipt.CommandName),
+            Is.EquivalentTo(new[] { PlayerCommandNames.PostCountyNotice }));
     }
 
     private static HallDocketItemSnapshot GetFamilyHallDocketItem(PresentationReadModelBundle bundle)

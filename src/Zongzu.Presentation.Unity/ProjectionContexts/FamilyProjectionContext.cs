@@ -41,13 +41,13 @@ internal sealed class FamilyProjectionContext
 			OrderedClans = bundle.Clans
 				.OrderBy(clan => clan.ClanName, StringComparer.Ordinal)
 				.ToArray(),
-			OrderedAffordances = bundle.PlayerCommands.Affordances
-				.Where(command => string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal))
+			OrderedAffordances = bundle.PlayerCommands
+				.EnumerateAffordances(PlayerCommandSurfaceKeys.Family)
 				.OrderBy(command => command.TargetLabel, StringComparer.Ordinal)
 				.ThenBy(command => command.CommandName, StringComparer.Ordinal)
 				.ToArray(),
-			OrderedReceipts = bundle.PlayerCommands.Receipts
-				.Where(receipt => string.Equals(receipt.SurfaceKey, PlayerCommandSurfaceKeys.Family, StringComparison.Ordinal))
+			OrderedReceipts = bundle.PlayerCommands
+				.EnumerateReceipts(PlayerCommandSurfaceKeys.Family)
 				.OrderBy(receipt => receipt.TargetLabel, StringComparer.Ordinal)
 				.ThenBy(receipt => receipt.CommandName, StringComparer.Ordinal)
 				.ToArray(),
