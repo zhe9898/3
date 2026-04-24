@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
 using Zongzu.Contracts;
-using Zongzu.Modules.OrderAndBanditry;
+using Zongzu.Kernel;
 
 namespace Zongzu.Modules.OrderAndBanditry;
 
@@ -9,28 +8,21 @@ public sealed class OrderAndBanditryCommandContext
 {
     public OrderAndBanditryState State { get; init; } = new();
 
-        OrderAndBanditryModule? module = simulation.Modules
-            .OfType<OrderAndBanditryModule>()
-            .FirstOrDefault();
-        if (module is null)
-        {
-            return new PlayerCommandResult
-            {
-                Accepted = false,
-                ModuleKey = KnownModuleKeys.OrderAndBanditry,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = command.SettlementId,
-                ClanId = command.ClanId,
-                CommandName = command.CommandName,
-                Label = DeterminePublicLifeCommandLabel(command.CommandName),
-                Summary = "当前运行模块未注册地方治安与护路。",
-            };
-        }
+    public PlayerCommandRequest Command { get; init; } = new();
 
-        OrderAndBanditryState state = simulation.GetMutableModuleState<OrderAndBanditryState>(KnownModuleKeys.OrderAndBanditry);
-        OrderAdministrativeReachProfile administrativeReach = OrderAdministrativeReachEvaluator.Resolve(simulation, command.SettlementId);
-        OrderPublicLifeCommandResult resolution = module.HandlePublicLifeCommand(
-            state,
+    public IOfficeAndCareerQueries? OfficeQueries { get; init; }
+}
+
+public static class OrderAndBanditryCommandResolver
+{
+    public static PlayerCommandResult IssueIntent(OrderAndBanditryCommandContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        PlayerCommandRequest command = context.Command;
+        OrderAdministrativeReachProfile administrativeReach = ResolveAdministrativeReach(context.OfficeQueries, command.SettlementId);
+        OrderPublicLifeCommandResult resolution = new OrderAndBanditryModule().HandlePublicLifeCommand(
+            context.State,
             new OrderPublicLifeCommand
             {
                 SettlementId = command.SettlementId,
@@ -43,24 +35,9 @@ public sealed class OrderAndBanditryCommandContext
                 ReachSummaryTail = administrativeReach.SummaryTail,
             });
 
-        if (!resolution.Accepted)
-        {
-            return new PlayerCommandResult
-            {
-                Accepted = false,
-                ModuleKey = KnownModuleKeys.OrderAndBanditry,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = command.SettlementId,
-                ClanId = command.ClanId,
-                CommandName = command.CommandName,
-                Label = resolution.Label,
-                Summary = resolution.Summary,
-            };
-        }
-
         return new PlayerCommandResult
         {
-            Accepted = true,
+            Accepted = resolution.Accepted,
             ModuleKey = KnownModuleKeys.OrderAndBanditry,
             SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
             SettlementId = command.SettlementId,
@@ -68,38 +45,119 @@ public sealed class OrderAndBanditryCommandContext
             CommandName = command.CommandName,
             Label = resolution.Label,
             Summary = resolution.Summary,
-            TargetLabel = $"据点 {command.SettlementId.Value}",
+            TargetLabel = resolution.Accepted ? $"据点 {command.SettlementId.Value}" : string.Empty,
         };
     }
 
-    private static QueryRegistry BuildQueries(GameSimulation simulation)
+    public static string DeterminePublicLifeCommandLabel(string commandName)
     {
-        QueryRegistry queries = new();
-        foreach (IModuleRunner module in simulation.Modules
-                     .OrderBy(static module => module.Phase)
-                     .ThenBy(static module => module.ExecutionOrder)
-                     .ThenBy(static module => module.ModuleKey, StringComparer.Ordinal))
+        return commandName switch
         {
-            if (!simulation.FeatureManifest.IsEnabled(module.ModuleKey))
-            {
-                continue;
-            }
-
-            if (!simulation.TryGetModuleState(module.ModuleKey, out object? state) || state is null)
-            {
-                throw new InvalidOperationException($"Enabled module {module.ModuleKey} has no state for player-command queries.");
-            }
-
-            module.RegisterQueries(state, queries);
-        }
-
-        return queries;
+            PlayerCommandNames.EscortRoadReport => "催护一路",
+            PlayerCommandNames.FundLocalWatch => "添雇巡丁",
+            PlayerCommandNames.SuppressBanditry => "严缉路匪",
+            PlayerCommandNames.NegotiateWithOutlaws => "遣人议路",
+            PlayerCommandNames.TolerateDisorder => "暂缓穷追",
+            _ => commandName,
+        };
     }
 
-    internal static string DeterminePublicLifeCommandLabel(string commandName)
+    public static string DetermineAdministrativeReachExecutionSummary(JurisdictionAuthoritySnapshot? jurisdiction)
     {
-        public bool HasModifier => BenefitShift != 0 || ShieldingShift != 0 || BacklashShift != 0 || LeakageShift != 0;
+        return EvaluateAdministrativeReach(jurisdiction).ExecutionSummary;
+    }
 
+    private static OrderAdministrativeReachProfile ResolveAdministrativeReach(
+        IOfficeAndCareerQueries? officeQueries,
+        SettlementId settlementId)
+    {
+        if (officeQueries is null)
+        {
+            return OrderAdministrativeReachProfile.Neutral;
+        }
+
+        try
+        {
+            return EvaluateAdministrativeReach(officeQueries.GetRequiredJurisdiction(settlementId));
+        }
+        catch (InvalidOperationException)
+        {
+            return OrderAdministrativeReachProfile.Neutral;
+        }
+    }
+
+    private static OrderAdministrativeReachProfile EvaluateAdministrativeReach(JurisdictionAuthoritySnapshot? jurisdiction)
+    {
+        if (jurisdiction is null)
+        {
+            return OrderAdministrativeReachProfile.Neutral;
+        }
+
+        int supportSignal =
+            jurisdiction.JurisdictionLeverage
+            + jurisdiction.ClerkDependence
+            + (jurisdiction.AuthorityTier * 10);
+        int frictionSignal =
+            jurisdiction.AdministrativeTaskLoad
+            + jurisdiction.PetitionPressure
+            + (jurisdiction.PetitionBacklog / 2);
+        int netSignal = supportSignal - frictionSignal;
+
+        if (netSignal >= 40)
+        {
+            return new OrderAdministrativeReachProfile(
+                3,
+                5,
+                -4,
+                -3,
+                "县署肯出手，文移与差役都跟得上。",
+                "县署肯出手，此令多半能照行到底。");
+        }
+
+        if (netSignal >= 15)
+        {
+            return new OrderAdministrativeReachProfile(
+                1,
+                2,
+                -2,
+                -1,
+                "县署还能接得住，文移差役尚能随令。",
+                "县署还能接得住，此令大体跟得上。");
+        }
+
+        if (netSignal <= -40)
+        {
+            return new OrderAdministrativeReachProfile(
+                -3,
+                -5,
+                4,
+                3,
+                "县署拥案未解，文移不畅，路上只得勉强敷衍。",
+                "县署拥案未解，此令多半只落在文面，地面跟得慢。");
+        }
+
+        if (netSignal <= -15)
+        {
+            return new OrderAdministrativeReachProfile(
+                -1,
+                -2,
+                2,
+                1,
+                "县署案前偏重，差役跟得慢，只能先做半套。",
+                "县署案前偏重，此令常要拖成半套。");
+        }
+
+        return OrderAdministrativeReachProfile.Neutral;
+    }
+
+    private readonly record struct OrderAdministrativeReachProfile(
+        int BenefitShift,
+        int ShieldingShift,
+        int BacklashShift,
+        int LeakageShift,
+        string SummaryTail,
+        string ExecutionSummary)
+    {
         public static OrderAdministrativeReachProfile Neutral => new(
             0,
             0,

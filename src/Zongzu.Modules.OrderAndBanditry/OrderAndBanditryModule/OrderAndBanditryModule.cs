@@ -14,9 +14,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
         PlayerCommandNames.EscortRoadReport,
 
-        "EscortRoadReport",
-
-        "SuppressBanditry",
+        PlayerCommandNames.FundLocalWatch,
 
         PlayerCommandNames.SuppressBanditry,
 
