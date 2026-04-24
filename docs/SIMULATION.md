@@ -213,6 +213,10 @@ The normal rule remains:
 - ordinary day steps are not separate player turns
 - the player should usually choose after seeing the month-end projection, not after every internal day-level movement
 
+Current public-life/order v3 note:
+- home-household leverage, cost, and readback for public-life order commands are read at the monthly shell from current projections before command issue, then read again after the next monthly pass through command receipts and governance/order docket projections
+- this does not make `xun` a lower authority grid and does not add a daily player turn; the authority mutation still belongs to the owning module command resolver and later monthly module passes
+
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window
 - these should stay rare and should not turn the game into a daily alert treadmill

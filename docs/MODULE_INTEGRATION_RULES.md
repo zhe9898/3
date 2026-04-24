@@ -119,7 +119,7 @@ Correct approach:
 
 `PlayerCommandService` is now dispatch glue over a shared player-command catalog: it resolves existing `PlayerCommandRequest` names to module/surface metadata, reports disabled-module rejection, and does not own consequence formulas for the migrated command slices.
 
-Partial closure note (2026-04-24): the public-life order verbs `EscortRoadReport`, `FundLocalWatch`, `SuppressBanditry`, `NegotiateWithOutlaws`, and `TolerateDisorder` now route through `OrderAndBanditryModule.HandlePublicLifeCommand`, so their state changes, receipts, refusals, and one-month carryover are owned by `OrderAndBanditry`.  `PlayerCommandService` still retrieves the mutable order state and adapts the result until the general command seam exists, but it no longer owns those order-rule effects.
+Partial closure note (2026-04-24): the public-life order verbs `EscortRoadReport`, `FundLocalWatch`, `SuppressBanditry`, `NegotiateWithOutlaws`, and `TolerateDisorder` now route through the shared module command seam into `OrderAndBanditryModule.HandleCommand(...)`, so their state changes, receipts, refusals, and one-month carryover are owned by `OrderAndBanditry`. `PlayerCommandService` resolves catalog metadata, reports disabled-module rejection, and delegates through `GameSimulation.IssueModuleCommand(...)`; it must not own order-rule effects.
 
 Until the general seam exists, any command route not yet moved into its owning module remains transitional.  Application services may route, gather query-derived modifiers, and adapt results, but new closure work should keep authority effects in the owning module rather than adding new Application-owned rule layers.  UI and projection code must remain read-only.
 
@@ -239,6 +239,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Application routing may still pass the existing public-life order command into `OrderAndBanditryModule.HandlePublicLifeCommand`, but it must not compute the order outcome itself; office reach is supplied as query-derived modifiers only.
 - Projection joins may show office aftermath tied to the prior order receipt, but no projection, notification, or shell adapter may parse `DomainEvent.Summary` or mutate module state.
 - When `OrderAndBanditry` is disabled, public-life order commands must return a refusal and leave save/module projection state unchanged.
+
+## Playable closure v3 leverage note - 2026-04-24
+- `chain1-public-life-order-leverage-v3` deepens the same lane with read-only household leverage, cost, and next-month readback text on affordances, receipts, and the governance docket.
+- The projection may read existing family prestige/support, social-memory clan narrative, office reach, trade-route exposure, public-life heat, and order pressure snapshots from the presentation bundle. These joins remain runtime-only and do not create a new query interface, command, domain event, module state, or save field.
+- The leverage text explains what the home-household is spending, such as lineage face, yamen/document reach, cash/watch labor, mediation, trade exposure, or tolerated ground risk. It is not an authority formula and must not be parsed by later modules.
 
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace

@@ -785,6 +785,10 @@ public sealed class PlayerCommandAffordanceSnapshot {
     string Summary;
     bool IsEnabled;
     string AvailabilitySummary;
+    string ExecutionSummary;
+    string LeverageSummary;
+    string CostSummary;
+    string ReadbackSummary;
     string TargetLabel;
 }
 
@@ -797,6 +801,10 @@ public sealed class PlayerCommandReceiptSnapshot {
     string Label;
     string Summary;
     string OutcomeSummary;
+    string ExecutionSummary;
+    string LeverageSummary;
+    string CostSummary;
+    string ReadbackSummary;
     string TargetLabel;
 }
 
@@ -889,7 +897,8 @@ Current note:
 - the read-model bundle now also carries runtime-only `PersonDossiers` composed from existing `PersonRegistry`, `FamilyCore`, `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, and optional `SocialMemoryAndRelations` queries; this does not add a root schema, module schema, save namespace, migration, or authoritative person table
 - the read-model bundle now also carries `Households`, `HouseholdSocialPressures`, and `InfluenceFootprint` as runtime-only joins across household, lineage, market, education, yamen, public-life, order, and force projections; these fields are not saved and do not create a player route system
 - `InfluenceFootprint` distinguishes the player's anchor household (`OwnHousehold`, local agency) from observed household pressure (`ObservedHouseholds`, indirect influence only)
-- `PlayerCommands` now spans family, office, and warfare affordances/receipts as read-only presentation data only
+- `PlayerCommands` now spans family, office, order, and warfare affordances/receipts as read-only presentation data only
+- public-life order command affordances/receipts may include runtime-only `LeverageSummary`, `CostSummary`, and `ReadbackSummary` strings; governance docket may copy the selected recent receipt's leverage/cost/readback text for next-month readback, but none of these fields are saved or authoritative
 - family command targeting is expressed through optional `ClanId` plus `TargetLabel`; it does not create a new save namespace
 
 Diagnostics harness note:

@@ -60,6 +60,11 @@ This is not a mood event pool. Authoritative state changes first; emotional rece
 
 The first active command consumer is `FamilyCoreCommandResolver`. It may read clan climate and adult person-tempering snapshots to adjust family command pressure profiles: bitterness, volatility, anger, grief, or shame can make mediation and lifecycle decisions harder; trust, restraint, obligation, and hope can soften backlash or strengthen reconciliation. Missing SocialMemory queries are neutral. The resolver still mutates only `FamilyCore`, and any later memory residue must return through normal monthly simulation or event handling.
 
+Current public-life/order v3 note:
+- public-life order leverage readback may mention likely obligation, shame, fear, trade, office, or ground-pressure residue, but it is projection-only unless `SocialMemoryAndRelations` owns and persists a memory or climate change through its normal event/query seams
+- `OrderAndBanditry` command receipts and carryover can explain that a command has a social tail; they do not themselves create durable favor/grudge records outside order-owned state
+- future durable order-to-memory residue must add explicit SocialMemory-owned schema, migration, event metadata, and tests rather than parsing command summary text
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

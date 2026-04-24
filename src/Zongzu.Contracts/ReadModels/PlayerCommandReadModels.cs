@@ -91,6 +91,12 @@ public sealed record PlayerCommandAffordanceSnapshot
 
     public string ExecutionSummary { get; init; } = string.Empty;
 
+    public string LeverageSummary { get; init; } = string.Empty;
+
+    public string CostSummary { get; init; } = string.Empty;
+
+    public string ReadbackSummary { get; init; } = string.Empty;
+
     public string TargetLabel { get; init; } = string.Empty;
 }
 
@@ -113,6 +119,12 @@ public sealed record PlayerCommandReceiptSnapshot
     public string OutcomeSummary { get; init; } = string.Empty;
 
     public string ExecutionSummary { get; init; } = string.Empty;
+
+    public string LeverageSummary { get; init; } = string.Empty;
+
+    public string CostSummary { get; init; } = string.Empty;
+
+    public string ReadbackSummary { get; init; } = string.Empty;
 
     public string TargetLabel { get; init; } = string.Empty;
 }

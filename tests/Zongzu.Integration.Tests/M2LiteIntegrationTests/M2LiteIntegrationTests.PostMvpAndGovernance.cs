@@ -822,12 +822,29 @@ public sealed partial class M2LiteIntegrationTests
 
         PresentationReadModelBuilder builder = new();
 
-        SettlementId settlementId = builder.BuildForM2(interventionSimulation).PublicLifeSettlements.Single().SettlementId;
+        PresentationReadModelBundle beforeBundle = builder.BuildForM2(interventionSimulation);
+
+        SettlementId settlementId = beforeBundle.PublicLifeSettlements.Single().SettlementId;
 
         SettlementId controlSettlementId = builder.BuildForM2(controlSimulation).PublicLifeSettlements.Single().SettlementId;
 
 
         Assert.That(controlSettlementId, Is.EqualTo(settlementId));
+
+        PlayerCommandAffordanceSnapshot affordance = beforeBundle.PlayerCommands.Affordances.Single(command =>
+
+            string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.PublicLife, StringComparison.Ordinal)
+
+            && string.Equals(command.CommandName, PlayerCommandNames.SuppressBanditry, StringComparison.Ordinal)
+
+            && command.SettlementId == settlementId);
+
+
+        Assert.That(affordance.LeverageSummary, Does.Contain("本户"));
+
+        Assert.That(affordance.CostSummary, Does.Contain("代价"));
+
+        Assert.That(affordance.ReadbackSummary, Does.Contain("下月读回"));
 
 
         PlayerCommandService service = new();
@@ -948,6 +965,12 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(afterBundle.GovernanceDocket.RecentReceiptLabel, Is.EqualTo("严缉路匪"));
 
+        Assert.That(afterBundle.GovernanceDocket.RecentReceiptLeverageSummary, Does.Contain("本户"));
+
+        Assert.That(afterBundle.GovernanceDocket.RecentReceiptCostSummary, Does.Contain("代价"));
+
+        Assert.That(afterBundle.GovernanceDocket.RecentReceiptReadbackSummary, Does.Contain("下月读回"));
+
         Assert.That(afterBundle.GovernanceDocket.Headline, Is.Not.Empty);
 
         Assert.That(afterBundle.GovernanceDocket.PublicMomentumSummary, Is.Not.Empty);
@@ -962,11 +985,21 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(afterBundle.GovernanceDocket.HandlingSummary, Does.Contain("上月严缉路匪"));
 
+        Assert.That(afterBundle.GovernanceDocket.HandlingSummary, Does.Contain("代价"));
+
+        Assert.That(afterBundle.GovernanceDocket.HandlingSummary, Does.Contain("下月读回"));
+
         Assert.That(afterBundle.GovernanceDocket.GuidanceSummary, Is.Not.Empty);
 
         Assert.That(receipt.ExecutionSummary, Does.Contain("上月严缉路匪"));
 
         Assert.That(receipt.ExecutionSummary, Does.Contain("积案"));
+
+        Assert.That(receipt.LeverageSummary, Does.Contain("本户"));
+
+        Assert.That(receipt.CostSummary, Does.Contain("代价"));
+
+        Assert.That(receipt.ReadbackSummary, Does.Contain("下月读回"));
 
         Assert.That(afterBundle.Debug.Warnings.Any(static warning => warning.Contains("office cleanup tied to recent order follow-through", StringComparison.Ordinal)), Is.True);
 

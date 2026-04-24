@@ -203,13 +203,11 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
-        string prompt = $"眼下可先以{affordance.Label}应对{affordance.TargetLabel}；{affordance.AvailabilitySummary}";
-        if (string.IsNullOrWhiteSpace(affordance.ExecutionSummary))
-        {
-            return prompt;
-        }
-
-        return $"{prompt} {affordance.ExecutionSummary}";
+        return CombineGovernanceDocketText(
+            $"眼下可先以{affordance.Label}应对{affordance.TargetLabel}；{affordance.AvailabilitySummary}",
+            affordance.LeverageSummary,
+            affordance.CostSummary,
+            affordance.ExecutionSummary);
     }
 
     private static GovernanceFocusSnapshot BuildGovernanceFocus(
@@ -321,6 +319,9 @@ public sealed partial class PresentationReadModelBuilder
             RecentReceiptSummary = recentReceipt?.Summary ?? string.Empty,
             RecentReceiptOutcomeSummary = recentReceipt?.OutcomeSummary ?? string.Empty,
             RecentReceiptExecutionSummary = recentReceipt?.ExecutionSummary ?? string.Empty,
+            RecentReceiptLeverageSummary = recentReceipt?.LeverageSummary ?? string.Empty,
+            RecentReceiptCostSummary = recentReceipt?.CostSummary ?? string.Empty,
+            RecentReceiptReadbackSummary = recentReceipt?.ReadbackSummary ?? string.Empty,
             Headline = headline,
             WhyNowSummary = whyNowSummary,
             PublicMomentumSummary = focus.PublicMomentumSummary,
@@ -351,6 +352,8 @@ public sealed partial class PresentationReadModelBuilder
     {
         return EnumerateReceiptsForSurface(receipts, PlayerCommandSurfaceKeys.PublicLife, settlementId)
             .OrderBy(receipt => GetGovernanceDocketReceiptPriority(receipt, lane))
+            .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.ReadbackSummary))
+            .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.LeverageSummary))
             .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.ExecutionSummary))
             .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.OutcomeSummary))
             .ThenBy(static receipt => receipt.CommandName, StringComparer.Ordinal)
@@ -421,6 +424,9 @@ public sealed partial class PresentationReadModelBuilder
             $"近已按{lead}处置。",
             receipt.Summary,
             receipt.OutcomeSummary,
+            receipt.LeverageSummary,
+            receipt.CostSummary,
+            receipt.ReadbackSummary,
             receipt.ExecutionSummary);
     }
 
@@ -477,6 +483,7 @@ public sealed partial class PresentationReadModelBuilder
             "已下处置" => CombineGovernanceDocketText(
                 $"{leadLabel}前番已按{recentReceipt?.Label ?? recentReceipt?.CommandName}处置，眼下续理{taskLabel}。".Trim(),
                 recentReceipt?.OutcomeSummary ?? string.Empty,
+                recentReceipt?.ReadbackSummary ?? string.Empty,
                 recentReceipt?.ExecutionSummary ?? string.Empty),
             "待即刻应对" => CombineGovernanceDocketText(
                 $"{leadLabel}眼下尚未腾出手，仍须先应{relatedNotification?.Title}。".Trim(),

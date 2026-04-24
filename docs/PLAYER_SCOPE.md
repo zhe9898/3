@@ -243,6 +243,7 @@ Enabled through thin application dispatch into module-owned resolvers:
 - governance-lite may expose petition review, administrative-leverage, county notice, and road-dispatch commands through `OfficeAndCareerCommandResolver`
 - governance-lite office play should feel like candidate waiting, attached yamen service, recommendation, and formal appointment pressure rather than a one-click exam-to-office ladder
 - order-enabled public life may expose escort, watch funding, suppression, negotiation, and temporary tolerance through `OrderAndBanditryCommandResolver`
+- public-life order affordances should explain the home-household channel being spent: lineage face, yamen/document reach, cash or watch labor, mediation through known people, trade-route exposure, or deliberate tolerance of ground risk; receipts should name the cost and the next-month readback rather than presenting order work as a free button
 - campaign-enabled warfare may expose plan drafting, mobilization, supply-line protection, and barracks withdrawal through `WarfareCampaignCommandResolver`
 
 Rules:
@@ -251,6 +252,7 @@ Rules:
 - family commands may write only `FamilyCore`-owned lineage-conflict, marriage, heir, newborn-care, mourning, and receipt state directly; downstream memory or narrative changes still happen through later monthly simulation and projection
 - `SocialMemoryAndRelations` pressure tempering may be read as deterministic command friction, but it is never a player-facing emotion button and is not mutated by the command itself
 - office, order, and warfare commands may write only their owning module's command receipt / directive / pressure state; any wider consequences must move through normal module cadence, queries, events, or projections
+- the v3 public-life/order leverage readback is explanatory projection only; durable social-memory residue requires `SocialMemoryAndRelations` owner-state work rather than a hidden Application or UI ledger
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

@@ -111,6 +111,7 @@ Every surface must obey:
 - the read-only public-life surface may now also expose who says what:榜文如何写、街谈如何传、路报如何失真、州牒如何压下来, and that contention wording must still come from `PublicLifeAndRumor` read models only
 - hall / desk settlement nodes may now show bounded public-life affordances and receipts such as `张榜晓谕`, `遣吏催报`, `催护一路`, and `请族老出面`, but those remain read-only UI projections; public-life order verbs resolve through `OrderAndBanditry` while other command lanes must likewise route to their owning module/domain service
 - the current playable-thin public-life order closure is complete only when the shell can show pressure, expose a bounded order affordance, receive an order-owned receipt/refusal, and read the next-month governance/order aftermath back from projections; merely showing a public-life read model is not sufficient
+- the v3 public-life order shell also carries read-only leverage / cost / readback fields on command affordances, command receipts, hall prompts, and governance docket summaries, so the player can see which household channel is being spent and what may echo next month without Unity resolving authority
 - the read-only warfare surface now exposes campaign boards, mobilization windows, front labels, command-fit labels, commander summaries, active directive label/summary/trace, bounded route summaries, supply-line summaries, office coordination traces, and aftermath summaries without introducing any authority controls
 - the read-only warfare surface may now also expose bounded command affordances such as plan drafting, mobilization, supply-line protection, and barracks withdrawal only when the campaign-enabled path is active
 - the read-only warfare surface now also derives board-environment labels, board-surface labels, marker summaries, and atmosphere summaries from front pressure, supply state, morale state, active directive, and route posture so the campaign sandbox no longer reads like one static board
@@ -127,6 +128,7 @@ Every surface must obey:
 - governance-lite office read models remain optional: when `OfficeAndCareer` is disabled, the shell must surface a read-only "no office projection" equivalent rather than synthesizing office data
 - public-life/order read models remain optional by feature pack: when `OrderAndBanditry` is absent, public-life order affordances/receipts must be empty or refused through command routing; the shell must not synthesize order state or command outcomes
 - `chain1-public-life-order-v2` treats the desk settlement node and great hall as readback surfaces only: they can show pressure, affordances, receipts, and next-month governance aftermath, but they cannot infer inheritance, death, marriage, office authority, or order command results
+- `chain1-public-life-order-leverage-v3` keeps that same rule for leverage/cost/readback: shell adapters copy projected strings only and must fall back to empty text when the projection is absent
 - warfare-lite read models remain optional: when `WarfareCampaign` is disabled, the shell must surface `暂无军务沙盘投影。` rather than synthesizing campaign data
 
 ## Explainability rule

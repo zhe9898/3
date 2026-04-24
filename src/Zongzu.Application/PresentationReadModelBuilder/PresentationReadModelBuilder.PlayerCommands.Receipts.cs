@@ -17,6 +17,16 @@ public sealed partial class PresentationReadModelBuilder
         Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = IndexFirstBySettlement(
             bundle.OfficeJurisdictions,
             static entry => entry.SettlementId);
+        Dictionary<int, SettlementPublicLifeSnapshot> publicLifeBySettlement = IndexFirstBySettlement(
+            bundle.PublicLifeSettlements,
+            static entry => entry.SettlementId);
+        ILookup<int, ClanSnapshot> clansBySettlement = bundle.Clans.ToLookup(static entry => entry.HomeSettlementId.Value);
+        Dictionary<int, ClanNarrativeSnapshot> narrativesByClan = bundle.ClanNarratives
+            .ToDictionary(static entry => entry.ClanId.Value, static entry => entry);
+        ILookup<int, ClanTradeSnapshot> tradesBySettlement = bundle.ClanTrades
+            .ToLookup(static entry => entry.PrimarySettlementId.Value);
+        ILookup<int, ClanTradeRouteSnapshot> routesBySettlement = bundle.ClanTradeRoutes
+            .ToLookup(static entry => entry.SettlementId.Value);
 
         foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
         {
@@ -44,7 +54,26 @@ public sealed partial class PresentationReadModelBuilder
         foreach (SettlementDisorderSnapshot disorder in bundle.SettlementDisorder.OrderBy(static entry => entry.SettlementId.Value))
         {
             jurisdictionsBySettlement.TryGetValue(disorder.SettlementId.Value, out JurisdictionAuthoritySnapshot? jurisdiction);
-            PlayerCommandReceiptSnapshot? receipt = BuildOrderPublicLifeReceipt(disorder, jurisdiction);
+            publicLifeBySettlement.TryGetValue(disorder.SettlementId.Value, out SettlementPublicLifeSnapshot? publicLife);
+            ClanSnapshot[] localClans = clansBySettlement[disorder.SettlementId.Value]
+                .OrderByDescending(static entry => entry.Prestige)
+                .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
+                .ToArray();
+            ClanNarrativeSnapshot[] localNarratives = localClans
+                .Where(clan => narrativesByClan.ContainsKey(clan.Id.Value))
+                .Select(clan => narrativesByClan[clan.Id.Value])
+                .ToArray();
+            ClanTradeSnapshot[] localTrades = tradesBySettlement[disorder.SettlementId.Value].ToArray();
+            ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[disorder.SettlementId.Value].ToArray();
+
+            PlayerCommandReceiptSnapshot? receipt = BuildOrderPublicLifeReceipt(
+                disorder,
+                jurisdiction,
+                publicLife,
+                localClans,
+                localNarratives,
+                localTrades,
+                localRoutes);
             if (receipt is not null)
             {
                 yield return receipt;
@@ -58,11 +87,24 @@ public sealed partial class PresentationReadModelBuilder
                 continue;
             }
 
+            CommandLeverageProjection escortProjection = BuildOrderPublicLifeLeverageProjection(
+                PlayerCommandNames.EscortRoadReport,
+                null,
+                disorder,
+                null,
+                [],
+                [],
+                [],
+                []);
+
             yield return BuildPlayerCommandReceiptSnapshot(
                 PlayerCommandNames.EscortRoadReport,
                 disorder.SettlementId,
                 disorder.LastPressureReason,
                 $"路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。",
+                leverageSummary: escortProjection.LeverageSummary,
+                costSummary: escortProjection.CostSummary,
+                readbackSummary: escortProjection.ReadbackSummary,
                 targetLabel: disorder.SettlementId.Value.ToString());
         }
 
@@ -85,12 +127,28 @@ public sealed partial class PresentationReadModelBuilder
 
     private static PlayerCommandReceiptSnapshot? BuildOrderPublicLifeReceipt(
         SettlementDisorderSnapshot disorder,
-        JurisdictionAuthoritySnapshot? jurisdiction)
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife,
+        IReadOnlyList<ClanSnapshot> localClans,
+        IReadOnlyList<ClanNarrativeSnapshot> localNarratives,
+        IReadOnlyList<ClanTradeSnapshot> localTrades,
+        IReadOnlyList<ClanTradeRouteSnapshot> localRoutes)
     {
-        if (string.IsNullOrWhiteSpace(disorder.LastInterventionCommandCode))
+        if (string.IsNullOrWhiteSpace(disorder.LastInterventionCommandCode)
+            || !IsOrderPublicLifeCommand(disorder.LastInterventionCommandCode))
         {
             return null;
         }
+
+        CommandLeverageProjection leverageProjection = BuildOrderPublicLifeLeverageProjection(
+            disorder.LastInterventionCommandCode,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes);
 
         return BuildPlayerCommandReceiptSnapshot(
             disorder.LastInterventionCommandCode,
@@ -98,6 +156,9 @@ public sealed partial class PresentationReadModelBuilder
             disorder.LastInterventionSummary,
             disorder.LastInterventionOutcome,
             executionSummary: BuildOrderAdministrativeAftermathExecutionSummary(disorder, jurisdiction),
+            leverageSummary: leverageProjection.LeverageSummary,
+            costSummary: leverageProjection.CostSummary,
+            readbackSummary: leverageProjection.ReadbackSummary,
             targetLabel: disorder.SettlementId.Value.ToString(),
             labelOverride: disorder.LastInterventionCommandLabel);
     }

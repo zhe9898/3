@@ -307,6 +307,11 @@ Build these chains in this order after the skeleton exists:
 - This does not move the broader pressure-chain order; it narrows the current implementation work to one already-supported closure instead of opening a new route, war, or court system.
 - No save/schema impact is expected for this v2 pass because it uses existing order intervention receipt/carryover state.
 
+2026-04-24 v3 leverage status note:
+- `chain1-public-life-order-leverage-v3` keeps the same route but adds the missing home-household leverage read: what channel is being spent, what it costs, and where the residue is expected to echo next month.
+- This remains a playable-thin projection pass, not a new family, office, trade, memory, order, or Unity authority system.
+- No save/schema impact is expected because it uses existing read models and order intervention carryover.
+
 ## Documentation Index By Job
 
 | Job | Start Here | Then Read |

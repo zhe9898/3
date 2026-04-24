@@ -250,3 +250,10 @@ At integration level, verify:
 - Presentation acceptance must include projection-absent fallback: desk/great-hall public-life surfaces remain stable and expose no synthesized order affordances or receipts.
 - Architecture acceptance must guard against WorldManager/PersonManager/CharacterManager/god-controller drift, UI authority drift, application/presentation mutation paths inside modules, and `PersonRegistry` expansion beyond identity fields.
 - Save/schema result for this v2 chain: no save/schema impact.
+
+## Playable closure v3 leverage acceptance - 2026-04-24
+- `chain1-public-life-order-leverage-v3` must prove Month N public-life/order pressure exposes a visible leverage explanation before command issue, the bounded order command still resolves in `OrderAndBanditry`, and Month N+1 governance/order readback carries the leverage/cost/residue explanation forward.
+- Integration acceptance must show affordance leverage, receipt cost, and next-month governance docket readback for an accepted public-life order command without adding a new command, event, save field, or cross-module write path.
+- Presentation acceptance must show Unity shell adapters copy projected leverage/cost/readback fields and fall back safely when those projections are absent; Unity must not compute authority formulas.
+- Relationship acceptance for this pass is projection-only: durable favor, shame, debt, fear, grudge, or obligation state remains future `SocialMemoryAndRelations` work unless a later task explicitly adds owner-state schema and migration.
+- Save/schema result for this v3 chain: no persisted state impact; the only schema documentation change is runtime read-model shape.

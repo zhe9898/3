@@ -98,6 +98,9 @@ public sealed partial class FirstPassPresentationShellTests
                     Label = "张榜晓谕",
                     Summary = "先在县门榜下压住街谈。",
                     AvailabilitySummary = "榜示与街谈正在相争。",
+                    LeverageSummary = "本户可借宗族体面与官面触达。",
+                    CostSummary = "代价是钱粮与人情先垫出去。",
+                    ReadbackSummary = "下月读回看街谈与路压。",
                     TargetLabel = "县门榜下",
                     IsEnabled = true,
                 },
@@ -113,6 +116,9 @@ public sealed partial class FirstPassPresentationShellTests
                     Label = "张榜晓谕",
                     Summary = "榜文已出，县门口风先压下去。",
                     OutcomeSummary = "街谈略收，榜示可见。",
+                    LeverageSummary = "本户已动用榜下熟人。",
+                    CostSummary = "代价留在人情与担保里。",
+                    ReadbackSummary = "下月读回看榜下街谈。",
                     TargetLabel = "县门榜下",
                 },
             ],
@@ -157,9 +163,17 @@ public sealed partial class FirstPassPresentationShellTests
         SettlementNodeViewModel settlementNode = shell.DeskSandbox.Settlements.Single();
 
         Assert.That(settlementNode.PublicLifeCommandAffordances, Has.Count.EqualTo(1));
-        Assert.That(settlementNode.PublicLifeCommandAffordances[0].CommandName, Is.EqualTo(PlayerCommandNames.PostCountyNotice));
+        CommandAffordanceViewModel affordance = settlementNode.PublicLifeCommandAffordances[0];
+        Assert.That(affordance.CommandName, Is.EqualTo(PlayerCommandNames.PostCountyNotice));
+        Assert.That(affordance.LeverageSummary, Does.Contain("宗族体面"));
+        Assert.That(affordance.CostSummary, Does.Contain("代价"));
+        Assert.That(affordance.ReadbackSummary, Does.Contain("下月读回"));
         Assert.That(settlementNode.PublicLifeRecentReceipts, Has.Count.EqualTo(1));
-        Assert.That(settlementNode.PublicLifeRecentReceipts[0].CommandName, Is.EqualTo(PlayerCommandNames.PostCountyNotice));
+        CommandReceiptViewModel receipt = settlementNode.PublicLifeRecentReceipts[0];
+        Assert.That(receipt.CommandName, Is.EqualTo(PlayerCommandNames.PostCountyNotice));
+        Assert.That(receipt.LeverageSummary, Does.Contain("本户"));
+        Assert.That(receipt.CostSummary, Does.Contain("代价"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("下月读回"));
         Assert.That(settlementNode.PublicLifeSummary, Does.Contain("榜示"));
         Assert.That(settlementNode.PublicLifeSummary, Does.Contain("街谈").Or.Contain("观望").Or.Contain("路报"));
     }

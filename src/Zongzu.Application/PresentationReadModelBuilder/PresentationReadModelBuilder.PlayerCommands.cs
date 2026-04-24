@@ -200,10 +200,26 @@ public sealed partial class PresentationReadModelBuilder
             bundle.SettlementDisorder,
             static entry => entry.SettlementId);
         ILookup<int, ClanSnapshot> clansBySettlement = bundle.Clans.ToLookup(static entry => entry.HomeSettlementId.Value);
+        Dictionary<int, ClanNarrativeSnapshot> narrativesByClan = bundle.ClanNarratives
+            .ToDictionary(static entry => entry.ClanId.Value, static entry => entry);
+        ILookup<int, ClanTradeSnapshot> tradesBySettlement = bundle.ClanTrades
+            .ToLookup(static entry => entry.PrimarySettlementId.Value);
+        ILookup<int, ClanTradeRouteSnapshot> routesBySettlement = bundle.ClanTradeRoutes
+            .ToLookup(static entry => entry.SettlementId.Value);
 
         foreach (SettlementPublicLifeSnapshot publicLife in bundle.PublicLifeSettlements.OrderBy(static entry => entry.SettlementId.Value))
         {
             jurisdictionsBySettlement.TryGetValue(publicLife.SettlementId.Value, out JurisdictionAuthoritySnapshot? jurisdiction);
+            ClanSnapshot[] localClans = clansBySettlement[publicLife.SettlementId.Value]
+                .OrderByDescending(static entry => entry.Prestige)
+                .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
+                .ToArray();
+            ClanNarrativeSnapshot[] localNarratives = localClans
+                .Where(clan => narrativesByClan.ContainsKey(clan.Id.Value))
+                .Select(clan => narrativesByClan[clan.Id.Value])
+                .ToArray();
+            ClanTradeSnapshot[] localTrades = tradesBySettlement[publicLife.SettlementId.Value].ToArray();
+            ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[publicLife.SettlementId.Value].ToArray();
 
             if (jurisdiction is not null)
             {
@@ -228,11 +244,28 @@ public sealed partial class PresentationReadModelBuilder
             {
                 string administrativeReachSummary = OrderAndBanditryCommandResolver.DetermineAdministrativeReachExecutionSummary(jurisdiction);
 
-                foreach (PlayerCommandAffordanceSnapshot affordance in BuildSupplementalOrderPublicLifeAffordances(publicLife, disorder, administrativeReachSummary))
+                foreach (PlayerCommandAffordanceSnapshot affordance in BuildSupplementalOrderPublicLifeAffordances(
+                    publicLife,
+                    disorder,
+                    jurisdiction,
+                    localClans,
+                    localNarratives,
+                    localTrades,
+                    localRoutes,
+                    administrativeReachSummary))
                 {
                     yield return affordance;
                 }
 
+                CommandLeverageProjection escortProjection = BuildOrderPublicLifeLeverageProjection(
+                    PlayerCommandNames.EscortRoadReport,
+                    publicLife,
+                    disorder,
+                    jurisdiction,
+                    localClans,
+                    localNarratives,
+                    localTrades,
+                    localRoutes);
                 yield return BuildPlayerCommandAffordanceSnapshot(
                     PlayerCommandNames.EscortRoadReport,
                     publicLife.SettlementId,
@@ -240,13 +273,13 @@ public sealed partial class PresentationReadModelBuilder
                     disorder.RoutePressure >= 28 || publicLife.CourierRisk >= 32,
                     $"路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。",
                     executionSummary: administrativeReachSummary,
+                    leverageSummary: escortProjection.LeverageSummary,
+                    costSummary: escortProjection.CostSummary,
+                    readbackSummary: escortProjection.ReadbackSummary,
                     targetLabel: publicLife.DominantVenueLabel);
             }
 
-            ClanSnapshot? leadClan = clansBySettlement[publicLife.SettlementId.Value]
-                .OrderByDescending(static entry => entry.Prestige)
-                .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
-                .FirstOrDefault();
+            ClanSnapshot? leadClan = localClans.FirstOrDefault();
             if (leadClan is not null)
             {
                 yield return BuildPlayerCommandAffordanceSnapshot(
@@ -264,8 +297,22 @@ public sealed partial class PresentationReadModelBuilder
     private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildSupplementalOrderPublicLifeAffordances(
         SettlementPublicLifeSnapshot publicLife,
         SettlementDisorderSnapshot disorder,
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        IReadOnlyList<ClanSnapshot> localClans,
+        IReadOnlyList<ClanNarrativeSnapshot> localNarratives,
+        IReadOnlyList<ClanTradeSnapshot> localTrades,
+        IReadOnlyList<ClanTradeRouteSnapshot> localRoutes,
         string administrativeReachSummary)
     {
+        CommandLeverageProjection watchProjection = BuildOrderPublicLifeLeverageProjection(
+            PlayerCommandNames.FundLocalWatch,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.FundLocalWatch,
             publicLife.SettlementId,
@@ -273,8 +320,20 @@ public sealed partial class PresentationReadModelBuilder
             disorder.RoutePressure >= 22 || disorder.DisorderPressure >= 24,
             $"路压{disorder.RoutePressure}，地面不靖{disorder.DisorderPressure}。",
             executionSummary: administrativeReachSummary,
+            leverageSummary: watchProjection.LeverageSummary,
+            costSummary: watchProjection.CostSummary,
+            readbackSummary: watchProjection.ReadbackSummary,
             targetLabel: publicLife.DominantVenueLabel);
 
+        CommandLeverageProjection suppressionProjection = BuildOrderPublicLifeLeverageProjection(
+            PlayerCommandNames.SuppressBanditry,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.SuppressBanditry,
             publicLife.SettlementId,
@@ -282,8 +341,20 @@ public sealed partial class PresentationReadModelBuilder
             disorder.BanditThreat >= 36 || disorder.SuppressionDemand >= 32,
             $"盗压{disorder.BanditThreat}，镇压之需{disorder.SuppressionDemand}。",
             executionSummary: administrativeReachSummary,
+            leverageSummary: suppressionProjection.LeverageSummary,
+            costSummary: suppressionProjection.CostSummary,
+            readbackSummary: suppressionProjection.ReadbackSummary,
             targetLabel: publicLife.NodeLabel);
 
+        CommandLeverageProjection negotiateProjection = BuildOrderPublicLifeLeverageProjection(
+            PlayerCommandNames.NegotiateWithOutlaws,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.NegotiateWithOutlaws,
             publicLife.SettlementId,
@@ -291,8 +362,20 @@ public sealed partial class PresentationReadModelBuilder
             disorder.BanditThreat >= 24 || disorder.DisorderPressure >= 28,
             $"盗压{disorder.BanditThreat}，地面不靖{disorder.DisorderPressure}。",
             executionSummary: administrativeReachSummary,
+            leverageSummary: negotiateProjection.LeverageSummary,
+            costSummary: negotiateProjection.CostSummary,
+            readbackSummary: negotiateProjection.ReadbackSummary,
             targetLabel: publicLife.DominantVenueLabel);
 
+        CommandLeverageProjection tolerateProjection = BuildOrderPublicLifeLeverageProjection(
+            PlayerCommandNames.TolerateDisorder,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.TolerateDisorder,
             publicLife.SettlementId,
@@ -300,6 +383,9 @@ public sealed partial class PresentationReadModelBuilder
             disorder.BanditThreat >= 18 || disorder.RoutePressure >= 18 || disorder.DisorderPressure >= 18,
             $"盗压{disorder.BanditThreat}，路压{disorder.RoutePressure}，地面不靖{disorder.DisorderPressure}。",
             executionSummary: administrativeReachSummary,
+            leverageSummary: tolerateProjection.LeverageSummary,
+            costSummary: tolerateProjection.CostSummary,
+            readbackSummary: tolerateProjection.ReadbackSummary,
             targetLabel: publicLife.NodeLabel);
     }
 }

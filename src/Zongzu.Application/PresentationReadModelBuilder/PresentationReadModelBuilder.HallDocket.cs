@@ -262,6 +262,9 @@ public sealed partial class PresentationReadModelBuilder
         return CombineGovernanceDocketText(
             $"眼下可先{targetClause}。",
             affordance.AvailabilitySummary,
+            affordance.LeverageSummary,
+            affordance.CostSummary,
+            affordance.ReadbackSummary,
             affordance.ExecutionSummary);
     }
 

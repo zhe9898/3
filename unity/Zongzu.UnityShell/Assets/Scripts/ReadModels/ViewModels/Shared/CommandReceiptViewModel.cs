@@ -11,5 +11,11 @@ public sealed class CommandReceiptViewModel
 	public string Summary { get; set; } = string.Empty;
 
 	public string OutcomeSummary { get; set; } = string.Empty;
+
+	public string LeverageSummary { get; set; } = string.Empty;
+
+	public string CostSummary { get; set; } = string.Empty;
+
+	public string ReadbackSummary { get; set; } = string.Empty;
 }
 }

@@ -14,6 +14,9 @@ public sealed partial class PresentationReadModelBuilder
         string availabilitySummary,
         ClanId? clanId = null,
         string executionSummary = "",
+        string leverageSummary = "",
+        string costSummary = "",
+        string readbackSummary = "",
         string targetLabel = "",
         string? labelOverride = null)
     {
@@ -31,6 +34,9 @@ public sealed partial class PresentationReadModelBuilder
             IsEnabled = isEnabled,
             AvailabilitySummary = availabilitySummary,
             ExecutionSummary = executionSummary,
+            LeverageSummary = leverageSummary,
+            CostSummary = costSummary,
+            ReadbackSummary = readbackSummary,
             TargetLabel = targetLabel,
         };
     }
@@ -42,6 +48,9 @@ public sealed partial class PresentationReadModelBuilder
         string outcomeSummary,
         ClanId? clanId = null,
         string executionSummary = "",
+        string leverageSummary = "",
+        string costSummary = "",
+        string readbackSummary = "",
         string targetLabel = "",
         string? labelOverride = null)
     {
@@ -58,6 +67,9 @@ public sealed partial class PresentationReadModelBuilder
             Summary = summary,
             OutcomeSummary = outcomeSummary,
             ExecutionSummary = executionSummary,
+            LeverageSummary = leverageSummary,
+            CostSummary = costSummary,
+            ReadbackSummary = readbackSummary,
             TargetLabel = targetLabel,
         };
     }
