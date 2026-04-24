@@ -153,9 +153,18 @@ public sealed class ExamPrestigeChainTests
             "Real scheduler must drain ExamPassed into ClanPrestigeAdjusted.");
 
         ClanStateData clan = familyState.Clans.Single(static c => c.Id == new ClanId(1));
-        Assert.That(clan.Prestige, Is.EqualTo(55),
-            "Clan prestige must rise by 5 after real scheduler drain.");
-        Assert.That(clan.MarriageAllianceValue, Is.EqualTo(23),
-            "Clan marriage alliance value must rise by 3.");
+        Assert.That(clan.Prestige, Is.EqualTo(58),
+            "Clan prestige must follow the exam credential profile after real scheduler drain.");
+        Assert.That(clan.MarriageAllianceValue, Is.EqualTo(24),
+            "Clan marriage alliance value must follow the exam credential profile.");
+
+        IDomainEvent prestigeEvent = events.Single(e =>
+            e.EventType == FamilyCoreEventNames.ClanPrestigeAdjusted
+            && e.Metadata.TryGetValue(DomainEventMetadataKeys.Cause, out string? cause)
+            && cause == DomainEventMetadataValues.CauseExamPass);
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseExamPass));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.SourceEventType], Is.EqualTo(EducationAndExamsEventNames.ExamPassed));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamPrestigeDelta], Is.EqualTo("8"));
+        Assert.That(prestigeEvent.Metadata[DomainEventMetadataKeys.ExamMarriageAllianceDelta], Is.EqualTo("4"));
     }
 }

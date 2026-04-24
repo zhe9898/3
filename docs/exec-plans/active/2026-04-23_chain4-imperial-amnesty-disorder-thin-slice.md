@@ -13,15 +13,15 @@ This is not the full chain-4 implementation. It covers only the grand-amnesty br
 | Module | Owns | Thin-slice behavior |
 | --- | --- | --- |
 | WorldSettlements | `ImperialBand` / `AmnestyWave` | Emits global `ImperialRhythmChanged` when the imperial axis crosses a band. |
-| OfficeAndCareer | Yamen command / docket response | Reads `IWorldSettlementsQueries.GetCurrentSeason().Imperial.AmnestyWave`; emits settlement-scoped `AmnestyApplied` per jurisdiction. |
-| OrderAndBanditry | Local disorder state | Consumes `AmnestyApplied`, mutates only the matching settlement, emits `DisorderSpike` on threshold crossing. |
-| NarrativeProjection | Read-only notice wording | Projects `DisorderSpike` with cause-neutral guidance until event metadata exists. |
+| OfficeAndCareer | Yamen command / docket response | Reads `IWorldSettlementsQueries.GetCurrentSeason().Imperial.AmnestyWave`; emits settlement-scoped `AmnestyApplied` per jurisdiction with office execution metadata. |
+| OrderAndBanditry | Local disorder state | Consumes `AmnestyApplied`, computes an amnesty-disorder profile from event metadata plus local order soil, mutates only the matching settlement, emits `DisorderSpike` on threshold crossing. |
+| NarrativeProjection | Read-only notice wording | Projects `DisorderSpike` through cause metadata; it does not drive the rule. |
 
 ## Scope Rules
 
 - `ImperialRhythmChanged` is global and uses `EntityKey = "imperial"`.
 - `AmnestyApplied` is settlement-scoped and uses `EntityKey = settlementId`.
-- `DisorderSpike` is settlement-scoped and uses `EntityKey = settlementId`.
+- `DisorderSpike` is settlement-scoped and uses `EntityKey = settlementId`; amnesty-origin spikes carry cause/profile metadata.
 - `OfficeAndCareer.LastAppliedAmnestyWave` is persisted de-duplication state so non-amnesty imperial-axis changes do not replay the same amnesty while `AmnestyWave` remains high.
 
 ## Save Compatibility
@@ -41,11 +41,12 @@ This is not the full chain-4 implementation. It covers only the grand-amnesty br
   - settlement-scoped mutation
   - off-scope negative assertion
   - invalid entity key no-op
-  - threshold crossing emits `DisorderSpike`
+  - missing metadata no-op
+  - threshold crossing emits `DisorderSpike` with profile metadata
 - `ImperialAmnestyDisorderChainTests`
   - real scheduler drains the chain end to end.
 
 ## Remaining Design Debt
 
-- Add structured metadata or typed payload to `IDomainEvent` so `ImperialRhythmChanged` can carry `bandKind`, and `DisorderSpike` can carry `causeKey`.
+- Add structured metadata or typed payload to `ImperialRhythmChanged` so it can carry `bandKind`; the current slice still relies on querying `AmnestyWave` plus the office-owned watermark.
 - Implement full chain-4 branches for mourning, appointment pause, frontier supply, public-life edict projection, and `DisorderLevelChanged`.

@@ -102,6 +102,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 3, 4, MigrateWarfareCampaignStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PopulationAndHouseholds, 1, 2, MigratePopulationAndHouseholdsStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.SocialMemoryAndRelations, 1, 2, MigrateSocialMemoryAndRelationsStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.SocialMemoryAndRelations, 2, 3, MigrateSocialMemoryAndRelationsStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.EducationAndExams, 1, 2, MigrateEducationAndExamsStateV1ToV2);
         return pipeline;
     }
@@ -130,6 +131,20 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.SocialMemoryAndRelations,
             ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(SocialMemoryAndRelationsState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateSocialMemoryAndRelationsStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        SocialMemoryAndRelationsState migratedState = (SocialMemoryAndRelationsState)serializer.Deserialize(typeof(SocialMemoryAndRelationsState), envelope.Payload);
+        SocialMemoryAndRelationsStateProjection.UpgradeFromSchemaV2ToV3(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.SocialMemoryAndRelations,
+            ModuleSchemaVersion = 3,
             Payload = serializer.Serialize(typeof(SocialMemoryAndRelationsState), migratedState),
         };
     }

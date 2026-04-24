@@ -68,10 +68,8 @@ internal static class PublicLifeShellAdapter
 		SettlementId settlementId)
 	{
 		return CommandShellAdapter.BuildAffordances(
-			bundle.PlayerCommands.Affordances
-				.Where(command =>
-					string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.PublicLife, StringComparison.Ordinal)
-					&& command.SettlementId == settlementId)
+			bundle.PlayerCommands
+				.EnumerateAffordances(PlayerCommandSurfaceKeys.PublicLife, settlementId)
 				.OrderBy(command => command.TargetLabel, StringComparer.Ordinal)
 				.ThenBy(command => command.CommandName, StringComparer.Ordinal));
 	}
@@ -81,10 +79,8 @@ internal static class PublicLifeShellAdapter
 		SettlementId settlementId)
 	{
 		return CommandShellAdapter.BuildReceipts(
-			bundle.PlayerCommands.Receipts
-				.Where(receipt =>
-					string.Equals(receipt.SurfaceKey, PlayerCommandSurfaceKeys.PublicLife, StringComparison.Ordinal)
-					&& receipt.SettlementId == settlementId)
+			bundle.PlayerCommands
+				.EnumerateReceipts(PlayerCommandSurfaceKeys.PublicLife, settlementId)
 				.OrderBy(receipt => receipt.TargetLabel, StringComparer.Ordinal)
 				.ThenBy(receipt => receipt.CommandName, StringComparer.Ordinal));
 	}

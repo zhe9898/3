@@ -16,6 +16,9 @@ public enum MemoryType
     Fear = 4,
     Debt = 5,
     Patronage = 6,
+    Aspiration = 7,
+    Grief = 8,
+    Trust = 9,
 }
 
 /// <summary>
@@ -35,6 +38,25 @@ public enum MemorySubtype
     WarDread = 9,
     MarketDebt = 10,
     MourningDebt = 11,
+    ExamHonor = 12,
+    ExamFailure = 13,
+    MarriageObligation = 14,
+    TradeBreach = 15,
+    BranchRift = 16,
+    ViolentDeath = 17,
+    TemperingResidue = 18,
+}
+
+public enum EmotionalPressureAxis
+{
+    Unknown = 0,
+    Fear = 1,
+    Shame = 2,
+    Grief = 3,
+    Anger = 4,
+    Obligation = 5,
+    Hope = 6,
+    Trust = 7,
 }
 
 /// <summary>
@@ -115,4 +137,76 @@ public sealed record DormantStubSnapshot
     public GameDate LastSeen { get; init; }
 
     public bool IsEligibleForReemergence { get; init; }
+}
+
+public sealed record ClanEmotionalClimateSnapshot
+{
+    public ClanId ClanId { get; init; }
+
+    public int Fear { get; init; }
+
+    public int Shame { get; init; }
+
+    public int Grief { get; init; }
+
+    public int Anger { get; init; }
+
+    public int Obligation { get; init; }
+
+    public int Hope { get; init; }
+
+    public int Trust { get; init; }
+
+    public int Restraint { get; init; }
+
+    public int Hardening { get; init; }
+
+    public int Bitterness { get; init; }
+
+    public int Volatility { get; init; }
+
+    public int LastPressureScore { get; init; }
+
+    public int LastPressureBand { get; init; }
+
+    public int LastTemperingBand { get; init; }
+
+    public GameDate LastUpdated { get; init; }
+
+    public string LastTrace { get; init; } = string.Empty;
+}
+
+public sealed record PersonPressureTemperingSnapshot
+{
+    public PersonId PersonId { get; init; }
+
+    public ClanId ClanId { get; init; }
+
+    public int Fear { get; init; }
+
+    public int Shame { get; init; }
+
+    public int Grief { get; init; }
+
+    public int Anger { get; init; }
+
+    public int Obligation { get; init; }
+
+    public int Hope { get; init; }
+
+    public int Trust { get; init; }
+
+    public int Restraint { get; init; }
+
+    public int Hardening { get; init; }
+
+    public int Bitterness { get; init; }
+
+    public int Volatility { get; init; }
+
+    public int LastPressureScore { get; init; }
+
+    public GameDate LastUpdated { get; init; }
+
+    public string LastTrace { get; init; } = string.Empty;
 }

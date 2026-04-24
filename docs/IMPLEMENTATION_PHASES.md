@@ -145,7 +145,7 @@ Modules:
 
 Implementation note:
 - the first active `WarfareCampaign.Lite` slice may land before deeper war rules so long as it stays campaign-level, read-only in presentation, and downstream of `ConflictAndForce` / `OfficeAndCareer`
-- current board-depth work already adds bounded front labels, command-fit wording, commander summaries, route descriptors, and thin application-routed campaign intent descriptors plus a built-in schema `1 -> 2 -> 3` migration, without introducing tactical micro
+- current board-depth work already adds bounded front labels, command-fit wording, commander summaries, route descriptors, and module-owned campaign intent descriptors plus a built-in schema migration path, without introducing tactical micro
 - P3 owns the full conflict/war stack, not just campaign boards
 
 ## Phase P4 - historical trends

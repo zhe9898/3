@@ -35,6 +35,8 @@ This avoids spreading social-state mutation across many modules.
 - clan narrative summaries that outlive individuals
 - escalation, restraint, and reconciliation pressure
 - dormant social-memory stubs for actors who leave the dense local horizon without becoming socially irrelevant
+- clan emotional climate: fear, shame, grief, anger, obligation, hope, trust, restraint, hardening, bitterness, volatility
+- person pressure tempering for clan-linked adults
 
 ## How other modules interact
 - family queries it for marriage and branch tension context
@@ -45,6 +47,18 @@ This avoids spreading social-state mutation across many modules.
 - warfare queries it for commander loyalty and inter-clan obligation context
 
 No other module owns these states.
+
+## Pressure tempering kernel
+
+Repeated pressure should not vanish when the notification is dismissed. `SocialMemoryAndRelations` persists the residue as clan climate and personal tempering:
+- material pressure from household distress, debt, migration, and trade strain can become fear, shame, anger, bitterness, or hardening
+- lineage pressure from branch tension, weak succession, mourning, care burden, funeral debt, and relief sanction can become grief, obligation, restraint, or grudge
+- recovery pressure from support reserve, mediation, marriage alliance, exam honor, relief, and trust can become hope, trust, obligation, and restraint
+- personality traits from `FamilyCore` shape how adults absorb pressure: prudence and sociability tend toward restraint, ambition can raise hope and volatility, loyalty can deepen obligation or hardening
+
+This is not a mood event pool. Authoritative state changes first; emotional receipts are downstream social-memory facts. Later adult autonomy and command friction may read them through queries, but no module may directly edit another module's state to "make someone feel" a result.
+
+The first active command consumer is `FamilyCoreCommandResolver`. It may read clan climate and adult person-tempering snapshots to adjust family command pressure profiles: bitterness, volatility, anger, grief, or shame can make mediation and lifecycle decisions harder; trust, restraint, obligation, and hope can soften backlash or strengthen reconciliation. Missing SocialMemory queries are neutral. The resolver still mutates only `FamilyCore`, and any later memory residue must return through normal monthly simulation or event handling.
 
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations

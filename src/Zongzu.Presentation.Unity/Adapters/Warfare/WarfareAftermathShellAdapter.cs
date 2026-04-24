@@ -142,30 +142,29 @@ internal static class WarfareAftermathShellAdapter
 		CampaignFrontSnapshot? campaign,
 		IReadOnlyList<NarrativeNotificationSnapshot> notifications)
 	{
-		string settlementKey = settlementId.Value.ToString();
 		NarrativeNotificationSnapshot[] source = notifications
 			.Where(notification =>
-				string.Equals(notification.SourceModuleKey, KnownModuleKeys.WarfareCampaign, StringComparison.Ordinal)
-				|| notification.Traces.Any(trace => string.Equals(trace.EntityKey, settlementKey, StringComparison.Ordinal)))
+				notification.MatchesSourceModule(KnownModuleKeys.WarfareCampaign)
+				|| notification.MatchesSettlementScope(settlementId))
 			.ToArray();
 
-		bool merit = source.Any(notification => notification.Traces.Any(trace =>
-				string.Equals(trace.SourceModuleKey, KnownModuleKeys.FamilyCore, StringComparison.Ordinal)
-				|| string.Equals(trace.SourceModuleKey, KnownModuleKeys.SocialMemoryAndRelations, StringComparison.Ordinal)))
+		bool merit = source.Any(static notification =>
+				notification.HasTraceFromModule(KnownModuleKeys.FamilyCore)
+				|| notification.HasTraceFromModule(KnownModuleKeys.SocialMemoryAndRelations))
 			|| campaign != null && campaign.IsActive && campaign.MoraleState >= 55 && campaign.SupplyState >= 50;
-		bool blame = source.Any(notification => notification.Traces.Any(trace =>
-				string.Equals(trace.SourceModuleKey, KnownModuleKeys.OfficeAndCareer, StringComparison.Ordinal)
-				|| string.Equals(trace.SourceModuleKey, KnownModuleKeys.ConflictAndForce, StringComparison.Ordinal)))
+		bool blame = source.Any(static notification =>
+				notification.HasTraceFromModule(KnownModuleKeys.OfficeAndCareer)
+				|| notification.HasTraceFromModule(KnownModuleKeys.ConflictAndForce))
 			|| campaign != null && (!campaign.IsActive || campaign.FrontPressure >= 60)
 			|| (jurisdiction?.PetitionBacklog ?? 0) >= 8;
-		bool relief = source.Any(notification => notification.Traces.Any(trace =>
-				string.Equals(trace.SourceModuleKey, KnownModuleKeys.PopulationAndHouseholds, StringComparison.Ordinal)
-				|| string.Equals(trace.SourceModuleKey, KnownModuleKeys.WorldSettlements, StringComparison.Ordinal)))
+		bool relief = source.Any(static notification =>
+				notification.HasTraceFromModule(KnownModuleKeys.PopulationAndHouseholds)
+				|| notification.HasTraceFromModule(KnownModuleKeys.WorldSettlements))
 			|| population != null && (population.CommonerDistress >= 40 || population.MigrationPressure >= 35)
 			|| settlement != null && (settlement.Security <= 55 || settlement.Prosperity <= 58);
-		bool disorder = source.Any(notification => notification.Traces.Any(trace =>
-				string.Equals(trace.SourceModuleKey, KnownModuleKeys.OrderAndBanditry, StringComparison.Ordinal)
-				|| string.Equals(trace.SourceModuleKey, KnownModuleKeys.TradeAndIndustry, StringComparison.Ordinal)))
+		bool disorder = source.Any(static notification =>
+				notification.HasTraceFromModule(KnownModuleKeys.OrderAndBanditry)
+				|| notification.HasTraceFromModule(KnownModuleKeys.TradeAndIndustry))
 			|| settlement != null && settlement.Security < 58
 			|| campaign != null && (campaign.SupplyState < 45 || campaign.Routes.Any(route => route.Pressure > route.Security));
 

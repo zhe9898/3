@@ -121,6 +121,8 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 ### Accepts commands
 - `ArrangeMarriage`
 - `DesignateHeirPolicy`
+- `SupportNewbornCare`
+- `SetMourningOrder`
 - `SupportSeniorBranch`
 - `OrderFormalApology`
 - `PermitBranchSeparation`
@@ -129,6 +131,11 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `InviteClanEldersPubliclyBroker`
 
 > Note: `RedistributeHouseholdSupport` is not yet implemented in the active command surface.
+
+Current routing note:
+- family commands are resolved by `FamilyCoreCommandResolver` inside `Zongzu.Modules.FamilyCore`
+- `PlayerCommandService` remains thin module-selection glue for this slice and must not own family consequence formulas
+- the resolver may read `PersonRegistry` and `SocialMemoryAndRelations` query snapshots, but may mutate only `FamilyCore` state and receipt fields
 
 ### Emits events
 - `MarriageAllianceArranged`
@@ -201,12 +208,16 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - memory records
 - clan narrative promotion
 - grudge escalation state
+- clan emotional climate: fear, shame, grief, anger, obligation, hope, trust, restraint, hardening, bitterness, volatility
+- person pressure tempering for clan-linked adults, keyed by `PersonId`
 
 ### Public queries
 - relation summaries
 - grudge pressure
 - obligation/favor summaries
 - public vs private memory projections
+- clan emotional climate snapshots
+- person pressure-tempering snapshots by person or clan
 
 ### Accepts commands
 - apologize
@@ -221,11 +232,20 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `FavorIncurred`
 - `DebtOfHonorCreated`
 - `ClanNarrativeUpdated`
+- `SocialMemoryAndRelations.EmotionalPressureShifted`
+- `SocialMemoryAndRelations.PressureTempered`
+
+### Upstream reads / event inputs
+- reads `FamilyCore` clan pressure and personality traits through `IFamilyCoreQueries`
+- reads sponsored household pressure through `IPopulationAndHouseholdsQueries`
+- reads optional clan trade pressure through `ITradeAndIndustryQueries`
+- consumes scoped trade shock, exam, death, marriage, branch, heir, and warfare events to mutate only its own climate, memory, narrative, and tempering state
 
 ### Does not own
 - direct conflict resolution
 - exam or trade state
 - office appointments
+- household distress, market price, education progress, family lineage, force posture, or public-life heat
 
 ## 5. EducationAndExams
 ### Owns
@@ -329,6 +349,12 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - resign/refuse
 - petition via office channels
 - deploy legal/administrative leverage where allowed
+- post county notice
+- dispatch road report
+
+Current routing note:
+- these commands are resolved by `OfficeAndCareerCommandResolver` inside `Zongzu.Modules.OfficeAndCareer`
+- office public-life verbs may update only office-owned jurisdiction, petition, and trace state; order, family, trade, or public-life heat must move later through queries, events, or projections
 
 ### Emits events
 - `OfficeGranted`
@@ -379,6 +405,10 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 Current routing note:
 - these public-life order commands are currently routed by `PlayerCommandService`, but resolution lives in `OrderAndBanditryModule.HandlePublicLifeCommand`
 - the application layer may pass query-derived office-reach modifiers into that resolver; it must not write office, trade, public-life, force, or family state directly
+
+Current routing note:
+- these commands are resolved by `OrderAndBanditryCommandResolver` inside `Zongzu.Modules.OrderAndBanditry`
+- the resolver may read `OfficeAndCareer` jurisdiction authority through queries to shape administrative reach, but it may mutate only order-owned pressure, carryover, and receipt state
 
 ### Emits events
 - `BanditThreatRaised`
@@ -451,8 +481,8 @@ Current routing note:
 - withdraw to barracks
 
 Current routing note:
-- these commands are currently staged through a thin application-routed warfare-intent service
-- the service may write only `WarfareCampaign`-owned directive state; it may not mutate `ConflictAndForce`, `OfficeAndCareer`, or settlement state directly
+- these commands are resolved by `WarfareCampaignCommandResolver` inside `Zongzu.Modules.WarfareCampaign`
+- the resolver may write only `WarfareCampaign`-owned directive state; it may not mutate `ConflictAndForce`, `OfficeAndCareer`, or settlement state directly
 
 ### Emits events
 - `CampaignMobilized`

@@ -14,39 +14,30 @@ public sealed partial class PresentationReadModelBuilder
 
     private static IEnumerable<PlayerCommandReceiptSnapshot> BuildPublicLifeReceipts(PresentationReadModelBundle bundle)
     {
-        Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = bundle.OfficeJurisdictions
-            .ToDictionary(static entry => entry.SettlementId.Value, static entry => entry);
+        Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = IndexFirstBySettlement(
+            bundle.OfficeJurisdictions,
+            static entry => entry.SettlementId);
 
         foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
         {
             if (string.Equals(jurisdiction.CurrentAdministrativeTask, "张榜晓谕", StringComparison.Ordinal))
             {
-                yield return new PlayerCommandReceiptSnapshot
-                {
-                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
-                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                    SettlementId = jurisdiction.SettlementId,
-                    CommandName = PlayerCommandNames.PostCountyNotice,
-                    Label = PlayerCommandService.DeterminePublicLifeCommandLabel(PlayerCommandNames.PostCountyNotice),
-                    Summary = jurisdiction.LastAdministrativeTrace,
-                    OutcomeSummary = jurisdiction.LastPetitionOutcome,
-                    TargetLabel = jurisdiction.LeadOfficialName,
-                };
+                yield return BuildPlayerCommandReceiptSnapshot(
+                    PlayerCommandNames.PostCountyNotice,
+                    jurisdiction.SettlementId,
+                    jurisdiction.LastAdministrativeTrace,
+                    jurisdiction.LastPetitionOutcome,
+                    targetLabel: jurisdiction.LeadOfficialName);
             }
 
             if (string.Equals(jurisdiction.CurrentAdministrativeTask, "遣吏催报", StringComparison.Ordinal))
             {
-                yield return new PlayerCommandReceiptSnapshot
-                {
-                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
-                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                    SettlementId = jurisdiction.SettlementId,
-                    CommandName = PlayerCommandNames.DispatchRoadReport,
-                    Label = PlayerCommandService.DeterminePublicLifeCommandLabel(PlayerCommandNames.DispatchRoadReport),
-                    Summary = jurisdiction.LastAdministrativeTrace,
-                    OutcomeSummary = jurisdiction.LastPetitionOutcome,
-                    TargetLabel = jurisdiction.LeadOfficialName,
-                };
+                yield return BuildPlayerCommandReceiptSnapshot(
+                    PlayerCommandNames.DispatchRoadReport,
+                    jurisdiction.SettlementId,
+                    jurisdiction.LastAdministrativeTrace,
+                    jurisdiction.LastPetitionOutcome,
+                    targetLabel: jurisdiction.LeadOfficialName);
             }
         }
 
@@ -67,17 +58,12 @@ public sealed partial class PresentationReadModelBuilder
                 continue;
             }
 
-            yield return new PlayerCommandReceiptSnapshot
-            {
-                ModuleKey = KnownModuleKeys.OrderAndBanditry,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = disorder.SettlementId,
-                CommandName = PlayerCommandNames.EscortRoadReport,
-                Label = PlayerCommandService.DeterminePublicLifeCommandLabel(PlayerCommandNames.EscortRoadReport),
-                Summary = disorder.LastPressureReason,
-                OutcomeSummary = $"路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。",
-                TargetLabel = disorder.SettlementId.Value.ToString(),
-            };
+            yield return BuildPlayerCommandReceiptSnapshot(
+                PlayerCommandNames.EscortRoadReport,
+                disorder.SettlementId,
+                disorder.LastPressureReason,
+                $"路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。",
+                targetLabel: disorder.SettlementId.Value.ToString());
         }
 
         foreach (ClanSnapshot clan in bundle.Clans.OrderBy(static entry => entry.HomeSettlementId.Value))
@@ -87,95 +73,13 @@ public sealed partial class PresentationReadModelBuilder
                 continue;
             }
 
-            yield return new PlayerCommandReceiptSnapshot
-            {
-                ModuleKey = KnownModuleKeys.FamilyCore,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = clan.HomeSettlementId,
-                ClanId = clan.Id,
-                CommandName = PlayerCommandNames.InviteClanEldersPubliclyBroker,
-                Label = PlayerCommandService.DeterminePublicLifeCommandLabel(PlayerCommandNames.InviteClanEldersPubliclyBroker),
-                Summary = clan.LastConflictTrace,
-                OutcomeSummary = clan.LastConflictOutcome,
-                TargetLabel = clan.ClanName,
-            };
-        }
-    }
-
-    private static IEnumerable<PlayerCommandReceiptSnapshot> BuildPublicLifeReceiptsNormalized(PresentationReadModelBundle bundle)
-    {
-        foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
-        {
-            if (string.Equals(jurisdiction.CurrentAdministrativeTask, "张榜晓谕", StringComparison.Ordinal))
-            {
-                yield return new PlayerCommandReceiptSnapshot
-                {
-                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
-                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                    SettlementId = jurisdiction.SettlementId,
-                    CommandName = PlayerCommandNames.PostCountyNotice,
-                    Label = PlayerCommandService.DeterminePublicLifeCommandLabel(PlayerCommandNames.PostCountyNotice),
-                    Summary = jurisdiction.LastAdministrativeTrace,
-                    OutcomeSummary = jurisdiction.LastPetitionOutcome,
-                    TargetLabel = jurisdiction.LeadOfficialName,
-                };
-            }
-
-            if (string.Equals(jurisdiction.CurrentAdministrativeTask, "遣吏催报", StringComparison.Ordinal))
-            {
-                yield return new PlayerCommandReceiptSnapshot
-                {
-                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
-                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                    SettlementId = jurisdiction.SettlementId,
-                    CommandName = PlayerCommandNames.DispatchRoadReport,
-                    Label = PlayerCommandService.DeterminePublicLifeCommandLabel(PlayerCommandNames.DispatchRoadReport),
-                    Summary = jurisdiction.LastAdministrativeTrace,
-                    OutcomeSummary = jurisdiction.LastPetitionOutcome,
-                    TargetLabel = jurisdiction.LeadOfficialName,
-                };
-            }
-        }
-
-        foreach (SettlementDisorderSnapshot disorder in bundle.SettlementDisorder.OrderBy(static entry => entry.SettlementId.Value))
-        {
-            if (!disorder.LastPressureReason.Contains("催护一路", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            yield return new PlayerCommandReceiptSnapshot
-            {
-                ModuleKey = KnownModuleKeys.OrderAndBanditry,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = disorder.SettlementId,
-                CommandName = PlayerCommandNames.EscortRoadReport,
-                Label = PlayerCommandService.DeterminePublicLifeCommandLabel(PlayerCommandNames.EscortRoadReport),
-                Summary = disorder.LastPressureReason,
-                OutcomeSummary = $"路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。",
-                TargetLabel = disorder.SettlementId.Value.ToString(),
-            };
-        }
-
-        foreach (ClanSnapshot clan in bundle.Clans.OrderBy(static entry => entry.HomeSettlementId.Value))
-        {
-            if (!string.Equals(clan.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersPubliclyBroker, StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            yield return new PlayerCommandReceiptSnapshot
-            {
-                ModuleKey = KnownModuleKeys.FamilyCore,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = clan.HomeSettlementId,
-                ClanId = clan.Id,
-                CommandName = PlayerCommandNames.InviteClanEldersPubliclyBroker,
-                Label = PlayerCommandService.DeterminePublicLifeCommandLabel(PlayerCommandNames.InviteClanEldersPubliclyBroker),
-                Summary = clan.LastConflictTrace,
-                OutcomeSummary = clan.LastConflictOutcome,
-                TargetLabel = clan.ClanName,
-            };
+            yield return BuildPlayerCommandReceiptSnapshot(
+                PlayerCommandNames.InviteClanEldersPubliclyBroker,
+                clan.HomeSettlementId,
+                clan.LastConflictTrace,
+                clan.LastConflictOutcome,
+                clanId: clan.Id,
+                targetLabel: clan.ClanName);
         }
     }
 
@@ -188,20 +92,14 @@ public sealed partial class PresentationReadModelBuilder
             return null;
         }
 
-        return new PlayerCommandReceiptSnapshot
-        {
-            ModuleKey = KnownModuleKeys.OrderAndBanditry,
-            SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-            SettlementId = disorder.SettlementId,
-            CommandName = disorder.LastInterventionCommandCode,
-            Label = string.IsNullOrWhiteSpace(disorder.LastInterventionCommandLabel)
-                ? PlayerCommandService.DeterminePublicLifeCommandLabel(disorder.LastInterventionCommandCode)
-                : disorder.LastInterventionCommandLabel,
-            Summary = disorder.LastInterventionSummary,
-            OutcomeSummary = disorder.LastInterventionOutcome,
-            ExecutionSummary = BuildOrderAdministrativeAftermathExecutionSummary(disorder, jurisdiction),
-            TargetLabel = disorder.SettlementId.Value.ToString(),
-        };
+        return BuildPlayerCommandReceiptSnapshot(
+            disorder.LastInterventionCommandCode,
+            disorder.SettlementId,
+            disorder.LastInterventionSummary,
+            disorder.LastInterventionOutcome,
+            executionSummary: BuildOrderAdministrativeAftermathExecutionSummary(disorder, jurisdiction),
+            targetLabel: disorder.SettlementId.Value.ToString(),
+            labelOverride: disorder.LastInterventionCommandLabel);
     }
 
     private static string BuildOrderAdministrativeAftermathExecutionSummary(
@@ -247,42 +145,36 @@ public sealed partial class PresentationReadModelBuilder
 
             if (!string.IsNullOrWhiteSpace(clan.LastConflictTrace) || !string.IsNullOrWhiteSpace(clan.LastConflictOutcome))
             {
-                receipts.Add(new PlayerCommandReceiptSnapshot
-            {
-                ModuleKey = KnownModuleKeys.FamilyCore,
-                SurfaceKey = PlayerCommandSurfaceKeys.Family,
-                SettlementId = clan.HomeSettlementId,
-                ClanId = clan.Id,
-                CommandName = string.IsNullOrWhiteSpace(clan.LastConflictCommandCode)
+                string commandName = string.IsNullOrWhiteSpace(clan.LastConflictCommandCode)
                     ? PlayerCommandNames.InviteClanEldersMediation
-                    : clan.LastConflictCommandCode,
-                Label = string.IsNullOrWhiteSpace(clan.LastConflictCommandLabel)
-                    ? "祠堂议决"
-                    : clan.LastConflictCommandLabel,
-                Summary = clan.LastConflictTrace,
-                OutcomeSummary = clan.LastConflictOutcome,
-                TargetLabel = clan.ClanName,
-            });
+                    : clan.LastConflictCommandCode;
+                receipts.Add(BuildPlayerCommandReceiptSnapshot(
+                    commandName,
+                    clan.HomeSettlementId,
+                    clan.LastConflictTrace,
+                    clan.LastConflictOutcome,
+                    clanId: clan.Id,
+                    targetLabel: clan.ClanName,
+                    labelOverride: string.IsNullOrWhiteSpace(clan.LastConflictCommandLabel)
+                        ? "祠堂议决"
+                        : clan.LastConflictCommandLabel));
             }
 
             if (!string.IsNullOrWhiteSpace(clan.LastLifecycleTrace) || !string.IsNullOrWhiteSpace(clan.LastLifecycleOutcome))
             {
-                receipts.Add(new PlayerCommandReceiptSnapshot
-                {
-                    ModuleKey = KnownModuleKeys.FamilyCore,
-                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
-                    SettlementId = clan.HomeSettlementId,
-                    ClanId = clan.Id,
-                    CommandName = string.IsNullOrWhiteSpace(clan.LastLifecycleCommandCode)
-                        ? PlayerCommandNames.ArrangeMarriage
-                        : clan.LastLifecycleCommandCode,
-                    Label = string.IsNullOrWhiteSpace(clan.LastLifecycleCommandLabel)
+                string commandName = string.IsNullOrWhiteSpace(clan.LastLifecycleCommandCode)
+                    ? PlayerCommandNames.ArrangeMarriage
+                    : clan.LastLifecycleCommandCode;
+                receipts.Add(BuildPlayerCommandReceiptSnapshot(
+                    commandName,
+                    clan.HomeSettlementId,
+                    clan.LastLifecycleTrace,
+                    clan.LastLifecycleOutcome,
+                    clanId: clan.Id,
+                    targetLabel: clan.ClanName,
+                    labelOverride: string.IsNullOrWhiteSpace(clan.LastLifecycleCommandLabel)
                         ? "门内后计"
-                        : clan.LastLifecycleCommandLabel,
-                    Summary = clan.LastLifecycleTrace,
-                    OutcomeSummary = clan.LastLifecycleOutcome,
-                    TargetLabel = clan.ClanName,
-                });
+                        : clan.LastLifecycleCommandLabel));
             }
         }
 
@@ -297,16 +189,11 @@ public sealed partial class PresentationReadModelBuilder
                 ? PlayerCommandNames.DeployAdministrativeLeverage
                 : PlayerCommandNames.PetitionViaOfficeChannels;
 
-            receipts.Add(new PlayerCommandReceiptSnapshot
-            {
-                ModuleKey = KnownModuleKeys.OfficeAndCareer,
-                SurfaceKey = PlayerCommandSurfaceKeys.Office,
-                SettlementId = jurisdiction.SettlementId,
-                CommandName = commandName,
-                Label = PlayerCommandService.DetermineOfficeCommandLabel(commandName),
-                Summary = jurisdiction.LastAdministrativeTrace,
-                OutcomeSummary = jurisdiction.LastPetitionOutcome,
-            });
+            receipts.Add(BuildPlayerCommandReceiptSnapshot(
+                commandName,
+                jurisdiction.SettlementId,
+                jurisdiction.LastAdministrativeTrace,
+                jurisdiction.LastPetitionOutcome));
         }
 
         foreach (CampaignFrontSnapshot campaign in bundle.Campaigns.OrderBy(static entry => entry.CampaignId.Value))
@@ -317,16 +204,12 @@ public sealed partial class PresentationReadModelBuilder
                 continue;
             }
 
-            receipts.Add(new PlayerCommandReceiptSnapshot
-            {
-                ModuleKey = KnownModuleKeys.WarfareCampaign,
-                SurfaceKey = PlayerCommandSurfaceKeys.Warfare,
-                SettlementId = campaign.AnchorSettlementId,
-                CommandName = campaign.ActiveDirectiveCode,
-                Label = campaign.ActiveDirectiveLabel,
-                Summary = campaign.LastDirectiveTrace,
-                OutcomeSummary = campaign.ActiveDirectiveSummary,
-            });
+            receipts.Add(BuildPlayerCommandReceiptSnapshot(
+                campaign.ActiveDirectiveCode,
+                campaign.AnchorSettlementId,
+                campaign.LastDirectiveTrace,
+                campaign.ActiveDirectiveSummary,
+                labelOverride: campaign.ActiveDirectiveLabel));
         }
 
         receipts.AddRange(BuildPublicLifeReceipts(bundle));

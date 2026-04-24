@@ -6,22 +6,16 @@ using Zongzu.Kernel;
 
 namespace Zongzu.Modules.SocialMemoryAndRelations;
 
-public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAndRelationsState>
+public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAndRelationsState>
 {
-    private static readonly string[] CommandNames =
-    [
-        "Apologize",
-        "Compensate",
-        "RestrainRetaliation",
-        "PubliclyHonorOrShame",
-    ];
-
     private static readonly string[] EventNames =
     [
         SocialMemoryAndRelationsEventNames.GrudgeEscalated,
         SocialMemoryAndRelationsEventNames.GrudgeSoftened,
         SocialMemoryAndRelationsEventNames.FavorIncurred,
         SocialMemoryAndRelationsEventNames.ClanNarrativeUpdated,
+        SocialMemoryAndRelationsEventNames.PressureTempered,
+        SocialMemoryAndRelationsEventNames.EmotionalPressureShifted,
     ];
 
     private static readonly string[] ConsumedEventNames =
@@ -44,21 +38,23 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
         // Step 1b gap 4: branch split / heir weakened → clan narrative (no-op dispatch)
         FamilyCoreEventNames.BranchSeparationApproved,
         FamilyCoreEventNames.HeirSecurityWeakened,
+        FamilyCoreEventNames.MarriageAllianceArranged,
+        EducationAndExamsEventNames.ExamPassed,
+        EducationAndExamsEventNames.ExamFailed,
+        EducationAndExamsEventNames.StudyAbandoned,
     ];
 
 
 
     public override string ModuleKey => KnownModuleKeys.SocialMemoryAndRelations;
 
-    public override int ModuleSchemaVersion => 2;
+    public override int ModuleSchemaVersion => 3;
 
     public override SimulationPhase Phase => SimulationPhase.SocialMemory;
 
     public override int ExecutionOrder => 400;
 
     public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.XunAndMonth;
-
-    public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
 
@@ -101,6 +97,10 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
             ClanTradeSnapshot? trade = tradeByClan.TryGetValue(clan.Id, out ClanTradeSnapshot? snapshot)
                 ? snapshot
                 : null;
+            IReadOnlyList<FamilyPersonSnapshot> members = familyQueries.GetClanMembers(clan.Id);
+            TraitAverages traits = BuildTraitAverages(members);
+            SocialPressureInput pressureInput = BuildPressureInput(clan, sponsoredHouseholds, trade);
+            ClanEmotionalClimateState climate = GetOrCreateClimate(scope.State, clan.Id);
 
             ApplyXunSocialPulse(
                 scope.Context.CurrentXun,
@@ -110,6 +110,7 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                 hasMigratingHousehold,
                 trade,
                 narrative);
+            ApplyXunTemperingPulse(scope.Context.CurrentXun, pressureInput, traits, climate, scope.Context.CurrentDate);
         }
     }
 
@@ -117,9 +118,15 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
     {
         IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
         IPopulationAndHouseholdsQueries populationQueries = scope.GetRequiredQuery<IPopulationAndHouseholdsQueries>();
+        ITradeAndIndustryQueries? tradeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.TradeAndIndustry)
+            ? scope.GetRequiredQuery<ITradeAndIndustryQueries>()
+            : null;
 
         IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
         IReadOnlyList<HouseholdPressureSnapshot> households = populationQueries.GetHouseholds();
+        Dictionary<ClanId, ClanTradeSnapshot> tradeByClan = tradeQueries is null
+            ? new Dictionary<ClanId, ClanTradeSnapshot>()
+            : tradeQueries.GetClanTrades().ToDictionary(static trade => trade.ClanId, static trade => trade);
 
         AdvanceMemoryLifecycle(scope.State);
 
@@ -135,16 +142,43 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
             int previousFavor = narrative.FavorBalance;
 
             int averageDistress = sponsoredHouseholds.Length == 0 ? 0 : sponsoredHouseholds.Sum(static household => household.Distress) / sponsoredHouseholds.Length;
+            ClanTradeSnapshot? trade = tradeByClan.TryGetValue(clan.Id, out ClanTradeSnapshot? tradeSnapshot)
+                ? tradeSnapshot
+                : null;
+            IReadOnlyList<FamilyPersonSnapshot> members = familyQueries.GetClanMembers(clan.Id);
+            TraitAverages traits = BuildTraitAverages(members);
+            SocialPressureInput pressureInput = BuildPressureInput(clan, sponsoredHouseholds, trade);
+            ClanEmotionalClimateState climate = GetOrCreateClimate(scope.State, clan.Id);
 
             narrative.GrudgePressure = Math.Clamp(narrative.GrudgePressure + ComputeGrudgeDelta(clan, averageDistress), 0, 100);
             narrative.FearPressure = Math.Clamp(narrative.FearPressure + (averageDistress >= 70 ? 1 : averageDistress < 45 ? -1 : 0), 0, 100);
             narrative.ShamePressure = Math.Clamp(narrative.ShamePressure + ComputeShameDelta(clan), 0, 100);
             narrative.FavorBalance = Math.Clamp(narrative.FavorBalance + ComputeFavorDelta(clan), -100, 100);
             narrative.PublicNarrative = BuildNarrativeText(clan, averageDistress, narrative.GrudgePressure);
+            TemperingOutcome tempering = ApplyMonthlyTempering(pressureInput, traits, climate, scope.Context.CurrentDate);
+            ApplyPersonPressureTempering(scope.State, clan, members, climate, pressureInput, scope.Context.CurrentDate);
 
             scope.RecordDiff(
                 $"{clan.ClanName}宗中旧怨{narrative.GrudgePressure}，惧意{narrative.FearPressure}，羞压{narrative.ShamePressure}。",
                 clan.Id.Value.ToString());
+
+            if (tempering.PressureBandRose)
+            {
+                scope.Emit(
+                    SocialMemoryAndRelationsEventNames.EmotionalPressureShifted,
+                    $"{clan.ClanName}门内情压升至{tempering.PressureBand}阶，{climate.LastTrace}。",
+                    clan.Id.Value.ToString(),
+                    BuildTemperingMetadata(clan.Id, EmotionalPressureAxis.Fear, tempering));
+            }
+
+            if (tempering.TemperingBandRose)
+            {
+                scope.Emit(
+                    SocialMemoryAndRelationsEventNames.PressureTempered,
+                    $"{clan.ClanName}受压久了，压力化为抑制与怨意的新底色。",
+                    clan.Id.Value.ToString(),
+                    BuildTemperingMetadata(clan.Id, EmotionalPressureAxis.Unknown, tempering));
+            }
 
             if (previousGrudge < 60 && narrative.GrudgePressure >= 60)
             {
@@ -169,6 +203,12 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
 
     public override void HandleEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)
     {
+        DispatchTradeShockEventsCore(scope);
+        DispatchViolentDeathEventsCore(scope);
+        DispatchFamilyBranchEventsCore(scope);
+        DispatchMarriageAllianceEventsCore(scope);
+        DispatchExamEventsCore(scope);
+        DispatchChildLossClimateEventsCore(scope);
         DispatchTradeShockEvents(scope);
         DispatchViolentDeathEvents(scope);
         DispatchFamilyBranchEvents(scope);
@@ -702,6 +742,37 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                 .ToArray();
         }
 
+        public ClanEmotionalClimateSnapshot GetClanEmotionalClimate(ClanId clanId)
+        {
+            ClanEmotionalClimateState? climate = _state.ClanEmotionalClimates.SingleOrDefault(climate => climate.ClanId == clanId);
+            return climate is null
+                ? new ClanEmotionalClimateSnapshot { ClanId = clanId }
+                : CloneClimate(climate);
+        }
+
+        public IReadOnlyList<ClanEmotionalClimateSnapshot> GetClanEmotionalClimates()
+        {
+            return _state.ClanEmotionalClimates
+                .OrderBy(static climate => climate.ClanId.Value)
+                .Select(CloneClimate)
+                .ToArray();
+        }
+
+        public PersonPressureTemperingSnapshot? FindPersonTempering(PersonId personId)
+        {
+            PersonPressureTemperingState? tempering = _state.PersonTemperings.SingleOrDefault(entry => entry.PersonId == personId);
+            return tempering is null ? null : ClonePersonTempering(tempering);
+        }
+
+        public IReadOnlyList<PersonPressureTemperingSnapshot> GetPersonTemperingsByClan(ClanId clanId)
+        {
+            return _state.PersonTemperings
+                .Where(entry => entry.ClanId == clanId)
+                .OrderBy(static entry => entry.PersonId.Value)
+                .Select(ClonePersonTempering)
+                .ToArray();
+        }
+
         private static SocialMemoryEntrySnapshot CloneMemory(MemoryRecordState memory)
         {
             return new SocialMemoryEntrySnapshot
@@ -737,6 +808,53 @@ public sealed class SocialMemoryAndRelationsModule : ModuleRunner<SocialMemoryAn
                 ShamePressure = narrative.ShamePressure,
                 FavorBalance = narrative.FavorBalance,
                 MemoryCount = memoryCount,
+            };
+        }
+
+        private static ClanEmotionalClimateSnapshot CloneClimate(ClanEmotionalClimateState climate)
+        {
+            return new ClanEmotionalClimateSnapshot
+            {
+                ClanId = climate.ClanId,
+                Fear = climate.Fear,
+                Shame = climate.Shame,
+                Grief = climate.Grief,
+                Anger = climate.Anger,
+                Obligation = climate.Obligation,
+                Hope = climate.Hope,
+                Trust = climate.Trust,
+                Restraint = climate.Restraint,
+                Hardening = climate.Hardening,
+                Bitterness = climate.Bitterness,
+                Volatility = climate.Volatility,
+                LastPressureScore = climate.LastPressureScore,
+                LastPressureBand = climate.LastPressureBand,
+                LastTemperingBand = climate.LastTemperingBand,
+                LastUpdated = climate.LastUpdated,
+                LastTrace = climate.LastTrace,
+            };
+        }
+
+        private static PersonPressureTemperingSnapshot ClonePersonTempering(PersonPressureTemperingState tempering)
+        {
+            return new PersonPressureTemperingSnapshot
+            {
+                PersonId = tempering.PersonId,
+                ClanId = tempering.ClanId,
+                Fear = tempering.Fear,
+                Shame = tempering.Shame,
+                Grief = tempering.Grief,
+                Anger = tempering.Anger,
+                Obligation = tempering.Obligation,
+                Hope = tempering.Hope,
+                Trust = tempering.Trust,
+                Restraint = tempering.Restraint,
+                Hardening = tempering.Hardening,
+                Bitterness = tempering.Bitterness,
+                Volatility = tempering.Volatility,
+                LastPressureScore = tempering.LastPressureScore,
+                LastUpdated = tempering.LastUpdated,
+                LastTrace = tempering.LastTrace,
             };
         }
     }

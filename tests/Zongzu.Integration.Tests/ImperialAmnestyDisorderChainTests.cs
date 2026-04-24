@@ -145,10 +145,11 @@ public sealed class ImperialAmnestyDisorderChainTests
             HasAppointment = true,
             OfficeTitle = "县尉",
             AuthorityTier = 2,
-            PetitionBacklog = 20,
-            ClerkDependence = 20,
             PetitionPressure = 20,
-            AdministrativeTaskLoad = 20,
+            JurisdictionLeverage = 30,
+            PetitionBacklog = 60,
+            ClerkDependence = 50,
+            AdministrativeTaskLoad = 40,
         });
         officeState.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(officeState.People);
 
@@ -159,12 +160,12 @@ public sealed class ImperialAmnestyDisorderChainTests
         orderState.Settlements.Add(new SettlementDisorderState
         {
             SettlementId = countyId,
-            BanditThreat = 28,
+            BanditThreat = 35,
             RoutePressure = 24,
             SuppressionDemand = 19,
-            DisorderPressure = 46,
-            BlackRoutePressure = 18,
-            CoercionRisk = 12,
+            DisorderPressure = 48,
+            BlackRoutePressure = 34,
+            CoercionRisk = 25,
         });
 
         // Inject grand amnesty before the tick.
@@ -206,7 +207,7 @@ public sealed class ImperialAmnestyDisorderChainTests
         // the real scheduler, after normal xun/month drift and the amnesty pulse.
         SettlementDisorderState targetSettlement = orderState.Settlements.Single(
             s => s.SettlementId == countyId);
-        Console.WriteLine($"DISORDER: initial=46 final={targetSettlement.DisorderPressure}");
+        Console.WriteLine($"DISORDER: initial=48 final={targetSettlement.DisorderPressure}");
 
         Assert.That(
             events,
@@ -214,6 +215,12 @@ public sealed class ImperialAmnestyDisorderChainTests
                 e => e.EventType == OrderAndBanditryEventNames.DisorderSpike
                      && e.EntityKey == countyId.Value.ToString()),
             "Real scheduler must drain AmnestyApplied into DisorderSpike when threshold crossed.");
+        IDomainEvent spike = events.Single(e =>
+            e.EventType == OrderAndBanditryEventNames.DisorderSpike
+            && e.EntityKey == countyId.Value.ToString());
+        Assert.That(spike.Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseAmnesty));
+        Assert.That(int.Parse(spike.Metadata[DomainEventMetadataKeys.AmnestyWave]), Is.GreaterThanOrEqualTo(50));
+        Assert.That(spike.Metadata[DomainEventMetadataKeys.DisorderDelta], Is.Not.Empty);
 
         Assert.That(targetSettlement.DisorderPressure, Is.GreaterThanOrEqualTo(50),
             "Target settlement disorder must cross the public spike threshold after real scheduler drain.");

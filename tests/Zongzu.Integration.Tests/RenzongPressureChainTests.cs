@@ -389,11 +389,13 @@ public sealed class RenzongPressureChainTests
             Id = new HouseholdId(1),
             HouseholdName = "张家",
             SettlementId = new SettlementId(1),
-            Distress = 52,
-            DebtPressure = 40,
-            LaborCapacity = 100,
-            MigrationRisk = 20,
-            GrainStore = 50,
+            Livelihood = LivelihoodType.PettyTrader,
+            Distress = 55,
+            DebtPressure = 65,
+            LaborCapacity = 25,
+            MigrationRisk = 75,
+            GrainStore = 10,
+            DependentCount = 4,
         });
         popState.Households.Add(new PopulationHouseholdState
         {
@@ -411,11 +413,13 @@ public sealed class RenzongPressureChainTests
             Id = new HouseholdId(3),
             HouseholdName = "李家",
             SettlementId = new SettlementId(2),
-            Distress = 52,
-            DebtPressure = 40,
-            LaborCapacity = 100,
-            MigrationRisk = 20,
-            GrainStore = 50,
+            Livelihood = LivelihoodType.PettyTrader,
+            Distress = 55,
+            DebtPressure = 65,
+            LaborCapacity = 25,
+            MigrationRisk = 75,
+            GrainStore = 10,
+            DependentCount = 4,
         });
 
         TradeAndIndustryState tradeState = (TradeAndIndustryState)states[KnownModuleKeys.TradeAndIndustry];

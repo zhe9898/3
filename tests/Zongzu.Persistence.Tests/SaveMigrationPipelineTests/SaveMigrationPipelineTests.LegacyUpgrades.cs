@@ -9,6 +9,7 @@ using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
 using Zongzu.Modules.PublicLifeAndRumor;
+using Zongzu.Modules.SocialMemoryAndRelations;
 using Zongzu.Modules.TradeAndIndustry;
 using Zongzu.Modules.WarfareCampaign;
 using Zongzu.Modules.WorldSettlements;
@@ -257,6 +258,61 @@ public sealed partial class SaveMigrationPipelineTests
         Assert.That(migratedState.Settlements.All(static settlement => settlement.NodeKind != SettlementNodeKind.Unknown), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.Visibility == NodeVisibility.StateVisible), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.EcoZone == SettlementEcoZone.JiangnanWaterNetwork), Is.True);
+    }
+
+    [Test]
+    public void LoadM2_DefaultMigrationPipeline_UpgradesLegacySocialMemorySchema()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260608);
+        simulation.AdvanceMonths(1);
+
+        SaveRoot saveRoot = simulation.ExportSave();
+        MessagePackModuleStateSerializer serializer = new();
+        SocialMemoryAndRelationsState currentState = (SocialMemoryAndRelationsState)serializer.Deserialize(
+            typeof(SocialMemoryAndRelationsState),
+            saveRoot.ModuleStates[KnownModuleKeys.SocialMemoryAndRelations].Payload);
+
+        if (currentState.ClanNarratives.Count == 0)
+        {
+            currentState.ClanNarratives.Add(new ClanNarrativeState
+            {
+                ClanId = new ClanId(1),
+                GrudgePressure = 24,
+                FearPressure = 18,
+                ShamePressure = 12,
+                FavorBalance = 6,
+            });
+        }
+
+        currentState.ClanEmotionalClimates.Clear();
+        currentState.PersonTemperings.Clear();
+
+        saveRoot.ModuleStates[KnownModuleKeys.SocialMemoryAndRelations] = new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.SocialMemoryAndRelations,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(SocialMemoryAndRelationsState), currentState),
+        };
+
+        GameSimulation reloaded = SimulationBootstrapper.LoadM2(saveRoot);
+        SaveRoot reloadedSave = reloaded.ExportSave();
+        SocialMemoryAndRelationsState migratedState = (SocialMemoryAndRelationsState)serializer.Deserialize(
+            typeof(SocialMemoryAndRelationsState),
+            reloadedSave.ModuleStates[KnownModuleKeys.SocialMemoryAndRelations].Payload);
+
+        Assert.That(reloaded.LoadMigrationReport, Is.Not.Null);
+        Assert.That(reloaded.LoadMigrationReport!.ConsistencyPassed, Is.True);
+        Assert.That(reloaded.LoadMigrationReport.ModuleStateKeySetPreserved, Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations
+                && step.SourceVersion == 2
+                && step.TargetVersion == 3),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.SocialMemoryAndRelations].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(migratedState.ClanNarratives, Has.Count.EqualTo(currentState.ClanNarratives.Count));
+        Assert.That(migratedState.ClanEmotionalClimates, Has.Count.EqualTo(currentState.ClanNarratives.Count));
+        Assert.That(migratedState.ClanEmotionalClimates.All(static climate => climate.LastTrace.Contains("schema2 narrative", StringComparison.Ordinal)), Is.True);
     }
 
     [Test]

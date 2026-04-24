@@ -8,14 +8,6 @@ namespace Zongzu.Modules.EducationAndExams;
 
 public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsState>
 {
-    private static readonly string[] CommandNames =
-    [
-        "FundStudy",
-        "HireTutor",
-        "RedirectEducationalSupport",
-        "WithdrawFromStudy",
-    ];
-
     private static readonly string[] EventNames =
     [
         EducationAndExamsEventNames.ExamPassed,
@@ -35,8 +27,6 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
     public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.MonthAndSeasonal;
 
     public override FeatureMode DefaultMode => FeatureMode.Lite;
-
-    public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
 
@@ -119,13 +109,15 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
 
             if (score >= 75)
             {
+                ExamTier passedTier = student.CurrentTier;
+                int passedStudyProgress = student.StudyProgress;
                 student.HasPassedLocalExam = true;
                 student.IsStudying = false;
                 student.ScholarlyReputation = Math.Clamp(student.ScholarlyReputation + 15, 0, 100);
                 student.LastOutcome = "Passed";
                 student.LastResult = ExamResult.Passed;
                 student.FallbackPath = FallbackPath.ContinueStudy;
-                student.CurrentTier = PromoteTier(student.CurrentTier);
+                student.CurrentTier = PromoteTier(passedTier);
                 student.LastExplanation =
                     $"以学业{student.StudyProgress}、塾望{academy.Prestige}、塾师之助{student.TutorQuality}与宗房接济{clan.SupportReserve}，场中得分{score}。";
                 student.StudyProgress = 25;
@@ -133,7 +125,23 @@ public sealed class EducationAndExamsModule : ModuleRunner<EducationAndExamsStat
                 scope.RecordDiff(
                     $"{student.DisplayName}场屋得捷。{student.LastExplanation}",
                     student.PersonId.Value.ToString());
-                scope.Emit(EducationAndExamsEventNames.ExamPassed, $"{student.DisplayName}场屋得捷。", student.PersonId.Value.ToString());
+                scope.Emit(
+                    EducationAndExamsEventNames.ExamPassed,
+                    $"{student.DisplayName}场屋得捷。",
+                    student.PersonId.Value.ToString(),
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseExamPass,
+                        [DomainEventMetadataKeys.ExamTier] = passedTier.ToString(),
+                        [DomainEventMetadataKeys.ExamScore] = score.ToString(),
+                        [DomainEventMetadataKeys.ExamStudyProgress] = passedStudyProgress.ToString(),
+                        [DomainEventMetadataKeys.ExamAcademyPrestige] = academy.Prestige.ToString(),
+                        [DomainEventMetadataKeys.ExamTutorQuality] = student.TutorQuality.ToString(),
+                        [DomainEventMetadataKeys.ExamClanSupportReserve] = clan.SupportReserve.ToString(),
+                        [DomainEventMetadataKeys.ExamFavorBalance] = narrative.FavorBalance.ToString(),
+                        [DomainEventMetadataKeys.ExamShamePressure] = narrative.ShamePressure.ToString(),
+                        [DomainEventMetadataKeys.ExamStress] = student.Stress.ToString(),
+                    });
             }
             else
             {

@@ -293,6 +293,7 @@ public sealed class WorldSettlementsModule : ModuleRunner<WorldSettlementsState>
             new Dictionary<string, string>
             {
                 [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseFrontier,
+                [DomainEventMetadataKeys.SettlementId] = affected.Id.Value.ToString(),
                 [DomainEventMetadataKeys.Severity] = severity,
                 [DomainEventMetadataKeys.FrontierPressure] = frontierPressure.ToString(),
             });

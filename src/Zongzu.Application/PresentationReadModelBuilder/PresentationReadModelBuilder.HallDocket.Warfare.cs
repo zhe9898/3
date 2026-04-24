@@ -16,11 +16,7 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
         SettlementId settlementId)
     {
-        return affordances
-            .Where(command =>
-                command.IsEnabled
-                && command.SettlementId == settlementId
-                && string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.Warfare, StringComparison.Ordinal))
+        return EnumerateAffordancesForSurface(affordances, PlayerCommandSurfaceKeys.Warfare, settlementId)
             .OrderBy(command => GetWarfareHallAffordancePriority(command.CommandName))
             .ThenBy(static command => command.CommandName, StringComparer.Ordinal)
             .FirstOrDefault();
@@ -42,10 +38,7 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<PlayerCommandReceiptSnapshot> receipts,
         CampaignFrontSnapshot campaign)
     {
-        return receipts
-            .Where(receipt =>
-                receipt.SettlementId == campaign.AnchorSettlementId
-                && string.Equals(receipt.SurfaceKey, PlayerCommandSurfaceKeys.Warfare, StringComparison.Ordinal))
+        return EnumerateReceiptsForSurface(receipts, PlayerCommandSurfaceKeys.Warfare, campaign.AnchorSettlementId)
             .OrderBy(receipt =>
                 string.Equals(receipt.CommandName, campaign.ActiveDirectiveCode, StringComparison.Ordinal) ? 0 : 1)
             .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.OutcomeSummary))
@@ -57,17 +50,11 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<NarrativeNotificationSnapshot> notifications,
         SettlementId settlementId)
     {
-        string settlementKey = settlementId.Value.ToString();
-
-        return notifications
-            .Where(notification =>
-                string.Equals(notification.SourceModuleKey, KnownModuleKeys.WarfareCampaign, StringComparison.Ordinal)
-                && notification.Traces.Any(trace => string.Equals(trace.EntityKey, settlementKey, StringComparison.Ordinal)))
-            .OrderBy(static notification => notification.Tier)
-            .ThenByDescending(static notification => notification.CreatedAt.Year)
-            .ThenByDescending(static notification => notification.CreatedAt.Month)
-            .ThenByDescending(static notification => notification.Id.Value)
-            .FirstOrDefault();
+        return SelectPrimarySettlementNotification(
+            notifications,
+            settlementId,
+            static _ => 0,
+            KnownModuleKeys.WarfareCampaign);
     }
 
     private static int ComputeWarfareHallDocketUrgencyScore(CampaignFrontSnapshot campaign)

@@ -29,7 +29,7 @@ public sealed class FrontierSupplyHandlerTests
     }
 
     [Test]
-    public void FrontierStrainEscalated_EmitsOfficialSupplyRequisition_ForMatchingJurisdictionOnly()
+    public void FrontierStrainEscalated_EmitsProfiledOfficialSupplyRequisition_ForMatchingJurisdictionOnly()
     {
         OfficeAndCareerModule module = new();
         OfficeAndCareerState state = new();
@@ -42,6 +42,10 @@ public sealed class FrontierSupplyHandlerTests
             HasAppointment = true,
             OfficeTitle = "County Magistrate",
             AuthorityTier = 2,
+            JurisdictionLeverage = 40,
+            ClerkDependence = 36,
+            PetitionBacklog = 20,
+            AdministrativeTaskLoad = 24,
         });
         state.People.Add(new OfficeCareerState
         {
@@ -67,11 +71,7 @@ public sealed class FrontierSupplyHandlerTests
             buffer,
             new WorldDiff());
 
-        buffer.Emit(new DomainEventRecord(
-            KnownModuleKeys.WorldSettlements,
-            WorldSettlementsEventNames.FrontierStrainEscalated,
-            "frontier pressure for settlement 10",
-            "10"));
+        buffer.Emit(MakeFrontierEvent(new SettlementId(10)));
 
         module.HandleEvents(new ModuleEventHandlingScope<OfficeAndCareerState>(
             state, context, buffer.Events.ToList()));
@@ -87,6 +87,22 @@ public sealed class FrontierSupplyHandlerTests
         Assert.That(
             emitted[0].Metadata[DomainEventMetadataKeys.SourceEventType],
             Is.EqualTo(WorldSettlementsEventNames.FrontierStrainEscalated));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.SettlementId], Is.EqualTo("10"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo("76"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.Severity], Is.EqualTo(DomainEventMetadataValues.SeverityFrontierSevere));
+        Assert.That(int.Parse(emitted[0].Metadata[DomainEventMetadataKeys.OfficialSupplyPressure]), Is.GreaterThan(0));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.OfficialSupplyQuotaPressure], Is.Not.Empty);
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure], Is.Not.Empty);
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer], Is.Not.Empty);
+
+        OfficeCareerState affectedOfficial = state.People.Single(static p => p.PersonId == new PersonId(1));
+        OfficeCareerState offScopeOfficial = state.People.Single(static p => p.PersonId == new PersonId(2));
+        Assert.That(affectedOfficial.AdministrativeTaskLoad, Is.GreaterThan(24),
+            "Supply requisition should leave office-owned task pressure behind.");
+        Assert.That(affectedOfficial.PetitionBacklog, Is.GreaterThan(20),
+            "Supply requisition should thicken the docket instead of only emitting a relay event.");
+        Assert.That(offScopeOfficial.AdministrativeTaskLoad, Is.EqualTo(0),
+            "Off-scope jurisdiction must not receive office-side pressure.");
     }
 
     [Test]
@@ -118,11 +134,7 @@ public sealed class FrontierSupplyHandlerTests
             buffer,
             new WorldDiff());
 
-        buffer.Emit(new DomainEventRecord(
-            KnownModuleKeys.WorldSettlements,
-            WorldSettlementsEventNames.FrontierStrainEscalated,
-            "frontier pressure for settlement 20",
-            "20"));
+        buffer.Emit(MakeFrontierEvent(new SettlementId(20)));
 
         module.HandleEvents(new ModuleEventHandlingScope<OfficeAndCareerState>(
             state, context, buffer.Events.ToList()));
@@ -151,11 +163,7 @@ public sealed class FrontierSupplyHandlerTests
             buffer,
             new WorldDiff());
 
-        buffer.Emit(new DomainEventRecord(
-            KnownModuleKeys.WorldSettlements,
-            WorldSettlementsEventNames.FrontierStrainEscalated,
-            "frontier pressure for settlement 10",
-            "10"));
+        buffer.Emit(MakeFrontierEvent(new SettlementId(10)));
 
         module.HandleEvents(new ModuleEventHandlingScope<OfficeAndCareerState>(
             state, context, buffer.Events.ToList()));
@@ -164,5 +172,20 @@ public sealed class FrontierSupplyHandlerTests
             buffer.Events.Select(static e => e.EventType),
             Does.Not.Contain(OfficeAndCareerEventNames.OfficialSupplyRequisition),
             "No jurisdiction means no supply requisition.");
+    }
+
+    private static DomainEventRecord MakeFrontierEvent(SettlementId settlementId)
+    {
+        return new DomainEventRecord(
+            KnownModuleKeys.WorldSettlements,
+            WorldSettlementsEventNames.FrontierStrainEscalated,
+            $"frontier pressure for settlement {settlementId.Value}",
+            settlementId.Value.ToString(),
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.SettlementId] = settlementId.Value.ToString(),
+                [DomainEventMetadataKeys.FrontierPressure] = "76",
+                [DomainEventMetadataKeys.Severity] = DomainEventMetadataValues.SeverityFrontierSevere,
+            });
     }
 }

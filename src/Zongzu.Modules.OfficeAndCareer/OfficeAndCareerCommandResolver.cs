@@ -1,24 +1,27 @@
-﻿using System;
+using System;
 using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
-using Zongzu.Modules.FamilyCore;
-using Zongzu.Modules.OfficeAndCareer;
-using Zongzu.Modules.OrderAndBanditry;
 
-namespace Zongzu.Application;
+namespace Zongzu.Modules.OfficeAndCareer;
 
-public sealed partial class PlayerCommandService
+public sealed class OfficeAndCareerCommandContext
 {
-    private static PlayerCommandResult IssueOfficeIntent(GameSimulation simulation, PlayerCommandRequest command)
-    {
-        if (!simulation.FeatureManifest.IsEnabled(KnownModuleKeys.OfficeAndCareer))
-        {
-            return BuildRejectedOfficeResult(command, "当前存档未启用官署权柄。");
-        }
+    public OfficeAndCareerState State { get; init; } = new();
 
-        OfficeAndCareerState state = simulation.GetMutableModuleState<OfficeAndCareerState>(KnownModuleKeys.OfficeAndCareer);
-        OfficeCareerState[] careers = state.People
+    public PlayerCommandRequest Command { get; init; } = new();
+}
+
+public static class OfficeAndCareerCommandResolver
+{
+    public static PlayerCommandResult IssueIntent(OfficeAndCareerCommandContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(context.State);
+        ArgumentNullException.ThrowIfNull(context.Command);
+
+        PlayerCommandRequest command = context.Command;
+        OfficeCareerState[] careers = context.State.People
             .Where(person => person.HasAppointment && person.SettlementId == command.SettlementId)
             .OrderByDescending(static person => person.AuthorityTier)
             .ThenByDescending(static person => person.OfficeReputation)
@@ -49,12 +52,11 @@ public sealed partial class PlayerCommandService
                 return BuildRejectedOfficeResult(command, $"官署不识此令：{command.CommandName}。");
         }
 
-        state.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(state.People);
-        simulation.RefreshReplayHash();
+        context.State.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(context.State.People);
 
         bool isPublicLifeCommand = IsPublicLifeOfficeCommand(command.CommandName);
         string label = isPublicLifeCommand
-            ? DeterminePublicLifeCommandLabel(command.CommandName)
+            ? DeterminePublicLifeOfficeCommandLabel(command.CommandName)
             : DetermineOfficeCommandLabel(command.CommandName);
 
         return new PlayerCommandResult
@@ -68,6 +70,26 @@ public sealed partial class PlayerCommandService
             Label = label,
             Summary = $"{leadCareer.DisplayName}已奉行{label}：{leadCareer.LastPetitionOutcome}",
             TargetLabel = leadCareer.DisplayName,
+        };
+    }
+
+    public static string DetermineOfficeCommandLabel(string commandName)
+    {
+        return commandName switch
+        {
+            PlayerCommandNames.PetitionViaOfficeChannels => "批覆词状",
+            PlayerCommandNames.DeployAdministrativeLeverage => "发签催办",
+            _ => commandName,
+        };
+    }
+
+    public static string DeterminePublicLifeOfficeCommandLabel(string commandName)
+    {
+        return commandName switch
+        {
+            PlayerCommandNames.PostCountyNotice => "张榜晓谕",
+            PlayerCommandNames.DispatchRoadReport => "遣吏催报",
+            _ => commandName,
         };
     }
 
@@ -161,18 +183,8 @@ public sealed partial class PlayerCommandService
             SettlementId = command.SettlementId,
             ClanId = command.ClanId,
             CommandName = command.CommandName,
-            Label = isPublicLife ? DeterminePublicLifeCommandLabel(command.CommandName) : DetermineOfficeCommandLabel(command.CommandName),
+            Label = isPublicLife ? DeterminePublicLifeOfficeCommandLabel(command.CommandName) : DetermineOfficeCommandLabel(command.CommandName),
             Summary = summary,
-        };
-    }
-
-    internal static string DetermineOfficeCommandLabel(string commandName)
-    {
-        return commandName switch
-        {
-            PlayerCommandNames.PetitionViaOfficeChannels => "批覆词状",
-            PlayerCommandNames.DeployAdministrativeLeverage => "发签催办",
-            _ => commandName,
         };
     }
 

@@ -85,10 +85,10 @@ public sealed class FrontierSupplyHouseholdChainTests
         PopulationHouseholdState household1 = popState.Households.Single(h => h.Id == new HouseholdId(1));
         PopulationHouseholdState household2 = popState.Households.Single(h => h.Id == new HouseholdId(2));
 
-        Assert.That(household1.Distress, Is.EqualTo(83),
-            "Household in settlement 1 must gain +5 distress from supply requisition.");
-        Assert.That(household1.DebtPressure, Is.EqualTo(33),
-            "Household in settlement 1 must gain +3 debt from supply requisition.");
+        Assert.That(household1.Distress, Is.GreaterThanOrEqualTo(80),
+            "Household in settlement 1 must cross the burden receipt threshold from profiled supply pressure.");
+        Assert.That(household1.DebtPressure, Is.GreaterThan(30),
+            "Household in settlement 1 must gain debt from profiled supply pressure.");
         Assert.That(household2.Distress, Is.EqualTo(40),
             "Household in settlement 2 must remain untouched.");
         Assert.That(household2.DebtPressure, Is.EqualTo(30),
@@ -97,8 +97,9 @@ public sealed class FrontierSupplyHouseholdChainTests
             buffer.Events,
             Has.Some.Matches<IDomainEvent>(
                 e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased
-                     && e.EntityKey == "1"),
-            "PopulationAndHouseholds must emit the threshold-crossing burden receipt.");
+                     && e.EntityKey == "1"
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.OfficialSupplyDistressDelta)),
+            "PopulationAndHouseholds must emit the threshold-crossing burden receipt with supply-profile metadata.");
     }
 
     [Test]

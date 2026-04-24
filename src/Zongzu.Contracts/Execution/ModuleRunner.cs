@@ -36,6 +36,8 @@ public interface IModuleRunner
     void RunMonth(ModuleExecutionContext context, object state);
 
     void HandleEvents(ModuleExecutionContext context, object state, IReadOnlyList<IDomainEvent> events);
+
+    PlayerCommandResult HandleCommand(ModuleExecutionContext context, object state, PlayerCommandRequest command);
 }
 
 public interface IModuleStateDescriptor
@@ -84,6 +86,20 @@ public abstract class ModuleRunner<TState> : IModuleRunner
     {
     }
 
+    public virtual PlayerCommandResult HandleCommand(ModuleCommandHandlingScope<TState> scope)
+    {
+        return new PlayerCommandResult
+        {
+            Accepted = false,
+            ModuleKey = ModuleKey,
+            SettlementId = scope.Command.SettlementId,
+            ClanId = scope.Command.ClanId,
+            CommandName = scope.Command.CommandName,
+            Label = scope.Command.CommandName,
+            Summary = $"{ModuleKey} does not handle player command {scope.Command.CommandName}.",
+        };
+    }
+
     object IModuleRunner.CreateInitialState()
     {
         return CreateInitialState();
@@ -107,6 +123,11 @@ public abstract class ModuleRunner<TState> : IModuleRunner
     void IModuleRunner.HandleEvents(ModuleExecutionContext context, object state, IReadOnlyList<IDomainEvent> events)
     {
         HandleEvents(new ModuleEventHandlingScope<TState>(CastState(state), context, events));
+    }
+
+    PlayerCommandResult IModuleRunner.HandleCommand(ModuleExecutionContext context, object state, PlayerCommandRequest command)
+    {
+        return HandleCommand(new ModuleCommandHandlingScope<TState>(CastState(state), context, command));
     }
 
     private static TState CastState(object state)

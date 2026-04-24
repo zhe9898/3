@@ -47,13 +47,13 @@ internal sealed class OfficeProjectionContext
 			OrderedJurisdictions = bundle.OfficeJurisdictions
 				.OrderBy(jurisdiction => jurisdiction.SettlementId.Value)
 				.ToArray(),
-			OrderedAffordances = bundle.PlayerCommands.Affordances
-				.Where(command => string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.Office, StringComparison.Ordinal))
+			OrderedAffordances = bundle.PlayerCommands
+				.EnumerateAffordances(PlayerCommandSurfaceKeys.Office)
 				.OrderBy(command => command.SettlementId.Value)
 				.ThenBy(command => command.CommandName, StringComparer.Ordinal)
 				.ToArray(),
-			OrderedReceipts = bundle.PlayerCommands.Receipts
-				.Where(receipt => string.Equals(receipt.SurfaceKey, PlayerCommandSurfaceKeys.Office, StringComparison.Ordinal))
+			OrderedReceipts = bundle.PlayerCommands
+				.EnumerateReceipts(PlayerCommandSurfaceKeys.Office)
 				.OrderBy(receipt => receipt.SettlementId.Value)
 				.ThenBy(receipt => receipt.CommandName, StringComparer.Ordinal)
 				.ToArray()

@@ -264,7 +264,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
             return;
         }
 
-        foreach (SettlementMarketState market in scope.State.Markets)
+        foreach (SettlementMarketState market in scope.State.Markets.OrderBy(static market => market.SettlementId.Value))
         {
             MarketGoodsEntryState entry = GetOrCreateGrainEntry(scope.State, market.SettlementId);
             int oldPrice = entry.CurrentPrice;
@@ -278,7 +278,18 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
                 scope.Emit(
                     TradeAndIndustryEventNames.GrainPriceSpike,
                     $"{market.MarketName}秋收后粮价陡起，现每石{entry.CurrentPrice}文。",
-                    market.SettlementId.Value.ToString());
+                    market.SettlementId.Value.ToString(),
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseHarvest,
+                        [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+                        [DomainEventMetadataKeys.SettlementId] = market.SettlementId.Value.ToString(),
+                        [DomainEventMetadataKeys.GrainOldPrice] = oldPrice.ToString(),
+                        [DomainEventMetadataKeys.GrainCurrentPrice] = entry.CurrentPrice.ToString(),
+                        [DomainEventMetadataKeys.GrainPriceDelta] = (entry.CurrentPrice - oldPrice).ToString(),
+                        [DomainEventMetadataKeys.GrainSupply] = entry.Supply.ToString(),
+                        [DomainEventMetadataKeys.GrainDemand] = entry.Demand.ToString(),
+                    });
             }
         }
     }

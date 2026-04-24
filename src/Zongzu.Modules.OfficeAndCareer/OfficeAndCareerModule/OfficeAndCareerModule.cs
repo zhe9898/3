@@ -18,13 +18,13 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
     [
 
-        "PursuePosting",
+        PlayerCommandNames.PetitionViaOfficeChannels,
 
-        "ResignOrRefuse",
+        PlayerCommandNames.DeployAdministrativeLeverage,
 
-        "PetitionViaOfficeChannels",
+        PlayerCommandNames.PostCountyNotice,
 
-        "DeployAdministrativeLeverage",
+        PlayerCommandNames.DispatchRoadReport,
 
     ];
 
@@ -318,7 +318,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 continue;
             }
 
-            int pressureScore = ComputeClerkCapturePressure(jurisdiction);
+            ClerkCaptureProfile profile = ComputeClerkCaptureProfile(jurisdiction);
             scope.Emit(
                 OfficeAndCareerEventNames.ClerkCaptureDeepened,
                 $"{jurisdiction.LeadOfficeTitle}衙门书吏坐大，案牍渐被架空。",
@@ -327,7 +327,19 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 {
                     [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseClerkCapture,
                     [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
-                    [DomainEventMetadataKeys.PressureScore] = pressureScore.ToString(),
+                    [DomainEventMetadataKeys.PressureScore] = profile.CapturePressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkDependence] = jurisdiction.ClerkDependence.ToString(),
+                    [DomainEventMetadataKeys.PetitionBacklog] = jurisdiction.PetitionBacklog.ToString(),
+                    [DomainEventMetadataKeys.AdministrativeTaskLoad] = jurisdiction.AdministrativeTaskLoad.ToString(),
+                    [DomainEventMetadataKeys.PetitionPressure] = jurisdiction.PetitionPressure.ToString(),
+                    [DomainEventMetadataKeys.AuthorityTier] = jurisdiction.AuthorityTier.ToString(),
+                    [DomainEventMetadataKeys.JurisdictionLeverage] = jurisdiction.JurisdictionLeverage.ToString(),
+                    [DomainEventMetadataKeys.ClerkCapturePressure] = profile.CapturePressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCaptureDependencePressure] = profile.DependencePressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCaptureBacklogPressure] = profile.BacklogPressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCaptureTaskPressure] = profile.TaskPressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCapturePetitionPressure] = profile.PetitionPressure.ToString(),
+                    [DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer] = profile.AuthorityBuffer.ToString(),
                 });
         }
 
@@ -471,9 +483,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 continue;
             }
 
-            // Find the official with jurisdiction over this settlement.
-            // For thin-chain, we pick the first appointed official.
-            OfficeCareerState? career = scope.State.People.FirstOrDefault(static p => p.HasAppointment);
+            SettlementId? settlementId = ResolveSettlementMetadata(domainEvent);
+            OfficeCareerState? career = SelectAppointedOfficialForDebtEvent(scope.State, settlementId);
             if (career is null)
             {
                 continue;
@@ -488,9 +499,44 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 scope.Emit(
                     OfficeAndCareerEventNames.YamenOverloaded,
                     $"{career.OfficeTitle}衙门口因欠税纠纷挤满请减之人，案牍骤增。",
-                    career.PersonId.Value.ToString());
+                    career.SettlementId.Value.ToString(),
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.Cause] = domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.Cause, out string? cause)
+                            ? cause
+                            : DomainEventMetadataValues.CauseTaxSeason,
+                        [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+                        [DomainEventMetadataKeys.SettlementId] = career.SettlementId.Value.ToString(),
+                        [DomainEventMetadataKeys.PersonId] = career.PersonId.Value.ToString(),
+                        [DomainEventMetadataKeys.PetitionBacklog] = career.PetitionBacklog.ToString(),
+                        [DomainEventMetadataKeys.AdministrativeTaskLoad] = career.AdministrativeTaskLoad.ToString(),
+                    });
             }
         }
+    }
+
+    private static OfficeCareerState? SelectAppointedOfficialForDebtEvent(
+        OfficeAndCareerState state,
+        SettlementId? settlementId)
+    {
+        IEnumerable<OfficeCareerState> appointedOfficials = state.People
+            .Where(static p => p.HasAppointment)
+            .OrderBy(static p => p.PersonId.Value);
+
+        return settlementId.HasValue
+            ? appointedOfficials.FirstOrDefault(p => p.SettlementId == settlementId.Value)
+            : appointedOfficials.FirstOrDefault();
+    }
+
+    private static SettlementId? ResolveSettlementMetadata(IDomainEvent domainEvent)
+    {
+        if (domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.SettlementId, out string? rawSettlementId)
+            && int.TryParse(rawSettlementId, out int settlementIdValue))
+        {
+            return new SettlementId(settlementIdValue);
+        }
+
+        return null;
     }
 
     private static void DispatchPublicLifeEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
@@ -514,9 +560,9 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
     private static void DispatchImperialRhythmEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
     {
         // Chain 4 thin slice: imperial amnesty wave → office docket release → disorder reflux.
-        bool hasRhythmChange = scope.Events.Any(static e =>
+        IDomainEvent? rhythmEvent = scope.Events.FirstOrDefault(static e =>
             e.EventType == WorldSettlementsEventNames.ImperialRhythmChanged);
-        if (!hasRhythmChange)
+        if (rhythmEvent is null)
         {
             return;
         }
@@ -547,7 +593,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             scope.Emit(
                 OfficeAndCareerEventNames.AmnestyApplied,
                 $"{jurisdiction.LeadOfficeTitle}奉赦，{jurisdiction.SettlementId.Value}地界在押人犯减等释放，案牍重理。",
-                jurisdiction.SettlementId.Value.ToString());
+                jurisdiction.SettlementId.Value.ToString(),
+                BuildAmnestyAppliedMetadata(amnestyWave, jurisdiction, rhythmEvent));
             emitted = true;
         }
 
@@ -555,6 +602,25 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         {
             scope.State.LastAppliedAmnestyWave = amnestyWave;
         }
+    }
+
+    private static Dictionary<string, string> BuildAmnestyAppliedMetadata(
+        int amnestyWave,
+        JurisdictionAuthorityState jurisdiction,
+        IDomainEvent sourceEvent)
+    {
+        return new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseAmnesty,
+            [DomainEventMetadataKeys.SourceEventType] = sourceEvent.EventType,
+            [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
+            [DomainEventMetadataKeys.AmnestyWave] = amnestyWave.ToString(),
+            [DomainEventMetadataKeys.AuthorityTier] = jurisdiction.AuthorityTier.ToString(),
+            [DomainEventMetadataKeys.JurisdictionLeverage] = jurisdiction.JurisdictionLeverage.ToString(),
+            [DomainEventMetadataKeys.ClerkDependence] = jurisdiction.ClerkDependence.ToString(),
+            [DomainEventMetadataKeys.PetitionBacklog] = jurisdiction.PetitionBacklog.ToString(),
+            [DomainEventMetadataKeys.AdministrativeTaskLoad] = jurisdiction.AdministrativeTaskLoad.ToString(),
+        };
     }
 
     private static void DispatchFrontierStrainEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
@@ -579,18 +645,140 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 continue;
             }
 
+            OfficialSupplyRequisitionProfile profile = ComputeOfficialSupplyRequisitionProfile(domainEvent, jurisdiction);
+            ApplyOfficialSupplyOfficeLoad(scope.State, settlementId, profile);
+
             scope.Emit(
                 OfficeAndCareerEventNames.OfficialSupplyRequisition,
                 $"{jurisdiction.LeadOfficeTitle}奉边报征粮，{jurisdiction.SettlementId.Value}地界需筹军需。",
                 jurisdiction.SettlementId.Value.ToString(),
-                new Dictionary<string, string>
-                {
-                    [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseOfficialSupply,
-                    [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
-                    [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
-                });
+                BuildOfficialSupplyRequisitionMetadata(domainEvent, jurisdiction, profile));
+        }
+
+        scope.State.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(scope.State.People);
+    }
+
+    private static void ApplyOfficialSupplyOfficeLoad(
+        OfficeAndCareerState state,
+        SettlementId settlementId,
+        OfficialSupplyRequisitionProfile profile)
+    {
+        foreach (OfficeCareerState career in state.People
+            .Where(person => person.HasAppointment && person.SettlementId == settlementId)
+            .OrderBy(static person => person.PersonId.Value))
+        {
+            career.CurrentAdministrativeTask = "frontier supply requisition";
+            career.AdministrativeTaskLoad = Math.Clamp(
+                career.AdministrativeTaskLoad + Math.Max(1, profile.DocketPressure / 3),
+                0,
+                100);
+            career.PetitionBacklog = Math.Clamp(
+                career.PetitionBacklog + Math.Max(1, profile.DocketPressure / 4),
+                0,
+                100);
+            career.PetitionPressure = Math.Clamp(
+                career.PetitionPressure + Math.Max(1, profile.QuotaPressure / 4),
+                0,
+                100);
+            career.DemotionPressure = Math.Clamp(
+                career.DemotionPressure + Math.Max(0, profile.ClerkDistortionPressure / 4),
+                0,
+                100);
+            career.JurisdictionLeverage = Math.Clamp(
+                career.JurisdictionLeverage - Math.Max(0, profile.SupplyPressure / 12),
+                0,
+                100);
+            career.LastExplanation =
+                $"{career.LastExplanation} Frontier supply requisition: pressure {profile.SupplyPressure}, quota {profile.QuotaPressure}, clerk distortion {profile.ClerkDistortionPressure}.";
         }
     }
+
+    private static Dictionary<string, string> BuildOfficialSupplyRequisitionMetadata(
+        IDomainEvent sourceEvent,
+        JurisdictionAuthorityState jurisdiction,
+        OfficialSupplyRequisitionProfile profile)
+    {
+        return new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseOfficialSupply,
+            [DomainEventMetadataKeys.SourceEventType] = sourceEvent.EventType,
+            [DomainEventMetadataKeys.SettlementId] = jurisdiction.SettlementId.Value.ToString(),
+            [DomainEventMetadataKeys.FrontierPressure] = profile.FrontierPressure.ToString(),
+            [DomainEventMetadataKeys.Severity] = profile.Severity,
+            [DomainEventMetadataKeys.AuthorityTier] = jurisdiction.AuthorityTier.ToString(),
+            [DomainEventMetadataKeys.JurisdictionLeverage] = jurisdiction.JurisdictionLeverage.ToString(),
+            [DomainEventMetadataKeys.ClerkDependence] = jurisdiction.ClerkDependence.ToString(),
+            [DomainEventMetadataKeys.PetitionBacklog] = jurisdiction.PetitionBacklog.ToString(),
+            [DomainEventMetadataKeys.AdministrativeTaskLoad] = jurisdiction.AdministrativeTaskLoad.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = profile.SupplyPressure.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = profile.QuotaPressure.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = profile.DocketPressure.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = profile.ClerkDistortionPressure.ToString(),
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = profile.AuthorityBuffer.ToString(),
+        };
+    }
+
+    private static OfficialSupplyRequisitionProfile ComputeOfficialSupplyRequisitionProfile(
+        IDomainEvent sourceEvent,
+        JurisdictionAuthorityState jurisdiction)
+    {
+        int frontierPressure = ReadMetadataInt(sourceEvent, DomainEventMetadataKeys.FrontierPressure, 60);
+        string severity = sourceEvent.Metadata.TryGetValue(DomainEventMetadataKeys.Severity, out string? rawSeverity)
+            ? rawSeverity
+            : DomainEventMetadataValues.SeverityFrontierModerate;
+
+        int severityPressure = severity switch
+        {
+            DomainEventMetadataValues.SeverityFrontierSevere => 3,
+            DomainEventMetadataValues.SeverityFrontierModerate => 1,
+            _ => frontierPressure >= 70 ? 3 : frontierPressure >= 50 ? 1 : 0,
+        };
+        int quotaPressure = Math.Clamp(
+            (frontierPressure / 10) + severityPressure + (jurisdiction.AdministrativeTaskLoad / 20),
+            5,
+            16);
+        int docketPressure = Math.Clamp(
+            severityPressure + (jurisdiction.AdministrativeTaskLoad / 12) + (jurisdiction.PetitionBacklog / 14),
+            1,
+            14);
+        int clerkDistortionPressure = Math.Clamp(
+            (jurisdiction.ClerkDependence / 12) + (jurisdiction.PetitionBacklog / 20),
+            0,
+            10);
+        int authorityBuffer = Math.Clamp(
+            (jurisdiction.AuthorityTier * 2) + (jurisdiction.JurisdictionLeverage / 20),
+            0,
+            10);
+        int supplyPressure = Math.Clamp(
+            quotaPressure + docketPressure + clerkDistortionPressure - authorityBuffer,
+            4,
+            26);
+
+        return new OfficialSupplyRequisitionProfile(
+            Math.Clamp(frontierPressure, 0, 100),
+            severity,
+            supplyPressure,
+            quotaPressure,
+            docketPressure,
+            clerkDistortionPressure,
+            authorityBuffer);
+    }
+
+    private static int ReadMetadataInt(IDomainEvent domainEvent, string key, int fallback)
+    {
+        return domainEvent.Metadata.TryGetValue(key, out string? value) && int.TryParse(value, out int parsed)
+            ? parsed
+            : fallback;
+    }
+
+    private readonly record struct OfficialSupplyRequisitionProfile(
+        int FrontierPressure,
+        string Severity,
+        int SupplyPressure,
+        int QuotaPressure,
+        int DocketPressure,
+        int ClerkDistortionPressure,
+        int AuthorityBuffer);
 
     private static void DispatchCourtAgendaEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
     {
@@ -614,7 +802,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             return;
         }
 
-        int pressureScore = ComputePolicyWindowScore(target, mandateConfidence);
+        PolicyWindowProfile profile = ComputePolicyWindowProfile(target, mandateConfidence);
         scope.Emit(
             OfficeAndCareerEventNames.PolicyWindowOpened,
             $"{target.LeadOfficeTitle}辖下因朝局紧张，政策窗口忽开。",
@@ -625,8 +813,21 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 [DomainEventMetadataKeys.SourceEventType] = courtAgendaPressure.EventType,
                 [DomainEventMetadataKeys.SettlementId] = target.SettlementId.Value.ToString(),
                 [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
-                [DomainEventMetadataKeys.PressureScore] = pressureScore.ToString(),
+                [DomainEventMetadataKeys.PressureScore] = profile.WindowPressure.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowPressure] = profile.WindowPressure.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowMandateDeficit] = profile.MandateDeficit.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowAuthoritySignal] = profile.AuthoritySignal.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowLeverageSignal] = profile.LeverageSignal.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowPetitionSignal] = profile.PetitionSignal.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowAdministrativeDrag] = profile.AdministrativeDrag.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowClerkDrag] = profile.ClerkDrag.ToString(),
+                [DomainEventMetadataKeys.PolicyWindowBacklogDrag] = profile.BacklogDrag.ToString(),
                 [DomainEventMetadataKeys.AuthorityTier] = target.AuthorityTier.ToString(),
+                [DomainEventMetadataKeys.JurisdictionLeverage] = target.JurisdictionLeverage.ToString(),
+                [DomainEventMetadataKeys.ClerkDependence] = target.ClerkDependence.ToString(),
+                [DomainEventMetadataKeys.PetitionPressure] = target.PetitionPressure.ToString(),
+                [DomainEventMetadataKeys.PetitionBacklog] = target.PetitionBacklog.ToString(),
+                [DomainEventMetadataKeys.AdministrativeTaskLoad] = target.AdministrativeTaskLoad.ToString(),
             });
     }
 
@@ -652,8 +853,9 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             .ToList();
         foreach (OfficeCareerState career in appointed)
         {
+            DefectionProfile profile = ComputeDefectionProfile(career, mandateConfidence);
             career.OfficialDefectionRisk = Math.Clamp(
-                Math.Max(career.OfficialDefectionRisk, ComputeDefectionRisk(career, mandateConfidence)),
+                Math.Max(career.OfficialDefectionRisk, profile.DefectionRisk),
                 0,
                 100);
         }
@@ -669,6 +871,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             return;
         }
 
+        DefectionProfile defectionProfile = ComputeDefectionProfile(defector, mandateConfidence);
         defector.HasAppointment = false;
         defector.IsEligible = false;
         defector.LastOutcome = "Defected";
@@ -686,6 +889,16 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 [DomainEventMetadataKeys.PersonId] = defector.PersonId.Value.ToString(),
                 [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
                 [DomainEventMetadataKeys.DefectionRisk] = defector.OfficialDefectionRisk.ToString(),
+                [DomainEventMetadataKeys.DefectionBaselinePressure] = defectionProfile.BaselinePressure.ToString(),
+                [DomainEventMetadataKeys.DefectionMandateDeficit] = defectionProfile.MandateDeficit.ToString(),
+                [DomainEventMetadataKeys.DefectionDemotionPressure] = defectionProfile.DemotionPressure.ToString(),
+                [DomainEventMetadataKeys.DefectionClerkPressure] = defectionProfile.ClerkPressure.ToString(),
+                [DomainEventMetadataKeys.DefectionPetitionPressure] = defectionProfile.PetitionPressure.ToString(),
+                [DomainEventMetadataKeys.DefectionReputationStrain] = defectionProfile.ReputationStrain.ToString(),
+                [DomainEventMetadataKeys.DefectionAuthorityBuffer] = defectionProfile.AuthorityBuffer.ToString(),
+                [DomainEventMetadataKeys.AuthorityTier] = defector.AuthorityTier.ToString(),
+                [DomainEventMetadataKeys.ClerkDependence] = defector.ClerkDependence.ToString(),
+                [DomainEventMetadataKeys.PetitionPressure] = defector.PetitionPressure.ToString(),
             });
 
         scope.State.People = scope.State.People
@@ -697,13 +910,28 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
     private static int ComputeClerkCapturePressure(JurisdictionAuthorityState jurisdiction)
     {
-        return Math.Clamp(
-            jurisdiction.ClerkDependence
-            + (jurisdiction.PetitionBacklog / 2)
-            + (jurisdiction.AdministrativeTaskLoad / 3)
-            - (jurisdiction.AuthorityTier * 3),
+        return ComputeClerkCaptureProfile(jurisdiction).CapturePressure;
+    }
+
+    private static ClerkCaptureProfile ComputeClerkCaptureProfile(JurisdictionAuthorityState jurisdiction)
+    {
+        int dependencePressure = jurisdiction.ClerkDependence;
+        int backlogPressure = jurisdiction.PetitionBacklog / 2;
+        int taskPressure = jurisdiction.AdministrativeTaskLoad / 3;
+        int petitionPressure = jurisdiction.PetitionPressure / 4;
+        int authorityBuffer = (jurisdiction.AuthorityTier * 3) + (jurisdiction.JurisdictionLeverage / 10);
+        int capturePressure = Math.Clamp(
+            dependencePressure + backlogPressure + taskPressure + petitionPressure - authorityBuffer,
             0,
             100);
+
+        return new ClerkCaptureProfile(
+            capturePressure,
+            dependencePressure,
+            backlogPressure,
+            taskPressure,
+            petitionPressure,
+            authorityBuffer);
     }
 
     private static JurisdictionAuthorityState? SelectPolicyWindowJurisdiction(
@@ -711,40 +939,94 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         int mandateConfidence)
     {
         return jurisdictions
-            .Where(jurisdiction => jurisdiction.AuthorityTier >= CourtPolicyWindowAuthorityTierThreshold
-                                   && ComputePolicyWindowScore(jurisdiction, mandateConfidence) >= CourtPolicyWindowScoreThreshold)
-            .OrderByDescending(static jurisdiction => jurisdiction.AuthorityTier)
-            .ThenByDescending(static jurisdiction => jurisdiction.JurisdictionLeverage)
-            .ThenBy(static jurisdiction => jurisdiction.SettlementId.Value)
+            .Select(jurisdiction => new
+            {
+                Jurisdiction = jurisdiction,
+                Profile = ComputePolicyWindowProfile(jurisdiction, mandateConfidence),
+            })
+            .Where(candidate => candidate.Jurisdiction.AuthorityTier >= CourtPolicyWindowAuthorityTierThreshold
+                                && candidate.Profile.WindowPressure >= CourtPolicyWindowScoreThreshold)
+            .OrderByDescending(static candidate => candidate.Profile.WindowPressure)
+            .ThenByDescending(static candidate => candidate.Jurisdiction.AuthorityTier)
+            .ThenByDescending(static candidate => candidate.Jurisdiction.JurisdictionLeverage)
+            .ThenBy(static candidate => candidate.Jurisdiction.SettlementId.Value)
+            .Select(static candidate => candidate.Jurisdiction)
             .FirstOrDefault();
     }
 
     private static int ComputePolicyWindowScore(JurisdictionAuthorityState jurisdiction, int mandateConfidence)
     {
+        return ComputePolicyWindowProfile(jurisdiction, mandateConfidence).WindowPressure;
+    }
+
+    private static PolicyWindowProfile ComputePolicyWindowProfile(
+        JurisdictionAuthorityState jurisdiction,
+        int mandateConfidence)
+    {
         int mandateDeficit = Math.Max(0, 40 - mandateConfidence);
-        return Math.Clamp(
-            (jurisdiction.AuthorityTier * 18)
-            + (jurisdiction.JurisdictionLeverage / 3)
+        int authoritySignal = jurisdiction.AuthorityTier * 18;
+        int leverageSignal = jurisdiction.JurisdictionLeverage / 3;
+        int petitionSignal = jurisdiction.PetitionPressure / 5;
+        int administrativeDrag = jurisdiction.AdministrativeTaskLoad / 4;
+        int clerkDrag = jurisdiction.ClerkDependence / 5;
+        int backlogDrag = jurisdiction.PetitionBacklog / 6;
+        int windowPressure = Math.Clamp(
+            authoritySignal
+            + leverageSignal
+            + petitionSignal
             + mandateDeficit
-            - (jurisdiction.AdministrativeTaskLoad / 4),
+            - administrativeDrag
+            - clerkDrag
+            - backlogDrag,
             0,
             100);
+
+        return new PolicyWindowProfile(
+            windowPressure,
+            mandateDeficit,
+            authoritySignal,
+            leverageSignal,
+            petitionSignal,
+            administrativeDrag,
+            clerkDrag,
+            backlogDrag);
     }
 
     private static int ComputeDefectionRisk(OfficeCareerState career, int mandateConfidence)
     {
+        return ComputeDefectionProfile(career, mandateConfidence).DefectionRisk;
+    }
+
+    private static DefectionProfile ComputeDefectionProfile(OfficeCareerState career, int mandateConfidence)
+    {
         int mandateDeficit = Math.Max(0, 25 - mandateConfidence);
+        const int baselinePressure = 35;
+        int demotionPressure = career.DemotionPressure / 2;
+        int clerkPressure = career.ClerkDependence / 3;
+        int petitionPressure = career.PetitionPressure / 4;
         int reputationStrain = Math.Max(0, 40 - career.OfficeReputation);
-        return Math.Clamp(
-            35
+        int reputationPressure = reputationStrain / 2;
+        int authorityBuffer = (career.AuthorityTier * 4) + (Math.Max(0, career.OfficeReputation - 60) / 5);
+        int defectionRisk = Math.Clamp(
+            baselinePressure
             + mandateDeficit
-            + (career.DemotionPressure / 2)
-            + (career.ClerkDependence / 3)
-            + (career.PetitionPressure / 4)
-            + (reputationStrain / 2)
-            - (career.AuthorityTier * 4),
+            + demotionPressure
+            + clerkPressure
+            + petitionPressure
+            + reputationPressure
+            - authorityBuffer,
             0,
             100);
+
+        return new DefectionProfile(
+            defectionRisk,
+            baselinePressure,
+            mandateDeficit,
+            demotionPressure,
+            clerkPressure,
+            petitionPressure,
+            reputationPressure,
+            authorityBuffer);
     }
 
     private static int GetMandateConfidence(ModuleEventHandlingScope<OfficeAndCareerState> scope, IDomainEvent domainEvent)
@@ -758,4 +1040,32 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         IWorldSettlementsQueries worldQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
         return worldQueries.GetCurrentSeason().Imperial.MandateConfidence;
     }
+
+    private readonly record struct ClerkCaptureProfile(
+        int CapturePressure,
+        int DependencePressure,
+        int BacklogPressure,
+        int TaskPressure,
+        int PetitionPressure,
+        int AuthorityBuffer);
+
+    private readonly record struct PolicyWindowProfile(
+        int WindowPressure,
+        int MandateDeficit,
+        int AuthoritySignal,
+        int LeverageSignal,
+        int PetitionSignal,
+        int AdministrativeDrag,
+        int ClerkDrag,
+        int BacklogDrag);
+
+    private readonly record struct DefectionProfile(
+        int DefectionRisk,
+        int BaselinePressure,
+        int MandateDeficit,
+        int DemotionPressure,
+        int ClerkPressure,
+        int PetitionPressure,
+        int ReputationStrain,
+        int AuthorityBuffer);
 }

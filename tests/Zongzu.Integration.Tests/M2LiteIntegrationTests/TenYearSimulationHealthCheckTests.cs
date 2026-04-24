@@ -498,5 +498,10 @@ public sealed class TenYearSimulationHealthCheckTests
 
             _inner.HandleEvents(context, state, events);
         }
+
+        public PlayerCommandResult HandleCommand(ModuleExecutionContext context, object state, PlayerCommandRequest command)
+        {
+            return _inner.HandleCommand(context, state, command);
+        }
     }
 }

@@ -47,7 +47,10 @@ public sealed class OfficeCourtRegimePressureChainTests
             firstEvents,
             Has.Some.Matches<IDomainEvent>(
                 e => e.EventType == OfficeAndCareerEventNames.ClerkCaptureDeepened
-                     && e.EntityKey == "10"));
+                     && e.EntityKey == "10"
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCapturePressure)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCaptureBacklogPressure)
+                     && e.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer)));
         Assert.That(
             firstEvents,
             Has.None.Matches<IDomainEvent>(
@@ -108,6 +111,13 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(windows.Length, Is.EqualTo(1),
             "Court agenda pressure must not fan out into every jurisdiction.");
         Assert.That(windows[0].EntityKey, Is.EqualTo("10"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowPressure], Is.EqualTo("84"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowMandateDeficit], Is.EqualTo("10"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowAuthoritySignal], Is.EqualTo("54"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowLeverageSignal], Is.EqualTo("20"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowAdministrativeDrag], Is.EqualTo("0"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowClerkDrag], Is.EqualTo("0"));
+        Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowBacklogDrag], Is.EqualTo("0"));
     }
 
     [Test]
@@ -159,6 +169,14 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(defections.Length, Is.EqualTo(1),
             "Regime pressure must resolve through risk allocation, not all-official defection.");
         Assert.That(defections[0].EntityKey, Is.EqualTo("1"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionRisk], Is.EqualTo("100"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionBaselinePressure], Is.EqualTo("35"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionMandateDeficit], Is.EqualTo("5"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionDemotionPressure], Is.EqualTo("45"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionClerkPressure], Is.EqualTo("20"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionPetitionPressure], Is.EqualTo("17"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionReputationStrain], Is.EqualTo("20"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.DefectionAuthorityBuffer], Is.EqualTo("8"));
         Assert.That(officeState.People.Single(static p => p.PersonId == new PersonId(1)).HasAppointment, Is.False);
         Assert.That(officeState.People.Single(static p => p.PersonId == new PersonId(2)).HasAppointment, Is.True);
     }

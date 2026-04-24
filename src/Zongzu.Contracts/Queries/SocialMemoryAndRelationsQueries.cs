@@ -34,4 +34,12 @@ public interface ISocialMemoryAndRelationsQueries
 
     /// <summary>降格人物记忆存根列表。Phase 4 新增。</summary>
     IReadOnlyList<DormantStubSnapshot> GetDormantStubs() => [];
+
+    ClanEmotionalClimateSnapshot GetClanEmotionalClimate(ClanId clanId) => new() { ClanId = clanId };
+
+    IReadOnlyList<ClanEmotionalClimateSnapshot> GetClanEmotionalClimates() => [];
+
+    PersonPressureTemperingSnapshot? FindPersonTempering(PersonId personId) => null;
+
+    IReadOnlyList<PersonPressureTemperingSnapshot> GetPersonTemperingsByClan(ClanId clanId) => [];
 }

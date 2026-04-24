@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Modules.PublicLifeAndRumor;
@@ -80,6 +81,51 @@ public sealed class Chain7ClerkCaptureTests
             ]));
 
         Assert.That(state.Settlements.Single().StreetTalkHeat, Is.EqualTo(100));
+    }
+
+    [Test]
+    public void HandleEvents_ClerkCaptureDeepened_UsesProfileMetadataForHeat()
+    {
+        PublicLifeAndRumorModule module = new();
+        PublicLifeAndRumorState state = module.CreateInitialState();
+        state.Settlements.Add(new SettlementPublicLifeState
+        {
+            SettlementId = new SettlementId(1),
+            SettlementName = "Lanxi",
+            SettlementTier = SettlementTier.CountySeat,
+            StreetTalkHeat = 30,
+        });
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 4),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(19)),
+            new QueryRegistry(),
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        module.HandleEvents(new ModuleEventHandlingScope<PublicLifeAndRumorState>(
+            state,
+            context,
+            [
+                new DomainEventRecord(
+                    KnownModuleKeys.OfficeAndCareer,
+                    OfficeAndCareerEventNames.ClerkCaptureDeepened,
+                    "clerk capture profile",
+                    "1",
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.ClerkCapturePressure] = "70",
+                        [DomainEventMetadataKeys.ClerkCaptureBacklogPressure] = "18",
+                        [DomainEventMetadataKeys.ClerkCaptureTaskPressure] = "15",
+                        [DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer] = "0",
+                    }),
+            ]));
+
+        SettlementPublicLifeState settlement = state.Settlements.Single();
+        Assert.That(settlement.StreetTalkHeat, Is.GreaterThan(42),
+            "Profile metadata should let severe clerk capture heat the public surface more than the legacy +12 fallback.");
+        Assert.That(settlement.LastPublicTrace, Does.Contain("捕获势70"));
     }
 
     [Test]

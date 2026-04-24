@@ -74,13 +74,13 @@ internal sealed class WarfareProjectionContext
 				.OrderByDescending(signal => signal.ResponseActivationLevel)
 				.ThenBy(signal => signal.SettlementId.Value)
 				.ToArray(),
-			OrderedAffordances = bundle.PlayerCommands.Affordances
-				.Where(command => string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.Warfare, StringComparison.Ordinal))
+			OrderedAffordances = bundle.PlayerCommands
+				.EnumerateAffordances(PlayerCommandSurfaceKeys.Warfare)
 				.OrderBy(command => command.SettlementId.Value)
 				.ThenBy(command => command.CommandName, StringComparer.Ordinal)
 				.ToArray(),
-			OrderedReceipts = bundle.PlayerCommands.Receipts
-				.Where(receipt => string.Equals(receipt.SurfaceKey, PlayerCommandSurfaceKeys.Warfare, StringComparison.Ordinal))
+			OrderedReceipts = bundle.PlayerCommands
+				.EnumerateReceipts(PlayerCommandSurfaceKeys.Warfare)
 				.OrderBy(receipt => receipt.SettlementId.Value)
 				.ThenBy(receipt => receipt.CommandName, StringComparer.Ordinal)
 				.ToArray(),

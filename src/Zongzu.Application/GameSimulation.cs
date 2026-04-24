@@ -154,6 +154,48 @@ public sealed class GameSimulation
         return _stateStore.GetRequired<TState>(moduleKey);
     }
 
+    internal PlayerCommandResult IssueModuleCommand(string moduleKey, PlayerCommandRequest command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        if (!FeatureManifest.IsEnabled(moduleKey))
+        {
+            return new PlayerCommandResult
+            {
+                Accepted = false,
+                ModuleKey = moduleKey,
+                SettlementId = command.SettlementId,
+                ClanId = command.ClanId,
+                CommandName = command.CommandName,
+                Label = command.CommandName,
+                Summary = $"Module {moduleKey} is not enabled for command {command.CommandName}.",
+            };
+        }
+
+        IModuleRunner module = _modules.SingleOrDefault(candidate => string.Equals(candidate.ModuleKey, moduleKey, StringComparison.Ordinal))
+            ?? throw new InvalidOperationException($"Module {moduleKey} is not registered.");
+        object state = _stateStore.GetRequired(moduleKey);
+        QueryRegistry queries = BuildQueryRegistry();
+        KernelState commandKernelState = KernelState.Clone();
+        ModuleExecutionContext context = new(
+            CurrentDate,
+            FeatureManifest,
+            new DeterministicRandom(commandKernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            commandKernelState);
+
+        PlayerCommandResult result = module.HandleCommand(context, state, command);
+        if (result.Accepted)
+        {
+            ApplyCommandKernelState(commandKernelState);
+            RefreshReplayHash();
+        }
+
+        return result;
+    }
+
     /// <summary>
     /// Test-only escape hatch: read a module's live state object without
     /// going through ExportSave. Application code must keep using
@@ -195,6 +237,20 @@ public sealed class GameSimulation
         }
 
         return queries.GetRequired<TQuery>();
+    }
+
+    private void ApplyCommandKernelState(KernelState commandKernelState)
+    {
+        KernelState.RandomState = commandKernelState.RandomState;
+        KernelState.NextPersonId = commandKernelState.NextPersonId;
+        KernelState.NextHouseholdId = commandKernelState.NextHouseholdId;
+        KernelState.NextClanId = commandKernelState.NextClanId;
+        KernelState.NextSettlementId = commandKernelState.NextSettlementId;
+        KernelState.NextRouteId = commandKernelState.NextRouteId;
+        KernelState.NextInstitutionId = commandKernelState.NextInstitutionId;
+        KernelState.NextMemoryId = commandKernelState.NextMemoryId;
+        KernelState.NextRelationshipEdgeId = commandKernelState.NextRelationshipEdgeId;
+        KernelState.NextNotificationId = commandKernelState.NextNotificationId;
     }
 
     internal bool TryGetModuleState(string moduleKey, out object? state)
@@ -239,5 +295,29 @@ public sealed class GameSimulation
             KernelState = includeReplayHash ? KernelState.Clone() : KernelState.CloneWithoutReplayHash(),
             ModuleStates = moduleStates,
         };
+    }
+
+    private QueryRegistry BuildQueryRegistry()
+    {
+        QueryRegistry queries = new();
+        foreach (IModuleRunner module in _modules
+                     .OrderBy(static module => module.Phase)
+                     .ThenBy(static module => module.ExecutionOrder)
+                     .ThenBy(static module => module.ModuleKey, StringComparer.Ordinal))
+        {
+            if (!FeatureManifest.IsEnabled(module.ModuleKey))
+            {
+                continue;
+            }
+
+            if (!_stateStore.States.TryGetValue(module.ModuleKey, out object? state) || state is null)
+            {
+                throw new InvalidOperationException($"Enabled module {module.ModuleKey} has no state for command queries.");
+            }
+
+            module.RegisterQueries(state, queries);
+        }
+
+        return queries;
     }
 }

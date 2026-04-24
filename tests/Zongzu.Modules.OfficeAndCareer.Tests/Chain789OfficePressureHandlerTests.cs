@@ -68,6 +68,10 @@ public sealed class Chain789OfficePressureHandlerTests
             emitted[0].Metadata[DomainEventMetadataKeys.Cause],
             Is.EqualTo(DomainEventMetadataValues.CauseClerkCapture),
             "Clerk capture receipts must carry structured cause metadata.");
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.ClerkCapturePressure], Is.Not.Empty);
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.ClerkCaptureDependencePressure], Is.EqualTo("35"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.ClerkCaptureBacklogPressure], Is.EqualTo("10"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.ClerkCaptureAuthorityBuffer], Is.EqualTo("9"));
         Assert.That(
             state.ActiveClerkCaptureSettlementIds,
             Does.Contain(new SettlementId(10)),
@@ -312,6 +316,15 @@ public sealed class Chain789OfficePressureHandlerTests
             "EntityKey must match the jurisdiction settlement id.");
         Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseCourt));
         Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.MandateConfidence], Is.EqualTo("30"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowPressure], Is.EqualTo("64"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PressureScore], Is.EqualTo("64"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowMandateDeficit], Is.EqualTo("10"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowAuthoritySignal], Is.EqualTo("54"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowLeverageSignal], Is.EqualTo("0"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowPetitionSignal], Is.EqualTo("0"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowAdministrativeDrag], Is.EqualTo("0"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowClerkDrag], Is.EqualTo("0"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowBacklogDrag], Is.EqualTo("0"));
     }
 
     [Test]
@@ -375,6 +388,60 @@ public sealed class Chain789OfficePressureHandlerTests
         Assert.That(emitted.Length, Is.EqualTo(1),
             "A global court pressure must be allocated to one explicit court-facing jurisdiction in the thin slice.");
         Assert.That(emitted[0].EntityKey, Is.EqualTo("10"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.PolicyWindowPressure], Is.EqualTo("84"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.JurisdictionLeverage], Is.EqualTo("60"));
+    }
+
+    [Test]
+    public void CourtAgendaPressureAccumulated_LocalDragBelowThreshold_DoesNotEmit()
+    {
+        OfficeAndCareerModule module = new();
+        OfficeAndCareerState state = new();
+        state.People.Add(new OfficeCareerState
+        {
+            PersonId = new PersonId(1),
+            ClanId = new ClanId(1),
+            SettlementId = new SettlementId(10),
+            DisplayName = "Zhang Heng",
+            HasAppointment = true,
+            OfficeTitle = "鍘夸护",
+            AuthorityTier = 3,
+            ClerkDependence = 80,
+            PetitionBacklog = 90,
+            AdministrativeTaskLoad = 80,
+        });
+        state.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(state.People);
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+        queries.Register<IWorldSettlementsQueries>(new FakeWorldQueries(mandateConfidence: 30));
+
+        DomainEventBuffer buffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 5),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            queries,
+            buffer,
+            new WorldDiff());
+
+        buffer.Emit(new DomainEventRecord(
+            KnownModuleKeys.WorldSettlements,
+            WorldSettlementsEventNames.CourtAgendaPressureAccumulated,
+            "court agenda pressure",
+            "court",
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.MandateConfidence] = "30",
+            }));
+
+        module.HandleEvents(new ModuleEventHandlingScope<OfficeAndCareerState>(
+            state, context, buffer.Events.ToList()));
+
+        Assert.That(
+            buffer.Events.Select(static e => e.EventType),
+            Does.Not.Contain(OfficeAndCareerEventNames.PolicyWindowOpened),
+            "Court pressure should not open a local policy window when clerk, backlog, and task drag absorb the mandate signal.");
     }
 
     [Test]
@@ -532,6 +599,13 @@ public sealed class Chain789OfficePressureHandlerTests
             "EntityKey must match the appointed official person id.");
         Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseRegime));
         Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.DefectionRisk], Is.EqualTo("100"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.DefectionBaselinePressure], Is.EqualTo("35"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.DefectionMandateDeficit], Is.EqualTo("5"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.DefectionDemotionPressure], Is.EqualTo("45"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.DefectionClerkPressure], Is.EqualTo("20"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.DefectionPetitionPressure], Is.EqualTo("17"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.DefectionReputationStrain], Is.EqualTo("20"));
+        Assert.That(emitted[0].Metadata[DomainEventMetadataKeys.DefectionAuthorityBuffer], Is.EqualTo("8"));
         Assert.That(state.People.Single(static p => p.PersonId == new PersonId(1)).HasAppointment, Is.False,
             "OfficeDefected is a receipt for an actual Office-owned state mutation.");
     }
@@ -605,6 +679,60 @@ public sealed class Chain789OfficePressureHandlerTests
         Assert.That(emitted[0].EntityKey, Is.EqualTo("1"));
         Assert.That(state.People.Single(static p => p.PersonId == new PersonId(1)).HasAppointment, Is.False);
         Assert.That(state.People.Single(static p => p.PersonId == new PersonId(2)).HasAppointment, Is.True);
+    }
+
+    [Test]
+    public void RegimeLegitimacyShifted_BufferedOfficialBelowThreshold_DoesNotEmit()
+    {
+        OfficeAndCareerModule module = new();
+        OfficeAndCareerState state = new();
+        state.People.Add(new OfficeCareerState
+        {
+            PersonId = new PersonId(1),
+            ClanId = new ClanId(1),
+            SettlementId = new SettlementId(10),
+            DisplayName = "Zhang Heng",
+            HasAppointment = true,
+            OfficeTitle = "鍘夸护",
+            AuthorityTier = 4,
+            DemotionPressure = 10,
+            ClerkDependence = 5,
+            PetitionPressure = 10,
+            OfficeReputation = 80,
+        });
+        state.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(state.People);
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+        queries.Register<IWorldSettlementsQueries>(new FakeWorldQueries(mandateConfidence: 20));
+
+        DomainEventBuffer buffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 5),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            queries,
+            buffer,
+            new WorldDiff());
+
+        buffer.Emit(new DomainEventRecord(
+            KnownModuleKeys.WorldSettlements,
+            WorldSettlementsEventNames.RegimeLegitimacyShifted,
+            "regime legitimacy shifted",
+            "regime",
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.MandateConfidence] = "20",
+            }));
+
+        module.HandleEvents(new ModuleEventHandlingScope<OfficeAndCareerState>(
+            state, context, buffer.Events.ToList()));
+
+        Assert.That(
+            buffer.Events.Select(static e => e.EventType),
+            Does.Not.Contain(OfficeAndCareerEventNames.OfficeDefected),
+            "Low mandate confidence alone should not defect a well-buffered official below the risk threshold.");
+        Assert.That(state.People.Single(static p => p.PersonId == new PersonId(1)).OfficialDefectionRisk, Is.EqualTo(28));
     }
 
     [Test]

@@ -8,21 +8,6 @@ namespace Zongzu.Modules.ConflictAndForce;
 
 public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndForceState>
 {
-    private static readonly string[] CommandNames =
-
-    [
-
-        "HireGuards",
-
-        "MobilizeClanMilitia",
-
-        "PrepareEscort",
-
-        "RestrainRetaliation",
-
-    ];
-
-
     private static readonly string[] EventNames =
 
     [
@@ -72,9 +57,6 @@ public sealed partial class ConflictAndForceModule : ModuleRunner<ConflictAndFor
 
 
     public override FeatureMode DefaultMode => FeatureMode.Lite;
-
-
-    public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;

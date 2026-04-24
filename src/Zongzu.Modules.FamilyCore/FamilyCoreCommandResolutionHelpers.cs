@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Zongzu.Application;
+namespace Zongzu.Modules.FamilyCore;
 
 internal static class CommandResolutionBands
 {
@@ -42,15 +42,5 @@ internal static class CommandResolutionMath
     public static int Clamp100(int value)
     {
         return Math.Clamp(value, 0, 100);
-    }
-
-    public static int AdjustReduction(int baseValue, int shift, int minimum = 1)
-    {
-        return Math.Max(minimum, baseValue + shift);
-    }
-
-    public static int AdjustIncrease(int baseValue, int shift)
-    {
-        return Math.Max(0, baseValue + shift);
     }
 }

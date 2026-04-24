@@ -60,7 +60,7 @@ For large tasks also read:
 Use the repo's actual stack and boundaries to choose tools.
 
 Preferred MCP servers:
-- `microsoft-learn` for C#, .NET 8, Microsoft.Extensions, WinUI-adjacent tooling, and other Microsoft platform questions
+- `microsoft-learn` for C#, the repo's current .NET SDK line, Microsoft.Extensions, WinUI-adjacent tooling, and other Microsoft platform questions
 - `context7` for third-party library and framework documentation
 - `openaiDeveloperDocs` only when the task specifically involves OpenAI or Codex products
 - `GitHub` for PR context, CI logs, review comments, and repository metadata

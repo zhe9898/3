@@ -3,26 +3,11 @@ using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Modules.OrderAndBanditry;
 
-namespace Zongzu.Application;
+namespace Zongzu.Modules.OrderAndBanditry;
 
-public sealed partial class PlayerCommandService
+public sealed class OrderAndBanditryCommandContext
 {
-    private static PlayerCommandResult IssueExpandedOrderIntent(GameSimulation simulation, PlayerCommandRequest command)
-    {
-        if (!simulation.FeatureManifest.IsEnabled(KnownModuleKeys.OrderAndBanditry))
-        {
-            return new PlayerCommandResult
-            {
-                Accepted = false,
-                ModuleKey = KnownModuleKeys.OrderAndBanditry,
-                SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
-                SettlementId = command.SettlementId,
-                ClanId = command.ClanId,
-                CommandName = command.CommandName,
-                Label = DeterminePublicLifeCommandLabel(command.CommandName),
-                Summary = "当前存档未启用地方治安与护路。",
-            };
-        }
+    public OrderAndBanditryState State { get; init; } = new();
 
         OrderAndBanditryModule? module = simulation.Modules
             .OfType<OrderAndBanditryModule>()
@@ -73,7 +58,6 @@ public sealed partial class PlayerCommandService
             };
         }
 
-        simulation.RefreshReplayHash();
         return new PlayerCommandResult
         {
             Accepted = true,
@@ -114,33 +98,14 @@ public sealed partial class PlayerCommandService
 
     internal static string DeterminePublicLifeCommandLabel(string commandName)
     {
-        if (string.Equals(commandName, PlayerCommandNames.FundLocalWatch, StringComparison.Ordinal))
-        {
-            return "添雇巡丁";
-        }
+        public bool HasModifier => BenefitShift != 0 || ShieldingShift != 0 || BacklashShift != 0 || LeakageShift != 0;
 
-        if (string.Equals(commandName, PlayerCommandNames.SuppressBanditry, StringComparison.Ordinal))
-        {
-            return "严缉路匪";
-        }
-
-        if (string.Equals(commandName, PlayerCommandNames.NegotiateWithOutlaws, StringComparison.Ordinal))
-        {
-            return "遣人议路";
-        }
-
-        if (string.Equals(commandName, PlayerCommandNames.TolerateDisorder, StringComparison.Ordinal))
-        {
-            return "暂缓穷追";
-        }
-
-        return commandName switch
-        {
-            PlayerCommandNames.PostCountyNotice => "张榜晓谕",
-            PlayerCommandNames.DispatchRoadReport => "遣吏催报",
-            PlayerCommandNames.EscortRoadReport => "催护一路",
-            PlayerCommandNames.InviteClanEldersPubliclyBroker => "请族老出面",
-            _ => commandName,
-        };
+        public static OrderAdministrativeReachProfile Neutral => new(
+            0,
+            0,
+            0,
+            0,
+            string.Empty,
+            "此地眼下多凭本地人手与地面情势，官面帮衬未显。");
     }
 }

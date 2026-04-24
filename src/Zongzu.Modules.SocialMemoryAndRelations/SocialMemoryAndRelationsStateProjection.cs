@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Zongzu.Contracts;
+using Zongzu.Kernel;
 
 namespace Zongzu.Modules.SocialMemoryAndRelations;
 
@@ -17,6 +19,9 @@ public static class SocialMemoryAndRelationsStateProjection
         ArgumentNullException.ThrowIfNull(state);
 
         state.DormantStubs ??= new List<DormantStubState>();
+        state.ClanEmotionalClimates ??= new List<ClanEmotionalClimateState>();
+        state.PersonTemperings ??= new List<PersonPressureTemperingState>();
+        NormalizeTemperingDates(state);
 
         foreach (MemoryRecordState memory in state.Memories)
         {
@@ -71,6 +76,69 @@ public static class SocialMemoryAndRelationsStateProjection
         }
     }
 
+    public static void UpgradeFromSchemaV2ToV3(SocialMemoryAndRelationsState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        state.ClanEmotionalClimates ??= new List<ClanEmotionalClimateState>();
+        state.PersonTemperings ??= new List<PersonPressureTemperingState>();
+        NormalizeTemperingDates(state);
+
+        foreach (ClanNarrativeState narrative in state.ClanNarratives)
+        {
+            if (state.ClanEmotionalClimates.Any(climate => climate.ClanId == narrative.ClanId))
+            {
+                continue;
+            }
+
+            int pressureScore = Math.Clamp(
+                (narrative.FearPressure + narrative.ShamePressure + narrative.GrudgePressure) / 2,
+                0,
+                100);
+            state.ClanEmotionalClimates.Add(new ClanEmotionalClimateState
+            {
+                ClanId = narrative.ClanId,
+                Fear = Math.Clamp(narrative.FearPressure, 0, 100),
+                Shame = Math.Clamp(narrative.ShamePressure, 0, 100),
+                Anger = Math.Clamp(narrative.GrudgePressure / 2, 0, 100),
+                Obligation = Math.Clamp(Math.Max(0, narrative.FavorBalance), 0, 100),
+                Trust = Math.Clamp(Math.Max(0, narrative.FavorBalance), 0, 100),
+                Bitterness = Math.Clamp(narrative.GrudgePressure / 3, 0, 100),
+                LastPressureScore = pressureScore,
+                LastPressureBand = ResolveBand(pressureScore),
+                LastTemperingBand = 0,
+                LastUpdated = new GameDate(1, 1),
+                LastTrace = "schema2 narrative backfill",
+            });
+        }
+
+        state.ClanEmotionalClimates = state.ClanEmotionalClimates
+            .OrderBy(static climate => climate.ClanId.Value)
+            .ToList();
+        state.PersonTemperings = state.PersonTemperings
+            .OrderBy(static entry => entry.PersonId.Value)
+            .ToList();
+    }
+
+    private static void NormalizeTemperingDates(SocialMemoryAndRelationsState state)
+    {
+        foreach (ClanEmotionalClimateState climate in state.ClanEmotionalClimates)
+        {
+            if (climate.LastUpdated.Month == 0)
+            {
+                climate.LastUpdated = new GameDate(1, 1);
+            }
+        }
+
+        foreach (PersonPressureTemperingState tempering in state.PersonTemperings)
+        {
+            if (tempering.LastUpdated.Month == 0)
+            {
+                tempering.LastUpdated = new GameDate(1, 1);
+            }
+        }
+    }
+
     private static (MemoryType Type, MemorySubtype Subtype, int MonthlyDecay) ClassifyLegacyKind(string kind)
     {
         return kind switch
@@ -80,6 +148,17 @@ public static class SocialMemoryAndRelationsStateProjection
             "campaign-aftermath" => (MemoryType.Fear, MemorySubtype.WarDread, 1),
             "campaign-pressure" => (MemoryType.Fear, MemorySubtype.WarDread, 2),
             _ => (MemoryType.Grudge, MemorySubtype.Unknown, 2),
+        };
+    }
+
+    private static int ResolveBand(int value)
+    {
+        return value switch
+        {
+            >= 80 => 3,
+            >= 60 => 2,
+            >= 40 => 1,
+            _ => 0,
         };
     }
 }

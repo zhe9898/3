@@ -133,6 +133,7 @@ public sealed class SocialMemoryAndRelationsModuleTests
         QueryRegistry queries = new();
         familyModule.RegisterQueries(familyState, queries);
         populationModule.RegisterQueries(populationState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
         queries.Register<ITradeAndIndustryQueries>(new StubTradeQueries(
         [
             new ClanTradeSnapshot
@@ -596,6 +597,285 @@ public sealed class SocialMemoryAndRelationsModuleTests
         Assert.That(childLoss[0].Type, Is.EqualTo(MemoryType.Fear));
         Assert.That(childLoss[0].Subtype, Is.EqualTo(MemorySubtype.MourningDebt));
         Assert.That(childLoss[0].SubjectClanId, Is.EqualTo(new ClanId(1)));
+    }
+
+    [Test]
+    public void RunMonth_MultidimensionalPressure_BuildsClanClimateAndPersonalTempering()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+            Prestige = 34,
+            SupportReserve = 24,
+            HeirPersonId = new PersonId(1),
+            BranchTension = 75,
+            InheritancePressure = 70,
+            SeparationPressure = 65,
+            MediationMomentum = 8,
+            ReliefSanctionPressure = 64,
+            BranchFavorPressure = 62,
+            MourningLoad = 56,
+            CareLoad = 72,
+            FuneralDebt = 50,
+            CharityObligation = 58,
+            HeirSecurity = 30,
+        });
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(1),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Jin",
+            AgeMonths = 30 * 12,
+            IsAlive = true,
+            Ambition = 82,
+            Prudence = 25,
+            Loyalty = 20,
+            Sociability = 35,
+        });
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(2),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Shen",
+            AgeMonths = 42 * 12,
+            IsAlive = true,
+            Ambition = 35,
+            Prudence = 80,
+            Loyalty = 75,
+            Sociability = 65,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 84,
+            DebtPressure = 88,
+            LaborCapacity = 22,
+            MigrationRisk = 78,
+            IsMigrating = true,
+        });
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(2),
+            HouseholdName = "Tenant Zhou",
+            SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
+            Distress = 78,
+            DebtPressure = 76,
+            LaborCapacity = 35,
+            MigrationRisk = 74,
+            IsMigrating = false,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+        socialState.ClanNarratives.Add(new ClanNarrativeState
+        {
+            ClanId = new ClanId(1),
+            GrudgePressure = 38,
+            FearPressure = 24,
+            ShamePressure = 18,
+            FavorBalance = 2,
+        });
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        queries.Register<ITradeAndIndustryQueries>(new StubTradeQueries(
+        [
+            new ClanTradeSnapshot
+            {
+                ClanId = new ClanId(1),
+                PrimarySettlementId = new SettlementId(1),
+                CashReserve = 18,
+                GrainReserve = 20,
+                Debt = 96,
+                CommerceReputation = 30,
+                ShopCount = 1,
+                LastOutcome = "Strained",
+            },
+        ]));
+        socialModule.RegisterQueries(socialState, queries);
+
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.TradeAndIndustry, FeatureMode.Lite);
+
+        KernelState kernelState = KernelState.Create(1401);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 4),
+            manifest,
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        ISocialMemoryAndRelationsQueries socialQueries = queries.GetRequired<ISocialMemoryAndRelationsQueries>();
+        ClanEmotionalClimateSnapshot climate = socialQueries.GetClanEmotionalClimate(new ClanId(1));
+        PersonPressureTemperingSnapshot ambitious = socialQueries.FindPersonTempering(new PersonId(1))!;
+        PersonPressureTemperingSnapshot cautious = socialQueries.FindPersonTempering(new PersonId(2))!;
+
+        Assert.That(climate.LastPressureScore, Is.EqualTo(100));
+        Assert.That(climate.LastPressureBand, Is.EqualTo(3));
+        Assert.That(climate.Fear, Is.GreaterThan(0));
+        Assert.That(climate.Shame, Is.GreaterThan(0));
+        Assert.That(climate.Anger, Is.GreaterThan(0));
+        Assert.That(climate.Hardening, Is.GreaterThan(0));
+        Assert.That(socialState.PersonTemperings, Has.Count.EqualTo(2));
+        Assert.That(cautious.Restraint, Is.GreaterThan(ambitious.Restraint));
+        Assert.That(ambitious.Volatility, Is.GreaterThan(cautious.Volatility));
+        Assert.That(
+            context.DomainEvents.Events,
+            Has.Some.Matches<IDomainEvent>(
+                e => e.EventType == SocialMemoryAndRelationsEventNames.EmotionalPressureShifted
+                     && e.EntityKey == "1"
+                     && e.Metadata[DomainEventMetadataKeys.SocialPressureScore] == "100"));
+    }
+
+    [Test]
+    public void HandleEvents_ScopedTradeShock_UpdatesOnlyTargetClanClimate()
+    {
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+        socialState.ClanNarratives.Add(new ClanNarrativeState { ClanId = new ClanId(1) });
+        socialState.ClanNarratives.Add(new ClanNarrativeState { ClanId = new ClanId(2) });
+        socialState.ClanEmotionalClimates.Add(new ClanEmotionalClimateState
+        {
+            ClanId = new ClanId(1),
+            Fear = 35,
+            Shame = 10,
+        });
+        socialState.ClanEmotionalClimates.Add(new ClanEmotionalClimateState
+        {
+            ClanId = new ClanId(2),
+            Fear = 35,
+            Shame = 10,
+        });
+
+        QueryRegistry queries = new();
+        socialModule.RegisterQueries(socialState, queries);
+        DomainEventRecord[] events =
+        {
+            new(
+                KnownModuleKeys.TradeAndIndustry,
+                TradeAndIndustryEventNames.TradeDebtDefaulted,
+                "Zhang trade debt defaulted.",
+                "1"),
+        };
+
+        KernelState kernelState = KernelState.Create(1402);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 5),
+            new FeatureManifest(),
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.HandleEvents(new ModuleEventHandlingScope<SocialMemoryAndRelationsState>(socialState, context, events));
+
+        ClanEmotionalClimateState target = socialState.ClanEmotionalClimates.Single(static climate => climate.ClanId == new ClanId(1));
+        ClanEmotionalClimateState untouched = socialState.ClanEmotionalClimates.Single(static climate => climate.ClanId == new ClanId(2));
+        Assert.That(target.Fear, Is.EqualTo(39));
+        Assert.That(target.Shame, Is.EqualTo(15));
+        Assert.That(target.Anger, Is.EqualTo(3));
+        Assert.That(untouched.Fear, Is.EqualTo(35));
+        Assert.That(untouched.Shame, Is.EqualTo(10));
+        Assert.That(untouched.Anger, Is.EqualTo(0));
+        Assert.That(socialState.Memories.Single().Subtype, Is.EqualTo(MemorySubtype.TradeBreach));
+        Assert.That(
+            context.DomainEvents.Events,
+            Has.Some.Matches<IDomainEvent>(
+                e => e.EventType == SocialMemoryAndRelationsEventNames.EmotionalPressureShifted
+                     && e.EntityKey == "1"));
+    }
+
+    [Test]
+    public void HandleEvents_ExamPassed_ShapesPersonTemperingAndAspirationMemory()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(1),
+        });
+        familyState.People.Add(new FamilyPersonState
+        {
+            Id = new PersonId(11),
+            ClanId = new ClanId(1),
+            GivenName = "Zhang Yuan",
+            AgeMonths = 20 * 12,
+            IsAlive = true,
+            Ambition = 72,
+            Prudence = 58,
+            Loyalty = 65,
+            Sociability = 60,
+        });
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        socialModule.RegisterQueries(socialState, queries);
+        queries.Register<IPersonRegistryQueries>(new EmptyPersonRegistryQueries());
+        DomainEventRecord[] events =
+        {
+            new(
+                KnownModuleKeys.EducationAndExams,
+                EducationAndExamsEventNames.ExamPassed,
+                "Zhang Yuan passed the county exam.",
+                "11"),
+        };
+
+        KernelState kernelState = KernelState.Create(1403);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 3),
+            new FeatureManifest(),
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.HandleEvents(new ModuleEventHandlingScope<SocialMemoryAndRelationsState>(socialState, context, events));
+
+        PersonPressureTemperingState person = socialState.PersonTemperings.Single();
+        ClanEmotionalClimateState climate = socialState.ClanEmotionalClimates.Single();
+        MemoryRecordState memory = socialState.Memories.Single();
+
+        Assert.That(person.PersonId, Is.EqualTo(new PersonId(11)));
+        Assert.That(person.Hope, Is.EqualTo(7));
+        Assert.That(person.Obligation, Is.EqualTo(2));
+        Assert.That(climate.Hope, Is.EqualTo(7));
+        Assert.That(climate.Trust, Is.EqualTo(3));
+        Assert.That(memory.Type, Is.EqualTo(MemoryType.Aspiration));
+        Assert.That(memory.Subtype, Is.EqualTo(MemorySubtype.ExamHonor));
+        Assert.That(memory.CauseKey, Is.EqualTo("exam.pass"));
+    }
+
+    [Test]
+    public void PublishedEvents_ContainsPressureTemperingReceipts()
+    {
+        SocialMemoryAndRelationsModule socialModule = new();
+
+        Assert.That(socialModule.PublishedEvents, Does.Contain(SocialMemoryAndRelationsEventNames.PressureTempered));
+        Assert.That(socialModule.PublishedEvents, Does.Contain(SocialMemoryAndRelationsEventNames.EmotionalPressureShifted));
     }
 
     private sealed class EmptyPersonRegistryQueries : IPersonRegistryQueries

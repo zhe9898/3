@@ -108,7 +108,8 @@ public sealed partial class OfficeAndCareerModuleTests
         Assert.That(snapshot.AuthorityTrajectorySummary, Is.Not.Empty);
         Assert.That(context.DomainEvents.Events.Select(static entry => entry.EventType), Does.Contain(OfficeAndCareerEventNames.OfficeGranted));
         Assert.That(context.Diff.Entries.Single().ModuleKey, Is.EqualTo(KnownModuleKeys.OfficeAndCareer));
-        Assert.That(officeModule.AcceptedCommands, Does.Contain("PursuePosting"));
+        Assert.That(officeModule.AcceptedCommands, Does.Contain(PlayerCommandNames.PetitionViaOfficeChannels));
+        Assert.That(officeModule.AcceptedCommands, Does.Not.Contain("PursuePosting"));
         Assert.That(officeModule.PublishedEvents, Does.Contain(OfficeAndCareerEventNames.AuthorityChanged));
     }
 

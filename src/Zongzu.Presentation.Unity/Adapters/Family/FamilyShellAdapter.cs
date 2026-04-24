@@ -11,7 +11,7 @@ internal static class FamilyShellAdapter
 		IReadOnlyList<ClanSnapshot> clans,
 		IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances)
 	{
-		PlayerCommandAffordanceSnapshot? affordance = FamilyLifecycleCommandSelector.SelectLeadLifecycleAffordance(clans, affordances);
+		PlayerCommandAffordanceSnapshot? affordance = FamilyLifecycleProjectionSelectors.SelectLeadLifecycleAffordance(clans, affordances);
 
 		if (affordance == null)
 		{
@@ -148,7 +148,7 @@ internal static class FamilyShellAdapter
 		IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
 		bool includeClanName)
 	{
-		PlayerCommandAffordanceSnapshot? affordance = FamilyLifecycleCommandSelector.SelectPrimaryLifecycleAffordance(clan, affordances);
+		PlayerCommandAffordanceSnapshot? affordance = FamilyLifecycleProjectionSelectors.SelectPrimaryLifecycleAffordance(clan, affordances);
 		if (affordance == null)
 		{
 			return string.Empty;

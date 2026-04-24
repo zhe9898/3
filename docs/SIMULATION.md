@@ -169,6 +169,7 @@ The day step should handle due short-band pressure, not replace the monthly shel
 - handlers update only owning module state
 - the active handler seam runs after authority modules finish their monthly pass and before `NarrativeProjection` builds notices
 - follow-on events may reach projection, but they do not trigger uncontrolled recursive month expansion
+- `SocialMemoryAndRelations` may consume scoped trade, exam, death, branch, marriage, and warfare events here; it mutates only memory/climate/tempering state and emits terminal social-memory receipts such as `EmotionalPressureShifted` or `PressureTempered`
 
 Current M3 local-conflict note:
 - `ConflictAndForce.Lite` may refresh force posture before `OrderAndBanditry.Lite` reads same-month response support
