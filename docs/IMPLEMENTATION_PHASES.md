@@ -7,7 +7,7 @@ For the phase-by-phase index, cross-document map, and ultra-fine implementation 
 Goal:
 - repo skeleton
 - kernel/contracts/scheduler/persistence shell
-- cadence-aware scheduler foundation for `xun / month / seasonal`
+- cadence-aware scheduler foundation for `day / month / seasonal`, with `xun` kept to calendar/projection grouping unless a transitional implementation hook still uses the old name
 - module registration
 - save root + feature manifest
 - replay hash skeleton

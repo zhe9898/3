@@ -4,7 +4,7 @@ This document defines additive release lines after MVP.
 
 ## Post-MVP rule
 Post-MVP features must extend the same:
-- monthly tick
+- monthly review shell plus day-level internal authority cadence
 - save identity system
 - command model
 - module integration rules

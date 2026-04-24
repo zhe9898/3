@@ -15,7 +15,7 @@ The game should not feel like:
 - a tactical battlefield game
 
 It should feel like:
-**a household-side or lineage-side actor seated in lived space, receiving people, letters, pressure, grief, celebration, and consequence.**
+**a home-household seat in lived space, receiving people, letters, pressure, grief, celebration, and consequence through one household or branch doorway of obligation.**
 
 ## Core visual thesis
 Use **spatialized living-society simulation**:
@@ -34,7 +34,7 @@ It should not come from exposing more controls.
 Avoid:
 - many sliders as the primary interaction grammar
 - full-screen profession labels or career tags
-- three routine xun reports per month
+- a daily-turn treadmill or three routine xun reports per month
 - instant abstract feedback such as `+5 credit` as the main result language
 
 Prefer:
@@ -47,6 +47,7 @@ Prefer:
 - edict scroll, appointment notice, amnesty proclamation, mourning cloth, tax / corvee writ, border dispatch, and yamen docket seal for imperial pressure reaching local life
 - monthly review that shows only the pressure closest to the player's current position
 - next-month echo through receipt, rumor, obligation, grudge, trust, debt, shame, or altered reach
+- people as portrait-scroll and visitor entry points into the household seat, not as proof that the player is one fixed person
 
 Imperial pressure should be visible as arrival, interruption, delay, and local interpretation.
 The player may see a sealed scroll arrive, a county-gate notice pasted up, a mourning marker dimming the hall, a docket seal slowing petitions, or a border dispatch heating the sandbox.
@@ -80,7 +81,7 @@ This should still feel like a sand table on a desk, not a detached national map.
 - Route strips (physical bands with directional grain-flow markers)
 - County-entry seal (wax seal indicating current administrative posture)
 - Spillover markers (small incident tokens that slide from macro into desk sandbox)
-- Calendar strip (current month plus internal xun/trend indicator aligned to agricultural phase; not three routine player-turn buttons)
+- Calendar strip (current month plus day-level trend or xun-labeled almanac indicator aligned to agricultural phase; not daily-turn or three-routine-turn buttons)
 
 ### D. Desk sandbox
 Local-world board:
@@ -174,10 +175,11 @@ These markers are **read-only projections** of module state. They do not resolve
 
 ## Time visibility principle
 
-The shell should make sub-month life visible without making sub-month clicking mandatory.
+The shell should make day-level life visible without making day-level clicking mandatory.
 
 - monthly review remains the foreground decision rhythm
-- xun pulse appears as marker motion, route heat, public-life drift, illness trend, and pressure accumulation
+- day-level motion appears as marker motion, route heat, public-life drift, illness trend, and pressure accumulation
+- xun labels may group almanac wording or projections, but they are not routine play turns
 - the calendar strip may show where the month currently sits, but it should not ask the player to play three separate turns by default
 - urgent interrupts are foregrounded only when a projected red-band threshold demands a response
 - after an interrupt is handled, the shell returns to the monthly review / command structure

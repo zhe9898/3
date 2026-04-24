@@ -6,13 +6,13 @@ A successful MVP proves that:
 - a local living society can self-run month by month
 - the player can intervene through bounded commands
 - family, commoner pressure, exams, trade, and grudges form a coherent loop
-- the shell feels like a household or lineage seat inside a living county society rather than a spreadsheet
+- the shell feels like a continuing home-household seat inside a living county society rather than a spreadsheet, a fixed-person RPG, or clan-god control
 - **structured diffs, projections, and bounded commands already make the shell feel alive**
 
 ## MVP content summary
 
 - one local region
-- one playable household-side or lineage-side entry position
+- one playable home-household seat with lineage, household, and local-institution reach
 - surrounding households and institutions
 - household and lineage surfaces
 - commoner pressure
@@ -37,4 +37,4 @@ A successful MVP proves that:
 
 "Sitting in the hall, hearing the world arrive at the door."
 
-A good Zongzu slice proves that structured diffs, projections, and bounded commands already make the shell feel alive. The MVP is not a collection of disconnected mechanics; it is a living-world loop that the player can see, touch, and influence from one situated household position.
+A good Zongzu slice proves that structured diffs, projections, bounded commands, receipts, and next-month residue already make the shell feel alive. The MVP is not a collection of disconnected mechanics; it is a living-world loop that the player can see, touch, and influence from one home-household seat.

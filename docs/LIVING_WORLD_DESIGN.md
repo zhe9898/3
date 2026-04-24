@@ -117,7 +117,7 @@ MVP 的规则很薄，但瓶颈不是"公式不够复杂"，而是**静态容器
 新增 `SeasonalCalendar`（静态工具类）：
 - Season / AgrarianPhase / isFloodWindow / isDroughtWindow / isExamSeason / isTaxSeason / isFestivalWindow
 
-时间契约：xun 路况短漂移 / seasonal 收成结算和灾荒判定
+时间契约：day 路况短漂移 / seasonal 收成结算和灾荒判定；xun 只作为历法读法或投影分组
 
 薄链：夏季 + floodExposure 高 + embankment 差 -> Flood -> harvestForecast 降
 
@@ -271,7 +271,8 @@ MVP 的规则很薄，但瓶颈不是"公式不够复杂"，而是**静态容器
 - `legitimacyDelta` / `shameDelta` / `fearDelta` / `attentionBand`
 
 时间契约：
-- xun：街谈、路报、榜文热度短漂移
+- day：街谈、路报、榜文热度短漂移
+- xun：只作为早 / 中 / 晚月的可读汇总标签，不作为底层权威格
 - month：整合公共面 residue，供 `NarrativeProjection` 和 hall / desk 读
 
 薄链：

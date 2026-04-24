@@ -370,10 +370,15 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - last intervention command / label / summary / outcome for public-life read models
 
 ### Accepts commands
-- fund local watch
-- suppress
-- negotiate in limited later cases
-- tolerate/ignore at cost
+- `EscortRoadReport` /催护一路 for limited route-report and travel protection
+- `FundLocalWatch` /添雇巡丁
+- `SuppressBanditry` /严缉路匪
+- `NegotiateWithOutlaws` /遣人议路 in limited local cases
+- `TolerateDisorder` /暂缓穷追 at cost
+
+Current routing note:
+- these public-life order commands are currently routed by `PlayerCommandService`, but resolution lives in `OrderAndBanditryModule.HandlePublicLifeCommand`
+- the application layer may pass query-derived office-reach modifiers into that resolver; it must not write office, trade, public-life, force, or family state directly
 
 ### Emits events
 - `BanditThreatRaised`

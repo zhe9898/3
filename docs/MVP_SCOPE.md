@@ -10,7 +10,7 @@ For modern game-engineering standards (code, module, system, Unity, content), se
 ## MVP question
 The MVP exists to answer one question:
 
-**Can a living local Northern-Song society run month by month, with bounded player intervention, readable consequences, and a spatial shell that feels like acting from one situated household / lineage / local-institution position rather than as an omnipotent world owner?**
+**Can a living local Northern-Song society run month by month, with bounded player intervention, readable consequences, and a spatial shell that feels like acting from one continuing home-household seat rather than as a single-person RPG protagonist, a profession route, or an omnipotent world owner?**
 
 If the answer is yes, the MVP is successful.
 
@@ -71,18 +71,19 @@ The long-run design may still allow history-changing play at larger scale when l
 
 ## MVP time UX contract
 
-The MVP should feel monthly to the player even though the authoritative simulation may use three internal xun pulses.
+The MVP should feel monthly to the player even though nearby authoritative pressure may move by day inside the month.
 
 Required:
 - one normal player-facing review per month
 - one normal bounded command window per month
-- xun movement summarized as trend, pressure, cause trace, and urgency
+- day-level movement summarized as trend, pressure, cause trace, urgency, or optional xun-labeled calendar wording
 - interrupt windows only for red-band or irreversible items such as death, flight, violence, office seizure, route collapse, or disaster impact
 
 Forbidden for MVP:
+- daily-turn treadmill as the normal loop
 - three routine player turns per month
 - separate `advance shangxun / advance zhongxun / advance xiaxun` buttons as the main loop
-- showing every xun receipt as equal-weight notification spam
+- showing every day receipt or xun-labeled summary as equal-weight notification spam
 - letting interrupts become the default play rhythm
 
 The intended feel is:
@@ -103,7 +104,7 @@ Required:
 Forbidden for MVP:
 - primary interaction built around many exposed sliders
 - full-screen profession / career labels as the player's identity model
-- showing every xun pulse as a separate report
+- showing every day movement or xun-labeled summary as a separate report
 - using bare `+5 credit`, `+10 reputation`, or similar abstract score text as the main player-facing consequence
 - emperor buttons, edict editing, throne commands, or direct court control
 
@@ -147,9 +148,9 @@ The following bounded commands must be available in the MVP shell. They are not 
 These walkthroughs show what a player should experience in one month, proving the "world moves first, player responds second" design.
 
 ### Example 1: Death → 承祧 gap → notice → command → receipt
-1. **上旬 pulse:** Elderly head of household falls ill; household strain rises.
-2. **中旬 pulse:** Illness worsens; branch tension begins to surface.
-3. **下旬 pulse:** Death. `FamilyCore` emits `DeathEvent` → triggers inheritance check → finds no confirmed heir.
+1. **Day-level motion:** Elderly head of household falls ill; household strain rises.
+2. **Day-level threshold:** Illness worsens; branch tension begins to surface.
+3. **Irreversible day event:** Death. `FamilyCore` emits `DeathEvent` → triggers inheritance check → finds no confirmed heir.
 4. **Month-end diff:** Death recorded; heir status = `UNSETTLED`; branch tension +15; mourning obligation registered.
 5. **Projection:** Great hall notice tray receives urgent notice: `张公殁，承祧未定，房支浮动`. Ancestral hall memorial pile adds one marker.
 6. **Player review:** Player sees `眼下宜先议定承祧` directional prompt.
@@ -160,9 +161,9 @@ These walkthroughs show what a player should experience in one month, proving th
 
 ### Example 2: Harvest failure → debt pressure → trade route risk
 1. **Seasonal band:** Drought in summer → autumn harvest `HarvestWindowProgress` stalls at 30%.
-2. **上旬 pulse:** Household grain consumption exceeds safe threshold.
-3. **中旬 pulse:** Household seeks credit; `TradeAndIndustry` records debt obligation.
-4. **下旬 pulse:** Debt servicer demands repayment; route to market unsafe due to bandit hotspot.
+2. **Day-level motion:** Household grain consumption exceeds safe threshold.
+3. **Day-level threshold:** Household seeks credit; `TradeAndIndustry` records debt obligation.
+4. **Due-date / route day:** Debt servicer demands repayment; route to market unsafe due to bandit hotspot.
 5. **Month-end diff:** Household debt +20; grain stock critical; route `r.lx-grain-south` reliability drops to 35.
 6. **Projection:** Desk sandbox shows `南渡津` node in red; great hall notice: `粮道吃紧，佃户浮动`.
 7. **Player options:**
@@ -173,9 +174,9 @@ These walkthroughs show what a player should experience in one month, proving th
 
 ### Example 3: Exam failure → social drift → household return
 1. **Seasonal band:** Autumn exam season arrives.
-2. **上旬 pulse:** Aspirant travels to county seat; `EducationAndExams` resolves attempt.
-3. **中旬 pulse:** Result: failure. Aspirant returns home.
-4. **下旬 pulse:** Household reabsorbs labor; aspirant mood = `withdrawn`.
+2. **Travel day:** Aspirant travels to county seat; `EducationAndExams` resolves attempt.
+3. **Return day:** Result: failure. Aspirant returns home.
+4. **Household day:** Household reabsorbs labor; aspirant mood = `withdrawn`.
 5. **Month-end diff:** Exam attempt recorded; household labor +1; study investment sunk.
 6. **Projection:** Ancestral hall shows `科场未第`; household ledger shows sunk cost.
 7. **Player options:**

@@ -46,8 +46,8 @@ Owns:
 ### 3. Scheduler
 Owns:
 - module registration order
-- `xun / month / seasonal` cadence inspection
-- three inner `xun` pulses plus month-end consolidation
+- `day / month / seasonal` cadence inspection
+- day-level authority steps with safe batching/skipping of quiet spans, plus month-end consolidation
 - deterministic event queue handling
 - diff aggregation boundaries
 
@@ -101,7 +101,7 @@ Owns:
 
 ## Base simulation flow
 1. scheduler opens the monthly review shell
-2. scheduler runs `上旬 / 中旬 / 下旬` inner pulses for modules that declare `xun`
+2. scheduler runs due day-level authority steps for modules that declare `day`, batching or skipping quiet spans deterministically
 3. month-end authority consolidation runs for modules that declare `month`
 4. modules emit domain events
 5. deterministic event handling pass runs before projection

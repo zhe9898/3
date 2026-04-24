@@ -5,8 +5,11 @@ This document defines the project through **14 formal dimensions** plus **3 cros
 ## Core thesis
 The player is not a god and not a single adventurer.
 The project is a **Northern Song-inspired, multi-route, rules-driven simulation of a living Chinese ancient society**.
-The player enters that society through a household or lineage position.
-That position is not permanently elite: a house may stabilize, rise, fragment, sink into commoner survival, or fall into gray dependence under pressure.
+The player enters that society through a **home-household seat**: the continuing play perspective of one household / branch / doorway of obligation.
+That seat is not the same as one person and is not the whole clan.
+The current household spokesperson may change, people may die or leave, and social identities may drift, but play remains anchored in what this household can see, remember, afford, request, endure, or risk.
+In Chinese design shorthand: 玩家持续经营的是本户的家计、人口、名声、债务、亲缘与位置；人物是感受和执行这些压力的入口，而不是玩家本体。
+The seat is not permanently elite: a house may stabilize, rise, fragment, sink into commoner survival, or fall into gray dependence under pressure.
 
 For the higher-level rules-driven living-world thesis, player leverage doctrine, and multi-generation consequence framing, see `RULES_DRIVEN_LIVING_WORLD.md`.
 For how named historical figures, reforms, wars, and great trends enter as pressure rather than rails, see `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`.
@@ -41,6 +44,7 @@ The player acts only through the influence circle currently available:
 
 The player may touch part of the living society through those levers, but may not become the whole society.
 Lineage is a strong influence node, not the default identity of the player and not the boundary of the game.
+The player's available power may expand outward from the household into clan, locality, office, force, or court-facing pressure, but it must always pass through concrete relationship chains rather than becoming free god-view control.
 
 Imperial and court pressure is a real layer, but it is distant at MVP scale.
 For a Northern Song Renzong-era opening, it should appear as initial pressure and institution tone:
@@ -85,7 +89,7 @@ The world:
 ## Core loop
 Authoritative loop:
 1. open a new monthly shell
-2. run the world's internal `xun` pulses
+2. run the world's internal day-level authority steps, skipping or batching quiet days when safe
 3. consolidate month-end module state and structured diffs
 4. build projections and notifications
 5. let the player review pressure and opportunity
@@ -93,7 +97,8 @@ Authoritative loop:
 7. carry those choices into the next month
 
 This is not a flat once-per-month jump.
-The month is the player's main review shell; lived pressure below it may pulse multiple times before review closes.
+The month is the player's main review shell; lived pressure below it may move by day before review closes.
+`xun` / early-mid-late month language may remain as an almanac label, UI grouping, or projection summary, but it is not the preferred bottom-level authority grid.
 
 Monthly readability rule:
 - the world runs first: household livelihood, marriage, birth, death, market movement, study progress, debt, public order, and border pressure
@@ -101,6 +106,11 @@ Monthly readability rule:
 - presentation translates those changes into visible social chains, not random event cards
 - the player intervenes only through available reach: lend grain, guarantee debt, fund study, mediate, write a petition, escort a route, recommend someone, seek office help, or deliberately endure
 - the next month carries the cost: credit spent, public face changed, obligations created, office attention raised, lineage resentment deepened
+
+Playable loop lock:
+- the current docs and architecture can support a complete world, but implementation is not playable until a real intervention loop is closed
+- a playable slice must show pressure in the home-household shell, expose concrete leverage, accept a bounded command, resolve through module-owned rules, emit a receipt or refusal, leave memory/residue, and make the next month read differently
+- read models alone are not a gameplay loop; they become play only when the player can judge, commit, and later understand consequence
 
 ## The 14 dimensions
 

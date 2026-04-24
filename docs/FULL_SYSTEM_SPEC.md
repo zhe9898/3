@@ -25,7 +25,7 @@ Primary supporting documents remain:
 
 Zongzu is a Northern Song-inspired, multi-route, rules-driven simulation of a living Chinese ancient society.
 The player is not a god and not always a secure elite manager.
-The player enters the world through a household-side or lineage-side position inside a society that keeps moving on its own.
+The player enters the world through a continuing home-household seat: one household or branch doorway of obligation, material pressure, kin reach, and mediated public contact inside a society that keeps moving on its own.
 Households, lineages, commoners, markets, offices, local order, conflict, and wider imperial pressure all remain part of one linked field.
 Long-run play may let that field bend history itself through rebellion, polity formation, succession struggle, usurpation, restoration, or dynasty repair, but only through earned rule chains rather than free timeline editing.
 The backend is a modular monolith with one scheduler, one save root, one world-state container, and multiple authoritative modules with owned state and explicit contracts.
@@ -154,7 +154,7 @@ Performance is a product requirement, not a late optimization pass.
 The system must remain playable and inspectable under long deterministic runs.
 
 That means:
-- `xun` fidelity may deepen local life, but must not explode whole-world authority cost
+- day-level fidelity may deepen local life, but must not explode whole-world authority cost
 - notification growth must stay bounded during long headless runs
 - save payload growth must stay bounded and diagnosable
 - runtime-only diagnostics may expose scale summaries, top payload modules, pressure counts, and hotspot scores without entering save compatibility
@@ -264,7 +264,7 @@ Top-level layers:
 ### 3. Scheduler
 - module order
 - cadence inspection
-- `xun / month / seasonal` timing
+- `day / month / seasonal` timing, with `xun` only as calendar band or projection grouping
 - deterministic event queue handling
 - diff aggregation boundaries
 
@@ -339,13 +339,12 @@ That stable structure should also remain pluggable:
 ## Time model
 
 The player-facing shell is monthly.
-The living world inside the month may pulse in three inner bands:
-- upper xun
-- middle xun
-- lower xun
+The living world inside the month targets day-level authority for nearby pressure, travel, illness, due dates, debt timing, route friction, rumor heat, and urgent thresholds.
+Quiet spans may be batched or skipped when no due rule, command receipt, travel arrival, illness threshold, debt date, office deadline, route window, or interrupt candidate is pending.
+`Xun` labels such as early / middle / late month may still be used as almanac wording, projection grouping, and loose schedule-window labels, but they are not the preferred bottom-level authority grid.
 
 Cadence is therefore:
-- `xun` for close life and local pressure
+- `day` for close life and local pressure
 - `month` for review, consolidation, projection, and most bounded intervention
 - `seasonal` for slower structures such as harvest, exam heat, and broad policy or war climate
 
@@ -418,7 +417,7 @@ The player acts late in the chain, after the world has already moved.
 
 ## Player scope
 
-The player is a household-side or lineage-side decision-maker.
+The player is a home-household-seat decision-maker, not one fixed person and not the whole clan.
 The player chooses an entry position, not a custom universe.
 
 The player may choose:
@@ -600,11 +599,11 @@ When working on this project, assume:
 - routes are open and pressure-driven, not fixed classes
 - the backend is a modular monolith
 - modules own their own state
-- cadence is `xun / month / seasonal`
+- cadence is `day / month / seasonal`, while `xun` is a readable calendar band rather than the bottom authority grid
 - structure and contracts should stabilize before deep formulas
 - projection owns wording
 - the shell must feel like a game, not a tool
 
 ## One-line summary
 
-Zongzu is a rules-driven, historically grounded, living-society simulation built as a modular monolith with one scheduler, one save root, and multiple authoritative modules, where the world moves first, the player intervenes late and imperfectly, and the shell must make that rigor feel playable rather than technical.
+Zongzu is a rules-driven, historically grounded, living-society simulation built as a modular monolith with one scheduler, one save root, and multiple authoritative modules, where the world moves first, the player intervenes late and imperfectly from a home-household seat, and the shell must make that rigor feel playable rather than technical.

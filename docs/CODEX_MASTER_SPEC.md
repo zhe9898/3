@@ -1,10 +1,10 @@
 # CODEX_MASTER_SPEC
 
 ## One-paragraph summary
-Build a Windows single-player living-society simulation inspired by Northern Song China, where the world advances through sub-month pulses inside a monthly review shell before the player acts. Those pulses are internal lived-time cadence, not three routine player turns; normal player review and command happen monthly, with only red-band irreversible crises allowed to interrupt. The player is a household-side or lineage-side actor using bounded leverage inside a spatialized shell: great hall or study, ancestral hall, desk sandbox, and conflict or campaign vignettes. The authoritative architecture is a modular monolith whose modules own their own state and communicate through Query, Command, and DomainEvent. Household life, lineage pressure, commoner survival, exams, trade, office, outlaw or banditry, conflict, later campaign warfare, and eventual imperial / dynasty-cycle pressure are interlinked social pathways rather than isolated game modes. The Renzong-era opening is a calibrated starting field, not a fixed historical rail; later outcomes may diverge through earned rule chains, institution constraints, people, locality, and player influence.
+Build a Windows single-player living-society simulation inspired by Northern Song China, where the world advances through day-level internal authority motion inside a monthly review shell before the player acts. Day steps are lived-time cadence, not routine player turns; `xun` may appear as almanac wording or projection grouping, not as the bottom authority grid. Normal player review and command happen monthly, with only red-band irreversible crises allowed to interrupt. The player acts from a continuing home-household seat using bounded leverage inside a spatialized shell: great hall or study, ancestral hall, desk sandbox, and conflict or campaign vignettes. The authoritative architecture is a modular monolith whose modules own their own state and communicate through Query, Command, and DomainEvent. Household life, lineage pressure, commoner survival, exams, trade, office, outlaw or banditry, conflict, later campaign warfare, and eventual imperial / dynasty-cycle pressure are interlinked social pathways rather than isolated game modes. The Renzong-era opening is a calibrated starting field, not a fixed historical rail; later outcomes may diverge through earned rule chains, institution constraints, people, locality, and player influence.
 
 ## Non-negotiable pillars
-- world-first living simulation with xun pulses inside a monthly review shell, without turning xun into routine player turns
+- world-first living simulation with day-level authority motion inside a monthly review shell, without turning days or xun labels into routine player turns
 - module-owned state namespaces
 - deterministic authority
 - explanation traces
@@ -14,6 +14,7 @@ Build a Windows single-player living-society simulation inspired by Northern Son
 - explicit boundary ownership
 - no blocking IO in authority hot paths
 - no authority or debug leakage into player-facing shell
+- no fixed-person RPG identity model and no clan-god control; the player continuity is the home-household seat
 - no player-facing emperor button, edict editor, or unearned court-control surface; imperial pressure must arrive through mediated objects, institutions, and rule chains
 - no new deprecated libraries or weak glue-code layers
 - narrative downstream of simulation
@@ -29,7 +30,7 @@ When writing code, assume these rules are hard:
 - if a source file is drifting past roughly `400` logical lines, check whether responsibilities are already mixed
 - if a non-generated source file passes roughly `600` logical lines, splitting is the default expectation
 - do not mix domain rules, command routing, persistence, projection wording, and diagnostics in one file
-- do not perform blocking file or network IO inside `xun`, `month`, `seasonal`, event-handling, or diff-generation paths
+- do not perform blocking file or network IO inside `day`, `month`, `seasonal`, event-handling, or diff-generation paths
 - application code may route commands, but must not directly mutate foreign authoritative module state
 - presentation code may format and arrange, but must not resolve outcomes
 - saves and public read models must not leak secrets, local machine paths, stack traces, hidden future information, or debug-only traces

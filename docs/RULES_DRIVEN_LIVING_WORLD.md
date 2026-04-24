@@ -26,7 +26,7 @@ The player may bias part of that motion, but may not freeze it.
 A rule is not a story beat, popup, or hidden script.
 A rule is allowed into the authoritative simulation only when it can answer:
 - which module owns the state it changes
-- which cadence runs it: xun, monthly, seasonal, annual, scenario setup, or command resolution
+- which cadence runs it: daily authority step, monthly consolidation, seasonal / annual band, scenario setup, or command resolution
 - which input state, query, command, or domain event it reads
 - which deterministic calculation or table resolves it
 - which owned state, domain event, structured diff, or projection receipt it emits
@@ -99,7 +99,7 @@ The player may not edit history without passing through people, institutions, lo
 
 ## One-sentence pitch
 
-The player is not the god of the world, but one household-side or lineage-side actor inside a living society.
+The player is not the god of the world, but the continuing seat of one home household / branch inside a living society.
 Politics, economy, kinship, marriage, resentment, status, commoner survival, and local pressure keep moving on their own; the player can only shape a limited piece of that motion through leverage they can afford and relationships they can still reach.
 
 ## Core experience
@@ -127,7 +127,8 @@ Events, letters, rumors, memorials, and reports are the readable layer built aft
 
 This does not mean every internal cadence becomes a player turn.
 The normal player rhythm is monthly review and bounded monthly command.
-`xun` exists so illness, debt, route trouble, rumor, office delay, and disorder can accumulate with lived texture before consolidation.
+The target authority atom is `day`, so illness, debt, route trouble, rumor, office delay, and disorder can move with lived texture before consolidation.
+`xun` / early-mid-late month language may remain as a calendar label or projection grouping, but it should not be the rigid bottom-level authority grid.
 Only red-band or irreversible pressure should interrupt the month, and even then the interrupt is a narrow response window rather than a replacement for the monthly shell.
 
 ### 2. The player's influence is always bounded
@@ -174,9 +175,15 @@ If player input is removed, the world should still produce plausible history acr
 
 ## Player identity and boundaries
 
-The player is a household-side or lineage-side decision maker, not a creator of the world's rules.
+The player is a home-household-seat decision maker, not a creator of the world's rules and not one fixed person.
 At start, the player chooses an entry position, not a custom universe.
 That entry may be stronger or weaker, respectable or precarious, lineage-centered or closer to ordinary household survival.
+
+The player's continuity is the household / branch seat:
+- household accounts, rice, debt, labor, illness, marriage prospects, reputation, kin obligations, documents, and memory
+- people are the vivid carriers and command channels
+- the lineage is a surrounding institution and influence channel, not automatic total control
+- social identity labels belong to people and projections; they may change without changing the player's seat
 
 The player may choose:
 - era pack
@@ -280,13 +287,15 @@ The living world should use tiered simulation and tiered cadence:
 
 The world should not breathe at one flat speed.
 Use:
-- `xun` pulses for nearby life, livelihood strain, rumor, delay, and local drift
+- day-level authority steps for nearby life, livelihood strain, rumor, delay, travel, illness, and local drift
 - monthly review shells for consolidation, projection, and bounded player intervention
 - seasonal or annual bands for slower structures such as harvest, exam heat, major war posture, and broader policy climate
+`xun` may remain as an almanac band, UI grouping, or explanation label.
+It should not force every local process into three equal pulses.
 
 The high-level order should remain:
 1. open a monthly shell
-2. let the world run multiple inner pulses
+2. let the world run day-level inner motion, with safe batching for quiet days
 3. consolidate state and structured diffs at month-end
 4. build readable projection
 5. allow bounded player intervention
@@ -294,6 +303,23 @@ The high-level order should remain:
 
 The most important rule is still simple:
 the player acts late, after the world has already moved.
+
+## Gameplay loop lock
+
+Design support is not the same as a playable loop.
+A slice is not truly playable until it closes this chain:
+
+`world moves by day -> monthly household-seat shell shows pressure -> player reads people / accounts / kin / notices -> player sees bounded leverage -> player commits an intent through a concrete channel -> module-owned rules resolve success, delay, refusal, partial effect, or backlash -> receipt and residue are recorded -> next month reads differently`
+
+The first strong gameplay loop should therefore be household-seat and month-facing:
+- one home household has a visible pressure
+- relevant people are inspectable
+- available leverage is concrete, such as grain, money, kin mediation, public face, debt guarantee, office contact, labor, or force
+- command resolution may fail or distort through adult autonomy and institutional friction
+- the result returns as receipt, changed household pressure, relationship memory, public-life signal, or next-month obligation
+
+Read models and dossiers make the world legible.
+They become play only when the player can judge, commit, and later understand consequence.
 
 The fidelity rule for deciding who becomes a full agent, who stays household- or node-level, how upper layers remain alive as pressure rather than dead backdrop, and how different rings use different time density is defined in `SIMULATION_FIDELITY_MODEL.md`.
 
@@ -339,7 +365,7 @@ These are concrete, playable examples that the MVP must support. They are not ab
 
 ### MVP Example 2: Grain price spike → household debt → player intervention
 1. **Owning module:** `WorldSettlements` (seasonal band) + `TradeAndIndustry` (price) + `PopulationAndHouseholds` (debt)
-2. **Cadence:** Xun pulse (price movement) → Monthly (debt consolidation)
+2. **Cadence:** Day-level price / route movement -> Monthly debt consolidation
 3. **Pressure:** `SeasonBand.HarvestWindowProgress` low + `LaborPinch` high → grain price band rises
 4. **Deterministic resolution:** Price band feeds `TradeAndIndustry` route profitability; household grain consumption exceeds income
 5. **Cross-module:** `PopulationAndHouseholds` accumulates debt strain; `FamilyCore` may receive support request

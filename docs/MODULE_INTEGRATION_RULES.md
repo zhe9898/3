@@ -111,7 +111,9 @@ This is a **known structural gap**, not an intended permanent design.  The plan 
 2. move command resolution logic out of `PlayerCommandService` and into the owning modules;
 3. make `GetMutableModuleState` truly internal-only for bootstrapping and testing.
 
-Until that seam exists, the Application services act as a temporary rule layer.  All direct state mutations are confined to Application-layer command services and do not leak into UI or projection code.
+Partial closure note (2026-04-24): the public-life order verbs `EscortRoadReport`, `FundLocalWatch`, `SuppressBanditry`, `NegotiateWithOutlaws`, and `TolerateDisorder` now route through `OrderAndBanditryModule.HandlePublicLifeCommand`, so their state changes, receipts, refusals, and one-month carryover are owned by `OrderAndBanditry`.  `PlayerCommandService` still retrieves the mutable order state and adapts the result until the general command seam exists, but it no longer owns those order-rule effects.
+
+Until the general seam exists, any command route not yet moved into its owning module remains transitional.  Application services may route, gather query-derived modifiers, and adapt results, but new closure work should keep authority effects in the owning module rather than adding new Application-owned rule layers.  UI and projection code must remain read-only.
 
 ## Current M2-lite integration notes
 - Renzong chain-1 is currently a **real scheduler thin slice**, not the full tax/corvee society chain: `WorldSettlements.TaxSeasonOpened` drains through `PopulationAndHouseholds.HouseholdDebtSpiked` and `OfficeAndCareer.YamenOverloaded` into `PublicLifeAndRumor` street-talk heat. The full chain still needs household-grade/tax-kind formulas, client/tenant pressure, market cash squeeze, long memory, and precise settlement/jurisdiction payloads.
@@ -140,7 +142,7 @@ Until that seam exists, the Application services act as a temporary rule layer. 
 - `TradeAndIndustry.Lite` owns clan trade cash/debt state, market pressure, route pressure, outcomes, and explanation text; it does not write household or clan internals directly
 - `PublicLifeAndRumor.Lite` now reads `WorldSettlements`, `PopulationAndHouseholds`, `TradeAndIndustry`, `OrderAndBanditry`, optional `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` through query interfaces only
 - `PublicLifeAndRumor.Lite` owns settlement public pulse only: street-talk heat, market bustle, notice visibility, road-report lag, prefecture-dispatch pressure, public legitimacy, dominant-venue wording, monthly cadence / crowd-mix wording, venue-channel competition metrics, and channel-line wording for notice / street talk / road report / prefecture pressure / contention
-- `PublicLifeAndRumor.Lite` may now also compress office-owned `AdministrativeTaskLoad` and `ClerkDependence` into xun-only county-gate heat, notice drift, and prefecture-pressure bias through the existing office query seam; month-end readable diffs and events remain public-life-owned and month-bound
+- `PublicLifeAndRumor.Lite` may now also compress office-owned `AdministrativeTaskLoad` and `ClerkDependence` into day-facing short-band county-gate heat, notice drift, and prefecture-pressure bias through the existing office query seam; month-end readable diffs and events remain public-life-owned and month-bound
 - `WorldSettlements` now owns settlement tier / node rank at schema `2`; presentation and public-life projections must not invent county / market / village rank in UI-only code
 - M2 and later manifests may enable `PublicLifeAndRumor` as an additive county-public-life layer without changing ownership of household, office, trade, force, or clan state
 - great-hall and desk-sandbox public-life summaries must be rebuilt from `IPublicLifeAndRumorQueries` through the presentation bundle only; UI remains read-only
@@ -185,6 +187,7 @@ Until that seam exists, the Application services act as a temporary rule layer. 
 - `OrderAndBanditry.Lite` also collapses local-force response into two order-owned handoff signals: route shielding when patrol or escort pressure really protects traffic, and retaliation risk when suppression invites backlash
 - `OrderAndBanditry.Lite` now also owns explicit public-life intervention receipts for bounded order verbs on the same settlement lane: command code/label plus short summary/outcome text
 - `OrderAndBanditry.Lite` now also owns a one-month intervention follow-through window on that same lane; recent `催护一路` / `添雇巡丁` / `严缉路匪` / `遣人议路` / `暂缓穷追` effects must decay inside order-owned state rather than via UI timers or direct trade writes
+- `OrderAndBanditry.Lite` now owns the corresponding public-life order command resolver for `EscortRoadReport`, `FundLocalWatch`, `SuppressBanditry`, `NegotiateWithOutlaws`, and `TolerateDisorder`; the application layer supplies only the settlement id, command name/label, and query-derived office-reach modifiers
 - `OrderAndBanditry.Lite` may now also read office-owned jurisdiction leverage, clerk dependence, administrative task load, and petition pressure as bounded administrative-reach inputs; it still may not write office state
 - those bounded order verbs may now scale their immediate effect against the same office query seam when governance-lite is enabled; when office is disabled or no jurisdiction is present, the order lane stays on its neutral local baseline
 - those same public-life order affordances may now also project a read-only execution outlook from the office query seam so hall or desk surfaces can tell whether a command is likely to land as a full push or only half-arrive; UI still does not resolve authority
@@ -193,7 +196,7 @@ Until that seam exists, the Application services act as a temporary rule layer. 
 - runtime-only observability and hotspot summaries may now also surface that same order-linked office aftermath as read-only administrative task/backlog context, but those fields remain derived after simulation and never become authority state
 - the application-layer presentation bundle may now also project a read-only settlement governance lane by joining public-life, order, and office snapshots for the same settlement; this derived summary remains outside all module-owned authority state
 - that same governance lane may also nominate one current public-life lead affordance as a read-only next-step prompt, but the prompt must be selected from the existing player-command projections rather than a second hidden command-resolution path
-- that same governance lane may now also carry a read-only xun-facing public-momentum summary derived from current public-life pressure plus office task-load / clerk-drag projections; it remains projection-only and does not create governance-owned cadence state
+- that same governance lane may now also carry a read-only day-facing public-momentum summary derived from current public-life pressure plus office task-load / clerk-drag projections; it remains projection-only and does not create governance-owned cadence state
 - the application-layer presentation bundle may also derive one lead governance focus from those settlement governance lanes so hall surfaces can consume a single monthly docket headline without re-sorting inside UI
 - that same application-layer bundle may also derive one read-only governance docket from the selected governance focus plus same-settlement notifications, but governance focus remains primary and notifications only decorate why-now / what-next context after authority has already resolved
 - that same read-only governance docket may also pull one same-settlement recent handling receipt from the existing command projections, so hall surfaces can read why-now / what-was-done / what-next without inventing a second command ledger
@@ -215,7 +218,7 @@ Until that seam exists, the Application services act as a temporary rule layer. 
 - calm or standing-but-untriggered `ConflictAndForce.Lite` posture must not leak support, escort relief, or militia relief into `OrderAndBanditry` until the response is actually activated by local-conflict pressure
 - `ConflictAndForce.Lite` emits deterministic readiness and local-conflict events while still updating only its own state
 - `OrderAndBanditry.Lite` remains available through an order-enabled M3 bridge bootstrap path
-- the current public-life order lane already supports `催护一路`, `添雇巡丁`, `严缉路匪`, `遣人议路`, and `暂缓穷追` through `PlayerCommandService`; later work should deepen consequences through the same lane rather than invent a second order surface
+- the current public-life order lane already supports `催护一路`, `添雇巡丁`, `严缉路匪`, `遣人议路`, and `暂缓穷追` through thin `PlayerCommandService` routing into the `OrderAndBanditry` resolver; later work should deepen consequences through the same lane rather than invent a second order surface
 - `ConflictAndForce.Lite` is available through a conflict-enabled M3 local-conflict bootstrap path and remains absent from active M2 manifests
 
 ## Governance-lite notes

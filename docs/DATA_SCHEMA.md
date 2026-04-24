@@ -30,6 +30,12 @@ Rules:
 public readonly record struct GameDate(int Year, int Month);
 ```
 
+Current save/schema rule:
+- persisted root time still records year and month in the current codebase
+- the design target for short-band authority is day-level scheduler motion inside the month
+- `xun` is a calendar/projection grouping, not a schema-owned authority unit
+- if exact day must become persisted authoritative state later, that is a schema/version/migration change and must update this document, `SCHEMA_NAMESPACE_RULES.md`, and save/load tests
+
 ### Kernel person identity
 `PersonRegistry` (Kernel layer) owns the thin identity anchor:
 ```csharp

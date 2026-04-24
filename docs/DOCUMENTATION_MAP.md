@@ -37,9 +37,11 @@ This map is about alignment, not correction. Existing docs are treated as valid 
 | What is the current implementation spine? | `ARCHITECTURE.md` | `MODULE_BOUNDARIES.md`, `MODULE_INTEGRATION_RULES.md`, `STATIC_BACKEND_FIRST.md` | Modular monolith, module-owned state, Query / Command / DomainEvent. |
 | Who owns person data? | `PERSON_OWNERSHIP_RULES.md` | `MODULE_BOUNDARIES.md`, `DATA_SCHEMA.md`, `LIVING_WORLD_DESIGN.md` | `PersonRegistry` is identity-only. Domain facts live in modules or read-side projections. |
 | How should player-facing person identity be assembled? | `PERSON_OWNERSHIP_RULES.md` | `DATA_SCHEMA.md`, `UI_AND_PRESENTATION.md`, `MODULE_INTEGRATION_RULES.md` | `PersonDossiers` are projection-layer read models over distributed person facts, not an authoritative person table. |
+| What is the player's gameplay perspective? | `PLAYER_SCOPE.md` | `PRODUCT_SCOPE.md`, `VISUAL_FORM_AND_INTERACTION.md`, `UI_AND_PRESENTATION.md` | The player continuity is a home-household seat, not a fixed-person RPG identity and not clan-god control. |
 | What changes save/schema? | `SCHEMA_NAMESPACE_RULES.md` | `DATA_SCHEMA.md`, `VERSION_ALIGNMENT.md`, `EXTENSIBILITY_MODEL.md` | New authoritative state requires schema/version documentation. Read models alone do not. |
-| How does time advance? | `SIMULATION.md` | `MODULE_CADENCE_MATRIX.md`, `SIMULATION_FIDELITY_MODEL.md` | Player review is monthly; inner pulses remain scheduler-owned. |
+| How does time advance? | `SIMULATION.md` | `MODULE_CADENCE_MATRIX.md`, `SIMULATION_FIDELITY_MODEL.md` | Player review is monthly; day-level inner motion remains scheduler-owned; `xun` is a projection/calendar band rather than the bottom authority grid. |
 | How does the living society stay alive? | `RULES_DRIVEN_LIVING_WORLD.md` | `LIVING_WORLD_DESIGN.md`, `SOCIAL_STRATA_AND_PATHWAYS.md`, `MULTI_ROUTE_DESIGN_MATRIX.md` | Pressure chains beat random event pools. |
+| What proves the game loop is actually playable? | `RULES_DRIVEN_LIVING_WORLD.md` | `PLAYER_SCOPE.md`, `UI_AND_PRESENTATION.md`, `ACCEPTANCE_TESTS.md` | A slice must connect visible pressure -> readable leverage -> bounded command -> module-owned receipt/refusal/residue -> changed next-month read. |
 | How does history enter play? | `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md` | `RENZONG_PRESSURE_CHAIN_SPEC.md`, `SOCIAL_STRATA_AND_PATHWAYS.md`, `INFLUENCE_POWER_AND_FACTIONS.md` | Historical carriers create pressure and windows, not fixed cutscenes. |
 | Where does Renzong thin-chain topology live? | `RENZONG_PRESSURE_CHAIN_SPEC.md` | `MODULE_INTEGRATION_RULES.md`, `ACCEPTANCE_TESTS.md` | Current Renzong chain topology is consolidated in the pressure-chain spec. Split only if a later task creates a dedicated topology index. |
 | How should the shell look and read? | `VISUAL_FORM_AND_INTERACTION.md` | `UI_AND_PRESENTATION.md`, `SPATIAL_SKELETON_SPEC.md`, `WRITING_AND_COPY_GUIDELINES.md` | Shell surfaces are spatialized projections, not rule owners. |
@@ -76,7 +78,7 @@ This map is about alignment, not correction. Existing docs are treated as valid 
 | `DATA_SCHEMA.md` | Save, state, event, and read-model data shapes. | Schema |
 | `SIMULATION.md` | Simulation flow, cadence, determinism, event handling. | Simulation |
 | `SIMULATION_FIDELITY_MODEL.md` | Core/local/wider fidelity policy. | Simulation |
-| `MODULE_CADENCE_MATRIX.md` | Per-module xun/month/seasonal cadence. | Simulation |
+| `MODULE_CADENCE_MATRIX.md` | Per-module day/month/seasonal cadence, plus xun as projection/calendar band. | Simulation |
 | `PLAYER_SCOPE.md` | Player identity, reach, and bounded leverage. | Product / domain |
 | `PERSON_OWNERSHIP_RULES.md` | Person identity/domain/projection ownership. | Domain / architecture |
 | `RELATIONSHIPS_AND_GRUDGES.md` | Memory, grudge, and long-horizon relationship design. | Domain |

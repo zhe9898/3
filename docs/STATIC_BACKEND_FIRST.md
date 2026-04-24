@@ -38,7 +38,7 @@ If rules are written deeply before structure stabilizes, later work tends to:
 - spread rule logic across Application, module state, projections, and UI
 - hide authority in helper services or strings
 - make schema migration expensive
-- make xun/month/season cadence harder to reason about
+- make day/month/season cadence harder to reason about
 
 The repo already has a strong structural spine:
 - module-per-domain projects
@@ -67,9 +67,10 @@ Codex should treat these as first-pass backend assets that may be designed befor
 - authority state versus projection state
 
 ### 3. Time contracts
-- `xun`
+- `day`
 - `month`
 - `seasonal`
+- `xun` only as calendar/projection grouping unless a transitional implementation note says otherwise
 - who runs when
 - who only consolidates at month end
 
@@ -178,10 +179,11 @@ Short-term compatibility fields may exist, but new work should prefer projection
 
 They must not become a second authority layer.
 
-### 4. Scheduler contracts come before dense xun logic
+### 4. Scheduler contracts come before dense day-level logic
 
 It is acceptable to:
-- wire `xun` into scheduler contracts first
+- wire day-level cadence into scheduler contracts first
+- keep existing `xun` implementation names only as a transitional compatibility layer when code has not migrated yet
 - let some modules remain month-only or thin at first
 
 It is **not** acceptable to:
@@ -197,7 +199,7 @@ As of the current codebase state:
 - save/migration structure exists
 - read-model bundle structure exists
 - many modules still use relatively thin month-level heuristics
-- `xun` routing exists in scheduler contracts, but dense module-level `RunXun` behavior is still sparse
+- current scheduler code may still expose `xun`-named hooks, but the target doctrine is day-level authority with month-end review; dense short-band module behavior is still sparse
 
 That means the project is still in a good position to follow this rule.
 It is **not** too late to keep rules decoupled.

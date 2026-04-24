@@ -5,6 +5,7 @@ Build a **Windows single-player lineage simulation game** whose authoritative ar
 
 The game must preserve these product truths:
 - the world advances before the player acts
+- the player continuity is a home-household seat, not a fixed-person RPG identity and not clan-god control
 - notifications are projections of state changes, not the driver of state changes
 - the player influences the world through bounded local leverage, not omnipotent buttons
 - adults are partially autonomous
@@ -19,6 +20,7 @@ The game must preserve these engineering truths:
 - modern code, module, system, Unity, and content standards are documented and enforced progressively
 - save data is versioned at both root and module levels
 - MVP foundations are the substrate for later releases
+- day-level authority can move inside the monthly review shell; `xun` is a calendar/projection band unless a transitional implementation hook says otherwise
 
 ## Mandatory read order before non-trivial work
 1. `docs/README.md`
@@ -117,7 +119,7 @@ Encoding and language note:
    - no detached RTS or unit micro layer
 
 8. **MVP and post-MVP must align structurally**
-   - later releases extend the same kernel, commands, events, projections, save IDs, and monthly tick
+   - later releases extend the same kernel, commands, events, projections, save IDs, monthly review shell, and day-level authority path
 
 ## Non-negotiable architecture constraints
 1. The project is a **modular monolith**, not a giant world manager and not a runtime plugin marketplace.

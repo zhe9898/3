@@ -133,7 +133,7 @@ Start with `CODEX_MASTER_SPEC.md` or `FULL_SYSTEM_SPEC.md` when you need a compa
 
 ## Core concept
 The game is a **Northern Song-inspired, multi-route, rules-driven simulation of a living Chinese ancient society**.
-The player enters that society through a household or lineage position rather than as an all-powerful controller or a permanently elite manager.
+The player enters that society through a continuing home-household seat rather than as one fixed RPG protagonist, an all-powerful clan controller, or a permanently elite manager.
 Houses may stabilize, rise, fragment, drift sideways, sink into commoner survival, or fall into gray dependence while the wider society keeps moving.
 At later scale, the same rules may allow rebellion, polity formation, succession struggle, usurpation, restoration, or dynasty repair; history can bend when earned by pressure, leverage, legitimacy, force, and memory, not by free timeline editing.
 The architecture is a **modular monolith** whose modules own their own state and integrate through deterministic Query/Command/DomainEvent flows.
@@ -143,6 +143,6 @@ That synthesis also keeps pluggability explicit: feature packs and `absent / lit
 The higher-level design manifesto for how that living world should behave is captured in `RULES_DRIVEN_LIVING_WORLD.md`.
 The rule for historical figures, reforms, wars, policies, and great trends entering the simulation as pressure rather than rails is captured in `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`.
 The fidelity policy for who becomes a full agent, who remains household- or node-level, and how upper layers stay alive as pressure is captured in `SIMULATION_FIDELITY_MODEL.md`.
-The per-module time contract for `xun / month / seasonal` execution is captured in `MODULE_CADENCE_MATRIX.md`.
+The per-module time contract for `day / month / seasonal` execution, with `xun` as calendar/projection grouping, is captured in `MODULE_CADENCE_MATRIX.md`.
 The code/module/system/Unity engineering standard bridge is captured in `MODERN_GAME_ENGINEERING_STANDARDS.md`.
 The backend implementation-order rule for keeping structure ahead of deep rules is captured in `STATIC_BACKEND_FIRST.md`.
