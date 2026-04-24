@@ -131,7 +131,17 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
                 LastInterventionOutcome = settlement.LastInterventionOutcome,
 
+                LastInterventionOutcomeCode = settlement.LastInterventionOutcomeCode,
+
+                LastInterventionRefusalCode = settlement.LastInterventionRefusalCode,
+
+                LastInterventionPartialCode = settlement.LastInterventionPartialCode,
+
+                LastInterventionTraceCode = settlement.LastInterventionTraceCode,
+
                 InterventionCarryoverMonths = settlement.InterventionCarryoverMonths,
+
+                RefusalCarryoverMonths = settlement.RefusalCarryoverMonths,
 
             };
 

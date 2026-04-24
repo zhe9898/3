@@ -94,6 +94,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 4, 5, MigrateOrderAndBanditryStateV4ToV5);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 5, 6, MigrateOrderAndBanditryStateV5ToV6);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 6, 7, MigrateOrderAndBanditryStateV6ToV7);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 7, 8, MigrateOrderAndBanditryStateV7ToV8);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 1, 2, MigrateConflictAndForceStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 2, 3, MigrateConflictAndForceStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 3, 4, MigrateConflictAndForceStateV3ToV4);
@@ -930,6 +931,47 @@ public static partial class SimulationBootstrapper
             ModuleSchemaVersion = 7,
             Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
         };
+    }
+
+    private static ModuleStateEnvelope MigrateOrderAndBanditryStateV7ToV8(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState migratedState = (OrderAndBanditryState)serializer.Deserialize(typeof(OrderAndBanditryState), envelope.Payload);
+
+        migratedState.Settlements ??= [];
+        foreach (SettlementDisorderState settlement in migratedState.Settlements)
+        {
+            settlement.LastInterventionCommandCode ??= string.Empty;
+            settlement.LastInterventionCommandLabel ??= string.Empty;
+            settlement.LastInterventionSummary ??= string.Empty;
+            settlement.LastInterventionOutcome ??= string.Empty;
+            settlement.LastInterventionOutcomeCode = string.IsNullOrWhiteSpace(settlement.LastInterventionOutcomeCode)
+                ? InferLegacyOrderOutcomeCode(settlement)
+                : settlement.LastInterventionOutcomeCode;
+            settlement.LastInterventionRefusalCode ??= string.Empty;
+            settlement.LastInterventionPartialCode ??= string.Empty;
+            settlement.LastInterventionTraceCode = string.IsNullOrWhiteSpace(settlement.LastInterventionTraceCode)
+                ? (string.IsNullOrWhiteSpace(settlement.LastInterventionCommandCode)
+                    ? string.Empty
+                    : OrderInterventionTraceCodes.AcceptedFollowThrough)
+                : settlement.LastInterventionTraceCode;
+            settlement.InterventionCarryoverMonths = Math.Clamp(settlement.InterventionCarryoverMonths, 0, 1);
+            settlement.RefusalCarryoverMonths = Math.Clamp(settlement.RefusalCarryoverMonths, 0, 1);
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OrderAndBanditry,
+            ModuleSchemaVersion = 8,
+            Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
+        };
+    }
+
+    private static string InferLegacyOrderOutcomeCode(SettlementDisorderState settlement)
+    {
+        return string.IsNullOrWhiteSpace(settlement.LastInterventionCommandCode)
+            ? string.Empty
+            : OrderInterventionOutcomeCodes.Accepted;
     }
 
     private static ModuleStateEnvelope MigrateConflictAndForceStateV1ToV2(ModuleStateEnvelope envelope)

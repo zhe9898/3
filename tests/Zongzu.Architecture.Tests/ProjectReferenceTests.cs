@@ -256,6 +256,24 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Social_memory_public_life_order_residue_must_not_parse_order_receipt_summary()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.PublicLifeOrderResidue.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Contain("LastInterventionOutcomeCode"));
+        Assert.That(
+            source.Contains("LastInterventionRefusalCode", StringComparison.Ordinal)
+            || source.Contains("LastInterventionPartialCode", StringComparison.Ordinal),
+            Is.True);
+    }
+
+    [Test]
     public void PersonRecord_must_remain_identity_only()
     {
         string personTypesPath = Path.Combine(SrcDir, "Zongzu.Contracts", "PersonRegistryTypes.cs");

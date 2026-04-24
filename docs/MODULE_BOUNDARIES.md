@@ -239,7 +239,7 @@ Current routing note:
 - reads `FamilyCore` clan pressure and personality traits through `IFamilyCoreQueries`
 - reads sponsored household pressure through `IPopulationAndHouseholdsQueries`
 - reads optional clan trade pressure through `ITradeAndIndustryQueries`
-- reads optional `OrderAndBanditry` public-life order aftermath through `IOrderAndBanditryQueries` when turning recent `添雇巡丁`, `严缉路匪`, or related order carryover into owner-owned obligation, fear, shame, favor, or grudge residue
+- reads optional `OrderAndBanditry` public-life order aftermath through `IOrderAndBanditryQueries` when turning recent accepted, partial, or refused `添雇巡丁`, `严缉路匪`, or related order carryover into owner-owned obligation, fear, shame, favor, or grudge residue
 - consumes scoped trade shock, exam, death, marriage, branch, heir, and warfare events to mutate only its own climate, memory, narrative, and tempering state
 
 ### Does not own
@@ -394,7 +394,7 @@ Current routing note:
 - black-route suppression-window and escalation-band summaries
 - suppression demand
 - local disorder projections
-- last intervention command / label / summary / outcome for public-life read models
+- last intervention command / label / summary / outcome plus structured outcome/refusal/partial/trace codes for public-life read models
 - structured intervention aftermath such as black-route pressure, coercion risk, implementation drag, route shielding, and retaliation risk for next-month readback by office, trade, social-memory, and presentation projections
 
 ### Accepts commands
@@ -601,3 +601,9 @@ Current lite note:
 - `OrderAndBanditry` still mutates only order-owned settlement pressure, receipt, and carryover state. It does not write memory, favor, shame, fear, obligation, or grudge records.
 - `SocialMemoryAndRelations` may create public-order residue only inside its own `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` state. It must use query-visible order fields or structured metadata, never `DomainEvent.Summary` parsing.
 - Application, presentation, and Unity may expose `社会记忆读回` from projected SocialMemory read models only; they must not author, save, or repair social memory state.
+
+## 2026-04-25 playable closure v5 refusal-residue note
+- `public-life-order-refusal-residue-v5` keeps the same rule-driven command / aftermath / social-memory readback loop and explicitly rejects event-chain or event-pool design language.
+- `OrderAndBanditry` now owns structured `accepted`, `partial`, and `refused` authority trace fields for public-life/order commands, including refusal and partial reason codes plus refusal carryover.
+- `SocialMemoryAndRelations` consumes those structured Order query fields on the next monthly pass and may write only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`; it must not parse `DomainEvent.Summary`, `LastInterventionSummary`, or receipt prose.
+- Application, governance read models, public-life receipts, family-facing SocialMemory readback, and Unity shell surfaces may only copy projected refusal/partial residue such as `县门未落地`, `地方拖延`, and `后账仍在`.

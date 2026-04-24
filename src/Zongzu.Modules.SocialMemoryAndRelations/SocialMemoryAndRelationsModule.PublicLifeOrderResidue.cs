@@ -21,10 +21,10 @@ public sealed partial class SocialMemoryAndRelationsModule
         ILookup<int, ClanSnapshot> clansBySettlement = clans.ToLookup(static clan => clan.HomeSettlementId.Value);
 
         foreach (SettlementDisorderSnapshot disorder in settlementDisorder
-                     .Where(static disorder => disorder.InterventionCarryoverMonths > 0)
+                     .Where(HasPublicLifeOrderAftermathCarryover)
                      .OrderBy(static disorder => disorder.SettlementId.Value))
         {
-            if (!TryBuildPublicLifeOrderResidueProfile(disorder.LastInterventionCommandCode, out PublicLifeOrderResidueProfile profile))
+            if (!TryBuildPublicLifeOrderResidueProfile(disorder, out PublicLifeOrderResidueProfile profile))
             {
                 continue;
             }
@@ -37,6 +37,11 @@ public sealed partial class SocialMemoryAndRelationsModule
 
             RecordPublicLifeOrderResidue(scope, ownerClan, disorder, profile);
         }
+    }
+
+    private static bool HasPublicLifeOrderAftermathCarryover(SettlementDisorderSnapshot disorder)
+    {
+        return disorder.InterventionCarryoverMonths > 0 || disorder.RefusalCarryoverMonths > 0;
     }
 
     private static ClanSnapshot? SelectPublicLifeOrderResidueOwner(IEnumerable<ClanSnapshot> localClans)
@@ -79,7 +84,7 @@ public sealed partial class SocialMemoryAndRelationsModule
         climate.LastPressureScore = Math.Max(climate.LastPressureScore, pressureScore);
         climate.LastPressureBand = Math.Max(climate.LastPressureBand, pressureBand);
         climate.LastUpdated = scope.Context.CurrentDate;
-        climate.LastTrace = $"{profile.CauseKey}: {disorder.LastInterventionCommandLabel} left public-order residue at settlement {disorder.SettlementId.Value}.";
+        climate.LastTrace = $"{profile.CauseKey}: {RenderOrderLabel(disorder)} {RenderOrderOutcomeLabel(disorder)} at settlement {disorder.SettlementId.Value}.";
 
         AddMemory(
             scope.State,
@@ -95,14 +100,14 @@ public sealed partial class SocialMemoryAndRelationsModule
             scope.Context);
 
         scope.RecordDiff(
-            $"{ownerClan.ClanName}承接{disorder.LastInterventionCommandLabel}后留下的{profile.ResidueLabel}，强度{intensity}。",
+            $"{ownerClan.ClanName}承接{RenderOrderLabel(disorder)}{RenderOrderOutcomeLabel(disorder)}后的{profile.ResidueLabel}，强度{intensity}。",
             ownerClan.Id.Value.ToString());
 
         if (pressureBand > previousPressureBand)
         {
             scope.Emit(
                 SocialMemoryAndRelationsEventNames.EmotionalPressureShifted,
-                $"{ownerClan.ClanName}因{disorder.LastInterventionCommandLabel}后账，门内情压升至{pressureBand}阶。",
+                $"{ownerClan.ClanName}因{RenderOrderLabel(disorder)}后账，门内情压升至{pressureBand}阶。",
                 ownerClan.Id.Value.ToString(),
                 new Dictionary<string, string>
                 {
@@ -126,9 +131,21 @@ public sealed partial class SocialMemoryAndRelationsModule
             + (disorder.RetaliationRisk / 3)
             + (disorder.SuppressionDemand / 5)
             + (disorder.BlackRoutePressure / 6)
-            + (disorder.CoercionRisk / 6);
+            + (disorder.CoercionRisk / 6)
+            + (disorder.RefusalCarryoverMonths * 12)
+            + ResolveOutcomeIntensityBonus(disorder.LastInterventionOutcomeCode);
 
         return Math.Clamp(pressure, 10, 100);
+    }
+
+    private static int ResolveOutcomeIntensityBonus(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            OrderInterventionOutcomeCodes.Refused => 15,
+            OrderInterventionOutcomeCodes.Partial => 8,
+            _ => 0,
+        };
     }
 
     private static string BuildPublicLifeOrderResidueNarrative(
@@ -136,10 +153,9 @@ public sealed partial class SocialMemoryAndRelationsModule
         SettlementDisorderSnapshot disorder,
         PublicLifeOrderResidueProfile profile)
     {
-        string orderLabel = string.IsNullOrWhiteSpace(disorder.LastInterventionCommandLabel)
-            ? disorder.LastInterventionCommandCode
-            : disorder.LastInterventionCommandLabel;
-        return $"{ownerClan.ClanName}上月按{orderLabel}出面，路口稍稳，{profile.ResidueLabel}却已落进乡议；路压{disorder.RoutePressure}，报复险{disorder.RetaliationRisk}。";
+        string orderLabel = RenderOrderLabel(disorder);
+        string outcomeLabel = RenderOrderOutcomeLabel(disorder);
+        return $"{ownerClan.ClanName}上月按{orderLabel}出面，{outcomeLabel}；{profile.ResidueLabel}已经落进乡议，路压{disorder.RoutePressure}，报复险{disorder.RetaliationRisk}。";
     }
 
     private static string BuildPublicLifeOrderResidueSummary(
@@ -148,13 +164,184 @@ public sealed partial class SocialMemoryAndRelationsModule
         PublicLifeOrderResidueProfile profile,
         int intensity)
     {
-        string orderLabel = string.IsNullOrWhiteSpace(disorder.LastInterventionCommandLabel)
+        string orderLabel = RenderOrderLabel(disorder);
+        string outcomeLabel = RenderOrderOutcomeLabel(disorder);
+        return $"{ownerClan.ClanName}因上月{orderLabel}{outcomeLabel}留下{profile.ResidueLabel}；乡里记得谁担保、谁护路，也记得报复险{disorder.RetaliationRisk}与路压{disorder.RoutePressure}，残留强度{intensity}。";
+    }
+
+    private static string RenderOrderLabel(SettlementDisorderSnapshot disorder)
+    {
+        return string.IsNullOrWhiteSpace(disorder.LastInterventionCommandLabel)
             ? disorder.LastInterventionCommandCode
             : disorder.LastInterventionCommandLabel;
-        return $"{ownerClan.ClanName}因上月{orderLabel}留下{profile.ResidueLabel}；乡里记得谁担保、谁得护路，也记得报复险{disorder.RetaliationRisk}与路压{disorder.RoutePressure}，残留强度{intensity}。";
+    }
+
+    private static string RenderOrderOutcomeLabel(SettlementDisorderSnapshot disorder)
+    {
+        return disorder.LastInterventionOutcomeCode switch
+        {
+            OrderInterventionOutcomeCodes.Refused => "被地方拒住",
+            OrderInterventionOutcomeCodes.Partial => "只半落地",
+            _ => "已经落地",
+        };
     }
 
     private static bool TryBuildPublicLifeOrderResidueProfile(
+        SettlementDisorderSnapshot disorder,
+        out PublicLifeOrderResidueProfile profile)
+    {
+        string outcomeCode = string.IsNullOrWhiteSpace(disorder.LastInterventionOutcomeCode)
+            ? OrderInterventionOutcomeCodes.Accepted
+            : disorder.LastInterventionOutcomeCode;
+
+        if (string.Equals(outcomeCode, OrderInterventionOutcomeCodes.Refused, StringComparison.Ordinal))
+        {
+            return TryBuildRefusedPublicLifeOrderResidueProfile(
+                disorder.LastInterventionCommandCode,
+                disorder.LastInterventionRefusalCode,
+                out profile);
+        }
+
+        if (string.Equals(outcomeCode, OrderInterventionOutcomeCodes.Partial, StringComparison.Ordinal))
+        {
+            return TryBuildPartialPublicLifeOrderResidueProfile(
+                disorder.LastInterventionCommandCode,
+                disorder.LastInterventionPartialCode,
+                out profile);
+        }
+
+        return TryBuildAcceptedPublicLifeOrderResidueProfile(disorder.LastInterventionCommandCode, out profile);
+    }
+
+    private static bool TryBuildRefusedPublicLifeOrderResidueProfile(
+        string commandName,
+        string refusalCode,
+        out PublicLifeOrderResidueProfile profile)
+    {
+        profile = (commandName, refusalCode) switch
+        {
+            (PlayerCommandNames.FundLocalWatch, OrderInterventionRefusalCodes.WatchmenRefused) => new(
+                SocialMemoryKinds.PublicOrderWatchRefusalShame,
+                MemoryType.Shame,
+                MemorySubtype.PublicShame,
+                "order.public_life.fund_local_watch.refused",
+                EmotionalPressureAxis.Shame,
+                "巡丁不应后的公开担保失败",
+                BaseIntensity: 32,
+                MonthlyDecay: 2,
+                Fear: 5,
+                Shame: 9,
+                Anger: 3,
+                Obligation: 4,
+                Trust: -3,
+                Favor: -2,
+                Grudge: 4),
+
+            (PlayerCommandNames.SuppressBanditry, OrderInterventionRefusalCodes.SuppressionRefused) => new(
+                SocialMemoryKinds.PublicOrderSuppressionRefusalFear,
+                MemoryType.Fear,
+                MemorySubtype.PowerGrudge,
+                "order.public_life.suppress_banditry.refused",
+                EmotionalPressureAxis.Fear,
+                "严缉不成后的恐惧与怨尾",
+                BaseIntensity: 36,
+                MonthlyDecay: 2,
+                Fear: 10,
+                Shame: 5,
+                Anger: 5,
+                Obligation: 1,
+                Trust: -4,
+                Favor: -3,
+                Grudge: 7),
+
+            _ => default,
+        };
+
+        return !string.IsNullOrWhiteSpace(profile.Kind);
+    }
+
+    private static bool TryBuildPartialPublicLifeOrderResidueProfile(
+        string commandName,
+        string partialCode,
+        out PublicLifeOrderResidueProfile profile)
+    {
+        profile = (commandName, partialCode) switch
+        {
+            (PlayerCommandNames.FundLocalWatch, OrderInterventionPartialCodes.CountyDrag) => new(
+                SocialMemoryKinds.PublicOrderWatchPartialObligation,
+                MemoryType.Debt,
+                MemorySubtype.ProtectionFavor,
+                "order.public_life.fund_local_watch.partial",
+                EmotionalPressureAxis.Obligation,
+                "巡丁半落地后的担保债",
+                BaseIntensity: 28,
+                MonthlyDecay: 3,
+                Fear: 4,
+                Shame: 4,
+                Anger: 2,
+                Obligation: 9,
+                Trust: -1,
+                Favor: 1,
+                Grudge: 2),
+
+            (PlayerCommandNames.FundLocalWatch, OrderInterventionPartialCodes.WatchMisread) => new(
+                SocialMemoryKinds.PublicOrderWatchPartialObligation,
+                MemoryType.Debt,
+                MemorySubtype.ProtectionFavor,
+                "order.public_life.fund_local_watch.partial",
+                EmotionalPressureAxis.Obligation,
+                "巡丁半落地后的误读担保债",
+                BaseIntensity: 30,
+                MonthlyDecay: 3,
+                Fear: 5,
+                Shame: 5,
+                Anger: 3,
+                Obligation: 8,
+                Trust: -2,
+                Favor: 0,
+                Grudge: 3),
+
+            (PlayerCommandNames.SuppressBanditry, OrderInterventionPartialCodes.CountyDrag) => new(
+                SocialMemoryKinds.PublicOrderSuppressionPartialGrudge,
+                MemoryType.Grudge,
+                MemorySubtype.PowerGrudge,
+                "order.public_life.suppress_banditry.partial",
+                EmotionalPressureAxis.Anger,
+                "严缉半落地后的拖延怨尾",
+                BaseIntensity: 32,
+                MonthlyDecay: 2,
+                Fear: 6,
+                Shame: 4,
+                Anger: 6,
+                Obligation: 1,
+                Trust: -2,
+                Favor: -2,
+                Grudge: 7),
+
+            (PlayerCommandNames.SuppressBanditry, OrderInterventionPartialCodes.SuppressionBacklash) => new(
+                SocialMemoryKinds.PublicOrderSuppressionPartialGrudge,
+                MemoryType.Grudge,
+                MemorySubtype.PowerGrudge,
+                "order.public_life.suppress_banditry.partial",
+                EmotionalPressureAxis.Anger,
+                "严缉半落地后的反噬怨尾",
+                BaseIntensity: 34,
+                MonthlyDecay: 2,
+                Fear: 8,
+                Shame: 4,
+                Anger: 8,
+                Obligation: 1,
+                Trust: -3,
+                Favor: -2,
+                Grudge: 8),
+
+            _ => default,
+        };
+
+        return !string.IsNullOrWhiteSpace(profile.Kind);
+    }
+
+    private static bool TryBuildAcceptedPublicLifeOrderResidueProfile(
         string commandName,
         out PublicLifeOrderResidueProfile profile)
     {

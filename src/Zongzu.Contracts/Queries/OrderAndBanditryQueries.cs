@@ -35,7 +35,17 @@ public sealed record SettlementDisorderSnapshot
 
     public string LastInterventionOutcome { get; init; } = string.Empty;
 
+    public string LastInterventionOutcomeCode { get; init; } = string.Empty;
+
+    public string LastInterventionRefusalCode { get; init; } = string.Empty;
+
+    public string LastInterventionPartialCode { get; init; } = string.Empty;
+
+    public string LastInterventionTraceCode { get; init; } = string.Empty;
+
     public int InterventionCarryoverMonths { get; init; }
+
+    public int RefusalCarryoverMonths { get; init; }
 }
 
 public sealed record OutlawBandSnapshot

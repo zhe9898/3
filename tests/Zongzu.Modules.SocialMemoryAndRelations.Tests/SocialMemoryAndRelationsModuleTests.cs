@@ -968,6 +968,116 @@ public sealed class SocialMemoryAndRelationsModuleTests
     }
 
     [Test]
+    public void RunMonth_PublicLifeOrderRefusalAndPartialAftermath_ConsumesStructuredOrderTraceOnly()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(7),
+            Prestige = 55,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(1),
+        });
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(2),
+            ClanName = "Li",
+            HomeSettlementId = new SettlementId(8),
+            Prestige = 80,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(2),
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        queries.Register<IOrderAndBanditryQueries>(new StubOrderQueries(
+        [
+            new SettlementDisorderSnapshot
+            {
+                SettlementId = new SettlementId(7),
+                RoutePressure = 42,
+                SuppressionDemand = 30,
+                DisorderPressure = 34,
+                RouteShielding = 8,
+                RetaliationRisk = 36,
+                ImplementationDrag = 62,
+                LastInterventionCommandCode = PlayerCommandNames.FundLocalWatch,
+                LastInterventionCommandLabel = "添雇巡丁",
+                LastInterventionSummary = "summary text must not drive residue",
+                LastInterventionOutcomeCode = OrderInterventionOutcomeCodes.Refused,
+                LastInterventionRefusalCode = OrderInterventionRefusalCodes.WatchmenRefused,
+                LastInterventionTraceCode = OrderInterventionTraceCodes.WatchGroundRefusal,
+                RefusalCarryoverMonths = 1,
+            },
+            new SettlementDisorderSnapshot
+            {
+                SettlementId = new SettlementId(8),
+                BanditThreat = 50,
+                RoutePressure = 44,
+                SuppressionDemand = 40,
+                DisorderPressure = 36,
+                BlackRoutePressure = 24,
+                CoercionRisk = 58,
+                RouteShielding = 10,
+                RetaliationRisk = 52,
+                LastInterventionCommandCode = PlayerCommandNames.SuppressBanditry,
+                LastInterventionCommandLabel = "严缉路匪",
+                LastInterventionSummary = "summary text must not drive residue",
+                LastInterventionOutcomeCode = OrderInterventionOutcomeCodes.Partial,
+                LastInterventionPartialCode = OrderInterventionPartialCodes.SuppressionBacklash,
+                LastInterventionTraceCode = OrderInterventionTraceCodes.SuppressionBacklash,
+                InterventionCarryoverMonths = 1,
+            },
+        ]));
+        socialModule.RegisterQueries(socialState, queries);
+
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
+        KernelState kernelState = KernelState.Create(1411);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 9),
+            manifest,
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        MemoryRecordState watchRefusal = socialState.Memories.Single(memory => memory.CauseKey == "order.public_life.fund_local_watch.refused");
+        Assert.That(watchRefusal.SubjectClanId, Is.EqualTo(new ClanId(1)));
+        Assert.That(watchRefusal.Kind, Is.EqualTo(SocialMemoryKinds.PublicOrderWatchRefusalShame));
+        Assert.That(watchRefusal.Type, Is.EqualTo(MemoryType.Shame));
+        Assert.That(watchRefusal.Subtype, Is.EqualTo(MemorySubtype.PublicShame));
+        Assert.That(watchRefusal.Summary, Does.Contain("添雇巡丁"));
+        Assert.That(watchRefusal.Summary, Does.Not.Contain("summary text must not drive residue"));
+
+        MemoryRecordState suppressionPartial = socialState.Memories.Single(memory => memory.CauseKey == "order.public_life.suppress_banditry.partial");
+        Assert.That(suppressionPartial.SubjectClanId, Is.EqualTo(new ClanId(2)));
+        Assert.That(suppressionPartial.Kind, Is.EqualTo(SocialMemoryKinds.PublicOrderSuppressionPartialGrudge));
+        Assert.That(suppressionPartial.Type, Is.EqualTo(MemoryType.Grudge));
+        Assert.That(suppressionPartial.Subtype, Is.EqualTo(MemorySubtype.PowerGrudge));
+        Assert.That(suppressionPartial.Summary, Does.Contain("严缉路匪"));
+        Assert.That(suppressionPartial.Summary, Does.Not.Contain("summary text must not drive residue"));
+
+        Assert.That(socialState.ClanNarratives.Single(static narrative => narrative.ClanId == new ClanId(1)).ShamePressure, Is.GreaterThan(0));
+        Assert.That(socialState.ClanEmotionalClimates.Single(static climate => climate.ClanId == new ClanId(2)).Anger, Is.GreaterThan(0));
+        Assert.That(context.Diff.Entries.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);
+        Assert.That(context.DomainEvents.Events.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);
+    }
+
+    [Test]
     public void PublishedEvents_ContainsPressureTemperingReceipts()
     {
         SocialMemoryAndRelationsModule socialModule = new();

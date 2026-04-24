@@ -283,7 +283,9 @@ Current note:
 - `SocialMemoryAndRelations` schema `3` persists pressure-tempering state. Clan climates and person tempering ledgers are module-owned residue from household distress, lineage conflict, trade pressure, exam outcomes, death, marriage, and warfare aftermath.
 - `SocialMemoryAndRelations` reads foreign pressure through queries or scoped domain events only. It does not write family, population, trade, education, office, order, force, or campaign state.
 - public-life order residue v4 uses existing schema `3` fields rather than adding a new persisted shape: `Memories` carry public-order cause/kind entries, `ClanNarratives` carry the lasting social interpretation, and `ClanEmotionalClimates` carry obligation, fear, shame, anger, trust, bitterness, or volatility changes
+- public-life order refusal residue v5 still uses SocialMemory schema `3`: refused or partial `添雇巡丁` / `严缉路匪` read structured Order outcome/refusal/partial codes and then write only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` records
 - current public-order residue cause keys include `order.public_life.escort_road_report`, `order.public_life.fund_local_watch`, `order.public_life.suppress_banditry`, `order.public_life.negotiate_with_outlaws`, and `order.public_life.tolerate_disorder`
+- v5 refusal / partial cause keys include `order.public_life.fund_local_watch.refused`, `order.public_life.fund_local_watch.partial`, `order.public_life.suppress_banditry.refused`, and `order.public_life.suppress_banditry.partial`
 - `LastUpdated` on climate / tempering records must be a valid `GameDate` even for default or migrated state; default `0000-00` dates are invalid save data.
 - `SocialMemoryAndRelations.PressureTempered` and `SocialMemoryAndRelations.EmotionalPressureShifted` are runtime receipts after owned state mutation; their metadata does not extend save schema.
 
@@ -527,13 +529,19 @@ public sealed class SettlementDisorderState {
     string LastInterventionCommandLabel;
     string LastInterventionSummary;
     string LastInterventionOutcome;
+    string LastInterventionOutcomeCode;
+    string LastInterventionRefusalCode;
+    string LastInterventionPartialCode;
+    string LastInterventionTraceCode;
     int InterventionCarryoverMonths;
+    int RefusalCarryoverMonths;
 }
 ```
 
 Current lite note:
-- the current M3 slice persists settlement-level disorder plus black-route pressure summaries, paper-compliance visibility, implementation-drag friction, route-shielding relief, and retaliation-risk backlash
-- bounded public-life order interventions now also persist a one-month follow-through window so recent road-watch / crackdown / negotiation choices can echo into the next monthly pass without creating a second authority surface
+- the current M3 slice persists settlement-level disorder plus black-route pressure summaries, paper-compliance visibility, implementation-drag friction, route-shielding relief, retaliation-risk backlash, and public-life order trace fields
+- `OrderAndBanditry` schema `8` adds structured public-life order outcome/refusal/partial trace fields plus `RefusalCarryoverMonths`; migration `7 -> 8` backfills legacy intervention receipts as accepted follow-through and clamps both carryover windows
+- bounded public-life order interventions now persist one-month follow-through or refusal carryover windows so recent road-watch / crackdown / negotiation choices can echo into the next monthly pass without creating a second authority surface
 - `SettlementDisorderSnapshot` exposes the same structured aftermath fields, including black-route pressure, coercion risk, implementation drag, route shielding, and retaliation risk, so downstream modules can read order aftermath without parsing receipt text
 - outlaw actors/camps remain deferred to a later deeper slice
 - black-route pressure snapshots stay inside `OrderAndBanditry` even when `TradeAndIndustry` reads them through query seams
@@ -898,12 +906,12 @@ public sealed class ModulePayloadFootprintSnapshot {
 
 Current note:
 - the read-model bundle now carries `ClanNarratives` so lineage conflict, shame, and favor pressure can be shown in the family council without reading module state directly
-- the read-model bundle now also carries `SocialMemories` so public-life order receipts, governance lanes, and shell adapters can show durable SocialMemory-owned residue without querying module state from UI
+- the read-model bundle now also carries `SocialMemories` so family, public-life order receipts, governance lanes, and shell adapters can show durable SocialMemory-owned residue without querying module state from UI
 - the read-model bundle now also carries runtime-only `PersonDossiers` composed from existing `PersonRegistry`, `FamilyCore`, `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, and optional `SocialMemoryAndRelations` queries; this does not add a root schema, module schema, save namespace, migration, or authoritative person table
 - the read-model bundle now also carries `Households`, `HouseholdSocialPressures`, and `InfluenceFootprint` as runtime-only joins across household, lineage, market, education, yamen, public-life, order, and force projections; these fields are not saved and do not create a player route system
 - `InfluenceFootprint` distinguishes the player's anchor household (`OwnHousehold`, local agency) from observed household pressure (`ObservedHouseholds`, indirect influence only)
 - `PlayerCommands` now spans family, office, order, and warfare affordances/receipts as read-only presentation data only
-- public-life order command affordances/receipts may include runtime-only `LeverageSummary`, `CostSummary`, and `ReadbackSummary` strings; governance docket may copy the selected recent receipt's leverage/cost/readback text for next-month readback, but none of these fields are saved or authoritative
+- public-life order command affordances/receipts may include runtime-only `LeverageSummary`, `CostSummary`, and `ReadbackSummary` strings; v5 readback may include structured `县门未落地`, `地方拖延`, and `后账仍在` text plus SocialMemory refusal residue, and governance docket may copy the projected receipt/gateway text for next-month readback, but none of these fields are saved or authoritative
 - family command targeting is expressed through optional `ClanId` plus `TargetLabel`; it does not create a new save namespace
 
 Diagnostics harness note:

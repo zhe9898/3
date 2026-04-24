@@ -159,11 +159,56 @@ public sealed partial class PresentationReadModelBuilder
         JurisdictionAuthoritySnapshot? jurisdiction,
         IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
+        string landingTail = BuildOrderLandingAftermathSummary(disorder);
         string officeTail = jurisdiction is null
             ? "官面读回暂缺。"
             : $"官面读回看{jurisdiction.CurrentAdministrativeTask}、积案{jurisdiction.PetitionBacklog}、词牒之压{jurisdiction.PetitionPressure}。";
+        string baseReadback = $"当前读回锚点：路压{disorder.RoutePressure}、镇压之需{disorder.SuppressionDemand}、护路得力{disorder.InterventionCarryoverMonths}月余波；{officeTail}";
 
-        return $"当前读回锚点：路压{disorder.RoutePressure}、镇压之需{disorder.SuppressionDemand}、护路得力{disorder.InterventionCarryoverMonths}月余波；{officeTail}";
+        return string.Join(" ", new[] { landingTail, baseReadback }.Where(static value => !string.IsNullOrWhiteSpace(value)));
+    }
+
+    private static string BuildOrderLandingAftermathSummary(SettlementDisorderSnapshot disorder)
+    {
+        string orderLabel = RenderOrderInterventionLabel(disorder);
+        return disorder.LastInterventionOutcomeCode switch
+        {
+            OrderInterventionOutcomeCodes.Refused =>
+                $"县门未落地：{orderLabel}被拒；{RenderOrderRefusalLabel(disorder.LastInterventionRefusalCode)}，后账仍在。",
+            OrderInterventionOutcomeCodes.Partial =>
+                $"地方拖延：{orderLabel}半落地；{RenderOrderPartialLabel(disorder.LastInterventionPartialCode)}，后账仍在。",
+            _ => string.Empty,
+        };
+    }
+
+    private static string RenderOrderInterventionLabel(SettlementDisorderSnapshot disorder)
+    {
+        return string.IsNullOrWhiteSpace(disorder.LastInterventionCommandLabel)
+            ? disorder.LastInterventionCommandCode
+            : disorder.LastInterventionCommandLabel;
+    }
+
+    private static string RenderOrderRefusalLabel(string refusalCode)
+    {
+        return refusalCode switch
+        {
+            OrderInterventionRefusalCodes.WatchmenRefused => "巡丁不应、脚户误读，本户公开担保失手",
+            OrderInterventionRefusalCodes.SuppressionRefused => "胥吏拖延、地方不肯真动，镇压不成",
+            OrderInterventionRefusalCodes.MissingSettlement => "地方接点缺失，命令无处落脚",
+            OrderInterventionRefusalCodes.UnknownCommand => "地方不识此令，无法承接",
+            _ => "地方未接住，本户担保没有转成实令",
+        };
+    }
+
+    private static string RenderOrderPartialLabel(string partialCode)
+    {
+        return partialCode switch
+        {
+            OrderInterventionPartialCodes.CountyDrag => "县门拖延，只落成半套",
+            OrderInterventionPartialCodes.WatchMisread => "巡丁与脚户误读，只护住半路",
+            OrderInterventionPartialCodes.SuppressionBacklash => "强压引出反噬，明面暂退、怨尾仍在",
+            _ => "地方只接住半截，余波留给本户背账",
+        };
     }
 
     private static IReadOnlyList<SocialMemoryEntrySnapshot> SelectLocalPublicLifeOrderSocialMemories(
@@ -202,11 +247,11 @@ public sealed partial class PresentationReadModelBuilder
 
     private static bool IsPublicLifeOrderSocialMemory(SocialMemoryEntrySnapshot memory)
     {
-        return string.Equals(memory.CauseKey, "order.public_life.escort_road_report", StringComparison.Ordinal)
-            || string.Equals(memory.CauseKey, "order.public_life.fund_local_watch", StringComparison.Ordinal)
-            || string.Equals(memory.CauseKey, "order.public_life.suppress_banditry", StringComparison.Ordinal)
-            || string.Equals(memory.CauseKey, "order.public_life.negotiate_with_outlaws", StringComparison.Ordinal)
-            || string.Equals(memory.CauseKey, "order.public_life.tolerate_disorder", StringComparison.Ordinal);
+        return memory.CauseKey.StartsWith("order.public_life.escort_road_report", StringComparison.Ordinal)
+            || memory.CauseKey.StartsWith("order.public_life.fund_local_watch", StringComparison.Ordinal)
+            || memory.CauseKey.StartsWith("order.public_life.suppress_banditry", StringComparison.Ordinal)
+            || memory.CauseKey.StartsWith("order.public_life.negotiate_with_outlaws", StringComparison.Ordinal)
+            || memory.CauseKey.StartsWith("order.public_life.tolerate_disorder", StringComparison.Ordinal);
     }
 
     private static string RenderSocialMemoryTypeLabel(MemoryType type)

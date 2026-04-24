@@ -252,6 +252,13 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The write boundary is strict: Order writes order state, SocialMemory writes social-memory state, and Application/UI/Unity only join read models for `社会记忆读回`.
 - Because the residue uses existing SocialMemory schema v3 records, this pass does not add a new module state field, migration, command, feature pack, `PersonRegistry` field, or manager layer.
 
+## Playable closure v5 refusal-residue note - 2026-04-25
+- `public-life-order-refusal-residue-v5` extends the same rule-driven loop to partial and refused `添雇巡丁` / `严缉路匪`: Order resolution writes structured outcome/refusal/partial/trace codes, not just receipt prose.
+- `OrderAndBanditry` is the only owner of refusal / partial authority classification. Application may pass office-reach modifiers from queries, but it may not compute `县门未落地`, `地方拖延`, or refusal causes.
+- `SocialMemoryAndRelations` must consume `LastInterventionOutcomeCode`, `LastInterventionRefusalCode`, `LastInterventionPartialCode`, `RefusalCarryoverMonths`, and pressure fields through `IOrderAndBanditryQueries`; it must not parse `LastInterventionSummary`, `LastInterventionOutcome`, or `DomainEvent.Summary`.
+- Governance, public-life, family, and Unity shell readback may display refusal residue only through `PresentationReadModelBundle.SocialMemories`, command receipts, and governance summaries.
+- Save impact is limited to `OrderAndBanditry` schema `7 -> 8`; SocialMemory residue continues to use schema `3`.
+
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace
 - `OfficeAndCareer.Lite` now reads `EducationAndExams`, `SocialMemoryAndRelations`, and optional `OrderAndBanditry` projections only

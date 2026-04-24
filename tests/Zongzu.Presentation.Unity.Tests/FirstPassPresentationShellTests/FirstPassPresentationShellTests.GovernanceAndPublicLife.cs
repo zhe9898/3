@@ -195,7 +195,7 @@ public sealed partial class FirstPassPresentationShellTests
                     Label = "添雇巡丁",
                     Summary = "巡丁已经补到路口。",
                     OutcomeSummary = "路口暂稳。",
-                    ReadbackSummary = "社会记忆读回：人情31，张氏因上月添雇巡丁留下巡丁担保与护路人情。",
+                    ReadbackSummary = "县门未落地：添雇巡丁被拒；巡丁不应、脚户误读，本户公开担保失手，后账仍在。社会记忆读回：羞面46，张氏因上月添雇巡丁被地方拒住留下巡丁不应后的公开担保失败。",
                     TargetLabel = "县门榜下",
                 },
             ],
@@ -205,6 +205,8 @@ public sealed partial class FirstPassPresentationShellTests
         CommandReceiptViewModel receipt = shell.DeskSandbox.Settlements.Single().PublicLifeRecentReceipts.Single();
 
         Assert.That(receipt.CommandName, Is.EqualTo(PlayerCommandNames.FundLocalWatch));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("县门未落地"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("后账仍在"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("社会记忆读回"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("添雇巡丁"));
     }

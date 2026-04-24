@@ -217,7 +217,10 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
     }
 
 
-    private static InterventionCarryoverEffect ResolveInterventionCarryover(string commandCode, int carryoverMonths)
+    private static InterventionCarryoverEffect ResolveInterventionCarryover(
+        string commandCode,
+        int carryoverMonths,
+        string outcomeCode)
 
     {
 
@@ -230,7 +233,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
         }
 
 
-        return commandCode switch
+        InterventionCarryoverEffect effect = commandCode switch
 
         {
 
@@ -248,6 +251,32 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
         };
 
+        if (string.Equals(outcomeCode, OrderInterventionOutcomeCodes.Partial, StringComparison.Ordinal))
+        {
+            return ScaleCarryoverEffect(effect, 2);
+        }
+
+        return effect;
+
+    }
+
+    private static InterventionCarryoverEffect ScaleCarryoverEffect(InterventionCarryoverEffect effect, int divisor)
+    {
+        if (divisor <= 1)
+        {
+            return effect;
+        }
+
+        return new InterventionCarryoverEffect(
+            effect.BanditDelta / divisor,
+            effect.RouteDelta / divisor,
+            effect.DisorderDelta / divisor,
+            effect.RouteShieldingDelta / divisor,
+            effect.SuppressionDemandDelta / divisor,
+            effect.SuppressionReliefDelta / divisor,
+            effect.RetaliationRiskDelta / divisor,
+            effect.BlackRoutePressureDelta / divisor,
+            effect.CoercionRiskDelta / divisor);
     }
 
 

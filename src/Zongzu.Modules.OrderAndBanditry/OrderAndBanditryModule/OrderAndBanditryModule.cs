@@ -75,7 +75,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
     public override string ModuleKey => KnownModuleKeys.OrderAndBanditry;
 
 
-    public override int ModuleSchemaVersion => 7;
+    public override int ModuleSchemaVersion => 8;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -586,7 +586,9 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
                 disorder.LastInterventionCommandCode,
 
-                disorder.InterventionCarryoverMonths);
+                disorder.InterventionCarryoverMonths,
+
+                disorder.LastInterventionOutcomeCode);
 
             routeShielding = Math.Clamp(routeShielding + interventionCarryover.RouteShieldingDelta, 0, 100);
 
@@ -896,6 +898,14 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
             {
 
                 disorder.InterventionCarryoverMonths = 0;
+
+            }
+
+            if (disorder.RefusalCarryoverMonths > 0)
+
+            {
+
+                disorder.RefusalCarryoverMonths = 0;
 
             }
 

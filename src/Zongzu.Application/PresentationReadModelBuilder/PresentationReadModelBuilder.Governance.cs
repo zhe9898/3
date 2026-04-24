@@ -37,9 +37,13 @@ public sealed partial class PresentationReadModelBuilder
                 string orderAdministrativeAftermathSummary = disorder is null
                     ? string.Empty
                     : BuildOrderAdministrativeAftermathExecutionSummary(disorder, jurisdiction);
+                string orderLandingAftermathSummary = disorder is null
+                    ? string.Empty
+                    : BuildOrderLandingAftermathSummary(disorder);
                 string socialMemoryAftermathSummary = BuildOrderSocialMemoryReadbackSummary(
                     SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans));
                 string orderAftermathSummary = CombineGovernanceDocketText(
+                    orderLandingAftermathSummary,
                     orderAdministrativeAftermathSummary,
                     socialMemoryAftermathSummary);
                 string focusLabel = ResolveGovernanceFocusLabel(publicLife, jurisdiction);

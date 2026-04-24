@@ -90,13 +90,13 @@ Example:
 - `WorldSettlements` uses namespace `WorldSettlements` with schema version `8` for the active world-settlement slice plus chain-6 flood-disaster and chain-5 frontier-strain declaration watermark state
 - `FamilyCore` uses namespace `FamilyCore` with schema version `7`
 - `PopulationAndHouseholds` uses namespace `PopulationAndHouseholds` with schema version `2`
-- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `3` for clan emotional climate, person pressure-tempering ledgers, and public-life order residue stored in existing memory/narrative/climate records
+- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `3` for clan emotional climate, person pressure-tempering ledgers, and public-life order accepted/refused/partial residue stored in existing memory/narrative/climate records
 - `EducationAndExams` uses namespace `EducationAndExams` with schema version `2`
 - `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `4`
 - `PublicLifeAndRumor` uses namespace `PublicLifeAndRumor` with schema version `4` for the active county-public-life slice plus monthly-cadence, venue-channel, and channel-contention descriptors
 - `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `6` for the active governance-lite slice plus chain-4 amnesty de-duplication state, chain-7 clerk-capture edge state, and chain-9 official-defection risk state
 - `NarrativeProjection` uses namespace `NarrativeProjection` with schema version `1`
-- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `7`
+- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `8`
 - `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `4` for active M3 local-conflict lite integration plus campaign-fallout persistence
 - `WarfareCampaign` uses namespace `WarfareCampaign` with schema version `4` for the active campaign-lite slice (phase + aftermath docket projection)
 
@@ -112,7 +112,7 @@ Example:
 - built-in default loaders now migrate legacy `PublicLifeAndRumor` schema `1 -> 2 -> 3 -> 4` by first backfilling cadence code/label, crowd mix, and cadence summary, then by conservatively backfilling dominant-venue code plus channel metrics, then by backfilling official/street/road/prefecture/contention wording inside the public-life namespace only
 - built-in default loaders now also migrate legacy `TradeAndIndustry` schema `1 -> 2 -> 3` by first backfilling gray-route ledgers, then by conservatively backfilling per-route blockage / seizure mirrors inside the same trade namespace only
 - built-in default loaders now also migrate legacy `SocialMemoryAndRelations` schema `1 -> 2 -> 3` by first classifying legacy memory records, then by backfilling clan emotional climate records from existing clan narratives inside the same social-memory namespace only
-- public-life order residue v4 does not add a new SocialMemory field or module envelope; it writes new records into existing schema `3` collections and therefore requires no `3 -> 4` migration. Any later residue work that adds fields, indexes, or namespaces must bump the SocialMemory schema and add an explicit migration.
+- public-life order residue v4/v5 does not add a new SocialMemory field or module envelope; it writes new records into existing schema `3` collections and therefore requires no `3 -> 4` migration. Any later residue work that adds fields, indexes, or namespaces must bump the SocialMemory schema and add an explicit migration.
 - M2-lite explanation strings are module-owned authoritative traces and must roundtrip with the rest of the module state
 - `NarrativeProjection` persists derived notification history only inside its own namespace and may be rebuilt later without rewriting foreign module state
 - latest-month debug traces, warning lists, and module inspectors are non-persisted read models and must not require a root schema change
@@ -121,8 +121,8 @@ Example:
 ## M3 local-conflict namespace policy
 - `OrderAndBanditry` now has an order-enabled M3 bridge path and a conflict-enabled M3 local-conflict path; both seed module-owned settlement disorder state only when the feature is enabled
 - old M2 saves still load cleanly while `OrderAndBanditry` remains disabled in the manifest
-- legacy M3 order saves with `OrderAndBanditry` schema `1` now migrate through built-in `1 -> 2 -> 3 -> 4 -> 5 -> 6` steps that first backfill black-route pressure summaries, then conservatively reconstruct paper-compliance and implementation-drag fields, then backfill route-shielding and retaliation-risk summaries, then backfill empty intervention-receipt fields, then clamp one-month intervention-follow-through state inside the same namespace
-- public-life order residue v4 adds only query/read-model exposure for existing order aftermath fields; it does not change `OrderAndBanditry` persisted state or require an order schema migration
+- legacy M3 order saves with `OrderAndBanditry` schema `1` now migrate through built-in `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8` steps that first backfill black-route pressure summaries, then conservatively reconstruct paper-compliance and implementation-drag fields, then backfill route-shielding and retaliation-risk summaries, then backfill empty intervention-receipt fields, then clamp one-month intervention-follow-through state, then backfill structured outcome/refusal/partial trace fields inside the same namespace
+- public-life order residue v4 adds only query/read-model exposure for existing order aftermath fields; v5 adds `OrderAndBanditry` persisted structured trace fields (`LastInterventionOutcomeCode`, `LastInterventionRefusalCode`, `LastInterventionPartialCode`, `LastInterventionTraceCode`, `RefusalCarryoverMonths`) and a same-namespace `7 -> 8` migration
 - `ConflictAndForce` now has a conflict-enabled M3 local-conflict path and seeds module-owned settlement force posture plus explicit response activation/support fields only when the feature is enabled
 - legacy M3 local-conflict saves with `ConflictAndForce` schema `1` now migrate through a built-in `1 -> 2` module step during default local-conflict load
 - built-in migration now also upgrades legacy `ConflictAndForce` schema `2` saves to schema `3` by backfilling zero campaign-fatigue / escort-strain fields and empty fallout traces inside the same namespace

@@ -221,6 +221,11 @@ Current public-life/order v3 note:
 Current public-life/order v4 note:
 - Month N accepted order commands such as `添雇巡丁` or `严缉路匪` mutate only `OrderAndBanditry` command receipt and carryover state at command time
 - Month N+1 `SocialMemoryAndRelations` reads structured order aftermath through `IOrderAndBanditryQueries`, writes durable memory/narrative/climate residue, and exposes it to read models before projection
+
+Current public-life/order v5 note:
+- Month N public-life/order commands may resolve as accepted, partial, or refused inside `OrderAndBanditry`; the module owns the structured outcome/refusal/partial/trace codes and any carryover.
+- Same-month command resolution must not mutate `SocialMemoryAndRelations`; Month N+1 SocialMemory reads prior-month structured Order trace before Order clears the carryover later in the monthly pass.
+- The loop is rule-driven command / aftermath / social-memory readback, not an event-chain or event-pool design; `DomainEvent.Summary` and receipt prose are not rule input.
 - this is a rule-driven monthly residue path over query-visible state, not an event pool and not `DomainEvent.Summary` parsing; UI and Unity receive only the projected residue/readback text
 
 Optional exception:

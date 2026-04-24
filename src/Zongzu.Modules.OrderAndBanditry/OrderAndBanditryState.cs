@@ -78,5 +78,15 @@ public sealed class SettlementDisorderState
 
     public string LastInterventionOutcome { get; set; } = string.Empty;
 
+    public string LastInterventionOutcomeCode { get; set; } = string.Empty;
+
+    public string LastInterventionRefusalCode { get; set; } = string.Empty;
+
+    public string LastInterventionPartialCode { get; set; } = string.Empty;
+
+    public string LastInterventionTraceCode { get; set; } = string.Empty;
+
     public int InterventionCarryoverMonths { get; set; }
+
+    public int RefusalCarryoverMonths { get; set; }
 }

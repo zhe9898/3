@@ -31,4 +31,16 @@ public static class SocialMemoryKinds
 
     /// <summary>Public-life order residue: 议路或暂缓穷追后留下的公议羞面。</summary>
     public const string PublicOrderPublicShame = "public_order_public_shame";
+
+    /// <summary>Public-life order residue: 添雇巡丁半落地后的担保债和地方拖延。</summary>
+    public const string PublicOrderWatchPartialObligation = "public_order_watch_partial_obligation";
+
+    /// <summary>Public-life order residue: 添雇巡丁被拒后的公开担保失败和羞面。</summary>
+    public const string PublicOrderWatchRefusalShame = "public_order_watch_refusal_shame";
+
+    /// <summary>Public-life order residue: 严缉路匪半落地后的反噬与怨尾。</summary>
+    public const string PublicOrderSuppressionPartialGrudge = "public_order_suppression_partial_grudge";
+
+    /// <summary>Public-life order residue: 严缉路匪被拒后的恐惧、怨尾和后账。</summary>
+    public const string PublicOrderSuppressionRefusalFear = "public_order_suppression_refusal_fear";
 }

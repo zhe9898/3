@@ -96,6 +96,12 @@ public sealed class SaveRoundtripTests
         GameSimulation simulation = SimulationBootstrapper.CreateM3OrderAndBanditryBootstrap(20260428);
         simulation.AdvanceMonths(12);
         var settlementId = new PresentationReadModelBuilder().BuildForM2(simulation).SettlementDisorder.Single().SettlementId;
+        OrderAndBanditryState preCommandOrderState = simulation.GetModuleStateForTesting<OrderAndBanditryState>(
+            KnownModuleKeys.OrderAndBanditry);
+        SettlementDisorderState preCommandSettlement = preCommandOrderState.Settlements.Single(settlement => settlement.SettlementId == settlementId);
+        preCommandSettlement.ImplementationDrag = 0;
+        preCommandSettlement.CoercionRisk = 0;
+        preCommandSettlement.RetaliationRisk = 0;
         new PlayerCommandService().IssueIntent(
             simulation,
             new PlayerCommandRequest
@@ -133,7 +139,7 @@ public sealed class SaveRoundtripTests
         TradeAndIndustryState tradeState = (TradeAndIndustryState)serializer.Deserialize(
             typeof(TradeAndIndustryState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(7));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(8));
         Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(orderState.Settlements.Any(static settlement => settlement.PaperCompliance >= 0), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => settlement.ImplementationDrag >= 0), Is.True);
@@ -142,7 +148,10 @@ public sealed class SaveRoundtripTests
         Assert.That(orderState.Settlements.Any(static settlement => string.Equals(settlement.LastInterventionCommandCode, PlayerCommandNames.FundLocalWatch, System.StringComparison.Ordinal)), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => !string.IsNullOrWhiteSpace(settlement.LastInterventionSummary)), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => !string.IsNullOrWhiteSpace(settlement.LastInterventionOutcome)), Is.True);
+        Assert.That(orderState.Settlements.Any(static settlement => settlement.LastInterventionOutcomeCode == OrderInterventionOutcomeCodes.Accepted), Is.True);
+        Assert.That(orderState.Settlements.Any(static settlement => settlement.LastInterventionTraceCode == OrderInterventionTraceCodes.AcceptedFollowThrough), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => settlement.InterventionCarryoverMonths == 1), Is.True);
+        Assert.That(orderState.Settlements.Any(static settlement => settlement.RefusalCarryoverMonths == 0), Is.True);
         Assert.That(tradeState.Routes.Any(static route => !string.IsNullOrWhiteSpace(route.RouteConstraintLabel)), Is.True);
         Assert.That(tradeState.Routes.Any(static route => !string.IsNullOrWhiteSpace(route.LastRouteTrace)), Is.True);
     }
@@ -184,6 +193,56 @@ public sealed class SaveRoundtripTests
 
         PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(reloaded);
         Assert.That(bundle.SocialMemories.Any(static memory => memory.CauseKey == "order.public_life.fund_local_watch"), Is.True);
+    }
+
+    [Test]
+    public void SaveCodec_RoundtripPreservesOrderRefusalTraceAndSocialMemoryResidue()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM3OrderAndBanditryBootstrap(20260426);
+        simulation.AdvanceMonths(2);
+        SettlementId settlementId = new PresentationReadModelBuilder().BuildForM2(simulation).SettlementDisorder.Single().SettlementId;
+        OrderAndBanditryState orderState = simulation.GetModuleStateForTesting<OrderAndBanditryState>(
+            KnownModuleKeys.OrderAndBanditry);
+        SettlementDisorderState settlement = orderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+        settlement.CoercionRisk = 82;
+        settlement.RetaliationRisk = 65;
+        settlement.ImplementationDrag = 20;
+
+        PlayerCommandResult result = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.SuppressBanditry,
+            });
+        Assert.That(result.Accepted, Is.False);
+
+        SaveCodec codec = new();
+        GameSimulation traceReloaded = SimulationBootstrapper.LoadM3OrderAndBanditry(codec.Decode(codec.Encode(simulation.ExportSave())));
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState reloadedOrderState = (OrderAndBanditryState)serializer.Deserialize(
+            typeof(OrderAndBanditryState),
+            traceReloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].Payload);
+        SettlementDisorderState reloadedSettlement = reloadedOrderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+        Assert.That(traceReloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(8));
+        Assert.That(reloadedSettlement.LastInterventionOutcomeCode, Is.EqualTo(OrderInterventionOutcomeCodes.Refused));
+        Assert.That(reloadedSettlement.LastInterventionRefusalCode, Is.EqualTo(OrderInterventionRefusalCodes.SuppressionRefused));
+        Assert.That(reloadedSettlement.LastInterventionTraceCode, Is.EqualTo(OrderInterventionTraceCodes.SuppressionGroundRefusal));
+        Assert.That(reloadedSettlement.RefusalCarryoverMonths, Is.EqualTo(1));
+        Assert.That(reloadedSettlement.InterventionCarryoverMonths, Is.EqualTo(0));
+
+        traceReloaded.AdvanceOneMonth();
+        GameSimulation residueReloaded = SimulationBootstrapper.LoadM3OrderAndBanditry(codec.Decode(codec.Encode(traceReloaded.ExportSave())));
+        SocialMemoryAndRelationsState socialState = (SocialMemoryAndRelationsState)serializer.Deserialize(
+            typeof(SocialMemoryAndRelationsState),
+            residueReloaded.ExportSave().ModuleStates[KnownModuleKeys.SocialMemoryAndRelations].Payload);
+        Assert.That(
+            socialState.Memories.Any(static memory =>
+                memory.Kind == SocialMemoryKinds.PublicOrderSuppressionRefusalFear
+                && memory.CauseKey == "order.public_life.suppress_banditry.refused"
+                && memory.Type == MemoryType.Fear
+                && memory.Subtype == MemorySubtype.PowerGrudge),
+            Is.True);
     }
 
     [Test]

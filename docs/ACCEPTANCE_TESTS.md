@@ -86,7 +86,7 @@ Every release line must pass:
   - county-public-life summaries can also surface official-notice, street-talk, road-report, prefecture-dispatch, and contention wording on hall / desk nodes without introducing authority UI
   - `PublicLifeAndRumor` day-facing short-band passes may distinguish hot and calm yamen surfaces through office task-load / clerk-dependence queries without emitting short-band diffs/events or writing office state
   - legacy `PublicLifeAndRumor` schema `1 -> 2 -> 3 -> 4` saves migrate through the default loaders and backfill cadence, venue-channel, plus channel-contention descriptors conservatively enough to keep current M2+ paths loadable
-- legacy `OrderAndBanditry` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6` saves migrate through the default loaders and backfill black-route pressure, paper reach, shielding / retaliation, empty intervention-receipt fields, plus clamped one-month intervention-follow-through state conservatively enough to keep current M3+ paths loadable
+- legacy `OrderAndBanditry` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8` saves migrate through the default loaders and backfill black-route pressure, paper reach, shielding / retaliation, empty intervention-receipt fields, clamped one-month intervention-follow-through state, and structured public-life order outcome/refusal/partial trace fields conservatively enough to keep current M3+ paths loadable
 - legacy `WorldSettlements` schema `1` saves migrate through schema `7` through the default loaders, backfilling settlement tiers and the chain-6 flood-disaster declaration watermark conservatively enough to continue load on current M2+ paths
 - legacy `SocialMemoryAndRelations` schema `2` saves migrate to schema `3`, backfilling clan emotional climates from existing narratives and keeping `GameDate` fields valid for save/load roundtrip
 
@@ -103,8 +103,8 @@ Every release line must pass:
 - recent bounded order interventions can echo into the next monthly pass through order-owned carryover state, and trade may only react by reading the corresponding order queries
 - bounded public-life order interventions may also scale against office-owned jurisdiction reach when governance-lite is enabled, while order-only paths remain neutral
 - those same public-life order affordances may also surface a read-only office-aware execution summary without introducing UI-owned authority logic
-- public-life order closure must prove a full playable-thin loop: Month N public-life/order pressure appears on a settlement surface, the player issues one bounded order command, `OrderAndBanditry` resolves acceptance/refusal and receipt state, and Month N+1 governance/order readback changes without UI authority or cross-module mutation
-- public-life order social-memory residue must prove Month N `添雇巡丁` or `严缉路匪` mutates only order-owned command/carryover state, Month N+1 `SocialMemoryAndRelations` reads structured order aftermath and writes only social-memory memory/narrative/climate state, and the durable residue appears in read models and shell readback
+- public-life order closure must prove a full playable-thin loop: Month N public-life/order pressure appears on a settlement surface, the player issues one bounded order command, `OrderAndBanditry` resolves accepted/partial/refused outcome and receipt state, and Month N+1 governance/order readback changes without UI authority or cross-module mutation
+- public-life order social-memory residue must prove Month N `添雇巡丁` or `严缉路匪` mutates only order-owned command/carryover/refusal-trace state, Month N+1 `SocialMemoryAndRelations` reads structured order aftermath and writes only social-memory memory/narrative/climate state, and the durable residue appears in read models and shell readback
 - governance-lite office runs may also convert recent order-intervention carryover into office-owned backlog / petition / task-load fallout on the next month, but only by reading order queries and without writing order state back
 - those same public-life order receipts may also surface a read-only office-aftermath execution summary when next-month jurisdiction traces still carry that order command’s follow-through
 - runtime-only interaction-pressure and hotspot summaries may also surface that same order-linked office aftermath as read-only administrative-task / backlog context without entering save compatibility
@@ -132,7 +132,7 @@ Every release line must pass:
 - migrated local-conflict loads can surface runtime-only migration steps and current hotspots through the read-only debug shell
 - migration reports preserve enabled-module and module-envelope key sets unless an explicit migration says otherwise
 - migration preparation leaves source save data unchanged while reporting consistency status on the prepared copy
-- legacy `OrderAndBanditry` schema `1` saves migrate to schema `2`, then `3`, then `4`, then `5`, then `6`, backfilling black-route pressure first, paper-compliance / implementation-drag fields second, route-shielding / retaliation-risk fields third, intervention receipts fourth, and intervention-follow-through bounds fifth inside the same envelope only
+- legacy `OrderAndBanditry` schema `1` saves migrate to schema `2`, then `3`, then `4`, then `5`, then `6`, then `7`, then `8`, backfilling black-route pressure first, paper-compliance / implementation-drag fields second, route-shielding / retaliation-risk fields third, intervention receipts fourth, intervention-follow-through bounds fifth, and structured outcome/refusal/partial trace fields sixth inside the same envelope only
 - legacy `TradeAndIndustry` schema `1` saves migrate to schema `2` and then `3`, backfilling gray-route ledgers first and route-level blockage / seizure mirrors second inside the same envelope only
 - campaign aftermath can push deterministic owned-state fatigue / escort-strain fallout into `ConflictAndForce` without cross-module writes
 - `ConflictAndForce` campaign-fatigue fallout must reduce only conflict-owned readiness / command / escort posture and recover through later monthly passes
@@ -264,3 +264,11 @@ At integration level, verify:
 - Integration acceptance must show the full rule-driven loop: accepted `添雇巡丁` or `严缉路匪`, structured order aftermath query, SocialMemory-owned memory/climate/narrative residue, public-life receipt readback, governance readback, and shell visibility.
 - Save acceptance must show the new residue entries roundtrip through the existing SocialMemory schema `3`; because no new persisted field is added, no `3 -> 4` migration is expected for this pass.
 - Architecture acceptance must guard against `DomainEvent.Summary` parsing, Application/UI/Unity social-memory writes, manager/god-controller drift, and `PersonRegistry` expansion.
+
+## Playable closure v5 refusal-residue acceptance - 2026-04-25
+- `public-life-order-refusal-residue-v5` must prove this is a rule-driven command / aftermath / social-memory readback loop, not an event-chain or event-pool design.
+- Order acceptance must cover accepted, partial, and refused `添雇巡丁` / `严缉路匪` paths and prove command time mutates only `OrderAndBanditry` state.
+- SocialMemory acceptance must prove same-month command resolution does not write SocialMemory, while Month N+1 refused or partial aftermath writes durable `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` residue only inside `SocialMemoryAndRelations`.
+- Read-model acceptance must prove public-life receipts, governance lanes/dockets, family-facing `SocialMemories`, and shell surfaces expose `县门未落地`, `地方拖延`, `后账仍在`, and `社会记忆读回` from projections only.
+- Save acceptance must prove `OrderAndBanditry` schema `7 -> 8` migration and save/load preservation of structured refusal trace plus SocialMemory refusal residue; SocialMemory remains schema `3`.
+- Architecture acceptance must guard against `LastInterventionSummary` / `DomainEvent.Summary` parsing, Application/UI/Unity social-memory writes, forbidden manager/god-controller names, and `PersonRegistry` expansion.
