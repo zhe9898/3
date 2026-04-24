@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System;
+using System.Linq;
 using Zongzu.Kernel;
 
 namespace Zongzu.Contracts;
@@ -30,6 +32,17 @@ public sealed record NotificationTraceSnapshot
     public string DiffDescription { get; init; } = string.Empty;
 
     public string? EntityKey { get; init; }
+
+    public bool MatchesSettlementScope(SettlementId settlementId)
+    {
+        return string.Equals(EntityKey, settlementId.Value.ToString(), StringComparison.Ordinal);
+    }
+
+    public bool MatchesSourceModule(string sourceModuleKey)
+    {
+        return !string.IsNullOrWhiteSpace(sourceModuleKey)
+            && string.Equals(SourceModuleKey, sourceModuleKey, StringComparison.Ordinal);
+    }
 }
 
 public sealed record NarrativeNotificationSnapshot
@@ -55,6 +68,28 @@ public sealed record NarrativeNotificationSnapshot
     public bool IsRead { get; init; }
 
     public IReadOnlyList<NotificationTraceSnapshot> Traces { get; init; } = [];
+
+    public bool MatchesSourceModule(string sourceModuleKey)
+    {
+        return !string.IsNullOrWhiteSpace(sourceModuleKey)
+            && string.Equals(SourceModuleKey, sourceModuleKey, StringComparison.Ordinal);
+    }
+
+    public bool HasTraceFromModule(string sourceModuleKey)
+    {
+        return Traces.Any(trace => trace.MatchesSourceModule(sourceModuleKey));
+    }
+
+    public bool MatchesSettlementScope(SettlementId settlementId)
+    {
+        return Traces.Any(trace => trace.MatchesSettlementScope(settlementId));
+    }
+
+    public bool MatchesScope(SettlementId settlementId, string? sourceModuleKey = null)
+    {
+        return (string.IsNullOrWhiteSpace(sourceModuleKey) || MatchesSourceModule(sourceModuleKey))
+            && MatchesSettlementScope(settlementId);
+    }
 }
 
 public interface INarrativeProjectionQueries

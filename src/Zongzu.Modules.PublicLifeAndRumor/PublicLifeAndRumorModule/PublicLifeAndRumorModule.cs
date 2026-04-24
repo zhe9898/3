@@ -99,7 +99,7 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
             switch (domainEvent.EventType)
             {
                 case OfficeAndCareerEventNames.YamenOverloaded:
-                    ApplyYamenOverloadHeat(scope);
+                    ApplyYamenOverloadHeat(scope, domainEvent);
                     break;
 
                 case OrderAndBanditryEventNames.DisorderSpike:
@@ -113,15 +113,27 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
         }
     }
 
-    private static void ApplyYamenOverloadHeat(ModuleEventHandlingScope<PublicLifeAndRumorState> scope)
+    private static void ApplyYamenOverloadHeat(
+        ModuleEventHandlingScope<PublicLifeAndRumorState> scope,
+        IDomainEvent domainEvent)
     {
         // Renzong thin chain: yamen overload → public life heat.
-        // For thin-chain we attach heat to all settlements (no settlement id in payload yet).
-        foreach (SettlementPublicLifeState publicLife in scope.State.Settlements)
+        if (!int.TryParse(domainEvent.EntityKey, out int settlementIdValue))
         {
-            publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + 15, 0, 100);
-            publicLife.LastPublicTrace = $"衙门口因税役挤满请减之人，街谈热度升至{publicLife.StreetTalkHeat}。";
+            return;
         }
+
+        SettlementId settlementId = new(settlementIdValue);
+        SettlementPublicLifeState? publicLife = scope.State.Settlements
+            .FirstOrDefault(s => s.SettlementId == settlementId);
+
+        if (publicLife is null)
+        {
+            return;
+        }
+
+        publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + 15, 0, 100);
+        publicLife.LastPublicTrace = $"衙门口因税役挤满请减之人，街谈热度升至{publicLife.StreetTalkHeat}。";
     }
 
     private static void ApplyDisorderSpikeHeat(

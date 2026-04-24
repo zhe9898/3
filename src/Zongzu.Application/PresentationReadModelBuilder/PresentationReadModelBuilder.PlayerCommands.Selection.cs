@@ -77,13 +77,8 @@ public sealed partial class PresentationReadModelBuilder
     {
         ArgumentNullException.ThrowIfNull(priority);
 
-        string settlementKey = settlementId.Value.ToString();
-
         return notifications
-            .Where(notification =>
-                (string.IsNullOrWhiteSpace(sourceModuleKey)
-                 || string.Equals(notification.SourceModuleKey, sourceModuleKey, StringComparison.Ordinal))
-                && notification.Traces.Any(trace => string.Equals(trace.EntityKey, settlementKey, StringComparison.Ordinal)))
+            .Where(notification => notification.MatchesScope(settlementId, sourceModuleKey))
             .OrderBy(priority)
             .ThenBy(static notification => notification.Tier)
             .ThenByDescending(static notification => notification.CreatedAt.Year)

@@ -41,7 +41,9 @@ The code, analyzer, module, system, Unity presentation, performance, and content
     /Zongzu.Contracts
     /Zongzu.Scheduler
     /Zongzu.Application
+    /Zongzu.Host
     /Zongzu.Persistence
+    /Zongzu.Modules.PersonRegistry
     /Zongzu.Modules.WorldSettlements
     /Zongzu.Modules.FamilyCore
     /Zongzu.Modules.PopulationAndHouseholds
@@ -52,14 +54,18 @@ The code, analyzer, module, system, Unity presentation, performance, and content
     /Zongzu.Modules.OrderAndBanditry
     /Zongzu.Modules.ConflictAndForce
     /Zongzu.Modules.WarfareCampaign
+    /Zongzu.Modules.PublicLifeAndRumor
     /Zongzu.Modules.NarrativeProjection
+    /Zongzu.Presentation.Unity.ViewModels
     /Zongzu.Presentation.Unity
   /unity
     /Zongzu.UnityShell
   /tests
+    /Zongzu.Architecture.Tests
     /Zongzu.Kernel.Tests
     /Zongzu.Persistence.Tests
     /Zongzu.Scheduler.Tests
+    /Zongzu.Modules.PersonRegistry.Tests
     /Zongzu.Modules.WorldSettlements.Tests
     /Zongzu.Modules.FamilyCore.Tests
     /Zongzu.Modules.PopulationAndHouseholds.Tests
@@ -70,12 +76,15 @@ The code, analyzer, module, system, Unity presentation, performance, and content
     /Zongzu.Modules.OrderAndBanditry.Tests
     /Zongzu.Modules.ConflictAndForce.Tests
     /Zongzu.Modules.WarfareCampaign.Tests
+    /Zongzu.Modules.PublicLifeAndRumor.Tests
     /Zongzu.Modules.NarrativeProjection.Tests
+    /Zongzu.Presentation.Unity.Tests
     /Zongzu.Integration.Tests
   /content
     /authoring
     /generated
   /tools
+    /Zongzu.MvpPreviewRunner
 ```
 
 ## Architectural stance
@@ -95,10 +104,12 @@ It is **not**:
 - kernel depends on nothing game-specific
 - contracts depend on kernel
 - scheduler depends on kernel + contracts
-- modules depend on kernel + contracts + scheduler interfaces
-- application depends on kernel + contracts + scheduler + module facades
-- persistence depends on kernel + contracts + module schema contracts
-- presentation depends on application + projections, never directly on module internals
+- modules depend on kernel + contracts only; they must not reference each other or scheduler internals
+- application depends on kernel + contracts + scheduler + persistence + explicitly registered module assemblies
+- persistence depends on kernel + contracts and serializes module envelopes by namespace/version
+- presentation view models depend on contracts
+- presentation adapters depend on contracts + view models, never directly on application services or module internals
+- host projects may compose application and presentation pieces for preview/shell integration, but they do not own authoritative rules
 - the Unity host shell lives under `/unity/Zongzu.UnityShell`; it is a presentation host and asset/scene workspace, not an authority layer
 
 ## Out-of-scope technologies for MVP

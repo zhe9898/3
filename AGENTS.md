@@ -57,7 +57,7 @@ For large tasks also read:
 Use the repo's actual stack and boundaries to choose tools.
 
 Preferred MCP servers:
-- `microsoft-learn` for C#, .NET 8, Microsoft.Extensions, WinUI-adjacent tooling, and other Microsoft platform questions
+- `microsoft-learn` for C#, the repo's current .NET SDK line, Microsoft.Extensions, WinUI-adjacent tooling, and other Microsoft platform questions
 - `context7` for third-party library and framework documentation
 - `openaiDeveloperDocs` only when the task specifically involves OpenAI or Codex products
 - `GitHub` for PR context, CI logs, review comments, and repository metadata
@@ -66,6 +66,11 @@ Preferred skills:
 - `zongzu-game-design` for rules-driven living-world design, monthly loop shaping, pressure-chain design, bounded player leverage, explainable causality, vertical slices, and MVP shaping when working on mechanics or product structure
 - `zongzu-ui-shell` for Zongzu shell and presentation work: great hall, ancestral hall, desk sandbox, notice tray, conflict vignette, campaign-lite board, information density, object grammar, 2.5D shell design, and anti-poster correction when a draft feels like a static concept board instead of a playable surface
 - `zongzu-ancient-china` for historical grounding, Chinese antiquity / imperial China institutions, anti-anachronism review, terms, titles, kinship, lineage behavior, exam and office pathways, household and tax framing, and history-to-game translation including desk sandbox, map nodes, warfare-lite boards, and spatial presentation language
+- `zongzu-simulation-validation` for determinism, replay hash, scheduler cadence, event flow, long-run pressure health, diagnostics, and post-change validation
+- `zongzu-pressure-chain` for Renzong pressure-chain topology, broad-to-local propagation, event metadata, projection receipts, player response surfaces, and thin-vs-full chain completion
+- `zongzu-save-and-schema` for module state namespaces, schema versions, save manifests, migrations, persistence compatibility, and save-related documentation/tests
+- `zongzu-unity-shell` for Unity host shell implementation: scenes, prefabs, MonoBehaviours, ViewModel bindings, adapters, presentation tests, and editor/play-mode validation boundaries
+- `zongzu-content-authoring` for historical carriers, authored configs, narrative copy, data tables, descriptors, content packs, Chinese text preservation, and content/rule boundary checks
 - `microsoft-code-reference` for API lookups, implementation details, code samples, and error repair in C# / .NET code
 - `microsoft-docs` for concept docs, configuration guidance, limits, and official Microsoft tutorials
 - `aspnet-core` for modern .NET project structure, testing, dependency boundaries, hosting patterns, and idiomatic C# guidance even when the repo is not a web app
@@ -74,14 +79,23 @@ Preferred skills:
 - `security-threat-model` and `security-ownership-map` for larger architectural changes that affect module boundaries, save compatibility, determinism, or trust boundaries
 - `gh-fix-ci` when build or test failures appear in GitHub Actions
 
+Skill activation discipline:
+- choose the smallest set of skills that matches the actual touched surface
+- do not stack every Zongzu skill by default; combine skills only when the task truly crosses design, architecture, validation, save/schema, Unity, content, or historical grounding
+- use `zongzu-simulation-validation` as a diagnostic or finishing pass for runtime/save/chain behavior, not for every documentation-only edit
+- use `zongzu-save-and-schema` only when persisted shape, module schema version, manifest membership, migration, or persistence tests are in scope
+- use `zongzu-unity-shell` only for Unity-facing implementation or validation; use `zongzu-ui-shell` for product/UI surface concepts
+- use `zongzu-content-authoring` only when an authored content artifact, data file, descriptor, copy, or validation rule is being created or changed
+- for short or ambiguous prompts, inspect the current code/docs first and then select the narrowest applicable workflow instead of turning the task into a full audit
+
 Do not default to web-first skills for this repo:
 - `develop-web-game` is not a fit for the authoritative simulation or Unity presentation path here
 - `frontend-skill`, `react-best-practices`, and `web-design-guidelines` are helpers only after `zongzu-ui-shell` when the task is about the actual Zongzu shell; they are mainly relevant for auxiliary tooling, documentation sites, launchers, or future web surfaces
 
 Unity MCP note:
-- This repository currently does not contain a full Unity project root with `Assets/`, `Packages/`, and `ProjectSettings/`
-- do not assume Unity Editor MCP workflows are available yet
-- if a real Unity project root is added later, Unity-specific MCP setup should be added at that time
+- This repository now contains a Unity host shell at `unity/Zongzu.UnityShell` with `Assets/`, `Packages/`, and `ProjectSettings/`
+- do not assume Unity Editor MCP workflows are available unless a real Unity editor/MCP target is explicitly configured for the task
+- authoritative simulation still lives under `src/` and must not reference Unity APIs
 
 Encoding and language note:
 - this repository contains meaningful Chinese text in docs, descriptors, and narrative-facing content

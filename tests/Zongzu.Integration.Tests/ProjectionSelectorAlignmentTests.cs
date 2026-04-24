@@ -173,6 +173,35 @@ public sealed class ProjectionSelectorAlignmentTests
     }
 
     [Test]
+    public void NotificationScopeHelpers_match_settlement_and_module_without_policy()
+    {
+        SettlementId targetSettlementId = new(7);
+        NarrativeNotificationSnapshot notification = new()
+        {
+            SourceModuleKey = KnownModuleKeys.WarfareCampaign,
+            Traces =
+            [
+                new NotificationTraceSnapshot
+                {
+                    SourceModuleKey = KnownModuleKeys.FamilyCore,
+                    EntityKey = targetSettlementId.Value.ToString(),
+                },
+                new NotificationTraceSnapshot
+                {
+                    SourceModuleKey = KnownModuleKeys.OrderAndBanditry,
+                    EntityKey = new SettlementId(8).Value.ToString(),
+                },
+            ],
+        };
+
+        Assert.That(notification.MatchesScope(targetSettlementId, KnownModuleKeys.WarfareCampaign), Is.True);
+        Assert.That(notification.MatchesScope(targetSettlementId, KnownModuleKeys.PublicLifeAndRumor), Is.False);
+        Assert.That(notification.MatchesSettlementScope(new SettlementId(8)), Is.True);
+        Assert.That(notification.HasTraceFromModule(KnownModuleKeys.FamilyCore), Is.True);
+        Assert.That(notification.HasTraceFromModule(KnownModuleKeys.TradeAndIndustry), Is.False);
+    }
+
+    [Test]
     public void PlayerCommandSurfaceSnapshot_enumerators_filter_by_surface_and_settlement()
     {
         PlayerCommandSurfaceSnapshot surface = new()

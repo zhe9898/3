@@ -483,9 +483,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 continue;
             }
 
-            // Find the official with jurisdiction over this settlement.
-            // For thin-chain, we pick the first appointed official.
-            OfficeCareerState? career = scope.State.People.FirstOrDefault(static p => p.HasAppointment);
+            SettlementId? settlementId = ResolveSettlementMetadata(domainEvent);
+            OfficeCareerState? career = SelectAppointedOfficialForDebtEvent(scope.State, settlementId);
             if (career is null)
             {
                 continue;
@@ -500,9 +499,44 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 scope.Emit(
                     OfficeAndCareerEventNames.YamenOverloaded,
                     $"{career.OfficeTitle}衙门口因欠税纠纷挤满请减之人，案牍骤增。",
-                    career.PersonId.Value.ToString());
+                    career.SettlementId.Value.ToString(),
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.Cause] = domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.Cause, out string? cause)
+                            ? cause
+                            : DomainEventMetadataValues.CauseTaxSeason,
+                        [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+                        [DomainEventMetadataKeys.SettlementId] = career.SettlementId.Value.ToString(),
+                        [DomainEventMetadataKeys.PersonId] = career.PersonId.Value.ToString(),
+                        [DomainEventMetadataKeys.PetitionBacklog] = career.PetitionBacklog.ToString(),
+                        [DomainEventMetadataKeys.AdministrativeTaskLoad] = career.AdministrativeTaskLoad.ToString(),
+                    });
             }
         }
+    }
+
+    private static OfficeCareerState? SelectAppointedOfficialForDebtEvent(
+        OfficeAndCareerState state,
+        SettlementId? settlementId)
+    {
+        IEnumerable<OfficeCareerState> appointedOfficials = state.People
+            .Where(static p => p.HasAppointment)
+            .OrderBy(static p => p.PersonId.Value);
+
+        return settlementId.HasValue
+            ? appointedOfficials.FirstOrDefault(p => p.SettlementId == settlementId.Value)
+            : appointedOfficials.FirstOrDefault();
+    }
+
+    private static SettlementId? ResolveSettlementMetadata(IDomainEvent domainEvent)
+    {
+        if (domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.SettlementId, out string? rawSettlementId)
+            && int.TryParse(rawSettlementId, out int settlementIdValue))
+        {
+            return new SettlementId(settlementIdValue);
+        }
+
+        return null;
     }
 
     private static void DispatchPublicLifeEvents(ModuleEventHandlingScope<OfficeAndCareerState> scope)
