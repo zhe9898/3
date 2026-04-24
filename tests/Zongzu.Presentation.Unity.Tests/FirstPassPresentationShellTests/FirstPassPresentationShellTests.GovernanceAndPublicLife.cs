@@ -165,6 +165,22 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_UsesPublicLifeFallbackWhenProjectionAndCommandsAreAbsent()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.PublicLifeSettlements = [];
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot();
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        SettlementNodeViewModel settlementNode = shell.DeskSandbox.Settlements.Single();
+
+        Assert.That(shell.GreatHall.PublicLifeSummary, Is.Not.Empty);
+        Assert.That(settlementNode.PublicLifeSummary, Is.Not.Empty);
+        Assert.That(settlementNode.PublicLifeCommandAffordances, Is.Empty);
+        Assert.That(settlementNode.PublicLifeRecentReceipts, Is.Empty);
+    }
+
+    [Test]
     public void Compose_ProjectsGovernanceMomentumIntoGreatHallAndDeskSandbox()
     {
         PresentationReadModelBundle bundle = CreateBundle();

@@ -299,6 +299,11 @@ Build these chains in this order after the skeleton exists:
 14. regime recognition chain: legitimacy claim -> office backing -> tax / grain / force / ritual reach -> local compliance / defection
 15. dynasty-cycle chain: fatigue -> fracture -> rebellion / succession crisis -> polity / usurpation / restoration -> new order
 
+2026-04-24 v2 status note:
+- `chain1-public-life-order-v2` advances the public-life/disorder segment to playable-thin acceptance-hardening: visible county/road pressure, bounded order command, owner-module receipt/refusal, residue, and next-month governance/order readback are now the proof target.
+- This does not move the broader pressure-chain order; it narrows the current implementation work to one already-supported closure instead of opening a new route, war, or court system.
+- No save/schema impact is expected for this v2 pass because it uses existing order intervention receipt/carryover state.
+
 ## Documentation Index By Job
 
 | Job | Start Here | Then Read |

@@ -221,6 +221,12 @@ Until the general seam exists, any command route not yet moved into its owning m
 - the current public-life order lane already supports `催护一路`, `添雇巡丁`, `严缉路匪`, `遣人议路`, and `暂缓穷追` through thin `PlayerCommandService` routing into the `OrderAndBanditry` resolver; later work should deepen consequences through the same lane rather than invent a second order surface
 - `ConflictAndForce.Lite` is available through a conflict-enabled M3 local-conflict bootstrap path and remains absent from active M2 manifests
 
+## Playable closure v2 integration note - 2026-04-24
+- `chain1-public-life-order-v2` proves the public-life order lane as pressure -> order-owned state -> projection -> shell affordance -> bounded command -> order-owned receipt/refusal -> next-month governance/order readback.
+- Application routing may still pass the existing public-life order command into `OrderAndBanditryModule.HandlePublicLifeCommand`, but it must not compute the order outcome itself; office reach is supplied as query-derived modifiers only.
+- Projection joins may show office aftermath tied to the prior order receipt, but no projection, notification, or shell adapter may parse `DomainEvent.Summary` or mutate module state.
+- When `OrderAndBanditry` is disabled, public-life order commands must return a refusal and leave save/module projection state unchanged.
+
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace
 - `OfficeAndCareer.Lite` now reads `EducationAndExams`, `SocialMemoryAndRelations`, and optional `OrderAndBanditry` projections only

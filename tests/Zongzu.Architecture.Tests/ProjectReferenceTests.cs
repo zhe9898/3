@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace Zongzu.Architecture.Tests;
@@ -161,6 +162,109 @@ public class ProjectReferenceTests
         }
     }
 
+    [Test]
+    public void Source_must_not_define_forbidden_manager_or_god_controller_types()
+    {
+        var forbiddenTypePattern = new Regex(
+            @"\b(class|record|record\s+class|record\s+struct|struct|interface)\s+(WorldManager|PersonManager|CharacterManager|GodController|WorldController)\b",
+            RegexOptions.Compiled);
+
+        var offenders = EnumerateSourceFiles(SrcDir)
+            .SelectMany(file => File.ReadLines(file)
+                .Select((line, index) => new { file, line, lineNumber = index + 1 }))
+            .Where(entry => forbiddenTypePattern.IsMatch(entry.line))
+            .Select(entry => $"{Path.GetRelativePath(RepoRoot, entry.file)}:{entry.lineNumber}: {entry.line.Trim()}")
+            .ToArray();
+
+        Assert.That(
+            offenders,
+            Is.Empty,
+            "World/Person/Character manager or god-controller types are forbidden. " +
+            string.Join(Environment.NewLine, offenders));
+    }
+
+    [Test]
+    public void Presentation_Unity_sources_must_not_hold_simulation_authority()
+    {
+        var presentationRoots = new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels"),
+        };
+        var forbiddenTokens = new[]
+        {
+            "Zongzu.Application",
+            "Zongzu.Modules.",
+            "PlayerCommandService",
+            "GetMutableModuleState",
+            "HandlePublicLifeCommand",
+        };
+
+        var offenders = FindTokenOccurrences(EnumerateSourceFiles(presentationRoots), forbiddenTokens);
+
+        Assert.That(
+            offenders,
+            Is.Empty,
+            "Presentation Unity sources must stay read-model/ViewModel adapters, not simulation authority. " +
+            string.Join(Environment.NewLine, offenders));
+    }
+
+    [Test]
+    public void Simulation_modules_must_not_use_application_or_presentation_mutation_paths()
+    {
+        var moduleRoots = ModuleProjectNames
+            .Select(module => Path.Combine(SrcDir, module))
+            .ToArray();
+        var forbiddenTokens = new[]
+        {
+            "GetMutableModuleState",
+            "PlayerCommandService",
+            "FirstPassPresentationShell",
+            "PresentationShellViewModel",
+        };
+
+        var offenders = FindTokenOccurrences(EnumerateSourceFiles(moduleRoots), forbiddenTokens);
+
+        Assert.That(
+            offenders,
+            Is.Empty,
+            "Simulation modules must not call application mutation escape hatches or presentation surfaces. " +
+            string.Join(Environment.NewLine, offenders));
+    }
+
+    [Test]
+    public void PersonRecord_must_remain_identity_only()
+    {
+        string personTypesPath = Path.Combine(SrcDir, "Zongzu.Contracts", "PersonRegistryTypes.cs");
+        string source = File.ReadAllText(personTypesPath);
+        Match match = Regex.Match(
+            source,
+            @"public sealed class PersonRecord\s*\{(?<body>.*?)\n\}",
+            RegexOptions.Singleline);
+
+        Assert.That(match.Success, Is.True, "Could not locate PersonRecord.");
+
+        string[] properties = Regex.Matches(
+                match.Groups["body"].Value,
+                @"public\s+[^\r\n{]+\s+(?<name>\w+)\s*\{\s*get;\s*set;\s*\}")
+            .Select(static property => property.Groups["name"].Value)
+            .ToArray();
+
+        Assert.That(
+            properties,
+            Is.EquivalentTo(new[]
+            {
+                "Id",
+                "DisplayName",
+                "BirthDate",
+                "Gender",
+                "LifeStage",
+                "IsAlive",
+                "FidelityRing",
+            }),
+            "PersonRegistry must remain an identity anchor, not a clan/household/office relationship table.");
+    }
+
     private static string[] GetProjectReferences(string projectName)
     {
         var csproj = FindCsproj(projectName);
@@ -224,5 +328,24 @@ public class ProjectReferenceTests
         }
         throw new InvalidOperationException(
             "Could not locate repo root from " + AppContext.BaseDirectory);
+    }
+
+    private static IEnumerable<string> EnumerateSourceFiles(params string[] roots)
+    {
+        return roots
+            .Where(Directory.Exists)
+            .SelectMany(root => Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories))
+            .Where(static file => !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
+                && !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal));
+    }
+
+    private static string[] FindTokenOccurrences(IEnumerable<string> files, IReadOnlyCollection<string> forbiddenTokens)
+    {
+        return files
+            .SelectMany(file => File.ReadLines(file)
+                .Select((line, index) => new { file, line, lineNumber = index + 1 }))
+            .Where(entry => forbiddenTokens.Any(token => entry.line.Contains(token, StringComparison.Ordinal)))
+            .Select(entry => $"{Path.GetRelativePath(RepoRoot, entry.file)}:{entry.lineNumber}: {entry.line.Trim()}")
+            .ToArray();
     }
 }

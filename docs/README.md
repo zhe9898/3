@@ -62,16 +62,17 @@ Start with `CODEX_MASTER_SPEC.md` or `FULL_SYSTEM_SPEC.md` when you need a compa
 30. `RELATIONSHIPS_AND_GRUDGES.md`
 31. `CONFLICT_AND_FORCE.md`
 32. `RENZONG_PRESSURE_CHAIN_SPEC.md`
-33. `VISUAL_FORM_AND_INTERACTION.md`
-34. `UI_AND_PRESENTATION.md`
-35. `SPATIAL_SKELETON_SPEC.md`
-36. `MAP_AND_SANDBOX_DIRECTION.md`
-37. `WRITING_AND_COPY_GUIDELINES.md`
-38. `ART_AND_AUDIO_ASSET_SOURCING.md`
-39. `MVP.md`
-40. `IMPLEMENTATION_PHASES.md`
-41. `ACCEPTANCE_TESTS.md`
-42. `CODEX_TASK_PROMPTS.md`
+33. `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`
+34. `VISUAL_FORM_AND_INTERACTION.md`
+35. `UI_AND_PRESENTATION.md`
+36. `SPATIAL_SKELETON_SPEC.md`
+37. `MAP_AND_SANDBOX_DIRECTION.md`
+38. `WRITING_AND_COPY_GUIDELINES.md`
+39. `ART_AND_AUDIO_ASSET_SOURCING.md`
+40. `MVP.md`
+41. `IMPLEMENTATION_PHASES.md`
+42. `ACCEPTANCE_TESTS.md`
+43. `CODEX_TASK_PROMPTS.md`
 
 ## Document groups
 
@@ -109,6 +110,7 @@ Start with `CODEX_MASTER_SPEC.md` or `FULL_SYSTEM_SPEC.md` when you need a compa
 - `INFLUENCE_POWER_AND_FACTIONS.md`
 - `SOCIAL_STRATA_AND_PATHWAYS.md`
 - `RENZONG_PRESSURE_CHAIN_SPEC.md`
+- `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`
 - `RELATIONSHIPS_AND_GRUDGES.md`
 - `CONFLICT_AND_FORCE.md`
 - `MAP_AND_SANDBOX_DIRECTION.md`
@@ -128,6 +130,7 @@ Start with `CODEX_MASTER_SPEC.md` or `FULL_SYSTEM_SPEC.md` when you need a compa
 - `ACCEPTANCE_TESTS.md`
 - `CODEX_TASK_PROMPTS.md`
 - `CODEX_MASTER_SPEC.md`
+- `CODEX_SKILL_RATIONALIZATION_MATRIX.md`
 - `DESIGN_CODE_ALIGNMENT_AUDIT.md`
 - `STEP2A_LINEAGE_CONTINUITY_PLAN.md`
 
@@ -146,3 +149,4 @@ The fidelity policy for who becomes a full agent, who remains household- or node
 The per-module time contract for `day / month / seasonal` execution, with `xun` as calendar/projection grouping, is captured in `MODULE_CADENCE_MATRIX.md`.
 The code/module/system/Unity engineering standard bridge is captured in `MODERN_GAME_ENGINEERING_STANDARDS.md`.
 The backend implementation-order rule for keeping structure ahead of deep rules is captured in `STATIC_BACKEND_FIRST.md`.
+The Codex skill-pack orchestration bridge, including external standard calibration and current Zongzu skill sequencing, is captured in `CODEX_SKILL_RATIONALIZATION_MATRIX.md`.

@@ -283,6 +283,79 @@ public sealed partial class M2LiteIntegrationTests
 
     [Test]
 
+    public void PublicLifeOrderCommand_DisabledOrderModule_RefusesWithoutMutatingProjectionOrSave()
+
+    {
+
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260626);
+
+        simulation.AdvanceMonths(1);
+
+
+        PresentationReadModelBuilder builder = new();
+
+        PresentationReadModelBundle beforeBundle = builder.BuildForM2(simulation);
+
+        string replayHashBefore = simulation.ReplayHash;
+
+        int receiptCountBefore = beforeBundle.PlayerCommands.Receipts.Count;
+
+        SettlementId settlementId = beforeBundle.PublicLifeSettlements.Single().SettlementId;
+
+
+        PlayerCommandResult result = new PlayerCommandService().IssueIntent(
+
+            simulation,
+
+            new PlayerCommandRequest
+
+            {
+
+                SettlementId = settlementId,
+
+                CommandName = PlayerCommandNames.FundLocalWatch,
+
+            });
+
+
+        PresentationReadModelBundle afterBundle = builder.BuildForM2(simulation);
+
+        SaveRoot saveRoot = simulation.ExportSave();
+
+
+        Assert.That(simulation.FeatureManifest.IsEnabled(KnownModuleKeys.OrderAndBanditry), Is.False);
+
+        Assert.That(result.Accepted, Is.False);
+
+        Assert.That(result.ModuleKey, Is.EqualTo(KnownModuleKeys.OrderAndBanditry));
+
+        Assert.That(result.SurfaceKey, Is.EqualTo(PlayerCommandSurfaceKeys.PublicLife));
+
+        Assert.That(result.CommandName, Is.EqualTo(PlayerCommandNames.FundLocalWatch));
+
+        Assert.That(result.Summary, Is.Not.Empty);
+
+        Assert.That(simulation.ReplayHash, Is.EqualTo(replayHashBefore));
+
+        Assert.That(afterBundle.SettlementDisorder, Is.Empty);
+
+        Assert.That(afterBundle.PlayerCommands.Receipts, Has.Count.EqualTo(receiptCountBefore));
+
+        Assert.That(
+
+            afterBundle.PlayerCommands.Receipts.Any(static receipt =>
+
+                string.Equals(receipt.CommandName, PlayerCommandNames.FundLocalWatch, StringComparison.Ordinal)),
+
+            Is.False);
+
+        Assert.That(saveRoot.ModuleStates.ContainsKey(KnownModuleKeys.OrderAndBanditry), Is.False);
+
+    }
+
+
+    [Test]
+
     public void OrderEnabledM3Bootstrap_LoadsOrderWithoutActivatingConflict()
 
     {

@@ -236,3 +236,10 @@ At integration level, verify:
 - no module writes foreign namespace
 - projections remain read-only
 - disabled feature packs load clean defaults
+
+## Playable closure v2 acceptance - 2026-04-24
+- `chain1-public-life-order-v2` must prove Month N public-life/order pressure is visible, a bounded public-life order command routes to `OrderAndBanditry`, the owner module accepts or refuses, and Month N+1 governance/order readback changes through projections only.
+- Acceptance must include a disabled-module fallback: when `OrderAndBanditry` is not enabled, public-life order commands refuse safely, produce no order receipt, and do not add an order save envelope.
+- Presentation acceptance must include projection-absent fallback: desk/great-hall public-life surfaces remain stable and expose no synthesized order affordances or receipts.
+- Architecture acceptance must guard against WorldManager/PersonManager/CharacterManager/god-controller drift, UI authority drift, application/presentation mutation paths inside modules, and `PersonRegistry` expansion beyond identity fields.
+- Save/schema result for this v2 chain: no save/schema impact.

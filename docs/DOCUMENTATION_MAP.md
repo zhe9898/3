@@ -23,7 +23,7 @@ This map is about alignment, not correction. Existing docs are treated as valid 
 | --- | --- | --- |
 | Product authority | Defines the project fantasy, non-negotiable product truths, scope direction, and anti-patterns. | `PRODUCT_SCOPE.md`, `RULES_DRIVEN_LIVING_WORLD.md`, `FULL_SYSTEM_SPEC.md`, `CODEX_MASTER_SPEC.md` |
 | Architecture authority | Defines ownership, boundaries, integration seams, save/schema rules, and engineering constraints. | `ARCHITECTURE.md`, `MODULE_BOUNDARIES.md`, `MODULE_INTEGRATION_RULES.md`, `DATA_SCHEMA.md`, `SCHEMA_NAMESPACE_RULES.md` |
-| Domain authority | Defines a system field such as lineage, household, social memory, influence, conflict, office, public life, or Renzong pressure. | `PERSON_OWNERSHIP_RULES.md`, `SOCIAL_STRATA_AND_PATHWAYS.md`, `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`, `RENZONG_PRESSURE_CHAIN_SPEC.md` |
+| Domain authority | Defines a system field such as lineage, household, social memory, influence, conflict, office, public life, or Renzong pressure. | `PERSON_OWNERSHIP_RULES.md`, `SOCIAL_STRATA_AND_PATHWAYS.md`, `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`, `RENZONG_PRESSURE_CHAIN_SPEC.md`, `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` |
 | Presentation authority | Defines spatialized shell grammar, surface read order, player-facing wording, and object anchors. | `VISUAL_FORM_AND_INTERACTION.md`, `UI_AND_PRESENTATION.md`, `SPATIAL_SKELETON_SPEC.md`, `WRITING_AND_COPY_GUIDELINES.md` |
 | Delivery authority | Defines phase order, roadmap, acceptance tests, and task execution discipline. | `GAME_DEVELOPMENT_ROADMAP.md`, `IMPLEMENTATION_PHASES.md`, `ACCEPTANCE_TESTS.md`, `PLANS.md`, `docs/exec-plans/README.md` |
 | Synthesis / orientation | Compresses the full system for fast re-entry. It should not override a more specific authority doc. | `README.md`, `FULL_SYSTEM_SPEC.md`, `CODEX_MASTER_SPEC.md`, this file |
@@ -43,11 +43,12 @@ This map is about alignment, not correction. Existing docs are treated as valid 
 | How does the living society stay alive? | `RULES_DRIVEN_LIVING_WORLD.md` | `LIVING_WORLD_DESIGN.md`, `SOCIAL_STRATA_AND_PATHWAYS.md`, `MULTI_ROUTE_DESIGN_MATRIX.md` | Pressure chains beat random event pools. |
 | What proves the game loop is actually playable? | `RULES_DRIVEN_LIVING_WORLD.md` | `PLAYER_SCOPE.md`, `UI_AND_PRESENTATION.md`, `ACCEPTANCE_TESTS.md` | A slice must connect visible pressure -> readable leverage -> bounded command -> module-owned receipt/refusal/residue -> changed next-month read. |
 | How does history enter play? | `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md` | `RENZONG_PRESSURE_CHAIN_SPEC.md`, `SOCIAL_STRATA_AND_PATHWAYS.md`, `INFLUENCE_POWER_AND_FACTIONS.md` | Historical carriers create pressure and windows, not fixed cutscenes. |
-| Where does Renzong thin-chain topology live? | `RENZONG_PRESSURE_CHAIN_SPEC.md` | `MODULE_INTEGRATION_RULES.md`, `ACCEPTANCE_TESTS.md` | Current Renzong chain topology is consolidated in the pressure-chain spec. Split only if a later task creates a dedicated topology index. |
+| Where does Renzong thin-chain topology live? | `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` | `RENZONG_PRESSURE_CHAIN_SPEC.md`, `MODULE_INTEGRATION_RULES.md`, `ACCEPTANCE_TESTS.md` | The topology index is the current thin-chain ledger; the pressure-chain spec remains the fuller design target. |
 | How should the shell look and read? | `VISUAL_FORM_AND_INTERACTION.md` | `UI_AND_PRESENTATION.md`, `SPATIAL_SKELETON_SPEC.md`, `WRITING_AND_COPY_GUIDELINES.md` | Shell surfaces are spatialized projections, not rule owners. |
 | What is the roadmap? | `GAME_DEVELOPMENT_ROADMAP.md` | `IMPLEMENTATION_PHASES.md`, `MVP_SCOPE.md`, `POST_MVP_SCOPE.md` | MVP is substrate, not a ceiling. |
 | What proves done? | `ACCEPTANCE_TESTS.md` | Relevant ExecPlan, module tests, integration tests, presentation tests | Acceptance should prove causality, boundaries, and shell visibility. |
 | How should Codex execute a large task? | `PLANS.md` | `docs/exec-plans/README.md`, `CODEX_TASK_PROMPTS.md`, `CODEX_MASTER_SPEC.md` | Large work gets an ExecPlan before edits. |
+| Which Zongzu skill should a Codex pass use? | `CODEX_SKILL_RATIONALIZATION_MATRIX.md` | `AGENTS.md`, relevant skill `SKILL.md`, local references before external sources | The matrix keeps skill usage aligned with current repo facts, external calibration standards, and game direction. |
 
 ## Complete document inventory
 
@@ -87,6 +88,7 @@ This map is about alignment, not correction. Existing docs are treated as valid 
 | `INFLUENCE_POWER_AND_FACTIONS.md` | Influence, power, factional pull, and leverage surfaces. | Domain |
 | `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md` | Historical trend translation into pressure chains. | Historical / domain |
 | `RENZONG_PRESSURE_CHAIN_SPEC.md` | Renzong pressure-chain topology and event contract preflight. | Historical / domain / integration |
+| `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` | Current Renzong thin-chain topology ledger and implementation-status index. | Historical / domain / integration |
 | `CONFLICT_AND_FORCE.md` | Conflict ladder, force types, and warfare relation to lineage simulation. | Domain |
 | `MAP_AND_SANDBOX_DIRECTION.md` | Map and sandbox direction. | Presentation / domain |
 | `SPATIAL_SKELETON_SPEC.md` | Spatial skeleton, topology, overlays, public surfaces, shell anchors. | Presentation / domain |
@@ -97,6 +99,7 @@ This map is about alignment, not correction. Existing docs are treated as valid 
 | `DESIGN_CODE_ALIGNMENT_AUDIT.md` | Audit record comparing design and implementation. | Review record |
 | `STEP2A_LINEAGE_CONTINUITY_PLAN.md` | Specific lineage continuity planning record. | Planning record |
 | `CODEX_TASK_PROMPTS.md` | Reusable task prompt patterns. | Execution |
+| `CODEX_SKILL_RATIONALIZATION_MATRIX.md` | Codex skill-pack orchestration, external standard calibration, and current Zongzu skill sequencing. | Execution / governance |
 | `DOCUMENTATION_MAP.md` | Documentation authority map and reading guide. | Orientation / governance |
 
 ## Recommended read paths
@@ -141,9 +144,10 @@ This map is about alignment, not correction. Existing docs are treated as valid 
 
 1. `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md`
 2. `SOCIAL_STRATA_AND_PATHWAYS.md`
-3. `RENZONG_PRESSURE_CHAIN_SPEC.md`
-4. `MODULE_INTEGRATION_RULES.md`
-5. `ACCEPTANCE_TESTS.md`
+3. `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`
+4. `RENZONG_PRESSURE_CHAIN_SPEC.md`
+5. `MODULE_INTEGRATION_RULES.md`
+6. `ACCEPTANCE_TESTS.md`
 
 ### Save/schema work
 

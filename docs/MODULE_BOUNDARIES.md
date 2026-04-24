@@ -553,3 +553,8 @@ Current lite note:
 - `PublicLifeAndRumor` may also react to settlement-targeted `WarfareCampaign` aftermath events, but only by updating its own public-pulse summaries and public-trace state
 - black-route depth must stay split across `OrderAndBanditry` pressure and `TradeAndIndustry` ledgers; it must not grow a detached module namespace
 - no module is allowed to "just update" another module's internal data
+
+## 2026-04-24 playable closure v2 note
+- `chain1-public-life-order-v2` keeps public-life order resolution owned by `OrderAndBanditry`; `PublicLifeAndRumor` supplies visibility, `OfficeAndCareer` supplies optional reach/readback through queries, and Unity/presentation surfaces remain projection-only.
+- The playable-thin chain uses existing `SettlementDisorderState.LastIntervention*` and `InterventionCarryoverMonths` state for receipt/residue/readback; no new module namespace, manager, or save/schema field is introduced.
+- Disabled or absent `OrderAndBanditry` must refuse public-life order commands safely instead of creating a fallback authority path in Application or UI.

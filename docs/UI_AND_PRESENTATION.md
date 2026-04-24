@@ -125,6 +125,8 @@ Every surface must obey:
 - authoritative simulation state stays inside application/module layers
 - command affordances and receipts in the shell are rebuilt from current authoritative state only; they do not authorize, queue, or resolve commands inside UI code
 - governance-lite office read models remain optional: when `OfficeAndCareer` is disabled, the shell must surface a read-only "no office projection" equivalent rather than synthesizing office data
+- public-life/order read models remain optional by feature pack: when `OrderAndBanditry` is absent, public-life order affordances/receipts must be empty or refused through command routing; the shell must not synthesize order state or command outcomes
+- `chain1-public-life-order-v2` treats the desk settlement node and great hall as readback surfaces only: they can show pressure, affordances, receipts, and next-month governance aftermath, but they cannot infer inheritance, death, marriage, office authority, or order command results
 - warfare-lite read models remain optional: when `WarfareCampaign` is disabled, the shell must surface `暂无军务沙盘投影。` rather than synthesizing campaign data
 
 ## Explainability rule

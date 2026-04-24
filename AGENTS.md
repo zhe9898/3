@@ -66,9 +66,15 @@ Preferred MCP servers:
 - `GitHub` for PR context, CI logs, review comments, and repository metadata
 
 Preferred skills:
+- `zongzu-architecture-boundaries` for modular-monolith boundaries, Query / Command / DomainEvent seams, scheduler flow, command ownership, save/version contracts, deterministic simulation, feature-pack extensibility, and anti-world-manager review
 - `zongzu-game-design` for rules-driven living-world design, monthly loop shaping, pressure-chain design, bounded player leverage, explainable causality, vertical slices, and MVP shaping when working on mechanics or product structure
+- `zongzu-pressure-chain` for cross-module pressure chains, Renzong thin/full chain topology, event metadata, scheduler-drain proof, projection receipts, player response surfaces, and chain-completion tests
 - `zongzu-ui-shell` for Zongzu shell and presentation work: great hall, ancestral hall, desk sandbox, notice tray, conflict vignette, campaign-lite board, information density, object grammar, 2.5D shell design, and anti-poster correction when a draft feels like a static concept board instead of a playable surface
+- `zongzu-unity-shell` for Unity host shell implementation, scenes, prefabs, MonoBehaviours, bindings, ViewModel adapters, presentation tests, Unity project layout, and editor/play-mode validation while keeping authority outside Unity
 - `zongzu-ancient-china` for historical grounding, Chinese antiquity / imperial China institutions, anti-anachronism review, terms, titles, kinship, lineage behavior, exam and office pathways, household and tax framing, and history-to-game translation including desk sandbox, map nodes, warfare-lite boards, and spatial presentation language
+- `zongzu-content-authoring` for Chinese narrative copy, authored configs, descriptors, projection wording, localization-facing text, content packs, and content validation while keeping prose downstream of authority
+- `zongzu-save-and-schema` for persisted save data, module state schemas, root/module schema versions, migrations, manifests, feature-pack save membership, serialization boundaries, and persistence tests
+- `zongzu-simulation-validation` for determinism, replay hashes, scheduler cadence, event flow, long-run health, pressure saturation, migration behavior, and acceptance-test proof
 - `microsoft-code-reference` for API lookups, implementation details, code samples, and error repair in C# / .NET code
 - `microsoft-docs` for concept docs, configuration guidance, limits, and official Microsoft tutorials
 - `aspnet-core` for modern .NET project structure, testing, dependency boundaries, hosting patterns, and idiomatic C# guidance even when the repo is not a web app
@@ -76,6 +82,10 @@ Preferred skills:
 - `security-best-practices` when touching persistence, serialization, save migration, file IO, process execution, or boundary-crossing code
 - `security-threat-model` and `security-ownership-map` for larger architectural changes that affect module boundaries, save compatibility, determinism, or trust boundaries
 - `gh-fix-ci` when build or test failures appear in GitHub Actions
+
+Skill orchestration note:
+- `docs/CODEX_SKILL_RATIONALIZATION_MATRIX.md` maps the full Zongzu skill pack to current repo facts, external calibration standards, forbidden drifts, and validation surfaces
+- when a short prompt or skill chip clearly implies adjacent systems, use the matrix to sequence the skills into one connected pass instead of returning isolated mini-answers
 
 Do not default to web-first skills for this repo:
 - `develop-web-game` is not a fit for the authoritative simulation or Unity presentation path here
