@@ -24,6 +24,7 @@ public sealed partial class PresentationReadModelBuilder
         Dictionary<int, SettlementDisorderSnapshot> disorderBySettlement = IndexFirstBySettlement(
             bundle.SettlementDisorder,
             static entry => entry.SettlementId);
+        ILookup<int, ClanSnapshot> clansBySettlement = bundle.Clans.ToLookup(static entry => entry.HomeSettlementId.Value);
 
         return bundle.OfficeJurisdictions
             .OrderBy(static jurisdiction => jurisdiction.SettlementId.Value)
@@ -31,10 +32,16 @@ public sealed partial class PresentationReadModelBuilder
             {
                 publicLifeBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out SettlementPublicLifeSnapshot? publicLife);
                 disorderBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out SettlementDisorderSnapshot? disorder);
+                ClanSnapshot[] localClans = clansBySettlement[jurisdiction.SettlementId.Value].ToArray();
 
-                string orderAftermathSummary = disorder is null
+                string orderAdministrativeAftermathSummary = disorder is null
                     ? string.Empty
                     : BuildOrderAdministrativeAftermathExecutionSummary(disorder, jurisdiction);
+                string socialMemoryAftermathSummary = BuildOrderSocialMemoryReadbackSummary(
+                    SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans));
+                string orderAftermathSummary = CombineGovernanceDocketText(
+                    orderAdministrativeAftermathSummary,
+                    socialMemoryAftermathSummary);
                 string focusLabel = ResolveGovernanceFocusLabel(publicLife, jurisdiction);
                 string leadLabel = string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
                     ? jurisdiction.LeadOfficeTitle

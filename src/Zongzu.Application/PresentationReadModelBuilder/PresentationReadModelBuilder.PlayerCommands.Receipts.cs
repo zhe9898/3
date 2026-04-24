@@ -65,6 +65,8 @@ public sealed partial class PresentationReadModelBuilder
                 .ToArray();
             ClanTradeSnapshot[] localTrades = tradesBySettlement[disorder.SettlementId.Value].ToArray();
             ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[disorder.SettlementId.Value].ToArray();
+            IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
+                SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
 
             PlayerCommandReceiptSnapshot? receipt = BuildOrderPublicLifeReceipt(
                 disorder,
@@ -73,7 +75,8 @@ public sealed partial class PresentationReadModelBuilder
                 localClans,
                 localNarratives,
                 localTrades,
-                localRoutes);
+                localRoutes,
+                localSocialMemories);
             if (receipt is not null)
             {
                 yield return receipt;
@@ -92,6 +95,7 @@ public sealed partial class PresentationReadModelBuilder
                 null,
                 disorder,
                 null,
+                [],
                 [],
                 [],
                 [],
@@ -132,7 +136,8 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<ClanSnapshot> localClans,
         IReadOnlyList<ClanNarrativeSnapshot> localNarratives,
         IReadOnlyList<ClanTradeSnapshot> localTrades,
-        IReadOnlyList<ClanTradeRouteSnapshot> localRoutes)
+        IReadOnlyList<ClanTradeRouteSnapshot> localRoutes,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
         if (string.IsNullOrWhiteSpace(disorder.LastInterventionCommandCode)
             || !IsOrderPublicLifeCommand(disorder.LastInterventionCommandCode))
@@ -148,7 +153,14 @@ public sealed partial class PresentationReadModelBuilder
             localClans,
             localNarratives,
             localTrades,
-            localRoutes);
+            localRoutes,
+            localSocialMemories);
+
+        string socialMemoryReadback = BuildOrderSocialMemoryReadbackSummary(localSocialMemories);
+        string readbackSummary = string.IsNullOrWhiteSpace(socialMemoryReadback)
+            ? leverageProjection.ReadbackSummary
+            : string.Join(" ", new[] { leverageProjection.ReadbackSummary, socialMemoryReadback }
+                .Where(static value => !string.IsNullOrWhiteSpace(value)));
 
         return BuildPlayerCommandReceiptSnapshot(
             disorder.LastInterventionCommandCode,
@@ -158,7 +170,7 @@ public sealed partial class PresentationReadModelBuilder
             executionSummary: BuildOrderAdministrativeAftermathExecutionSummary(disorder, jurisdiction),
             leverageSummary: leverageProjection.LeverageSummary,
             costSummary: leverageProjection.CostSummary,
-            readbackSummary: leverageProjection.ReadbackSummary,
+            readbackSummary: readbackSummary,
             targetLabel: disorder.SettlementId.Value.ToString(),
             labelOverride: disorder.LastInterventionCommandLabel);
     }

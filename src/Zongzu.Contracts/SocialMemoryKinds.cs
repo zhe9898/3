@@ -19,4 +19,16 @@ public static class SocialMemoryKinds
 
     /// <summary>被宗族拒绝救济（A0d 预留）。</summary>
     public const string ShameExclusion = "shame_exclusion";
+
+    /// <summary>Public-life order residue: 添雇巡丁后留下的本户担保 / 护路人情。</summary>
+    public const string PublicOrderWatchObligation = "public_order_watch_obligation";
+
+    /// <summary>Public-life order residue: 催护一路后留下的路报担保债。</summary>
+    public const string PublicOrderEscortObligation = "public_order_escort_obligation";
+
+    /// <summary>Public-life order residue: 严缉路匪后留下的报复恐惧 / 强压旧怨。</summary>
+    public const string PublicOrderSuppressionFear = "public_order_suppression_fear";
+
+    /// <summary>Public-life order residue: 议路或暂缓穷追后留下的公议羞面。</summary>
+    public const string PublicOrderPublicShame = "public_order_public_shame";
 }

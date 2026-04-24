@@ -233,6 +233,29 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Social_memory_residue_writes_must_stay_inside_social_memory_module()
+    {
+        var forbiddenTokens = new[]
+        {
+            "new MemoryRecordState",
+            ".Memories.Add",
+            "ClanEmotionalClimates.Add",
+            "PersonTemperings.Add",
+        };
+
+        var offenders = FindTokenOccurrences(
+            EnumerateSourceFiles(SrcDir)
+                .Where(file => file.IndexOf($"{Path.DirectorySeparatorChar}Zongzu.Modules.SocialMemoryAndRelations{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase) < 0),
+            forbiddenTokens);
+
+        Assert.That(
+            offenders,
+            Is.Empty,
+            "Only SocialMemoryAndRelations may write social-memory residue/climate/tempering state. " +
+            string.Join(Environment.NewLine, offenders));
+    }
+
+    [Test]
     public void PersonRecord_must_remain_identity_only()
     {
         string personTypesPath = Path.Combine(SrcDir, "Zongzu.Contracts", "PersonRegistryTypes.cs");

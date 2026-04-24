@@ -104,6 +104,7 @@ Every release line must pass:
 - bounded public-life order interventions may also scale against office-owned jurisdiction reach when governance-lite is enabled, while order-only paths remain neutral
 - those same public-life order affordances may also surface a read-only office-aware execution summary without introducing UI-owned authority logic
 - public-life order closure must prove a full playable-thin loop: Month N public-life/order pressure appears on a settlement surface, the player issues one bounded order command, `OrderAndBanditry` resolves acceptance/refusal and receipt state, and Month N+1 governance/order readback changes without UI authority or cross-module mutation
+- public-life order social-memory residue must prove Month N `添雇巡丁` or `严缉路匪` mutates only order-owned command/carryover state, Month N+1 `SocialMemoryAndRelations` reads structured order aftermath and writes only social-memory memory/narrative/climate state, and the durable residue appears in read models and shell readback
 - governance-lite office runs may also convert recent order-intervention carryover into office-owned backlog / petition / task-load fallout on the next month, but only by reading order queries and without writing order state back
 - those same public-life order receipts may also surface a read-only office-aftermath execution summary when next-month jurisdiction traces still carry that order command’s follow-through
 - runtime-only interaction-pressure and hotspot summaries may also surface that same order-linked office aftermath as read-only administrative-task / backlog context without entering save compatibility
@@ -257,3 +258,9 @@ At integration level, verify:
 - Presentation acceptance must show Unity shell adapters copy projected leverage/cost/readback fields and fall back safely when those projections are absent; Unity must not compute authority formulas.
 - Relationship acceptance for this pass is projection-only: durable favor, shame, debt, fear, grudge, or obligation state remains future `SocialMemoryAndRelations` work unless a later task explicitly adds owner-state schema and migration.
 - Save/schema result for this v3 chain: no persisted state impact; the only schema documentation change is runtime read-model shape.
+
+## Playable closure v4 social-memory residue acceptance - 2026-04-25
+- `public-life-order-social-memory-residue-v4` must prove Month N public-life/order command resolution remains inside `OrderAndBanditry`, while Month N+1 durable obligation, favor, shame, fear, or grudge residue is persisted only by `SocialMemoryAndRelations`.
+- Integration acceptance must show the full rule-driven loop: accepted `添雇巡丁` or `严缉路匪`, structured order aftermath query, SocialMemory-owned memory/climate/narrative residue, public-life receipt readback, governance readback, and shell visibility.
+- Save acceptance must show the new residue entries roundtrip through the existing SocialMemory schema `3`; because no new persisted field is added, no `3 -> 4` migration is expected for this pass.
+- Architecture acceptance must guard against `DomainEvent.Summary` parsing, Application/UI/Unity social-memory writes, manager/god-controller drift, and `PersonRegistry` expansion.

@@ -15,6 +15,16 @@ public sealed record SettlementDisorderSnapshot
 
     public int DisorderPressure { get; init; }
 
+    public int BlackRoutePressure { get; init; }
+
+    public int CoercionRisk { get; init; }
+
+    public int ImplementationDrag { get; init; }
+
+    public int RouteShielding { get; init; }
+
+    public int RetaliationRisk { get; init; }
+
     public string LastPressureReason { get; init; } = string.Empty;
 
     public string LastInterventionCommandCode { get; init; } = string.Empty;

@@ -111,6 +111,16 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
                 DisorderPressure = settlement.DisorderPressure,
 
+                BlackRoutePressure = settlement.BlackRoutePressure,
+
+                CoercionRisk = settlement.CoercionRisk,
+
+                ImplementationDrag = settlement.ImplementationDrag,
+
+                RouteShielding = settlement.RouteShielding,
+
+                RetaliationRisk = settlement.RetaliationRisk,
+
                 LastPressureReason = settlement.LastPressureReason,
 
                 LastInterventionCommandCode = settlement.LastInterventionCommandCode,

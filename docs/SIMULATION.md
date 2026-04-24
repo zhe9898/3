@@ -176,6 +176,7 @@ Current M3 local-conflict note:
 - only activated local-conflict response state may feed same-month order relief; calm or standing-but-untriggered posture stays visible but does not leak relief
 - `ConflictAndForce.Lite` still reads only published query state and does not mutate `OrderAndBanditry` directly
 - `OfficeAndCareer.Lite`, when enabled through the governance-lite path, now runs ahead of conflict/order so jurisdiction leverage can be read as bounded same-month administrative support without direct writes
+- `SocialMemoryAndRelations` currently runs before `OrderAndBanditry` in the monthly module order, so it may read the prior public-life order carryover once, persist social residue inside its own state, and leave Order to decay or clear its carryover later in the same month
 - `ConflictAndForce.Lite` may also carry campaign-fatigue and escort-strain fallout across months; those penalties recover during its own owned pass
 
 ### Phase 3: month-end diff generation
@@ -216,6 +217,11 @@ The normal rule remains:
 Current public-life/order v3 note:
 - home-household leverage, cost, and readback for public-life order commands are read at the monthly shell from current projections before command issue, then read again after the next monthly pass through command receipts and governance/order docket projections
 - this does not make `xun` a lower authority grid and does not add a daily player turn; the authority mutation still belongs to the owning module command resolver and later monthly module passes
+
+Current public-life/order v4 note:
+- Month N accepted order commands such as `添雇巡丁` or `严缉路匪` mutate only `OrderAndBanditry` command receipt and carryover state at command time
+- Month N+1 `SocialMemoryAndRelations` reads structured order aftermath through `IOrderAndBanditryQueries`, writes durable memory/narrative/climate residue, and exposes it to read models before projection
+- this is a rule-driven monthly residue path over query-visible state, not an event pool and not `DomainEvent.Summary` parsing; UI and Unity receive only the projected residue/readback text
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window

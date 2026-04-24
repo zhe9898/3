@@ -239,13 +239,14 @@ Current routing note:
 - reads `FamilyCore` clan pressure and personality traits through `IFamilyCoreQueries`
 - reads sponsored household pressure through `IPopulationAndHouseholdsQueries`
 - reads optional clan trade pressure through `ITradeAndIndustryQueries`
+- reads optional `OrderAndBanditry` public-life order aftermath through `IOrderAndBanditryQueries` when turning recent `添雇巡丁`, `严缉路匪`, or related order carryover into owner-owned obligation, fear, shame, favor, or grudge residue
 - consumes scoped trade shock, exam, death, marriage, branch, heir, and warfare events to mutate only its own climate, memory, narrative, and tempering state
 
 ### Does not own
 - direct conflict resolution
 - exam or trade state
 - office appointments
-- household distress, market price, education progress, family lineage, force posture, or public-life heat
+- household distress, market price, education progress, family lineage, force posture, public-life heat, or order carryover state
 
 ## 5. EducationAndExams
 ### Owns
@@ -394,6 +395,7 @@ Current routing note:
 - suppression demand
 - local disorder projections
 - last intervention command / label / summary / outcome for public-life read models
+- structured intervention aftermath such as black-route pressure, coercion risk, implementation drag, route shielding, and retaliation risk for next-month readback by office, trade, social-memory, and presentation projections
 
 ### Accepts commands
 - `EscortRoadReport` /催护一路 for limited route-report and travel protection
@@ -593,3 +595,9 @@ Current lite note:
 - `chain1-public-life-order-leverage-v3` adds runtime-only leverage / cost / readback projections for the same public-life order lane. The projection may join existing public-life, order, office, family, social-memory, and trade snapshots, but it must not write any module state.
 - `OrderAndBanditry` remains the only owner of public-life order command resolution and intervention receipt/carryover state. Family, office, trade, and social-memory context is explanatory readback, not a same-command write path.
 - Durable obligation, favor, shame, fear, or grudge records still belong to `SocialMemoryAndRelations`; v3 does not add a shortcut residue store in Application, Unity, or `PersonRegistry`.
+
+## 2026-04-25 playable closure v4 social-memory residue note
+- `public-life-order-social-memory-residue-v4` keeps public-life order command resolution inside `OrderAndBanditry`, then applies a rule-driven SocialMemory monthly residue rule over structured next-month order aftermath.
+- `OrderAndBanditry` still mutates only order-owned settlement pressure, receipt, and carryover state. It does not write memory, favor, shame, fear, obligation, or grudge records.
+- `SocialMemoryAndRelations` may create public-order residue only inside its own `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` state. It must use query-visible order fields or structured metadata, never `DomainEvent.Summary` parsing.
+- Application, presentation, and Unity may expose `社会记忆读回` from projected SocialMemory read models only; they must not author, save, or repair social memory state.

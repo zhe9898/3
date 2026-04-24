@@ -870,6 +870,104 @@ public sealed class SocialMemoryAndRelationsModuleTests
     }
 
     [Test]
+    public void RunMonth_PublicLifeOrderAftermath_WritesOwnerOwnedResidueFromOrderQuery()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(7),
+            Prestige = 55,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(1),
+        });
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(2),
+            ClanName = "Li",
+            HomeSettlementId = new SettlementId(8),
+            Prestige = 80,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(2),
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+        socialState.ClanNarratives.Add(new ClanNarrativeState
+        {
+            ClanId = new ClanId(1),
+            PublicNarrative = "Zhang waits on the road matter.",
+            FearPressure = 12,
+            ShamePressure = 8,
+            GrudgePressure = 10,
+            FavorBalance = 2,
+        });
+        socialState.ClanNarratives.Add(new ClanNarrativeState
+        {
+            ClanId = new ClanId(2),
+            PublicNarrative = "Li is off-scope.",
+            FearPressure = 12,
+            ShamePressure = 8,
+            GrudgePressure = 10,
+            FavorBalance = 2,
+        });
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        queries.Register<IOrderAndBanditryQueries>(new StubOrderQueries(
+        [
+            new SettlementDisorderSnapshot
+            {
+                SettlementId = new SettlementId(7),
+                RoutePressure = 35,
+                SuppressionDemand = 26,
+                DisorderPressure = 28,
+                RouteShielding = 18,
+                RetaliationRisk = 12,
+                LastInterventionCommandCode = PlayerCommandNames.FundLocalWatch,
+                LastInterventionCommandLabel = "添雇巡丁",
+                InterventionCarryoverMonths = 1,
+            },
+        ]));
+        socialModule.RegisterQueries(socialState, queries);
+
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
+        KernelState kernelState = KernelState.Create(1410);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 8),
+            manifest,
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        MemoryRecordState residue = socialState.Memories.Single(memory => memory.CauseKey == "order.public_life.fund_local_watch");
+        Assert.That(residue.SubjectClanId, Is.EqualTo(new ClanId(1)));
+        Assert.That(residue.Kind, Is.EqualTo(SocialMemoryKinds.PublicOrderWatchObligation));
+        Assert.That(residue.Type, Is.EqualTo(MemoryType.Favor));
+        Assert.That(residue.Subtype, Is.EqualTo(MemorySubtype.ProtectionFavor));
+        Assert.That(residue.Summary, Does.Contain("添雇巡丁"));
+        Assert.That(residue.Weight, Is.GreaterThan(0));
+
+        ClanNarrativeState targetNarrative = socialState.ClanNarratives.Single(static narrative => narrative.ClanId == new ClanId(1));
+        Assert.That(targetNarrative.FavorBalance, Is.GreaterThan(2));
+        Assert.That(socialState.Memories.Any(static memory => memory.SubjectClanId == new ClanId(2)), Is.False);
+        Assert.That(socialState.ClanEmotionalClimates.Single(static climate => climate.ClanId == new ClanId(1)).Obligation, Is.GreaterThan(0));
+        Assert.That(context.Diff.Entries.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);
+        Assert.That(context.DomainEvents.Events.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);
+    }
+
+    [Test]
     public void PublishedEvents_ContainsPressureTemperingReceipts()
     {
         SocialMemoryAndRelationsModule socialModule = new();
@@ -949,6 +1047,26 @@ public sealed class SocialMemoryAndRelationsModuleTests
         public IReadOnlyList<ClanTradeRouteSnapshot> GetRoutesForClan(ClanId clanId)
         {
             return [];
+        }
+    }
+
+    private sealed class StubOrderQueries : IOrderAndBanditryQueries
+    {
+        private readonly IReadOnlyList<SettlementDisorderSnapshot> _settlements;
+
+        public StubOrderQueries(IReadOnlyList<SettlementDisorderSnapshot> settlements)
+        {
+            _settlements = settlements;
+        }
+
+        public SettlementDisorderSnapshot GetRequiredSettlementDisorder(SettlementId settlementId)
+        {
+            return _settlements.Single(settlement => settlement.SettlementId == settlementId);
+        }
+
+        public IReadOnlyList<SettlementDisorderSnapshot> GetSettlementDisorder()
+        {
+            return _settlements;
         }
     }
 }

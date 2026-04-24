@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
+using Zongzu.Kernel;
 
 namespace Zongzu.Application;
 
@@ -15,14 +16,15 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<ClanSnapshot> localClans,
         IReadOnlyList<ClanNarrativeSnapshot> localNarratives,
         IReadOnlyList<ClanTradeSnapshot> localTrades,
-        IReadOnlyList<ClanTradeRouteSnapshot> localRoutes)
+        IReadOnlyList<ClanTradeRouteSnapshot> localRoutes,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
         string nodeLabel = ResolvePublicLifeNodeLabel(publicLife, disorder);
         string lineage = BuildOrderLineageLeverageSummary(localClans, localNarratives);
         string office = BuildOrderOfficeLeverageSummary(jurisdiction);
         string trade = BuildOrderTradeLeverageSummary(localTrades, localRoutes);
         string pressure = BuildOrderGroundPressureSummary(publicLife, disorder);
-        string readback = BuildOrderPressureReadbackSummary(disorder, jurisdiction);
+        string readback = BuildOrderPressureReadbackSummary(disorder, jurisdiction, localSocialMemories);
 
         return commandName switch
         {
@@ -154,13 +156,71 @@ public sealed partial class PresentationReadModelBuilder
 
     private static string BuildOrderPressureReadbackSummary(
         SettlementDisorderSnapshot disorder,
-        JurisdictionAuthoritySnapshot? jurisdiction)
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
         string officeTail = jurisdiction is null
             ? "官面读回暂缺。"
             : $"官面读回看{jurisdiction.CurrentAdministrativeTask}、积案{jurisdiction.PetitionBacklog}、词牒之压{jurisdiction.PetitionPressure}。";
 
         return $"当前读回锚点：路压{disorder.RoutePressure}、镇压之需{disorder.SuppressionDemand}、护路得力{disorder.InterventionCarryoverMonths}月余波；{officeTail}";
+    }
+
+    private static IReadOnlyList<SocialMemoryEntrySnapshot> SelectLocalPublicLifeOrderSocialMemories(
+        IReadOnlyList<SocialMemoryEntrySnapshot> socialMemories,
+        IReadOnlyList<ClanSnapshot> localClans)
+    {
+        if (socialMemories.Count == 0 || localClans.Count == 0)
+        {
+            return [];
+        }
+
+        HashSet<ClanId> localClanIds = localClans.Select(static clan => clan.Id).ToHashSet();
+        return socialMemories
+            .Where(memory =>
+                memory.State == MemoryLifecycleState.Active
+                && IsPublicLifeOrderSocialMemory(memory)
+                && memory.SourceClanId.HasValue
+                && localClanIds.Contains(memory.SourceClanId.Value))
+            .OrderByDescending(static memory => memory.OriginDate.Year)
+            .ThenByDescending(static memory => memory.OriginDate.Month)
+            .ThenByDescending(static memory => memory.Weight)
+            .ThenBy(static memory => memory.Id.Value)
+            .ToArray();
+    }
+
+    private static string BuildOrderSocialMemoryReadbackSummary(IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
+    {
+        SocialMemoryEntrySnapshot? residue = localSocialMemories.FirstOrDefault();
+        if (residue is null)
+        {
+            return string.Empty;
+        }
+
+        return $"社会记忆读回：{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}，{residue.Summary}";
+    }
+
+    private static bool IsPublicLifeOrderSocialMemory(SocialMemoryEntrySnapshot memory)
+    {
+        return string.Equals(memory.CauseKey, "order.public_life.escort_road_report", StringComparison.Ordinal)
+            || string.Equals(memory.CauseKey, "order.public_life.fund_local_watch", StringComparison.Ordinal)
+            || string.Equals(memory.CauseKey, "order.public_life.suppress_banditry", StringComparison.Ordinal)
+            || string.Equals(memory.CauseKey, "order.public_life.negotiate_with_outlaws", StringComparison.Ordinal)
+            || string.Equals(memory.CauseKey, "order.public_life.tolerate_disorder", StringComparison.Ordinal);
+    }
+
+    private static string RenderSocialMemoryTypeLabel(MemoryType type)
+    {
+        return type switch
+        {
+            MemoryType.Favor => "人情",
+            MemoryType.Shame => "羞面",
+            MemoryType.Fear => "恐惧",
+            MemoryType.Grudge => "旧怨",
+            MemoryType.Debt => "担保债",
+            MemoryType.Trust => "信任",
+            _ => "余痕",
+        };
     }
 
     private readonly record struct CommandLeverageProjection(

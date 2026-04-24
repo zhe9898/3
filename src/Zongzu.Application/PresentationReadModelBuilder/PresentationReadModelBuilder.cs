@@ -32,7 +32,9 @@ public sealed partial class PresentationReadModelBuilder
 
         if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.SocialMemoryAndRelations))
         {
-            bundle.ClanNarratives = queries.GetRequired<ISocialMemoryAndRelationsQueries>().GetClanNarratives();
+            ISocialMemoryAndRelationsQueries socialQueries = queries.GetRequired<ISocialMemoryAndRelationsQueries>();
+            bundle.ClanNarratives = socialQueries.GetClanNarratives();
+            bundle.SocialMemories = socialQueries.GetMemories();
         }
 
         bundle.PersonDossiers = BuildPersonDossiers(simulation.FeatureManifest, queries);

@@ -179,6 +179,37 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_ProjectsSocialMemoryOrderReadbackWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Receipts =
+            [
+                new PlayerCommandReceiptSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OrderAndBanditry,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.FundLocalWatch,
+                    Label = "添雇巡丁",
+                    Summary = "巡丁已经补到路口。",
+                    OutcomeSummary = "路口暂稳。",
+                    ReadbackSummary = "社会记忆读回：人情31，张氏因上月添雇巡丁留下巡丁担保与护路人情。",
+                    TargetLabel = "县门榜下",
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        CommandReceiptViewModel receipt = shell.DeskSandbox.Settlements.Single().PublicLifeRecentReceipts.Single();
+
+        Assert.That(receipt.CommandName, Is.EqualTo(PlayerCommandNames.FundLocalWatch));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("社会记忆读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("添雇巡丁"));
+    }
+
+    [Test]
     public void Compose_UsesPublicLifeFallbackWhenProjectionAndCommandsAreAbsent()
     {
         PresentationReadModelBundle bundle = CreateBundle();

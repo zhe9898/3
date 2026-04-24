@@ -220,6 +220,8 @@ public sealed partial class PresentationReadModelBuilder
                 .ToArray();
             ClanTradeSnapshot[] localTrades = tradesBySettlement[publicLife.SettlementId.Value].ToArray();
             ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[publicLife.SettlementId.Value].ToArray();
+            IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
+                SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
 
             if (jurisdiction is not null)
             {
@@ -252,6 +254,7 @@ public sealed partial class PresentationReadModelBuilder
                     localNarratives,
                     localTrades,
                     localRoutes,
+                    localSocialMemories,
                     administrativeReachSummary))
                 {
                     yield return affordance;
@@ -265,7 +268,8 @@ public sealed partial class PresentationReadModelBuilder
                     localClans,
                     localNarratives,
                     localTrades,
-                    localRoutes);
+                    localRoutes,
+                    localSocialMemories);
                 yield return BuildPlayerCommandAffordanceSnapshot(
                     PlayerCommandNames.EscortRoadReport,
                     publicLife.SettlementId,
@@ -302,6 +306,7 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<ClanNarrativeSnapshot> localNarratives,
         IReadOnlyList<ClanTradeSnapshot> localTrades,
         IReadOnlyList<ClanTradeRouteSnapshot> localRoutes,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
         string administrativeReachSummary)
     {
         CommandLeverageProjection watchProjection = BuildOrderPublicLifeLeverageProjection(
@@ -312,7 +317,8 @@ public sealed partial class PresentationReadModelBuilder
             localClans,
             localNarratives,
             localTrades,
-            localRoutes);
+            localRoutes,
+            localSocialMemories);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.FundLocalWatch,
             publicLife.SettlementId,
@@ -333,7 +339,8 @@ public sealed partial class PresentationReadModelBuilder
             localClans,
             localNarratives,
             localTrades,
-            localRoutes);
+            localRoutes,
+            localSocialMemories);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.SuppressBanditry,
             publicLife.SettlementId,
@@ -354,7 +361,8 @@ public sealed partial class PresentationReadModelBuilder
             localClans,
             localNarratives,
             localTrades,
-            localRoutes);
+            localRoutes,
+            localSocialMemories);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.NegotiateWithOutlaws,
             publicLife.SettlementId,
@@ -375,7 +383,8 @@ public sealed partial class PresentationReadModelBuilder
             localClans,
             localNarratives,
             localTrades,
-            localRoutes);
+            localRoutes,
+            localSocialMemories);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.TolerateDisorder,
             publicLife.SettlementId,

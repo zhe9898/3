@@ -1,10 +1,12 @@
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
+using Zongzu.Kernel;
 using Zongzu.Modules.ConflictAndForce;
 using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
+using Zongzu.Modules.SocialMemoryAndRelations;
 using Zongzu.Modules.TradeAndIndustry;
 using Zongzu.Modules.WarfareCampaign;
 using Zongzu.Persistence;
@@ -143,6 +145,45 @@ public sealed class SaveRoundtripTests
         Assert.That(orderState.Settlements.Any(static settlement => settlement.InterventionCarryoverMonths == 1), Is.True);
         Assert.That(tradeState.Routes.Any(static route => !string.IsNullOrWhiteSpace(route.RouteConstraintLabel)), Is.True);
         Assert.That(tradeState.Routes.Any(static route => !string.IsNullOrWhiteSpace(route.LastRouteTrace)), Is.True);
+    }
+
+    [Test]
+    public void SaveCodec_RoundtripPreservesPublicLifeOrderSocialMemoryResidue()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM3OrderAndBanditryBootstrap(20260425);
+        simulation.AdvanceMonths(2);
+        SettlementId settlementId = new PresentationReadModelBuilder().BuildForM2(simulation).SettlementDisorder.Single().SettlementId;
+
+        PlayerCommandResult result = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.FundLocalWatch,
+            });
+        Assert.That(result.Accepted, Is.True);
+
+        simulation.AdvanceOneMonth();
+
+        SaveCodec codec = new();
+        byte[] bytes = codec.Encode(simulation.ExportSave());
+        GameSimulation reloaded = SimulationBootstrapper.LoadM3OrderAndBanditry(codec.Decode(bytes));
+
+        MessagePackModuleStateSerializer serializer = new();
+        SocialMemoryAndRelationsState socialState = (SocialMemoryAndRelationsState)serializer.Deserialize(
+            typeof(SocialMemoryAndRelationsState),
+            reloaded.ExportSave().ModuleStates[KnownModuleKeys.SocialMemoryAndRelations].Payload);
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.SocialMemoryAndRelations].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(
+            socialState.Memories.Any(static memory =>
+                memory.Kind == SocialMemoryKinds.PublicOrderWatchObligation
+                && memory.CauseKey == "order.public_life.fund_local_watch"
+                && memory.Type == MemoryType.Favor
+                && memory.Subtype == MemorySubtype.ProtectionFavor),
+            Is.True);
+
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(reloaded);
+        Assert.That(bundle.SocialMemories.Any(static memory => memory.CauseKey == "order.public_life.fund_local_watch"), Is.True);
     }
 
     [Test]

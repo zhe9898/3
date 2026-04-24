@@ -65,6 +65,12 @@ Current public-life/order v3 note:
 - `OrderAndBanditry` command receipts and carryover can explain that a command has a social tail; they do not themselves create durable favor/grudge records outside order-owned state
 - future durable order-to-memory residue must add explicit SocialMemory-owned schema, migration, event metadata, and tests rather than parsing command summary text
 
+Current public-life/order v4 note:
+- `SocialMemoryAndRelations` now owns a minimal durable public-order residue cut for accepted order interventions such as `添雇巡丁` and `严缉路匪`
+- the residue is recorded as existing schema v3 memory, narrative, and climate state, with cause keys such as `order.public_life.fund_local_watch` and `order.public_life.suppress_banditry`
+- `OrderAndBanditry` supplies structured aftermath through queries: recent command code/label, carryover, shielding, retaliation, coercion, implementation drag, and pressure fields; SocialMemory decides what obligation, fear, shame, favor, or grudge remains
+- no module, projection, shell adapter, or Unity surface may create social residue by interpreting command prose or `DomainEvent.Summary`
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance
