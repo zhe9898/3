@@ -27,7 +27,27 @@ public sealed class PersonDossierViewModel
 
 	public string TemperamentSummary { get; set; } = string.Empty;
 
+	public int? HouseholdId { get; set; }
+
+	public string HouseholdName { get; set; } = string.Empty;
+
+	public string LivelihoodSummary { get; set; } = string.Empty;
+
+	public string HealthSummary { get; set; } = string.Empty;
+
+	public string ActivitySummary { get; set; } = string.Empty;
+
+	public string EducationSummary { get; set; } = string.Empty;
+
+	public string TradeSummary { get; set; } = string.Empty;
+
+	public string OfficeSummary { get; set; } = string.Empty;
+
 	public string MemoryPressureSummary { get; set; } = string.Empty;
+
+	public string DormantMemorySummary { get; set; } = string.Empty;
+
+	public string SocialPositionLabel { get; set; } = string.Empty;
 
 	public string CurrentStatusSummary { get; set; } = string.Empty;
 

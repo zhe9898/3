@@ -24,6 +24,18 @@ public sealed partial class PresentationReadModelBuilder
         ISocialMemoryAndRelationsQueries? socialQueries = manifest.IsEnabled(KnownModuleKeys.SocialMemoryAndRelations)
             ? queries.GetRequired<ISocialMemoryAndRelationsQueries>()
             : null;
+        IPopulationAndHouseholdsQueries? populationQueries = manifest.IsEnabled(KnownModuleKeys.PopulationAndHouseholds)
+            ? queries.GetRequired<IPopulationAndHouseholdsQueries>()
+            : null;
+        IEducationAndExamsQueries? educationQueries = manifest.IsEnabled(KnownModuleKeys.EducationAndExams)
+            ? queries.GetRequired<IEducationAndExamsQueries>()
+            : null;
+        ITradeAndIndustryQueries? tradeQueries = manifest.IsEnabled(KnownModuleKeys.TradeAndIndustry)
+            ? queries.GetRequired<ITradeAndIndustryQueries>()
+            : null;
+        IOfficeAndCareerQueries? officeQueries = manifest.IsEnabled(KnownModuleKeys.OfficeAndCareer)
+            ? queries.GetRequired<IOfficeAndCareerQueries>()
+            : null;
 
         IReadOnlyList<PersonRecord> registryPeople = registryQueries.GetAllPersons();
         Dictionary<PersonId, PersonRecord> registryById = registryPeople
@@ -49,6 +61,41 @@ public sealed partial class PresentationReadModelBuilder
         Dictionary<ClanId, ClanNarrativeSnapshot> narrativesByClan = socialQueries is null
             ? []
             : socialQueries.GetClanNarratives().ToDictionary(static narrative => narrative.ClanId);
+        Dictionary<PersonId, DormantStubSnapshot> dormantStubsByPerson = socialQueries is null
+            ? []
+            : socialQueries.GetDormantStubs()
+                .GroupBy(static stub => stub.PersonId)
+                .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<MemoryId, SocialMemoryEntrySnapshot> memoriesById = socialQueries is null
+            ? []
+            : socialQueries.GetMemories()
+                .GroupBy(static memory => memory.Id)
+                .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<HouseholdId, HouseholdPressureSnapshot> householdsById = populationQueries is null
+            ? []
+            : populationQueries.GetHouseholds()
+                .GroupBy(static household => household.Id)
+                .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<PersonId, HouseholdMembershipSnapshot> membershipsByPerson = populationQueries is null
+            ? []
+            : populationQueries.GetMemberships()
+                .GroupBy(static membership => membership.PersonId)
+                .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<PersonId, EducationCandidateSnapshot> educationByPerson = educationQueries is null
+            ? []
+            : educationQueries.GetCandidates()
+                .GroupBy(static candidate => candidate.PersonId)
+                .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<ClanId, ClanTradeSnapshot> tradesByClan = tradeQueries is null
+            ? []
+            : tradeQueries.GetClanTrades()
+                .GroupBy(static trade => trade.ClanId)
+                .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<PersonId, OfficeCareerSnapshot> officeByPerson = officeQueries is null
+            ? []
+            : officeQueries.GetCareers()
+                .GroupBy(static career => career.PersonId)
+                .ToDictionary(static group => group.Key, static group => group.First());
 
         return registryPeople
             .Select(person =>
@@ -67,6 +114,26 @@ public sealed partial class PresentationReadModelBuilder
                 IReadOnlyList<SocialMemoryEntrySnapshot> memories = clanId.HasValue && socialQueries is not null
                     ? socialQueries.GetMemoriesByClan(clanId.Value)
                     : [];
+                HouseholdMembershipSnapshot? membership = membershipsByPerson.TryGetValue(person.Id, out HouseholdMembershipSnapshot? personMembership)
+                    ? personMembership
+                    : null;
+                HouseholdPressureSnapshot? household = membership is not null &&
+                    householdsById.TryGetValue(membership.HouseholdId, out HouseholdPressureSnapshot? householdSnapshot)
+                        ? householdSnapshot
+                        : null;
+                EducationCandidateSnapshot? education = educationByPerson.TryGetValue(person.Id, out EducationCandidateSnapshot? educationCandidate)
+                    ? educationCandidate
+                    : null;
+                ClanTradeSnapshot? trade = clanId.HasValue &&
+                    tradesByClan.TryGetValue(clanId.Value, out ClanTradeSnapshot? clanTrade)
+                        ? clanTrade
+                        : null;
+                OfficeCareerSnapshot? office = officeByPerson.TryGetValue(person.Id, out OfficeCareerSnapshot? officeCareer)
+                    ? officeCareer
+                    : null;
+                DormantStubSnapshot? dormantStub = dormantStubsByPerson.TryGetValue(person.Id, out DormantStubSnapshot? stub)
+                    ? stub
+                    : null;
 
                 return new PersonDossierSnapshot
                 {
@@ -81,9 +148,37 @@ public sealed partial class PresentationReadModelBuilder
                     BranchPositionLabel = BuildBranchPositionLabel(familyPerson?.BranchPosition),
                     KinshipSummary = BuildKinshipSummary(familyPerson, registryById),
                     TemperamentSummary = BuildTemperamentSummary(familyPerson),
+                    HouseholdId = membership?.HouseholdId,
+                    HouseholdName = household?.HouseholdName ?? string.Empty,
+                    LivelihoodSummary = BuildLivelihoodSummary(membership, household),
+                    HealthSummary = BuildHealthSummary(membership),
+                    ActivitySummary = BuildActivitySummary(membership, household),
+                    EducationSummary = BuildEducationSummary(education),
+                    TradeSummary = BuildTradeSummary(trade),
+                    OfficeSummary = BuildOfficeSummary(office),
                     MemoryPressureSummary = BuildMemoryPressureSummary(narrative, memories),
-                    CurrentStatusSummary = BuildCurrentStatusSummary(person, clan, familyPerson, narrative, memories),
-                    SourceModuleKeys = BuildPersonDossierSourceKeys(familyPerson, clan, narrative, memories),
+                    DormantMemorySummary = BuildDormantMemorySummary(dormantStub, memoriesById),
+                    SocialPositionLabel = BuildSocialPositionLabel(familyPerson, membership, education, trade, office, dormantStub),
+                    CurrentStatusSummary = BuildCurrentStatusSummary(
+                        person,
+                        clan,
+                        familyPerson,
+                        membership,
+                        education,
+                        office,
+                        narrative,
+                        memories,
+                        dormantStub),
+                    SourceModuleKeys = BuildPersonDossierSourceKeys(
+                        familyPerson,
+                        clan,
+                        membership,
+                        education,
+                        trade,
+                        office,
+                        narrative,
+                        memories,
+                        dormantStub),
                 };
             })
             .OrderBy(static dossier => dossier.IsAlive ? 0 : 1)
@@ -166,6 +261,95 @@ public sealed partial class PresentationReadModelBuilder
                $"loyalty {familyPerson.Loyalty}, sociability {familyPerson.Sociability}";
     }
 
+    private static string BuildLivelihoodSummary(
+        HouseholdMembershipSnapshot? membership,
+        HouseholdPressureSnapshot? household)
+    {
+        if (membership is null)
+        {
+            return "No household livelihood projection.";
+        }
+
+        string householdText = household is null
+            ? $"household #{membership.HouseholdId.Value}"
+            : household.HouseholdName;
+        string pressureText = household is null
+            ? "household pressure unknown"
+            : $"distress {household.Distress}, debt {household.DebtPressure}, migration risk {household.MigrationRisk}";
+        return $"{householdText}; livelihood {membership.Livelihood}; {pressureText}";
+    }
+
+    private static string BuildHealthSummary(HouseholdMembershipSnapshot? membership)
+    {
+        if (membership is null)
+        {
+            return "No household health projection.";
+        }
+
+        string illness = membership.IllnessMonths <= 0
+            ? "no active illness months"
+            : $"illness months {membership.IllnessMonths}";
+        return $"health {membership.Health}; resilience {membership.HealthResilience}; {illness}";
+    }
+
+    private static string BuildActivitySummary(
+        HouseholdMembershipSnapshot? membership,
+        HouseholdPressureSnapshot? household)
+    {
+        if (membership is null)
+        {
+            return "No household activity projection.";
+        }
+
+        string capacity = household is null
+            ? string.Empty
+            : $"labor {household.LaborCapacity}; dependents {household.DependentCount}";
+        return string.Join("; ", DistinctNonEmpty($"activity {membership.Activity}", capacity));
+    }
+
+    private static string BuildEducationSummary(EducationCandidateSnapshot? education)
+    {
+        if (education is null)
+        {
+            return "No education projection.";
+        }
+
+        string status = education.HasPassedLocalExam
+            ? "local exam passed"
+            : education.IsStudying ? "studying" : "not currently studying";
+        string tutor = education.HasTutor ? "has tutor" : "no tutor";
+        return $"{status}; tier {education.CurrentTier}; progress {education.StudyProgress}; stress {education.Stress}; {tutor}";
+    }
+
+    private static string BuildTradeSummary(ClanTradeSnapshot? trade)
+    {
+        if (trade is null)
+        {
+            return "No clan trade projection.";
+        }
+
+        string outcome = string.IsNullOrWhiteSpace(trade.LastOutcome)
+            ? "no recent trade outcome"
+            : $"last outcome {trade.LastOutcome}";
+        return $"clan trade cash {trade.CashReserve}, grain {trade.GrainReserve}, debt {trade.Debt}; shops {trade.ShopCount}; {outcome}";
+    }
+
+    private static string BuildOfficeSummary(OfficeCareerSnapshot? office)
+    {
+        if (office is null)
+        {
+            return "No office projection.";
+        }
+
+        string status = office.HasAppointment
+            ? $"appointed {office.OfficeTitle}"
+            : office.IsEligible ? "eligible for office path" : "office-listed without appointment";
+        string task = string.IsNullOrWhiteSpace(office.CurrentAdministrativeTask)
+            ? "no current administrative task"
+            : $"task {office.CurrentAdministrativeTask}";
+        return $"{status}; authority {office.AuthorityTier}; petitions {office.PetitionPressure}/{office.PetitionBacklog}; {task}";
+    }
+
     private static string BuildMemoryPressureSummary(
         ClanNarrativeSnapshot? narrative,
         IReadOnlyList<SocialMemoryEntrySnapshot> memories)
@@ -188,27 +372,109 @@ public sealed partial class PresentationReadModelBuilder
         return string.Join("; ", parts);
     }
 
+    private static string BuildDormantMemorySummary(
+        DormantStubSnapshot? dormantStub,
+        IReadOnlyDictionary<MemoryId, SocialMemoryEntrySnapshot> memoriesById)
+    {
+        if (dormantStub is null)
+        {
+            return "No dormant social-memory stub.";
+        }
+
+        string role = string.IsNullOrWhiteSpace(dormantStub.LastKnownRole)
+            ? "last role unknown"
+            : $"last role {dormantStub.LastKnownRole}";
+        string rememberedCauses = string.Join(
+            ", ",
+            dormantStub.ActiveMemoryIds
+                .Select(memoryId => memoriesById.TryGetValue(memoryId, out SocialMemoryEntrySnapshot? memory)
+                    ? memory.CauseKey
+                    : memoryId.Value.ToString())
+                .Where(static value => !string.IsNullOrWhiteSpace(value))
+                .Take(3));
+        string hooks = string.IsNullOrWhiteSpace(rememberedCauses)
+            ? $"active memory hooks {dormantStub.ActiveMemoryIds.Count}"
+            : $"active memory hooks {dormantStub.ActiveMemoryIds.Count}: {rememberedCauses}";
+        string reemergence = dormantStub.IsEligibleForReemergence
+            ? "eligible for reemergence"
+            : "not eligible for reemergence";
+        return $"{role}; last seen {dormantStub.LastSeen}; {hooks}; {reemergence}";
+    }
+
+    private static string BuildSocialPositionLabel(
+        FamilyPersonSnapshot? familyPerson,
+        HouseholdMembershipSnapshot? membership,
+        EducationCandidateSnapshot? education,
+        ClanTradeSnapshot? trade,
+        OfficeCareerSnapshot? office,
+        DormantStubSnapshot? dormantStub)
+    {
+        string branch = familyPerson is null ? string.Empty : BuildBranchPositionLabel(familyPerson.BranchPosition);
+        string officeText = office is null
+            ? string.Empty
+            : office.HasAppointment ? office.OfficeTitle : office.IsEligible ? "office candidate" : string.Empty;
+        string study = education is null
+            ? string.Empty
+            : education.HasPassedLocalExam ? "local-exam passer" : education.IsStudying ? "student" : string.Empty;
+        string livelihood = membership is null ? string.Empty : membership.Livelihood.ToString();
+        string tradeText = trade is null || trade.ShopCount <= 0 ? string.Empty : $"clan shops {trade.ShopCount}";
+        string dormant = dormantStub is null || string.IsNullOrWhiteSpace(dormantStub.LastKnownRole)
+            ? string.Empty
+            : dormantStub.LastKnownRole;
+
+        string label = string.Join(", ", DistinctNonEmpty(branch, officeText, study, livelihood, tradeText, dormant));
+        return string.IsNullOrWhiteSpace(label) ? "Registry-only person." : label;
+    }
+
     private static string BuildCurrentStatusSummary(
         PersonRecord person,
         ClanSnapshot? clan,
         FamilyPersonSnapshot? familyPerson,
+        HouseholdMembershipSnapshot? membership,
+        EducationCandidateSnapshot? education,
+        OfficeCareerSnapshot? office,
         ClanNarrativeSnapshot? narrative,
-        IReadOnlyList<SocialMemoryEntrySnapshot> memories)
+        IReadOnlyList<SocialMemoryEntrySnapshot> memories,
+        DormantStubSnapshot? dormantStub)
     {
         string life = person.IsAlive ? "Living" : "Deceased";
         string clanText = clan is null ? "no clan projection" : $"clan {clan.ClanName}";
         string branchText = familyPerson is null ? "no family placement" : BuildBranchPositionLabel(familyPerson.BranchPosition);
+        string householdText = membership is null ? "no household projection" : $"household {membership.HouseholdId.Value}";
+        string educationText = education is null
+            ? "no education projection"
+            : education.HasPassedLocalExam ? "local exam passed" : education.IsStudying ? "studying" : "education record";
+        string officeText = office is null
+            ? "no office projection"
+            : office.HasAppointment ? $"office {office.OfficeTitle}" : office.IsEligible ? "office eligible" : "office record";
         string memoryText = narrative is null && memories.Count == 0
             ? "no social-memory projection"
             : $"social memory entries {narrative?.MemoryCount ?? memories.Count}";
-        return $"{life} {person.LifeStage}; {person.FidelityRing} ring; {clanText}; {branchText}; {memoryText}.";
+        string dormantText = dormantStub is null ? string.Empty : "dormant memory stub present";
+        return string.Join(
+            "; ",
+            DistinctNonEmpty(
+                $"{life} {person.LifeStage}",
+                $"{person.FidelityRing} ring",
+                clanText,
+                branchText,
+                householdText,
+                educationText,
+                officeText,
+                memoryText,
+                dormantText)) + ".";
     }
 
     private static IReadOnlyList<string> BuildPersonDossierSourceKeys(
         FamilyPersonSnapshot? familyPerson,
         ClanSnapshot? clan,
+        HouseholdMembershipSnapshot? membership,
+        EducationCandidateSnapshot? education,
+        ClanTradeSnapshot? trade,
+        OfficeCareerSnapshot? office,
         ClanNarrativeSnapshot? narrative,
-        IReadOnlyList<SocialMemoryEntrySnapshot> memories)
+        IReadOnlyList<SocialMemoryEntrySnapshot> memories,
+        DormantStubSnapshot? dormantStub)
     {
         List<string> keys = [KnownModuleKeys.PersonRegistry];
         if (familyPerson is not null || clan is not null)
@@ -216,7 +482,27 @@ public sealed partial class PresentationReadModelBuilder
             keys.Add(KnownModuleKeys.FamilyCore);
         }
 
-        if (narrative is not null || memories.Count > 0)
+        if (membership is not null)
+        {
+            keys.Add(KnownModuleKeys.PopulationAndHouseholds);
+        }
+
+        if (education is not null)
+        {
+            keys.Add(KnownModuleKeys.EducationAndExams);
+        }
+
+        if (trade is not null)
+        {
+            keys.Add(KnownModuleKeys.TradeAndIndustry);
+        }
+
+        if (office is not null)
+        {
+            keys.Add(KnownModuleKeys.OfficeAndCareer);
+        }
+
+        if (narrative is not null || memories.Count > 0 || dormantStub is not null)
         {
             keys.Add(KnownModuleKeys.SocialMemoryAndRelations);
         }

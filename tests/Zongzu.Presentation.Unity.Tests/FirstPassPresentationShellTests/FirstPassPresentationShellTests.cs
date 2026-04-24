@@ -152,15 +152,26 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(dossier.DisplayName, Is.EqualTo("Zhang Yuan"));
         Assert.That(dossier.BranchPositionLabel, Is.EqualTo("Main-line heir"));
         Assert.That(dossier.MemoryPressureSummary, Does.Contain("pressure 38"));
+        Assert.That(dossier.LivelihoodSummary, Does.Contain("PettyTrader"));
+        Assert.That(dossier.EducationSummary, Does.Contain("local exam passed"));
+        Assert.That(dossier.OfficeSummary, Does.Contain("appointed"));
+        Assert.That(dossier.SocialPositionLabel, Does.Contain("local-exam passer"));
         Assert.That(dossier.CurrentStatusSummary, Does.Contain("Living Adult"));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.SocialMemoryAndRelations));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.EducationAndExams));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.TradeAndIndustry));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.OfficeAndCareer));
         Assert.That(shell.Lineage.FocusedPerson, Is.Not.Null);
         Assert.That(shell.Lineage.FocusedPerson!.ObjectAnchorLabel, Is.EqualTo("画像卷轴"));
         Assert.That(shell.Lineage.FocusedPerson.TabletLabel, Does.Contain("Zhang Yuan"));
-        Assert.That(shell.Lineage.FocusedPerson.PortraitScrollLine, Does.Contain("Main-line heir"));
+        Assert.That(shell.Lineage.FocusedPerson.PortraitScrollLine, Does.Contain("local-exam passer"));
         Assert.That(shell.Lineage.FocusedPerson.KinshipThreadLine, Is.EqualTo(dossier.KinshipSummary));
+        Assert.That(shell.Lineage.FocusedPerson.LivelihoodThreadLine, Is.EqualTo(dossier.LivelihoodSummary));
+        Assert.That(shell.Lineage.FocusedPerson.EducationThreadLine, Is.EqualTo(dossier.EducationSummary));
+        Assert.That(shell.Lineage.FocusedPerson.OfficeThreadLine, Is.EqualTo(dossier.OfficeSummary));
         Assert.That(shell.Lineage.FocusedPerson.MemoryThreadLine, Is.EqualTo(dossier.MemoryPressureSummary));
         Assert.That(shell.Lineage.FocusedPerson.Dossier.PersonId, Is.EqualTo(dossier.PersonId));
     }
@@ -185,7 +196,12 @@ public sealed partial class FirstPassPresentationShellTests
                 BranchPositionLabel = "Branch member",
                 KinshipSummary = "children 0",
                 TemperamentSummary = "ambition 42, prudence 61, loyalty 48, sociability 55",
+                LivelihoodSummary = "No household livelihood projection.",
+                EducationSummary = "No education projection.",
+                OfficeSummary = "No office projection.",
                 MemoryPressureSummary = "pressure 12; trust 8, hope 6",
+                DormantMemorySummary = "No dormant social-memory stub.",
+                SocialPositionLabel = "Branch member",
                 CurrentStatusSummary = "Living Adult; Local ring; clan Qinghe Zhang; Branch member; pressure 12.",
                 SourceModuleKeys = [KnownModuleKeys.PersonRegistry, KnownModuleKeys.FamilyCore],
             },

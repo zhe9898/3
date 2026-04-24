@@ -677,7 +677,17 @@ public sealed class PersonDossierSnapshot {
     string BranchPositionLabel;
     string KinshipSummary;
     string TemperamentSummary;
+    HouseholdId? HouseholdId;
+    string HouseholdName;
+    string LivelihoodSummary;
+    string HealthSummary;
+    string ActivitySummary;
+    string EducationSummary;
+    string TradeSummary;
+    string OfficeSummary;
     string MemoryPressureSummary;
+    string DormantMemorySummary;
+    string SocialPositionLabel;
     string CurrentStatusSummary;
     IReadOnlyList<string> SourceModuleKeys;
 }
@@ -821,7 +831,7 @@ public sealed class ModulePayloadFootprintSnapshot {
 
 Current note:
 - the read-model bundle now carries `ClanNarratives` so lineage conflict, shame, and favor pressure can be shown in the family council without reading module state directly
-- the read-model bundle now also carries runtime-only `PersonDossiers` composed from existing `PersonRegistry`, `FamilyCore`, and optional `SocialMemoryAndRelations` queries; this does not add a root schema, module schema, save namespace, migration, or authoritative person table
+- the read-model bundle now also carries runtime-only `PersonDossiers` composed from existing `PersonRegistry`, `FamilyCore`, `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, and optional `SocialMemoryAndRelations` queries; this does not add a root schema, module schema, save namespace, migration, or authoritative person table
 - the read-model bundle now also carries `Households`, `HouseholdSocialPressures`, and `InfluenceFootprint` as runtime-only joins across household, lineage, market, education, yamen, public-life, order, and force projections; these fields are not saved and do not create a player route system
 - `InfluenceFootprint` distinguishes the player's anchor household (`OwnHousehold`, local agency) from observed household pressure (`ObservedHouseholds`, indirect influence only)
 - `PlayerCommands` now spans family, office, and warfare affordances/receipts as read-only presentation data only

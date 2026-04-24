@@ -33,7 +33,27 @@ public sealed record PersonDossierSnapshot
 
     public string TemperamentSummary { get; init; } = string.Empty;
 
+    public HouseholdId? HouseholdId { get; init; }
+
+    public string HouseholdName { get; init; } = string.Empty;
+
+    public string LivelihoodSummary { get; init; } = string.Empty;
+
+    public string HealthSummary { get; init; } = string.Empty;
+
+    public string ActivitySummary { get; init; } = string.Empty;
+
+    public string EducationSummary { get; init; } = string.Empty;
+
+    public string TradeSummary { get; init; } = string.Empty;
+
+    public string OfficeSummary { get; init; } = string.Empty;
+
     public string MemoryPressureSummary { get; init; } = string.Empty;
+
+    public string DormantMemorySummary { get; init; } = string.Empty;
+
+    public string SocialPositionLabel { get; init; } = string.Empty;
 
     public string CurrentStatusSummary { get; init; } = string.Empty;
 

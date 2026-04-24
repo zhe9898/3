@@ -2,8 +2,12 @@ using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
+using Zongzu.Modules.EducationAndExams;
 using Zongzu.Modules.FamilyCore;
+using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.PersonRegistry;
+using Zongzu.Modules.PopulationAndHouseholds;
+using Zongzu.Modules.TradeAndIndustry;
 using Zongzu.Persistence;
 using Zongzu.Scheduler;
 
@@ -76,6 +80,65 @@ public sealed class PersonRegistryIntegrationTests
     }
 
     [Test]
+    public void GovernanceBootstrap_BuildsPersonDossierAcrossEnabledPersonDomainQueries()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260517);
+        FamilyCoreState familyState = GetModuleState<FamilyCoreState>(simulation, KnownModuleKeys.FamilyCore);
+        FamilyPersonState heir = familyState.People.Single(p => p.BranchPosition == BranchPosition.MainLineHeir);
+        PopulationAndHouseholdsState populationState = GetModuleState<PopulationAndHouseholdsState>(
+            simulation,
+            KnownModuleKeys.PopulationAndHouseholds);
+        PopulationHouseholdState household = populationState.Households.Single(household => household.SponsorClanId == heir.ClanId);
+        populationState.Memberships.Add(new HouseholdMembershipState
+        {
+            PersonId = heir.Id,
+            HouseholdId = household.Id,
+            Livelihood = LivelihoodType.PettyTrader,
+            HealthResilience = 64,
+            Health = HealthStatus.Ailing,
+            IllnessMonths = 1,
+            Activity = PersonActivity.Studying,
+        });
+        OfficeAndCareerState officeState = GetModuleState<OfficeAndCareerState>(simulation, KnownModuleKeys.OfficeAndCareer);
+        officeState.People.Add(new OfficeCareerState
+        {
+            PersonId = heir.Id,
+            ClanId = heir.ClanId,
+            SettlementId = household.SettlementId,
+            DisplayName = "Zhang Yuan",
+            IsEligible = true,
+            HasAppointment = true,
+            OfficeTitle = "County clerk",
+            AuthorityTier = 2,
+            PetitionPressure = 24,
+            PetitionBacklog = 7,
+            CurrentAdministrativeTask = "petition triage",
+        });
+
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(simulation);
+        PersonDossierSnapshot dossier = bundle.PersonDossiers.Single(dossier => dossier.PersonId == heir.Id);
+
+        Assert.That(dossier.HouseholdId, Is.EqualTo(household.Id));
+        Assert.That(dossier.HouseholdName, Is.EqualTo(household.HouseholdName));
+        Assert.That(dossier.LivelihoodSummary, Does.Contain("PettyTrader"));
+        Assert.That(dossier.HealthSummary, Does.Contain("Ailing"));
+        Assert.That(dossier.ActivitySummary, Does.Contain("Studying"));
+        Assert.That(dossier.EducationSummary, Does.Contain("local exam passed"));
+        Assert.That(dossier.TradeSummary, Does.Contain("clan trade cash"));
+        Assert.That(dossier.OfficeSummary, Does.Contain("County clerk"));
+        Assert.That(dossier.SocialPositionLabel, Does.Contain("County clerk"));
+        Assert.That(dossier.SocialPositionLabel, Does.Contain("local-exam passer"));
+        Assert.That(dossier.CurrentStatusSummary, Does.Contain("household"));
+        Assert.That(dossier.CurrentStatusSummary, Does.Contain("office County clerk"));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.EducationAndExams));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.TradeAndIndustry));
+        Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.OfficeAndCareer));
+    }
+
+    [Test]
     public void RegistryOnlyBootstrap_BuildsDossier_WhenOptionalFamilyAndSocialMemoryModulesAreMissing()
     {
         FeatureManifest manifest = new();
@@ -104,7 +167,12 @@ public sealed class PersonRegistryIntegrationTests
         Assert.That(dossier.DisplayName, Is.EqualTo("Registry Only"));
         Assert.That(dossier.ClanId, Is.Null);
         Assert.That(dossier.KinshipSummary, Is.EqualTo("No clan kinship projection."));
+        Assert.That(dossier.LivelihoodSummary, Is.EqualTo("No household livelihood projection."));
+        Assert.That(dossier.EducationSummary, Is.EqualTo("No education projection."));
+        Assert.That(dossier.OfficeSummary, Is.EqualTo("No office projection."));
         Assert.That(dossier.MemoryPressureSummary, Is.EqualTo("No social-memory pressure projection."));
+        Assert.That(dossier.DormantMemorySummary, Is.EqualTo("No dormant social-memory stub."));
+        Assert.That(dossier.SocialPositionLabel, Is.EqualTo("Registry-only person."));
         Assert.That(dossier.SourceModuleKeys, Is.EqualTo(new[] { KnownModuleKeys.PersonRegistry }));
     }
 

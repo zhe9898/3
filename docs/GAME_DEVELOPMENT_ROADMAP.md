@@ -301,6 +301,7 @@ Build these chains in this order after the skeleton exists:
 
 | Job | Start Here | Then Read |
 | --- | --- | --- |
+| Documentation navigation | `DOCUMENTATION_MAP.md` | `README.md`, `CODEX_MASTER_SPEC.md`, `FULL_SYSTEM_SPEC.md` |
 | Product direction | `PRODUCT_SCOPE.md` | `FULL_SYSTEM_SPEC.md`, `RULES_DRIVEN_LIVING_WORLD.md` |
 | Historical / regime-scale design | `HISTORICAL_PROCESS_AND_GREAT_TRENDS.md` | `SOCIAL_STRATA_AND_PATHWAYS.md`, `INFLUENCE_POWER_AND_FACTIONS.md`, `RENZONG_PRESSURE_CHAIN_SPEC.md` |
 | MVP cut decisions | `MVP_SCOPE.md` | `MVP.md`, `ACCEPTANCE_TESTS.md` |

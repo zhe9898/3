@@ -408,3 +408,13 @@ PersonProjection:
 ## 一句话总结
 
 **PersonRegistry 只回答"这个人存在吗、活着吗、多大了"。其他一切归各模块自己管。**
+## Current projection-layer landing
+
+`PersonDossiers` are the current shell-facing landing point for this document's
+multi-module person projection rule. They may join identity, clan placement,
+household livelihood / activity / health, education, clan trade footing, office
+career, clan memory, and dormant social-memory stubs through queries only.
+
+This does not create a person master table. Each source fact remains owned by
+its module, and the dossier is rebuilt as a runtime-only read model for the
+lineage surface / person inspector.

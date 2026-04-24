@@ -47,7 +47,17 @@ internal static class LineageShellAdapter
 			BranchPositionLabel = dossier.BranchPositionLabel,
 			KinshipSummary = dossier.KinshipSummary,
 			TemperamentSummary = dossier.TemperamentSummary,
+			HouseholdId = dossier.HouseholdId?.Value,
+			HouseholdName = dossier.HouseholdName,
+			LivelihoodSummary = dossier.LivelihoodSummary,
+			HealthSummary = dossier.HealthSummary,
+			ActivitySummary = dossier.ActivitySummary,
+			EducationSummary = dossier.EducationSummary,
+			TradeSummary = dossier.TradeSummary,
+			OfficeSummary = dossier.OfficeSummary,
 			MemoryPressureSummary = dossier.MemoryPressureSummary,
+			DormantMemorySummary = dossier.DormantMemorySummary,
+			SocialPositionLabel = dossier.SocialPositionLabel,
 			CurrentStatusSummary = dossier.CurrentStatusSummary,
 			SourceModuleKeys = dossier.SourceModuleKeys.ToArray()
 		};
@@ -66,13 +76,24 @@ internal static class LineageShellAdapter
 			TabletLabel = string.IsNullOrWhiteSpace(dossier.ClanName)
 				? dossier.DisplayName
 				: $"{dossier.ClanName} · {dossier.DisplayName}",
-			PortraitScrollLine = $"{dossier.DisplayName} · {dossier.BranchPositionLabel}",
+			PortraitScrollLine = $"{dossier.DisplayName} · {dossier.SocialPositionLabel}",
 			KinshipThreadLine = dossier.KinshipSummary,
-			MemoryThreadLine = dossier.MemoryPressureSummary,
+			LivelihoodThreadLine = dossier.LivelihoodSummary,
+			EducationThreadLine = dossier.EducationSummary,
+			OfficeThreadLine = dossier.OfficeSummary,
+			MemoryThreadLine = BuildMemoryThreadLine(dossier),
 			StatusLedgerLine = dossier.CurrentStatusSummary,
 			Dossier = dossier,
 			SourceModuleKeys = dossier.SourceModuleKeys.ToArray()
 		};
+	}
+
+	private static string BuildMemoryThreadLine(PersonDossierViewModel dossier)
+	{
+		return string.IsNullOrWhiteSpace(dossier.DormantMemorySummary) ||
+			dossier.DormantMemorySummary == "No dormant social-memory stub."
+				? dossier.MemoryPressureSummary
+				: $"{dossier.MemoryPressureSummary}; {dossier.DormantMemorySummary}";
 	}
 
 	private static PersonDossierViewModel? SelectFocusedPerson(
