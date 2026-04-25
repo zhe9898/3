@@ -49,6 +49,12 @@ public sealed partial class PresentationReadModelBuilder
             BuildHomeHouseholdLocalResponseFollowUpHint(PlayerCommandNames.PoolRunnerCompensation, household);
         HouseholdLocalResponseFollowUpHint roadMessageFollowUp =
             BuildHomeHouseholdLocalResponseFollowUpHint(PlayerCommandNames.SendHouseholdRoadMessage, household);
+        HouseholdExternalOwnerLaneReturnGuidance nightTravelOwnerLane =
+            BuildHomeHouseholdExternalOwnerLaneReturnGuidance(PlayerCommandNames.RestrictNightTravel, household);
+        HouseholdExternalOwnerLaneReturnGuidance compensationOwnerLane =
+            BuildHomeHouseholdExternalOwnerLaneReturnGuidance(PlayerCommandNames.PoolRunnerCompensation, household);
+        HouseholdExternalOwnerLaneReturnGuidance roadMessageOwnerLane =
+            BuildHomeHouseholdExternalOwnerLaneReturnGuidance(PlayerCommandNames.SendHouseholdRoadMessage, household);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.RestrictNightTravel,
@@ -61,11 +67,14 @@ public sealed partial class PresentationReadModelBuilder
                 nightTravelCapacity.AvailabilitySummary,
                 nightTravelFollowUp.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
-            executionSummary: "由PopulationAndHouseholds处理本户劳力、债压、民困和迁徙险；不替治安、县门或族老修复前案。",
+            executionSummary: JoinHomeHouseholdLocalResponseText(
+                "由PopulationAndHouseholds处理本户劳力、债压、民困和迁徙险；不替治安、县门或族老修复前案。",
+                nightTravelOwnerLane.ExecutionSummary),
             leverageSummary: JoinHomeHouseholdLocalResponseText(
                 $"本户只动自家夜行、脚程与临时避险。{residue.Summary}",
                 nightTravelTradeoff.BenefitSummary,
                 nightTravelTradeoff.BoundarySummary,
+                nightTravelOwnerLane.BoundarySummary,
                 nightTravelFollowUp.LeverageSummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：丁力会被收紧，债压可能小涨；当前丁力{laborCapacity}，债压{debtPressure}。",
@@ -77,6 +86,7 @@ public sealed partial class PresentationReadModelBuilder
                 nightTravelCapacity.ReadbackSummary,
                 nightTravelTradeoff.ReadbackSummary,
                 nightTravelTradeoff.BoundarySummary,
+                nightTravelOwnerLane.ReadbackSummary,
                 nightTravelFollowUp.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
@@ -92,11 +102,14 @@ public sealed partial class PresentationReadModelBuilder
                 compensationCapacity.AvailabilitySummary,
                 compensationFollowUp.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
-            executionSummary: "由PopulationAndHouseholds处理本户现钱、人情与民困变化；不替OrderAndBanditry补巡丁权威。",
+            executionSummary: JoinHomeHouseholdLocalResponseText(
+                "由PopulationAndHouseholds处理本户现钱、人情与民困变化；不替OrderAndBanditry补巡丁权威。",
+                compensationOwnerLane.ExecutionSummary),
             leverageSummary: JoinHomeHouseholdLocalResponseText(
                 "本户拿钱和人情先对脚户解释，只能压住自家牵连的误读。",
                 compensationTradeoff.BenefitSummary,
                 compensationTradeoff.BoundarySummary,
+                compensationOwnerLane.BoundarySummary,
                 compensationFollowUp.LeverageSummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：债压会抬升，换取民困和迁徙险暂缓；当前债压{debtPressure}。",
@@ -108,6 +121,7 @@ public sealed partial class PresentationReadModelBuilder
                 compensationCapacity.ReadbackSummary,
                 compensationTradeoff.ReadbackSummary,
                 compensationTradeoff.BoundarySummary,
+                compensationOwnerLane.ReadbackSummary,
                 compensationFollowUp.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
@@ -123,11 +137,14 @@ public sealed partial class PresentationReadModelBuilder
                 roadMessageCapacity.AvailabilitySummary,
                 roadMessageFollowUp.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
-            executionSummary: "由PopulationAndHouseholds处理自家派丁与劳力抽动；递信不等于官署递报。",
+            executionSummary: JoinHomeHouseholdLocalResponseText(
+                "由PopulationAndHouseholds处理自家派丁与劳力抽动；递信不等于官署递报。",
+                roadMessageOwnerLane.ExecutionSummary),
             leverageSummary: JoinHomeHouseholdLocalResponseText(
                 "本户只能派自家少丁跑一趟，换一点路情清楚和街口解释。",
                 roadMessageTradeoff.BenefitSummary,
                 roadMessageTradeoff.BoundarySummary,
+                roadMessageOwnerLane.BoundarySummary,
                 roadMessageFollowUp.LeverageSummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：丁力会下降，若本已薄弱会变成吃紧后账；当前丁力{laborCapacity}。",
@@ -139,6 +156,7 @@ public sealed partial class PresentationReadModelBuilder
                 roadMessageCapacity.ReadbackSummary,
                 roadMessageTradeoff.ReadbackSummary,
                 roadMessageTradeoff.BoundarySummary,
+                roadMessageOwnerLane.ReadbackSummary,
                 roadMessageFollowUp.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
@@ -160,6 +178,8 @@ public sealed partial class PresentationReadModelBuilder
                 BuildHomeHouseholdLocalResponseTradeoffForecast(household.LastLocalResponseCommandCode, household, 0);
             HouseholdLocalResponseShortTermConsequenceReadback responseShortTerm =
                 BuildHomeHouseholdLocalResponseShortTermConsequenceReadback(household);
+            HouseholdExternalOwnerLaneReturnGuidance ownerLane =
+                BuildHomeHouseholdExternalOwnerLaneReturnGuidance(household.LastLocalResponseCommandCode, household);
 
             yield return BuildPlayerCommandReceiptSnapshot(
                 household.LastLocalResponseCommandCode,
@@ -172,6 +192,7 @@ public sealed partial class PresentationReadModelBuilder
                     "本户回应只结算自家劳力、债压、民困与迁徙险；不改治安、县门、宗房或社会记忆。",
                     responseTradeoff.BenefitSummary,
                     responseTradeoff.BoundarySummary,
+                    ownerLane.BoundarySummary,
                     responseShortTerm.ReliefSummary,
                     responseShortTerm.ExternalAfterAccountSummary),
                 costSummary: JoinHomeHouseholdLocalResponseText(
@@ -184,6 +205,7 @@ public sealed partial class PresentationReadModelBuilder
                     responseCapacity.ReadbackSummary,
                     responseTradeoff.ReadbackSummary,
                     responseTradeoff.BoundarySummary,
+                    ownerLane.ReadbackSummary,
                     responseShortTerm.ReliefSummary,
                     responseShortTerm.SqueezeSummary,
                     responseShortTerm.ExternalAfterAccountSummary),
@@ -397,6 +419,43 @@ public sealed partial class PresentationReadModelBuilder
         return new HouseholdLocalResponseShortTermConsequenceReadback(relief, squeeze, external);
     }
 
+    private static HouseholdExternalOwnerLaneReturnGuidance BuildHomeHouseholdExternalOwnerLaneReturnGuidance(
+        string commandName,
+        HouseholdPressureSnapshot? household)
+    {
+        if (household is null)
+        {
+            return HouseholdExternalOwnerLaneReturnGuidance.Empty;
+        }
+
+        string orderLane = commandName switch
+        {
+            PlayerCommandNames.RestrictNightTravel =>
+                "外部后账归位：该走巡丁/路匪 lane（OrderAndBanditry）：巡丁补保、路匪压制和 route pressure repair 仍归治安路面，本户不能代修。",
+            PlayerCommandNames.PoolRunnerCompensation =>
+                "外部后账归位：该走巡丁/路匪 lane（OrderAndBanditry）：脚户误读可先在本户压口舌，巡丁权威、路匪压力和 route pressure repair 仍归治安路面，本户不能代修。",
+            PlayerCommandNames.SendHouseholdRoadMessage =>
+                "外部后账归位：该走巡丁/路匪 lane（OrderAndBanditry）：路情可由本户问清，巡丁权威、路匪压力和 route pressure repair 仍归治安路面，本户不能代修。",
+            _ => string.Empty,
+        };
+        if (string.IsNullOrWhiteSpace(orderLane))
+        {
+            return HouseholdExternalOwnerLaneReturnGuidance.Empty;
+        }
+
+        string officeLane = commandName == PlayerCommandNames.SendHouseholdRoadMessage
+            ? "外部后账归位：该走县门/文移 lane（OfficeAndCareer）：本户递信不是官署递报，县门未落地、文移拖延和胥吏续拖仍要 Office lane。"
+            : "外部后账归位：该走县门/文移 lane（OfficeAndCareer）：县门未落地、文移拖延和胥吏续拖仍要 Office lane，本户不能代修。";
+        string familyLane = "外部后账归位：该走族老/担保 lane（FamilyCore）：族老解释、本户担保和宗房脸面仍要 Family lane，本户不能代修。";
+        string memoryLane = "外部后账归位：SocialMemoryAndRelations 只在后续月读取 structured aftermath，沉淀 shame/fear/favor/grudge/obligation residue。";
+        string boundary = "外部后账归位：该走巡丁/路匪 lane；该走县门/文移 lane；该走族老/担保 lane；本户不能代修。";
+
+        return new HouseholdExternalOwnerLaneReturnGuidance(
+            "外部后账归位：本户回应只交回 owner lane 读回，不补巡丁、不催县门、不替族老解释，本户不能代修。",
+            boundary,
+            JoinHomeHouseholdLocalResponseText(orderLane, officeLane, familyLane, memoryLane));
+    }
+
     private static HouseholdLocalResponseFollowUpHint BuildHomeHouseholdLocalResponseFollowUpHint(
         string commandName,
         HouseholdPressureSnapshot? household)
@@ -576,6 +635,15 @@ public sealed partial class PresentationReadModelBuilder
         string ExternalAfterAccountSummary)
     {
         public static HouseholdLocalResponseShortTermConsequenceReadback Empty { get; } =
+            new(string.Empty, string.Empty, string.Empty);
+    }
+
+    private readonly record struct HouseholdExternalOwnerLaneReturnGuidance(
+        string ExecutionSummary,
+        string BoundarySummary,
+        string ReadbackSummary)
+    {
+        public static HouseholdExternalOwnerLaneReturnGuidance Empty { get; } =
             new(string.Empty, string.Empty, string.Empty);
     }
 

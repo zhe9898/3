@@ -1027,8 +1027,14 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(repeatRoadMessageAffordance.CostSummary, Does.Contain("冷却提示"));
         Assert.That(repeatRoadMessageAffordance.CostSummary, Does.Contain("本月再压"));
         Assert.That(repeatRoadMessageAffordance.ReadbackSummary, Does.Contain("续接读回"));
+        Assert.That(repeatRoadMessageAffordance.ReadbackSummary, Does.Contain("外部后账归位"));
+        Assert.That(repeatRoadMessageAffordance.ReadbackSummary, Does.Contain("该走巡丁/路匪 lane"));
+        Assert.That(repeatRoadMessageAffordance.ReadbackSummary, Does.Contain("本户不能代修"));
         Assert.That(switchedCompensationAffordance.LeverageSummary, Does.Contain("换招提示"));
         Assert.That(switchedCompensationAffordance.LeverageSummary, Does.Contain("外部后账"));
+        Assert.That(switchedCompensationAffordance.LeverageSummary, Does.Contain("外部后账归位"));
+        Assert.That(switchedCompensationAffordance.LeverageSummary, Does.Contain("该走县门/文移 lane"));
+        Assert.That(switchedCompensationAffordance.LeverageSummary, Does.Contain("该走族老/担保 lane"));
         Assert.That(switchedCompensationAffordance.CostSummary, Does.Contain("换招前"));
 
         PlayerCommandReceiptSnapshot receipt = afterResponse.PlayerCommands.Receipts
@@ -1038,6 +1044,11 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(receipt.Summary, Does.Contain("取舍预判"));
         Assert.That(receipt.LeverageSummary, Does.Contain("预期收益"));
         Assert.That(receipt.LeverageSummary, Does.Contain("外部后账"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("外部后账归位"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("该走巡丁/路匪 lane"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("该走县门/文移 lane"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("该走族老/担保 lane"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("本户不能代修"));
         Assert.That(receipt.LeverageSummary, Does.Contain("短期后果"));
         Assert.That(receipt.LeverageSummary, Does.Contain("缓住项"));
         Assert.That(receipt.LeverageSummary, Does.Contain("路情"));
@@ -1049,6 +1060,11 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(receipt.ReadbackSummary, Does.Contain("取舍读回"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("短期后果"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("仍欠外部后账"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("外部后账归位"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("该走巡丁/路匪 lane"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("该走县门/文移 lane"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("该走族老/担保 lane"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("本户不能代修"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("本户递信不是官署递报"));
     }
 

@@ -184,6 +184,7 @@ Current M3 local-conflict note:
 - v17 home-household response tradeoff forecast is projection-time plus command-time only: read models derive `取舍预判` / `预期收益` / `反噬尾巴` / `外部后账` from existing household fields, while `PopulationAndHouseholds` resolves any issued local command inside its own namespace. It adds no scheduler step, no same-command SocialMemory write, and no thick household rule loop.
 - v18 home-household short-term consequence readback is receipt projection only: read models derive `短期后果：缓住项` / `挤压项` / `仍欠外部后账` from existing household fields and structured local response codes after the owning command has resolved. It adds no scheduler step, no same-command SocialMemory write, and no thick household rule loop.
 - v19 home-household follow-up affordance readback is projection-time only: read models derive `续接提示` / `换招提示` / `冷却提示` / `续接读回` from existing household fields and structured local response codes for the next command window. It adds no scheduler step, no same-command SocialMemory write, no cooldown ledger, and no thick household rule loop.
+- v20 owner-lane return guidance is projection-time only: read models derive `外部后账归位`, `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` from existing household fields and structured local response codes. It adds no scheduler step, no same-command SocialMemory write, no owner-lane ledger, and no thick household rule loop.
 - `ConflictAndForce.Lite` may also carry campaign-fatigue and escort-strain fallout across months; those penalties recover during its own owned pass
 
 ### Phase 3: month-end diff generation
@@ -267,6 +268,7 @@ Current public-life/order v9/v10/v11/v12 note:
 - v17 adds tradeoff forecast readback on top of v12-v16: `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` can show expected benefit, recoil tail, and external-afteraccount boundary before command issue, and receipts can copy the resulting tradeoff readback. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
 - v18 adds short-term consequence readback on top of v12-v17: receipts can say what was locally eased (`缓住项`), what got squeezed (`挤压项`), and which外部后账 remains outside household authority. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
 - v19 adds follow-up affordance readback on top of v12-v18: the next projected local response surface can say whether repeating or switching a home-household move is续接, 换招, or should cool down. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
+- v20 adds owner-lane return guidance on top of v12-v19: receipts and the next projected local response surface can say that Order, Office, Family, or SocialMemory still own the external after-account. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window

@@ -128,6 +128,11 @@ Current public-life/order v19 home-household follow-up affordance note:
 - The follow-up hint may explain whether repeating or switching a household local response is risky, but only structured local response aftermath can later become durable memory.
 - `SocialMemoryAndRelations` still waits for its later monthly pass and reads only structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`; it must not parse `续接提示`, `换招提示`, `冷却提示`, `续接读回`, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
 
+Current public-life/order v20 owner-lane return guidance note:
+- `外部后账归位`, `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` are projected readback cues, not durable social memory state.
+- The guidance may explain that household local response has reached its limit and that Order, Office, or Family lanes still own the repair work. It does not authorize `SocialMemoryAndRelations` to handle commands.
+- `SocialMemoryAndRelations` still waits for its later monthly pass and reads only structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`; it must not parse owner-lane guidance prose, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

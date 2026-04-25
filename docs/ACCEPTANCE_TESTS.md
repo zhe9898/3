@@ -409,3 +409,13 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy projected follow-up affordance fields and do not query modules, select hidden household targets, resolve outcomes, write SocialMemory, or maintain a cooldown ledger.
 - Save/schema acceptance: v19 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v20 owner-lane return guidance acceptance - 2026-04-25
+- `public-life-order-owner-lane-return-guidance-v20` must prove the v12-v19 home-household lane now returns unresolved external after-accounts to their owning lanes, before thick household or county rules are added.
+- Projection acceptance must prove receipts and the next affordance/readback expose `外部后账归位`, `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Coverage acceptance must include at least one Order lane direction for 巡丁/路匪/route pressure and one Office or Family lane direction for 县门/文移/胥吏 or 族老/担保.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time and same-month handling does not mutate `SocialMemoryAndRelations`.
+- SocialMemory acceptance must prove the later reader does not parse `外部后账归位`, `该走巡丁`, `该走县门`, `该走族老`, `本户不能代修`, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected owner-lane guidance fields and do not query modules, compute owner lanes, resolve outcomes, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
+- Save/schema acceptance: v20 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, no owner-lane ledger, no household target field, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.

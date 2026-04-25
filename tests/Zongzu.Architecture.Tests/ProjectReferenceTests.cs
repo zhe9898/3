@@ -393,6 +393,9 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
         Assert.That(source, Does.Not.Contain("PopulationAndHouseholdsState"));
         Assert.That(source, Does.Not.Contain(".Memories.Add"));
+        Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+        Assert.That(source, Does.Not.Contain("CooldownLedger"));
+        Assert.That(source, Does.Not.Contain("HouseholdTarget"));
         Assert.That(source, Does.Contain("HouseholdPressureSnapshot"));
         Assert.That(source, Does.Contain("HouseholdLocalResponseAffordanceCapacity"));
         Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseAffordanceCapacity"));
@@ -400,8 +403,15 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseTradeoffForecast"));
         Assert.That(source, Does.Contain("HouseholdLocalResponseShortTermConsequenceReadback"));
         Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseShortTermConsequenceReadback"));
+        Assert.That(source, Does.Contain("HouseholdExternalOwnerLaneReturnGuidance"));
+        Assert.That(source, Does.Contain("BuildHomeHouseholdExternalOwnerLaneReturnGuidance"));
         Assert.That(source, Does.Contain("HouseholdLocalResponseFollowUpHint"));
         Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseFollowUpHint"));
+        Assert.That(source, Does.Contain("外部后账归位"));
+        Assert.That(source, Does.Contain("该走巡丁/路匪 lane"));
+        Assert.That(source, Does.Contain("该走县门/文移 lane"));
+        Assert.That(source, Does.Contain("该走族老/担保 lane"));
+        Assert.That(source, Does.Contain("本户不能代修"));
         Assert.That(source, Does.Contain("IsEnabled"));
         Assert.That(source, Does.Contain("LastLocalResponseCommandCode"));
         Assert.That(source, Does.Contain("PlayerCommandAffordanceSnapshot"));
@@ -429,6 +439,11 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("换招提示"));
         Assert.That(source, Does.Not.Contain("冷却提示"));
         Assert.That(source, Does.Not.Contain("续接读回"));
+        Assert.That(source, Does.Not.Contain("外部后账归位"));
+        Assert.That(source, Does.Not.Contain("该走巡丁"));
+        Assert.That(source, Does.Not.Contain("该走县门"));
+        Assert.That(source, Does.Not.Contain("该走族老"));
+        Assert.That(source, Does.Not.Contain("本户不能代修"));
         Assert.That(source, Does.Not.Contain("OrderAndBanditryState"));
         Assert.That(source, Does.Not.Contain("OfficeAndCareerState"));
         Assert.That(source, Does.Not.Contain("FamilyCoreState"));

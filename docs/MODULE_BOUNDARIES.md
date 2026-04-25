@@ -730,3 +730,11 @@ Current lite note:
 - Affordances may show `续接提示`, `换招提示`, `冷却提示`, and `续接读回` so the player can see whether repeating or switching `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信` would be light follow-up, risky overpressure, or a local switch that still leaves外部后账.
 - `SocialMemoryAndRelations` must not parse those affordance strings; its Month N+2 local response residue continues to read only structured `PopulationAndHouseholds` aftermath fields.
 - v19 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, or command-target shape change.
+
+## 2026-04-25 playable closure v20 owner-lane return guidance note
+- `public-life-order-owner-lane-return-guidance-v20` adds projected `外部后账归位` guidance to home-household local response affordances and receipts.
+- The guidance is derived only from existing projected household fields and structured `LastLocalResponse*` codes. It does not parse `LastLocalResponseSummary`, receipt prose, `DomainEvent.Summary`, or `LastInterventionSummary`.
+- `OrderAndBanditry` still owns 巡丁/路匪/路面误读/route pressure repair; `OfficeAndCareer` still owns 县门未落地/文移拖延/胥吏续拖; `FamilyCore` still owns 族老解释/本户担保/宗房脸面; `SocialMemoryAndRelations` still owns durable shame/fear/favor/grudge/obligation residue.
+- `PopulationAndHouseholds` remains only the low-power home-household response owner for labor, debt, distress, migration, and local response trace. Ordinary household response is not a universal repair line.
+- UI and Unity may copy `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` projected fields only; they must not compute owner lanes or query modules.
+- v20 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, owner-lane ledger, household target field, or command-target shape change.
