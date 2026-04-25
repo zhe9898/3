@@ -274,6 +274,80 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Social_memory_public_life_order_response_residue_must_not_parse_response_or_event_summary()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.PublicLifeOrderResponseResidue.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Contain("LastRefusalResponseOutcomeCode"));
+        Assert.That(source, Does.Contain("LastRefusalResponseTraceCode"));
+        Assert.That(source, Does.Contain("LastRefusalResponseCommandCode"));
+    }
+
+    [Test]
+    public void Social_memory_public_life_order_response_drift_must_not_parse_response_or_event_summary()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.PublicLifeOrderResponseDrift.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Contain("CauseKey.StartsWith"));
+        Assert.That(source, Does.Contain("TryReadPublicLifeResponseCause"));
+    }
+
+    [Test]
+    public void Public_life_response_friction_readers_must_not_parse_social_memory_summary()
+    {
+        string[] sourcePaths =
+        [
+            Path.Combine(SrcDir, "Zongzu.Modules.OrderAndBanditry", "OrderAndBanditryCommandResolver.cs"),
+            Path.Combine(SrcDir, "Zongzu.Modules.OfficeAndCareer", "OfficeAndCareerCommandResolver.cs"),
+            Path.Combine(SrcDir, "Zongzu.Modules.FamilyCore", "FamilyCoreCommandResolver.cs"),
+        ];
+
+        foreach (string sourcePath in sourcePaths)
+        {
+            string source = File.ReadAllText(sourcePath);
+            Assert.That(source, Does.Not.Contain("memory.Summary"), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Contain("order.public_life.response."), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Contain("CauseKey.Contains"), Path.GetFileName(sourcePath));
+        }
+    }
+
+    [Test]
+    public void Public_life_actor_countermoves_must_read_structured_social_memory_only()
+    {
+        string[] sourcePaths =
+        [
+            Path.Combine(SrcDir, "Zongzu.Modules.OrderAndBanditry", "OrderAndBanditryModule", "OrderAndBanditryModule.PublicLifeActorCountermove.cs"),
+            Path.Combine(SrcDir, "Zongzu.Modules.OfficeAndCareer", "OfficeAndCareerModule", "OfficeAndCareerModule.PublicLifeActorCountermove.cs"),
+            Path.Combine(SrcDir, "Zongzu.Modules.FamilyCore", "FamilyCoreModule.PublicLifeActorCountermove.cs"),
+        ];
+
+        foreach (string sourcePath in sourcePaths)
+        {
+            string source = File.ReadAllText(sourcePath);
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Not.Contain("LastInterventionSummary"), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Not.Contain("memory.Summary"), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Contain("CauseKey.StartsWith"), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Contain("CauseKey.Contains"), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Contain("OriginDate"), Path.GetFileName(sourcePath));
+        }
+    }
+
+    [Test]
     public void PersonRecord_must_remain_identity_only()
     {
         string personTypesPath = Path.Combine(SrcDir, "Zongzu.Contracts", "PersonRegistryTypes.cs");

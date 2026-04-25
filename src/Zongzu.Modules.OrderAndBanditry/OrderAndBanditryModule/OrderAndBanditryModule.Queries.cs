@@ -143,6 +143,18 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
                 RefusalCarryoverMonths = settlement.RefusalCarryoverMonths,
 
+                LastRefusalResponseCommandCode = settlement.LastRefusalResponseCommandCode,
+
+                LastRefusalResponseCommandLabel = settlement.LastRefusalResponseCommandLabel,
+
+                LastRefusalResponseSummary = settlement.LastRefusalResponseSummary,
+
+                LastRefusalResponseOutcomeCode = settlement.LastRefusalResponseOutcomeCode,
+
+                LastRefusalResponseTraceCode = settlement.LastRefusalResponseTraceCode,
+
+                ResponseCarryoverMonths = settlement.ResponseCarryoverMonths,
+
             };
 
         }

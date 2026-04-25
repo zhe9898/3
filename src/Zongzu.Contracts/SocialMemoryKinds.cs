@@ -43,4 +43,16 @@ public static class SocialMemoryKinds
 
     /// <summary>Public-life order residue: 严缉路匪被拒后的恐惧、怨尾和后账。</summary>
     public const string PublicOrderSuppressionRefusalFear = "public_order_suppression_refusal_fear";
+
+    /// <summary>Public-life order response residue: 后账被修复后转成的人情与信任。</summary>
+    public const string PublicOrderResponseRepaired = "public_order_response_repaired";
+
+    /// <summary>Public-life order response residue: 后账被暂压后留下的担保与人情欠账。</summary>
+    public const string PublicOrderResponseContained = "public_order_response_contained";
+
+    /// <summary>Public-life order response residue: 后账恶化后转深的恐惧、羞面与怨尾。</summary>
+    public const string PublicOrderResponseEscalated = "public_order_response_escalated";
+
+    /// <summary>Public-life order response residue: 后账被放置后沉下来的羞面与怨尾。</summary>
+    public const string PublicOrderResponseIgnored = "public_order_response_ignored";
 }

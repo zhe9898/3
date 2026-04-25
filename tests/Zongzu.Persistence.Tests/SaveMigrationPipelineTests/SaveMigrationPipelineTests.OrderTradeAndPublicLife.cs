@@ -175,7 +175,13 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 7
                 && step.TargetVersion == 8),
             Is.True);
-        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(8));
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OrderAndBanditry
+                && step.SourceVersion == 8
+                && step.TargetVersion == 9),
+            Is.True);
+        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(9));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.BlackRoutePressure > 0), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.CoercionRisk >= 0), Is.True);
@@ -195,6 +201,9 @@ public sealed partial class SaveMigrationPipelineTests
         Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionRefusalCode is not null), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionPartialCode is not null), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionTraceCode == OrderInterventionTraceCodes.AcceptedFollowThrough), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.LastRefusalResponseCommandCode is not null), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.LastRefusalResponseOutcomeCode is not null), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.ResponseCarryoverMonths is >= 0 and <= 1), Is.True);
     }
 
     [Test]

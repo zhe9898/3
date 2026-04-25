@@ -71,6 +71,26 @@ Current public-life/order v4 note:
 - `OrderAndBanditry` supplies structured aftermath through queries: recent command code/label, carryover, shielding, retaliation, coercion, implementation drag, and pressure fields; SocialMemory decides what obligation, fear, shame, favor, or grudge remains
 - no module, projection, shell adapter, or Unity surface may create social residue by interpreting command prose or `DomainEvent.Summary`
 
+Current public-life/order v6 response note:
+- refused or partial `添雇巡丁` / `严缉路匪` residue may now receive bounded responses such as `补保巡丁`, `请族老解释`, `押文催县门`, `赔脚户误读`, `暂缓强压`, or `改走递报`
+- the response authority trace belongs to the actual owning module: order repair to `OrderAndBanditry`, yamen/document repair to `OfficeAndCareer`, and elder explanation / home-household guarantee repair to `FamilyCore`
+- `SocialMemoryAndRelations` does not resolve those commands; on the later monthly pass it reads only structured response aftermath (`Repaired`, `Contained`, `Escalated`, or `Ignored`) and converts that into owned shame, fear, favor, grudge, and obligation residue
+- `Repaired` should soften shame/fear/grudge and strengthen favor or trust, `Contained` should hold the matter with obligation still visible, `Escalated` should deepen fear/shame/grudge, and `Ignored` should leave public shame or bitterness attached
+- the module may write only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` for this response residue; it must not write Order, Family, PublicLife, Governance, Population, or PersonRegistry state
+- response residue must not parse `DomainEvent.Summary`, receipt summary text, or `LastInterventionSummary`
+
+Current public-life/order v7 residue-decay note:
+- response residue does not disappear after the first readback. `SocialMemoryAndRelations` may later soften repaired后账, carry contained obligation, or harden escalated / ignored后账 by adjusting existing memory weight, narrative pressure, and clan climate.
+- a repaired memory should tend toward trust/favor and lower shame/fear/grudge; a contained memory should remain as obligation; escalated or ignored memory should tend toward fear, shame, bitterness, volatility, or grudge.
+- later `OrderAndBanditry`, `OfficeAndCareer`, and `FamilyCore` command resolvers may read structured SocialMemory response cause keys and weights to model repeat friction, but they still mutate only their own module state.
+- no resolver may parse social-memory summary prose, command receipt text, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`.
+- this pass reuses SocialMemory schema `3`; no new memory namespace, person table, relationship table, or migration is introduced.
+
+Current public-life/order v8 actor-countermove note:
+- local actors can now respond to existing response residue even when the player does not immediately issue another command. Route-watch / runner movement belongs to `OrderAndBanditry`, yamen / clerk movement belongs to `OfficeAndCareer`, and elder / household-guarantee movement belongs to `FamilyCore`.
+- these actor countermoves read structured SocialMemory residue (`CauseKey`, outcome marker, `Weight`, `State`, `SourceClanId`, `OriginDate`) and skip current-month memories; they do not parse memory summaries, receipt summaries, `LastInterventionSummary`, `LastRefusalResponseSummary`, or `DomainEvent.Summary`.
+- any durable shame, fear, favor, grudge, or obligation after the actor countermove is still written only by `SocialMemoryAndRelations` through existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`. v8 adds no new relationship table, person table, memory namespace, schema bump, or migration.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

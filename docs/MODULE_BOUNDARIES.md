@@ -106,6 +106,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - marriage-alliance pressure/value, heir security, reproductive pressure, and mourning load
 - care burden, funeral debt, remedy confidence, and charity-obligation pressure inside the clan namespace
 - last family-command receipts that remain family-owned state
+- family-owned public-life refusal response trace for clan explanation / household guarantee repair, including v8 quiet elder explanation / guarantee-avoidance countermoves
 - personality traits per clan member: ambition, prudence, loyalty, sociability
 - clan-scoped kinship references: spouseId, childrenIds, fatherId, motherId (only for persons who are or were clan members; FamilyCore does not track kinship for non-clan persons such as unaffiliated commoners, bandits, or officials from other lineages)
 
@@ -117,6 +118,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - lineage-conflict and mediation projection
 - personality traits per clan member PersonId
 - clan-scoped kinship view (only for persons who are or were clan members; not a global kinship registry)
+- family-owned public-life refusal response aftermath fields for readback and later SocialMemory adjustment
 
 ### Accepts commands
 - `ArrangeMarriage`
@@ -129,6 +131,7 @@ If a proposed field answers "what is this person doing / feeling / capable of / 
 - `SuspendClanRelief`
 - `InviteClanEldersMediation`
 - `InviteClanEldersPubliclyBroker`
+- `AskClanEldersExplain` /请族老解释 for public-life refusal response when family standing can repair or contain shame
 
 > Note: `RedistributeHouseholdSupport` is not yet implemented in the active command surface.
 
@@ -136,6 +139,7 @@ Current routing note:
 - family commands are resolved by `FamilyCoreCommandResolver` inside `Zongzu.Modules.FamilyCore`
 - `PlayerCommandService` remains thin module-selection glue for this slice and must not own family consequence formulas
 - the resolver may read `PersonRegistry` and `SocialMemoryAndRelations` query snapshots, but may mutate only `FamilyCore` state and receipt fields
+- for public-life refusal response, the resolver may also read `OrderAndBanditry` refusal/partial residue through queries; v8 monthly family actor countermoves may read structured `SocialMemoryAndRelations` response residue. Both paths may mutate only `FamilyCore` response trace and family pressure fields, not Order or SocialMemory.
 
 ### Emits events
 - `MarriageAllianceArranged`
@@ -240,6 +244,9 @@ Current routing note:
 - reads sponsored household pressure through `IPopulationAndHouseholdsQueries`
 - reads optional clan trade pressure through `ITradeAndIndustryQueries`
 - reads optional `OrderAndBanditry` public-life order aftermath through `IOrderAndBanditryQueries` when turning recent accepted, partial, or refused `添雇巡丁`, `严缉路匪`, or related order carryover into owner-owned obligation, fear, shame, favor, or grudge residue
+- reads structured public-life refusal response aftermath through `IOrderAndBanditryQueries`, optional `IOfficeAndCareerQueries`, and optional `IFamilyCoreQueries`; it may use response command / outcome / trace codes, but must not parse `DomainEvent.Summary`, receipt summaries, or `LastInterventionSummary`
+- later-month public-life response residue drift is SocialMemory-owned: it may adjust only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`, reusing existing schema `3` fields such as memory weight, cause key, lifecycle state, narrative pressures, and climate axes
+- v8 owner-module actor countermoves may read SocialMemory snapshots, but `SocialMemoryAndRelations` still owns only durable residue. It does not resolve route-watch, yamen, clerk, elder, or household-guarantee countermoves.
 - consumes scoped trade shock, exam, death, marriage, branch, heir, and warfare events to mutate only its own climate, memory, narrative, and tempering state
 
 ### Does not own
@@ -247,6 +254,7 @@ Current routing note:
 - exam or trade state
 - office appointments
 - household distress, market price, education progress, family lineage, force posture, public-life heat, or order carryover state
+- public-life refusal response command resolution or response authority traces
 
 ## 5. EducationAndExams
 ### Owns
@@ -330,6 +338,7 @@ Current routing note:
 - jurisdiction-level clerk dependence and administrative task load
 - clerk-capture edge watermarks for office-owned escalation receipts
 - official defection risk before office-owned appointment loss
+- office-owned public-life refusal response trace for county-yamen催办, 文移落地, and 胥吏拖延 outcomes
 - official influence projections
 
 ### Public queries
@@ -344,6 +353,7 @@ Current routing note:
 - petition outcome category plus latest petition outcome trace
 - promotion / demotion pressure labels and authority-trajectory summary
 - current official defection risk when governance-lite exposes regime pressure
+- office-owned public-life refusal response aftermath fields for governance docket readback
 
 ### Accepts commands
 - pursue posting
@@ -352,10 +362,13 @@ Current routing note:
 - deploy legal/administrative leverage where allowed
 - post county notice
 - dispatch road report
+- `PressCountyYamenDocument` /押文催县门 for county-yamen landing or clerk-delay escalation
+- `RedirectRoadReport` /改走递报 for bounded document-route repair
 
 Current routing note:
 - these commands are resolved by `OfficeAndCareerCommandResolver` inside `Zongzu.Modules.OfficeAndCareer`
 - office public-life verbs may update only office-owned jurisdiction, petition, and trace state; order, family, trade, or public-life heat must move later through queries, events, or projections
+- public-life refusal response commands may read `OrderAndBanditry` structured residue through queries, and v7/v8 repeat-friction or actor countermove logic may read `FamilyCore` local clan scope plus `SocialMemoryAndRelations` response residue weights, but the response outcome and trace they write are owned by `OfficeAndCareer`
 
 ### Emits events
 - `OfficeGranted`
@@ -377,6 +390,7 @@ Current routing note:
 - local force pools
 - war battle plans
 - foreign order state, black-route pressure, or intervention carryover directly
+- family or social-memory residue, including shame/fear/favor/grudge/obligation records
 
 ## 8. OrderAndBanditry
 ### Owns
@@ -384,7 +398,7 @@ Current routing note:
 - outlaw/bandit pathways and camps
 - black-route pressure
 - suppression / recruitment / disorder escalation state
-- coercion-risk, suppression-relief, response-activation mirrors, paper-compliance visibility, implementation drag, route-shielding summaries, retaliation-risk summaries, administrative suppression windows, escalation bands, and intervention-receipt traces
+- coercion-risk, suppression-relief, response-activation mirrors, paper-compliance visibility, implementation drag, route-shielding summaries, retaliation-risk summaries, administrative suppression windows, escalation bands, intervention-receipt traces, order-owned refusal response traces, and v8 route-watch / runner actor countermove traces
 
 ### Public queries
 - bandit threat
@@ -396,6 +410,7 @@ Current routing note:
 - local disorder projections
 - last intervention command / label / summary / outcome plus structured outcome/refusal/partial/trace codes for public-life read models
 - structured intervention aftermath such as black-route pressure, coercion risk, implementation drag, route shielding, and retaliation risk for next-month readback by office, trade, social-memory, and presentation projections
+- order-owned response aftermath fields (`LastRefusalResponseCommandCode`, `LastRefusalResponseOutcomeCode`, `LastRefusalResponseTraceCode`, `ResponseCarryoverMonths`) for Month N+2 SocialMemory reads and shell readback
 
 ### Accepts commands
 - `EscortRoadReport` /催护一路 for limited route-report and travel protection
@@ -403,6 +418,9 @@ Current routing note:
 - `SuppressBanditry` /严缉路匪
 - `NegotiateWithOutlaws` /遣人议路 in limited local cases
 - `TolerateDisorder` /暂缓穷追 at cost
+- `RepairLocalWatchGuarantee` /补保巡丁 for road-watch guarantee repair
+- `CompensateRunnerMisread` /赔脚户误读 for runner/carrier misread repair
+- `DeferHardPressure` /暂缓强压 for route-pressure containment
 
 Current routing note:
 - these public-life order commands are currently routed by `PlayerCommandService`, but resolution lives in `OrderAndBanditryModule.HandlePublicLifeCommand`
@@ -423,6 +441,9 @@ Current routing note:
 - authoritative trade balances
 - force pools
 - campaign maps
+- county-yamen催办, 文移落地, or 胥吏拖延 response traces owned by `OfficeAndCareer`
+- clan explanation / home-household guarantee response traces owned by `FamilyCore`
+- durable shame/fear/favor/grudge/obligation residue owned by `SocialMemoryAndRelations`
 
 ## 9. ConflictAndForce
 ### Owns
@@ -574,7 +595,7 @@ Current lite note:
 - `TradeAndIndustry` may query `WorldSettlements` and `OrderAndBanditry`
 - `OrderAndBanditry` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `TradeAndIndustry`, `OfficeAndCareer`, and `ConflictAndForce`
 - `ConflictAndForce` may query `WorldSettlements`, `PopulationAndHouseholds`, `FamilyCore`, `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, and `TradeAndIndustry`
-- `OfficeAndCareer` may query `EducationAndExams`, `SocialMemoryAndRelations`, and optional `OrderAndBanditry`
+- `OfficeAndCareer` may query `EducationAndExams`, `SocialMemoryAndRelations`, optional `OrderAndBanditry`, and `FamilyCore` when it needs local clan scope for structured public-life response friction or v8 yamen / clerk actor countermoves
 - `WarfareCampaign` may query `ConflictAndForce`, `WorldSettlements`, `OfficeAndCareer`
 - `PublicLifeAndRumor` may query `WorldSettlements`, `PopulationAndHouseholds`, `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations`
 - `TradeAndIndustry`, `OrderAndBanditry`, `OfficeAndCareer`, and `SocialMemoryAndRelations` may react to settlement-targeted `WarfareCampaign` events during the handler pass, but only by updating their own owned state
@@ -607,3 +628,17 @@ Current lite note:
 - `OrderAndBanditry` now owns structured `accepted`, `partial`, and `refused` authority trace fields for public-life/order commands, including refusal and partial reason codes plus refusal carryover.
 - `SocialMemoryAndRelations` consumes those structured Order query fields on the next monthly pass and may write only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`; it must not parse `DomainEvent.Summary`, `LastInterventionSummary`, or receipt prose.
 - Application, governance read models, public-life receipts, family-facing SocialMemory readback, and Unity shell surfaces may only copy projected refusal/partial residue such as `县门未落地`, `地方拖延`, and `后账仍在`.
+
+## 2026-04-25 playable closure v7 residue-decay / repeat-friction note
+- `public-life-order-residue-decay-friction-v7` keeps the response afterlife inside the rule-driven command / residue / social-memory / response loop; it is not an event-pool or event-centered authority path.
+- `SocialMemoryAndRelations` owns later-month softening or hardening of public-life response residue by adjusting only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`.
+- `OrderAndBanditry`, `OfficeAndCareer`, and `FamilyCore` may read structured response memories through `ISocialMemoryAndRelationsQueries` and local clan scope through `IFamilyCoreQueries` where needed, then mutate only their own command/pressure/trace state.
+- No module may parse social-memory summary prose, receipt prose, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary` to compute repeat friction.
+- v7 adds no persisted fields; SocialMemory remains schema `3`, with owner response traces still held by the v6 owning modules.
+
+## 2026-04-25 playable closure v8 actor-countermove / passive back-pressure note
+- `public-life-order-actor-countermove-v8` adds small deterministic monthly actor movement after response residue exists; it remains part of the rule-driven command / residue / social-memory / response loop, not an event-pool, event-chain, or autonomous-manager design.
+- `OrderAndBanditry` owns route-watch and runner countermoves such as `巡丁自补保` or `脚户误读反噬`; `OfficeAndCareer` owns yamen and clerk countermoves such as `县门自补落地` or `胥吏续拖`; `FamilyCore` owns elder and household-guarantee countermoves such as `族老自解释` or `族老避羞`.
+- Those modules may read structured `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, `SourceClanId`, and `OriginDate`, skip current-month response memories, and mutate only their own existing pressure and response trace fields.
+- `SocialMemoryAndRelations` does not resolve actor countermoves and does not write Order, Office, Family, PublicLife, Governance, Population, or PersonRegistry state. It may later read structured owner aftermath and adjust only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`.
+- v8 adds no persisted fields, schema bump, migration, manager/controller layer, or `PersonRegistry` expansion.

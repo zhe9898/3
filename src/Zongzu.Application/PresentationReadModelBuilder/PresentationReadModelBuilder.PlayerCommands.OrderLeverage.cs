@@ -160,12 +160,13 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
         string landingTail = BuildOrderLandingAftermathSummary(disorder);
+        string responseTail = BuildOrderResponseAftermathSummary(disorder);
         string officeTail = jurisdiction is null
             ? "官面读回暂缺。"
             : $"官面读回看{jurisdiction.CurrentAdministrativeTask}、积案{jurisdiction.PetitionBacklog}、词牒之压{jurisdiction.PetitionPressure}。";
         string baseReadback = $"当前读回锚点：路压{disorder.RoutePressure}、镇压之需{disorder.SuppressionDemand}、护路得力{disorder.InterventionCarryoverMonths}月余波；{officeTail}";
 
-        return string.Join(" ", new[] { landingTail, baseReadback }.Where(static value => !string.IsNullOrWhiteSpace(value)));
+        return string.Join(" ", new[] { landingTail, responseTail, baseReadback }.Where(static value => !string.IsNullOrWhiteSpace(value)));
     }
 
     private static string BuildOrderLandingAftermathSummary(SettlementDisorderSnapshot disorder)
@@ -211,6 +212,31 @@ public sealed partial class PresentationReadModelBuilder
         };
     }
 
+    private static string BuildOrderResponseAftermathSummary(SettlementDisorderSnapshot disorder)
+    {
+        if (string.IsNullOrWhiteSpace(disorder.LastRefusalResponseOutcomeCode)
+            || string.IsNullOrWhiteSpace(disorder.LastRefusalResponseCommandCode))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = string.IsNullOrWhiteSpace(disorder.LastRefusalResponseCommandLabel)
+            ? disorder.LastRefusalResponseCommandCode
+            : disorder.LastRefusalResponseCommandLabel;
+        return disorder.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired =>
+                $"{commandLabel}后账已修复：护路担保重新接住，本户羞面与人情开始回缓。",
+            PublicLifeOrderResponseOutcomeCodes.Contained =>
+                $"{commandLabel}后账暂压：明面反噬被压住，但担保与欠账仍在。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated =>
+                $"{commandLabel}后账恶化：地面反噬、恐惧与怨尾继续加重。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored =>
+                $"{commandLabel}后账放置：前案余波仍无人接住。",
+            _ => $"{commandLabel}后账{disorder.LastRefusalResponseOutcomeCode}。",
+        };
+    }
+
     private static IReadOnlyList<SocialMemoryEntrySnapshot> SelectLocalPublicLifeOrderSocialMemories(
         IReadOnlyList<SocialMemoryEntrySnapshot> socialMemories,
         IReadOnlyList<ClanSnapshot> localClans)
@@ -250,6 +276,7 @@ public sealed partial class PresentationReadModelBuilder
         return memory.CauseKey.StartsWith("order.public_life.escort_road_report", StringComparison.Ordinal)
             || memory.CauseKey.StartsWith("order.public_life.fund_local_watch", StringComparison.Ordinal)
             || memory.CauseKey.StartsWith("order.public_life.suppress_banditry", StringComparison.Ordinal)
+            || memory.CauseKey.StartsWith("order.public_life.response", StringComparison.Ordinal)
             || memory.CauseKey.StartsWith("order.public_life.negotiate_with_outlaws", StringComparison.Ordinal)
             || memory.CauseKey.StartsWith("order.public_life.tolerate_disorder", StringComparison.Ordinal);
     }

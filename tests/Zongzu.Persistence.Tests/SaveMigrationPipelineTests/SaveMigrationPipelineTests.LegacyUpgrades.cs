@@ -140,7 +140,13 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 6
                 && step.TargetVersion == 7),
             Is.True);
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(7));
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.FamilyCore
+                && step.SourceVersion == 7
+                && step.TargetVersion == 8),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(8));
         Assert.That(migratedState.Clans, Has.Count.EqualTo(currentState.Clans.Count));
         Assert.That(
             migratedState.Clans.All(static clan =>
@@ -159,6 +165,9 @@ public sealed partial class SaveMigrationPipelineTests
         Assert.That(migratedState.Clans.All(static clan => clan.LastConflictTrace is not null), Is.True);
         Assert.That(migratedState.Clans.All(static clan => clan.LastLifecycleCommandCode is not null), Is.True);
         Assert.That(migratedState.Clans.All(static clan => clan.LastLifecycleTrace is not null), Is.True);
+        Assert.That(migratedState.Clans.All(static clan => clan.LastRefusalResponseCommandCode is not null), Is.True);
+        Assert.That(migratedState.Clans.All(static clan => clan.LastRefusalResponseOutcomeCode is not null), Is.True);
+        Assert.That(migratedState.Clans.All(static clan => clan.ResponseCarryoverMonths is >= 0 and <= 2), Is.True);
     }
 
     [Test]

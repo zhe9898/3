@@ -212,6 +212,52 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_ProjectsPublicLifeResponseReadbackWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OrderAndBanditry,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.RepairLocalWatchGuarantee,
+                    Label = "补保巡丁",
+                    Summary = "巡丁后账已露出来，可补保巡丁。",
+                    IsEnabled = true,
+                    AvailabilitySummary = "前案半落地。",
+                    ReadbackSummary = "后账已修复：护路担保重新接住。",
+                    TargetLabel = "县门榜下",
+                },
+            ],
+            Receipts =
+            [
+                new PlayerCommandReceiptSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OrderAndBanditry,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.RepairLocalWatchGuarantee,
+                    Label = "补保巡丁",
+                    Summary = "本户补出担保与口粮。",
+                    OutcomeSummary = "后账已修复",
+                    ReadbackSummary = "后账已修复：护路担保重新接住。社会记忆读回：人情27。",
+                    TargetLabel = "县门榜下",
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        SettlementNodeViewModel settlementNode = shell.DeskSandbox.Settlements.Single();
+
+        Assert.That(settlementNode.PublicLifeCommandAffordances.Single().ReadbackSummary, Does.Contain("后账已修复"));
+        Assert.That(settlementNode.PublicLifeRecentReceipts.Single().ReadbackSummary, Does.Contain("社会记忆读回"));
+    }
+
+    [Test]
     public void Compose_UsesPublicLifeFallbackWhenProjectionAndCommandsAreAbsent()
     {
         PresentationReadModelBundle bundle = CreateBundle();

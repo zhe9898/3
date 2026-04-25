@@ -49,6 +49,21 @@ public sealed partial class PresentationReadModelBuilder
                     jurisdiction.LastPetitionOutcome,
                     targetLabel: jurisdiction.LeadOfficialName);
             }
+
+            if (HasPublicLifeOrderResponseReceipt(jurisdiction))
+            {
+                yield return BuildPlayerCommandReceiptSnapshot(
+                    jurisdiction.LastRefusalResponseCommandCode,
+                    jurisdiction.SettlementId,
+                    jurisdiction.LastRefusalResponseSummary,
+                    RenderPublicLifeResponseOutcome(jurisdiction.LastRefusalResponseOutcomeCode),
+                    executionSummary: BuildOfficeResponseAftermathSummary(jurisdiction),
+                    readbackSummary: BuildOfficeResponseAftermathSummary(jurisdiction),
+                    targetLabel: string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
+                        ? jurisdiction.LeadOfficeTitle
+                        : jurisdiction.LeadOfficialName,
+                    labelOverride: jurisdiction.LastRefusalResponseCommandLabel);
+            }
         }
 
         foreach (SettlementDisorderSnapshot disorder in bundle.SettlementDisorder.OrderBy(static entry => entry.SettlementId.Value))
@@ -80,6 +95,21 @@ public sealed partial class PresentationReadModelBuilder
             if (receipt is not null)
             {
                 yield return receipt;
+            }
+
+            if (HasPublicLifeOrderResponseReceipt(disorder))
+            {
+                yield return BuildPlayerCommandReceiptSnapshot(
+                    disorder.LastRefusalResponseCommandCode,
+                    disorder.SettlementId,
+                    disorder.LastRefusalResponseSummary,
+                    RenderPublicLifeResponseOutcome(disorder.LastRefusalResponseOutcomeCode),
+                    executionSummary: BuildOrderResponseAftermathSummary(disorder),
+                    readbackSummary: CombinePublicLifeResponseText(
+                        BuildOrderResponseAftermathSummary(disorder),
+                        BuildOrderSocialMemoryReadbackSummary(localSocialMemories)),
+                    targetLabel: disorder.SettlementId.Value.ToString(),
+                    labelOverride: disorder.LastRefusalResponseCommandLabel);
             }
         }
 
@@ -114,19 +144,96 @@ public sealed partial class PresentationReadModelBuilder
 
         foreach (ClanSnapshot clan in bundle.Clans.OrderBy(static entry => entry.HomeSettlementId.Value))
         {
-            if (!string.Equals(clan.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersPubliclyBroker, StringComparison.Ordinal))
+            if (!string.Equals(clan.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersPubliclyBroker, StringComparison.Ordinal)
+                && !string.Equals(clan.LastConflictCommandCode, PlayerCommandNames.AskClanEldersExplain, StringComparison.Ordinal))
             {
                 continue;
             }
 
             yield return BuildPlayerCommandReceiptSnapshot(
-                PlayerCommandNames.InviteClanEldersPubliclyBroker,
+                clan.LastConflictCommandCode,
                 clan.HomeSettlementId,
                 clan.LastConflictTrace,
                 clan.LastConflictOutcome,
+                readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
+                    ? BuildFamilyResponseAftermathSummary(clan)
+                    : string.Empty,
                 clanId: clan.Id,
-                targetLabel: clan.ClanName);
+                targetLabel: clan.ClanName,
+                labelOverride: clan.LastConflictCommandLabel);
         }
+    }
+
+    private static bool HasPublicLifeOrderResponseReceipt(SettlementDisorderSnapshot disorder)
+    {
+        return !string.IsNullOrWhiteSpace(disorder.LastRefusalResponseCommandCode)
+            && !string.IsNullOrWhiteSpace(disorder.LastRefusalResponseOutcomeCode);
+    }
+
+    private static bool HasPublicLifeOrderResponseReceipt(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        return !string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseCommandCode)
+            && !string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseOutcomeCode);
+    }
+
+    private static bool HasPublicLifeOrderResponseReceipt(ClanSnapshot clan)
+    {
+        return !string.IsNullOrWhiteSpace(clan.LastRefusalResponseCommandCode)
+            && !string.IsNullOrWhiteSpace(clan.LastRefusalResponseOutcomeCode);
+    }
+
+    private static string RenderPublicLifeResponseOutcome(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "后账已修复",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "后账暂压",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "后账恶化",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "后账放置",
+            _ => outcomeCode,
+        };
+    }
+
+    private static string BuildOfficeResponseAftermathSummary(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        if (!HasPublicLifeOrderResponseReceipt(jurisdiction))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseCommandLabel)
+            ? jurisdiction.LastRefusalResponseCommandCode
+            : jurisdiction.LastRefusalResponseCommandLabel;
+        string yamenTail = jurisdiction.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "县门已补落地，文移进入案牍正道。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "县门正道仍滞，递报先把路情暂压。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "胥吏继续拖延，后账转成新的积案。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "县门未接住前案，后账仍在。",
+            _ => jurisdiction.LastRefusalResponseOutcomeCode,
+        };
+        return $"{commandLabel}：{yamenTail}积案{jurisdiction.PetitionBacklog}，胥吏牵制{jurisdiction.ClerkDependence}。";
+    }
+
+    private static string BuildFamilyResponseAftermathSummary(ClanSnapshot clan)
+    {
+        if (!HasPublicLifeOrderResponseReceipt(clan))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = string.IsNullOrWhiteSpace(clan.LastRefusalResponseCommandLabel)
+            ? clan.LastRefusalResponseCommandCode
+            : clan.LastRefusalResponseCommandLabel;
+        string familyTail = clan.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "族老解释缓下羞面，本户担保重新站住。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "族老解释先压住街口议论，本户仍欠人情。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "族老解释反使议论翻起，怨尾加深。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "族老未接住前案，担保欠账仍在。",
+            _ => clan.LastRefusalResponseOutcomeCode,
+        };
+        return $"{commandLabel}：{familyTail}门望{clan.Prestige}，调停势{clan.MediationMomentum}，房支争力{clan.BranchTension}。";
     }
 
     private static PlayerCommandReceiptSnapshot? BuildOrderPublicLifeReceipt(
@@ -222,13 +329,16 @@ public sealed partial class PresentationReadModelBuilder
                     ? PlayerCommandNames.InviteClanEldersMediation
                     : clan.LastConflictCommandCode;
                 receipts.Add(BuildPlayerCommandReceiptSnapshot(
-                    commandName,
-                    clan.HomeSettlementId,
-                    clan.LastConflictTrace,
-                    clan.LastConflictOutcome,
-                    clanId: clan.Id,
-                    targetLabel: clan.ClanName,
-                    labelOverride: string.IsNullOrWhiteSpace(clan.LastConflictCommandLabel)
+                commandName,
+                clan.HomeSettlementId,
+                clan.LastConflictTrace,
+                clan.LastConflictOutcome,
+                readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
+                    ? BuildFamilyResponseAftermathSummary(clan)
+                    : string.Empty,
+                clanId: clan.Id,
+                targetLabel: clan.ClanName,
+                labelOverride: string.IsNullOrWhiteSpace(clan.LastConflictCommandLabel)
                         ? "祠堂议决"
                         : clan.LastConflictCommandLabel));
             }

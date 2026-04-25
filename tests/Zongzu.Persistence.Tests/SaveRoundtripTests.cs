@@ -81,7 +81,7 @@ public sealed class SaveRoundtripTests
         FamilyCoreState reloadedState = (FamilyCoreState)serializer.Deserialize(
             typeof(FamilyCoreState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(7));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.FamilyCore].ModuleSchemaVersion, Is.EqualTo(8));
         Assert.That(reloadedState.Clans.Any(static clanState => clanState.MediationMomentum > 0), Is.True);
         Assert.That(reloadedState.Clans.Any(static clanState => string.Equals(clanState.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersMediation, System.StringComparison.Ordinal)), Is.True);
         Assert.That(reloadedState.Clans.Any(static clanState => !string.IsNullOrWhiteSpace(clanState.LastConflictOutcome)), Is.True);
@@ -139,7 +139,7 @@ public sealed class SaveRoundtripTests
         TradeAndIndustryState tradeState = (TradeAndIndustryState)serializer.Deserialize(
             typeof(TradeAndIndustryState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(8));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(9));
         Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.TradeAndIndustry].ModuleSchemaVersion, Is.EqualTo(4));
         Assert.That(orderState.Settlements.Any(static settlement => settlement.PaperCompliance >= 0), Is.True);
         Assert.That(orderState.Settlements.Any(static settlement => settlement.ImplementationDrag >= 0), Is.True);
@@ -224,7 +224,7 @@ public sealed class SaveRoundtripTests
             typeof(OrderAndBanditryState),
             traceReloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].Payload);
         SettlementDisorderState reloadedSettlement = reloadedOrderState.Settlements.Single(entry => entry.SettlementId == settlementId);
-        Assert.That(traceReloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(8));
+        Assert.That(traceReloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(9));
         Assert.That(reloadedSettlement.LastInterventionOutcomeCode, Is.EqualTo(OrderInterventionOutcomeCodes.Refused));
         Assert.That(reloadedSettlement.LastInterventionRefusalCode, Is.EqualTo(OrderInterventionRefusalCodes.SuppressionRefused));
         Assert.That(reloadedSettlement.LastInterventionTraceCode, Is.EqualTo(OrderInterventionTraceCodes.SuppressionGroundRefusal));
@@ -243,6 +243,51 @@ public sealed class SaveRoundtripTests
                 && memory.Type == MemoryType.Fear
                 && memory.Subtype == MemorySubtype.PowerGrudge),
             Is.True);
+    }
+
+    [Test]
+    public void SaveCodec_RoundtripPreservesPublicLifeOrderResponseTrace()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260427);
+        simulation.AdvanceMonths(2);
+        SettlementId settlementId = new PresentationReadModelBuilder().BuildForM2(simulation).SettlementDisorder.Single().SettlementId;
+        OrderAndBanditryState orderState = simulation.GetModuleStateForTesting<OrderAndBanditryState>(
+            KnownModuleKeys.OrderAndBanditry);
+        SettlementDisorderState settlement = orderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+        settlement.ImplementationDrag = 50;
+        settlement.RetaliationRisk = 12;
+        settlement.CoercionRisk = 10;
+
+        PlayerCommandService commandService = new();
+        commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.FundLocalWatch,
+            });
+        simulation.AdvanceOneMonth();
+        commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.RepairLocalWatchGuarantee,
+            });
+
+        SaveCodec codec = new();
+        GameSimulation reloaded = SimulationBootstrapper.LoadP1GovernanceLocalConflict(codec.Decode(codec.Encode(simulation.ExportSave())));
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState reloadedOrderState = (OrderAndBanditryState)serializer.Deserialize(
+            typeof(OrderAndBanditryState),
+            reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].Payload);
+        SettlementDisorderState reloadedSettlement = reloadedOrderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(9));
+        Assert.That(reloadedSettlement.LastRefusalResponseCommandCode, Is.EqualTo(PlayerCommandNames.RepairLocalWatchGuarantee));
+        Assert.That(reloadedSettlement.LastRefusalResponseOutcomeCode, Is.EqualTo(PublicLifeOrderResponseOutcomeCodes.Repaired));
+        Assert.That(reloadedSettlement.LastRefusalResponseTraceCode, Is.EqualTo(PublicLifeOrderResponseTraceCodes.OrderWatchGuaranteeRepaired));
+        Assert.That(reloadedSettlement.ResponseCarryoverMonths, Is.EqualTo(1));
     }
 
     [Test]
@@ -316,7 +361,7 @@ public sealed class SaveRoundtripTests
         OfficeAndCareerState reloadedState = (OfficeAndCareerState)serializer.Deserialize(
             typeof(OfficeAndCareerState),
             reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
-        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(6));
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(7));
         Assert.That(reloadedState.People.Any(static career => career.HasAppointment), Is.True);
         Assert.That(reloadedState.People.Any(static career => career.ServiceMonths > 0), Is.True);
         Assert.That(reloadedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.LastPetitionOutcome)), Is.True);

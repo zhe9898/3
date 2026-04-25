@@ -89,4 +89,16 @@ public sealed class SettlementDisorderState
     public int InterventionCarryoverMonths { get; set; }
 
     public int RefusalCarryoverMonths { get; set; }
+
+    public string LastRefusalResponseCommandCode { get; set; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; set; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; set; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; set; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; set; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; set; }
 }

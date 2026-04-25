@@ -123,6 +123,9 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
         IOrderAndBanditryQueries? orderQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OrderAndBanditry)
             ? scope.GetRequiredQuery<IOrderAndBanditryQueries>()
             : null;
+        IOfficeAndCareerQueries? officeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OfficeAndCareer)
+            ? scope.GetRequiredQuery<IOfficeAndCareerQueries>()
+            : null;
 
         IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
         IReadOnlyList<HouseholdPressureSnapshot> households = populationQueries.GetHouseholds();
@@ -204,8 +207,16 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
 
         if (orderQueries is not null)
         {
-            ApplyPublicLifeOrderAftermathResidue(scope, clans, orderQueries.GetSettlementDisorder());
+            IReadOnlyList<SettlementDisorderSnapshot> settlementDisorder = orderQueries.GetSettlementDisorder();
+            ApplyPublicLifeOrderAftermathResidue(scope, clans, settlementDisorder);
+            ApplyPublicLifeOrderResponseAftermathResidue(
+                scope,
+                clans,
+                settlementDisorder,
+                officeQueries?.GetJurisdictions() ?? Array.Empty<JurisdictionAuthoritySnapshot>());
         }
+
+        ApplyPublicLifeOrderResponseResidueDrift(scope, clans);
     }
 
     public override void HandleEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)

@@ -228,6 +228,26 @@ Current public-life/order v5 note:
 - The loop is rule-driven command / aftermath / social-memory readback, not an event-chain or event-pool design; `DomainEvent.Summary` and receipt prose are not rule input.
 - this is a rule-driven monthly residue path over query-visible state, not an event pool and not `DomainEvent.Summary` parsing; UI and Unity receive only the projected residue/readback text
 
+Current public-life/order v6 note:
+- Month N refused or partial `添雇巡丁` / `严缉路匪` residue becomes a Month N+1 projected response surface, not an automatic authority mutation.
+- The response command resolves in the owner module: `OrderAndBanditry` for road-watch / route-pressure repair, `OfficeAndCareer` for county-yamen / document-route repair, and `FamilyCore` for elder explanation / home-household guarantee repair.
+- Same-month response command handling mutates only the owner module response trace and related owner pressure fields; it must not mutate `SocialMemoryAndRelations`.
+- Month N+2 `SocialMemoryAndRelations` reads structured response aftermath from query snapshots and adjusts durable memory/narrative/climate residue. It must not parse `DomainEvent.Summary`, receipt text, `LastInterventionSummary`, or UI readback strings.
+- Family response carryover remains visible long enough for SocialMemory because `FamilyCore` runs before `SocialMemoryAndRelations` in the current monthly order; duplicate memory writes are guarded by SocialMemory's existing cause checks rather than by UI timers.
+- The projected readback may say whether the后账 was repaired, contained, worsened, or left aside, but the command result itself remains owner-owned state.
+
+Current public-life/order v7 note:
+- after Month N+2 response residue exists, later monthly SocialMemory passes may make it `后账渐平`, `后账暂压留账`, `后账转硬`, or `后账放置发酸` by changing only SocialMemory-owned memory weight, clan narrative pressure, and clan emotional climate.
+- SocialMemory skips current-month response memories for drift, so recording the response residue and aging/hardening it remain separate deterministic month steps.
+- later owner-module commands may read structured SocialMemory response memories and local clan scope as repeat-friction inputs. Order repair, yamen催办, and族老解释 still resolve in their owner module and do not write SocialMemory at command time.
+- v7 adds no new persisted fields or migration; the cadence proof is over existing SocialMemory schema `3` plus v6 owner response trace fields.
+
+Current public-life/order v8 note:
+- after response residue exists, later monthly owner-module rules may read structured SocialMemory response memories and resolve small actor countermoves without a new player command. Order owns route-watch / runner self-movement, Office owns yamen / clerk docket movement, and Family owns elder / household-guarantee movement.
+- actor countermoves skip memories whose `OriginDate` is the current month, and they read cause keys, outcome markers, weights, lifecycle state, source clan, and origin date rather than summaries.
+- `OrderAndBanditry` and `OfficeAndCareer` currently run after `SocialMemoryAndRelations`, so their actor countermove traces are read by SocialMemory on the following monthly pass. `FamilyCore` runs before `SocialMemoryAndRelations`, so a family actor trace may be observed in that same scheduler month through the existing carryover pattern; SocialMemory duplicate-cause guards keep this deterministic.
+- v8 adds no scheduler phase, no manager/controller layer, no persisted fields, and no migration. Application, UI, and Unity may only display projected readback.
+
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window
 - these should stay rare and should not turn the game into a daily alert treadmill

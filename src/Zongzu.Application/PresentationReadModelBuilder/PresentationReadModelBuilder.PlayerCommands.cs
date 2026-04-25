@@ -260,6 +260,16 @@ public sealed partial class PresentationReadModelBuilder
                     yield return affordance;
                 }
 
+                foreach (PlayerCommandAffordanceSnapshot affordance in BuildPublicLifeOrderResponseAffordances(
+                    publicLife,
+                    disorder,
+                    jurisdiction,
+                    localClans,
+                    localSocialMemories))
+                {
+                    yield return affordance;
+                }
+
                 CommandLeverageProjection escortProjection = BuildOrderPublicLifeLeverageProjection(
                     PlayerCommandNames.EscortRoadReport,
                     publicLife,
@@ -296,6 +306,136 @@ public sealed partial class PresentationReadModelBuilder
                     targetLabel: leadClan.ClanName);
             }
         }
+    }
+
+    private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildPublicLifeOrderResponseAffordances(
+        SettlementPublicLifeSnapshot publicLife,
+        SettlementDisorderSnapshot disorder,
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        IReadOnlyList<ClanSnapshot> localClans,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
+    {
+        if (!HasPublicLifeOrderRefusalOrPartialResidue(disorder))
+        {
+            yield break;
+        }
+
+        string responseReadback = CombinePublicLifeResponseText(
+            BuildOrderLandingAftermathSummary(disorder),
+            BuildOrderResponseAftermathSummary(disorder),
+            BuildOrderSocialMemoryReadbackSummary(localSocialMemories));
+        string targetLabel = string.IsNullOrWhiteSpace(publicLife.DominantVenueLabel)
+            ? publicLife.NodeLabel
+            : publicLife.DominantVenueLabel;
+        bool watchResidue = string.Equals(disorder.LastInterventionCommandCode, PlayerCommandNames.FundLocalWatch, StringComparison.Ordinal);
+        bool suppressionResidue = string.Equals(disorder.LastInterventionCommandCode, PlayerCommandNames.SuppressBanditry, StringComparison.Ordinal);
+
+        if (watchResidue)
+        {
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.RepairLocalWatchGuarantee,
+                publicLife.SettlementId,
+                $"{targetLabel}的巡丁后账已露出来，可补保巡丁，把本户担保重新接住。",
+                true,
+                $"前案为{RenderOrderInterventionLabel(disorder)}；{RenderOrderOutcomeLabelForReadback(disorder.LastInterventionOutcomeCode)}。",
+                leverageSummary: "只动路面担保、巡丁口粮与本户信誉；成败要看巡丁、脚户与路面口风。",
+                costSummary: "需再押钱粮、人手和公开担保，若前案误读未解，仍可能只压住一半。",
+                readbackSummary: responseReadback,
+                targetLabel: targetLabel);
+
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.CompensateRunnerMisread,
+                publicLife.SettlementId,
+                $"{targetLabel}的脚户误读正在传开，可先赔脚户误读，压住脚路口角。",
+                true,
+                $"误读/拖延来自结构化前案余波：{RenderOrderPartialLabel(disorder.LastInterventionPartialCode)}。",
+                leverageSummary: "只触达脚户、巡丁与路面解释，不代替县门补落地。",
+                costSummary: "赔付会花现钱和人情，换来脚路传话先缓。",
+                readbackSummary: responseReadback,
+                targetLabel: targetLabel);
+        }
+
+        if (suppressionResidue)
+        {
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.DeferHardPressure,
+                publicLife.SettlementId,
+                $"{publicLife.NodeLabel}强压后账仍在，可暂缓强压，先压住地面反噬。",
+                true,
+                $"前案为{RenderOrderInterventionLabel(disorder)}；报复险{disorder.RetaliationRisk}，胁迫险{disorder.CoercionRisk}。",
+                leverageSummary: "只走治安与路面人手收束强压余波，不改官署或宗房账。",
+                costSummary: "明面反噬会缓，但路匪尾巴未必马上收净。",
+                readbackSummary: responseReadback,
+                targetLabel: publicLife.NodeLabel);
+        }
+
+        if (jurisdiction is not null)
+        {
+            string leadLabel = string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
+                ? jurisdiction.LeadOfficeTitle
+                : jurisdiction.LeadOfficialName;
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.PressCountyYamenDocument,
+                publicLife.SettlementId,
+                $"{leadLabel}可押文催县门，把拖延后账落到案牍上。",
+                true,
+                $"县门积案{jurisdiction.PetitionBacklog}，胥吏牵制{jurisdiction.ClerkDependence}。",
+                executionSummary: $"眼下由{leadLabel}触达县门文移，成败要看文移、胥吏与官面余力。",
+                leverageSummary: "官署只处理催办、文移落地与胥吏拖延。",
+                costSummary: "若胥吏牵制太重，押文会变成新的积案与恶化后账。",
+                readbackSummary: responseReadback,
+                targetLabel: leadLabel);
+
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.RedirectRoadReport,
+                publicLife.SettlementId,
+                $"{leadLabel}可改走递报，绕开县门拖滞，先把路情送出。",
+                true,
+                $"递报险数{publicLife.CourierRisk}，县门积案{jurisdiction.PetitionBacklog}。",
+                executionSummary: $"递报仍归{leadLabel}经手；只是改走文移路径。",
+                leverageSummary: "官署处理递报路径，不能直接修复巡丁或宗房羞面。",
+                costSummary: "只能暂压后账，正路未补时仍留余波。",
+                readbackSummary: responseReadback,
+                targetLabel: leadLabel);
+        }
+
+        ClanSnapshot? leadClan = localClans.FirstOrDefault();
+        if (leadClan is not null)
+        {
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.AskClanEldersExplain,
+                publicLife.SettlementId,
+                $"{leadClan.ClanName}可请族老解释，让本户把前案用意说清。",
+                true,
+                $"宗房门望{leadClan.Prestige}，余力{leadClan.SupportReserve}，房支争力{leadClan.BranchTension}。",
+                leverageSummary: "族老只处理公开解释与本户担保，不替治安或县门落命令。",
+                costSummary: "解释能缓羞面，也可能留下人情欠账。",
+                readbackSummary: responseReadback,
+                clanId: leadClan.Id,
+                targetLabel: leadClan.ClanName);
+        }
+    }
+
+    private static bool HasPublicLifeOrderRefusalOrPartialResidue(SettlementDisorderSnapshot disorder)
+    {
+        return string.Equals(disorder.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Refused, StringComparison.Ordinal)
+            || string.Equals(disorder.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Partial, StringComparison.Ordinal);
+    }
+
+    private static string CombinePublicLifeResponseText(params string[] parts)
+    {
+        return string.Join(" ", parts.Where(static part => !string.IsNullOrWhiteSpace(part)));
+    }
+
+    private static string RenderOrderOutcomeLabelForReadback(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            OrderInterventionOutcomeCodes.Refused => "前案被拒",
+            OrderInterventionOutcomeCodes.Partial => "前案半落地",
+            OrderInterventionOutcomeCodes.Accepted => "前案已落地",
+            _ => outcomeCode,
+        };
     }
 
     private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildSupplementalOrderPublicLifeAffordances(

@@ -40,10 +40,16 @@ public sealed partial class PresentationReadModelBuilder
                 string orderLandingAftermathSummary = disorder is null
                     ? string.Empty
                     : BuildOrderLandingAftermathSummary(disorder);
+                string orderResponseAftermathSummary = disorder is null
+                    ? string.Empty
+                    : BuildOrderResponseAftermathSummary(disorder);
+                string officeResponseAftermathSummary = BuildOfficeResponseAftermathSummary(jurisdiction);
                 string socialMemoryAftermathSummary = BuildOrderSocialMemoryReadbackSummary(
                     SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans));
                 string orderAftermathSummary = CombineGovernanceDocketText(
                     orderLandingAftermathSummary,
+                    orderResponseAftermathSummary,
+                    officeResponseAftermathSummary,
                     orderAdministrativeAftermathSummary,
                     socialMemoryAftermathSummary);
                 string focusLabel = ResolveGovernanceFocusLabel(publicLife, jurisdiction);
@@ -195,11 +201,17 @@ public sealed partial class PresentationReadModelBuilder
     {
         return commandName switch
         {
+            PlayerCommandNames.PressCountyYamenDocument => hasOrderAftermath ? 0 : 2,
+            PlayerCommandNames.RedirectRoadReport => hasOrderAftermath ? 1 : 2,
+            PlayerCommandNames.RepairLocalWatchGuarantee => hasOrderAftermath ? 2 : 5,
+            PlayerCommandNames.CompensateRunnerMisread => hasOrderAftermath ? 2 : 5,
+            PlayerCommandNames.DeferHardPressure => hasOrderAftermath ? 2 : 5,
+            PlayerCommandNames.AskClanEldersExplain => hasOrderAftermath ? 3 : 6,
             PlayerCommandNames.PostCountyNotice => hasOrderAftermath ? 0 : 1,
             PlayerCommandNames.DispatchRoadReport => 0,
-            PlayerCommandNames.EscortRoadReport => 2,
-            PlayerCommandNames.FundLocalWatch => 3,
-            PlayerCommandNames.InviteClanEldersPubliclyBroker => 4,
+            PlayerCommandNames.EscortRoadReport => 4,
+            PlayerCommandNames.FundLocalWatch => 5,
+            PlayerCommandNames.InviteClanEldersPubliclyBroker => 6,
             PlayerCommandNames.SuppressBanditry => hasOrderAftermath ? 6 : 5,
             PlayerCommandNames.NegotiateWithOutlaws => 6,
             PlayerCommandNames.TolerateDisorder => 7,

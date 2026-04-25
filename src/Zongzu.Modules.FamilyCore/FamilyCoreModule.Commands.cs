@@ -13,6 +13,7 @@ public sealed partial class FamilyCoreModule
             CurrentDate = scope.Context.CurrentDate,
             PersonRegistryQueries = scope.TryGetQuery<IPersonRegistryQueries>(),
             SocialMemoryQueries = scope.TryGetQuery<ISocialMemoryAndRelationsQueries>(),
+            OrderQueries = scope.TryGetQuery<IOrderAndBanditryQueries>(),
         });
     }
 }

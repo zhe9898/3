@@ -117,6 +117,18 @@ public sealed class OfficeCareerState
     public string LastPetitionOutcome { get; set; } = "未开案：暂无词牍。";
 
     public string LastExplanation { get; set; } = string.Empty;
+
+    public string LastRefusalResponseCommandCode { get; set; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; set; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; set; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; set; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; set; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; set; }
 }
 
 public sealed class JurisdictionAuthorityState
@@ -146,4 +158,16 @@ public sealed class JurisdictionAuthorityState
     public string LastPetitionOutcome { get; set; } = string.Empty;
 
     public string LastAdministrativeTrace { get; set; } = string.Empty;
+
+    public string LastRefusalResponseCommandCode { get; set; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; set; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; set; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; set; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; set; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; set; }
 }

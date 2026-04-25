@@ -26,6 +26,10 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         PlayerCommandNames.DispatchRoadReport,
 
+        PlayerCommandNames.PressCountyYamenDocument,
+
+        PlayerCommandNames.RedirectRoadReport,
+
     ];
 
 
@@ -88,7 +92,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
     public override string ModuleKey => KnownModuleKeys.OfficeAndCareer;
 
 
-    public override int ModuleSchemaVersion => 6;
+    public override int ModuleSchemaVersion => 7;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -230,6 +234,8 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
         ISocialMemoryAndRelationsQueries socialQueries = scope.GetRequiredQuery<ISocialMemoryAndRelationsQueries>();
 
+        IFamilyCoreQueries? familyQueries = TryGetFamilyCoreQueries(scope);
+
         IOrderAndBanditryQueries? orderQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OrderAndBanditry)
 
             ? scope.GetRequiredQuery<IOrderAndBanditryQueries>()
@@ -346,6 +352,18 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         scope.State.ActiveClerkCaptureSettlementIds = currentCapturedSettlements
             .OrderBy(static settlementId => settlementId.Value)
             .ToList();
+
+        foreach (OfficeCareerState career in scope.State.People)
+        {
+            if (career.ResponseCarryoverMonths > 0)
+            {
+                career.ResponseCarryoverMonths = 0;
+            }
+        }
+
+        ApplyPublicLifeOfficeActorCountermoves(scope, familyQueries, socialQueries);
+
+        scope.State.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(scope.State.People);
     }
 
 

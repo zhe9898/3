@@ -88,15 +88,15 @@ Example:
 ## Current implemented module versions
 - `PersonRegistry` uses namespace `PersonRegistry` with schema version `1`
 - `WorldSettlements` uses namespace `WorldSettlements` with schema version `8` for the active world-settlement slice plus chain-6 flood-disaster and chain-5 frontier-strain declaration watermark state
-- `FamilyCore` uses namespace `FamilyCore` with schema version `7`
+- `FamilyCore` uses namespace `FamilyCore` with schema version `8`
 - `PopulationAndHouseholds` uses namespace `PopulationAndHouseholds` with schema version `2`
-- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `3` for clan emotional climate, person pressure-tempering ledgers, and public-life order accepted/refused/partial residue stored in existing memory/narrative/climate records
+- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `3` for clan emotional climate, person pressure-tempering ledgers, public-life order accepted/refused/partial/response residue, later response-residue decay/hardening, and v8 actor-countermove back-pressure inputs stored in existing memory/narrative/climate records
 - `EducationAndExams` uses namespace `EducationAndExams` with schema version `2`
 - `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `4`
 - `PublicLifeAndRumor` uses namespace `PublicLifeAndRumor` with schema version `4` for the active county-public-life slice plus monthly-cadence, venue-channel, and channel-contention descriptors
-- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `6` for the active governance-lite slice plus chain-4 amnesty de-duplication state, chain-7 clerk-capture edge state, and chain-9 official-defection risk state
+- `OfficeAndCareer` uses namespace `OfficeAndCareer` with schema version `7` for the active governance-lite slice plus chain-4 amnesty de-duplication state, chain-7 clerk-capture edge state, chain-9 official-defection risk state, and office-owned public-life refusal response trace state
 - `NarrativeProjection` uses namespace `NarrativeProjection` with schema version `1`
-- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `8`
+- `OrderAndBanditry` uses namespace `OrderAndBanditry` with schema version `9`
 - `ConflictAndForce` uses namespace `ConflictAndForce` with schema version `4` for active M3 local-conflict lite integration plus campaign-fallout persistence
 - `WarfareCampaign` uses namespace `WarfareCampaign` with schema version `4` for the active campaign-lite slice (phase + aftermath docket projection)
 
@@ -104,7 +104,7 @@ Example:
 - old saves without `EducationAndExams` or `TradeAndIndustry` load cleanly when those modules remain disabled in the feature manifest
 - old M0-M1 saves must continue to load through the M2 loader when `EducationAndExams`, `TradeAndIndustry`, and `NarrativeProjection` remain disabled in the manifest
 - enabling either M2-lite module requires creating its owned default state inside its own namespace only
-- built-in default loaders now migrate legacy `FamilyCore` schema `1 -> 2 -> 3` by first backfilling lineage-conflict defaults, then by conservatively backfilling marriage/heir/mourning lifecycle defaults inside the family namespace only
+- built-in default loaders now migrate legacy `FamilyCore` schemas through `8` by first backfilling lineage-conflict defaults, then conservatively backfilling marriage/heir/mourning lifecycle defaults, then adding family-owned public-life refusal response trace fields inside the family namespace only
 - built-in default loaders now also migrate legacy `WorldSettlements` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8` inside the world-settlement namespace only; schema `7` backfills `LastDeclaredFloodDisasterBand = 0`, and schema `8` backfills `LastDeclaredFrontierStrainBand = 0` so old saves do not repeat a past flood or frontier declaration after load
 - `PublicLifeAndRumor` now defaults to schema `4` when enabled and owns its public-pulse plus monthly-cadence / venue-channel / channel-contention state inside its own namespace only
 - old saves still load cleanly while `PublicLifeAndRumor` remains disabled in the manifest
@@ -112,7 +112,7 @@ Example:
 - built-in default loaders now migrate legacy `PublicLifeAndRumor` schema `1 -> 2 -> 3 -> 4` by first backfilling cadence code/label, crowd mix, and cadence summary, then by conservatively backfilling dominant-venue code plus channel metrics, then by backfilling official/street/road/prefecture/contention wording inside the public-life namespace only
 - built-in default loaders now also migrate legacy `TradeAndIndustry` schema `1 -> 2 -> 3` by first backfilling gray-route ledgers, then by conservatively backfilling per-route blockage / seizure mirrors inside the same trade namespace only
 - built-in default loaders now also migrate legacy `SocialMemoryAndRelations` schema `1 -> 2 -> 3` by first classifying legacy memory records, then by backfilling clan emotional climate records from existing clan narratives inside the same social-memory namespace only
-- public-life order residue v4/v5 does not add a new SocialMemory field or module envelope; it writes new records into existing schema `3` collections and therefore requires no `3 -> 4` migration. Any later residue work that adds fields, indexes, or namespaces must bump the SocialMemory schema and add an explicit migration.
+- public-life order residue v4/v5/v6/v7/v8 does not add a new SocialMemory field or module envelope; it writes, adjusts, or reads records inside existing schema `3` collections and therefore requires no `3 -> 4` migration. v6 response aftermath instead adds structured response trace fields to the actual owning modules (`FamilyCore` `7 -> 8`, `OfficeAndCareer` `6 -> 7`, `OrderAndBanditry` `8 -> 9`). v7 response-residue decay and repeat friction reuse existing SocialMemory `Weight`, `MonthlyDecay`, `LifecycleState`, `CauseKey`, narrative, and climate fields. v8 actor countermoves read existing `SocialMemoryEntrySnapshot` cause keys, weights, lifecycle state, source clan, and origin date, then write only existing owner-module response trace fields; they add no fields and require no migration. Any later residue work that adds SocialMemory fields, indexes, or namespaces must bump the SocialMemory schema and add an explicit migration.
 - M2-lite explanation strings are module-owned authoritative traces and must roundtrip with the rest of the module state
 - `NarrativeProjection` persists derived notification history only inside its own namespace and may be rebuilt later without rewriting foreign module state
 - latest-month debug traces, warning lists, and module inspectors are non-persisted read models and must not require a root schema change
@@ -121,8 +121,10 @@ Example:
 ## M3 local-conflict namespace policy
 - `OrderAndBanditry` now has an order-enabled M3 bridge path and a conflict-enabled M3 local-conflict path; both seed module-owned settlement disorder state only when the feature is enabled
 - old M2 saves still load cleanly while `OrderAndBanditry` remains disabled in the manifest
-- legacy M3 order saves with `OrderAndBanditry` schema `1` now migrate through built-in `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8` steps that first backfill black-route pressure summaries, then conservatively reconstruct paper-compliance and implementation-drag fields, then backfill route-shielding and retaliation-risk summaries, then backfill empty intervention-receipt fields, then clamp one-month intervention-follow-through state, then backfill structured outcome/refusal/partial trace fields inside the same namespace
+- legacy M3 order saves with `OrderAndBanditry` schema `1` now migrate through built-in `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9` steps that first backfill black-route pressure summaries, then conservatively reconstruct paper-compliance and implementation-drag fields, then backfill route-shielding and retaliation-risk summaries, then backfill empty intervention-receipt fields, then clamp one-month intervention-follow-through state, then backfill structured outcome/refusal/partial trace fields, then add structured refusal-response trace fields inside the same namespace
 - public-life order residue v4 adds only query/read-model exposure for existing order aftermath fields; v5 adds `OrderAndBanditry` persisted structured trace fields (`LastInterventionOutcomeCode`, `LastInterventionRefusalCode`, `LastInterventionPartialCode`, `LastInterventionTraceCode`, `RefusalCarryoverMonths`) and a same-namespace `7 -> 8` migration
+- public-life order response v6 adds `OrderAndBanditry` persisted response fields (`LastRefusalResponseCommandCode`, `LastRefusalResponseCommandLabel`, `LastRefusalResponseSummary`, `LastRefusalResponseOutcomeCode`, `LastRefusalResponseTraceCode`, `ResponseCarryoverMonths`) and a same-namespace `8 -> 9` migration for order-owned road watch / route-pressure repair responses
+- public-life order actor countermove v8 adds trace-code constants only. `OrderAndBanditry` remains schema `9`, `OfficeAndCareer` remains schema `7`, `FamilyCore` remains schema `8`, and `SocialMemoryAndRelations` remains schema `3`; the countermoves reuse the v6 response fields and existing SocialMemory records.
 - `ConflictAndForce` now has a conflict-enabled M3 local-conflict path and seeds module-owned settlement force posture plus explicit response activation/support fields only when the feature is enabled
 - legacy M3 local-conflict saves with `ConflictAndForce` schema `1` now migrate through a built-in `1 -> 2` module step during default local-conflict load
 - built-in migration now also upgrades legacy `ConflictAndForce` schema `2` saves to schema `3` by backfilling zero campaign-fatigue / escort-strain fields and empty fallout traces inside the same namespace
@@ -130,7 +132,7 @@ Example:
 
 ## Governance-lite namespace policy
 - `OfficeAndCareer` now has a dedicated governance-lite path that seeds its own office-career and jurisdiction-authority state only when the feature is enabled
-- legacy governance-lite saves with `OfficeAndCareer` schema `1` now migrate through built-in `1 -> 2 -> 3 -> 4 -> 5 -> 6` module steps during default governance-lite load
+- legacy governance-lite saves with `OfficeAndCareer` schema `1` now migrate through built-in `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7` module steps during default governance-lite load; `6 -> 7` adds office-owned public-life refusal response trace fields for yamen/document/clerk-delay handling
 - old M2 and M3 saves still load cleanly while `OfficeAndCareer` remains disabled in their manifests
 - no existing stable M2/M3 path gains an `OfficeAndCareer` envelope implicitly; only the governance-lite path does
 

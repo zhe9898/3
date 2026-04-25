@@ -22,6 +22,12 @@ public sealed record OrderPublicLifeCommand
     public int LeakageShift { get; init; }
 
     public string ReachSummaryTail { get; init; } = string.Empty;
+
+    public int ResponseRepairSupport { get; init; }
+
+    public int ResponseHardeningDrag { get; init; }
+
+    public string ResponseResidueSummaryTail { get; init; } = string.Empty;
 }
 
 public sealed record OrderPublicLifeCommandResult
@@ -75,6 +81,11 @@ public sealed partial class OrderAndBanditryModule
             };
         }
 
+        if (IsOrderRefusalResponseCommand(command.CommandName))
+        {
+            return ApplyOrderRefusalResponseCommand(settlement, command, label);
+        }
+
         if (!TryApplyOrderPublicLifeCommand(settlement, command, label))
         {
             return new OrderPublicLifeCommandResult
@@ -106,6 +117,117 @@ public sealed partial class OrderAndBanditryModule
             RefusalCode = settlement.LastInterventionRefusalCode,
             PartialCode = settlement.LastInterventionPartialCode,
             TraceCode = settlement.LastInterventionTraceCode,
+        };
+    }
+
+    private static bool IsOrderRefusalResponseCommand(string commandName)
+    {
+        return string.Equals(commandName, PlayerCommandNames.RepairLocalWatchGuarantee, StringComparison.Ordinal)
+            || string.Equals(commandName, PlayerCommandNames.CompensateRunnerMisread, StringComparison.Ordinal)
+            || string.Equals(commandName, PlayerCommandNames.DeferHardPressure, StringComparison.Ordinal);
+    }
+
+    private static OrderPublicLifeCommandResult ApplyOrderRefusalResponseCommand(
+        SettlementDisorderState settlement,
+        OrderPublicLifeCommand command,
+        string label)
+    {
+        bool hasRefusalOrPartialResidue =
+            string.Equals(settlement.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Refused, StringComparison.Ordinal)
+            || string.Equals(settlement.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Partial, StringComparison.Ordinal);
+        bool isWatchResidue = string.Equals(settlement.LastInterventionCommandCode, PlayerCommandNames.FundLocalWatch, StringComparison.Ordinal);
+        bool isSuppressionResidue = string.Equals(settlement.LastInterventionCommandCode, PlayerCommandNames.SuppressBanditry, StringComparison.Ordinal);
+
+        string outcomeCode = PublicLifeOrderResponseOutcomeCodes.Ignored;
+        string traceCode = PublicLifeOrderResponseTraceCodes.OrderResponseIgnored;
+        string summary = $"{label}未接住前案，后账仍在原处。";
+        int repairSupport = Math.Clamp(command.ResponseRepairSupport, 0, 4);
+        int hardeningDrag = Math.Clamp(command.ResponseHardeningDrag, 0, 6);
+        bool hardeningBlocksFullRepair = hardeningDrag >= 5 && repairSupport < 2;
+
+        switch (command.CommandName)
+        {
+            case PlayerCommandNames.RepairLocalWatchGuarantee when hasRefusalOrPartialResidue && isWatchResidue:
+                settlement.RouteShielding = Clamp100(settlement.RouteShielding + 10 + repairSupport);
+                settlement.ImplementationDrag = Math.Max(0, settlement.ImplementationDrag - Math.Max(4, 12 + repairSupport - hardeningDrag));
+                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - Math.Max(2, 5 + repairSupport - (hardeningDrag / 2)));
+                settlement.DisorderPressure = Math.Max(0, settlement.DisorderPressure - Math.Max(1, 3 + (repairSupport / 2) - (hardeningDrag / 3)));
+                outcomeCode = hardeningBlocksFullRepair
+                    ? PublicLifeOrderResponseOutcomeCodes.Contained
+                    : PublicLifeOrderResponseOutcomeCodes.Repaired;
+                traceCode = hardeningBlocksFullRepair
+                    ? PublicLifeOrderResponseTraceCodes.OrderPressureContained
+                    : PublicLifeOrderResponseTraceCodes.OrderWatchGuaranteeRepaired;
+                summary = hardeningBlocksFullRepair
+                    ? "本户补出担保，但旧后账已经转硬，巡丁与脚户只肯先把明面反噬压住。"
+                    : "本户补出担保与口粮，巡丁后账被重新接住。";
+                break;
+            case PlayerCommandNames.CompensateRunnerMisread when hasRefusalOrPartialResidue && isWatchResidue:
+                settlement.RetaliationRisk = Math.Max(0, settlement.RetaliationRisk - Math.Max(3, 8 + repairSupport - hardeningDrag));
+                settlement.ImplementationDrag = Math.Max(0, settlement.ImplementationDrag - Math.Max(2, 6 + repairSupport - hardeningDrag));
+                settlement.RoutePressure = Math.Max(0, settlement.RoutePressure - Math.Max(1, 3 + repairSupport - (hardeningDrag / 2)));
+                outcomeCode = !hardeningBlocksFullRepair && string.Equals(settlement.LastInterventionPartialCode, OrderInterventionPartialCodes.WatchMisread, StringComparison.Ordinal)
+                    ? PublicLifeOrderResponseOutcomeCodes.Repaired
+                    : PublicLifeOrderResponseOutcomeCodes.Contained;
+                traceCode = PublicLifeOrderResponseTraceCodes.OrderRunnerMisreadRepaired;
+                summary = hardeningBlocksFullRepair
+                    ? "已赔脚户误读之失，但旧话已硬，只能先压住脚路传话与巡丁口角。"
+                    : "已赔脚户误读之失，脚路传话与巡丁口角先被压回。";
+                break;
+            case PlayerCommandNames.DeferHardPressure when hasRefusalOrPartialResidue && isSuppressionResidue:
+                settlement.CoercionRisk = Math.Max(0, settlement.CoercionRisk - Math.Max(3, 10 + repairSupport - hardeningDrag));
+                settlement.RetaliationRisk = Math.Max(0, settlement.RetaliationRisk - Math.Max(4, 14 + repairSupport - hardeningDrag));
+                settlement.SuppressionDemand = Math.Max(0, settlement.SuppressionDemand - Math.Max(1, 4 + repairSupport - (hardeningDrag / 2)));
+                settlement.BanditThreat = Clamp100(settlement.BanditThreat + 1 + (hardeningDrag >= 5 ? 1 : 0));
+                outcomeCode = PublicLifeOrderResponseOutcomeCodes.Contained;
+                traceCode = PublicLifeOrderResponseTraceCodes.OrderPressureContained;
+                summary = hardeningDrag >= 5
+                    ? "已暂缓强压，转硬后账使地面仍有回刺，只能先把明面反噬压住。"
+                    : "已暂缓强压，明面反噬先被压住，但路匪尾巴仍未收净。";
+                break;
+        }
+
+        summary = AppendResponseResidueSummary(summary, command);
+        ApplyRefusalResponseReceipt(settlement, command.CommandName, label, summary, outcomeCode, traceCode);
+
+        return new OrderPublicLifeCommandResult
+        {
+            Accepted = true,
+            SettlementId = command.SettlementId,
+            CommandName = command.CommandName,
+            Label = label,
+            Summary = summary,
+            OutcomeSummary = RenderResponseOutcomeSummary(outcomeCode),
+            OutcomeCode = outcomeCode,
+            TraceCode = traceCode,
+        };
+    }
+
+    private static void ApplyRefusalResponseReceipt(
+        SettlementDisorderState settlement,
+        string commandName,
+        string commandLabel,
+        string summary,
+        string outcomeCode,
+        string traceCode)
+    {
+        settlement.LastRefusalResponseCommandCode = commandName;
+        settlement.LastRefusalResponseCommandLabel = commandLabel;
+        settlement.LastRefusalResponseSummary = summary;
+        settlement.LastRefusalResponseOutcomeCode = outcomeCode;
+        settlement.LastRefusalResponseTraceCode = traceCode;
+        settlement.ResponseCarryoverMonths = 1;
+    }
+
+    private static string RenderResponseOutcomeSummary(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "后账已修复",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "后账暂压",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "后账恶化",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "后账放置",
+            _ => outcomeCode,
         };
     }
 
@@ -323,6 +445,16 @@ public sealed partial class OrderAndBanditryModule
         }
 
         return $"{text}{command.ReachSummaryTail}";
+    }
+
+    private static string AppendResponseResidueSummary(string text, OrderPublicLifeCommand command)
+    {
+        if (string.IsNullOrWhiteSpace(command.ResponseResidueSummaryTail))
+        {
+            return text;
+        }
+
+        return $"{text}{command.ResponseResidueSummaryTail}";
     }
 
     private static void ApplyOrderInterventionReceipt(

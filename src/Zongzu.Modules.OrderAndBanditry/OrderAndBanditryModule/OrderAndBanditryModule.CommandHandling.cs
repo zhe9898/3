@@ -11,6 +11,8 @@ public sealed partial class OrderAndBanditryModule
             State = scope.State,
             Command = scope.Command,
             OfficeQueries = scope.TryGetQuery<IOfficeAndCareerQueries>(),
+            FamilyQueries = scope.TryGetQuery<IFamilyCoreQueries>(),
+            SocialMemoryQueries = scope.TryGetQuery<ISocialMemoryAndRelationsQueries>(),
         });
     }
 }

@@ -33,6 +33,12 @@ public static class PlayerCommandNames
     public const string SuppressBanditry = "SuppressBanditry";
     public const string NegotiateWithOutlaws = "NegotiateWithOutlaws";
     public const string TolerateDisorder = "TolerateDisorder";
+    public const string RepairLocalWatchGuarantee = "RepairLocalWatchGuarantee";
+    public const string AskClanEldersExplain = "AskClanEldersExplain";
+    public const string PressCountyYamenDocument = "PressCountyYamenDocument";
+    public const string CompensateRunnerMisread = "CompensateRunnerMisread";
+    public const string DeferHardPressure = "DeferHardPressure";
+    public const string RedirectRoadReport = "RedirectRoadReport";
     public const string DraftCampaignPlan = WarfareCampaignCommandNames.DraftCampaignPlan;
     public const string CommitMobilization = WarfareCampaignCommandNames.CommitMobilization;
     public const string ProtectSupplyLine = WarfareCampaignCommandNames.ProtectSupplyLine;

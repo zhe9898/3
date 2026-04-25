@@ -22,6 +22,12 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
         PlayerCommandNames.TolerateDisorder,
 
+        PlayerCommandNames.RepairLocalWatchGuarantee,
+
+        PlayerCommandNames.CompensateRunnerMisread,
+
+        PlayerCommandNames.DeferHardPressure,
+
     ];
 
 
@@ -75,7 +81,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
     public override string ModuleKey => KnownModuleKeys.OrderAndBanditry;
 
 
-    public override int ModuleSchemaVersion => 8;
+    public override int ModuleSchemaVersion => 9;
 
 
     public override SimulationPhase Phase => SimulationPhase.UpwardMobilityAndEconomy;
@@ -908,6 +914,16 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
                 disorder.RefusalCarryoverMonths = 0;
 
             }
+
+            if (disorder.ResponseCarryoverMonths > 0)
+
+            {
+
+                disorder.ResponseCarryoverMonths = 0;
+
+            }
+
+            ApplyPublicLifeOrderActorCountermove(scope, disorder, localClans, socialQueries);
 
 
             if (previousBanditThreat == disorder.BanditThreat &&

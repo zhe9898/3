@@ -46,6 +46,18 @@ public sealed record SettlementDisorderSnapshot
     public int InterventionCarryoverMonths { get; init; }
 
     public int RefusalCarryoverMonths { get; init; }
+
+    public string LastRefusalResponseCommandCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; init; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; init; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; init; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; init; }
 }
 
 public sealed record OutlawBandSnapshot
