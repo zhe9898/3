@@ -1201,6 +1201,8 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("后账渐平"));
         Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
         Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("不是本户再修"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("余味冷却提示"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("继续降温"));
 
         PlayerCommandAffordanceSnapshot officeResidueAffordance = afterSocialResidueReadback.PlayerCommands.Affordances
             .First(affordance => affordance.CommandName == PlayerCommandNames.PetitionViaOfficeChannels
@@ -1209,8 +1211,11 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("后账转硬"));
         Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
         Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("不是本户再修"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("余味换招提示"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("别回压本户"));
         Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("社会余味读回"));
         Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("后账转硬"));
+        Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("余味换招提示"));
 
         PlayerCommandAffordanceSnapshot familyResidueAffordance = afterSocialResidueReadback.PlayerCommands.Affordances
             .First(affordance => affordance.CommandName == PlayerCommandNames.InviteClanEldersMediation
@@ -1218,6 +1223,7 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("社会余味读回"));
         Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
         Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("不是本户再修"));
+        Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("余味"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)

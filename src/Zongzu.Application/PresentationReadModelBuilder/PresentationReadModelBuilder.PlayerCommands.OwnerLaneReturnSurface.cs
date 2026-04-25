@@ -205,7 +205,9 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         string residueLabel = RenderOwnerLaneSocialResidueLabel(outcomeCode);
-        return $"社会余味读回：{residueLabel}，余重{residue.Weight}；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。";
+        return JoinOwnerLaneReturnSurfaceText(
+            $"社会余味读回：{residueLabel}，余重{residue.Weight}；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。",
+            BuildOwnerLaneSocialResidueFollowUpGuidance(outcomeCode));
     }
 
     private static bool TryReadOwnerLaneSocialResidueCause(
@@ -240,6 +242,22 @@ public sealed partial class PresentationReadModelBuilder
             PublicLifeOrderResponseOutcomeCodes.Escalated => "后账转硬",
             PublicLifeOrderResponseOutcomeCodes.Ignored => "后账放置发酸",
             _ => "后账余味未明",
+        };
+    }
+
+    private static string BuildOwnerLaneSocialResidueFollowUpGuidance(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired =>
+                "余味冷却提示：后账渐平，先停本户加压；下月只看本 owner lane 与社会记忆是否继续降温。",
+            PublicLifeOrderResponseOutcomeCodes.Contained =>
+                "余味续接提示：后账暂压留账，轻续仍走本 owner lane；本户这头不再代扛。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated =>
+                "余味换招提示：后账转硬，先换 owner-lane 办法或等更有力承接入口；别回压本户。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored =>
+                "余味换招提示：后账放置发酸，先换 owner lane 或等可承接入口；不要从本户硬补。",
+            _ => string.Empty,
         };
     }
 

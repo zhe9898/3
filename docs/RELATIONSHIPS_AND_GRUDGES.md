@@ -159,6 +159,12 @@ Current public-life/order v25 owner-lane social-residue readback note:
 - Projection may read structured `SocialMemoryEntrySnapshot.CauseKey`, `State`, `Weight`, and `OriginDate`; no reader may parse SocialMemory summary prose, owner-lane guidance prose, receipt prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`.
 - Same-month SocialMemory de-duplication preserves distinct owner-lane response residues by structured `CauseKey` as well as memory kind, so an Order repair and a Family explanation with the same outcome kind can both remain visible without adding a new memory namespace or schema.
 
+Current public-life/order v26 owner-lane social-residue follow-up guidance note:
+- `余味冷却提示`, `余味续接提示`, `余味换招提示`, `继续降温`, `别回压本户`, and `不要从本户硬补` are projected reading cues over existing SocialMemory residue, not new durable social memory state by themselves.
+- The wording helps the player read visible residue as cool down, light owner-lane continuation, owner-lane tactic switch, or waiting for a better entry. It does not make ordinary home-household response a universal follow-up lane and does not authorize Application, UI, Unity, Order, Office, Family, or Population code to write SocialMemory.
+- Projection may read structured `SocialMemoryEntrySnapshot.CauseKey`, `State`, `Weight`, `OriginDate`, and owner-lane outcome codes; no reader may parse SocialMemory summary prose, owner-lane guidance prose, receipt prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`.
+- v26 adds no new memory namespace, relationship table, ledger, schema bump, or migration.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

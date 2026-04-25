@@ -489,6 +489,13 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("后账放置发酸"));
         Assert.That(source, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
         Assert.That(source, Does.Contain("不是本户再修"));
+        Assert.That(source, Does.Contain("BuildOwnerLaneSocialResidueFollowUpGuidance"));
+        Assert.That(source, Does.Contain("余味冷却提示"));
+        Assert.That(source, Does.Contain("余味续接提示"));
+        Assert.That(source, Does.Contain("余味换招提示"));
+        Assert.That(source, Does.Contain("继续降温"));
+        Assert.That(source, Does.Contain("别回压本户"));
+        Assert.That(source, Does.Contain("不要从本户硬补"));
         Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Repaired"));
         Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Contained"));
         Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Escalated"));
