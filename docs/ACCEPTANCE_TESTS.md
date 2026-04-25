@@ -419,3 +419,13 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy projected owner-lane guidance fields and do not query modules, compute owner lanes, resolve outcomes, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
 - Save/schema acceptance: v20 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, no owner-lane ledger, no household target field, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.
+
+## Playable closure v21 owner-lane return surface readback acceptance - 2026-04-26
+- `public-life-order-owner-lane-return-surface-readback-v21` must prove the v20 owner-lane return guidance now appears on the lane-facing read surfaces that own the next action, without becoming a new command system or event pool.
+- Projection acceptance must prove Office/Governance surfaces expose `该走县门/文移 lane` and Family-facing surfaces expose `该走族老/担保 lane` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Coverage acceptance must keep Order lane visibility for 巡丁/路匪/route pressure while also proving at least one Office/Governance and one Family-facing owner-lane return surface.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time and same-month handling does not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`.
+- SocialMemory acceptance must prove the later reader does not parse Office/Governance or Family-facing owner-lane guidance, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters display projected Office/Governance and Family owner-lane guidance only and do not query modules, compute owner lanes, resolve outcomes, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
+- Save/schema acceptance: v21 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, no owner-lane ledger, no household target field, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.

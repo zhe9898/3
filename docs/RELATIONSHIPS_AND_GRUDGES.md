@@ -133,6 +133,11 @@ Current public-life/order v20 owner-lane return guidance note:
 - The guidance may explain that household local response has reached its limit and that Order, Office, or Family lanes still own the repair work. It does not authorize `SocialMemoryAndRelations` to handle commands.
 - `SocialMemoryAndRelations` still waits for its later monthly pass and reads only structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`; it must not parse owner-lane guidance prose, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
 
+Current public-life/order v21 owner-lane surface readback note:
+- Office/Governance and Family-facing copies of `外部后账归位` remain projected readback cues, not durable social memory state.
+- The copy may tell the player that county-yamen / document / clerk drag or clan elder / guarantee face still belongs to the corresponding lane, but it does not let `SocialMemoryAndRelations` resolve those commands.
+- `SocialMemoryAndRelations` still ignores `该走县门/文移 lane`, `该走族老/担保 lane`, `本户不能代修`, receipt prose, and `LastLocalResponseSummary`; durable shame/fear/favor/grudge/obligation residue still comes only from structured aftermath.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

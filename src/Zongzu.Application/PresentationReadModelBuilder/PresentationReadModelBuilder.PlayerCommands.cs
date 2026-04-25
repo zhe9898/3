@@ -24,6 +24,8 @@ public sealed partial class PresentationReadModelBuilder
                 ? snapshot
                 : null;
             int grievancePressure = narrative?.GrudgePressure ?? 0;
+            string familyOwnerLaneReturnGuidance = BuildFamilyOwnerLaneReturnSurfaceGuidance(
+                SelectRecentLocalResponseHouseholdForClan(bundle.Households, clan));
 
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.SupportSeniorBranch,
@@ -72,6 +74,8 @@ public sealed partial class PresentationReadModelBuilder
                     ? "争议已起，请族老最能先缓祠堂气口。"
                     : "当前祠堂争议未盛，暂不必惊动族老。",
                 clanId: clan.Id,
+                leverageSummary: familyOwnerLaneReturnGuidance,
+                readbackSummary: familyOwnerLaneReturnGuidance,
                 targetLabel: clan.ClanName));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.ArrangeMarriage,
@@ -120,6 +124,8 @@ public sealed partial class PresentationReadModelBuilder
         foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
         {
             bool canReviewPetitions = jurisdiction.PetitionBacklog > 0 || jurisdiction.PetitionPressure > 0;
+            string officeOwnerLaneReturnGuidance = BuildOfficeOwnerLaneReturnSurfaceGuidance(
+                SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, jurisdiction.SettlementId));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.PetitionViaOfficeChannels,
                 jurisdiction.SettlementId,
@@ -127,7 +133,9 @@ public sealed partial class PresentationReadModelBuilder
                 canReviewPetitions,
                 canReviewPetitions
                     ? $"积案{jurisdiction.PetitionBacklog}，可先批结一轮。"
-                    : "本处暂无待批词状。"));
+                    : "本处暂无待批词状。",
+                leverageSummary: officeOwnerLaneReturnGuidance,
+                readbackSummary: officeOwnerLaneReturnGuidance));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.DeployAdministrativeLeverage,
                 jurisdiction.SettlementId,
@@ -135,7 +143,9 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.JurisdictionLeverage >= 12,
                 jurisdiction.JurisdictionLeverage >= 12
                     ? $"乡面杠杆{jurisdiction.JurisdictionLeverage}，足可催动里甲与吏胥。"
-                    : "此地官箴未足，不宜强行发签。"));
+                    : "此地官箴未足，不宜强行发签。",
+                leverageSummary: officeOwnerLaneReturnGuidance,
+                readbackSummary: officeOwnerLaneReturnGuidance));
         }
 
         foreach (CampaignMobilizationSignalSnapshot signal in bundle.CampaignMobilizationSignals.OrderBy(static entry => entry.SettlementId.Value))
@@ -223,6 +233,11 @@ public sealed partial class PresentationReadModelBuilder
             ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[publicLife.SettlementId.Value].ToArray();
             IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
                 SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
+            HouseholdPressureSnapshot? ownerLaneReturnHousehold =
+                SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, publicLife.SettlementId);
+            string orderOwnerLaneReturnGuidance = BuildOrderOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold);
+            string officeOwnerLaneReturnGuidance = BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold);
+            string familyOwnerLaneReturnGuidance = BuildFamilyOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold);
 
             if (jurisdiction is not null)
             {
@@ -232,6 +247,7 @@ public sealed partial class PresentationReadModelBuilder
                     $"{publicLife.NodeLabel}街谈已热，可先借榜示压住众口。",
                     publicLife.StreetTalkHeat >= 40 || publicLife.PublicLegitimacy < 55,
                     $"榜示分量{publicLife.DocumentaryWeight}，由{jurisdiction.LeadOfficialName}主其晓谕。",
+                    readbackSummary: officeOwnerLaneReturnGuidance,
                     targetLabel: publicLife.NodeLabel);
 
                 yield return BuildPlayerCommandAffordanceSnapshot(
@@ -240,6 +256,7 @@ public sealed partial class PresentationReadModelBuilder
                     $"{publicLife.DominantVenueLabel}消息往来已有迟滞，可先遣吏催报。",
                     publicLife.RoadReportLag >= 36 || publicLife.CourierRisk >= 35,
                     $"递报险数{publicLife.CourierRisk}，查验周折{publicLife.VerificationCost}。",
+                    readbackSummary: officeOwnerLaneReturnGuidance,
                     targetLabel: publicLife.DominantVenueLabel);
             }
 
@@ -256,7 +273,8 @@ public sealed partial class PresentationReadModelBuilder
                     localTrades,
                     localRoutes,
                     localSocialMemories,
-                    administrativeReachSummary))
+                    administrativeReachSummary,
+                    orderOwnerLaneReturnGuidance))
                 {
                     yield return affordance;
                 }
@@ -266,7 +284,10 @@ public sealed partial class PresentationReadModelBuilder
                     disorder,
                     jurisdiction,
                     localClans,
-                    localSocialMemories))
+                    localSocialMemories,
+                    orderOwnerLaneReturnGuidance,
+                    officeOwnerLaneReturnGuidance,
+                    familyOwnerLaneReturnGuidance))
                 {
                     yield return affordance;
                 }
@@ -290,7 +311,7 @@ public sealed partial class PresentationReadModelBuilder
                     executionSummary: administrativeReachSummary,
                     leverageSummary: escortProjection.LeverageSummary,
                     costSummary: escortProjection.CostSummary,
-                    readbackSummary: escortProjection.ReadbackSummary,
+                    readbackSummary: JoinOwnerLaneReturnSurfaceText(escortProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
                     targetLabel: publicLife.DominantVenueLabel);
             }
 
@@ -304,6 +325,7 @@ public sealed partial class PresentationReadModelBuilder
                     publicLife.StreetTalkHeat >= 45 || publicLife.MarketRumorFlow >= 45,
                     $"街谈{publicLife.StreetTalkHeat}，市语流势{publicLife.MarketRumorFlow}。",
                     clanId: leadClan.Id,
+                    readbackSummary: familyOwnerLaneReturnGuidance,
                     targetLabel: leadClan.ClanName);
             }
         }
@@ -314,7 +336,10 @@ public sealed partial class PresentationReadModelBuilder
         SettlementDisorderSnapshot disorder,
         JurisdictionAuthoritySnapshot? jurisdiction,
         IReadOnlyList<ClanSnapshot> localClans,
-        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
+        string orderOwnerLaneReturnGuidance,
+        string officeOwnerLaneReturnGuidance,
+        string familyOwnerLaneReturnGuidance)
     {
         if (!HasPublicLifeOrderRefusalOrPartialResidue(disorder))
         {
@@ -342,7 +367,7 @@ public sealed partial class PresentationReadModelBuilder
                 executionSummary: "由本户补出担保、口粮与巡丁解释，仍交由OrderAndBanditry解析地面是否接住。",
                 leverageSummary: "只动路面担保、巡丁口粮与本户信誉；成败要看巡丁、脚户与路面口风。",
                 costSummary: "需再押钱粮、人手和公开担保，若前案误读未解，仍可能只压住一半。",
-                readbackSummary: responseReadback,
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, orderOwnerLaneReturnGuidance),
                 targetLabel: targetLabel);
 
             yield return BuildPlayerCommandAffordanceSnapshot(
@@ -354,7 +379,7 @@ public sealed partial class PresentationReadModelBuilder
                 executionSummary: "由本户拿现钱和解释去对脚户、巡丁说清前案，不替县门补文移。",
                 leverageSummary: "只触达脚户、巡丁与路面解释，不代替县门补落地。",
                 costSummary: "赔付会花现钱和人情，换来脚路传话先缓。",
-                readbackSummary: responseReadback,
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, orderOwnerLaneReturnGuidance, officeOwnerLaneReturnGuidance),
                 targetLabel: targetLabel);
         }
 
@@ -369,7 +394,7 @@ public sealed partial class PresentationReadModelBuilder
                 executionSummary: "暂收强压口径，让路面先降温；后续是否转硬仍由OrderAndBanditry和SocialMemory读回。",
                 leverageSummary: "只走治安与路面人手收束强压余波，不改官署或宗房账。",
                 costSummary: "明面反噬会缓，但路匪尾巴未必马上收净。",
-                readbackSummary: responseReadback,
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, orderOwnerLaneReturnGuidance),
                 targetLabel: publicLife.NodeLabel);
         }
 
@@ -387,7 +412,7 @@ public sealed partial class PresentationReadModelBuilder
                 executionSummary: $"眼下由{leadLabel}触达县门文移，成败要看文移、胥吏与官面余力。",
                 leverageSummary: "官署只处理催办、文移落地与胥吏拖延。",
                 costSummary: "若胥吏牵制太重，押文会变成新的积案与恶化后账。",
-                readbackSummary: responseReadback,
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, officeOwnerLaneReturnGuidance),
                 targetLabel: leadLabel);
 
             yield return BuildPlayerCommandAffordanceSnapshot(
@@ -399,7 +424,7 @@ public sealed partial class PresentationReadModelBuilder
                 executionSummary: $"递报仍归{leadLabel}经手；只是改走文移路径。",
                 leverageSummary: "官署处理递报路径，不能直接修复巡丁或宗房羞面。",
                 costSummary: "只能暂压后账，正路未补时仍留余波。",
-                readbackSummary: responseReadback,
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, officeOwnerLaneReturnGuidance),
                 targetLabel: leadLabel);
         }
 
@@ -415,7 +440,7 @@ public sealed partial class PresentationReadModelBuilder
                 executionSummary: "由FamilyCore处理族老出面、羞面缓解与担保欠账，不替治安或县门落命令。",
                 leverageSummary: "族老只处理公开解释与本户担保，不替治安或县门落命令。",
                 costSummary: "解释能缓羞面，也可能留下人情欠账。",
-                readbackSummary: responseReadback,
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, familyOwnerLaneReturnGuidance),
                 clanId: leadClan.Id,
                 targetLabel: leadClan.ClanName);
         }
@@ -452,7 +477,8 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<ClanTradeSnapshot> localTrades,
         IReadOnlyList<ClanTradeRouteSnapshot> localRoutes,
         IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
-        string administrativeReachSummary)
+        string administrativeReachSummary,
+        string orderOwnerLaneReturnGuidance)
     {
         CommandLeverageProjection watchProjection = BuildOrderPublicLifeLeverageProjection(
             PlayerCommandNames.FundLocalWatch,
@@ -473,7 +499,7 @@ public sealed partial class PresentationReadModelBuilder
             executionSummary: administrativeReachSummary,
             leverageSummary: watchProjection.LeverageSummary,
             costSummary: watchProjection.CostSummary,
-            readbackSummary: watchProjection.ReadbackSummary,
+            readbackSummary: JoinOwnerLaneReturnSurfaceText(watchProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
             targetLabel: publicLife.DominantVenueLabel);
 
         CommandLeverageProjection suppressionProjection = BuildOrderPublicLifeLeverageProjection(
@@ -495,7 +521,7 @@ public sealed partial class PresentationReadModelBuilder
             executionSummary: administrativeReachSummary,
             leverageSummary: suppressionProjection.LeverageSummary,
             costSummary: suppressionProjection.CostSummary,
-            readbackSummary: suppressionProjection.ReadbackSummary,
+            readbackSummary: JoinOwnerLaneReturnSurfaceText(suppressionProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
             targetLabel: publicLife.NodeLabel);
 
         CommandLeverageProjection negotiateProjection = BuildOrderPublicLifeLeverageProjection(
@@ -517,7 +543,7 @@ public sealed partial class PresentationReadModelBuilder
             executionSummary: administrativeReachSummary,
             leverageSummary: negotiateProjection.LeverageSummary,
             costSummary: negotiateProjection.CostSummary,
-            readbackSummary: negotiateProjection.ReadbackSummary,
+            readbackSummary: JoinOwnerLaneReturnSurfaceText(negotiateProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
             targetLabel: publicLife.DominantVenueLabel);
 
         CommandLeverageProjection tolerateProjection = BuildOrderPublicLifeLeverageProjection(
@@ -539,7 +565,7 @@ public sealed partial class PresentationReadModelBuilder
             executionSummary: administrativeReachSummary,
             leverageSummary: tolerateProjection.LeverageSummary,
             costSummary: tolerateProjection.CostSummary,
-            readbackSummary: tolerateProjection.ReadbackSummary,
+            readbackSummary: JoinOwnerLaneReturnSurfaceText(tolerateProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
             targetLabel: publicLife.NodeLabel);
     }
 }

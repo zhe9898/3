@@ -1066,6 +1066,30 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(receipt.ReadbackSummary, Does.Contain("该走族老/担保 lane"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("本户不能代修"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("本户递信不是官署递报"));
+        PlayerCommandAffordanceSnapshot orderLaneAffordance = afterResponse.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.FundLocalWatch
+                                 && affordance.SettlementId == settlementId);
+        Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("外部后账归位"));
+        Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("该走巡丁/路匪 lane"));
+        Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("本户不能代修"));
+
+        PlayerCommandAffordanceSnapshot officeLaneAffordance = afterResponse.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.PetitionViaOfficeChannels
+                                 && affordance.SettlementId == settlementId);
+        Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("外部后账归位"));
+        Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("该走县门/文移 lane"));
+        Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("本户不能代修"));
+        Assert.That(afterResponse.GovernanceDocket.GuidanceSummary, Does.Contain("外部后账归位"));
+        Assert.That(afterResponse.GovernanceDocket.GuidanceSummary, Does.Contain("该走县门/文移 lane"));
+        Assert.That(afterResponse.GovernanceDocket.GuidanceSummary, Does.Contain("本户不能代修"));
+
+        Assert.That(anchorHousehold.SponsorClanId.HasValue, Is.True);
+        PlayerCommandAffordanceSnapshot familyLaneAffordance = afterResponse.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.InviteClanEldersMediation
+                                 && affordance.ClanId == anchorHousehold.SponsorClanId);
+        Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("外部后账归位"));
+        Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("该走族老/担保 lane"));
+        Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("本户不能代修"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)

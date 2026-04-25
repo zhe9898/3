@@ -82,6 +82,65 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_ProjectsOwnerLaneReturnGuidanceInOfficeAndFamilySurfacesWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        const string officeGuidance = "外部后账归位：该走县门/文移 lane（OfficeAndCareer）：张户本户这头吃紧，县门未落地、文移拖延和胥吏续拖仍回官署案头；本户不能代修。";
+        const string familyGuidance = "外部后账归位：该走族老/担保 lane（FamilyCore）：张户本户这头吃紧，族老解释、本户担保和宗房脸面仍回族中公开说法；本户不能代修。";
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Office,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PetitionViaOfficeChannels,
+                    Label = "批阅词状",
+                    Summary = "先把县门词状分轻重批下去。",
+                    AvailabilitySummary = "县门积案未清，可先行发落。",
+                    LeverageSummary = officeGuidance,
+                    ReadbackSummary = officeGuidance,
+                    TargetLabel = "兰溪县门",
+                    IsEnabled = true,
+                },
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.FamilyCore,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
+                    SettlementId = new SettlementId(1),
+                    ClanId = new ClanId(1),
+                    CommandName = PlayerCommandNames.InviteClanEldersMediation,
+                    Label = "请族老调停",
+                    Summary = "请族老入祠堂缓争，先压担保后账。",
+                    AvailabilitySummary = "族老与房亲都在县城，可即刻议事。",
+                    LeverageSummary = familyGuidance,
+                    ReadbackSummary = familyGuidance,
+                    TargetLabel = "清河张氏",
+                    IsEnabled = true,
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+
+        CommandAffordanceViewModel office = shell.Office.CommandAffordances
+            .Single(command => command.CommandName == PlayerCommandNames.PetitionViaOfficeChannels);
+        Assert.That(office.LeverageSummary, Does.Contain("外部后账归位"));
+        Assert.That(office.LeverageSummary, Does.Contain("该走县门/文移 lane"));
+        Assert.That(office.LeverageSummary, Does.Contain("本户不能代修"));
+        Assert.That(office.ReadbackSummary, Is.EqualTo(officeGuidance));
+
+        CommandAffordanceViewModel family = shell.FamilyCouncil.CommandAffordances
+            .Single(command => command.CommandName == PlayerCommandNames.InviteClanEldersMediation);
+        Assert.That(family.LeverageSummary, Does.Contain("外部后账归位"));
+        Assert.That(family.LeverageSummary, Does.Contain("该走族老/担保 lane"));
+        Assert.That(family.LeverageSummary, Does.Contain("本户不能代修"));
+        Assert.That(family.ReadbackSummary, Is.EqualTo(familyGuidance));
+    }
+
+    [Test]
     public void Compose_ProjectsPublicLifeAffordancesAndReceiptsIntoSettlementNodes()
     {
         PresentationReadModelBundle bundle = CreateBundle();

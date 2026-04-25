@@ -419,6 +419,42 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Owner_lane_return_surface_readback_must_stay_projection_only()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.OwnerLaneReturnSurface.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(source, Does.Not.Contain("PopulationAndHouseholdsState"));
+        Assert.That(source, Does.Not.Contain("SocialMemoryAndRelationsState"));
+        Assert.That(source, Does.Not.Contain(".Memories.Add"));
+        Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+        Assert.That(source, Does.Not.Contain("CooldownLedger"));
+        Assert.That(source, Does.Not.Contain("HouseholdTarget"));
+        Assert.That(source, Does.Not.Contain("ModuleSchemaVersion"));
+        Assert.That(source, Does.Not.Contain("UpgradeFromSchema"));
+        Assert.That(source, Does.Not.Contain("Migration"));
+        Assert.That(source, Does.Contain("HouseholdPressureSnapshot"));
+        Assert.That(source, Does.Contain("LastLocalResponseCommandCode"));
+        Assert.That(source, Does.Contain("LastLocalResponseOutcomeCode"));
+        Assert.That(source, Does.Contain("LocalResponseCarryoverMonths"));
+        Assert.That(source, Does.Contain("外部后账归位"));
+        Assert.That(source, Does.Contain("该走巡丁/路匪 lane"));
+        Assert.That(source, Does.Contain("该走县门/文移 lane"));
+        Assert.That(source, Does.Contain("该走族老/担保 lane"));
+        Assert.That(source, Does.Contain("本户不能代修"));
+    }
+
+    [Test]
     public void Home_household_local_response_social_memory_reader_must_use_structured_population_aftermath_only()
     {
         string sourcePath = Path.Combine(

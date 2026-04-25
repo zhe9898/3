@@ -738,3 +738,11 @@ Current lite note:
 - `PopulationAndHouseholds` remains only the low-power home-household response owner for labor, debt, distress, migration, and local response trace. Ordinary household response is not a universal repair line.
 - UI and Unity may copy `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` projected fields only; they must not compute owner lanes or query modules.
 - v20 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, owner-lane ledger, household target field, or command-target shape change.
+
+## 2026-04-26 playable closure v21 owner-lane surface readback note
+- `public-life-order-owner-lane-return-surface-readback-v21` carries v20 owner-lane return guidance into lane-facing read surfaces.
+- Application projections may place `该走县门/文移 lane` on Office/Governance affordance and docket readback, and `该走族老/担保 lane` on Family-facing affordances, using only existing `HouseholdPressureSnapshot.LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, `LocalResponseCarryoverMonths`, settlement, and sponsor-clan fields.
+- Public-life Order affordances may echo `该走巡丁/路匪 lane` when a local household response already exists, but the actual route-watch / road-bandit / route-pressure repair remains `OrderAndBanditry` authority.
+- `PopulationAndHouseholds` still owns only the low-power household response trace. It does not become a repair owner for county order, yamen paperwork, clan elder explanation, or durable social-memory residue.
+- UI and Unity remain copy-only. They may display the projected owner-lane guidance in public-life, Office/Governance, and Family surfaces, but must not compute owner-lane validity, query modules, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
+- v21 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, owner-lane ledger, household target field, or command-target shape change.

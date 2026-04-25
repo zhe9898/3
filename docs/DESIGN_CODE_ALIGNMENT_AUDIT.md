@@ -1,5 +1,12 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v21 delta - 2026-04-26
+
+- Public-life/order closure now includes v21 owner-lane return surface readback: the v20 `外部后账归位` guidance is copied into Office/Governance and Family-facing surfaces from existing `HouseholdPressureSnapshot.LastLocalResponse*` structure.
+- v21 remains projection/readback guidance only. It adds no persisted state, no schema bump, no migration, no owner-lane ledger, no cooldown ledger, no household target field, and no `PersonRegistry` expansion.
+- `PopulationAndHouseholds` still owns only the low-power home-household response trace; ordinary household response is not a universal repair line. `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, and later `SocialMemoryAndRelations` keep their owner lanes.
+- Unity and shell adapters still copy DTO fields only; they do not compute owner-lane validity, query modules, resolve outcomes, or write SocialMemory.
+
 ## 当前对齐快照（2026-04-25）
 
 本文是当前文档/代码对齐页，不再内嵌早期历史审计全文。旧的 `codex/mvp-default-path-closeout @ 1164241` 基线已经被后续模块和测试进度覆盖；如需考古，用 git 历史追溯，比在当前规范里保留过期失败清单更清楚。
