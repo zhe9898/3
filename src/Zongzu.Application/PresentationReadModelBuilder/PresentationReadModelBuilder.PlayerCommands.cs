@@ -173,6 +173,7 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         affordances.AddRange(BuildPublicLifeAffordances(bundle));
+        affordances.AddRange(BuildHomeHouseholdLocalResponseAffordances(bundle));
         return AddOrdinaryHouseholdResponseChoiceSurface(affordances, bundle.HouseholdSocialPressures);
     }
 

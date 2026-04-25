@@ -39,6 +39,9 @@ public static class PlayerCommandNames
     public const string CompensateRunnerMisread = "CompensateRunnerMisread";
     public const string DeferHardPressure = "DeferHardPressure";
     public const string RedirectRoadReport = "RedirectRoadReport";
+    public const string RestrictNightTravel = "RestrictNightTravel";
+    public const string PoolRunnerCompensation = "PoolRunnerCompensation";
+    public const string SendHouseholdRoadMessage = "SendHouseholdRoadMessage";
     public const string DraftCampaignPlan = WarfareCampaignCommandNames.DraftCampaignPlan;
     public const string CommitMobilization = WarfareCampaignCommandNames.CommitMobilization;
     public const string ProtectSupplyLine = WarfareCampaignCommandNames.ProtectSupplyLine;

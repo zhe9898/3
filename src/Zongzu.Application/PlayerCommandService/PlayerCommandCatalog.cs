@@ -7,6 +7,7 @@ using Zongzu.Kernel;
 using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
+using Zongzu.Modules.PopulationAndHouseholds;
 using Zongzu.Modules.WarfareCampaign;
 
 namespace Zongzu.Application;
@@ -204,6 +205,25 @@ public static class PlayerCommandCatalog
             PlayerCommandSurfaceKeys.PublicLife,
             OrderAndBanditryCommandResolver.DeterminePublicLifeCommandLabel(PlayerCommandNames.DeferHardPressure),
             "\u5f53\u524d\u5b58\u6863\u672a\u542f\u7528\u5730\u65b9\u6cbb\u5b89\u4e0e\u62a4\u8def\u3002"),
+
+        new(
+            PlayerCommandNames.RestrictNightTravel,
+            KnownModuleKeys.PopulationAndHouseholds,
+            PlayerCommandSurfaceKeys.PublicLife,
+            PopulationAndHouseholdsCommandResolver.DetermineLocalResponseCommandLabel(PlayerCommandNames.RestrictNightTravel),
+            "\u5f53\u524d\u5b58\u6863\u672a\u542f\u7528\u672c\u6237\u751f\u8ba1\u4e0e\u5bb6\u6237\u538b\u529b\u3002"),
+        new(
+            PlayerCommandNames.PoolRunnerCompensation,
+            KnownModuleKeys.PopulationAndHouseholds,
+            PlayerCommandSurfaceKeys.PublicLife,
+            PopulationAndHouseholdsCommandResolver.DetermineLocalResponseCommandLabel(PlayerCommandNames.PoolRunnerCompensation),
+            "\u5f53\u524d\u5b58\u6863\u672a\u542f\u7528\u672c\u6237\u751f\u8ba1\u4e0e\u5bb6\u6237\u538b\u529b\u3002"),
+        new(
+            PlayerCommandNames.SendHouseholdRoadMessage,
+            KnownModuleKeys.PopulationAndHouseholds,
+            PlayerCommandSurfaceKeys.PublicLife,
+            PopulationAndHouseholdsCommandResolver.DetermineLocalResponseCommandLabel(PlayerCommandNames.SendHouseholdRoadMessage),
+            "\u5f53\u524d\u5b58\u6863\u672a\u542f\u7528\u672c\u6237\u751f\u8ba1\u4e0e\u5bb6\u6237\u538b\u529b\u3002"),
 
         new(
             PlayerCommandNames.DraftCampaignPlan,

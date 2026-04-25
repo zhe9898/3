@@ -125,6 +125,28 @@ public sealed record MigrationPoolEntrySnapshot
     public int FloatingPopulation { get; init; }
 }
 
+public static class HouseholdLocalResponseOutcomeCodes
+{
+    public const string Relieved = "Relieved";
+
+    public const string Contained = "Contained";
+
+    public const string Strained = "Strained";
+
+    public const string Ignored = "Ignored";
+}
+
+public static class HouseholdLocalResponseTraceCodes
+{
+    public const string NightTravelRestricted = "NightTravelRestricted";
+
+    public const string RunnerMisreadSettledLocally = "RunnerMisreadSettledLocally";
+
+    public const string HouseholdRoadMessageSent = "HouseholdRoadMessageSent";
+
+    public const string HouseholdUnavailable = "HouseholdUnavailable";
+}
+
 /// <summary>
 /// Canonical event name constants emitted by <c>PopulationAndHouseholds</c>.
 /// Mirrors <c>DeathCauseEventNames.DeathByIllness</c> by value so the

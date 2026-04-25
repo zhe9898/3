@@ -647,7 +647,7 @@ public sealed partial class PresentationReadModelBuilder
             ReachKey = InfluenceReachKeys.OwnHousehold,
             Label = "本户",
             IsActive = anchorHousehold is not null,
-            HasCommandAffordance = false,
+            HasCommandAffordance = anchorHousehold is not null,
             IsPlayerAnchor = anchorHousehold is not null,
             HasLocalAgency = anchorHousehold is not null,
             ReachScore = anchorHousehold?.PressureScore ?? 0,
@@ -658,7 +658,9 @@ public sealed partial class PresentationReadModelBuilder
                 ? string.Empty
                 : $"本户眼下漂向「{anchorHousehold.PrimaryDriftLabel}」，压力{anchorHousehold.PressureScore}；能动性先限于自家劳力、储粮、债务、亲事和求助选择。",
             ConstraintSummary = "本户不是天下按钮；成年人仍会按债、亲缘、劳力和风险重新解释命令。",
-            CommandSummary = "本户有本地能动性；正式 command surface 未展开时，不可把它外推成操控全县家户。",
+            CommandSummary = anchorHousehold is null
+                ? "本户尚未锚定，不能外推出操控全县家户的按钮。"
+                : "本户已有低权能回应面：可暂缩夜行、凑钱赔脚户或遣少丁递信，只改自家劳力、债压、民困和迁徙险。",
             SourceModuleKeys = anchorHousehold?.SourceModuleKeys ?? [KnownModuleKeys.PopulationAndHouseholds],
         };
     }

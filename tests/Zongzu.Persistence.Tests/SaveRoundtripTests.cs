@@ -6,6 +6,7 @@ using Zongzu.Modules.ConflictAndForce;
 using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
+using Zongzu.Modules.PopulationAndHouseholds;
 using Zongzu.Modules.SocialMemoryAndRelations;
 using Zongzu.Modules.TradeAndIndustry;
 using Zongzu.Modules.WarfareCampaign;
@@ -288,6 +289,54 @@ public sealed class SaveRoundtripTests
         Assert.That(reloadedSettlement.LastRefusalResponseOutcomeCode, Is.EqualTo(PublicLifeOrderResponseOutcomeCodes.Repaired));
         Assert.That(reloadedSettlement.LastRefusalResponseTraceCode, Is.EqualTo(PublicLifeOrderResponseTraceCodes.OrderWatchGuaranteeRepaired));
         Assert.That(reloadedSettlement.ResponseCarryoverMonths, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void SaveCodec_RoundtripPreservesHomeHouseholdLocalResponseTrace()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260502);
+        simulation.AdvanceMonths(2);
+        PopulationAndHouseholdsState populationState = simulation.GetModuleStateForTesting<PopulationAndHouseholdsState>(
+            KnownModuleKeys.PopulationAndHouseholds);
+        PopulationHouseholdState household = populationState.Households
+            .OrderByDescending(static entry => entry.SponsorClanId.HasValue)
+            .ThenBy(static entry => entry.SettlementId.Value)
+            .ThenBy(static entry => entry.Id.Value)
+            .First();
+
+        PlayerCommandResult commandResult = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = household.SettlementId,
+                ClanId = household.SponsorClanId,
+                CommandName = PlayerCommandNames.RestrictNightTravel,
+            });
+        Assert.That(commandResult.Accepted, Is.True);
+
+        SaveCodec codec = new();
+        GameSimulation reloaded = SimulationBootstrapper.LoadM2(codec.Decode(codec.Encode(simulation.ExportSave())));
+        MessagePackModuleStateSerializer serializer = new();
+        PopulationAndHouseholdsState reloadedPopulationState = (PopulationAndHouseholdsState)serializer.Deserialize(
+            typeof(PopulationAndHouseholdsState),
+            reloaded.ExportSave().ModuleStates[KnownModuleKeys.PopulationAndHouseholds].Payload);
+        PopulationHouseholdState reloadedHousehold = reloadedPopulationState.Households.Single(entry => entry.Id == household.Id);
+
+        Assert.That(reloaded.ExportSave().ModuleStates[KnownModuleKeys.PopulationAndHouseholds].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(reloadedHousehold.LastLocalResponseCommandCode, Is.EqualTo(PlayerCommandNames.RestrictNightTravel));
+        Assert.That(reloadedHousehold.LastLocalResponseCommandLabel, Is.EqualTo("暂缩夜行"));
+        Assert.That(reloadedHousehold.LastLocalResponseOutcomeCode, Is.Not.Empty);
+        Assert.That(reloadedHousehold.LastLocalResponseTraceCode, Is.EqualTo(HouseholdLocalResponseTraceCodes.NightTravelRestricted));
+        Assert.That(reloadedHousehold.LastLocalResponseSummary, Does.Contain(household.HouseholdName));
+        Assert.That(reloadedHousehold.LocalResponseCarryoverMonths, Is.EqualTo(1));
+
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(reloaded);
+        Assert.That(
+            bundle.PlayerCommands.Receipts.Any(receipt =>
+                receipt.CommandName == PlayerCommandNames.RestrictNightTravel
+                && receipt.TargetLabel == household.HouseholdName
+                && receipt.ModuleKey == KnownModuleKeys.PopulationAndHouseholds),
+            Is.True);
     }
 
     [Test]

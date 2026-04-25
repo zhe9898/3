@@ -120,6 +120,7 @@ public sealed class CommandSeamIntegrationTests
             KnownModuleKeys.FamilyCore,
             KnownModuleKeys.OfficeAndCareer,
             KnownModuleKeys.OrderAndBanditry,
+            KnownModuleKeys.PopulationAndHouseholds,
             KnownModuleKeys.WarfareCampaign,
         ];
         IReadOnlyList<string> duplicateCatalogCommands = PlayerCommandCatalog.All

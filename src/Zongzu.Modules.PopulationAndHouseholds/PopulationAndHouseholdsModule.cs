@@ -6,8 +6,15 @@ using Zongzu.Kernel;
 
 namespace Zongzu.Modules.PopulationAndHouseholds;
 
-public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHouseholdsState>
+public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHouseholdsState>
 {
+    private static readonly string[] CommandNames =
+    [
+        PlayerCommandNames.RestrictNightTravel,
+        PlayerCommandNames.PoolRunnerCompensation,
+        PlayerCommandNames.SendHouseholdRoadMessage,
+    ];
+
     private static readonly string[] EventNames =
     [
         PopulationEventNames.HouseholdDebtSpiked,
@@ -47,13 +54,15 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
 
     public override string ModuleKey => KnownModuleKeys.PopulationAndHouseholds;
 
-    public override int ModuleSchemaVersion => 2;
+    public override int ModuleSchemaVersion => 3;
 
     public override SimulationPhase Phase => SimulationPhase.PopulationPressure;
 
     public override int ExecutionOrder => 200;
 
     public override IReadOnlyCollection<SimulationCadenceBand> CadenceBands => SimulationCadencePresets.XunAndMonth;
+
+    public override IReadOnlyCollection<string> AcceptedCommands => CommandNames;
 
     public override IReadOnlyCollection<string> PublishedEvents => EventNames;
 
@@ -133,6 +142,11 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
             if (oldDebtPressure < 85 && household.DebtPressure >= 85 && household.Distress >= 80)
             {
                 scope.Emit(PopulationEventNames.LivelihoodCollapsed, $"{household.HouseholdName}生计顿敝。");
+            }
+
+            if (household.LocalResponseCarryoverMonths > 0)
+            {
+                household.LocalResponseCarryoverMonths--;
             }
         }
 
@@ -1468,6 +1482,12 @@ public sealed class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHo
                 ShelterQuality = household.ShelterQuality,
                 DependentCount = household.DependentCount,
                 LaborerCount = household.LaborerCount,
+                LastLocalResponseCommandCode = household.LastLocalResponseCommandCode,
+                LastLocalResponseCommandLabel = household.LastLocalResponseCommandLabel,
+                LastLocalResponseOutcomeCode = household.LastLocalResponseOutcomeCode,
+                LastLocalResponseTraceCode = household.LastLocalResponseTraceCode,
+                LastLocalResponseSummary = household.LastLocalResponseSummary,
+                LocalResponseCarryoverMonths = household.LocalResponseCarryoverMonths,
             };
         }
 

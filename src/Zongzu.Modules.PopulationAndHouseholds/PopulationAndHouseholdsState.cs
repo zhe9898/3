@@ -54,6 +54,18 @@ public sealed class PopulationHouseholdState
     public int DependentCount { get; set; }
 
     public int LaborerCount { get; set; }
+
+    public string LastLocalResponseCommandCode { get; set; } = string.Empty;
+
+    public string LastLocalResponseCommandLabel { get; set; } = string.Empty;
+
+    public string LastLocalResponseOutcomeCode { get; set; } = string.Empty;
+
+    public string LastLocalResponseTraceCode { get; set; } = string.Empty;
+
+    public string LastLocalResponseSummary { get; set; } = string.Empty;
+
+    public int LocalResponseCarryoverMonths { get; set; }
 }
 
 public sealed class PopulationSettlementState

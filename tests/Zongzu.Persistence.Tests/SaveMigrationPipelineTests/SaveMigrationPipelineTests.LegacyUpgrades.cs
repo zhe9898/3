@@ -8,6 +8,7 @@ using Zongzu.Modules.ConflictAndForce;
 using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
+using Zongzu.Modules.PopulationAndHouseholds;
 using Zongzu.Modules.PublicLifeAndRumor;
 using Zongzu.Modules.SocialMemoryAndRelations;
 using Zongzu.Modules.TradeAndIndustry;
@@ -322,6 +323,59 @@ public sealed partial class SaveMigrationPipelineTests
         Assert.That(migratedState.ClanNarratives, Has.Count.EqualTo(currentState.ClanNarratives.Count));
         Assert.That(migratedState.ClanEmotionalClimates, Has.Count.EqualTo(currentState.ClanNarratives.Count));
         Assert.That(migratedState.ClanEmotionalClimates.All(static climate => climate.LastTrace.Contains("schema2 narrative", StringComparison.Ordinal)), Is.True);
+    }
+
+    [Test]
+    public void LoadM2_DefaultMigrationPipeline_UpgradesLegacyPopulationAndHouseholdsSchemaV2()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateM2Bootstrap(20260609);
+        simulation.AdvanceMonths(1);
+
+        SaveRoot saveRoot = simulation.ExportSave();
+        MessagePackModuleStateSerializer serializer = new();
+        PopulationAndHouseholdsState currentState = (PopulationAndHouseholdsState)serializer.Deserialize(
+            typeof(PopulationAndHouseholdsState),
+            saveRoot.ModuleStates[KnownModuleKeys.PopulationAndHouseholds].Payload);
+
+        foreach (PopulationHouseholdState household in currentState.Households)
+        {
+            household.LastLocalResponseCommandCode = null!;
+            household.LastLocalResponseCommandLabel = null!;
+            household.LastLocalResponseOutcomeCode = null!;
+            household.LastLocalResponseTraceCode = null!;
+            household.LastLocalResponseSummary = null!;
+            household.LocalResponseCarryoverMonths = 9;
+        }
+
+        saveRoot.ModuleStates[KnownModuleKeys.PopulationAndHouseholds] = new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PopulationAndHouseholds,
+            ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(PopulationAndHouseholdsState), currentState),
+        };
+
+        GameSimulation reloaded = SimulationBootstrapper.LoadM2(saveRoot);
+        SaveRoot reloadedSave = reloaded.ExportSave();
+        PopulationAndHouseholdsState migratedState = (PopulationAndHouseholdsState)serializer.Deserialize(
+            typeof(PopulationAndHouseholdsState),
+            reloadedSave.ModuleStates[KnownModuleKeys.PopulationAndHouseholds].Payload);
+
+        Assert.That(reloaded.LoadMigrationReport, Is.Not.Null);
+        Assert.That(reloaded.LoadMigrationReport!.ConsistencyPassed, Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.PopulationAndHouseholds
+                && step.SourceVersion == 2
+                && step.TargetVersion == 3),
+            Is.True);
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.PopulationAndHouseholds].ModuleSchemaVersion, Is.EqualTo(3));
+        Assert.That(migratedState.Households, Has.Count.EqualTo(currentState.Households.Count));
+        Assert.That(migratedState.Households.All(static household => household.LastLocalResponseCommandCode is not null), Is.True);
+        Assert.That(migratedState.Households.All(static household => household.LastLocalResponseCommandLabel is not null), Is.True);
+        Assert.That(migratedState.Households.All(static household => household.LastLocalResponseOutcomeCode is not null), Is.True);
+        Assert.That(migratedState.Households.All(static household => household.LastLocalResponseTraceCode is not null), Is.True);
+        Assert.That(migratedState.Households.All(static household => household.LastLocalResponseSummary is not null), Is.True);
+        Assert.That(migratedState.Households.All(static household => household.LocalResponseCarryoverMonths is >= 0 and <= 1), Is.True);
     }
 
     [Test]

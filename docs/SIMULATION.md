@@ -248,12 +248,14 @@ Current public-life/order v8 note:
 - `OrderAndBanditry` and `OfficeAndCareer` currently run after `SocialMemoryAndRelations`, so their actor countermove traces are read by SocialMemory on the following monthly pass. `FamilyCore` runs before `SocialMemoryAndRelations`, so family actor traces are owner-state facts first and may be read in the same scheduler pass when response carryover remains visible; SocialMemory duplicate-cause guards keep this deterministic without UI timers.
 - v8 adds no scheduler phase, no manager/controller layer, no persisted fields, and no migration. Application, UI, and Unity may only display projected readback.
 
-Current public-life/order v9/v10/v11 note:
+Current public-life/order v9/v10/v11/v12 note:
 - v9 hardens the same response afterlife by proving soft and hard actor-countermove readbacks plus minimum playable response affordances; it still adds no scheduler phase, manager/controller, or persisted fields.
 - v10 adds ordinary-household visibility as a projection/readback layer: Month N refused / partial residue can become a Month N+1 household social-pressure signal showing night-road fear, runner/watch misunderstanding, labor/debt/migration strain, and yamen delay.
 - ordinary-household v10 readback does not make `PopulationAndHouseholds` resolve public-life order commands and does not mutate household state during projection. The response commands still resolve in `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`, while SocialMemory residue remains owned by `SocialMemoryAndRelations`.
 - v11 turns that same projected ordinary-household pressure into costed response choice and receipt text on the existing public-life response affordances. The projection may name the affected household, show the tradeoff, and say which owner module will resolve the response, but it does not add a household command target or compute whether the response works.
 - v10/v11 add runtime read-model constants / projection enrichment only and no save/schema migration.
+- v12 adds the first home-household local response commands after that projection: `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`. They resolve through `PopulationAndHouseholds` at command time, mutate only household labor/debt/distress/migration plus local response trace fields, and still do not repair Order / Office / Family / SocialMemory aftermath.
+- v12 same-month handling does not mutate `SocialMemoryAndRelations`; any durable shame/fear/favor/grudge/obligation residue remains SocialMemory-owned. Save impact is `PopulationAndHouseholds` schema `2 -> 3` with a local migration.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window

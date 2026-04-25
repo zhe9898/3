@@ -350,6 +350,56 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Home_household_local_response_commands_must_stay_population_owned()
+    {
+        string[] sourcePaths =
+        [
+            Path.Combine(SrcDir, "Zongzu.Modules.PopulationAndHouseholds", "PopulationAndHouseholdsCommandResolver.cs"),
+            Path.Combine(SrcDir, "Zongzu.Modules.PopulationAndHouseholds", "PopulationAndHouseholdsModule.Commands.cs"),
+        ];
+        string source = string.Join(Environment.NewLine, sourcePaths.Select(File.ReadAllText));
+
+        Assert.That(source, Does.Not.Contain("OrderAndBanditryState"));
+        Assert.That(source, Does.Not.Contain("OfficeAndCareerState"));
+        Assert.That(source, Does.Not.Contain("FamilyCoreState"));
+        Assert.That(source, Does.Not.Contain("SocialMemoryAndRelationsState"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(source, Does.Contain("KnownModuleKeys.PopulationAndHouseholds"));
+        Assert.That(source, Does.Contain("LastLocalResponseCommandCode"));
+        Assert.That(source, Does.Contain("LastLocalResponseOutcomeCode"));
+        Assert.That(source, Does.Contain("LastLocalResponseTraceCode"));
+        Assert.That(source, Does.Contain("LocalResponseCarryoverMonths"));
+    }
+
+    [Test]
+    public void Home_household_local_response_projection_must_copy_projected_fields_only()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.HomeHouseholdLocalResponse.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(source, Does.Not.Contain("PopulationAndHouseholdsState"));
+        Assert.That(source, Does.Not.Contain(".Memories.Add"));
+        Assert.That(source, Does.Contain("HouseholdPressureSnapshot"));
+        Assert.That(source, Does.Contain("LastLocalResponseCommandCode"));
+        Assert.That(source, Does.Contain("PlayerCommandAffordanceSnapshot"));
+        Assert.That(source, Does.Contain("PlayerCommandReceiptSnapshot"));
+    }
+
+    [Test]
     public void Public_life_response_friction_readers_must_not_parse_social_memory_summary()
     {
         string[] sourcePaths =

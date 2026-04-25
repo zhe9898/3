@@ -9,6 +9,7 @@ namespace Zongzu.Modules.PopulationAndHouseholds;
 /// v1 → v2: add LivelihoodType + land/grain/tool/shelter/dependent/laborer
 /// household fields; initialise Memberships / LaborPools / MarriagePools /
 /// MigrationPools. See <c>LIVING_WORLD_DESIGN.md §2.3</c>.
+/// v2 → v3: add structured home-household local response trace fields.
 /// </summary>
 public static class PopulationAndHouseholdsStateProjection
 {
@@ -57,6 +58,21 @@ public static class PopulationAndHouseholdsStateProjection
             {
                 membership.HealthResilience = 50;
             }
+        }
+    }
+
+    public static void UpgradeFromSchemaV2ToV3(PopulationAndHouseholdsState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        foreach (PopulationHouseholdState household in state.Households)
+        {
+            household.LastLocalResponseCommandCode ??= string.Empty;
+            household.LastLocalResponseCommandLabel ??= string.Empty;
+            household.LastLocalResponseOutcomeCode ??= string.Empty;
+            household.LastLocalResponseTraceCode ??= string.Empty;
+            household.LastLocalResponseSummary ??= string.Empty;
+            household.LocalResponseCarryoverMonths = Math.Clamp(household.LocalResponseCarryoverMonths, 0, 1);
         }
     }
 }

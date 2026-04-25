@@ -396,6 +396,7 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         receipts.AddRange(BuildPublicLifeReceipts(bundle));
+        receipts.AddRange(BuildHomeHouseholdLocalResponseReceipts(bundle));
         IReadOnlyList<PlayerCommandReceiptSnapshot> ordinaryHouseholdResponseReceipts =
             AddOrdinaryHouseholdResponseReceiptSurface(receipts, bundle.HouseholdSocialPressures);
         return ordinaryHouseholdResponseReceipts

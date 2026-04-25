@@ -87,6 +87,7 @@ Every release line must pass:
   - `PublicLifeAndRumor` day-facing short-band passes may distinguish hot and calm yamen surfaces through office task-load / clerk-dependence queries without emitting short-band diffs/events or writing office state
   - legacy `PublicLifeAndRumor` schema `1 -> 2 -> 3 -> 4` saves migrate through the default loaders and backfill cadence, venue-channel, plus channel-contention descriptors conservatively enough to keep current M2+ paths loadable
 - legacy `OrderAndBanditry` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9` saves migrate through the default loaders and backfill black-route pressure, paper reach, shielding / retaliation, empty intervention-receipt fields, clamped one-month intervention-follow-through state, structured public-life order outcome/refusal/partial trace fields, and public-life refusal response trace fields conservatively enough to keep current M3+ paths loadable
+- legacy `PopulationAndHouseholds` schema `2 -> 3` saves migrate through the default loaders and backfill home-household local response trace fields conservatively enough to keep current M2+ paths loadable
 - legacy `WorldSettlements` schema `1` saves migrate through schema `7` through the default loaders, backfilling settlement tiers and the chain-6 flood-disaster declaration watermark conservatively enough to continue load on current M2+ paths
 - legacy `SocialMemoryAndRelations` schema `2` saves migrate to schema `3`, backfilling clan emotional climates from existing narratives and keeping `GameDate` fields valid for save/load roundtrip
 
@@ -329,3 +330,14 @@ At integration level, verify:
 - Unity acceptance must prove Desk Sandbox public-life command affordances and receipts copy projected ordinary-household response text only.
 - Architecture acceptance must guard against summary parsing, UI/Application outcome computation, forbidden manager/god-controller names, `PersonRegistry` expansion, and household-control drift.
 - Save/schema acceptance: v11 is runtime projection enrichment only and introduces no persisted fields, command request shape change, schema bump, migration, or save roundtrip requirement.
+
+## Playable closure v12 home-household local response acceptance - 2026-04-25
+- `public-life-order-home-household-local-response-v12` must prove ordinary-household pressure now has a first low-power home-household command loop, while staying rule-driven and avoiding event-pool / event-centered authority.
+- Read-model acceptance must prove v5 refusal / partial residue plus v10/v11 household pressure projects Month N+1 affordances for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from projected read models only.
+- Command acceptance must prove issuing a local response mutates only `PopulationAndHouseholds` household labor, debt, distress, migration, and `LastLocalResponse*` / `LocalResponseCarryoverMonths` fields at command time.
+- Same-month acceptance must prove the local response does not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`; those modules still own their own public-order, yamen, family, and durable social-memory accounts.
+- Outcome acceptance must cover at least two household local response paths among `Relieved`, `Contained`, `Strained`, and `Ignored`, including a successful relief/containment path and an eating-cost/strained path.
+- Projection acceptance must prove public-life / family-facing / household readback exposes the local response result and household cost (`本户已缓`, `本户暂压`, `本户吃紧`, or `本户放置`) without implying county order or social memory was repaired by the household.
+- Unity acceptance must prove shell adapters display projected home-household affordances and receipts only, never query `PopulationAndHouseholds`, select hidden household targets, or compute response outcome.
+- Save/schema acceptance must prove `PopulationAndHouseholds` schema `2 -> 3` migration plus save/load preservation of local response trace fields. `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` schema versions do not change in v12.
+- Architecture acceptance must guard boundary drift, summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, UI/Application outcome computation, and Application/UI/Unity writes to SocialMemory.

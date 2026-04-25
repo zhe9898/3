@@ -226,7 +226,29 @@ public sealed record PopulationState {
     Dictionary<PersonId, PopulationPersonState> People;
     Dictionary<SettlementId, PopulationSettlementState> Settlements;
 }
+
+public sealed class PopulationHouseholdState {
+    HouseholdId Id;
+    SettlementId SettlementId;
+    ClanId? SponsorClanId;
+    string HouseholdName;
+    int LaborCapacity;
+    int DebtPressure;
+    int Distress;
+    int MigrationRisk;
+    string LastLocalResponseCommandCode;
+    string LastLocalResponseCommandLabel;
+    string LastLocalResponseOutcomeCode;
+    string LastLocalResponseTraceCode;
+    string LastLocalResponseSummary;
+    int LocalResponseCarryoverMonths;
+}
 ```
+
+Current note:
+- `PopulationAndHouseholds` schema `3` owns home-household local response traces for public-life/order after-accounts. These fields record bounded household-seat responses such as `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`.
+- `LastLocalResponse*` and `LocalResponseCarryoverMonths` mutate only inside the population namespace and describe household labor, debt, distress, and migration-risk aftermath. They do not repair `OrderAndBanditry` refusal authority, county-yamen/document landing, family explanation, or SocialMemory residue.
+- Migration `2 -> 3` initializes local-response strings to empty values and clamps `LocalResponseCarryoverMonths` to `0..1`.
 
 ### SocialMemoryAndRelations state
 Owns:
@@ -945,9 +967,10 @@ Current note:
 - the read-model bundle now also carries `Households`, `HouseholdSocialPressures`, and `InfluenceFootprint` as runtime-only joins across household, lineage, market, education, yamen, public-life, order, and force projections; these fields are not saved and do not create a player route system
 - `HouseholdSocialPressures` may include runtime-only v10 keys such as `HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue` and `HouseholdSocialDriftKeys.PublicOrderAftermath` to show ordinary-household public-life/order after-account readback. These keys are read-model constants, not persisted module state, and they do not require a schema bump or migration.
 - v11 may use that projected household pressure to enrich `PlayerCommandAffordanceSnapshot` and `PlayerCommandReceiptSnapshot` leverage / cost / execution / readback strings for public-life refusal responses. This remains runtime presentation data; it does not add `HouseholdId` to `PlayerCommandRequest`, does not add module state, and does not require a schema bump or migration.
+- v12 adds persisted `PopulationAndHouseholds` local response traces for home-household commands. The projected affordances / receipts still come from read models, and `PlayerCommandRequest` still stays settlement / optional clan scoped; the persisted authority change is limited to population-owned household pressure and local response trace fields.
 - `InfluenceFootprint` distinguishes the player's anchor household (`OwnHousehold`, local agency) from observed household pressure (`ObservedHouseholds`, indirect influence only)
 - `PlayerCommands` now spans family, office, order, and warfare affordances/receipts as read-only presentation data only
-- public-life order command affordances/receipts may include runtime-only `LeverageSummary`, `CostSummary`, and `ReadbackSummary` strings; v5 readback may include structured `县门未落地`, `地方拖延`, and `后账仍在` text plus SocialMemory refusal residue, v6/v7 readback may include repaired / contained / escalated / ignored response residue and later `后账渐平` / `后账转硬` SocialMemory summaries, v8 readback may include owner-module actor countermove labels such as `巡丁自补保`, `胥吏续拖`, `县门自补落地`, `族老自解释`, or `族老避羞`, and governance docket may copy the projected receipt/gateway text for next-month readback, but none of these fields are saved or authoritative
+- public-life order command affordances/receipts may include runtime-only `LeverageSummary`, `CostSummary`, and `ReadbackSummary` strings; v5 readback may include structured `县门未落地`, `地方拖延`, and `后账仍在` text plus SocialMemory refusal residue, v6/v7 readback may include repaired / contained / escalated / ignored response residue and later `后账渐平` / `后账转硬` SocialMemory summaries, v8 readback may include owner-module actor countermove labels such as `巡丁自补保`, `胥吏续拖`, `县门自补落地`, `族老自解释`, or `族老避羞`, and governance docket may copy the projected receipt/gateway text for next-month readback. v12 home-household local response receipts may also show `本户已缓`, `本户暂压`, `本户吃紧`, or `本户放置`; only the v12 `PopulationAndHouseholds` local response trace fields are saved, while projection strings remain non-authoritative.
 - family command targeting is expressed through optional `ClanId` plus `TargetLabel`; it does not create a new save namespace
 
 Diagnostics harness note:

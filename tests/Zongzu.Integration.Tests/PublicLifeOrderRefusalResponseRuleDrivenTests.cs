@@ -394,10 +394,152 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(responseReceipt.ReadbackSummary, Does.Contain(ordinaryHousehold.HouseholdName));
     }
 
+    [Test]
+    public void PartialWatchResidue_ProjectsHomeHouseholdLocalResponse_AndCommandMutatesOnlyPopulation()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260501);
+        simulation.AdvanceMonths(2);
+
+        PresentationReadModelBuilder builder = new();
+        PopulationAndHouseholdsState populationState = simulation.GetModuleStateForTesting<PopulationAndHouseholdsState>(
+            KnownModuleKeys.PopulationAndHouseholds);
+        PopulationHouseholdState anchorHousehold = SelectPlayerAnchorHouseholdForTest(populationState);
+        SettlementId settlementId = anchorHousehold.SettlementId;
+        OrderAndBanditryState orderState = simulation.GetModuleStateForTesting<OrderAndBanditryState>(
+            KnownModuleKeys.OrderAndBanditry);
+        FamilyCoreState familyState = simulation.GetModuleStateForTesting<FamilyCoreState>(
+            KnownModuleKeys.FamilyCore);
+        OfficeAndCareerState officeState = simulation.GetModuleStateForTesting<OfficeAndCareerState>(
+            KnownModuleKeys.OfficeAndCareer);
+        SocialMemoryAndRelationsState socialState = simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(
+            KnownModuleKeys.SocialMemoryAndRelations);
+
+        anchorHousehold.Distress = 58;
+        anchorHousehold.DebtPressure = 48;
+        anchorHousehold.LaborCapacity = 42;
+        anchorHousehold.MigrationRisk = 72;
+        SettlementDisorderState settlement = orderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+        settlement.ImplementationDrag = 52;
+        settlement.RoutePressure = 62;
+        settlement.RetaliationRisk = 14;
+        settlement.CoercionRisk = 10;
+
+        PlayerCommandService commandService = new();
+        PlayerCommandResult partial = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.FundLocalWatch,
+            });
+        Assert.That(partial.Accepted, Is.True);
+        Assert.That(settlement.LastInterventionOutcomeCode, Is.EqualTo(OrderInterventionOutcomeCodes.Partial));
+
+        simulation.AdvanceOneMonth();
+
+        PresentationReadModelBundle monthNPlusOne = builder.BuildForM2(simulation);
+        HouseholdSocialPressureSnapshot anchorPressure = monthNPlusOne.HouseholdSocialPressures
+            .Single(pressure => pressure.HouseholdId == anchorHousehold.Id);
+        HouseholdSocialPressureSignalSnapshot residueSignal = anchorPressure.Signals
+            .Single(signal => signal.SignalKey == HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue);
+        Assert.That(residueSignal.Score, Is.GreaterThan(0));
+
+        PlayerCommandAffordanceSnapshot[] localAffordances = monthNPlusOne.PlayerCommands.Affordances
+            .Where(affordance => affordance.SettlementId == settlementId
+                                 && affordance.ModuleKey == KnownModuleKeys.PopulationAndHouseholds)
+            .OrderBy(static affordance => affordance.CommandName)
+            .ToArray();
+        Assert.That(
+            localAffordances.Select(static affordance => affordance.CommandName).ToArray(),
+            Is.SupersetOf(new[]
+            {
+                PlayerCommandNames.PoolRunnerCompensation,
+                PlayerCommandNames.RestrictNightTravel,
+                PlayerCommandNames.SendHouseholdRoadMessage,
+            }));
+        Assert.That(localAffordances.All(static affordance => affordance.SurfaceKey == PlayerCommandSurfaceKeys.PublicLife), Is.True);
+        Assert.That(localAffordances.All(affordance => affordance.TargetLabel.Contains(anchorHousehold.HouseholdName, StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.ExecutionSummary.Contains(KnownModuleKeys.PopulationAndHouseholds, StringComparison.Ordinal)), Is.True);
+
+        int memoryCountBefore = socialState.Memories.Count;
+        int orderRouteBefore = settlement.RoutePressure;
+        string orderResponseBefore = settlement.LastRefusalResponseCommandCode;
+        string familyResponsesBefore = string.Join("|", familyState.Clans.Select(static clan => clan.LastRefusalResponseCommandCode));
+        string officeResponsesBefore = string.Join("|", officeState.People.Select(static career => career.LastRefusalResponseCommandCode));
+
+        PlayerCommandResult localResponse = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.RestrictNightTravel,
+            });
+
+        Assert.That(localResponse.Accepted, Is.True);
+        Assert.That(localResponse.ModuleKey, Is.EqualTo(KnownModuleKeys.PopulationAndHouseholds));
+        Assert.That(anchorHousehold.LastLocalResponseCommandCode, Is.EqualTo(PlayerCommandNames.RestrictNightTravel));
+        Assert.That(anchorHousehold.LastLocalResponseOutcomeCode, Is.EqualTo(HouseholdLocalResponseOutcomeCodes.Relieved));
+        Assert.That(anchorHousehold.LastLocalResponseTraceCode, Is.EqualTo(HouseholdLocalResponseTraceCodes.NightTravelRestricted));
+        Assert.That(anchorHousehold.MigrationRisk, Is.LessThan(72));
+        Assert.That(anchorHousehold.LaborCapacity, Is.LessThan(42));
+        Assert.That(settlement.RoutePressure, Is.EqualTo(orderRouteBefore));
+        Assert.That(settlement.LastRefusalResponseCommandCode, Is.EqualTo(orderResponseBefore));
+        Assert.That(string.Join("|", familyState.Clans.Select(static clan => clan.LastRefusalResponseCommandCode)), Is.EqualTo(familyResponsesBefore));
+        Assert.That(string.Join("|", officeState.People.Select(static career => career.LastRefusalResponseCommandCode)), Is.EqualTo(officeResponsesBefore));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBefore));
+
+        PresentationReadModelBundle afterRelief = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot relievedReceipt = afterRelief.PlayerCommands.Receipts
+            .First(receipt => receipt.CommandName == PlayerCommandNames.RestrictNightTravel
+                              && receipt.TargetLabel == anchorHousehold.HouseholdName);
+        Assert.That(relievedReceipt.OutcomeSummary, Is.EqualTo("本户已缓"));
+        Assert.That(relievedReceipt.CostSummary, Does.Contain("迁徙之念"));
+        Assert.That(afterRelief.InfluenceFootprint.Reaches
+            .Single(reach => reach.ReachKey == InfluenceReachKeys.OwnHousehold)
+            .CommandSummary, Does.Contain("低权能回应面"));
+
+        anchorHousehold.Distress = 70;
+        anchorHousehold.DebtPressure = 78;
+        anchorHousehold.LaborCapacity = 35;
+        anchorHousehold.MigrationRisk = 45;
+        PlayerCommandResult strainedResponse = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.PoolRunnerCompensation,
+            });
+
+        Assert.That(strainedResponse.Accepted, Is.True);
+        Assert.That(anchorHousehold.LastLocalResponseCommandCode, Is.EqualTo(PlayerCommandNames.PoolRunnerCompensation));
+        Assert.That(anchorHousehold.LastLocalResponseOutcomeCode, Is.EqualTo(HouseholdLocalResponseOutcomeCodes.Strained));
+        Assert.That(anchorHousehold.LastLocalResponseTraceCode, Is.EqualTo(HouseholdLocalResponseTraceCodes.RunnerMisreadSettledLocally));
+        Assert.That(anchorHousehold.DebtPressure, Is.GreaterThanOrEqualTo(82));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBefore));
+
+        PresentationReadModelBundle afterStrain = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot strainedReceipt = afterStrain.PlayerCommands.Receipts
+            .First(receipt => receipt.CommandName == PlayerCommandNames.PoolRunnerCompensation
+                              && receipt.TargetLabel == anchorHousehold.HouseholdName);
+        Assert.That(strainedReceipt.OutcomeSummary, Is.EqualTo("本户吃紧"));
+        Assert.That(strainedReceipt.ReadbackSummary, Does.Contain("债压"));
+    }
+
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)
     {
         return bundle.GovernanceSettlements
             .Select(static lane => lane.SettlementId)
             .First(id => bundle.SettlementDisorder.Any(disorder => disorder.SettlementId == id));
+    }
+
+    private static PopulationHouseholdState SelectPlayerAnchorHouseholdForTest(PopulationAndHouseholdsState state)
+    {
+        return state.Households
+            .OrderByDescending(static household => household.SponsorClanId.HasValue)
+            .ThenBy(static household => household.SettlementId.Value)
+            .ThenBy(static household => household.Id.Value)
+            .First();
     }
 }

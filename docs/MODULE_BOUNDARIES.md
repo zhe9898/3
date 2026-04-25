@@ -173,6 +173,7 @@ Current routing note:
 - tenant/farmhand/shophand states
 - migration pressure
 - household livelihood pressure
+- home-household local response traces for public-life/order after-accounts, including `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`
 - summary pools: labor pool, marriage pool (population statistics), migration pool
 
 ### Public queries
@@ -183,6 +184,7 @@ Current routing note:
 - household pressure summaries
 - projected ordinary-household public-life/order after-account readback may join household pressure with Order / Office / Family traces, but this remains an Application read-model projection and does not make `PopulationAndHouseholds` own order commands or response traces
 - projected ordinary-household public-life/order response choice text may join that same pressure with existing public-life command affordances / receipts, but this remains Application read-model enrichment and does not add household command ownership or a household target to command requests
+- projected home-household local response aftermath fields for readback: `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, `LastLocalResponseTraceCode`, `LastLocalResponseSummary`, and `LocalResponseCarryoverMonths`
 - household membership per PersonId
 - health resilience and health status per PersonId
 - person activity per PersonId
@@ -192,6 +194,14 @@ Current routing note:
 - hire labor
 - adjust tenancy burden
 - relief/support where allowed
+- `RestrictNightTravel` /暂缩夜行 for local household road-risk avoidance
+- `PoolRunnerCompensation` /凑钱赔脚户 for local porter/runner misread containment
+- `SendHouseholdRoadMessage` /遣少丁递信 for household-scoped road-message clarification
+
+Current routing note:
+- these home-household local response commands are resolved by `PopulationAndHouseholdsCommandResolver` inside `Zongzu.Modules.PopulationAndHouseholds`
+- the resolver may select an affected household from settlement / optional clan scope, but it may mutate only population-owned household labor, debt, distress, migration, and local response trace fields
+- it does not repair `OrderAndBanditry` refusal authority, `OfficeAndCareer` yamen/document landing, `FamilyCore` elder explanation, or `SocialMemoryAndRelations` durable residue
 
 ### Emits events
 - `HouseholdDebtSpiked`
@@ -206,6 +216,7 @@ Current routing note:
 - school rank
 - trade route ownership
 - official careers
+- order repair, county-yamen催办, elder explanation, durable social-memory residue, or public-life rumor authority
 
 ## 4. SocialMemoryAndRelations
 ### Owns
@@ -658,3 +669,10 @@ Current lite note:
 - Application projections may select a visible `HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue` household and append that household's stakes to `PlayerCommandAffordanceSnapshot` / `PlayerCommandReceiptSnapshot` leverage, cost, execution, and readback text.
 - The selected household is a projected stake, not an authoritative command target. `PlayerCommandRequest` remains settlement / optional clan scoped, and owning modules still resolve the response.
 - v11 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or household-control surface.
+
+## 2026-04-25 playable closure v12 home-household local response note
+- `public-life-order-home-household-local-response-v12` turns the ordinary-household stake into a first low-power home-household command surface without making commoner households own county order repair.
+- `PopulationAndHouseholds` now owns only local household-seat responses: `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`. These commands can shift household labor, debt, distress, migration risk, and local response trace fields.
+- `OrderAndBanditry` still owns refused / partial order authority and route-watch repair; `OfficeAndCareer` still owns county-yamen/document/clerk response; `FamilyCore` still owns elder explanation and household guarantee; `SocialMemoryAndRelations` still owns durable shame/fear/favor/grudge/obligation residue.
+- Application projections may expose bounded home-household affordances only from projected read models. UI and Unity may copy the resulting projected affordance / receipt fields only, and must not query modules or compute local response effectiveness.
+- v12 bumps `PopulationAndHouseholds` schema from `2` to `3`, adds same-namespace migration and save roundtrip proof, and adds no `PersonRegistry` expansion, manager/controller layer, or `HouseholdId` command target.
