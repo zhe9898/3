@@ -1,5 +1,11 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v31 delta - 2026-04-26
+
+- Public-life/order closure v31 is an operational merge/cleanup pass: it lands the already validated v20-v30 owner-lane closure arc on `main` and removes merged topic branches after validation.
+- v31 adds no gameplay rules, projection wording, commands, event topology, persisted state, schema bump, migration, ledger, manager/controller layer, or `PersonRegistry` expansion.
+- Validation remains the same evidence lane as v30: build, focused integration / architecture / Unity presentation tests, `git diff --check`, and full no-build solution tests after mainline merge.
+
 ## v30 delta - 2026-04-26
 
 - Public-life/order closure now includes v30 audit lock: v20-v30 are documented and tested as projection/readback guidance over structured owner-lane and SocialMemory fields, not a new command system, event pool, ledger, or thick household/yamen/order formula.
