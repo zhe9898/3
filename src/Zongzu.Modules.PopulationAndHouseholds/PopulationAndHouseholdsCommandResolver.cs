@@ -36,12 +36,14 @@ public static class PopulationAndHouseholdsCommandResolver
 
         HouseholdLocalResponseResidueFriction residueFriction =
             ResolveHomeHouseholdLocalResponseResidueFriction(context.SocialMemoryQueries, household);
+        HouseholdLocalResponseTextureProfile textureProfile =
+            ResolveHomeHouseholdLocalResponseTextureProfile(household);
 
         return command.CommandName switch
         {
-            PlayerCommandNames.RestrictNightTravel => ApplyRestrictNightTravel(command, household, residueFriction),
-            PlayerCommandNames.PoolRunnerCompensation => ApplyPoolRunnerCompensation(command, household, residueFriction),
-            PlayerCommandNames.SendHouseholdRoadMessage => ApplySendHouseholdRoadMessage(command, household, residueFriction),
+            PlayerCommandNames.RestrictNightTravel => ApplyRestrictNightTravel(command, household, residueFriction, textureProfile),
+            PlayerCommandNames.PoolRunnerCompensation => ApplyPoolRunnerCompensation(command, household, residueFriction, textureProfile),
+            PlayerCommandNames.SendHouseholdRoadMessage => ApplySendHouseholdRoadMessage(command, household, residueFriction, textureProfile),
             _ => BuildRejectedResult(command, $"PopulationAndHouseholds does not handle player command {command.CommandName}."),
         };
     }
@@ -60,24 +62,30 @@ public static class PopulationAndHouseholdsCommandResolver
     private static PlayerCommandResult ApplyRestrictNightTravel(
         PlayerCommandRequest command,
         PopulationHouseholdState household,
-        HouseholdLocalResponseResidueFriction residueFriction)
+        HouseholdLocalResponseResidueFriction residueFriction,
+        HouseholdLocalResponseTextureProfile textureProfile)
     {
         int oldMigrationRisk = household.MigrationRisk;
         int migrationRelief = Math.Max(
             1,
             (household.MigrationRisk >= 65 ? 10 : 7)
             + residueFriction.ReliefSupport
+            + textureProfile.MigrationReliefBias
             - Math.Min(3, residueFriction.StrainDrag / 2));
         int laborCost = Math.Max(
             1,
             (household.LaborCapacity >= 35 ? 5 : 3)
-            + Math.Max(0, residueFriction.StrainDrag - residueFriction.ReliefSupport) / 2);
+            + Math.Max(0, residueFriction.StrainDrag - residueFriction.ReliefSupport) / 2
+            + textureProfile.LaborDrag);
         int debtCost = Math.Max(
             0,
             (household.DebtPressure >= 70 ? 2 : 1)
             + (residueFriction.ObligationDrag / 2)
-            + (residueFriction.StrainDrag / 2));
-        int distressDrift = (household.Distress >= 75 ? 1 : 0) + Math.Max(0, residueFriction.StrainDrag - 3) / 3;
+            + (residueFriction.StrainDrag / 2)
+            + (textureProfile.DebtDrag / 2));
+        int distressDrift = (household.Distress >= 75 ? 1 : 0)
+            + Math.Max(0, residueFriction.StrainDrag - 3) / 3
+            + (textureProfile.DistressDrag / 2);
 
         household.MigrationRisk = Clamp100(household.MigrationRisk - migrationRelief);
         household.LaborCapacity = Clamp100(household.LaborCapacity - laborCost);
@@ -87,6 +95,7 @@ public static class PopulationAndHouseholdsCommandResolver
 
         string outcomeCode = household.LaborCapacity < 25
             || household.DebtPressure >= 85
+            || (textureProfile.LaborDrag >= 3 && household.LaborCapacity < 32)
             || (residueFriction.StrainDrag >= 5 && household.DebtPressure >= 78)
             ? HouseholdLocalResponseOutcomeCodes.Strained
             : oldMigrationRisk - household.MigrationRisk >= 8
@@ -95,6 +104,7 @@ public static class PopulationAndHouseholdsCommandResolver
         string summary = outcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
             ? $"{household.HouseholdName}暂缩夜行，夜路险头被压住一截，但丁力和债压吃紧。"
             : $"{household.HouseholdName}暂缩夜行，少走夜路、渡口和黑路，迁徙之念缓到{household.MigrationRisk}。";
+        summary = AppendHouseholdTextureSummary(summary, textureProfile);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -109,34 +119,41 @@ public static class PopulationAndHouseholdsCommandResolver
     private static PlayerCommandResult ApplyPoolRunnerCompensation(
         PlayerCommandRequest command,
         PopulationHouseholdState household,
-        HouseholdLocalResponseResidueFriction residueFriction)
+        HouseholdLocalResponseResidueFriction residueFriction,
+        HouseholdLocalResponseTextureProfile textureProfile)
     {
         int debtCost = (household.DebtPressure >= 70 ? 8 : 5)
             + residueFriction.ObligationDrag
-            + residueFriction.StrainDrag;
+            + residueFriction.StrainDrag
+            + textureProfile.DebtDrag
+            + (textureProfile.DistressDrag / 2);
         int distressRelief = Math.Max(
             1,
             (household.Distress >= 60 ? 8 : 5)
             + (residueFriction.ReliefSupport / 2)
+            + Math.Min(2, textureProfile.DistressDrag)
             - Math.Min(2, residueFriction.StrainDrag / 3));
         int migrationRelief = Math.Max(
             0,
             (household.MigrationRisk >= 45 ? 4 : 2)
             + (residueFriction.ReliefSupport / 3)
+            + (textureProfile.MigrationReliefBias / 2)
             - Math.Min(2, residueFriction.StrainDrag / 4));
 
         household.DebtPressure = Clamp100(household.DebtPressure + debtCost);
         household.Distress = Clamp100(household.Distress - distressRelief);
         household.MigrationRisk = Clamp100(household.MigrationRisk - migrationRelief);
-        household.LaborCapacity = Clamp100(household.LaborCapacity - 1);
+        household.LaborCapacity = Clamp100(household.LaborCapacity - 1 - (textureProfile.LaborDrag / 2));
         household.IsMigrating = household.MigrationRisk >= 80 || (household.IsMigrating && household.MigrationRisk >= 65);
 
         string outcomeCode = household.DebtPressure >= 82
+            || (textureProfile.DebtDrag >= 4 && household.DebtPressure >= 78)
             ? HouseholdLocalResponseOutcomeCodes.Strained
             : HouseholdLocalResponseOutcomeCodes.Contained;
         string summary = outcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
             ? $"{household.HouseholdName}凑钱赔了脚户误读，街口话头暂压，债压却抬到{household.DebtPressure}。"
             : $"{household.HouseholdName}凑钱赔了脚户误读，街口误会先缓，民困降到{household.Distress}。";
+        summary = AppendHouseholdTextureSummary(summary, textureProfile);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -151,25 +168,42 @@ public static class PopulationAndHouseholdsCommandResolver
     private static PlayerCommandResult ApplySendHouseholdRoadMessage(
         PlayerCommandRequest command,
         PopulationHouseholdState household,
-        HouseholdLocalResponseResidueFriction residueFriction)
+        HouseholdLocalResponseResidueFriction residueFriction,
+        HouseholdLocalResponseTextureProfile textureProfile)
     {
-        bool laborThin = household.LaborCapacity < 30;
-        int laborCost = Math.Max(1, (laborThin ? 4 : 6) + Math.Max(0, residueFriction.StrainDrag - residueFriction.ReliefSupport) / 2);
-        int distressRelief = Math.Max(0, (laborThin ? 1 : 4) + (residueFriction.ReliefSupport / 2) - Math.Min(2, residueFriction.ObligationDrag / 2));
-        int migrationDelta = (laborThin ? 2 : -3) - (residueFriction.ReliefSupport / 2) + (residueFriction.StrainDrag / 3);
+        bool laborThin = household.LaborCapacity < 30 || textureProfile.LaborDrag >= 3;
+        int laborCost = Math.Max(
+            1,
+            (laborThin ? 4 : 6)
+            + Math.Max(0, residueFriction.StrainDrag - residueFriction.ReliefSupport) / 2
+            + textureProfile.LaborDrag);
+        int distressRelief = Math.Max(
+            0,
+            (laborThin ? 1 : 4)
+            + (residueFriction.ReliefSupport / 2)
+            + Math.Min(1, textureProfile.DistressDrag)
+            - Math.Min(2, residueFriction.ObligationDrag / 2));
+        int migrationDelta = (laborThin ? 2 : -3)
+            - (residueFriction.ReliefSupport / 2)
+            - (textureProfile.MigrationReliefBias / 2)
+            + (residueFriction.StrainDrag / 3)
+            + (textureProfile.LaborDrag / 2);
 
         household.LaborCapacity = Clamp100(household.LaborCapacity - laborCost);
         household.Distress = Clamp100(household.Distress - distressRelief);
         household.MigrationRisk = Clamp100(household.MigrationRisk + migrationDelta);
-        household.DebtPressure = Clamp100(household.DebtPressure + 1 + (residueFriction.ObligationDrag / 2));
+        household.DebtPressure = Clamp100(household.DebtPressure + 1 + (residueFriction.ObligationDrag / 2) + (textureProfile.DebtDrag / 2));
         household.IsMigrating = household.MigrationRisk >= 80 || (household.IsMigrating && household.MigrationRisk >= 65);
 
-        string outcomeCode = household.LaborCapacity < 25 || (residueFriction.StrainDrag >= 5 && household.LaborCapacity < 32)
+        string outcomeCode = household.LaborCapacity < 25
+            || (textureProfile.LaborDrag >= 4 && household.LaborCapacity < 34)
+            || (residueFriction.StrainDrag >= 5 && household.LaborCapacity < 32)
             ? HouseholdLocalResponseOutcomeCodes.Strained
             : HouseholdLocalResponseOutcomeCodes.Contained;
         string summary = outcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
             ? $"{household.HouseholdName}遣少丁递信，路情稍明，却把薄丁力又抽去一截。"
             : $"{household.HouseholdName}遣少丁递信，先把路情和脚户说法递清，迁徙之念调到{household.MigrationRisk}。";
+        summary = AppendHouseholdTextureSummary(summary, textureProfile);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -239,6 +273,78 @@ public static class PopulationAndHouseholdsCommandResolver
         }
 
         return HouseholdLocalResponseResidueFriction.FromWeights(relieved, contained, strained, ignored);
+    }
+
+    private static HouseholdLocalResponseTextureProfile ResolveHomeHouseholdLocalResponseTextureProfile(
+        PopulationHouseholdState household)
+    {
+        int debtDrag = household.DebtPressure >= 80
+            ? 4
+            : household.DebtPressure >= 68 ? 2 : 0;
+        int laborDrag = household.LaborCapacity < 25
+            ? 4
+            : household.LaborCapacity < 35 ? 2 : 0;
+        int distressDrag = household.Distress >= 75
+            ? 3
+            : household.Distress >= 62 ? 1 : 0;
+        int migrationReliefBias = household.MigrationRisk >= 70
+            ? 3
+            : household.MigrationRisk >= 55 ? 1 : 0;
+
+        if (household.DependentCount > household.LaborerCount + 1)
+        {
+            laborDrag = Math.Min(4, laborDrag + 1);
+            distressDrag = Math.Min(3, distressDrag + 1);
+        }
+
+        if (household.Livelihood is LivelihoodType.Boatman or LivelihoodType.SeasonalMigrant or LivelihoodType.YamenRunner)
+        {
+            migrationReliefBias = Math.Min(4, migrationReliefBias + 1);
+        }
+
+        return new HouseholdLocalResponseTextureProfile(
+            debtDrag,
+            laborDrag,
+            distressDrag,
+            migrationReliefBias,
+            BuildHouseholdTextureSummaryTail(household));
+    }
+
+    private static string AppendHouseholdTextureSummary(
+        string summary,
+        HouseholdLocalResponseTextureProfile textureProfile)
+    {
+        return string.IsNullOrWhiteSpace(textureProfile.SummaryTail)
+            ? summary
+            : $"{summary}{textureProfile.SummaryTail}";
+    }
+
+    private static string BuildHouseholdTextureSummaryTail(PopulationHouseholdState household)
+    {
+        List<string> notes = [];
+        if (household.DebtPressure >= 68)
+        {
+            notes.Add("债压已高，赔付能止口舌但会添欠账");
+        }
+
+        if (household.LaborCapacity < 35 || household.DependentCount > household.LaborerCount + 1)
+        {
+            notes.Add("丁力偏薄，夜禁和递信都会吃家中人手");
+        }
+
+        if (household.Distress >= 62)
+        {
+            notes.Add("民困偏重，再压会先伤脸面和气口");
+        }
+
+        if (household.MigrationRisk >= 55)
+        {
+            notes.Add("已有迁徙之念，少走夜路能先拦一截");
+        }
+
+        return notes.Count == 0
+            ? string.Empty
+            : $" 本户底色：{string.Join("；", notes)}。";
     }
 
     private static string AppendResidueFrictionSummary(
@@ -362,4 +468,11 @@ public static class PopulationAndHouseholdsCommandResolver
             return string.Empty;
         }
     }
+
+    private readonly record struct HouseholdLocalResponseTextureProfile(
+        int DebtDrag,
+        int LaborDrag,
+        int DistressDrag,
+        int MigrationReliefBias,
+        string SummaryTail);
 }

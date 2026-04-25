@@ -103,6 +103,11 @@ Current public-life/order v14 home-household repeat-friction note:
 - This is not a new relationship table, household target system, or thick social formula. Durable memory remains owned by `SocialMemoryAndRelations`; repeated-response command effects remain owned by `PopulationAndHouseholds`.
 - No resolver may parse SocialMemory summary prose, `LastLocalResponseSummary`, command receipt text, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
 
+Current public-life/order v15 common-household response texture note:
+- later local household responses may now also read existing population-owned household pressure as command-time texture: debt pressure, labor capacity, distress, migration risk, dependents, laborers, and livelihood.
+- This texture changes only the `PopulationAndHouseholds` local response cost / outcome path. It does not create durable memory, social obligation, shame, fear, favor, grudge, or clan climate by itself.
+- `SocialMemoryAndRelations` still reads only structured local response aftermath on its own later monthly pass and must not parse `本户底色` prose, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

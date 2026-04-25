@@ -203,6 +203,7 @@ Current routing note:
 - the resolver may select an affected household from settlement / optional clan scope, but it may mutate only population-owned household labor, debt, distress, migration, and local response trace fields
 - it does not repair `OrderAndBanditry` refusal authority, `OfficeAndCareer` yamen/document landing, `FamilyCore` elder explanation, or `SocialMemoryAndRelations` durable residue
 - v14 repeat friction may read structured `SocialMemoryEntrySnapshot` cause keys and weights for the same household through `ISocialMemoryAndRelationsQueries`, but it still mutates only population-owned household state and must not parse memory summaries or write SocialMemory state
+- v15 common-household response texture may derive local command cost and outcome pressure from existing population-owned household fields such as debt, labor, distress, migration risk, dependents, laborers, and livelihood. This remains `PopulationAndHouseholds` command-time logic and adds no new household target, schema field, or foreign authority.
 
 ### Emits events
 - `HouseholdDebtSpiked`
@@ -690,3 +691,10 @@ Current lite note:
 - The reader uses only active `SocialMemoryEntrySnapshot` cause keys under `order.public_life.household_response.{HouseholdId}.`, structured outcome markers, and weights. It must not parse memory summary prose, command receipt prose, `LastLocalResponseSummary`, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
 - `PopulationAndHouseholds` remains the command-time owner and may mutate only household labor, debt, distress, migration, and local response trace fields. It still does not repair order, yamen, family, public-life, registry, or SocialMemory state.
 - v14 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.
+
+## 2026-04-25 playable closure v15 common-household response texture note
+- `public-life-order-common-household-response-texture-v15` keeps the v12-v14 home-household local response lane thin but makes ordinary household state matter in play.
+- `PopulationAndHouseholds` derives a bounded texture profile from existing fields (`DebtPressure`, `LaborCapacity`, `Distress`, `MigrationRisk`, `DependentCount`, `LaborerCount`, and `Livelihood`) when resolving `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信`.
+- The profile may make debt-heavy compensation more costly, labor-thin night restriction / road messaging more fragile, distress-heavy pressure more socially brittle, and migration-prone night restriction more useful. It still writes only population-owned household pressure and local response trace fields.
+- Application projections may display `本户底色` hints from `HouseholdPressureSnapshot`, and Unity may copy those projected affordance / receipt fields only. UI and Unity must not compute final local response effectiveness.
+- v15 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.

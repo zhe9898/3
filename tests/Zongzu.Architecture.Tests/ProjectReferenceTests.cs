@@ -459,6 +459,36 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Home_household_local_response_texture_must_use_existing_population_household_fields_only()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsCommandResolver.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("OrderAndBanditryState"));
+        Assert.That(source, Does.Not.Contain("OfficeAndCareerState"));
+        Assert.That(source, Does.Not.Contain("FamilyCoreState"));
+        Assert.That(source, Does.Not.Contain("SocialMemoryAndRelationsState"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(source, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(source, Does.Not.Contain(".Memories.Add"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("memory.Summary"));
+        Assert.That(source, Does.Contain("ResolveHomeHouseholdLocalResponseTextureProfile"));
+        Assert.That(source, Does.Contain("HouseholdLocalResponseTextureProfile"));
+        Assert.That(source, Does.Contain("DebtPressure"));
+        Assert.That(source, Does.Contain("LaborCapacity"));
+        Assert.That(source, Does.Contain("Distress"));
+        Assert.That(source, Does.Contain("MigrationRisk"));
+        Assert.That(source, Does.Contain("DependentCount"));
+        Assert.That(source, Does.Contain("LaborerCount"));
+        Assert.That(source, Does.Contain("LivelihoodType"));
+    }
+
+    [Test]
     public void Public_life_response_friction_readers_must_not_parse_social_memory_summary()
     {
         string[] sourcePaths =

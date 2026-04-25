@@ -289,6 +289,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - `public-life-order-home-household-repeat-friction-v14` lets `PopulationAndHouseholds` read structured v13 SocialMemory residue when resolving later local household responses. `Relieved` can supply small local support, `Contained` can leave obligation drag, and `Strained` / `Ignored` can add debt or labor drag.
 - v14 command-time mutation remains limited to `PopulationAndHouseholds`; `SocialMemoryAndRelations` is read through queries only and is not mutated by the command resolver.
 - v14 projections may display the existing SocialMemory hint on local response affordances / receipts, but Application / UI / Unity must not compute the command outcome. v14 adds no persisted state, schema bump, or migration.
+- `public-life-order-common-household-response-texture-v15` adds a small population-owned texture profile to the same local household response lane. The resolver reads only existing household pressure fields (`DebtPressure`, `LaborCapacity`, `Distress`, `MigrationRisk`, `DependentCount`, `LaborerCount`, `Livelihood`) and writes only population-owned household cost/outcome trace.
+- v15 Application projections may display `本户底色` hints from `HouseholdPressureSnapshot` so the player can distinguish debt-heavy compensation, labor-thin night restriction / road messaging, distress-heavy face pressure, and migration-prone avoidance. These hints are read-model text only; UI and Unity must not query modules or compute final response effectiveness.
+- v15 adds no persisted state, command request shape change, schema bump, or migration.
 
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace

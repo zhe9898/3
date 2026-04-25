@@ -361,3 +361,13 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy projected hints and do not compute local response effectiveness.
 - Save/schema acceptance: v14 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v15 common-household response texture acceptance - 2026-04-25
+- `public-life-order-common-household-response-texture-v15` must prove ordinary household state gives the local response lane readable play texture without becoming thick household-class simulation.
+- Command acceptance must prove `PopulationAndHouseholds` derives texture from existing household fields (`DebtPressure`, `LaborCapacity`, `Distress`, `MigrationRisk`, `DependentCount`, `LaborerCount`, and `Livelihood`) and mutates only household labor, debt, distress, migration, and `LastLocalResponse*` fields.
+- Same-command acceptance must prove texture-adjusted commands do not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- Path acceptance must cover at least two texture paths, including debt-heavy compensation and labor-thin night restriction / road messaging.
+- Projection acceptance must prove local response affordances and receipts expose `本户底色` hints from read models only, while UI/Application/Unity do not compute final response effectiveness.
+- Unity acceptance must prove shell adapters copy projected `本户底色` fields and do not query modules or resolve outcomes.
+- Save/schema acceptance: v15 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.

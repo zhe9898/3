@@ -27,7 +27,9 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories = household is null
             ? []
             : SelectHomeHouseholdLocalResponseSocialMemories(bundle.SocialMemories, household);
-        string socialMemoryHint = BuildHomeHouseholdLocalResponseMemoryHint(localSocialMemories);
+        string socialMemoryHint = JoinHomeHouseholdLocalResponseText(
+            BuildHomeHouseholdLocalResponseTextureHint(household),
+            BuildHomeHouseholdLocalResponseMemoryHint(localSocialMemories));
         string socialMemoryReadback = BuildOrderSocialMemoryReadbackSummary(localSocialMemories);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
@@ -133,9 +135,42 @@ public sealed partial class PresentationReadModelBuilder
             : $"旧账记忆：{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}。";
     }
 
-    private static string JoinHomeHouseholdLocalResponseText(string first, string second)
+    private static string BuildHomeHouseholdLocalResponseTextureHint(HouseholdPressureSnapshot? household)
     {
-        return string.Join(" ", new[] { first, second }.Where(static value => !string.IsNullOrWhiteSpace(value)));
+        if (household is null)
+        {
+            return string.Empty;
+        }
+
+        List<string> notes = [];
+        if (household.DebtPressure >= 68)
+        {
+            notes.Add("债压已高，赔脚户能止口舌但会添欠账");
+        }
+
+        if (household.LaborCapacity < 35 || household.DependentCount > household.LaborerCount + 1)
+        {
+            notes.Add("丁力偏薄，夜禁和递信都会吃人手");
+        }
+
+        if (household.Distress >= 62)
+        {
+            notes.Add("民困偏重，再压容易伤脸面");
+        }
+
+        if (household.MigrationRisk >= 55)
+        {
+            notes.Add("已有迁徙之念，暂缩夜路更有用");
+        }
+
+        return notes.Count == 0
+            ? string.Empty
+            : $"本户底色：{string.Join("；", notes)}。";
+    }
+
+    private static string JoinHomeHouseholdLocalResponseText(params string[] parts)
+    {
+        return string.Join(" ", parts.Where(static value => !string.IsNullOrWhiteSpace(value)));
     }
 
     private static string RenderHomeHouseholdLocalResponseOutcome(string outcomeCode)

@@ -787,6 +787,120 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeRepeatStrain));
     }
 
+    [Test]
+    public void HomeHouseholdLocalResponse_CommonHouseholdTextureShapesAffordanceAndLocalCosts()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260504);
+        simulation.AdvanceMonths(2);
+
+        PresentationReadModelBuilder builder = new();
+        PopulationAndHouseholdsState populationState = simulation.GetModuleStateForTesting<PopulationAndHouseholdsState>(
+            KnownModuleKeys.PopulationAndHouseholds);
+        PopulationHouseholdState anchorHousehold = SelectPlayerAnchorHouseholdForTest(populationState);
+        SettlementId settlementId = anchorHousehold.SettlementId;
+        OrderAndBanditryState orderState = simulation.GetModuleStateForTesting<OrderAndBanditryState>(
+            KnownModuleKeys.OrderAndBanditry);
+        FamilyCoreState familyState = simulation.GetModuleStateForTesting<FamilyCoreState>(
+            KnownModuleKeys.FamilyCore);
+        OfficeAndCareerState officeState = simulation.GetModuleStateForTesting<OfficeAndCareerState>(
+            KnownModuleKeys.OfficeAndCareer);
+        SocialMemoryAndRelationsState socialState = simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(
+            KnownModuleKeys.SocialMemoryAndRelations);
+
+        anchorHousehold.Distress = 76;
+        anchorHousehold.DebtPressure = 82;
+        anchorHousehold.LaborCapacity = 33;
+        anchorHousehold.MigrationRisk = 62;
+        anchorHousehold.DependentCount = 4;
+        anchorHousehold.LaborerCount = 1;
+        SettlementDisorderState settlement = orderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+        settlement.ImplementationDrag = 52;
+        settlement.RoutePressure = 62;
+        settlement.RetaliationRisk = 14;
+        settlement.CoercionRisk = 10;
+
+        PlayerCommandService commandService = new();
+        PlayerCommandResult partial = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.FundLocalWatch,
+            });
+        Assert.That(partial.Accepted, Is.True);
+        Assert.That(settlement.LastInterventionOutcomeCode, Is.EqualTo(OrderInterventionOutcomeCodes.Partial));
+
+        simulation.AdvanceOneMonth();
+
+        PresentationReadModelBundle monthNPlusOne = builder.BuildForM2(simulation);
+        PlayerCommandAffordanceSnapshot compensationAffordance = monthNPlusOne.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.PoolRunnerCompensation
+                                 && affordance.SettlementId == settlementId
+                                 && affordance.TargetLabel == anchorHousehold.HouseholdName);
+        PlayerCommandAffordanceSnapshot nightTravelAffordance = monthNPlusOne.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.RestrictNightTravel
+                                 && affordance.SettlementId == settlementId
+                                 && affordance.TargetLabel == anchorHousehold.HouseholdName);
+        PlayerCommandAffordanceSnapshot roadMessageAffordance = monthNPlusOne.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.SendHouseholdRoadMessage
+                                 && affordance.SettlementId == settlementId
+                                 && affordance.TargetLabel == anchorHousehold.HouseholdName);
+
+        Assert.That(compensationAffordance.AvailabilitySummary, Does.Contain("本户底色"));
+        Assert.That(compensationAffordance.AvailabilitySummary, Does.Contain("债压已高"));
+        Assert.That(roadMessageAffordance.AvailabilitySummary, Does.Contain("丁力偏薄"));
+        Assert.That(nightTravelAffordance.AvailabilitySummary, Does.Contain("迁徙之念"));
+
+        int memoryCountBeforeTextureResponse = socialState.Memories.Count;
+        int routePressureBeforeTextureResponse = settlement.RoutePressure;
+        string familyResponsesBefore = string.Join("|", familyState.Clans.Select(static clan => clan.LastRefusalResponseCommandCode));
+        string officeResponsesBefore = string.Join("|", officeState.People.Select(static career => career.LastRefusalResponseCommandCode));
+
+        PlayerCommandResult compensation = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.PoolRunnerCompensation,
+            });
+
+        Assert.That(compensation.Accepted, Is.True);
+        Assert.That(anchorHousehold.LastLocalResponseOutcomeCode, Is.EqualTo(HouseholdLocalResponseOutcomeCodes.Strained));
+        Assert.That(anchorHousehold.DebtPressure, Is.GreaterThanOrEqualTo(95),
+            "Debt-heavy household texture should make local runner compensation visibly costly.");
+        Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("本户底色"));
+        Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("债压已高"));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeTextureResponse));
+        Assert.That(settlement.RoutePressure, Is.EqualTo(routePressureBeforeTextureResponse));
+        Assert.That(string.Join("|", familyState.Clans.Select(static clan => clan.LastRefusalResponseCommandCode)), Is.EqualTo(familyResponsesBefore));
+        Assert.That(string.Join("|", officeState.People.Select(static career => career.LastRefusalResponseCommandCode)), Is.EqualTo(officeResponsesBefore));
+
+        anchorHousehold.Distress = 60;
+        anchorHousehold.DebtPressure = 45;
+        anchorHousehold.LaborCapacity = 28;
+        anchorHousehold.MigrationRisk = 58;
+        anchorHousehold.DependentCount = 4;
+        anchorHousehold.LaborerCount = 1;
+
+        PlayerCommandResult roadMessage = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.SendHouseholdRoadMessage,
+            });
+
+        Assert.That(roadMessage.Accepted, Is.True);
+        Assert.That(anchorHousehold.LastLocalResponseOutcomeCode, Is.EqualTo(HouseholdLocalResponseOutcomeCodes.Strained));
+        Assert.That(anchorHousehold.LaborCapacity, Is.LessThanOrEqualTo(21),
+            "Labor-thin household texture should make sending a local road message eat scarce household labor.");
+        Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("丁力偏薄"));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeTextureResponse));
+        Assert.That(settlement.RoutePressure, Is.EqualTo(routePressureBeforeTextureResponse));
+    }
+
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)
     {
         return bundle.GovernanceSettlements
