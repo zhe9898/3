@@ -429,3 +429,12 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters display projected Office/Governance and Family owner-lane guidance only and do not query modules, compute owner lanes, resolve outcomes, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
 - Save/schema acceptance: v21 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, no owner-lane ledger, no household target field, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.
+
+## Playable closure v22 owner-lane handoff entry readback acceptance - 2026-04-26
+- `public-life-order-owner-lane-handoff-entry-readback-v22` must prove v21 owner-lane return surfaces can also name projected `承接入口` labels for existing owner-lane affordances without becoming a command queue, event pool, or recommendation ledger.
+- Projection acceptance must prove Order, Office/Governance, and Family surfaces expose lane-specific existing command-entry wording such as `添雇巡丁`, `押文催县门`, and `请族老解释` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time and same-month handling does not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`.
+- SocialMemory acceptance must prove the later reader does not parse `承接入口`, owner-lane guidance prose, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected `承接入口` text only and do not query modules, navigate/execute commands from prose, compute owner lanes, resolve outcomes, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
+- Save/schema acceptance: v22 adds no persisted fields, no schema bump, no migration, no command target shape change, no command queue, no cooldown ledger, no owner-lane ledger, no household target field, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.

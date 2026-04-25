@@ -746,3 +746,10 @@ Current lite note:
 - `PopulationAndHouseholds` still owns only the low-power household response trace. It does not become a repair owner for county order, yamen paperwork, clan elder explanation, or durable social-memory residue.
 - UI and Unity remain copy-only. They may display the projected owner-lane guidance in public-life, Office/Governance, and Family surfaces, but must not compute owner-lane validity, query modules, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
 - v21 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, owner-lane ledger, household target field, or command-target shape change.
+
+## 2026-04-26 playable closure v22 owner-lane handoff entry readback note
+- `public-life-order-owner-lane-handoff-entry-readback-v22` adds projected `承接入口` wording to the v20-v21 owner-lane guidance.
+- Application projections may name existing owner-lane affordance labels such as `添雇巡丁`, `押文催县门`, or `请族老解释`, but this is readback text only and does not create a new command system, queue, ranking authority, or command target.
+- Ownership remains unchanged: `OrderAndBanditry` owns route-watch / road-bandit / route-pressure repair, `OfficeAndCareer` owns county-yamen / document / clerk drag, `FamilyCore` owns elder explanation / guarantee face, `PopulationAndHouseholds` owns only low-power household response traces, and `SocialMemoryAndRelations` writes durable residue only from structured aftermath.
+- UI and Unity may copy `承接入口` from projected fields only. They must not compute owner lanes, query modules, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
+- v22 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, owner-lane ledger, household target field, command queue, or command-target shape change.

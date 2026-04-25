@@ -138,6 +138,11 @@ Current public-life/order v21 owner-lane surface readback note:
 - The copy may tell the player that county-yamen / document / clerk drag or clan elder / guarantee face still belongs to the corresponding lane, but it does not let `SocialMemoryAndRelations` resolve those commands.
 - `SocialMemoryAndRelations` still ignores `该走县门/文移 lane`, `该走族老/担保 lane`, `本户不能代修`, receipt prose, and `LastLocalResponseSummary`; durable shame/fear/favor/grudge/obligation residue still comes only from structured aftermath.
 
+Current public-life/order v22 owner-lane handoff entry readback note:
+- `承接入口` is projected player guidance, not durable memory state and not a SocialMemory command input.
+- The copy may name existing owner-lane command labels such as `添雇巡丁`, `押文催县门`, or `请族老解释`, but durable shame/fear/favor/grudge/obligation still comes only from structured aftermath read by `SocialMemoryAndRelations`.
+- `SocialMemoryAndRelations` must not parse `承接入口`, owner-lane guidance prose, receipt prose, `LastLocalResponseSummary`, or `DomainEvent.Summary`.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

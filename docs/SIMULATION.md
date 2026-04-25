@@ -271,6 +271,7 @@ Current public-life/order v9/v10/v11/v12 note:
 - v19 adds follow-up affordance readback on top of v12-v18: the next projected local response surface can say whether repeating or switching a home-household move is续接, 换招, or should cool down. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
 - v20 adds owner-lane return guidance on top of v12-v19: receipts and the next projected local response surface can say that Order, Office, Family, or SocialMemory still own the external after-account. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
 - v21 carries owner-lane return guidance into Office/Governance and Family-facing readback surfaces on top of v20. This remains projection/readback guidance over existing state, not a new command system, event pool, or persisted ledger.
+- v22 adds projected `承接入口` labels on top of v21 so those surfaces can point back to existing owner-lane command affordances. This does not add a scheduler step, command queue, command target, persisted ledger, or outcome calculation.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window

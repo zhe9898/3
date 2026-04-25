@@ -452,6 +452,10 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("该走县门/文移 lane"));
         Assert.That(source, Does.Contain("该走族老/担保 lane"));
         Assert.That(source, Does.Contain("本户不能代修"));
+        Assert.That(source, Does.Contain("承接入口"));
+        Assert.That(source, Does.Contain("添雇巡丁"));
+        Assert.That(source, Does.Contain("押文催县门"));
+        Assert.That(source, Does.Contain("请族老解释"));
     }
 
     [Test]

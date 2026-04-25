@@ -255,6 +255,7 @@ Current note:
 - v19 `续接提示` / `换招提示` / `冷却提示` / `续接读回` follow-up affordance adds no new state fields: projected follow-up hints are derived from existing household fields and structured `LastLocalResponse*` codes only.
 - v20 `外部后账归位` owner-lane return guidance adds no new state fields: projected `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` are derived from existing household fields and structured `LastLocalResponse*` codes only.
 - v21 owner-lane surface readback adds no new state fields: Office/Governance and Family-facing copies of `外部后账归位` are runtime projections derived from existing household response structure, settlement scope, and sponsor-clan scope only.
+- v22 owner-lane handoff entry readback adds no new state fields: projected `承接入口` labels name existing Order / Office / Family affordances from the same structured household response projection and do not create a command queue, owner-lane ledger, or household target.
 - Migration `2 -> 3` initializes local-response strings to empty values and clamps `LocalResponseCarryoverMonths` to `0..1`.
 
 ### SocialMemoryAndRelations state
@@ -331,6 +332,7 @@ Current note:
 - home-household follow-up affordance v19 still uses SocialMemory schema `3`: SocialMemory does not read `续接提示`, `换招提示`, `冷却提示`, `续接读回`, or `LastLocalResponseSummary`; later residue still comes only from structured local response aftermath fields
 - home-household owner-lane return guidance v20 still uses SocialMemory schema `3`: SocialMemory does not read `外部后账归位`, `该走巡丁`, `该走县门`, `该走族老`, `本户不能代修`, or `LastLocalResponseSummary`; later residue still comes only from structured local response aftermath fields
 - home-household owner-lane surface readback v21 still uses SocialMemory schema `3`: SocialMemory does not read Office/Governance or Family-facing copies of `外部后账归位`; later residue still comes only from structured local response aftermath fields
+- home-household owner-lane handoff entry readback v22 still uses SocialMemory schema `3`: SocialMemory does not read `承接入口`, owner-lane command-entry labels, or receipt prose; later residue still comes only from structured local response aftermath fields
 - current public-order residue cause keys include `order.public_life.escort_road_report`, `order.public_life.fund_local_watch`, `order.public_life.suppress_banditry`, `order.public_life.negotiate_with_outlaws`, and `order.public_life.tolerate_disorder`
 - v5 refusal / partial cause keys include `order.public_life.fund_local_watch.refused`, `order.public_life.fund_local_watch.partial`, `order.public_life.suppress_banditry.refused`, and `order.public_life.suppress_banditry.partial`
 - v6 response cause keys use `order.public_life.response`; durable meaning comes from structured outcome codes `Repaired`, `Contained`, `Escalated`, and `Ignored`, never from `DomainEvent.Summary`, receipt summary, or `LastInterventionSummary`

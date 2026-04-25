@@ -58,7 +58,7 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
-        return $"外部后账归位：该走巡丁/路匪 lane（OrderAndBanditry）：{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}，巡丁、路匪、路面误读和 route pressure repair 仍回治安路面；本户不能代修。";
+        return $"外部后账归位：该走巡丁/路匪 lane（OrderAndBanditry）：{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}，巡丁、路匪、路面误读和 route pressure repair 仍回治安路面；本户不能代修。承接入口：回到本 lane 先看添雇巡丁、严缉路匪、催护一路；若是前案误读，再看补保巡丁或赔脚户误读。";
     }
 
     private static string BuildOfficeOwnerLaneReturnSurfaceGuidance(HouseholdPressureSnapshot? household)
@@ -68,7 +68,7 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
-        return $"外部后账归位：该走县门/文移 lane（OfficeAndCareer）：{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}，县门未落地、文移拖延和胥吏续拖仍回官署案头；本户不能代修。";
+        return $"外部后账归位：该走县门/文移 lane（OfficeAndCareer）：{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}，县门未落地、文移拖延和胥吏续拖仍回官署案头；本户不能代修。承接入口：回到本 lane 先看押文催县门、改走递报；常规官署仍看批覆词状或发签催办。";
     }
 
     private static string BuildFamilyOwnerLaneReturnSurfaceGuidance(HouseholdPressureSnapshot? household)
@@ -78,7 +78,7 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
-        return $"外部后账归位：该走族老/担保 lane（FamilyCore）：{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}，族老解释、本户担保和宗房脸面仍回族中公开说法；本户不能代修。";
+        return $"外部后账归位：该走族老/担保 lane（FamilyCore）：{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}，族老解释、本户担保和宗房脸面仍回族中公开说法；本户不能代修。承接入口：回到本 lane 先看请族老解释、请族老出面；宗房内面仍看请族老调停。";
     }
 
     private static string RenderOwnerLaneReturnResponseState(HouseholdPressureSnapshot household)

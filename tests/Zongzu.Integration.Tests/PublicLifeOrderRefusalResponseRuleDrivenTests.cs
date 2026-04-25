@@ -1072,6 +1072,9 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("外部后账归位"));
         Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("该走巡丁/路匪 lane"));
         Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("本户不能代修"));
+        Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("承接入口"));
+        Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("添雇巡丁"));
+        Assert.That(orderLaneAffordance.ReadbackSummary, Does.Contain("补保巡丁"));
 
         PlayerCommandAffordanceSnapshot officeLaneAffordance = afterResponse.PlayerCommands.Affordances
             .First(affordance => affordance.CommandName == PlayerCommandNames.PetitionViaOfficeChannels
@@ -1079,9 +1082,14 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("外部后账归位"));
         Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("该走县门/文移 lane"));
         Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("本户不能代修"));
+        Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("承接入口"));
+        Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("押文催县门"));
+        Assert.That(officeLaneAffordance.LeverageSummary, Does.Contain("批覆词状"));
         Assert.That(afterResponse.GovernanceDocket.GuidanceSummary, Does.Contain("外部后账归位"));
         Assert.That(afterResponse.GovernanceDocket.GuidanceSummary, Does.Contain("该走县门/文移 lane"));
         Assert.That(afterResponse.GovernanceDocket.GuidanceSummary, Does.Contain("本户不能代修"));
+        Assert.That(afterResponse.GovernanceDocket.GuidanceSummary, Does.Contain("承接入口"));
+        Assert.That(afterResponse.GovernanceDocket.GuidanceSummary, Does.Contain("押文催县门"));
 
         Assert.That(anchorHousehold.SponsorClanId.HasValue, Is.True);
         PlayerCommandAffordanceSnapshot familyLaneAffordance = afterResponse.PlayerCommands.Affordances
@@ -1090,6 +1098,9 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("外部后账归位"));
         Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("该走族老/担保 lane"));
         Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("本户不能代修"));
+        Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("承接入口"));
+        Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("请族老解释"));
+        Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("请族老调停"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)
