@@ -31,19 +31,28 @@ public sealed partial class PresentationReadModelBuilder
             BuildHomeHouseholdLocalResponseTextureHint(household),
             BuildHomeHouseholdLocalResponseMemoryHint(localSocialMemories));
         string socialMemoryReadback = BuildOrderSocialMemoryReadbackSummary(localSocialMemories);
+        HouseholdLocalResponseAffordanceCapacity nightTravelCapacity =
+            BuildHomeHouseholdLocalResponseAffordanceCapacity(PlayerCommandNames.RestrictNightTravel, household, residue.Score);
+        HouseholdLocalResponseAffordanceCapacity compensationCapacity =
+            BuildHomeHouseholdLocalResponseAffordanceCapacity(PlayerCommandNames.PoolRunnerCompensation, household, residue.Score);
+        HouseholdLocalResponseAffordanceCapacity roadMessageCapacity =
+            BuildHomeHouseholdLocalResponseAffordanceCapacity(PlayerCommandNames.SendHouseholdRoadMessage, household, residue.Score);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.RestrictNightTravel,
             anchor.SettlementId,
             $"{householdName}可先暂缩夜行，少走夜路、渡口与黑路，把拒落/半落地后账先从自家脚程上压住。",
-            migrationRisk >= 28 || residue.Score >= 25,
-            JoinHomeHouseholdLocalResponseText($"本户迁徙之念{migrationRisk}，{residue.Label}{residue.Score}。", socialMemoryHint),
+            (migrationRisk >= 28 || residue.Score >= 25) && nightTravelCapacity.IsEnabled,
+            JoinHomeHouseholdLocalResponseText($"本户迁徙之念{migrationRisk}，{residue.Label}{residue.Score}。", socialMemoryHint, nightTravelCapacity.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理本户劳力、债压、民困和迁徙险；不替治安、县门或族老修复前案。",
             leverageSummary: $"本户只动自家夜行、脚程与临时避险。{residue.Summary}",
-            costSummary: $"代价：丁力会被收紧，债压可能小涨；当前丁力{laborCapacity}，债压{debtPressure}。",
+            costSummary: JoinHomeHouseholdLocalResponseText(
+                $"代价：丁力会被收紧，债压可能小涨；当前丁力{laborCapacity}，债压{debtPressure}。",
+                nightTravelCapacity.CostSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的迁徙之念、丁力和后账是否转为已缓、暂压或吃紧。",
+                nightTravelCapacity.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
 
@@ -51,14 +60,17 @@ public sealed partial class PresentationReadModelBuilder
             PlayerCommandNames.PoolRunnerCompensation,
             anchor.SettlementId,
             $"{householdName}可凑钱赔脚户，把误读和街口话头先压住，免得家户羞面继续外翻。",
-            distress >= 35 || residue.Score >= 20,
-            JoinHomeHouseholdLocalResponseText($"本户民困{distress}，债压{debtPressure}，脚路后账可见。", socialMemoryHint),
+            (distress >= 35 || residue.Score >= 20) && compensationCapacity.IsEnabled,
+            JoinHomeHouseholdLocalResponseText($"本户民困{distress}，债压{debtPressure}，脚路后账可见。", socialMemoryHint, compensationCapacity.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理本户现钱、人情与民困变化；不替OrderAndBanditry补巡丁权威。",
             leverageSummary: "本户拿钱和人情先对脚户解释，只能压住自家牵连的误读。",
-            costSummary: $"代价：债压会抬升，换取民困和迁徙险暂缓；当前债压{debtPressure}。",
+            costSummary: JoinHomeHouseholdLocalResponseText(
+                $"代价：债压会抬升，换取民困和迁徙险暂缓；当前债压{debtPressure}。",
+                compensationCapacity.CostSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的民困是否下降，债压是否转成新的欠账。",
+                compensationCapacity.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
 
@@ -66,14 +78,17 @@ public sealed partial class PresentationReadModelBuilder
             PlayerCommandNames.SendHouseholdRoadMessage,
             anchor.SettlementId,
             $"{householdName}可遣少丁递信，把路情和脚户说法先问清，再决定是否继续压。",
-            laborCapacity >= 18 && residue.Score >= 18,
-            JoinHomeHouseholdLocalResponseText($"本户丁力{laborCapacity}，{residue.Label}{residue.Score}。", socialMemoryHint),
+            laborCapacity >= 18 && residue.Score >= 18 && roadMessageCapacity.IsEnabled,
+            JoinHomeHouseholdLocalResponseText($"本户丁力{laborCapacity}，{residue.Label}{residue.Score}。", socialMemoryHint, roadMessageCapacity.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理自家派丁与劳力抽动；递信不等于官署递报。",
             leverageSummary: "本户只能派自家少丁跑一趟，换一点路情清楚和街口解释。",
-            costSummary: $"代价：丁力会下降，若本已薄弱会变成吃紧后账；当前丁力{laborCapacity}。",
+            costSummary: JoinHomeHouseholdLocalResponseText(
+                $"代价：丁力会下降，若本已薄弱会变成吃紧后账；当前丁力{laborCapacity}。",
+                roadMessageCapacity.CostSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的丁力、迁徙之念和后账读回。",
+                roadMessageCapacity.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
     }
@@ -88,6 +103,8 @@ public sealed partial class PresentationReadModelBuilder
         {
             IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
                 SelectHomeHouseholdLocalResponseSocialMemories(bundle.SocialMemories, household);
+            HouseholdLocalResponseAffordanceCapacity responseCapacity =
+                BuildHomeHouseholdLocalResponseAffordanceCapacity(household.LastLocalResponseCommandCode, household, 0);
 
             yield return BuildPlayerCommandReceiptSnapshot(
                 household.LastLocalResponseCommandCode,
@@ -97,8 +114,12 @@ public sealed partial class PresentationReadModelBuilder
                 clanId: household.SponsorClanId,
                 executionSummary: BuildHomeHouseholdLocalResponseExecutionSummary(household),
                 leverageSummary: "本户回应只结算自家劳力、债压、民困与迁徙险；不改治安、县门、宗房或社会记忆。",
-                costSummary: BuildHomeHouseholdLocalResponseCostSummary(household),
-                readbackSummary: BuildHomeHouseholdLocalResponseReadbackSummary(household, localSocialMemories),
+                costSummary: JoinHomeHouseholdLocalResponseText(
+                    BuildHomeHouseholdLocalResponseCostSummary(household),
+                    responseCapacity.CostSummary),
+                readbackSummary: JoinHomeHouseholdLocalResponseText(
+                    BuildHomeHouseholdLocalResponseReadbackSummary(household, localSocialMemories),
+                    responseCapacity.ReadbackSummary),
                 targetLabel: household.HouseholdName,
                 labelOverride: household.LastLocalResponseCommandLabel);
         }
@@ -166,6 +187,106 @@ public sealed partial class PresentationReadModelBuilder
         return notes.Count == 0
             ? string.Empty
             : $"本户底色：{string.Join("；", notes)}。";
+    }
+
+    private static HouseholdLocalResponseAffordanceCapacity BuildHomeHouseholdLocalResponseAffordanceCapacity(
+        string commandName,
+        HouseholdPressureSnapshot? household,
+        int residueScore)
+    {
+        if (household is null)
+        {
+            return HouseholdLocalResponseAffordanceCapacity.Empty;
+        }
+
+        bool debtBroken = household.DebtPressure >= 95;
+        bool debtRisk = household.DebtPressure >= 88;
+        bool laborBroken = household.LaborCapacity < 18
+            || household.LaborerCount <= 0
+            || (household.LaborCapacity < 30 && household.DependentCount > household.LaborerCount + 2);
+        bool laborRisk = household.LaborCapacity < 28
+            || household.DependentCount > household.LaborerCount + 1;
+
+        return commandName switch
+        {
+            PlayerCommandNames.RestrictNightTravel => BuildNightTravelCapacity(household, residueScore, laborBroken, laborRisk),
+            PlayerCommandNames.PoolRunnerCompensation => BuildRunnerCompensationCapacity(household, debtBroken, debtRisk),
+            PlayerCommandNames.SendHouseholdRoadMessage => BuildRoadMessageCapacity(household, laborBroken, laborRisk),
+            _ => HouseholdLocalResponseAffordanceCapacity.Empty,
+        };
+    }
+
+    private static HouseholdLocalResponseAffordanceCapacity BuildNightTravelCapacity(
+        HouseholdPressureSnapshot household,
+        int residueScore,
+        bool laborBroken,
+        bool laborRisk)
+    {
+        bool isEnabled = !laborBroken || household.MigrationRisk >= 75 || residueScore >= 55;
+        string availability = isEnabled
+            ? household.MigrationRisk >= 75
+                ? "回应承受线：迁徙之念已急，少走夜路仍是本户能先接的一刀。"
+                : laborRisk
+                    ? "回应承受线：丁力偏薄，暂缉夜行可做，但会挤压口粮人手。"
+                    : "回应承受线：本户尚能先从夜路和脚程上避险。"
+            : "回应承受线：丁力已贴地，除非迁徙之念已急，不宜再压夜禁。";
+        string cost = laborRisk
+            ? "承受线代价：会吃丁力，若旧账再硬，容易转成吃紧后账。"
+            : string.Empty;
+        string readback = isEnabled
+            ? "承受线读回：看夜路是否缓住迁徙之念，以及丁力是否被压过线。"
+            : "承受线读回：此项暂不宜由本户硬接。";
+        return new HouseholdLocalResponseAffordanceCapacity(isEnabled, availability, cost, readback);
+    }
+
+    private static HouseholdLocalResponseAffordanceCapacity BuildRunnerCompensationCapacity(
+        HouseholdPressureSnapshot household,
+        bool debtBroken,
+        bool debtRisk)
+    {
+        bool isEnabled = !debtBroken || household.Distress >= 82;
+        string availability = isEnabled
+            ? debtRisk
+                ? "回应承受线：债账逼线，赔脚户只能止口舌，不能久压。"
+                : "回应承受线：债账尚能勉强接住一笔赔付。"
+            : "回应承受线：债账已过线，赔付会把新欠账坐实；宜先改走递报或暂缉夜行。";
+        string cost = debtRisk
+            ? "承受线代价：赔付会抬债，若再叠旧账，多半变成吃紧。"
+            : string.Empty;
+        string readback = isEnabled
+            ? "承受线读回：看口舌是否压住，以及债账是否坐成新尾巴。"
+            : "承受线读回：本户当前不宜再用赔付接后账。";
+        return new HouseholdLocalResponseAffordanceCapacity(isEnabled, availability, cost, readback);
+    }
+
+    private static HouseholdLocalResponseAffordanceCapacity BuildRoadMessageCapacity(
+        HouseholdPressureSnapshot household,
+        bool laborBroken,
+        bool laborRisk)
+    {
+        bool isEnabled = !laborBroken && household.LaborCapacity >= 22;
+        string availability = isEnabled
+            ? laborRisk
+                ? "回应承受线：丁力偏薄，递信可做，但少丁一出就会压口粮人手。"
+                : "回应承受线：本户尚有少丁可跑一趟路信。"
+            : "回应承受线：丁力已贴地，遣少丁递信会压断家计；宜先夜路避险或等外路读回。";
+        string cost = laborRisk
+            ? "承受线代价：递信会抽丁力，容易把路情换成家计吃紧。"
+            : string.Empty;
+        string readback = isEnabled
+            ? "承受线读回：看路情是否问清，以及丁力是否掉到吃紧线。"
+            : "承受线读回：此项暂不宜由本户出丁。";
+        return new HouseholdLocalResponseAffordanceCapacity(isEnabled, availability, cost, readback);
+    }
+
+    private readonly record struct HouseholdLocalResponseAffordanceCapacity(
+        bool IsEnabled,
+        string AvailabilitySummary,
+        string CostSummary,
+        string ReadbackSummary)
+    {
+        public static HouseholdLocalResponseAffordanceCapacity Empty { get; } =
+            new(true, string.Empty, string.Empty, string.Empty);
     }
 
     private static string JoinHomeHouseholdLocalResponseText(params string[] parts)

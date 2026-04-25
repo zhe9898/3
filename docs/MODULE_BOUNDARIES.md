@@ -204,6 +204,7 @@ Current routing note:
 - it does not repair `OrderAndBanditry` refusal authority, `OfficeAndCareer` yamen/document landing, `FamilyCore` elder explanation, or `SocialMemoryAndRelations` durable residue
 - v14 repeat friction may read structured `SocialMemoryEntrySnapshot` cause keys and weights for the same household through `ISocialMemoryAndRelationsQueries`, but it still mutates only population-owned household state and must not parse memory summaries or write SocialMemory state
 - v15 common-household response texture may derive local command cost and outcome pressure from existing population-owned household fields such as debt, labor, distress, migration risk, dependents, laborers, and livelihood. This remains `PopulationAndHouseholds` command-time logic and adds no new household target, schema field, or foreign authority.
+- v16 response capacity affordance may project `回应承受线` and may add command-time capacity summary tails from those same existing household fields. It does not add persisted capacity state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
 
 ### Emits events
 - `HouseholdDebtSpiked`
@@ -698,3 +699,10 @@ Current lite note:
 - The profile may make debt-heavy compensation more costly, labor-thin night restriction / road messaging more fragile, distress-heavy pressure more socially brittle, and migration-prone night restriction more useful. It still writes only population-owned household pressure and local response trace fields.
 - Application projections may display `本户底色` hints from `HouseholdPressureSnapshot`, and Unity may copy those projected affordance / receipt fields only. UI and Unity must not compute final local response effectiveness.
 - v15 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.
+
+## 2026-04-25 playable closure v16 home-household response capacity note
+- `public-life-order-home-household-response-capacity-v16` adds a projected `回应承受线` to the existing home-household local response lane.
+- The capacity line is derived only from existing household read-model fields and existing command-time household state: debt pressure, labor capacity, distress, migration risk, dependents, laborers, and livelihood. It is not a new saved ledger.
+- `PopulationAndHouseholds` may use the same existing fields to mark a forced local response as `Strained` and append a capacity summary tail, but it still writes only household labor, debt, distress, migration, and local response trace fields.
+- Application projections may show whether `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信` is bearable, risky, or currently unfit. UI and Unity may copy those projected fields only and must not compute command outcome, query modules, or write SocialMemory.
+- v16 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.

@@ -371,3 +371,13 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy projected `本户底色` fields and do not query modules or resolve outcomes.
 - Save/schema acceptance: v15 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v16 home-household response capacity acceptance - 2026-04-25
+- `public-life-order-home-household-response-capacity-v16` must prove the v12-v15 home-household lane now shows a projected `回应承受线` before thick household rules are added.
+- Read-model acceptance must prove Month N+1 local response affordances expose bearable / risky / unfit capacity for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from existing household fields only.
+- Path acceptance must cover at least a debt-over-line compensation path, a labor-floor road-message path, and a migration-high night-travel path that remains useful when avoidance is the only local move.
+- Command acceptance must prove issuing a capacity-shaped local response mutates only `PopulationAndHouseholds` at command time and can resolve as `Strained` without mutating `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- Projection acceptance must prove affordances and receipts expose `回应承受线`, `承受线代价`, and `承受线读回` from read models only, while Application/UI/Unity do not compute final command outcome.
+- Unity acceptance must prove shell adapters copy projected capacity fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
+- Save/schema acceptance: v16 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.

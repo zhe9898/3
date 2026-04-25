@@ -94,6 +94,7 @@ public static class PopulationAndHouseholdsCommandResolver
         household.IsMigrating = household.MigrationRisk >= 80 || (household.IsMigrating && household.MigrationRisk >= 65);
 
         string outcomeCode = household.LaborCapacity < 25
+            || textureProfile.LaborCapacityBroken
             || household.DebtPressure >= 85
             || (textureProfile.LaborDrag >= 3 && household.LaborCapacity < 32)
             || (residueFriction.StrainDrag >= 5 && household.DebtPressure >= 78)
@@ -105,6 +106,7 @@ public static class PopulationAndHouseholdsCommandResolver
             ? $"{household.HouseholdName}暂缩夜行，夜路险头被压住一截，但丁力和债压吃紧。"
             : $"{household.HouseholdName}暂缩夜行，少走夜路、渡口和黑路，迁徙之念缓到{household.MigrationRisk}。";
         summary = AppendHouseholdTextureSummary(summary, textureProfile);
+        summary = AppendHouseholdCapacitySummary(summary, textureProfile);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -147,6 +149,7 @@ public static class PopulationAndHouseholdsCommandResolver
         household.IsMigrating = household.MigrationRisk >= 80 || (household.IsMigrating && household.MigrationRisk >= 65);
 
         string outcomeCode = household.DebtPressure >= 82
+            || textureProfile.DebtCapacityBroken
             || (textureProfile.DebtDrag >= 4 && household.DebtPressure >= 78)
             ? HouseholdLocalResponseOutcomeCodes.Strained
             : HouseholdLocalResponseOutcomeCodes.Contained;
@@ -154,6 +157,7 @@ public static class PopulationAndHouseholdsCommandResolver
             ? $"{household.HouseholdName}凑钱赔了脚户误读，街口话头暂压，债压却抬到{household.DebtPressure}。"
             : $"{household.HouseholdName}凑钱赔了脚户误读，街口误会先缓，民困降到{household.Distress}。";
         summary = AppendHouseholdTextureSummary(summary, textureProfile);
+        summary = AppendHouseholdCapacitySummary(summary, textureProfile);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -196,6 +200,7 @@ public static class PopulationAndHouseholdsCommandResolver
         household.IsMigrating = household.MigrationRisk >= 80 || (household.IsMigrating && household.MigrationRisk >= 65);
 
         string outcomeCode = household.LaborCapacity < 25
+            || textureProfile.LaborCapacityBroken
             || (textureProfile.LaborDrag >= 4 && household.LaborCapacity < 34)
             || (residueFriction.StrainDrag >= 5 && household.LaborCapacity < 32)
             ? HouseholdLocalResponseOutcomeCodes.Strained
@@ -204,6 +209,7 @@ public static class PopulationAndHouseholdsCommandResolver
             ? $"{household.HouseholdName}遣少丁递信，路情稍明，却把薄丁力又抽去一截。"
             : $"{household.HouseholdName}遣少丁递信，先把路情和脚户说法递清，迁徙之念调到{household.MigrationRisk}。";
         summary = AppendHouseholdTextureSummary(summary, textureProfile);
+        summary = AppendHouseholdCapacitySummary(summary, textureProfile);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -302,12 +308,20 @@ public static class PopulationAndHouseholdsCommandResolver
             migrationReliefBias = Math.Min(4, migrationReliefBias + 1);
         }
 
+        bool debtCapacityBroken = household.DebtPressure >= 92;
+        bool laborCapacityBroken = household.LaborCapacity < 18
+            || household.LaborerCount <= 0
+            || (household.LaborCapacity < 30 && household.DependentCount > household.LaborerCount + 2);
+
         return new HouseholdLocalResponseTextureProfile(
             debtDrag,
             laborDrag,
             distressDrag,
             migrationReliefBias,
-            BuildHouseholdTextureSummaryTail(household));
+            BuildHouseholdTextureSummaryTail(household),
+            debtCapacityBroken,
+            laborCapacityBroken,
+            BuildHouseholdCapacitySummaryTail(household, debtCapacityBroken, laborCapacityBroken));
     }
 
     private static string AppendHouseholdTextureSummary(
@@ -317,6 +331,15 @@ public static class PopulationAndHouseholdsCommandResolver
         return string.IsNullOrWhiteSpace(textureProfile.SummaryTail)
             ? summary
             : $"{summary}{textureProfile.SummaryTail}";
+    }
+
+    private static string AppendHouseholdCapacitySummary(
+        string summary,
+        HouseholdLocalResponseTextureProfile textureProfile)
+    {
+        return string.IsNullOrWhiteSpace(textureProfile.CapacityTail)
+            ? summary
+            : $"{summary}{textureProfile.CapacityTail}";
     }
 
     private static string BuildHouseholdTextureSummaryTail(PopulationHouseholdState household)
@@ -345,6 +368,32 @@ public static class PopulationAndHouseholdsCommandResolver
         return notes.Count == 0
             ? string.Empty
             : $" 本户底色：{string.Join("；", notes)}。";
+    }
+
+    private static string BuildHouseholdCapacitySummaryTail(
+        PopulationHouseholdState household,
+        bool debtCapacityBroken,
+        bool laborCapacityBroken)
+    {
+        List<string> notes = [];
+        if (debtCapacityBroken)
+        {
+            notes.Add("债账已过线，赔付会把新欠账坐实");
+        }
+
+        if (laborCapacityBroken)
+        {
+            notes.Add("丁力已贴地，夜禁和递信会压住口粮人手");
+        }
+
+        if (household.MigrationRisk >= 75)
+        {
+            notes.Add("迁徙之念已急，暂缉夜行仍可先拦一截");
+        }
+
+        return notes.Count == 0
+            ? string.Empty
+            : $" 回应承受线：{string.Join("；", notes)}。";
     }
 
     private static string AppendResidueFrictionSummary(
@@ -474,5 +523,8 @@ public static class PopulationAndHouseholdsCommandResolver
         int LaborDrag,
         int DistressDrag,
         int MigrationReliefBias,
-        string SummaryTail);
+        string SummaryTail,
+        bool DebtCapacityBroken,
+        bool LaborCapacityBroken,
+        string CapacityTail);
 }

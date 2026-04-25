@@ -108,6 +108,11 @@ Current public-life/order v15 common-household response texture note:
 - This texture changes only the `PopulationAndHouseholds` local response cost / outcome path. It does not create durable memory, social obligation, shame, fear, favor, grudge, or clan climate by itself.
 - `SocialMemoryAndRelations` still reads only structured local response aftermath on its own later monthly pass and must not parse `本户底色` prose, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
 
+Current public-life/order v16 home-household response capacity note:
+- `回应承受线` is a projection / Population command-time capacity cue, not durable social memory state.
+- A debt-over-line or labor-floor household may make `凑钱赔脚户` or `遣少丁递信` unfit in the read model and may make a forced command resolve as `Strained`, but only `PopulationAndHouseholds` writes that local response trace at command time.
+- `SocialMemoryAndRelations` still waits for its later monthly pass and reads only structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`; it must not parse `回应承受线`, `承受线代价`, `承受线读回`, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

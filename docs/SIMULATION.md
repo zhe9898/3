@@ -180,6 +180,7 @@ Current M3 local-conflict note:
 - `PopulationAndHouseholds` runs before `SocialMemoryAndRelations`, so v13 home-household local response residue reads structured local response command/outcome/trace fields after the population pass and relies on SocialMemory cause-key de-duplication rather than UI timers or summary parsing
 - v14 home-household repeat friction is command-time and query-driven: when the player issues a later local response, `PopulationAndHouseholds` reads already-persisted SocialMemory snapshots and mutates only its own household state, so no scheduler shortcut or same-command SocialMemory write is introduced
 - v15 common-household response texture is also command-time and population-owned: the resolver derives debt/labor/distress/migration texture from existing household state and mutates only the local household response cost/outcome fields. It adds no scheduler step, no same-command SocialMemory write, and no UI-owned rule path.
+- v16 home-household response capacity is projection-time plus command-time only: read models derive `回应承受线` from existing household fields, while `PopulationAndHouseholds` resolves any issued local command inside its own namespace. It adds no scheduler step, no same-command SocialMemory write, and no thick household rule loop.
 - `ConflictAndForce.Lite` may also carry campaign-fatigue and escort-strain fallout across months; those penalties recover during its own owned pass
 
 ### Phase 3: month-end diff generation
@@ -259,6 +260,7 @@ Current public-life/order v9/v10/v11/v12 note:
 - v10/v11 add runtime read-model constants / projection enrichment only and no save/schema migration.
 - v12 adds the first home-household local response commands after that projection: `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`. They resolve through `PopulationAndHouseholds` at command time, mutate only household labor/debt/distress/migration plus local response trace fields, and still do not repair Order / Office / Family / SocialMemory aftermath.
 - v12 same-month handling does not mutate `SocialMemoryAndRelations`; any durable shame/fear/favor/grudge/obligation residue remains SocialMemory-owned. Save impact is `PopulationAndHouseholds` schema `2 -> 3` with a local migration.
+- v16 adds response-capacity readback on top of v12-v15: `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` can show bearable / risky / unfit `回应承受线` before command issue, and receipts can copy the resulting capacity readback. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window
