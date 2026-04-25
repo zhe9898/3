@@ -181,6 +181,7 @@ Current routing note:
 - militia/levy potential
 - migration risk
 - household pressure summaries
+- projected ordinary-household public-life/order after-account readback may join household pressure with Order / Office / Family traces, but this remains an Application read-model projection and does not make `PopulationAndHouseholds` own order commands or response traces
 - household membership per PersonId
 - health resilience and health status per PersonId
 - person activity per PersonId
@@ -642,3 +643,10 @@ Current lite note:
 - Those modules may read structured `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, `SourceClanId`, and `OriginDate`, skip current-month response memories, and mutate only their own existing pressure and response trace fields.
 - `SocialMemoryAndRelations` does not resolve actor countermoves and does not write Order, Office, Family, PublicLife, Governance, Population, or PersonRegistry state. It may later read structured owner aftermath and adjust only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`.
 - v8 adds no persisted fields, schema bump, migration, manager/controller layer, or `PersonRegistry` expansion.
+
+## 2026-04-25 playable closure v10 ordinary-household readback note
+- `public-life-order-ordinary-household-readback-v10` keeps ordinary households in the same rule-driven command / residue / social-memory / response / readback loop without adding an event pool or new command owner.
+- `PopulationAndHouseholds` still owns commoner household pressure state only. It does not own `添雇巡丁`, `严缉路匪`, response repair, yamen催办, elder explanation, or durable SocialMemory residue.
+- Application projections may join `HouseholdPressureSnapshot` with structured `OrderAndBanditry`, `OfficeAndCareer`, and `FamilyCore` aftermath snapshots to expose `PublicLifeOrderResidue` household pressure readback.
+- Unity and shell adapters may copy that projected household readback into Desk Sandbox settlement pressure, but they must not query modules, parse summaries, compute effectiveness, mutate household state, or create a new household-control surface.
+- v10 adds runtime read-model constants only and no persisted fields, schema bump, migration, or `PersonRegistry` expansion.

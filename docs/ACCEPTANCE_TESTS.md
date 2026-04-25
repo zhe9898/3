@@ -310,3 +310,12 @@ At integration level, verify:
 - SocialMemory acceptance must prove actor traces are owner-state facts first: Order/Office traces are read on the following monthly pass, while Family traces may be read in the same scheduler pass through module order and response carryover, without parsing summaries or using UI timers.
 - Presentation acceptance must prove Unity/shell readback copies projected actor-countermove receipts only, including order, office, and family labels/result text, and does not query modules or compute effectiveness.
 - Save/schema acceptance: no schema bump, migration, or new persisted fields are expected for v9.
+
+## Playable closure v10 ordinary-household readback acceptance - 2026-04-25
+- `public-life-order-ordinary-household-readback-v10` must prove ordinary households are part of the same rule-driven command / residue / social-memory / response / readback loop, not a separate event-chain, event-pool, or household-control subsystem.
+- Read-model acceptance must prove Month N refused / partial `添雇巡丁` or `严缉路匪` residue projects a Month N+1 `HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue` signal for affected ordinary households.
+- Boundary acceptance must prove the projection reads structured order / office / family aftermath fields and does not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
+- Command acceptance remains unchanged: response affordances are still owned by `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`; ordinary households carry pressure readback and indirect leverage context, but they do not own a new command surface.
+- Projection acceptance must show route fear, runner/watch misunderstanding, household labor/debt/migration strain, and yamen delay where projected, while leaving `PopulationAndHouseholds` state unmutated by read-model composition.
+- Unity acceptance must prove Desk Sandbox settlement pressure displays the projected ordinary-household after-account only from `PresentationReadModelBundle.HouseholdSocialPressures`.
+- Save/schema acceptance: v10 adds runtime read-model constants only and introduces no persisted fields, schema bump, migration, or save roundtrip requirement.

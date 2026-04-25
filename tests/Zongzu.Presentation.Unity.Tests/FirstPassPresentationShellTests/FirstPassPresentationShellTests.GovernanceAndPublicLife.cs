@@ -323,6 +323,59 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_ProjectsOrdinaryHouseholdOrderResiduePressureWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.HouseholdSocialPressures =
+        [
+            new HouseholdSocialPressureSnapshot
+            {
+                HouseholdId = new HouseholdId(44),
+                HouseholdName = "Kiln Wu household",
+                SettlementId = new SettlementId(1),
+                SettlementName = "Lanxi",
+                Livelihood = LivelihoodType.HiredLabor,
+                LivelihoodLabel = "hired labor",
+                PrimaryDriftKey = HouseholdSocialDriftKeys.PublicOrderAftermath,
+                PrimaryDriftLabel = "road-watch after-account",
+                PressureScore = 78,
+                PressureBandLabel = "urgent",
+                IsPlayerAnchor = false,
+                AttachmentSummary = "ordinary household near the road mouth",
+                PressureSummary = "Kiln Wu household still reads the road-watch after-account.",
+                VisibleChainSummary = "Kiln Wu household sees route pressure and runner misread.",
+                Signals =
+                [
+                    new HouseholdSocialPressureSignalSnapshot
+                    {
+                        SignalKey = HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue,
+                        Label = "order residue",
+                        Score = 82,
+                        Summary = "Kiln Wu household still reads the road-watch after-account from runner misread.",
+                        SourceModuleKeys =
+                        [
+                            KnownModuleKeys.PopulationAndHouseholds,
+                            KnownModuleKeys.OrderAndBanditry,
+                        ],
+                    },
+                ],
+                SourceModuleKeys =
+                [
+                    KnownModuleKeys.PopulationAndHouseholds,
+                    KnownModuleKeys.OrderAndBanditry,
+                ],
+            },
+        ];
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        SettlementNodeViewModel settlementNode = shell.DeskSandbox.Settlements.Single();
+
+        Assert.That(settlementNode.PressureSummary, Does.Contain("Kiln Wu household"));
+        Assert.That(settlementNode.PressureSummary, Does.Contain("road-watch after-account"));
+        Assert.That(settlementNode.PressureSummary, Does.Contain("runner misread"));
+    }
+
+    [Test]
     public void Compose_UsesPublicLifeFallbackWhenProjectionAndCommandsAreAbsent()
     {
         PresentationReadModelBundle bundle = CreateBundle();

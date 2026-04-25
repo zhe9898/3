@@ -248,6 +248,12 @@ Current public-life/order v8 note:
 - `OrderAndBanditry` and `OfficeAndCareer` currently run after `SocialMemoryAndRelations`, so their actor countermove traces are read by SocialMemory on the following monthly pass. `FamilyCore` runs before `SocialMemoryAndRelations`, so family actor traces are owner-state facts first and may be read in the same scheduler pass when response carryover remains visible; SocialMemory duplicate-cause guards keep this deterministic without UI timers.
 - v8 adds no scheduler phase, no manager/controller layer, no persisted fields, and no migration. Application, UI, and Unity may only display projected readback.
 
+Current public-life/order v9/v10 note:
+- v9 hardens the same response afterlife by proving soft and hard actor-countermove readbacks plus minimum playable response affordances; it still adds no scheduler phase, manager/controller, or persisted fields.
+- v10 adds ordinary-household visibility as a projection/readback layer: Month N refused / partial residue can become a Month N+1 household social-pressure signal showing night-road fear, runner/watch misunderstanding, labor/debt/migration strain, and yamen delay.
+- ordinary-household v10 readback does not make `PopulationAndHouseholds` resolve public-life order commands and does not mutate household state during projection. The response commands still resolve in `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`, while SocialMemory residue remains owned by `SocialMemoryAndRelations`.
+- v10 adds runtime read-model constants only and no save/schema migration.
+
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window
 - these should stay rare and should not turn the game into a daily alert treadmill

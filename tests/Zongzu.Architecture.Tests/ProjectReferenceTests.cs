@@ -307,6 +307,26 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Ordinary_household_order_residue_projection_must_use_structured_after_account_fields()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.LivingSociety.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Contain("HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue"));
+        Assert.That(source, Does.Contain("LastRefusalResponseTraceCode"));
+        Assert.That(source, Does.Contain("BuildOrderResponseAftermathSummary"));
+        Assert.That(source, Does.Contain("BuildOfficeResponseAftermathSummary"));
+        Assert.That(source, Does.Contain("BuildFamilyResponseAftermathSummary"));
+    }
+
+    [Test]
     public void Public_life_response_friction_readers_must_not_parse_social_memory_summary()
     {
         string[] sourcePaths =

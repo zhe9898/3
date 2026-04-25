@@ -84,6 +84,12 @@ public sealed partial class PresentationReadModelBuilder
         HouseholdSocialPressureSignalSnapshot educationSignal = BuildEducationSignal(sponsorClan, bundle);
         HouseholdSocialPressureSignalSnapshot lineageSignal = BuildLineageProtectionSignal(household, sponsorClan);
         HouseholdSocialPressureSignalSnapshot yamenSignal = BuildYamenSignal(publicLife, jurisdiction);
+        HouseholdSocialPressureSignalSnapshot publicLifeOrderResidueSignal = BuildPublicLifeOrderResidueSignal(
+            household,
+            publicLife,
+            disorder,
+            jurisdiction,
+            sponsorClan);
         HouseholdSocialPressureSignalSnapshot disorderSignal = BuildDisorderSignal(household, disorder);
 
         HouseholdSocialPressureSignalSnapshot[] signals =
@@ -95,6 +101,7 @@ public sealed partial class PresentationReadModelBuilder
             educationSignal,
             lineageSignal,
             yamenSignal,
+            publicLifeOrderResidueSignal,
             disorderSignal,
         ];
 
@@ -331,6 +338,111 @@ public sealed partial class PresentationReadModelBuilder
         };
     }
 
+    private static HouseholdSocialPressureSignalSnapshot BuildPublicLifeOrderResidueSignal(
+        HouseholdPressureSnapshot household,
+        SettlementPublicLifeSnapshot? publicLife,
+        SettlementDisorderSnapshot? disorder,
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        ClanSnapshot? sponsorClan)
+    {
+        if (disorder is null
+            || !HasHouseholdPublicLifeOrderAftermath(disorder, jurisdiction, sponsorClan))
+        {
+            return new HouseholdSocialPressureSignalSnapshot
+            {
+                SignalKey = HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue,
+                Label = "巡防后账",
+                Score = 0,
+                Summary = $"{household.HouseholdName}尚未读到明确的巡防后账；夜路、脚户误读、巡丁担保与县门文移暂未压到此户。",
+                SourceModuleKeys = [KnownModuleKeys.PopulationAndHouseholds],
+            };
+        }
+
+        int publicLifeDrag = publicLife is null
+            ? 0
+            : publicLife.StreetTalkHeat / 4
+              + publicLife.MarketRumorFlow / 5
+              + publicLife.RoadReportLag / 4
+              + publicLife.CourierRisk / 5;
+        int officeDrag = jurisdiction is null
+            ? 0
+            : jurisdiction.PetitionBacklog / 3
+              + jurisdiction.ClerkDependence / 4
+              + jurisdiction.PetitionPressure / 5;
+        int householdExposure = household.Distress / 5
+            + household.DebtPressure / 6
+            + household.MigrationRisk / 6
+            + Math.Max(0, 65 - household.LaborCapacity) / 5;
+        int landingResidue = HasPublicLifeOrderRefusalOrPartialResidue(disorder) || disorder.RefusalCarryoverMonths > 0
+            ? 30
+            : 0;
+        int responseResidue = HasAnyPublicLifeOrderResponseAftermath(disorder, jurisdiction, sponsorClan)
+            ? 18
+            : 0;
+        int score = Math.Clamp(
+            landingResidue
+            + responseResidue
+            + disorder.ImplementationDrag / 3
+            + disorder.RetaliationRisk / 4
+            + disorder.CoercionRisk / 5
+            + disorder.RoutePressure / 4
+            + publicLifeDrag
+            + officeDrag
+            + householdExposure,
+            0,
+            100);
+
+        string orderLabel = RenderOrderInterventionLabel(disorder);
+        string landingTail = BuildOrderLandingAftermathSummary(disorder);
+        string responseTail = CombinePublicLifeResponseText(
+            BuildOrderResponseAftermathSummary(disorder),
+            jurisdiction is null ? string.Empty : BuildOfficeResponseAftermathSummary(jurisdiction),
+            sponsorClan is null ? string.Empty : BuildFamilyResponseAftermathSummary(sponsorClan));
+        string outcomeTail = string.IsNullOrWhiteSpace(responseTail)
+            ? "后账尚未被回应，普通户先用夜路、脚路口角与丁力耗费读到余波。"
+            : responseTail;
+
+        return new HouseholdSocialPressureSignalSnapshot
+        {
+            SignalKey = HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue,
+            Label = "巡防后账",
+            Score = score,
+            Summary = CombinePublicLifeResponseText(
+                $"{household.HouseholdName}读到{orderLabel}之后的普通户后账：夜路更怯、脚户误读更易传开、巡丁担保与口粮会压回本户丁力。",
+                landingTail,
+                outcomeTail,
+                $"民困{household.Distress}，债压{household.DebtPressure}，流徙险{household.MigrationRisk}；路压{disorder.RoutePressure}，县门积案{jurisdiction?.PetitionBacklog ?? 0}。"),
+            SourceModuleKeys = DistinctNonEmpty(
+                KnownModuleKeys.PopulationAndHouseholds,
+                KnownModuleKeys.OrderAndBanditry,
+                publicLife is null ? string.Empty : KnownModuleKeys.PublicLifeAndRumor,
+                jurisdiction is null ? string.Empty : KnownModuleKeys.OfficeAndCareer,
+                sponsorClan is null ? string.Empty : KnownModuleKeys.FamilyCore),
+        };
+    }
+
+    private static bool HasHouseholdPublicLifeOrderAftermath(
+        SettlementDisorderSnapshot disorder,
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        ClanSnapshot? sponsorClan)
+    {
+        return HasPublicLifeOrderRefusalOrPartialResidue(disorder)
+            || disorder.RefusalCarryoverMonths > 0
+            || disorder.ResponseCarryoverMonths > 0
+            || !string.IsNullOrWhiteSpace(disorder.LastRefusalResponseTraceCode)
+            || HasAnyPublicLifeOrderResponseAftermath(disorder, jurisdiction, sponsorClan);
+    }
+
+    private static bool HasAnyPublicLifeOrderResponseAftermath(
+        SettlementDisorderSnapshot disorder,
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        ClanSnapshot? sponsorClan)
+    {
+        return HasPublicLifeOrderResponseReceipt(disorder)
+            || (jurisdiction is not null && HasPublicLifeOrderResponseReceipt(jurisdiction))
+            || (sponsorClan is not null && HasPublicLifeOrderResponseReceipt(sponsorClan));
+    }
+
     private static HouseholdSocialPressureSignalSnapshot BuildDisorderSignal(HouseholdPressureSnapshot household, SettlementDisorderSnapshot? disorder)
     {
         if (disorder is null)
@@ -377,7 +489,13 @@ public sealed partial class PresentationReadModelBuilder
         HouseholdSocialPressureSignalSnapshot education = GetSignal(signals, HouseholdSocialPressureSignalKeys.EducationPull);
         HouseholdSocialPressureSignalSnapshot lineage = GetSignal(signals, HouseholdSocialPressureSignalKeys.LineageProtection);
         HouseholdSocialPressureSignalSnapshot yamen = GetSignal(signals, HouseholdSocialPressureSignalKeys.YamenContact);
+        HouseholdSocialPressureSignalSnapshot publicOrder = GetSignal(signals, HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue);
         HouseholdSocialPressureSignalSnapshot disorder = GetSignal(signals, HouseholdSocialPressureSignalKeys.DisorderOutlet);
+
+        if (publicOrder.Score >= 58 && (debt.Score >= 35 || yamen.Score >= 40 || disorder.Score >= 45))
+        {
+            return (HouseholdSocialDriftKeys.PublicOrderAftermath, "巡防后账牵动", publicOrder);
+        }
 
         if (disorder.Score >= 70 && debt.Score >= 45)
         {

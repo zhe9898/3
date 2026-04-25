@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
@@ -5,6 +6,7 @@ using Zongzu.Kernel;
 using Zongzu.Modules.FamilyCore;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
+using Zongzu.Modules.PopulationAndHouseholds;
 using Zongzu.Modules.SocialMemoryAndRelations;
 
 namespace Zongzu.Integration.Tests;
@@ -269,6 +271,90 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
                               && memory.CauseKey.Contains(PlayerCommandNames.AskClanEldersExplain));
         Assert.That(containedResidue.Type, Is.EqualTo(MemoryType.Debt));
         Assert.That(containedResidue.Subtype, Is.EqualTo(MemorySubtype.ProtectionFavor));
+    }
+
+    [Test]
+    public void PartialWatchResidue_ProjectsOrdinaryHouseholdAfterAccountWithoutPopulationMutation()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260430);
+        simulation.AdvanceMonths(2);
+
+        PresentationReadModelBuilder builder = new();
+        SettlementId settlementId = SelectSettlementWithDisorder(builder.BuildForM2(simulation));
+        OrderAndBanditryState orderState = simulation.GetModuleStateForTesting<OrderAndBanditryState>(
+            KnownModuleKeys.OrderAndBanditry);
+        PopulationAndHouseholdsState populationState = simulation.GetModuleStateForTesting<PopulationAndHouseholdsState>(
+            KnownModuleKeys.PopulationAndHouseholds);
+
+        HouseholdId ordinaryHouseholdId = new(populationState.Households.Max(static household => household.Id.Value) + 1);
+        PopulationHouseholdState ordinaryHousehold = new()
+        {
+            Id = ordinaryHouseholdId,
+            HouseholdName = "Kiln Wu household",
+            SettlementId = settlementId,
+            SponsorClanId = null,
+            Livelihood = LivelihoodType.HiredLabor,
+            Distress = 82,
+            DebtPressure = 76,
+            LaborCapacity = 36,
+            MigrationRisk = 58,
+            LandHolding = 0,
+            GrainStore = 8,
+            ToolCondition = 38,
+            ShelterQuality = 42,
+            DependentCount = 3,
+            LaborerCount = 1,
+        };
+        populationState.Households.Add(ordinaryHousehold);
+        PopulationSettlementState? populationSettlement = populationState.Settlements
+            .FirstOrDefault(entry => entry.SettlementId == settlementId);
+        if (populationSettlement is not null)
+        {
+            populationSettlement.CommonerDistress = 74;
+            populationSettlement.LaborSupply = 48;
+            populationSettlement.MigrationPressure = 54;
+        }
+
+        SettlementDisorderState settlement = orderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+        settlement.ImplementationDrag = 52;
+        settlement.RoutePressure = 64;
+        settlement.RetaliationRisk = 16;
+        settlement.CoercionRisk = 12;
+
+        PlayerCommandResult partial = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.FundLocalWatch,
+            });
+        Assert.That(partial.Accepted, Is.True);
+        Assert.That(settlement.LastInterventionOutcomeCode, Is.EqualTo(OrderInterventionOutcomeCodes.Partial));
+
+        simulation.AdvanceOneMonth();
+
+        int distressBeforeProjection = ordinaryHousehold.Distress;
+        int debtBeforeProjection = ordinaryHousehold.DebtPressure;
+        int migrationBeforeProjection = ordinaryHousehold.MigrationRisk;
+        PresentationReadModelBundle monthNPlusOne = builder.BuildForM2(simulation);
+        HouseholdSocialPressureSnapshot ordinaryPressure = monthNPlusOne.HouseholdSocialPressures
+            .Single(pressure => pressure.HouseholdId == ordinaryHouseholdId);
+        HouseholdSocialPressureSignalSnapshot orderResidueSignal = ordinaryPressure.Signals
+            .Single(signal => string.Equals(signal.SignalKey, HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue, StringComparison.Ordinal));
+
+        Assert.That(orderResidueSignal.Score, Is.GreaterThan(0));
+        Assert.That(ordinaryPressure.PrimaryDriftKey, Is.EqualTo(HouseholdSocialDriftKeys.PublicOrderAftermath));
+        Assert.That(ordinaryPressure.PressureSummary, Is.EqualTo(orderResidueSignal.Summary));
+        Assert.That(orderResidueSignal.Summary, Does.Contain(ordinaryHousehold.HouseholdName));
+        Assert.That(orderResidueSignal.SourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
+        Assert.That(orderResidueSignal.SourceModuleKeys, Does.Contain(KnownModuleKeys.OrderAndBanditry));
+        Assert.That(monthNPlusOne.PlayerCommands.Affordances
+            .Any(affordance => affordance.SettlementId == settlementId
+                               && affordance.CommandName == PlayerCommandNames.RepairLocalWatchGuarantee),
+            Is.True);
+        Assert.That(ordinaryHousehold.Distress, Is.EqualTo(distressBeforeProjection));
+        Assert.That(ordinaryHousehold.DebtPressure, Is.EqualTo(debtBeforeProjection));
+        Assert.That(ordinaryHousehold.MigrationRisk, Is.EqualTo(migrationBeforeProjection));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)

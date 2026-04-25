@@ -29,9 +29,10 @@ internal static class DeskSandboxShellAdapter
 					CampaignFrontSnapshot? campaign = context.GetCampaign(settlement.Id);
 					CampaignMobilizationSignalSnapshot? mobilizationSignal = context.GetMobilizationSignal(settlement.Id);
 					ClanTradeRouteSnapshot[] clanTradeRoutes = context.GetClanTradeRoutes(settlement.Id);
+					HouseholdSocialPressureSnapshot[] householdPressures = context.GetHouseholdPressures(settlement.Id);
 					HallDocketShellAdapter.SettlementHallAgendaProjection hallAgenda = HallDocketShellAdapter.BuildSettlementHallAgenda(bundle.HallDocket, settlement.Id);
 
-					SettlementNodeViewModel settlementNode = new SettlementNodeViewModel
+					SettlementNodeViewModel settlementNode = new()
 					{
 						SettlementName = settlement.Name,
 						Security = settlement.Security,
@@ -42,7 +43,7 @@ internal static class DeskSandboxShellAdapter
 						GovernanceSummary = OfficeShellAdapter.BuildSettlementGovernanceFallbackSummary(jurisdiction),
 						CampaignSummary = WarfareCampaignShellAdapter.BuildSettlementCampaignSummary(campaign, mobilizationSignal, settlement, clanTradeRoutes),
 						AftermathSummary = WarfareAftermathShellAdapter.BuildSettlementAftermathSummary(settlement, populationSettlement, jurisdiction, campaign, notifications),
-						PressureSummary = populationSettlement == null ? "民户情形未起。" : $"民困{populationSettlement.CommonerDistress}，丁力{populationSettlement.LaborSupply}，流徙{populationSettlement.MigrationPressure}。",
+						PressureSummary = BuildSettlementHouseholdPressureSummary(populationSettlement, householdPressures),
 						HallAgendaSummary = hallAgenda.Summary,
 						HallAgendaItems = hallAgenda.Items,
 						HallAgendaCount = hallAgenda.Count,
@@ -59,5 +60,31 @@ internal static class DeskSandboxShellAdapter
 
 		PublicLifeShellAdapter.HydrateDeskSandboxPublicLife(bundle, deskSandbox);
 		return deskSandbox;
+	}
+
+	private static string BuildSettlementHouseholdPressureSummary(
+		PopulationSettlementSnapshot? populationSettlement,
+		IReadOnlyList<HouseholdSocialPressureSnapshot> householdPressures)
+	{
+		string populationSummary = populationSettlement == null
+			? "民户情形未起。"
+			: $"民困{populationSettlement.CommonerDistress}，丁力{populationSettlement.LaborSupply}，流徙{populationSettlement.MigrationPressure}。";
+		HouseholdSocialPressureSnapshot? leadHousehold = householdPressures.FirstOrDefault();
+		if (leadHousehold is null)
+		{
+			return populationSummary;
+		}
+
+		HouseholdSocialPressureSignalSnapshot? orderResidueSignal = leadHousehold.Signals
+			.FirstOrDefault(static signal =>
+				string.Equals(signal.SignalKey, HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue, StringComparison.Ordinal)
+				&& signal.Score > 0);
+		string householdSummary = orderResidueSignal?.Summary
+			?? leadHousehold.VisibleChainSummary
+			?? leadHousehold.PressureSummary;
+
+		return string.IsNullOrWhiteSpace(householdSummary)
+			? populationSummary
+			: $"{populationSummary} {householdSummary}";
 	}
 }
