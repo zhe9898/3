@@ -97,6 +97,12 @@ Current public-life/order v13 home-household response note:
 - This pass still represents thin-chain structure, not thick household-status formulas: no household class ladder, yamen incentive model, or repeated-response ledger is introduced yet.
 - The reader must not parse `LastLocalResponseSummary`, command receipt text, memory summary prose, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
 
+Current public-life/order v14 home-household repeat-friction note:
+- later local household responses may now read prior home-household SocialMemory residue as friction or support, but only through structured cause keys and weights.
+- `PopulationAndHouseholds` may let relieved memories soften local cost, contained memories leave obligation drag, and strained / ignored memories harden later local costs. It still writes only household labor, debt, distress, migration, and local response trace fields.
+- This is not a new relationship table, household target system, or thick social formula. Durable memory remains owned by `SocialMemoryAndRelations`; repeated-response command effects remain owned by `PopulationAndHouseholds`.
+- No resolver may parse SocialMemory summary prose, `LastLocalResponseSummary`, command receipt text, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

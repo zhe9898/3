@@ -286,6 +286,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - `public-life-order-home-household-social-memory-v13` lets `SocialMemoryAndRelations` read the structured v12 local-response aftermath on the later monthly pass and convert `Relieved`, `Contained`, `Strained`, or `Ignored` into SocialMemory-owned residue.
 - v13 SocialMemory writes are limited to existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`; the reader must not parse `LastLocalResponseSummary`, receipt prose, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
 - v13 projection may append the resulting SocialMemory readback to home-household local response receipts, but Application / UI / Unity still do not compute outcome effectiveness or write social memory. v13 adds no persisted state, schema bump, or migration.
+- `public-life-order-home-household-repeat-friction-v14` lets `PopulationAndHouseholds` read structured v13 SocialMemory residue when resolving later local household responses. `Relieved` can supply small local support, `Contained` can leave obligation drag, and `Strained` / `Ignored` can add debt or labor drag.
+- v14 command-time mutation remains limited to `PopulationAndHouseholds`; `SocialMemoryAndRelations` is read through queries only and is not mutated by the command resolver.
+- v14 projections may display the existing SocialMemory hint on local response affordances / receipts, but Application / UI / Unity must not compute the command outcome. v14 adds no persisted state, schema bump, or migration.
 
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace

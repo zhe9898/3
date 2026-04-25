@@ -36,10 +36,10 @@ public sealed partial class FirstPassPresentationShellTests
                         CommandName = PlayerCommandNames.RestrictNightTravel,
                         Label = "暂缩夜行",
                         Summary = "张家户暂缩夜行。",
-                        AvailabilitySummary = "本户迁徙之念72，巡防后账66。",
+                        AvailabilitySummary = "本户迁徙之念72，巡防后账66。 旧账记忆：人情23。",
                         LeverageSummary = "本户只动自家夜行、脚程与临时避险。",
                         CostSummary = "代价：丁力会被收紧。",
-                        ReadbackSummary = "下月看迁徙之念、丁力和后账。",
+                        ReadbackSummary = "下月看迁徙之念、丁力和后账。 社会记忆读回：人情23，本户后账已缓。",
                         TargetLabel = "张家户",
                         IsEnabled = true,
                     },
@@ -71,8 +71,10 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(affordance.CommandName, Is.EqualTo(PlayerCommandNames.RestrictNightTravel));
         Assert.That(affordance.Label, Is.EqualTo("暂缩夜行"));
         Assert.That(affordance.TargetLabel, Is.EqualTo("张家户"));
+        Assert.That(affordance.AvailabilitySummary, Does.Contain("旧账记忆"));
         Assert.That(affordance.CostSummary, Does.Contain("丁力"));
         Assert.That(affordance.ReadbackSummary, Does.Contain("下月看"));
+        Assert.That(affordance.ReadbackSummary, Does.Contain("社会记忆读回"));
         Assert.That(affordance.IsEnabled, Is.True);
 
         CommandReceiptViewModel receipt = node.PublicLifeRecentReceipts.Single();

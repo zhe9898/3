@@ -644,6 +644,149 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(strainedReceipt.ReadbackSummary, Does.Contain(strainedResidue.Summary));
     }
 
+    [Test]
+    public void HomeHouseholdLocalResponse_RepeatFrictionReadsSocialMemoryAndMutatesOnlyPopulation()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260503);
+        simulation.AdvanceMonths(2);
+
+        PresentationReadModelBuilder builder = new();
+        PopulationAndHouseholdsState populationState = simulation.GetModuleStateForTesting<PopulationAndHouseholdsState>(
+            KnownModuleKeys.PopulationAndHouseholds);
+        PopulationHouseholdState anchorHousehold = SelectPlayerAnchorHouseholdForTest(populationState);
+        SettlementId settlementId = anchorHousehold.SettlementId;
+        OrderAndBanditryState orderState = simulation.GetModuleStateForTesting<OrderAndBanditryState>(
+            KnownModuleKeys.OrderAndBanditry);
+        FamilyCoreState familyState = simulation.GetModuleStateForTesting<FamilyCoreState>(
+            KnownModuleKeys.FamilyCore);
+        OfficeAndCareerState officeState = simulation.GetModuleStateForTesting<OfficeAndCareerState>(
+            KnownModuleKeys.OfficeAndCareer);
+        SocialMemoryAndRelationsState socialState = simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(
+            KnownModuleKeys.SocialMemoryAndRelations);
+
+        anchorHousehold.Distress = 58;
+        anchorHousehold.DebtPressure = 48;
+        anchorHousehold.LaborCapacity = 42;
+        anchorHousehold.MigrationRisk = 72;
+        SettlementDisorderState settlement = orderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+        settlement.ImplementationDrag = 52;
+        settlement.RoutePressure = 62;
+        settlement.RetaliationRisk = 14;
+        settlement.CoercionRisk = 10;
+
+        PlayerCommandService commandService = new();
+        PlayerCommandResult partial = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.FundLocalWatch,
+            });
+        Assert.That(partial.Accepted, Is.True);
+        Assert.That(settlement.LastInterventionOutcomeCode, Is.EqualTo(OrderInterventionOutcomeCodes.Partial));
+
+        simulation.AdvanceOneMonth();
+
+        PlayerCommandResult firstRelief = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.RestrictNightTravel,
+            });
+        Assert.That(firstRelief.Accepted, Is.True);
+        simulation.AdvanceOneMonth();
+
+        SocialMemoryEntrySnapshot relievedResidue = simulation.GetQueryForTesting<ISocialMemoryAndRelationsQueries>()
+            .GetMemories()
+            .Single(memory => memory.CauseKey.StartsWith("order.public_life.household_response.", StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(anchorHousehold.Id.Value.ToString(), StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(PlayerCommandNames.RestrictNightTravel, StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(HouseholdLocalResponseOutcomeCodes.Relieved, StringComparison.Ordinal));
+        Assert.That(relievedResidue.Weight, Is.GreaterThanOrEqualTo(20));
+
+        PresentationReadModelBundle afterRelievedMemory = builder.BuildForM2(simulation);
+        PlayerCommandAffordanceSnapshot relievedAffordance = afterRelievedMemory.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.RestrictNightTravel
+                                 && affordance.SettlementId == settlementId
+                                 && affordance.TargetLabel == anchorHousehold.HouseholdName);
+        Assert.That(relievedAffordance.AvailabilitySummary, Does.Contain("旧账记忆"));
+        Assert.That(relievedAffordance.ReadbackSummary, Does.Contain("社会记忆读回"));
+
+        anchorHousehold.Distress = 58;
+        anchorHousehold.DebtPressure = 48;
+        anchorHousehold.LaborCapacity = 42;
+        anchorHousehold.MigrationRisk = 72;
+        int memoryCountBeforeRepeatRelief = socialState.Memories.Count;
+        int routePressureBeforeRepeatRelief = settlement.RoutePressure;
+        string familyResponsesBefore = string.Join("|", familyState.Clans.Select(static clan => clan.LastRefusalResponseCommandCode));
+        string officeResponsesBefore = string.Join("|", officeState.People.Select(static career => career.LastRefusalResponseCommandCode));
+
+        PlayerCommandResult repeatedRelief = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.RestrictNightTravel,
+            });
+
+        Assert.That(repeatedRelief.Accepted, Is.True);
+        Assert.That(anchorHousehold.MigrationRisk, Is.LessThanOrEqualTo(60),
+            "Relieved social-memory residue should provide light local support on the next household response.");
+        Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("旧账记得曾被缓下"));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeRepeatRelief));
+        Assert.That(settlement.RoutePressure, Is.EqualTo(routePressureBeforeRepeatRelief));
+        Assert.That(string.Join("|", familyState.Clans.Select(static clan => clan.LastRefusalResponseCommandCode)), Is.EqualTo(familyResponsesBefore));
+        Assert.That(string.Join("|", officeState.People.Select(static career => career.LastRefusalResponseCommandCode)), Is.EqualTo(officeResponsesBefore));
+
+        anchorHousehold.Distress = 70;
+        anchorHousehold.DebtPressure = 78;
+        anchorHousehold.LaborCapacity = 35;
+        anchorHousehold.MigrationRisk = 45;
+        PlayerCommandResult firstStrain = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.PoolRunnerCompensation,
+            });
+        Assert.That(firstStrain.Accepted, Is.True);
+        Assert.That(anchorHousehold.LastLocalResponseOutcomeCode, Is.EqualTo(HouseholdLocalResponseOutcomeCodes.Strained));
+
+        simulation.AdvanceOneMonth();
+
+        SocialMemoryEntrySnapshot strainedResidue = simulation.GetQueryForTesting<ISocialMemoryAndRelationsQueries>()
+            .GetMemories()
+            .Single(memory => memory.CauseKey.StartsWith("order.public_life.household_response.", StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(anchorHousehold.Id.Value.ToString(), StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(PlayerCommandNames.PoolRunnerCompensation, StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(HouseholdLocalResponseOutcomeCodes.Strained, StringComparison.Ordinal));
+        Assert.That(strainedResidue.Weight, Is.GreaterThanOrEqualTo(35));
+
+        anchorHousehold.Distress = 70;
+        anchorHousehold.DebtPressure = 78;
+        anchorHousehold.LaborCapacity = 35;
+        anchorHousehold.MigrationRisk = 45;
+        int memoryCountBeforeRepeatStrain = socialState.Memories.Count;
+        PlayerCommandResult repeatedStrain = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.PoolRunnerCompensation,
+            });
+
+        Assert.That(repeatedStrain.Accepted, Is.True);
+        Assert.That(anchorHousehold.DebtPressure, Is.GreaterThanOrEqualTo(90),
+            "Strained social-memory residue should add local debt drag rather than repairing order authority.");
+        Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("旧账记忆仍硬"));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeRepeatStrain));
+    }
+
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)
     {
         return bundle.GovernanceSettlements

@@ -202,6 +202,7 @@ Current routing note:
 - these home-household local response commands are resolved by `PopulationAndHouseholdsCommandResolver` inside `Zongzu.Modules.PopulationAndHouseholds`
 - the resolver may select an affected household from settlement / optional clan scope, but it may mutate only population-owned household labor, debt, distress, migration, and local response trace fields
 - it does not repair `OrderAndBanditry` refusal authority, `OfficeAndCareer` yamen/document landing, `FamilyCore` elder explanation, or `SocialMemoryAndRelations` durable residue
+- v14 repeat friction may read structured `SocialMemoryEntrySnapshot` cause keys and weights for the same household through `ISocialMemoryAndRelationsQueries`, but it still mutates only population-owned household state and must not parse memory summaries or write SocialMemory state
 
 ### Emits events
 - `HouseholdDebtSpiked`
@@ -683,3 +684,9 @@ Current lite note:
 - `SocialMemoryAndRelations` reads structured `PopulationAndHouseholds` local-response aftermath and writes only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` records. It does not resolve `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信`, and it does not repair order, yamen, family, public-life, population, or registry state.
 - Application may join the resulting `SocialMemoryEntrySnapshot` onto home-household local response receipts as projected readback. Unity and shell adapters may copy that receipt text only; they must not compute durable residue, query modules, or parse summaries.
 - v13 adds only additive `SocialMemoryKinds` constants and no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.
+
+## 2026-04-25 playable closure v14 home-household repeat-friction note
+- `public-life-order-home-household-repeat-friction-v14` lets later `PopulationAndHouseholds` local response commands read existing v13 SocialMemory residue as small local repeat friction.
+- The reader uses only active `SocialMemoryEntrySnapshot` cause keys under `order.public_life.household_response.{HouseholdId}.`, structured outcome markers, and weights. It must not parse memory summary prose, command receipt prose, `LastLocalResponseSummary`, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
+- `PopulationAndHouseholds` remains the command-time owner and may mutate only household labor, debt, distress, migration, and local response trace fields. It still does not repair order, yamen, family, public-life, registry, or SocialMemory state.
+- v14 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.

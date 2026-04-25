@@ -430,6 +430,35 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Home_household_local_response_repeat_friction_must_read_structured_social_memory_only()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsCommandResolver.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("memory.Summary"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("OrderAndBanditryState"));
+        Assert.That(source, Does.Not.Contain("OfficeAndCareerState"));
+        Assert.That(source, Does.Not.Contain("FamilyCoreState"));
+        Assert.That(source, Does.Not.Contain("SocialMemoryAndRelationsState"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(source, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(source, Does.Not.Contain(".Memories.Add"));
+        Assert.That(source, Does.Contain("ISocialMemoryAndRelationsQueries"));
+        Assert.That(source, Does.Contain("GetMemoriesByClan"));
+        Assert.That(source, Does.Contain("order.public_life.household_response."));
+        Assert.That(source, Does.Contain("CauseKey.Contains"));
+        Assert.That(source, Does.Contain("HouseholdLocalResponseOutcomeCodes.Relieved"));
+        Assert.That(source, Does.Contain("HouseholdLocalResponseOutcomeCodes.Strained"));
+    }
+
+    [Test]
     public void Public_life_response_friction_readers_must_not_parse_social_memory_summary()
     {
         string[] sourcePaths =

@@ -10,6 +10,8 @@ public sealed class PopulationAndHouseholdsCommandContext
     public PopulationAndHouseholdsState State { get; init; } = new();
 
     public PlayerCommandRequest Command { get; init; } = new();
+
+    public ISocialMemoryAndRelationsQueries? SocialMemoryQueries { get; init; }
 }
 
 public static class PopulationAndHouseholdsCommandResolver
@@ -32,11 +34,14 @@ public static class PopulationAndHouseholdsCommandResolver
             return BuildRejectedResult(command, $"此地暂无可由本户先处理的家户压力：{command.SettlementId.Value}。");
         }
 
+        HouseholdLocalResponseResidueFriction residueFriction =
+            ResolveHomeHouseholdLocalResponseResidueFriction(context.SocialMemoryQueries, household);
+
         return command.CommandName switch
         {
-            PlayerCommandNames.RestrictNightTravel => ApplyRestrictNightTravel(command, household),
-            PlayerCommandNames.PoolRunnerCompensation => ApplyPoolRunnerCompensation(command, household),
-            PlayerCommandNames.SendHouseholdRoadMessage => ApplySendHouseholdRoadMessage(command, household),
+            PlayerCommandNames.RestrictNightTravel => ApplyRestrictNightTravel(command, household, residueFriction),
+            PlayerCommandNames.PoolRunnerCompensation => ApplyPoolRunnerCompensation(command, household, residueFriction),
+            PlayerCommandNames.SendHouseholdRoadMessage => ApplySendHouseholdRoadMessage(command, household, residueFriction),
             _ => BuildRejectedResult(command, $"PopulationAndHouseholds does not handle player command {command.CommandName}."),
         };
     }
@@ -52,13 +57,27 @@ public static class PopulationAndHouseholdsCommandResolver
         };
     }
 
-    private static PlayerCommandResult ApplyRestrictNightTravel(PlayerCommandRequest command, PopulationHouseholdState household)
+    private static PlayerCommandResult ApplyRestrictNightTravel(
+        PlayerCommandRequest command,
+        PopulationHouseholdState household,
+        HouseholdLocalResponseResidueFriction residueFriction)
     {
         int oldMigrationRisk = household.MigrationRisk;
-        int migrationRelief = household.MigrationRisk >= 65 ? 10 : 7;
-        int laborCost = household.LaborCapacity >= 35 ? 5 : 3;
-        int debtCost = household.DebtPressure >= 70 ? 2 : 1;
-        int distressDrift = household.Distress >= 75 ? 1 : 0;
+        int migrationRelief = Math.Max(
+            1,
+            (household.MigrationRisk >= 65 ? 10 : 7)
+            + residueFriction.ReliefSupport
+            - Math.Min(3, residueFriction.StrainDrag / 2));
+        int laborCost = Math.Max(
+            1,
+            (household.LaborCapacity >= 35 ? 5 : 3)
+            + Math.Max(0, residueFriction.StrainDrag - residueFriction.ReliefSupport) / 2);
+        int debtCost = Math.Max(
+            0,
+            (household.DebtPressure >= 70 ? 2 : 1)
+            + (residueFriction.ObligationDrag / 2)
+            + (residueFriction.StrainDrag / 2));
+        int distressDrift = (household.Distress >= 75 ? 1 : 0) + Math.Max(0, residueFriction.StrainDrag - 3) / 3;
 
         household.MigrationRisk = Clamp100(household.MigrationRisk - migrationRelief);
         household.LaborCapacity = Clamp100(household.LaborCapacity - laborCost);
@@ -66,7 +85,9 @@ public static class PopulationAndHouseholdsCommandResolver
         household.Distress = Clamp100(household.Distress + distressDrift);
         household.IsMigrating = household.MigrationRisk >= 80 || (household.IsMigrating && household.MigrationRisk >= 65);
 
-        string outcomeCode = household.LaborCapacity < 25 || household.DebtPressure >= 85
+        string outcomeCode = household.LaborCapacity < 25
+            || household.DebtPressure >= 85
+            || (residueFriction.StrainDrag >= 5 && household.DebtPressure >= 78)
             ? HouseholdLocalResponseOutcomeCodes.Strained
             : oldMigrationRisk - household.MigrationRisk >= 8
                 ? HouseholdLocalResponseOutcomeCodes.Relieved
@@ -74,6 +95,7 @@ public static class PopulationAndHouseholdsCommandResolver
         string summary = outcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
             ? $"{household.HouseholdName}暂缩夜行，夜路险头被压住一截，但丁力和债压吃紧。"
             : $"{household.HouseholdName}暂缩夜行，少走夜路、渡口和黑路，迁徙之念缓到{household.MigrationRisk}。";
+        summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
             household,
@@ -84,11 +106,24 @@ public static class PopulationAndHouseholdsCommandResolver
         return BuildAcceptedResult(command, household);
     }
 
-    private static PlayerCommandResult ApplyPoolRunnerCompensation(PlayerCommandRequest command, PopulationHouseholdState household)
+    private static PlayerCommandResult ApplyPoolRunnerCompensation(
+        PlayerCommandRequest command,
+        PopulationHouseholdState household,
+        HouseholdLocalResponseResidueFriction residueFriction)
     {
-        int debtCost = household.DebtPressure >= 70 ? 8 : 5;
-        int distressRelief = household.Distress >= 60 ? 8 : 5;
-        int migrationRelief = household.MigrationRisk >= 45 ? 4 : 2;
+        int debtCost = (household.DebtPressure >= 70 ? 8 : 5)
+            + residueFriction.ObligationDrag
+            + residueFriction.StrainDrag;
+        int distressRelief = Math.Max(
+            1,
+            (household.Distress >= 60 ? 8 : 5)
+            + (residueFriction.ReliefSupport / 2)
+            - Math.Min(2, residueFriction.StrainDrag / 3));
+        int migrationRelief = Math.Max(
+            0,
+            (household.MigrationRisk >= 45 ? 4 : 2)
+            + (residueFriction.ReliefSupport / 3)
+            - Math.Min(2, residueFriction.StrainDrag / 4));
 
         household.DebtPressure = Clamp100(household.DebtPressure + debtCost);
         household.Distress = Clamp100(household.Distress - distressRelief);
@@ -102,6 +137,7 @@ public static class PopulationAndHouseholdsCommandResolver
         string summary = outcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
             ? $"{household.HouseholdName}凑钱赔了脚户误读，街口话头暂压，债压却抬到{household.DebtPressure}。"
             : $"{household.HouseholdName}凑钱赔了脚户误读，街口误会先缓，民困降到{household.Distress}。";
+        summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
             household,
@@ -112,25 +148,29 @@ public static class PopulationAndHouseholdsCommandResolver
         return BuildAcceptedResult(command, household);
     }
 
-    private static PlayerCommandResult ApplySendHouseholdRoadMessage(PlayerCommandRequest command, PopulationHouseholdState household)
+    private static PlayerCommandResult ApplySendHouseholdRoadMessage(
+        PlayerCommandRequest command,
+        PopulationHouseholdState household,
+        HouseholdLocalResponseResidueFriction residueFriction)
     {
         bool laborThin = household.LaborCapacity < 30;
-        int laborCost = laborThin ? 4 : 6;
-        int distressRelief = laborThin ? 1 : 4;
-        int migrationDelta = laborThin ? 2 : -3;
+        int laborCost = Math.Max(1, (laborThin ? 4 : 6) + Math.Max(0, residueFriction.StrainDrag - residueFriction.ReliefSupport) / 2);
+        int distressRelief = Math.Max(0, (laborThin ? 1 : 4) + (residueFriction.ReliefSupport / 2) - Math.Min(2, residueFriction.ObligationDrag / 2));
+        int migrationDelta = (laborThin ? 2 : -3) - (residueFriction.ReliefSupport / 2) + (residueFriction.StrainDrag / 3);
 
         household.LaborCapacity = Clamp100(household.LaborCapacity - laborCost);
         household.Distress = Clamp100(household.Distress - distressRelief);
         household.MigrationRisk = Clamp100(household.MigrationRisk + migrationDelta);
-        household.DebtPressure = Clamp100(household.DebtPressure + 1);
+        household.DebtPressure = Clamp100(household.DebtPressure + 1 + (residueFriction.ObligationDrag / 2));
         household.IsMigrating = household.MigrationRisk >= 80 || (household.IsMigrating && household.MigrationRisk >= 65);
 
-        string outcomeCode = household.LaborCapacity < 25
+        string outcomeCode = household.LaborCapacity < 25 || (residueFriction.StrainDrag >= 5 && household.LaborCapacity < 32)
             ? HouseholdLocalResponseOutcomeCodes.Strained
             : HouseholdLocalResponseOutcomeCodes.Contained;
         string summary = outcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
             ? $"{household.HouseholdName}遣少丁递信，路情稍明，却把薄丁力又抽去一截。"
             : $"{household.HouseholdName}遣少丁递信，先把路情和脚户说法递清，迁徙之念调到{household.MigrationRisk}。";
+        summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
             household,
@@ -158,6 +198,56 @@ public static class PopulationAndHouseholdsCommandResolver
             .ThenByDescending(ComputeHouseholdExposureScore)
             .ThenBy(static household => household.Id.Value)
             .FirstOrDefault();
+    }
+
+    private static HouseholdLocalResponseResidueFriction ResolveHomeHouseholdLocalResponseResidueFriction(
+        ISocialMemoryAndRelationsQueries? socialMemoryQueries,
+        PopulationHouseholdState household)
+    {
+        if (socialMemoryQueries is null || !household.SponsorClanId.HasValue)
+        {
+            return HouseholdLocalResponseResidueFriction.Neutral;
+        }
+
+        string causePrefix = $"order.public_life.household_response.{household.Id.Value}.";
+        int relieved = 0;
+        int contained = 0;
+        int strained = 0;
+        int ignored = 0;
+
+        foreach (SocialMemoryEntrySnapshot memory in socialMemoryQueries.GetMemoriesByClan(household.SponsorClanId.Value)
+                     .Where(static memory => memory.State == MemoryLifecycleState.Active)
+                     .Where(memory => memory.CauseKey.StartsWith(causePrefix, StringComparison.Ordinal))
+                     .OrderBy(static memory => memory.Id.Value))
+        {
+            if (memory.CauseKey.Contains($".{HouseholdLocalResponseOutcomeCodes.Relieved}.", StringComparison.Ordinal))
+            {
+                relieved += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{HouseholdLocalResponseOutcomeCodes.Contained}.", StringComparison.Ordinal))
+            {
+                contained += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{HouseholdLocalResponseOutcomeCodes.Strained}.", StringComparison.Ordinal))
+            {
+                strained += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{HouseholdLocalResponseOutcomeCodes.Ignored}.", StringComparison.Ordinal))
+            {
+                ignored += memory.Weight;
+            }
+        }
+
+        return HouseholdLocalResponseResidueFriction.FromWeights(relieved, contained, strained, ignored);
+    }
+
+    private static string AppendResidueFrictionSummary(
+        string summary,
+        HouseholdLocalResponseResidueFriction residueFriction)
+    {
+        return string.IsNullOrWhiteSpace(residueFriction.SummaryTail)
+            ? summary
+            : $"{summary}{residueFriction.SummaryTail}";
     }
 
     private static int ComputeHouseholdExposureScore(PopulationHouseholdState household)
@@ -224,5 +314,52 @@ public static class PopulationAndHouseholdsCommandResolver
     private static int Clamp100(int value)
     {
         return Math.Clamp(value, 0, 100);
+    }
+
+    private readonly record struct HouseholdLocalResponseResidueFriction(
+        int ReliefSupport,
+        int ObligationDrag,
+        int StrainDrag,
+        string SummaryTail)
+    {
+        public static HouseholdLocalResponseResidueFriction Neutral { get; } = new(0, 0, 0, string.Empty);
+
+        public static HouseholdLocalResponseResidueFriction FromWeights(
+            int relieved,
+            int contained,
+            int strained,
+            int ignored)
+        {
+            int reliefSupport = Math.Clamp(relieved / 12, 0, 4);
+            int obligationDrag = Math.Clamp(contained / 14, 0, 3);
+            int strainDrag = Math.Clamp((strained + ignored) / 10, 0, 6);
+            string summaryTail = BuildSummaryTail(relieved, contained, strained, ignored);
+            return new HouseholdLocalResponseResidueFriction(reliefSupport, obligationDrag, strainDrag, summaryTail);
+        }
+
+        private static string BuildSummaryTail(
+            int relieved,
+            int contained,
+            int strained,
+            int ignored)
+        {
+            int hardWeight = strained + ignored;
+            if (hardWeight >= Math.Max(relieved, contained) && hardWeight > 0)
+            {
+                return $"旧账记忆仍硬，吃紧/放置余重{hardWeight}。";
+            }
+
+            if (relieved >= contained && relieved > 0)
+            {
+                return $"旧账记得曾被缓下，人情余重{relieved}。";
+            }
+
+            if (contained > 0)
+            {
+                return $"旧账暂压未清，担保余重{contained}。";
+            }
+
+            return string.Empty;
+        }
     }
 }

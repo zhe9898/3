@@ -351,3 +351,13 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy projected receipt readback only and do not compute SocialMemory residue or parse summaries.
 - Save/schema acceptance: v13 adds no persisted fields, no schema bump, and no migration; existing v12 `PopulationAndHouseholds` schema `3` save/load proof remains sufficient for the local response trace fields.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v14 home-household repeat-friction acceptance - 2026-04-25
+- `public-life-order-home-household-repeat-friction-v14` must prove v13 SocialMemory residue can influence a later local household response as bounded local friction without becoming a thick social formula or UI-owned rule path.
+- Command acceptance must prove `PopulationAndHouseholds` reads structured `SocialMemoryEntrySnapshot` cause keys and weights, then mutates only household labor, debt, distress, migration, and `LastLocalResponse*` fields.
+- Same-command acceptance must prove the repeat response does not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- Path acceptance must cover at least one relieved/favor support path and one strained/debt drag path.
+- Projection acceptance must prove local response affordances and receipts expose `旧账记忆` / `社会记忆读回` hints from read models only.
+- Unity acceptance must prove shell adapters copy projected hints and do not compute local response effectiveness.
+- Save/schema acceptance: v14 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.

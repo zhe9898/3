@@ -24,18 +24,25 @@ public sealed partial class PresentationReadModelBuilder
         int debtPressure = household?.DebtPressure ?? anchor.PressureScore;
         int laborCapacity = household?.LaborCapacity ?? Math.Max(20, 100 - anchor.PressureScore);
         string householdName = anchor.HouseholdName;
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories = household is null
+            ? []
+            : SelectHomeHouseholdLocalResponseSocialMemories(bundle.SocialMemories, household);
+        string socialMemoryHint = BuildHomeHouseholdLocalResponseMemoryHint(localSocialMemories);
+        string socialMemoryReadback = BuildOrderSocialMemoryReadbackSummary(localSocialMemories);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.RestrictNightTravel,
             anchor.SettlementId,
             $"{householdName}可先暂缩夜行，少走夜路、渡口与黑路，把拒落/半落地后账先从自家脚程上压住。",
             migrationRisk >= 28 || residue.Score >= 25,
-            $"本户迁徙之念{migrationRisk}，{residue.Label}{residue.Score}。",
+            JoinHomeHouseholdLocalResponseText($"本户迁徙之念{migrationRisk}，{residue.Label}{residue.Score}。", socialMemoryHint),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理本户劳力、债压、民困和迁徙险；不替治安、县门或族老修复前案。",
             leverageSummary: $"本户只动自家夜行、脚程与临时避险。{residue.Summary}",
             costSummary: $"代价：丁力会被收紧，债压可能小涨；当前丁力{laborCapacity}，债压{debtPressure}。",
-            readbackSummary: $"下月看{householdName}的迁徙之念、丁力和后账是否转为已缓、暂压或吃紧。",
+            readbackSummary: JoinHomeHouseholdLocalResponseText(
+                $"下月看{householdName}的迁徙之念、丁力和后账是否转为已缓、暂压或吃紧。",
+                socialMemoryReadback),
             targetLabel: householdName);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
@@ -43,12 +50,14 @@ public sealed partial class PresentationReadModelBuilder
             anchor.SettlementId,
             $"{householdName}可凑钱赔脚户，把误读和街口话头先压住，免得家户羞面继续外翻。",
             distress >= 35 || residue.Score >= 20,
-            $"本户民困{distress}，债压{debtPressure}，脚路后账可见。",
+            JoinHomeHouseholdLocalResponseText($"本户民困{distress}，债压{debtPressure}，脚路后账可见。", socialMemoryHint),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理本户现钱、人情与民困变化；不替OrderAndBanditry补巡丁权威。",
             leverageSummary: "本户拿钱和人情先对脚户解释，只能压住自家牵连的误读。",
             costSummary: $"代价：债压会抬升，换取民困和迁徙险暂缓；当前债压{debtPressure}。",
-            readbackSummary: $"下月看{householdName}的民困是否下降，债压是否转成新的欠账。",
+            readbackSummary: JoinHomeHouseholdLocalResponseText(
+                $"下月看{householdName}的民困是否下降，债压是否转成新的欠账。",
+                socialMemoryReadback),
             targetLabel: householdName);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
@@ -56,12 +65,14 @@ public sealed partial class PresentationReadModelBuilder
             anchor.SettlementId,
             $"{householdName}可遣少丁递信，把路情和脚户说法先问清，再决定是否继续压。",
             laborCapacity >= 18 && residue.Score >= 18,
-            $"本户丁力{laborCapacity}，{residue.Label}{residue.Score}。",
+            JoinHomeHouseholdLocalResponseText($"本户丁力{laborCapacity}，{residue.Label}{residue.Score}。", socialMemoryHint),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理自家派丁与劳力抽动；递信不等于官署递报。",
             leverageSummary: "本户只能派自家少丁跑一趟，换一点路情清楚和街口解释。",
             costSummary: $"代价：丁力会下降，若本已薄弱会变成吃紧后账；当前丁力{laborCapacity}。",
-            readbackSummary: $"下月看{householdName}的丁力、迁徙之念和后账读回。",
+            readbackSummary: JoinHomeHouseholdLocalResponseText(
+                $"下月看{householdName}的丁力、迁徙之念和后账读回。",
+                socialMemoryReadback),
             targetLabel: householdName);
     }
 
@@ -111,6 +122,20 @@ public sealed partial class PresentationReadModelBuilder
             .ThenByDescending(static memory => memory.Weight)
             .ThenBy(static memory => memory.Id.Value)
             .ToArray();
+    }
+
+    private static string BuildHomeHouseholdLocalResponseMemoryHint(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
+    {
+        SocialMemoryEntrySnapshot? residue = localSocialMemories.FirstOrDefault();
+        return residue is null
+            ? string.Empty
+            : $"旧账记忆：{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}。";
+    }
+
+    private static string JoinHomeHouseholdLocalResponseText(string first, string second)
+    {
+        return string.Join(" ", new[] { first, second }.Where(static value => !string.IsNullOrWhiteSpace(value)));
     }
 
     private static string RenderHomeHouseholdLocalResponseOutcome(string outcomeCode)

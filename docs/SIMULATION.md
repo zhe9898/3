@@ -178,6 +178,7 @@ Current M3 local-conflict note:
 - `OfficeAndCareer.Lite`, when enabled through the governance-lite path, now runs ahead of conflict/order so jurisdiction leverage can be read as bounded same-month administrative support without direct writes
 - `SocialMemoryAndRelations` currently runs before `OrderAndBanditry` in the monthly module order, so it may read the prior public-life order carryover once, persist social residue inside its own state, and leave Order to decay or clear its carryover later in the same month
 - `PopulationAndHouseholds` runs before `SocialMemoryAndRelations`, so v13 home-household local response residue reads structured local response command/outcome/trace fields after the population pass and relies on SocialMemory cause-key de-duplication rather than UI timers or summary parsing
+- v14 home-household repeat friction is command-time and query-driven: when the player issues a later local response, `PopulationAndHouseholds` reads already-persisted SocialMemory snapshots and mutates only its own household state, so no scheduler shortcut or same-command SocialMemory write is introduced
 - `ConflictAndForce.Lite` may also carry campaign-fatigue and escort-strain fallout across months; those penalties recover during its own owned pass
 
 ### Phase 3: month-end diff generation

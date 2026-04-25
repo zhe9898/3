@@ -10,6 +10,7 @@ public sealed partial class PopulationAndHouseholdsModule
         {
             State = scope.State,
             Command = scope.Command,
+            SocialMemoryQueries = scope.TryGetQuery<ISocialMemoryAndRelationsQueries>(),
         });
 
         if (result.Accepted)
