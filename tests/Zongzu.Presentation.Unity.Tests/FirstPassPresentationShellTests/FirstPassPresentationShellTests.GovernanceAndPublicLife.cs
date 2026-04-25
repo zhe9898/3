@@ -85,8 +85,8 @@ public sealed partial class FirstPassPresentationShellTests
     public void Compose_ProjectsOwnerLaneReturnGuidanceInOfficeAndFamilySurfacesWithoutShellAuthority()
     {
         PresentationReadModelBundle bundle = CreateBundle();
-        const string officeGuidance = "外部后账归位：该走县门/文移 lane（OfficeAndCareer）：张户本户这头吃紧，县门未落地、文移拖延和胥吏续拖仍回官署案头；本户不能代修。承接入口：回到本 lane 先看押文催县门、改走递报；常规官署仍看批覆词状或发签催办。 归口状态：已归口到县门/文移 lane（OfficeAndCareer）：张户本户后账已归到官署案头，押文催县门留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：后账暂压，仍看 owner lane 下月读回。 归口后读法：暂压留账：仍看本 lane 下月；本户这头不宜继续代扛。 社会余味读回：后账暂压留账，余重21；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。 余味续接提示：后账暂压留账，轻续仍走本 owner lane；本户这头不再代扛。";
-        const string familyGuidance = "外部后账归位：该走族老/担保 lane（FamilyCore）：张户本户这头吃紧，族老解释、本户担保和宗房脸面仍回族中公开说法；本户不能代修。承接入口：回到本 lane 先看请族老解释、请族老出面；宗房内面仍看请族老调停。 归口状态：已归口到族老/担保 lane（FamilyCore）：张户本户后账已归到族中公开说法，请族老解释留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：后账暂压，仍看 owner lane 下月读回。 归口后读法：暂压留账：仍看本 lane 下月；本户这头不宜继续代扛。 社会余味读回：后账暂压留账，余重21；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。 余味续接提示：后账暂压留账，轻续仍走本 owner lane；本户这头不再代扛。";
+        const string officeGuidance = "外部后账归位：该走县门/文移 lane（OfficeAndCareer）：张户本户这头吃紧，县门未落地、文移拖延和胥吏续拖仍回官署案头；本户不能代修。承接入口：回到本 lane 先看押文催县门、改走递报；常规官署仍看批覆词状或发签催办。 归口状态：已归口到县门/文移 lane（OfficeAndCareer）：张户本户后账已归到官署案头，押文催县门留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：后账暂压，仍看 owner lane 下月读回。 归口后读法：暂压留账：仍看本 lane 下月；本户这头不宜继续代扛。 社会余味读回：后账暂压留账，余重21；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。 余味续接提示：后账暂压留账，轻续仍走本 owner lane；本户这头不再代扛。 现有入口读法：可轻续：仍走本 lane；只从 owner-lane 入口续，不让本户代扛。 闭环防回压：旧提示只指本 owner lane，不重复追本户。";
+        const string familyGuidance = "外部后账归位：该走族老/担保 lane（FamilyCore）：张户本户这头吃紧，族老解释、本户担保和宗房脸面仍回族中公开说法；本户不能代修。承接入口：回到本 lane 先看请族老解释、请族老出面；宗房内面仍看请族老调停。 归口状态：已归口到族老/担保 lane（FamilyCore）：张户本户后账已归到族中公开说法，请族老解释留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：后账暂压，仍看 owner lane 下月读回。 归口后读法：暂压留账：仍看本 lane 下月；本户这头不宜继续代扛。 社会余味读回：后账暂压留账，余重21；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。 余味续接提示：后账暂压留账，轻续仍走本 owner lane；本户这头不再代扛。 现有入口读法：可轻续：仍走本 lane；只从 owner-lane 入口续，不让本户代扛。 闭环防回压：旧提示只指本 owner lane，不重复追本户。";
         bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
         {
             Affordances =
@@ -144,6 +144,10 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(office.LeverageSummary, Does.Contain("不是本户再修"));
         Assert.That(office.LeverageSummary, Does.Contain("余味续接提示"));
         Assert.That(office.LeverageSummary, Does.Contain("轻续仍走本 owner lane"));
+        Assert.That(office.LeverageSummary, Does.Contain("现有入口读法"));
+        Assert.That(office.LeverageSummary, Does.Contain("可轻续"));
+        Assert.That(office.LeverageSummary, Does.Contain("闭环防回压"));
+        Assert.That(office.LeverageSummary, Does.Contain("不重复追本户"));
         Assert.That(office.ReadbackSummary, Is.EqualTo(officeGuidance));
 
         CommandAffordanceViewModel family = shell.FamilyCouncil.CommandAffordances
@@ -165,6 +169,10 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(family.LeverageSummary, Does.Contain("不是本户再修"));
         Assert.That(family.LeverageSummary, Does.Contain("余味续接提示"));
         Assert.That(family.LeverageSummary, Does.Contain("轻续仍走本 owner lane"));
+        Assert.That(family.LeverageSummary, Does.Contain("现有入口读法"));
+        Assert.That(family.LeverageSummary, Does.Contain("可轻续"));
+        Assert.That(family.LeverageSummary, Does.Contain("闭环防回压"));
+        Assert.That(family.LeverageSummary, Does.Contain("不重复追本户"));
         Assert.That(family.ReadbackSummary, Is.EqualTo(familyGuidance));
     }
 

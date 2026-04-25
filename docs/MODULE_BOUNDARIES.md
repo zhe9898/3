@@ -140,7 +140,7 @@ Current routing note:
 - `PlayerCommandService` remains thin module-selection glue for this slice and must not own family consequence formulas
 - the resolver may read `PersonRegistry` and `SocialMemoryAndRelations` query snapshots, but may mutate only `FamilyCore` state and receipt fields
 - for public-life refusal response, the resolver may also read `OrderAndBanditry` refusal/partial residue through queries; v8 monthly family actor countermoves may read structured `SocialMemoryAndRelations` response residue. Both paths may mutate only `FamilyCore` response trace and family pressure fields, not Order or SocialMemory.
-- v24-v26 projected outcome/social-residue/follow-up reading may explain family outcomes as `已修复`, `暂压留账`, `恶化转硬`, `放置未接`, later `社会余味读回`, and then `余味冷却提示` / `余味续接提示` / `余味换招提示`, but those words are readback only; 族老公开解释、本户担保修复、宗房脸面 handling remains `FamilyCore` authority.
+- v24-v30 projected outcome/social-residue/follow-up/closure reading may explain family outcomes as `已修复`, `暂压留账`, `恶化转硬`, `放置未接`, later `社会余味读回`, `余味冷却提示` / `余味续接提示` / `余味换招提示`, `现有入口读法`, `后手收口读回`, and `闭环防回压`, but those words are readback only; 族老公开解释、本户担保修复、宗房脸面 handling remains `FamilyCore` authority.
 
 ### Emits events
 - `MarriageAllianceArranged`
@@ -209,7 +209,7 @@ Current routing note:
 - v17 response tradeoff forecast may project `取舍预判` / `预期收益` / `反噬尾巴` / `外部后账` and may add command-time tradeoff summary tails from those same existing household fields. It does not add persisted tradeoff state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
 - v18 short-term consequence readback may project receipt-side `短期后果：缓住项` / `挤压项` / `仍欠外部后账` from existing `HouseholdPressureSnapshot` fields and structured `LastLocalResponse*` codes. It does not add persisted consequence state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
 - v19 follow-up affordance readback may project `续接提示` / `换招提示` / `冷却提示` / `续接读回` from existing `HouseholdPressureSnapshot` fields and structured `LastLocalResponse*` codes. It does not add a cooldown ledger, repeated-response counter, persisted consequence state, or command targeting change.
-- v20-v26 owner-lane return/status/outcome/social-residue/follow-up readback may project `外部后账归位`, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, and `余味冷却提示` / `余味续接提示` / `余味换招提示` from existing household local response fields, existing owner-module response traces, and existing structured SocialMemory response residue. This does not make `PopulationAndHouseholds` own order repair, county-yamen催办, elder explanation, durable SocialMemory residue, or any owner-lane / receipt-status / outcome / follow-up ledger.
+- v20-v30 owner-lane return/status/outcome/social-residue/follow-up/closure readback may project `外部后账归位`, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `余味冷却提示` / `余味续接提示` / `余味换招提示`, `现有入口读法`, `后手收口读回`, and `闭环防回压` from existing household local response fields, existing owner-module response traces, and existing structured SocialMemory response residue. This does not make `PopulationAndHouseholds` own order repair, county-yamen催办, elder explanation, durable SocialMemory residue, or any owner-lane / receipt-status / outcome / follow-up ledger.
 
 ### Emits events
 - `HouseholdDebtSpiked`
@@ -268,7 +268,7 @@ Current routing note:
 - reads structured public-life refusal response aftermath through `IOrderAndBanditryQueries`, optional `IOfficeAndCareerQueries`, and optional `IFamilyCoreQueries`; it may use response command / outcome / trace codes, but must not parse `DomainEvent.Summary`, receipt summaries, or `LastInterventionSummary`
 - later-month public-life response residue drift is SocialMemory-owned: it may adjust only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`, reusing existing schema `3` fields such as memory weight, cause key, lifecycle state, narrative pressures, and climate axes
 - reads structured home-household local response aftermath through `IPopulationAndHouseholdsQueries`; it may use `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`, but must not parse `LastLocalResponseSummary` or treat a household local response as county order / yamen / family repair
-- v24-v26 `归口后读法` / `社会余味读回` / `余味冷却提示` / `余味续接提示` / `余味换招提示` remain projection text. `SocialMemoryAndRelations` must read structured Order / Office / Family response aftermath and home-household aftermath through queries, not parse `归口后读法`, `社会余味读回`, `余味冷却提示`, `余味续接提示`, `余味换招提示`, `已修复：先停本户加压`, `暂压留账`, `恶化转硬`, or `放置未接` prose.
+- v24-v30 `归口后读法` / `社会余味读回` / `余味冷却提示` / `余味续接提示` / `余味换招提示` / `现有入口读法` / `后手收口读回` / `闭环防回压` remain projection text. `SocialMemoryAndRelations` must read structured Order / Office / Family response aftermath and home-household aftermath through queries, not parse `归口后读法`, `社会余味读回`, `余味冷却提示`, `余味续接提示`, `余味换招提示`, `现有入口读法`, `后手收口读回`, `闭环防回压`, `已修复：先停本户加压`, `暂压留账`, `恶化转硬`, or `放置未接` prose.
 - v8 owner-module actor countermoves may read SocialMemory snapshots, but `SocialMemoryAndRelations` still owns only durable residue. It does not resolve route-watch, yamen, clerk, elder, or household-guarantee countermoves.
 - consumes scoped trade shock, exam, death, marriage, branch, heir, and warfare events to mutate only its own climate, memory, narrative, and tempering state
 
@@ -392,7 +392,7 @@ Current routing note:
 - these commands are resolved by `OfficeAndCareerCommandResolver` inside `Zongzu.Modules.OfficeAndCareer`
 - office public-life verbs may update only office-owned jurisdiction, petition, and trace state; order, family, trade, or public-life heat must move later through queries, events, or projections
 - public-life refusal response commands may read `OrderAndBanditry` structured residue through queries, and v7/v8 repeat-friction or actor countermove logic may read `FamilyCore` local clan scope plus `SocialMemoryAndRelations` response residue weights, but the response outcome and trace they write are owned by `OfficeAndCareer`
-- v24-v26 projected outcome/social-residue/follow-up reading may explain office outcomes as `已修复`, `暂压留账`, `恶化转硬`, `放置未接`, later `社会余味读回`, and then `余味冷却提示` / `余味续接提示` / `余味换招提示`, but those words are readback only; county-yamen催办, 文移落地, and 胥吏拖延 handling remains `OfficeAndCareer` authority.
+- v24-v30 projected outcome/social-residue/follow-up/closure reading may explain office outcomes as `已修复`, `暂压留账`, `恶化转硬`, `放置未接`, later `社会余味读回`, `余味冷却提示` / `余味续接提示` / `余味换招提示`, `现有入口读法`, `后手收口读回`, and `闭环防回压`, but those words are readback only; county-yamen催办, 文移落地, and 胥吏拖延 handling remains `OfficeAndCareer` authority.
 
 ### Emits events
 - `OfficeGranted`
@@ -453,7 +453,7 @@ Current routing note:
 Current routing note:
 - these commands are resolved by `OrderAndBanditryCommandResolver` inside `Zongzu.Modules.OrderAndBanditry`
 - the resolver may read `OfficeAndCareer` jurisdiction authority through queries to shape administrative reach, but it may mutate only order-owned pressure, carryover, and receipt state
-- v24-v26 projected outcome/social-residue/follow-up reading may explain order outcomes as `已修复`, `暂压留账`, `恶化转硬`, `放置未接`, later `社会余味读回`, and then `余味冷却提示` / `余味续接提示` / `余味换招提示`, but those words are readback only; road watch, route-pressure repair, runner misread repair, and patrol/order after-account handling remain `OrderAndBanditry` authority.
+- v24-v30 projected outcome/social-residue/follow-up/closure reading may explain order outcomes as `已修复`, `暂压留账`, `恶化转硬`, `放置未接`, later `社会余味读回`, `余味冷却提示` / `余味续接提示` / `余味换招提示`, `现有入口读法`, `后手收口读回`, and `闭环防回压`, but those words are readback only; road watch, route-pressure repair, runner misread repair, and patrol/order after-account handling remain `OrderAndBanditry` authority.
 
 ### Emits events
 - `BanditThreatRaised`
@@ -780,3 +780,10 @@ Current lite note:
 - Ownership remains unchanged: cooling, light continuation, tactic switch, or waiting are player-facing readback cues over existing owner lanes. `OrderAndBanditry`, `OfficeAndCareer`, and `FamilyCore` still own their commands and outcomes; `SocialMemoryAndRelations` still owns durable residue; `PopulationAndHouseholds` remains only the low-power home-household response lane.
 - UI and Unity may copy `余味冷却提示`, `余味续接提示`, `余味换招提示`, `继续降温`, `别回压本户`, and `不要从本户硬补` from projected fields only. They must not compute follow-up validity, query modules, write SocialMemory, maintain a follow-up ledger, or invent a hidden household target.
 - v26 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, owner-lane ledger, receipt-status ledger, outcome ledger, follow-up ledger, SocialMemory ledger, household target field, command queue, or command-target shape change.
+
+## 2026-04-26 playable closure v27-v30 owner-lane closure audit note
+- v27 `public-life-order-owner-lane-affordance-echo` adds projected `现有入口读法` over existing owner-lane affordances. It may say `建议冷却`, `可轻续`, `建议换招`, or `等待承接口`, but it does not enable, disable, rank, or route commands.
+- v28 `public-life-order-owner-followup-receipt-closure` adds projected `后手收口读回` to owner-lane receipts. It may say `已收口`, `仍留账`, `转硬待换招`, or `未接待承口`, but it is not a persisted receipt-status ledger.
+- v29 `public-life-order-owner-lane-no-loop-guard` adds projected `闭环防回压` so stale guidance does not point back at the home household after the owner lane has closed or hardened.
+- v30 records that v20-v30 are one thin projection/readback closure arc. `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` keep the same ownership split; Application only projects structured fields and Unity copies DTO fields.
+- v27-v30 add no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, owner-lane ledger, receipt-status ledger, outcome ledger, follow-up ledger, SocialMemory ledger, household target field, command queue, or command-target shape change.

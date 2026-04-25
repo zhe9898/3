@@ -1203,6 +1203,13 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("不是本户再修"));
         Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("余味冷却提示"));
         Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("继续降温"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("现有入口读法"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("建议冷却"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("先不加压"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("闭环防回压"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("后账已收束"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("旧提示仅作读回"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("不重复追本户"));
 
         PlayerCommandAffordanceSnapshot officeResidueAffordance = afterSocialResidueReadback.PlayerCommands.Affordances
             .First(affordance => affordance.CommandName == PlayerCommandNames.PetitionViaOfficeChannels
@@ -1213,9 +1220,34 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("不是本户再修"));
         Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("余味换招提示"));
         Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("别回压本户"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("现有入口读法"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("建议换招"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("闭环防回压"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("转硬后只换 owner-lane 办法"));
         Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("社会余味读回"));
         Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("后账转硬"));
         Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("余味换招提示"));
+        Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("现有入口读法"));
+        Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("闭环防回压"));
+
+        PlayerCommandReceiptSnapshot orderClosureReceipt = afterSocialResidueReadback.PlayerCommands.Receipts
+            .First(receipt => receipt.CommandName == PlayerCommandNames.RepairLocalWatchGuarantee
+                              && receipt.SettlementId == settlementId);
+        Assert.That(orderClosureReceipt.ReadbackSummary, Does.Contain("后手收口读回"));
+        Assert.That(orderClosureReceipt.ReadbackSummary, Does.Contain("已收口"));
+        Assert.That(orderClosureReceipt.ReadbackSummary, Does.Contain("不回压本户"));
+        Assert.That(orderClosureReceipt.ReadbackSummary, Does.Contain("社会余味"));
+        Assert.That(orderClosureReceipt.ReadbackSummary, Does.Contain("后账渐平"));
+        Assert.That(orderClosureReceipt.ReadbackSummary, Does.Contain("闭环防回压"));
+
+        PlayerCommandReceiptSnapshot officeClosureReceipt = afterSocialResidueReadback.PlayerCommands.Receipts
+            .First(receipt => receipt.CommandName == PlayerCommandNames.PressCountyYamenDocument
+                              && receipt.SettlementId == settlementId);
+        Assert.That(officeClosureReceipt.ReadbackSummary, Does.Contain("后手收口读回"));
+        Assert.That(officeClosureReceipt.ReadbackSummary, Does.Contain("转硬待换招"));
+        Assert.That(officeClosureReceipt.ReadbackSummary, Does.Contain("社会余味"));
+        Assert.That(officeClosureReceipt.ReadbackSummary, Does.Contain("后账转硬"));
+        Assert.That(officeClosureReceipt.ReadbackSummary, Does.Contain("闭环防回压"));
 
         PlayerCommandAffordanceSnapshot familyResidueAffordance = afterSocialResidueReadback.PlayerCommands.Affordances
             .First(affordance => affordance.CommandName == PlayerCommandNames.InviteClanEldersMediation
@@ -1224,6 +1256,8 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
         Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("不是本户再修"));
         Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("余味"));
+        Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("现有入口读法"));
+        Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("闭环防回压"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)

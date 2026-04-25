@@ -165,6 +165,12 @@ Current public-life/order v26 owner-lane social-residue follow-up guidance note:
 - Projection may read structured `SocialMemoryEntrySnapshot.CauseKey`, `State`, `Weight`, `OriginDate`, and owner-lane outcome codes; no reader may parse SocialMemory summary prose, owner-lane guidance prose, receipt prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`.
 - v26 adds no new memory namespace, relationship table, ledger, schema bump, or migration.
 
+Current public-life/order v27-v30 owner-lane closure audit note:
+- `现有入口读法`, `建议冷却`, `可轻续`, `建议换招`, `等待承接口`, `后手收口读回`, `已收口`, `仍留账`, `转硬待换招`, `未接待承口`, and `闭环防回压` are projected reading cues, not social-memory facts by themselves.
+- The wording helps the player avoid turning the home household into a universal follow-up line. Order, Office, and Family still own their commands and outcomes; SocialMemory still owns durable residue.
+- Projection may read structured owner outcome codes and `SocialMemoryEntrySnapshot.CauseKey`, `State`, `Weight`, and `OriginDate`; no reader may parse SocialMemory summary prose, owner-lane guidance prose, receipt prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`.
+- v27-v30 add no memory namespace, relationship table, follow-up ledger, stale-guidance ledger, schema bump, or migration.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

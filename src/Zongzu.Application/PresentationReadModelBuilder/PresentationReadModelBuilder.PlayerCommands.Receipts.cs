@@ -52,13 +52,25 @@ public sealed partial class PresentationReadModelBuilder
 
             if (HasPublicLifeOrderResponseReceipt(jurisdiction))
             {
+                ClanSnapshot[] localClans = clansBySettlement[jurisdiction.SettlementId.Value]
+                    .OrderByDescending(static entry => entry.Prestige)
+                    .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
+                    .ToArray();
+                IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
+                    SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
                 yield return BuildPlayerCommandReceiptSnapshot(
                     jurisdiction.LastRefusalResponseCommandCode,
                     jurisdiction.SettlementId,
                     jurisdiction.LastRefusalResponseSummary,
                     RenderPublicLifeResponseOutcome(jurisdiction.LastRefusalResponseOutcomeCode),
                     executionSummary: BuildOfficeResponseAftermathSummary(jurisdiction),
-                    readbackSummary: BuildOfficeResponseAftermathSummary(jurisdiction),
+                    readbackSummary: CombinePublicLifeResponseText(
+                        BuildOfficeResponseAftermathSummary(jurisdiction),
+                        BuildOwnerLaneFollowUpReceiptClosure(
+                            localSocialMemories,
+                            OwnerLaneReturnSourceOffice,
+                            jurisdiction.LastRefusalResponseCommandCode,
+                            jurisdiction.LastRefusalResponseOutcomeCode)),
                     targetLabel: string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
                         ? jurisdiction.LeadOfficeTitle
                         : jurisdiction.LeadOfficialName,
@@ -107,7 +119,12 @@ public sealed partial class PresentationReadModelBuilder
                     executionSummary: BuildOrderResponseAftermathSummary(disorder),
                     readbackSummary: CombinePublicLifeResponseText(
                         BuildOrderResponseAftermathSummary(disorder),
-                        BuildOrderSocialMemoryReadbackSummary(localSocialMemories)),
+                        BuildOrderSocialMemoryReadbackSummary(localSocialMemories),
+                        BuildOwnerLaneFollowUpReceiptClosure(
+                            localSocialMemories,
+                            OwnerLaneReturnSourceOrder,
+                            disorder.LastRefusalResponseCommandCode,
+                            disorder.LastRefusalResponseOutcomeCode)),
                     targetLabel: disorder.SettlementId.Value.ToString(),
                     labelOverride: disorder.LastRefusalResponseCommandLabel);
             }
@@ -156,7 +173,13 @@ public sealed partial class PresentationReadModelBuilder
                 clan.LastConflictTrace,
                 clan.LastConflictOutcome,
                 readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
-                    ? BuildFamilyResponseAftermathSummary(clan)
+                    ? CombinePublicLifeResponseText(
+                        BuildFamilyResponseAftermathSummary(clan),
+                        BuildOwnerLaneFollowUpReceiptClosure(
+                            SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, [clan]),
+                            OwnerLaneReturnSourceFamily,
+                            clan.LastRefusalResponseCommandCode,
+                            clan.LastRefusalResponseOutcomeCode))
                     : string.Empty,
                 clanId: clan.Id,
                 targetLabel: clan.ClanName,
@@ -334,7 +357,13 @@ public sealed partial class PresentationReadModelBuilder
                 clan.LastConflictTrace,
                 clan.LastConflictOutcome,
                 readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
-                    ? BuildFamilyResponseAftermathSummary(clan)
+                    ? CombinePublicLifeResponseText(
+                        BuildFamilyResponseAftermathSummary(clan),
+                        BuildOwnerLaneFollowUpReceiptClosure(
+                            SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, [clan]),
+                            OwnerLaneReturnSourceFamily,
+                            clan.LastRefusalResponseCommandCode,
+                            clan.LastRefusalResponseOutcomeCode))
                     : string.Empty,
                 clanId: clan.Id,
                 targetLabel: clan.ClanName,

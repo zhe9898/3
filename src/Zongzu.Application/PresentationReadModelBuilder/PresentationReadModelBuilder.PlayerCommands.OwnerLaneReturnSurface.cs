@@ -188,7 +188,39 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
-        SocialMemoryEntrySnapshot? residue = localSocialMemories
+        SocialMemoryEntrySnapshot? residue = SelectOwnerLaneSocialResidue(
+            localSocialMemories,
+            sourceModuleKey,
+            commandCode,
+            outcomeCode);
+        if (residue is null)
+        {
+            return string.Empty;
+        }
+
+        string residueLabel = RenderOwnerLaneSocialResidueLabel(outcomeCode);
+        return JoinOwnerLaneReturnSurfaceText(
+            $"社会余味读回：{residueLabel}，余重{residue.Weight}；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。",
+            BuildOwnerLaneSocialResidueFollowUpGuidance(outcomeCode),
+            BuildOwnerLaneAffordanceEcho(outcomeCode),
+            BuildOwnerLaneNoLoopGuard(outcomeCode));
+    }
+
+    private static SocialMemoryEntrySnapshot? SelectOwnerLaneSocialResidue(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
+        string sourceModuleKey,
+        string commandCode,
+        string outcomeCode)
+    {
+        if (localSocialMemories.Count == 0
+            || string.IsNullOrWhiteSpace(sourceModuleKey)
+            || string.IsNullOrWhiteSpace(commandCode)
+            || string.IsNullOrWhiteSpace(outcomeCode))
+        {
+            return null;
+        }
+
+        return localSocialMemories
             .Where(memory => memory.State == MemoryLifecycleState.Active)
             .Where(memory => TryReadOwnerLaneSocialResidueCause(memory.CauseKey, out OwnerLaneSocialResidueCause cause)
                              && string.Equals(cause.SourceModuleKey, sourceModuleKey, StringComparison.Ordinal)
@@ -199,15 +231,44 @@ public sealed partial class PresentationReadModelBuilder
             .ThenByDescending(static memory => memory.Weight)
             .ThenBy(static memory => memory.Id.Value)
             .FirstOrDefault();
-        if (residue is null)
+    }
+
+    private static string BuildOwnerLaneFollowUpReceiptClosure(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
+        string sourceModuleKey,
+        string commandCode,
+        string outcomeCode)
+    {
+        if (string.IsNullOrWhiteSpace(outcomeCode))
         {
             return string.Empty;
         }
 
-        string residueLabel = RenderOwnerLaneSocialResidueLabel(outcomeCode);
+        SocialMemoryEntrySnapshot? residue = SelectOwnerLaneSocialResidue(
+            localSocialMemories,
+            sourceModuleKey,
+            commandCode,
+            outcomeCode);
+        string residueTail = residue is null
+            ? string.Empty
+            : $"；社会余味{RenderOwnerLaneSocialResidueLabel(outcomeCode)}，余重{residue.Weight}";
+        string closure = outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "后手收口读回：已收口：不回压本户",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "后手收口读回：仍留账：轻续本 lane",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "后手收口读回：转硬待换招：先换 owner-lane 办法",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "后手收口读回：未接待承口：仍等 owner lane 可承接处",
+            _ => string.Empty,
+        };
+
+        if (string.IsNullOrWhiteSpace(closure))
+        {
+            return string.Empty;
+        }
+
         return JoinOwnerLaneReturnSurfaceText(
-            $"社会余味读回：{residueLabel}，余重{residue.Weight}；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。",
-            BuildOwnerLaneSocialResidueFollowUpGuidance(outcomeCode));
+            $"{closure}{residueTail}。",
+            BuildOwnerLaneNoLoopGuard(outcomeCode));
     }
 
     private static bool TryReadOwnerLaneSocialResidueCause(
@@ -257,6 +318,38 @@ public sealed partial class PresentationReadModelBuilder
                 "余味换招提示：后账转硬，先换 owner-lane 办法或等更有力承接入口；别回压本户。",
             PublicLifeOrderResponseOutcomeCodes.Ignored =>
                 "余味换招提示：后账放置发酸，先换 owner lane 或等可承接入口；不要从本户硬补。",
+            _ => string.Empty,
+        };
+    }
+
+    private static string BuildOwnerLaneAffordanceEcho(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired =>
+                "现有入口读法：建议冷却：先不加压；本 lane 已渐平，只保留读回。",
+            PublicLifeOrderResponseOutcomeCodes.Contained =>
+                "现有入口读法：可轻续：仍走本 lane；只从 owner-lane 入口续，不让本户代扛。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated =>
+                "现有入口读法：建议换招：别回压本户；先换 owner-lane 办法或等承接口。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored =>
+                "现有入口读法：等待承接口：本户不能硬补；先等 owner lane 可承接处或换招。",
+            _ => string.Empty,
+        };
+    }
+
+    private static string BuildOwnerLaneNoLoopGuard(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired =>
+                "闭环防回压：后账已收束，不再回压本户；旧提示仅作读回，不重复追本户。",
+            PublicLifeOrderResponseOutcomeCodes.Contained =>
+                "闭环防回压：旧提示只指本 owner lane，不重复追本户。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated =>
+                "闭环防回压：转硬后只换 owner-lane 办法，不回压本户。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored =>
+                "闭环防回压：未接后等待承接口，不从本户硬补。",
             _ => string.Empty,
         };
     }
