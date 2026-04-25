@@ -27,6 +27,21 @@ Use it to turn broad UI requests into a whole-shell pass that connects:
 - adapter and Unity-shell implementation seams
 - module or read-model source of every displayed fact
 
+## Current Repo Anchors
+
+The current repository has both a pure C# presentation adapter layer and a minimal Unity host root:
+- Unity project root: `unity/Zongzu.UnityShell`
+- projection/adapters: `src/Zongzu.Presentation.Unity`
+- shared ViewModel DTOs: `src/Zongzu.Presentation.Unity.ViewModels`
+- presentation tests: `tests/Zongzu.Presentation.Unity.Tests`
+- player-command affordance and receipt surfaces now include projected `LeverageSummary`, `CostSummary`, and `ReadbackSummary`
+- public-life/order v18 readback may include `PresentationReadModelBundle.SocialMemories`, `HouseholdSocialPressure`, governance recent-receipt summaries, and home-household local response receipt text
+- current v19 adds projection-only follow-up hints for repeat/switch/cooldown affordances; shell surfaces may show those hints only from projected affordance fields
+- WCAG 2.2 and Xbox Accessibility Guidelines calibrate contrast, focus/read order, semantic labels, status announcements, and narration parity for shell surfaces; they do not turn the shell into a generic dashboard
+- Unity UI performance guidance calibrates shell implementation only: split static/dynamic canvas work when needed, avoid per-frame layout/raycast churn, use precomputed ViewModels/projection contexts, and never scan long simulation histories from a visible surface
+
+Unity Editor MCP / live editor automation is not assumed available unless explicitly configured. Most shell work should be proven first through read-model, adapter, and presentation tests.
+
 ## Use This Skill When
 
 - designing or reviewing great hall, ancestral hall, desk sandbox, notice tray, public-life surface, conflict vignette, campaign-lite board, or debug shell
@@ -83,6 +98,7 @@ Use it to turn broad UI requests into a whole-shell pass that connects:
 - which adapter/ViewModel should carry the display shape
 - what test or screenshot/check should protect the behavior
 - whether repeated shell-side lookup should become a shared projection context or read-only snapshot helper instead of being re-derived in every adapter/test
+- whether the surface needs a bounded display count, one-pass read-model index, virtualized list, pooled Unity objects, or profiler check because it can grow across settlements, notices, households, or route markers
 
 ## Short Prompt Expansion
 
@@ -102,12 +118,15 @@ For prompts like `great hall`, `desk sandbox`, `hall surface`, `notice tray`, `2
 - Do not turn the shell into stacked generic cards.
 - Do not turn presentation into a spreadsheet, raw text parser, or document page.
 - Do not put authoritative rules, autonomy logic, scheduler logic, or state mutation into UI or Unity code.
+- Do not scan all notifications, memories, households, or command receipts from every UI binding or Unity `Update`; build a projection context once and display the result.
 - Do not let text volume outrun interaction value.
 - Do not solve weak structure by adding more ornament.
 - Do not make every surface a giant overview panel.
 - Do not use campaign board as the answer for every conflict.
 - Do not create Unity-only facts that cannot be traced to projection/read-model state.
 - Do allow read-only snapshot or projection-context helpers when they only normalize traversal of an already-built payload, such as finding the current hall-docket lane item, and do not become a second composition layer.
+- Do allow narrow notification scope helpers when they only answer "does this existing notification match this settlement/module?" and leave ranking, visibility, and UI policy at the caller.
+- Do allow bounded lanes, virtualized/pooled rows, and stable object anchors when projection size grows, as long as selection policy remains traceable to read-model fields.
 - Prefer room, desk, notice, ledger, seal, route, marker, tray, and visitor logic over abstract dashboard blocks.
 - Prefer one strong focal action cluster over many equal buttons.
 - Prefer visible object anchors over pure panel geometry.
@@ -121,6 +140,7 @@ For prompts like `great hall`, `desk sandbox`, `hall surface`, `notice tray`, `2
 - Desk sandbox is a local-world board with topology, routes, pressure, visibility, and reach, not a giant minimap or static infographic.
 - Notice tray separates urgent, consequential, and background pressure cleanly.
 - Public-life surfaces show reputation, rumor, visibility, and public pressure without becoming free-form prose.
+- Public-life/order shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, and v19 follow-up hints, but only by displaying projected read-model fields.
 - Conflict vignette should feel like aftermath and consequence.
 - Campaign-lite board is route, front, posture, supply, and aftermath pressure; it is later and scale-gated.
 - Debug panels may expose internals, but player-facing surfaces should turn state into readable consequence and bounded action.

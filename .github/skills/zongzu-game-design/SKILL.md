@@ -1,6 +1,6 @@
 ---
 name: zongzu-game-design
-description: Use when working on Zongzu's game design, especially rules-driven living-world structure, Northern Song/Renzong pressure chains, monthly and xun cadence, bounded player leverage, actor autonomy, command resolution, explainable causality, vertical slices, MVP shaping, feature-pack scope, module-boundary fit, or when a proposal risks becoming an event pool, detached subsystem, rigid route tree, locked timeline, spreadsheet, tactics game, or god-game instead of an integrated living society.
+description: Use when working on Zongzu's game design, especially rules-driven living-world structure, Northern Song/Renzong pressure chains, monthly and xun cadence, bounded player leverage, actor autonomy, command resolution, explainable causality, fidelity/scale budget, vertical slices, MVP shaping, feature-pack scope, module-boundary fit, or when a proposal risks becoming an event pool, detached subsystem, rigid route tree, locked timeline, spreadsheet, tactics game, or god-game instead of an integrated living society.
 ---
 
 # Zongzu Game Design
@@ -25,6 +25,19 @@ Use it to turn broad design prompts into a connected pass across:
 - projection, notice, great hall, desk sandbox, and conflict/campaign surfaces
 - historical momentum and Renzong thin-chain topology
 - roadmap phase, feature pack, schema/save, and acceptance-test ownership
+
+## Current Repo Anchors
+
+Use current code and `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` to distinguish implemented topology from design target:
+- the topology index records live thin-chain claims; the fuller pressure spec is not proof that code is wired
+- a chain is only "current" when real `PublishedEvents`, `ConsumedEvents`, scheduler drain behavior, metadata, off-scope tests, and projection/receipt behavior line up
+- long-run pressure saturation can be intended stress, missing recovery, missing allocation, or diagnostic debt; do not flatten it into a simple tuning problem
+- Unity shell presence does not change product authority: shell surfaces show read models and bounded command affordances, never direct court/world control
+- the current public-life/order closure is committed through v19: v3-v5 establish leverage/cost/readback, SocialMemory residue, and structured Order refusal traces; v6-v11 deepen bounded response affordance/receipt/readback; v12-v18 add home-household local response ownership, memory echo, repeat friction, common-household texture, capacity, tradeoff forecast, and short-term receipt readback; v19 adds projection-only follow-up hints for repeat/switch/cooldown judgment
+- current v19 follow-up affordance hints are playable readback, not new household omnipotence: they advise repeat, switch, or cool down from existing structured aftermath
+- treat public-life/order v18/v19 as a rule-driven command / aftermath / SocialMemory / household readback loop, not an event-chain or event-pool design
+- scale budget is part of design: use `SIMULATION_FIDELITY_MODEL.md` focus rings so full fidelity stays near the player or active pressure, while distant society remains alive through summarized pressure and promotion/demotion rules
+- a mechanic is not ready to implement until it names owner, cadence, state, projection, bounded command, resistance/refusal, test proof, and rough cardinality/fanout risk
 
 ## Use This Skill When
 
@@ -89,6 +102,8 @@ Use it to turn broad design prompts into a connected pass across:
    - balancing, diagnostics, scale budget, or long-run failure modes
    - schema/save/module contract impact
 
+   Pair with `zongzu-pressure-chain` for cross-module chain implementation, `zongzu-simulation-validation` for replay/health proof, `zongzu-content-authoring` when copy or authored content changes, and `zongzu-unity-shell` when the work touches Unity-facing files.
+
 4. Load only the references you need.
 
    - Read [references/rules-driven-living-world.md](references/rules-driven-living-world.md) for the design thesis and anti-patterns.
@@ -123,6 +138,7 @@ For prompts like `rules driven`, `living world`, `main loop`, `MVP`, `vertical s
 - identify shell projection and receipt
 - identify same-month vs delayed consequence
 - identify test and doc impact
+- identify fidelity ring, fanout/cardinality, and performance validation need when the feature scales across settlements, households, actors, routes, or notices
 
 ## Output Rules
 
@@ -140,6 +156,8 @@ For prompts like `rules driven`, `living world`, `main loop`, `MVP`, `vertical s
 - Do not let local pressure fan out globally by accident.
 - Do not let broad pressure become local consequence without an allocation rule.
 - Do not add balance knobs without owner, calibration source, expected band, and diagnostics/test.
+- Do not treat "simulate everyone in detail" as a design virtue; promote fidelity where pressure, player reach, or readability justifies it.
+- Do not add a system whose complexity grows all-to-all unless the player-facing reason and validation budget are explicit.
 - Do not make mods or content packs a second event pool.
 - Prefer pressure chains over isolated features.
 - Prefer edge events for changed conditions and recurring demand models for ongoing burdens.
@@ -153,7 +171,9 @@ For prompts like `rules driven`, `living world`, `main loop`, `MVP`, `vertical s
 - The player wins through leverage, preparation, timing, judgment, and earned social reach.
 - Family, commoner pressure, exams, trade, office, public life, order, conflict, court rhythm, and force should behave like one linked field.
 - Full fidelity belongs near the player's current influence footprint; distant regions and later packs can begin as pressure summaries.
+- The scale rule is: focus ring decides precision; prosperity and settlement scale decide pool thickness. A poor nearby household can deserve dense simulation; a rich distant city can remain mostly summarized until pressure or player reach promotes it.
 - Renzong-era and historical-process work should become pressure carriers and windows of possibility, not untouchable cutscenes.
 - A good command asks who executes it, who benefits, who loses face, who remembers, and where backlash can surface.
+- Current public-life order commands should continue to ask that question through the existing lane: the owning module resolves the bounded action, SocialMemory remembers durable social residue when in scope, household responses stay household-bounded, and shell readback explains leverage/cost without granting god control.
 - MVP should feel like sitting in the hall and hearing the world arrive, not sampling disconnected mechanics.
 - Later regions, scenarios, wars, courts, and dynasty-cycle systems should extend the same cadence, pressure, projection, and bounded-command spine.
