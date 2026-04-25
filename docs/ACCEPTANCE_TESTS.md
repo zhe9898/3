@@ -391,3 +391,12 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy projected tradeoff forecast fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
 - Save/schema acceptance: v17 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v18 home-household short-term consequence readback acceptance - 2026-04-25
+- `public-life-order-home-household-short-term-readback-v18` must prove the v12-v17 home-household lane now shows receipt-side `短期后果` after a local household response resolves, before thick household rules are added.
+- Projection acceptance must prove receipts expose `缓住项`, `挤压项`, and `仍欠外部后账` for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time without mutating `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- SocialMemory acceptance must prove the later reader does not parse `短期后果`, `缓住项`, `挤压项`, `仍欠外部后账`, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected short-term consequence receipt fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
+- Save/schema acceptance: v18 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.

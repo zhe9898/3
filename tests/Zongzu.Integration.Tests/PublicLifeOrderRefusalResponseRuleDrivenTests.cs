@@ -1023,10 +1023,18 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(receipt.Summary, Does.Contain("取舍预判"));
         Assert.That(receipt.LeverageSummary, Does.Contain("预期收益"));
         Assert.That(receipt.LeverageSummary, Does.Contain("外部后账"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("短期后果"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("缓住项"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("路情"));
         Assert.That(receipt.CostSummary, Does.Contain("承受线代价"));
         Assert.That(receipt.CostSummary, Does.Contain("反噬尾巴"));
+        Assert.That(receipt.CostSummary, Does.Contain("挤压项"));
+        Assert.That(receipt.CostSummary, Does.Contain("少丁出门"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("承受线读回"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("取舍读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("短期后果"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("仍欠外部后账"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("本户递信不是官署递报"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)

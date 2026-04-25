@@ -398,6 +398,8 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseAffordanceCapacity"));
         Assert.That(source, Does.Contain("HouseholdLocalResponseTradeoffForecast"));
         Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseTradeoffForecast"));
+        Assert.That(source, Does.Contain("HouseholdLocalResponseShortTermConsequenceReadback"));
+        Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseShortTermConsequenceReadback"));
         Assert.That(source, Does.Contain("IsEnabled"));
         Assert.That(source, Does.Contain("LastLocalResponseCommandCode"));
         Assert.That(source, Does.Contain("PlayerCommandAffordanceSnapshot"));
@@ -417,6 +419,10 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
         Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
         Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("短期后果"));
+        Assert.That(source, Does.Not.Contain("缓住项"));
+        Assert.That(source, Does.Not.Contain("挤压项"));
+        Assert.That(source, Does.Not.Contain("仍欠外部后账"));
         Assert.That(source, Does.Not.Contain("OrderAndBanditryState"));
         Assert.That(source, Does.Not.Contain("OfficeAndCareerState"));
         Assert.That(source, Does.Not.Contain("FamilyCoreState"));

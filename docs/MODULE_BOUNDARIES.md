@@ -206,6 +206,7 @@ Current routing note:
 - v15 common-household response texture may derive local command cost and outcome pressure from existing population-owned household fields such as debt, labor, distress, migration risk, dependents, laborers, and livelihood. This remains `PopulationAndHouseholds` command-time logic and adds no new household target, schema field, or foreign authority.
 - v16 response capacity affordance may project `回应承受线` and may add command-time capacity summary tails from those same existing household fields. It does not add persisted capacity state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
 - v17 response tradeoff forecast may project `取舍预判` / `预期收益` / `反噬尾巴` / `外部后账` and may add command-time tradeoff summary tails from those same existing household fields. It does not add persisted tradeoff state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
+- v18 short-term consequence readback may project receipt-side `短期后果：缓住项` / `挤压项` / `仍欠外部后账` from existing `HouseholdPressureSnapshot` fields and structured `LastLocalResponse*` codes. It does not add persisted consequence state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
 
 ### Emits events
 - `HouseholdDebtSpiked`
@@ -714,3 +715,10 @@ Current lite note:
 - `PopulationAndHouseholds` may append command-time tradeoff summary tails for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`, but it still writes only household labor, debt, distress, migration, and local response trace fields.
 - Application projections may show expected benefit, recoil tail, and external-afteraccount boundary so the player can distinguish migration avoidance, runner compensation, and road-message choices. UI and Unity may copy those projected fields only and must not compute command outcome, query modules, or write SocialMemory.
 - v17 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.
+
+## 2026-04-25 playable closure v18 home-household short-term consequence readback note
+- `public-life-order-home-household-short-term-readback-v18` adds receipt-side projected readback after a local household response resolves.
+- The readback is derived only from existing `HouseholdPressureSnapshot` fields and structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`. It is not a new saved ledger.
+- Receipts may show `短期后果：缓住项`, `短期后果：挤压项`, and `短期后果：仍欠外部后账` for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`, so the player can see what the household locally eased, what it squeezed, and which order/yamen/family/social-memory after-account remains outside household authority.
+- `SocialMemoryAndRelations` must not parse those receipt strings; its Month N+2 local response residue continues to read only structured `PopulationAndHouseholds` aftermath fields and write only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`.
+- v18 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.

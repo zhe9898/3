@@ -118,6 +118,11 @@ Current public-life/order v17 home-household response tradeoff note:
 - The forecast may explain why `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信` feels different in play, but only structured local response aftermath can later become durable memory.
 - `SocialMemoryAndRelations` still waits for its later monthly pass and reads only structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`; it must not parse `取舍预判`, `预期收益`, `反噬尾巴`, `外部后账`, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
 
+Current public-life/order v18 home-household short-term readback note:
+- `短期后果：缓住项`, `短期后果：挤压项`, and `短期后果：仍欠外部后账` are projected receipt readback cues, not durable social memory state.
+- The readback may explain what the household locally eased and what it squeezed, but only structured local response aftermath can later become durable memory.
+- `SocialMemoryAndRelations` still waits for its later monthly pass and reads only structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`; it must not parse `短期后果`, `缓住项`, `挤压项`, `仍欠外部后账`, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

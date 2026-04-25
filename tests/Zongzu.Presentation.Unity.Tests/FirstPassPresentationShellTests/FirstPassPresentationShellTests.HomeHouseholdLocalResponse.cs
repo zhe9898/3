@@ -55,9 +55,9 @@ public sealed partial class FirstPassPresentationShellTests
                         Label = "暂缩夜行",
                         Summary = "张家户暂缩夜行，迁徙之念缓下。",
                         OutcomeSummary = "本户已缓",
-                        LeverageSummary = "本户回应只结算自家劳力、债压、民困与迁徙险。 取舍预判：预期收益：先压夜路、渡口与迁徙险。 外部后账：不补巡丁、不催县门。",
-                        CostSummary = "本户余账：民困58，债压49，丁力37，迁徙之念62。 本户底色：迁徙之念仍在。 承受线代价：会吃丁力，若旧账再硬，容易转成吃紧后账。 反噬尾巴：会挤丁力。",
-                        ReadbackSummary = "张家户：后账已从本户脚程上缓下。 承受线读回：看夜路是否缓住迁徙之念，以及丁力是否被压过线。 取舍读回：看迁徙之念是否下降。 外部后账：不补巡丁、不催县门。 社会记忆读回：人情23，本户后账已缓。",
+                        LeverageSummary = "本户回应只结算自家劳力、债压、民困与迁徙险。 取舍预判：预期收益：先压夜路、渡口与迁徙险。 外部后账：不补巡丁、不催县门。 短期后果：缓住项：夜路、渡口和自家脚程先缓住，当前迁徙之念62。 短期后果：仍欠外部后账：巡丁、县门、族老解释和社会记忆仍归各自 owning module。",
+                        CostSummary = "本户余账：民困58，债压49，丁力37，迁徙之念62。 本户底色：迁徙之念仍在。 承受线代价：会吃丁力，若旧账再硬，容易转成吃紧后账。 反噬尾巴：会挤丁力。 短期后果：挤压项：丁力小耗，当前丁力37，债压49。",
+                        ReadbackSummary = "张家户：后账已从本户脚程上缓下。 承受线读回：看夜路是否缓住迁徙之念，以及丁力是否被压过线。 取舍读回：看迁徙之念是否下降。 外部后账：不补巡丁、不催县门。 短期后果：缓住项：夜路、渡口和自家脚程先缓住，当前迁徙之念62。 短期后果：挤压项：丁力小耗，当前丁力37，债压49。 短期后果：仍欠外部后账：巡丁、县门、族老解释和社会记忆仍归各自 owning module。 社会记忆读回：人情23，本户后账已缓。",
                         TargetLabel = "张家户",
                     },
                 ],
@@ -93,11 +93,15 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(receipt.CostSummary, Does.Contain("本户底色"));
         Assert.That(receipt.CostSummary, Does.Contain("承受线代价"));
         Assert.That(receipt.CostSummary, Does.Contain("反噬尾巴"));
+        Assert.That(receipt.CostSummary, Does.Contain("挤压项"));
         Assert.That(receipt.LeverageSummary, Does.Contain("取舍预判"));
         Assert.That(receipt.LeverageSummary, Does.Contain("外部后账"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("缓住项"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("张家户"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("承受线读回"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("取舍读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("短期后果"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("仍欠外部后账"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("社会记忆读回"));
     }
 }

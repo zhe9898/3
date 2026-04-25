@@ -131,6 +131,8 @@ public sealed partial class PresentationReadModelBuilder
                 BuildHomeHouseholdLocalResponseAffordanceCapacity(household.LastLocalResponseCommandCode, household, 0);
             HouseholdLocalResponseTradeoffForecast responseTradeoff =
                 BuildHomeHouseholdLocalResponseTradeoffForecast(household.LastLocalResponseCommandCode, household, 0);
+            HouseholdLocalResponseShortTermConsequenceReadback responseShortTerm =
+                BuildHomeHouseholdLocalResponseShortTermConsequenceReadback(household);
 
             yield return BuildPlayerCommandReceiptSnapshot(
                 household.LastLocalResponseCommandCode,
@@ -142,16 +144,22 @@ public sealed partial class PresentationReadModelBuilder
                 leverageSummary: JoinHomeHouseholdLocalResponseText(
                     "本户回应只结算自家劳力、债压、民困与迁徙险；不改治安、县门、宗房或社会记忆。",
                     responseTradeoff.BenefitSummary,
-                    responseTradeoff.BoundarySummary),
+                    responseTradeoff.BoundarySummary,
+                    responseShortTerm.ReliefSummary,
+                    responseShortTerm.ExternalAfterAccountSummary),
                 costSummary: JoinHomeHouseholdLocalResponseText(
                     BuildHomeHouseholdLocalResponseCostSummary(household),
                     responseCapacity.CostSummary,
-                    responseTradeoff.RecoilSummary),
+                    responseTradeoff.RecoilSummary,
+                    responseShortTerm.SqueezeSummary),
                 readbackSummary: JoinHomeHouseholdLocalResponseText(
                     BuildHomeHouseholdLocalResponseReadbackSummary(household, localSocialMemories),
                     responseCapacity.ReadbackSummary,
                     responseTradeoff.ReadbackSummary,
-                    responseTradeoff.BoundarySummary),
+                    responseTradeoff.BoundarySummary,
+                    responseShortTerm.ReliefSummary,
+                    responseShortTerm.SqueezeSummary,
+                    responseShortTerm.ExternalAfterAccountSummary),
                 targetLabel: household.HouseholdName,
                 labelOverride: household.LastLocalResponseCommandLabel);
         }
@@ -308,6 +316,60 @@ public sealed partial class PresentationReadModelBuilder
         return new HouseholdLocalResponseTradeoffForecast(benefit, recoil, boundary, readback);
     }
 
+    private static HouseholdLocalResponseShortTermConsequenceReadback BuildHomeHouseholdLocalResponseShortTermConsequenceReadback(
+        HouseholdPressureSnapshot household)
+    {
+        return household.LastLocalResponseCommandCode switch
+        {
+            PlayerCommandNames.RestrictNightTravel => BuildNightTravelShortTermReadback(household),
+            PlayerCommandNames.PoolRunnerCompensation => BuildRunnerCompensationShortTermReadback(household),
+            PlayerCommandNames.SendHouseholdRoadMessage => BuildRoadMessageShortTermReadback(household),
+            _ => HouseholdLocalResponseShortTermConsequenceReadback.Empty,
+        };
+    }
+
+    private static HouseholdLocalResponseShortTermConsequenceReadback BuildNightTravelShortTermReadback(
+        HouseholdPressureSnapshot household)
+    {
+        string relief = household.LastLocalResponseOutcomeCode == HouseholdLocalResponseOutcomeCodes.Ignored
+            ? $"短期后果：缓住项：夜路没有被本户接住，迁徙之念仍是{household.MigrationRisk}。"
+            : $"短期后果：缓住项：夜路、渡口和自家脚程先缓住，当前迁徙之念{household.MigrationRisk}。";
+        string squeeze = household.LaborCapacity < 30
+                         || household.LastLocalResponseOutcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
+            ? $"短期后果：挤压项：少走夜路也会挤丁力，当前丁力{household.LaborCapacity}，债压{household.DebtPressure}。"
+            : $"短期后果：挤压项：丁力小耗，当前丁力{household.LaborCapacity}，债压{household.DebtPressure}。";
+        string external = "短期后果：仍欠外部后账：巡丁、县门、族老解释和社会记忆仍归各自 owning module。";
+        return new HouseholdLocalResponseShortTermConsequenceReadback(relief, squeeze, external);
+    }
+
+    private static HouseholdLocalResponseShortTermConsequenceReadback BuildRunnerCompensationShortTermReadback(
+        HouseholdPressureSnapshot household)
+    {
+        string relief = household.LastLocalResponseOutcomeCode == HouseholdLocalResponseOutcomeCodes.Ignored
+            ? $"短期后果：缓住项：赔脚户没有接住误读，民困仍是{household.Distress}。"
+            : $"短期后果：缓住项：脚户误读和街口口舌先被压下，当前民困{household.Distress}。";
+        string squeeze = household.DebtPressure >= 80
+                         || household.LastLocalResponseOutcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
+            ? $"短期后果：挤压项：赔付坐成债尾，当前债压{household.DebtPressure}，迁徙之念{household.MigrationRisk}。"
+            : $"短期后果：挤压项：用钱和人情换暂缓，当前债压{household.DebtPressure}。";
+        string external = "短期后果：仍欠外部后账：赔脚户只压自家误读，不补巡丁、不催县门、不替族老解释。";
+        return new HouseholdLocalResponseShortTermConsequenceReadback(relief, squeeze, external);
+    }
+
+    private static HouseholdLocalResponseShortTermConsequenceReadback BuildRoadMessageShortTermReadback(
+        HouseholdPressureSnapshot household)
+    {
+        string relief = household.LastLocalResponseOutcomeCode == HouseholdLocalResponseOutcomeCodes.Ignored
+            ? $"短期后果：缓住项：路情没有问清，迁徙之念仍是{household.MigrationRisk}。"
+            : $"短期后果：缓住项：路情和脚户说法先问清，当前迁徙之念{household.MigrationRisk}。";
+        string squeeze = household.LaborCapacity < 32
+                         || household.LastLocalResponseOutcomeCode == HouseholdLocalResponseOutcomeCodes.Strained
+            ? $"短期后果：挤压项：少丁出门压住家计，当前丁力{household.LaborCapacity}，民困{household.Distress}。"
+            : $"短期后果：挤压项：耗一趟丁力换清楚说法，当前丁力{household.LaborCapacity}。";
+        string external = "短期后果：仍欠外部后账：本户递信不是官署递报，巡丁权威、县门文移和社会记忆仍未由本户修复。";
+        return new HouseholdLocalResponseShortTermConsequenceReadback(relief, squeeze, external);
+    }
+
     private static HouseholdLocalResponseAffordanceCapacity BuildNightTravelCapacity(
         HouseholdPressureSnapshot household,
         int residueScore,
@@ -389,6 +451,15 @@ public sealed partial class PresentationReadModelBuilder
     {
         public static HouseholdLocalResponseTradeoffForecast Empty { get; } =
             new(string.Empty, string.Empty, string.Empty, string.Empty);
+    }
+
+    private readonly record struct HouseholdLocalResponseShortTermConsequenceReadback(
+        string ReliefSummary,
+        string SqueezeSummary,
+        string ExternalAfterAccountSummary)
+    {
+        public static HouseholdLocalResponseShortTermConsequenceReadback Empty { get; } =
+            new(string.Empty, string.Empty, string.Empty);
     }
 
     private static string JoinHomeHouseholdLocalResponseText(params string[] parts)
