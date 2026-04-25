@@ -269,7 +269,9 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<NarrativeNotificationSnapshot> notifications,
         IReadOnlyList<PlayerCommandReceiptSnapshot> receipts,
         IReadOnlyList<HouseholdPressureSnapshot> households,
-        IReadOnlyList<JurisdictionAuthoritySnapshot> jurisdictions)
+        IReadOnlyList<JurisdictionAuthoritySnapshot> jurisdictions,
+        IReadOnlyList<ClanSnapshot> clans,
+        IReadOnlyList<SocialMemoryEntrySnapshot> socialMemories)
     {
         if (focus.UrgencyScore <= 0 || focus.SettlementId == default)
         {
@@ -289,9 +291,16 @@ public sealed partial class PresentationReadModelBuilder
             .FirstOrDefault(entry => entry.SettlementId == focus.SettlementId);
         HouseholdPressureSnapshot? ownerLaneReturnHousehold =
             SelectRecentLocalResponseHouseholdForSettlement(households, focus.SettlementId);
+        ClanSnapshot[] localClans = clans
+            .Where(clan => clan.HomeSettlementId == focus.SettlementId)
+            .OrderByDescending(static clan => clan.Prestige)
+            .ThenBy(static clan => clan.ClanName, StringComparer.Ordinal)
+            .ToArray();
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
+            SelectLocalPublicLifeOrderSocialMemories(socialMemories, localClans);
         string ownerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
             BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
-            BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction));
+            BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction, localSocialMemories));
 
         string headline = !string.IsNullOrWhiteSpace(relatedNotification?.Title)
             ? relatedNotification.Title

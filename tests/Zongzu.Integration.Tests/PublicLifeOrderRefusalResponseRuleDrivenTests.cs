@@ -1188,6 +1188,36 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("请族老解释"));
         Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("归口不等于修好"));
         Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("归口后读法"));
+
+        simulation.AdvanceOneMonth();
+        Assert.That(socialState.Memories, Has.Count.GreaterThan(memoryCountBeforeOwnerLaneResponses),
+            "Later monthly SocialMemory reader should own durable residue after owner-lane responses.");
+
+        PresentationReadModelBundle afterSocialResidueReadback = builder.BuildForM2(simulation);
+        PlayerCommandAffordanceSnapshot orderResidueAffordance = afterSocialResidueReadback.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.FundLocalWatch
+                                 && affordance.SettlementId == settlementId);
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("社会余味读回"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("后账渐平"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
+        Assert.That(orderResidueAffordance.ReadbackSummary, Does.Contain("不是本户再修"));
+
+        PlayerCommandAffordanceSnapshot officeResidueAffordance = afterSocialResidueReadback.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.PetitionViaOfficeChannels
+                                 && affordance.SettlementId == settlementId);
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("社会余味读回"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("后账转硬"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
+        Assert.That(officeResidueAffordance.LeverageSummary, Does.Contain("不是本户再修"));
+        Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("社会余味读回"));
+        Assert.That(afterSocialResidueReadback.GovernanceDocket.GuidanceSummary, Does.Contain("后账转硬"));
+
+        PlayerCommandAffordanceSnapshot familyResidueAffordance = afterSocialResidueReadback.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.InviteClanEldersMediation
+                                 && affordance.ClanId == leadClanForStatus.Id);
+        Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("社会余味读回"));
+        Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
+        Assert.That(familyResidueAffordance.LeverageSummary, Does.Contain("不是本户再修"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)

@@ -8,6 +8,11 @@ namespace Zongzu.Application;
 
 public sealed partial class PresentationReadModelBuilder
 {
+    private const string OwnerLaneReturnSourceOrder = "OrderAndBanditry";
+    private const string OwnerLaneReturnSourceOffice = "OfficeAndCareer";
+    private const string OwnerLaneReturnSourceFamily = "FamilyCore";
+    private const string OwnerLaneReturnSocialResiduePrefix = "order.public_life.response.";
+
     private static HouseholdPressureSnapshot? SelectRecentLocalResponseHouseholdForSettlement(
         IReadOnlyList<HouseholdPressureSnapshot> households,
         SettlementId settlementId)
@@ -63,7 +68,8 @@ public sealed partial class PresentationReadModelBuilder
 
     private static string BuildOrderOwnerLaneReturnStatusGuidance(
         HouseholdPressureSnapshot? household,
-        SettlementDisorderSnapshot? disorder)
+        SettlementDisorderSnapshot? disorder,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
         if (household is null || disorder is null || !HasStructuredOrderOwnerLaneResponse(disorder))
         {
@@ -76,7 +82,12 @@ public sealed partial class PresentationReadModelBuilder
         string outcomeLabel = RenderPublicLifeResponseOutcome(disorder.LastRefusalResponseOutcomeCode);
         return JoinOwnerLaneReturnSurfaceText(
             $"归口状态：已归口到巡丁/路匪 lane（OrderAndBanditry）：{household.HouseholdName}本户后账已归到治安路面，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。",
-            BuildOwnerLaneOutcomeReading(disorder.LastRefusalResponseOutcomeCode));
+            BuildOwnerLaneOutcomeReading(disorder.LastRefusalResponseOutcomeCode),
+            BuildOwnerLaneSocialResidueReadback(
+                localSocialMemories,
+                OwnerLaneReturnSourceOrder,
+                disorder.LastRefusalResponseCommandCode,
+                disorder.LastRefusalResponseOutcomeCode));
     }
 
     private static string BuildOfficeOwnerLaneReturnSurfaceGuidance(HouseholdPressureSnapshot? household)
@@ -91,7 +102,8 @@ public sealed partial class PresentationReadModelBuilder
 
     private static string BuildOfficeOwnerLaneReturnStatusGuidance(
         HouseholdPressureSnapshot? household,
-        JurisdictionAuthoritySnapshot? jurisdiction)
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
         if (household is null || jurisdiction is null || !HasStructuredOfficeOwnerLaneResponse(jurisdiction))
         {
@@ -104,7 +116,12 @@ public sealed partial class PresentationReadModelBuilder
         string outcomeLabel = RenderPublicLifeResponseOutcome(jurisdiction.LastRefusalResponseOutcomeCode);
         return JoinOwnerLaneReturnSurfaceText(
             $"归口状态：已归口到县门/文移 lane（OfficeAndCareer）：{household.HouseholdName}本户后账已归到官署案头，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。",
-            BuildOwnerLaneOutcomeReading(jurisdiction.LastRefusalResponseOutcomeCode));
+            BuildOwnerLaneOutcomeReading(jurisdiction.LastRefusalResponseOutcomeCode),
+            BuildOwnerLaneSocialResidueReadback(
+                localSocialMemories,
+                OwnerLaneReturnSourceOffice,
+                jurisdiction.LastRefusalResponseCommandCode,
+                jurisdiction.LastRefusalResponseOutcomeCode));
     }
 
     private static string BuildFamilyOwnerLaneReturnSurfaceGuidance(HouseholdPressureSnapshot? household)
@@ -119,7 +136,8 @@ public sealed partial class PresentationReadModelBuilder
 
     private static string BuildFamilyOwnerLaneReturnStatusGuidance(
         HouseholdPressureSnapshot? household,
-        ClanSnapshot? clan)
+        ClanSnapshot? clan,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
         if (household is null || clan is null || !HasStructuredFamilyOwnerLaneResponse(clan))
         {
@@ -132,7 +150,12 @@ public sealed partial class PresentationReadModelBuilder
         string outcomeLabel = RenderPublicLifeResponseOutcome(clan.LastRefusalResponseOutcomeCode);
         return JoinOwnerLaneReturnSurfaceText(
             $"归口状态：已归口到族老/担保 lane（FamilyCore）：{household.HouseholdName}本户后账已归到族中公开说法，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。",
-            BuildOwnerLaneOutcomeReading(clan.LastRefusalResponseOutcomeCode));
+            BuildOwnerLaneOutcomeReading(clan.LastRefusalResponseOutcomeCode),
+            BuildOwnerLaneSocialResidueReadback(
+                localSocialMemories,
+                OwnerLaneReturnSourceFamily,
+                clan.LastRefusalResponseCommandCode,
+                clan.LastRefusalResponseOutcomeCode));
     }
 
     private static string BuildOwnerLaneOutcomeReading(string outcomeCode)
@@ -148,6 +171,75 @@ public sealed partial class PresentationReadModelBuilder
             PublicLifeOrderResponseOutcomeCodes.Ignored =>
                 "归口后读法：放置未接：仍回 owner lane；本户不能替巡丁、县门或族老修后账。",
             _ => string.Empty,
+        };
+    }
+
+    private static string BuildOwnerLaneSocialResidueReadback(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
+        string sourceModuleKey,
+        string commandCode,
+        string outcomeCode)
+    {
+        if (localSocialMemories.Count == 0
+            || string.IsNullOrWhiteSpace(sourceModuleKey)
+            || string.IsNullOrWhiteSpace(commandCode)
+            || string.IsNullOrWhiteSpace(outcomeCode))
+        {
+            return string.Empty;
+        }
+
+        SocialMemoryEntrySnapshot? residue = localSocialMemories
+            .Where(memory => memory.State == MemoryLifecycleState.Active)
+            .Where(memory => TryReadOwnerLaneSocialResidueCause(memory.CauseKey, out OwnerLaneSocialResidueCause cause)
+                             && string.Equals(cause.SourceModuleKey, sourceModuleKey, StringComparison.Ordinal)
+                             && string.Equals(cause.CommandCode, commandCode, StringComparison.Ordinal)
+                             && string.Equals(cause.OutcomeCode, outcomeCode, StringComparison.Ordinal))
+            .OrderByDescending(static memory => memory.OriginDate.Year)
+            .ThenByDescending(static memory => memory.OriginDate.Month)
+            .ThenByDescending(static memory => memory.Weight)
+            .ThenBy(static memory => memory.Id.Value)
+            .FirstOrDefault();
+        if (residue is null)
+        {
+            return string.Empty;
+        }
+
+        string residueLabel = RenderOwnerLaneSocialResidueLabel(outcomeCode);
+        return $"社会余味读回：{residueLabel}，余重{residue.Weight}；仍由 SocialMemoryAndRelations 后续沉淀，不是本户再修。";
+    }
+
+    private static bool TryReadOwnerLaneSocialResidueCause(
+        string causeKey,
+        out OwnerLaneSocialResidueCause cause)
+    {
+        cause = default;
+        if (!causeKey.StartsWith(OwnerLaneReturnSocialResiduePrefix, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        string[] parts = causeKey.Split('.');
+        if (parts.Length < 6)
+        {
+            return false;
+        }
+
+        cause = new OwnerLaneSocialResidueCause(
+            SourceModuleKey: parts[3],
+            CommandCode: parts[4],
+            OutcomeCode: parts[5]);
+        return true;
+    }
+
+    private static string RenderOwnerLaneSocialResidueLabel(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "后账渐平",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "后账暂压留账",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "后账转硬",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "后账放置发酸",
+            _ => "后账余味未明",
         };
     }
 
@@ -219,4 +311,9 @@ public sealed partial class PresentationReadModelBuilder
     {
         return string.Join(" ", parts.Where(static part => !string.IsNullOrWhiteSpace(part)));
     }
+
+    private readonly record struct OwnerLaneSocialResidueCause(
+        string SourceModuleKey,
+        string CommandCode,
+        string OutcomeCode);
 }

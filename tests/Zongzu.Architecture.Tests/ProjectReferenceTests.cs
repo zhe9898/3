@@ -440,6 +440,7 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("PopulationAndHouseholdsState"));
         Assert.That(source, Does.Not.Contain("SocialMemoryAndRelationsState"));
         Assert.That(source, Does.Not.Contain(".Memories.Add"));
+        Assert.That(source, Does.Not.Contain("memory.Summary"));
         Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
         Assert.That(source, Does.Not.Contain("CooldownLedger"));
         Assert.That(source, Does.Not.Contain("HouseholdTarget"));
@@ -455,6 +456,9 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("LastRefusalResponseCommandCode"));
         Assert.That(source, Does.Contain("LastRefusalResponseOutcomeCode"));
         Assert.That(source, Does.Contain("LocalResponseCarryoverMonths"));
+        Assert.That(source, Does.Contain("SocialMemoryEntrySnapshot"));
+        Assert.That(source, Does.Contain("MemoryLifecycleState.Active"));
+        Assert.That(source, Does.Contain("CauseKey"));
         Assert.That(source, Does.Contain("外部后账归位"));
         Assert.That(source, Does.Contain("该走巡丁/路匪 lane"));
         Assert.That(source, Does.Contain("该走县门/文移 lane"));
@@ -476,6 +480,15 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("暂压留账：仍看本 lane 下月"));
         Assert.That(source, Does.Contain("恶化转硬：别让本户代扛"));
         Assert.That(source, Does.Contain("放置未接：仍回 owner lane"));
+        Assert.That(source, Does.Contain("BuildOwnerLaneSocialResidueReadback"));
+        Assert.That(source, Does.Contain("TryReadOwnerLaneSocialResidueCause"));
+        Assert.That(source, Does.Contain("社会余味读回"));
+        Assert.That(source, Does.Contain("后账渐平"));
+        Assert.That(source, Does.Contain("后账暂压留账"));
+        Assert.That(source, Does.Contain("后账转硬"));
+        Assert.That(source, Does.Contain("后账放置发酸"));
+        Assert.That(source, Does.Contain("仍由 SocialMemoryAndRelations 后续沉淀"));
+        Assert.That(source, Does.Contain("不是本户再修"));
         Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Repaired"));
         Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Contained"));
         Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Escalated"));

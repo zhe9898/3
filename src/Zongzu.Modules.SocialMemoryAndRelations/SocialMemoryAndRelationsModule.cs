@@ -656,6 +656,7 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
         bool alreadyRecordedThisMonth = state.Memories.Any(memory =>
             memory.SubjectClanId == clanId &&
             string.Equals(memory.Kind, kind, StringComparison.Ordinal) &&
+            string.Equals(memory.CauseKey, causeKey, StringComparison.Ordinal) &&
             memory.CreatedAt.Year == context.CurrentDate.Year &&
             memory.CreatedAt.Month == context.CurrentDate.Month);
 

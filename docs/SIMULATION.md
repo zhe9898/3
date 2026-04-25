@@ -189,6 +189,7 @@ Current M3 local-conflict note:
 - v22 owner-lane handoff entry readback is projection-time only: read models append `承接入口` labels for existing owner-lane affordances without adding a scheduler step, command queue, command target, or persisted ledger.
 - v23 owner-lane receipt status readback is projection-time only: read models append `归口状态` from existing owner-module structured response traces plus existing household local-response structure. `已归口` is not "社会其他人接手" and not automatic repair; it adds no scheduler step, no same-command SocialMemory write, no receipt-status ledger, no owner-lane ledger, and no thick household rule loop.
 - v24 owner-lane outcome reading guidance is projection-time only: read models append `归口后读法` from existing owner-module outcome codes. It explains whether the owner-lane result reads as `已修复`, `暂压留账`, `恶化转硬`, or `放置未接`, but it adds no scheduler step, no same-command SocialMemory write, no outcome ledger, no receipt-status ledger, no owner-lane ledger, and no thick household rule loop.
+- v25 owner-lane social-residue readback is projection-time only: read models append `社会余味读回` from existing SocialMemory response residue after the later monthly pass. It may show `后账渐平`, `后账暂压留账`, `后账转硬`, or `后账放置发酸`, but it adds no scheduler step, no same-command SocialMemory write, no SocialMemory ledger, no outcome ledger, no receipt-status ledger, no owner-lane ledger, and no thick household rule loop.
 - `ConflictAndForce.Lite` may also carry campaign-fatigue and escort-strain fallout across months; those penalties recover during its own owned pass
 
 ### Phase 3: month-end diff generation
@@ -277,6 +278,7 @@ Current public-life/order v9/v10/v11/v12 note:
 - v22 adds projected `承接入口` labels on top of v21 so those surfaces can point back to existing owner-lane command affordances. This does not add a scheduler step, command queue, command target, persisted ledger, or outcome calculation.
 - v23 adds projected `归口状态` on top of v22 so those surfaces can say when an existing owner lane has already received a structured response trace. This remains projection/readback guidance, not a social takeover, new scheduler step, event pool, persisted ledger, or outcome calculation.
 - v24 adds projected `归口后读法` on top of v23 so those surfaces can say how to read the existing owner-lane outcome after归口. This remains projection/readback guidance, not a new command system, event pool, persisted ledger, or outcome calculation.
+- v25 adds projected `社会余味读回` on top of v24 so those surfaces can say whether the later SocialMemory pass has made the owner-lane residue read as `后账渐平`, `后账暂压留账`, `后账转硬`, or `后账放置发酸`. This remains projection/readback guidance, not a new command system, event pool, persisted ledger, or outcome/residue calculation.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window
