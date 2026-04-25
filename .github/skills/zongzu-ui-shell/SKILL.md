@@ -36,7 +36,7 @@ The current repository has both a pure C# presentation adapter layer and a minim
 - presentation tests: `tests/Zongzu.Presentation.Unity.Tests`
 - player-command affordance and receipt surfaces now include projected `LeverageSummary`, `CostSummary`, and `ReadbackSummary`
 - public-life/order v18 readback may include `PresentationReadModelBundle.SocialMemories`, `HouseholdSocialPressure`, governance recent-receipt summaries, and home-household local response receipt text
-- current v19 adds projection-only follow-up hints for repeat/switch/cooldown affordances; v20-v24 add projection-only owner-lane return guidance, `承接入口`, `归口状态`, and `归口后读法`; shell surfaces may show those hints only from projected affordance/readback fields
+- current v19 adds projection-only follow-up hints for repeat/switch/cooldown affordances; v20-v30 add projection-only owner-lane return guidance, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, and `闭环防回压`; shell surfaces may show those hints only from projected affordance/readback fields
 - WCAG 2.2 and Xbox Accessibility Guidelines calibrate contrast, focus/read order, semantic labels, status announcements, and narration parity for shell surfaces; they do not turn the shell into a generic dashboard
 - Unity UI performance guidance calibrates shell implementation only: split static/dynamic canvas work when needed, avoid per-frame layout/raycast churn, use precomputed ViewModels/projection contexts, and never scan long simulation histories from a visible surface
 
@@ -140,7 +140,7 @@ For prompts like `great hall`, `desk sandbox`, `hall surface`, `notice tray`, `2
 - Desk sandbox is a local-world board with topology, routes, pressure, visibility, and reach, not a giant minimap or static infographic.
 - Notice tray separates urgent, consequential, and background pressure cleanly.
 - Public-life surfaces show reputation, rumor, visibility, and public pressure without becoming free-form prose.
-- Public-life/order shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, v19 follow-up hints, and v20-v24 owner-lane return/status/outcome readback, but only by displaying projected read-model fields.
+- Public-life/order shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, v19 follow-up hints, and v20-v30 owner-lane return/status/outcome/residue/no-loop readback, but only by displaying projected read-model fields.
 - Conflict vignette should feel like aftermath and consequence.
 - Campaign-lite board is route, front, posture, supply, and aftermath pressure; it is later and scale-gated.
 - Debug panels may expose internals, but player-facing surfaces should turn state into readable consequence and bounded action.

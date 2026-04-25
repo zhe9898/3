@@ -1,0 +1,7 @@
+interface:
+  display_name: "Zongzu Unity Shell"
+  short_description: "Implement Zongzu's existing Unity host shell, ViewModel adapters, scenes, assets, and presentation tests without authority leakage."
+  default_prompt: "Use $zongzu-unity-shell to work on the existing unity/Zongzu.UnityShell host, ViewModels, adapters, scenes, prefabs, assets, and validation while keeping simulation authority in src and not assuming Unity Editor MCP unless configured."
+
+policy:
+  allow_implicit_invocation: true

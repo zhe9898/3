@@ -1,0 +1,7 @@
+interface:
+  display_name: "Zongzu Save and Schema"
+  short_description: "Keep Zongzu save envelopes, module schemas, migrations, and manifests explicit and compatible."
+  default_prompt: "Use $zongzu-save-and-schema to review or implement Zongzu persisted-state changes with module namespaces, schema versions, migrations, manifests, compatibility tests, and clear no-save-impact calls for read-only helpers."
+
+policy:
+  allow_implicit_invocation: true

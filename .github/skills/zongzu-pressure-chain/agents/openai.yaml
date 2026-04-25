@@ -1,0 +1,7 @@
+interface:
+  display_name: "Zongzu Pressure Chain"
+  short_description: "Build and audit Zongzu Renzong/cross-module pressure topology, events, projections, and proof tests."
+  default_prompt: "Use $zongzu-pressure-chain to work a Zongzu pressure chain from source pressure through module ownership, PublishedEvents/ConsumedEvents, scheduler drain, metadata, projections, player surface, tests, docs, and thin-vs-full status."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Zongzu Content Authoring"
+  short_description: "Author Zongzu content, descriptors, projection copy, and content packs without turning prose into authority."
+  default_prompt: "Use $zongzu-content-authoring to create or review Zongzu content so historical grounding, authored data, projection copy, schemas, module authority, UTF-8 Chinese text, and Unity-facing labels stay aligned."
+
+policy:
+  allow_implicit_invocation: true

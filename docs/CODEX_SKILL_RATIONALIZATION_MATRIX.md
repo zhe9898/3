@@ -18,6 +18,7 @@ External standards calibrate the skill pack; they do not override product or arc
 - `Zongzu.Kernel` and simulation modules must not reference Unity APIs.
 - Unity host root exists at `unity/Zongzu.UnityShell` with `Assets/`, `Packages/`, and `ProjectSettings/`.
 - `src/Zongzu.Presentation.Unity` and `src/Zongzu.Presentation.Unity.ViewModels` are projection/adaptation layers.
+- The repo-tracked Zongzu skill pack under `.github/skills` contains all nine Zongzu skills: game design, architecture boundaries, pressure chain, UI shell, ancient China, content authoring, Unity shell, simulation validation, and save/schema.
 - Cross-module cooperation uses Query / Command / DomainEvent.
 - `MonthlyScheduler` performs deterministic prepare / xun / month / bounded fresh-event drain / projection ordering.
 - Notifications are read-side projection artifacts, not authority drivers.

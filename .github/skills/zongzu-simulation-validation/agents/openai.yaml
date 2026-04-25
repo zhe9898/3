@@ -1,0 +1,7 @@
+interface:
+  display_name: "Zongzu Simulation Validation"
+  short_description: "Validate Zongzu replay, scheduler, event-flow, save, projection, and long-run pressure health."
+  default_prompt: "Use $zongzu-simulation-validation to validate Zongzu determinism, replay hashes, scheduler cadence, event graph, pressure saturation, save/load behavior, projection tests, and residual diagnostic debt against the current repo."
+
+policy:
+  allow_implicit_invocation: true

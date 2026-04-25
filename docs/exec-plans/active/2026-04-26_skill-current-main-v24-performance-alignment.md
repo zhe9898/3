@@ -1,5 +1,7 @@
 # Skill Current Main v24 Performance Alignment
 
+> Superseded note: current `main` has since advanced to the public-life/order v30 closure arc plus the v31 merge/cleanup evidence pass. Keep this file as v24 alignment evidence; use `2026-04-26_skill-current-main-v31-full-pack-alignment.md` for the current full skill-pack state.
+
 ## Purpose
 
 Align the Zongzu skill pack and skill rationalization matrix to the current `main` branch after the public-life/order closure through v24. This is a skill/docs governance pass, not a runtime feature, not a new command system, and not a schema migration.
