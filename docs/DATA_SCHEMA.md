@@ -257,6 +257,7 @@ Current note:
 - v21 owner-lane surface readback adds no new state fields: Office/Governance and Family-facing copies of `外部后账归位` are runtime projections derived from existing household response structure, settlement scope, and sponsor-clan scope only.
 - v22 owner-lane handoff entry readback adds no new state fields: projected `承接入口` labels name existing Order / Office / Family affordances from the same structured household response projection and do not create a command queue, owner-lane ledger, or household target.
 - v23 owner-lane receipt status readback adds no new state fields: projected `归口状态` / `已归口到... lane` strings are derived from existing owner-module response trace fields plus existing household local-response structure and do not create a receipt-status ledger, owner-lane ledger, or household target.
+- v24 owner-lane outcome reading guidance adds no new state fields: projected `归口后读法` strings are derived from existing owner-module `LastRefusalResponseOutcomeCode` values and do not create an outcome ledger, receipt-status ledger, owner-lane ledger, household target, schema bump, or migration.
 - Migration `2 -> 3` initializes local-response strings to empty values and clamps `LocalResponseCarryoverMonths` to `0..1`.
 
 ### SocialMemoryAndRelations state

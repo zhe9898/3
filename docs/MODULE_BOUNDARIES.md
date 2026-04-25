@@ -140,6 +140,7 @@ Current routing note:
 - `PlayerCommandService` remains thin module-selection glue for this slice and must not own family consequence formulas
 - the resolver may read `PersonRegistry` and `SocialMemoryAndRelations` query snapshots, but may mutate only `FamilyCore` state and receipt fields
 - for public-life refusal response, the resolver may also read `OrderAndBanditry` refusal/partial residue through queries; v8 monthly family actor countermoves may read structured `SocialMemoryAndRelations` response residue. Both paths may mutate only `FamilyCore` response trace and family pressure fields, not Order or SocialMemory.
+- v24 projected outcome reading may explain family outcomes as `已修复`, `暂压留账`, `恶化转硬`, or `放置未接`, but those words are readback only; 族老公开解释、本户担保修复、宗房脸面 handling remains `FamilyCore` authority.
 
 ### Emits events
 - `MarriageAllianceArranged`
@@ -208,6 +209,7 @@ Current routing note:
 - v17 response tradeoff forecast may project `取舍预判` / `预期收益` / `反噬尾巴` / `外部后账` and may add command-time tradeoff summary tails from those same existing household fields. It does not add persisted tradeoff state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
 - v18 short-term consequence readback may project receipt-side `短期后果：缓住项` / `挤压项` / `仍欠外部后账` from existing `HouseholdPressureSnapshot` fields and structured `LastLocalResponse*` codes. It does not add persisted consequence state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
 - v19 follow-up affordance readback may project `续接提示` / `换招提示` / `冷却提示` / `续接读回` from existing `HouseholdPressureSnapshot` fields and structured `LastLocalResponse*` codes. It does not add a cooldown ledger, repeated-response counter, persisted consequence state, or command targeting change.
+- v20-v24 owner-lane return/status/outcome readback may project `外部后账归位`, `承接入口`, `归口状态`, and `归口后读法` from existing household local response fields plus existing owner-module response traces. This does not make `PopulationAndHouseholds` own order repair, county-yamen催办, elder explanation, durable SocialMemory residue, or any owner-lane / receipt-status / outcome ledger.
 
 ### Emits events
 - `HouseholdDebtSpiked`
@@ -266,6 +268,7 @@ Current routing note:
 - reads structured public-life refusal response aftermath through `IOrderAndBanditryQueries`, optional `IOfficeAndCareerQueries`, and optional `IFamilyCoreQueries`; it may use response command / outcome / trace codes, but must not parse `DomainEvent.Summary`, receipt summaries, or `LastInterventionSummary`
 - later-month public-life response residue drift is SocialMemory-owned: it may adjust only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`, reusing existing schema `3` fields such as memory weight, cause key, lifecycle state, narrative pressures, and climate axes
 - reads structured home-household local response aftermath through `IPopulationAndHouseholdsQueries`; it may use `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`, but must not parse `LastLocalResponseSummary` or treat a household local response as county order / yamen / family repair
+- v24 `归口后读法` remains projection text. `SocialMemoryAndRelations` must read structured Order / Office / Family response aftermath and home-household aftermath through queries, not parse `归口后读法`, `已修复：先停本户加压`, `暂压留账`, `恶化转硬`, or `放置未接` prose.
 - v8 owner-module actor countermoves may read SocialMemory snapshots, but `SocialMemoryAndRelations` still owns only durable residue. It does not resolve route-watch, yamen, clerk, elder, or household-guarantee countermoves.
 - consumes scoped trade shock, exam, death, marriage, branch, heir, and warfare events to mutate only its own climate, memory, narrative, and tempering state
 
@@ -389,6 +392,7 @@ Current routing note:
 - these commands are resolved by `OfficeAndCareerCommandResolver` inside `Zongzu.Modules.OfficeAndCareer`
 - office public-life verbs may update only office-owned jurisdiction, petition, and trace state; order, family, trade, or public-life heat must move later through queries, events, or projections
 - public-life refusal response commands may read `OrderAndBanditry` structured residue through queries, and v7/v8 repeat-friction or actor countermove logic may read `FamilyCore` local clan scope plus `SocialMemoryAndRelations` response residue weights, but the response outcome and trace they write are owned by `OfficeAndCareer`
+- v24 projected outcome reading may explain office outcomes as `已修复`, `暂压留账`, `恶化转硬`, or `放置未接`, but those words are readback only; county-yamen催办, 文移落地, and 胥吏拖延 handling remains `OfficeAndCareer` authority.
 
 ### Emits events
 - `OfficeGranted`
@@ -449,6 +453,7 @@ Current routing note:
 Current routing note:
 - these commands are resolved by `OrderAndBanditryCommandResolver` inside `Zongzu.Modules.OrderAndBanditry`
 - the resolver may read `OfficeAndCareer` jurisdiction authority through queries to shape administrative reach, but it may mutate only order-owned pressure, carryover, and receipt state
+- v24 projected outcome reading may explain order outcomes as `已修复`, `暂压留账`, `恶化转硬`, or `放置未接`, but those words are readback only; road watch, route-pressure repair, runner misread repair, and patrol/order after-account handling remain `OrderAndBanditry` authority.
 
 ### Emits events
 - `BanditThreatRaised`

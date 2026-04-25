@@ -74,7 +74,9 @@ public sealed partial class PresentationReadModelBuilder
             disorder.LastRefusalResponseCommandLabel,
             disorder.LastRefusalResponseCommandCode);
         string outcomeLabel = RenderPublicLifeResponseOutcome(disorder.LastRefusalResponseOutcomeCode);
-        return $"归口状态：已归口到巡丁/路匪 lane（OrderAndBanditry）：{household.HouseholdName}本户后账已归到治安路面，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。";
+        return JoinOwnerLaneReturnSurfaceText(
+            $"归口状态：已归口到巡丁/路匪 lane（OrderAndBanditry）：{household.HouseholdName}本户后账已归到治安路面，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。",
+            BuildOwnerLaneOutcomeReading(disorder.LastRefusalResponseOutcomeCode));
     }
 
     private static string BuildOfficeOwnerLaneReturnSurfaceGuidance(HouseholdPressureSnapshot? household)
@@ -100,7 +102,9 @@ public sealed partial class PresentationReadModelBuilder
             jurisdiction.LastRefusalResponseCommandLabel,
             jurisdiction.LastRefusalResponseCommandCode);
         string outcomeLabel = RenderPublicLifeResponseOutcome(jurisdiction.LastRefusalResponseOutcomeCode);
-        return $"归口状态：已归口到县门/文移 lane（OfficeAndCareer）：{household.HouseholdName}本户后账已归到官署案头，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。";
+        return JoinOwnerLaneReturnSurfaceText(
+            $"归口状态：已归口到县门/文移 lane（OfficeAndCareer）：{household.HouseholdName}本户后账已归到官署案头，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。",
+            BuildOwnerLaneOutcomeReading(jurisdiction.LastRefusalResponseOutcomeCode));
     }
 
     private static string BuildFamilyOwnerLaneReturnSurfaceGuidance(HouseholdPressureSnapshot? household)
@@ -126,7 +130,25 @@ public sealed partial class PresentationReadModelBuilder
             clan.LastRefusalResponseCommandLabel,
             clan.LastRefusalResponseCommandCode);
         string outcomeLabel = RenderPublicLifeResponseOutcome(clan.LastRefusalResponseOutcomeCode);
-        return $"归口状态：已归口到族老/担保 lane（FamilyCore）：{household.HouseholdName}本户后账已归到族中公开说法，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。";
+        return JoinOwnerLaneReturnSurfaceText(
+            $"归口状态：已归口到族老/担保 lane（FamilyCore）：{household.HouseholdName}本户后账已归到族中公开说法，{commandLabel}留有结构化 owner trace；归口不等于修好，当前 owner lane 读回：{outcomeLabel}，仍看 owner lane 下月读回。",
+            BuildOwnerLaneOutcomeReading(clan.LastRefusalResponseOutcomeCode));
+    }
+
+    private static string BuildOwnerLaneOutcomeReading(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired =>
+                "归口后读法：已修复：先停本户加压；下月只看 owner lane 与后续记忆是否渐平。",
+            PublicLifeOrderResponseOutcomeCodes.Contained =>
+                "归口后读法：暂压留账：仍看本 lane 下月；本户这头不宜继续代扛。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated =>
+                "归口后读法：恶化转硬：别让本户代扛；应回到 owner lane 继续读回。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored =>
+                "归口后读法：放置未接：仍回 owner lane；本户不能替巡丁、县门或族老修后账。",
+            _ => string.Empty,
+        };
     }
 
     private static bool HasStructuredOrderOwnerLaneResponse(SettlementDisorderSnapshot disorder)

@@ -470,6 +470,16 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("已归口到族老/担保 lane"));
         Assert.That(source, Does.Contain("归口不等于修好"));
         Assert.That(source, Does.Contain("仍看 owner lane 下月读回"));
+        Assert.That(source, Does.Contain("BuildOwnerLaneOutcomeReading"));
+        Assert.That(source, Does.Contain("归口后读法"));
+        Assert.That(source, Does.Contain("已修复：先停本户加压"));
+        Assert.That(source, Does.Contain("暂压留账：仍看本 lane 下月"));
+        Assert.That(source, Does.Contain("恶化转硬：别让本户代扛"));
+        Assert.That(source, Does.Contain("放置未接：仍回 owner lane"));
+        Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Repaired"));
+        Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Contained"));
+        Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Escalated"));
+        Assert.That(source, Does.Contain("PublicLifeOrderResponseOutcomeCodes.Ignored"));
     }
 
     [Test]
@@ -498,6 +508,11 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("该走县门"));
         Assert.That(source, Does.Not.Contain("该走族老"));
         Assert.That(source, Does.Not.Contain("本户不能代修"));
+        Assert.That(source, Does.Not.Contain("归口后读法"));
+        Assert.That(source, Does.Not.Contain("已修复：先停本户加压"));
+        Assert.That(source, Does.Not.Contain("暂压留账"));
+        Assert.That(source, Does.Not.Contain("恶化转硬"));
+        Assert.That(source, Does.Not.Contain("放置未接"));
         Assert.That(source, Does.Not.Contain("OrderAndBanditryState"));
         Assert.That(source, Does.Not.Contain("OfficeAndCareerState"));
         Assert.That(source, Does.Not.Contain("FamilyCoreState"));

@@ -148,6 +148,11 @@ Current public-life/order v23 owner-lane receipt status readback note:
 - `已归口` does not mean "社会其他人接手"; it only says the after-account is now visible on the owning Order / Office / Family lane through existing structured response trace fields.
 - `SocialMemoryAndRelations` must not parse `归口状态`, owner-lane status prose, receipt prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, or `DomainEvent.Summary`; durable shame/fear/favor/grudge/obligation still comes only from structured aftermath.
 
+Current public-life/order v24 owner-lane outcome reading note:
+- `归口后读法`, `已修复：先停本户加压`, `暂压留账：仍看本 lane 下月`, `恶化转硬：别让本户代扛`, and `放置未接：仍回 owner lane` are projected readback cues, not durable social memory state.
+- The wording helps the player read the existing owner-lane outcome after归口; it does not make ordinary home-household response a universal repair lane and does not authorize `SocialMemoryAndRelations` to handle Order / Office / Family commands.
+- `SocialMemoryAndRelations` must not parse `归口后读法`, owner-lane outcome prose, receipt prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, or `DomainEvent.Summary`; durable shame/fear/favor/grudge/obligation still comes only from structured aftermath codes and query snapshots.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

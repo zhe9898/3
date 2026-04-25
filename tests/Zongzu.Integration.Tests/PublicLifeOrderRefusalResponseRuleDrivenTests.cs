@@ -1110,6 +1110,13 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
                 SettlementId = settlementId,
                 CommandName = PlayerCommandNames.RepairLocalWatchGuarantee,
             });
+        foreach (OfficeCareerState career in officeState.People.Where(person => person.HasAppointment && person.SettlementId == settlementId))
+        {
+            career.JurisdictionLeverage = 4;
+            career.ClerkDependence = 90;
+            career.PetitionBacklog = 70;
+        }
+
         PlayerCommandResult officeLaneReturn = commandService.IssueIntent(
             simulation,
             new PlayerCommandRequest
@@ -1137,6 +1144,10 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(officeLaneReturn.ModuleKey, Is.EqualTo(KnownModuleKeys.OfficeAndCareer));
         Assert.That(familyLaneReturn.Accepted, Is.True);
         Assert.That(familyLaneReturn.ModuleKey, Is.EqualTo(KnownModuleKeys.FamilyCore));
+        Assert.That(settlement.LastRefusalResponseOutcomeCode, Is.EqualTo(PublicLifeOrderResponseOutcomeCodes.Repaired));
+        JurisdictionAuthorityState officeJurisdictionForStatus = officeState.Jurisdictions
+            .Single(jurisdiction => jurisdiction.SettlementId == settlementId);
+        Assert.That(officeJurisdictionForStatus.LastRefusalResponseOutcomeCode, Is.EqualTo(PublicLifeOrderResponseOutcomeCodes.Escalated));
         Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeOwnerLaneResponses),
             "Owner-lane归口 response commands must still leave durable SocialMemory to the later monthly reader.");
 
@@ -1149,6 +1160,9 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("补保巡丁"));
         Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("归口不等于修好"));
         Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("仍看 owner lane 下月读回"));
+        Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("归口后读法"));
+        Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("已修复"));
+        Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("先停本户加压"));
 
         PlayerCommandAffordanceSnapshot officeStatusAffordance = afterOwnerLaneReturn.PlayerCommands.Affordances
             .First(affordance => affordance.CommandName == PlayerCommandNames.PetitionViaOfficeChannels
@@ -1157,9 +1171,14 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("已归口到县门/文移 lane"));
         Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("押文催县门"));
         Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("归口不等于修好"));
+        Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("归口后读法"));
+        Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("恶化转硬"));
+        Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("别让本户代扛"));
         Assert.That(afterOwnerLaneReturn.GovernanceDocket.GuidanceSummary, Does.Contain("归口状态"));
         Assert.That(afterOwnerLaneReturn.GovernanceDocket.GuidanceSummary, Does.Contain("已归口到县门/文移 lane"));
         Assert.That(afterOwnerLaneReturn.GovernanceDocket.GuidanceSummary, Does.Contain("仍看 owner lane 下月读回"));
+        Assert.That(afterOwnerLaneReturn.GovernanceDocket.GuidanceSummary, Does.Contain("归口后读法"));
+        Assert.That(afterOwnerLaneReturn.GovernanceDocket.GuidanceSummary, Does.Contain("恶化转硬"));
 
         PlayerCommandAffordanceSnapshot familyStatusAffordance = afterOwnerLaneReturn.PlayerCommands.Affordances
             .First(affordance => affordance.CommandName == PlayerCommandNames.InviteClanEldersMediation
@@ -1168,6 +1187,7 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("已归口到族老/担保 lane"));
         Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("请族老解释"));
         Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("归口不等于修好"));
+        Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("归口后读法"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)
