@@ -341,3 +341,13 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters display projected home-household affordances and receipts only, never query `PopulationAndHouseholds`, select hidden household targets, or compute response outcome.
 - Save/schema acceptance must prove `PopulationAndHouseholds` schema `2 -> 3` migration plus save/load preservation of local response trace fields. `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` schema versions do not change in v12.
 - Architecture acceptance must guard boundary drift, summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, UI/Application outcome computation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v13 home-household social-memory readback acceptance - 2026-04-25
+- `public-life-order-home-household-social-memory-v13` must prove the v12 local response loop continues into Month N+2 SocialMemory-owned residue without becoming an event-chain, event-pool, or UI-owned rule layer.
+- Command-time acceptance remains strict: issuing `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信` mutates only `PopulationAndHouseholds` and does not mutate same-month `SocialMemoryAndRelations`.
+- SocialMemory acceptance must prove Month N+2 reads structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`, then writes only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`.
+- Path acceptance must cover at least two local response outcomes, including a relief/favor path and a strained/debt or shame path.
+- Projection acceptance must prove home-household receipts expose the resulting SocialMemory readback while still saying the household response did not repair county order, yamen, or family authority.
+- Unity acceptance must prove shell adapters copy projected receipt readback only and do not compute SocialMemory residue or parse summaries.
+- Save/schema acceptance: v13 adds no persisted fields, no schema bump, and no migration; existing v12 `PopulationAndHouseholds` schema `3` save/load proof remains sufficient for the local response trace fields.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.

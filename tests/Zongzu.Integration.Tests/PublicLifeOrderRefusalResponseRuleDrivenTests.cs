@@ -527,6 +527,123 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(strainedReceipt.ReadbackSummary, Does.Contain("债压"));
     }
 
+    [Test]
+    public void HomeHouseholdLocalResponse_MonthNPlusTwoSocialMemoryReadsStructuredAftermath()
+    {
+        GameSimulation simulation = SimulationBootstrapper.CreateP1GovernanceLocalConflictBootstrap(20260502);
+        simulation.AdvanceMonths(2);
+
+        PresentationReadModelBuilder builder = new();
+        PopulationAndHouseholdsState populationState = simulation.GetModuleStateForTesting<PopulationAndHouseholdsState>(
+            KnownModuleKeys.PopulationAndHouseholds);
+        PopulationHouseholdState anchorHousehold = SelectPlayerAnchorHouseholdForTest(populationState);
+        SettlementId settlementId = anchorHousehold.SettlementId;
+        OrderAndBanditryState orderState = simulation.GetModuleStateForTesting<OrderAndBanditryState>(
+            KnownModuleKeys.OrderAndBanditry);
+        SocialMemoryAndRelationsState socialState = simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(
+            KnownModuleKeys.SocialMemoryAndRelations);
+
+        anchorHousehold.Distress = 58;
+        anchorHousehold.DebtPressure = 48;
+        anchorHousehold.LaborCapacity = 42;
+        anchorHousehold.MigrationRisk = 72;
+        SettlementDisorderState settlement = orderState.Settlements.Single(entry => entry.SettlementId == settlementId);
+        settlement.ImplementationDrag = 52;
+        settlement.RoutePressure = 62;
+        settlement.RetaliationRisk = 14;
+        settlement.CoercionRisk = 10;
+
+        PlayerCommandService commandService = new();
+        PlayerCommandResult partial = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.FundLocalWatch,
+            });
+        Assert.That(partial.Accepted, Is.True);
+        Assert.That(settlement.LastInterventionOutcomeCode, Is.EqualTo(OrderInterventionOutcomeCodes.Partial));
+
+        simulation.AdvanceOneMonth();
+
+        PresentationReadModelBundle monthNPlusOne = builder.BuildForM2(simulation);
+        Assert.That(monthNPlusOne.PlayerCommands.Affordances
+            .Any(affordance => affordance.SettlementId == settlementId
+                               && affordance.CommandName == PlayerCommandNames.RestrictNightTravel
+                               && affordance.ModuleKey == KnownModuleKeys.PopulationAndHouseholds),
+            Is.True);
+
+        int memoryCountBeforeRelievedResponse = socialState.Memories.Count;
+        PlayerCommandResult relievedResponse = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.RestrictNightTravel,
+            });
+
+        Assert.That(relievedResponse.Accepted, Is.True);
+        Assert.That(relievedResponse.ModuleKey, Is.EqualTo(KnownModuleKeys.PopulationAndHouseholds));
+        Assert.That(anchorHousehold.LastLocalResponseOutcomeCode, Is.EqualTo(HouseholdLocalResponseOutcomeCodes.Relieved));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeRelievedResponse),
+            "Same-month home-household response command must not write SocialMemory.");
+
+        simulation.AdvanceOneMonth();
+
+        SocialMemoryEntrySnapshot relievedResidue = simulation.GetQueryForTesting<ISocialMemoryAndRelationsQueries>()
+            .GetMemories()
+            .Single(memory => memory.CauseKey.StartsWith("order.public_life.household_response.", StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(anchorHousehold.Id.Value.ToString(), StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(PlayerCommandNames.RestrictNightTravel, StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(HouseholdLocalResponseOutcomeCodes.Relieved, StringComparison.Ordinal));
+        Assert.That(relievedResidue.Type, Is.EqualTo(MemoryType.Favor));
+        Assert.That(relievedResidue.Subtype, Is.EqualTo(MemorySubtype.ProtectionFavor));
+
+        PresentationReadModelBundle afterRelievedMemory = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot relievedReceipt = afterRelievedMemory.PlayerCommands.Receipts
+            .First(receipt => receipt.CommandName == PlayerCommandNames.RestrictNightTravel
+                              && receipt.TargetLabel == anchorHousehold.HouseholdName);
+        Assert.That(relievedReceipt.ReadbackSummary, Does.Contain(relievedResidue.Summary));
+
+        anchorHousehold.Distress = 70;
+        anchorHousehold.DebtPressure = 78;
+        anchorHousehold.LaborCapacity = 35;
+        anchorHousehold.MigrationRisk = 45;
+        int memoryCountBeforeStrainedResponse = socialState.Memories.Count;
+        PlayerCommandResult strainedResponse = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = anchorHousehold.SponsorClanId,
+                CommandName = PlayerCommandNames.PoolRunnerCompensation,
+            });
+
+        Assert.That(strainedResponse.Accepted, Is.True);
+        Assert.That(strainedResponse.ModuleKey, Is.EqualTo(KnownModuleKeys.PopulationAndHouseholds));
+        Assert.That(anchorHousehold.LastLocalResponseOutcomeCode, Is.EqualTo(HouseholdLocalResponseOutcomeCodes.Strained));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeStrainedResponse),
+            "Same-month strained local response must still not write SocialMemory.");
+
+        simulation.AdvanceOneMonth();
+
+        SocialMemoryEntrySnapshot strainedResidue = simulation.GetQueryForTesting<ISocialMemoryAndRelationsQueries>()
+            .GetMemories()
+            .Single(memory => memory.CauseKey.StartsWith("order.public_life.household_response.", StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(anchorHousehold.Id.Value.ToString(), StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(PlayerCommandNames.PoolRunnerCompensation, StringComparison.Ordinal)
+                              && memory.CauseKey.Contains(HouseholdLocalResponseOutcomeCodes.Strained, StringComparison.Ordinal));
+        Assert.That(strainedResidue.Type, Is.EqualTo(MemoryType.Debt));
+        Assert.That(strainedResidue.Subtype, Is.EqualTo(MemorySubtype.MarketDebt));
+
+        PresentationReadModelBundle afterStrainedMemory = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot strainedReceipt = afterStrainedMemory.PlayerCommands.Receipts
+            .First(receipt => receipt.CommandName == PlayerCommandNames.PoolRunnerCompensation
+                              && receipt.TargetLabel == anchorHousehold.HouseholdName);
+        Assert.That(strainedReceipt.ReadbackSummary, Does.Contain(strainedResidue.Summary));
+    }
+
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)
     {
         return bundle.GovernanceSettlements

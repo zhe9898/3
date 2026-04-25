@@ -55,4 +55,16 @@ public static class SocialMemoryKinds
 
     /// <summary>Public-life order response residue: 后账被放置后沉下来的羞面与怨尾。</summary>
     public const string PublicOrderResponseIgnored = "public_order_response_ignored";
+
+    /// <summary>Public-life home-household response residue: 本户后账被缓下后留下的人情与信任。</summary>
+    public const string PublicOrderHouseholdResponseRelieved = "public_order_household_response_relieved";
+
+    /// <summary>Public-life home-household response residue: 本户后账被暂压后留下的担保与人情欠账。</summary>
+    public const string PublicOrderHouseholdResponseContained = "public_order_household_response_contained";
+
+    /// <summary>Public-life home-household response residue: 本户后账吃紧后转深的债压、羞面与怨尾。</summary>
+    public const string PublicOrderHouseholdResponseStrained = "public_order_household_response_strained";
+
+    /// <summary>Public-life home-household response residue: 本户后账被放置后沉下来的羞面与怨尾。</summary>
+    public const string PublicOrderHouseholdResponseIgnored = "public_order_household_response_ignored";
 }

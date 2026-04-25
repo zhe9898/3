@@ -73,6 +73,9 @@ public sealed partial class PresentationReadModelBuilder
             .OrderBy(static household => household.SettlementId.Value)
             .ThenBy(static household => household.Id.Value))
         {
+            IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
+                SelectHomeHouseholdLocalResponseSocialMemories(bundle.SocialMemories, household);
+
             yield return BuildPlayerCommandReceiptSnapshot(
                 household.LastLocalResponseCommandCode,
                 household.SettlementId,
@@ -82,10 +85,32 @@ public sealed partial class PresentationReadModelBuilder
                 executionSummary: BuildHomeHouseholdLocalResponseExecutionSummary(household),
                 leverageSummary: "本户回应只结算自家劳力、债压、民困与迁徙险；不改治安、县门、宗房或社会记忆。",
                 costSummary: BuildHomeHouseholdLocalResponseCostSummary(household),
-                readbackSummary: BuildHomeHouseholdLocalResponseReadbackSummary(household),
+                readbackSummary: BuildHomeHouseholdLocalResponseReadbackSummary(household, localSocialMemories),
                 targetLabel: household.HouseholdName,
                 labelOverride: household.LastLocalResponseCommandLabel);
         }
+    }
+
+    private static IReadOnlyList<SocialMemoryEntrySnapshot> SelectHomeHouseholdLocalResponseSocialMemories(
+        IReadOnlyList<SocialMemoryEntrySnapshot> socialMemories,
+        HouseholdPressureSnapshot household)
+    {
+        if (socialMemories.Count == 0 || !household.SponsorClanId.HasValue)
+        {
+            return [];
+        }
+
+        string causePrefix = $"order.public_life.household_response.{household.Id.Value}.";
+        return socialMemories
+            .Where(memory =>
+                memory.State == MemoryLifecycleState.Active
+                && memory.SourceClanId == household.SponsorClanId
+                && memory.CauseKey.StartsWith(causePrefix, StringComparison.Ordinal))
+            .OrderByDescending(static memory => memory.OriginDate.Year)
+            .ThenByDescending(static memory => memory.OriginDate.Month)
+            .ThenByDescending(static memory => memory.Weight)
+            .ThenBy(static memory => memory.Id.Value)
+            .ToArray();
     }
 
     private static string RenderHomeHouseholdLocalResponseOutcome(string outcomeCode)
@@ -117,7 +142,9 @@ public sealed partial class PresentationReadModelBuilder
         return $"本户余账：民困{household.Distress}，债压{household.DebtPressure}，丁力{household.LaborCapacity}，迁徙之念{household.MigrationRisk}。";
     }
 
-    private static string BuildHomeHouseholdLocalResponseReadbackSummary(HouseholdPressureSnapshot household)
+    private static string BuildHomeHouseholdLocalResponseReadbackSummary(
+        HouseholdPressureSnapshot household,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
         string tail = household.LastLocalResponseOutcomeCode switch
         {
@@ -127,6 +154,8 @@ public sealed partial class PresentationReadModelBuilder
             HouseholdLocalResponseOutcomeCodes.Ignored => "本户没有接住后账，压力仍在。",
             _ => household.LastLocalResponseOutcomeCode,
         };
-        return $"{household.HouseholdName}：{tail}";
+        string householdReadback = $"{household.HouseholdName}：{tail}";
+        string socialMemoryReadback = BuildOrderSocialMemoryReadbackSummary(localSocialMemories);
+        return string.Join(" ", new[] { householdReadback, socialMemoryReadback }.Where(static value => !string.IsNullOrWhiteSpace(value)));
     }
 }

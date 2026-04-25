@@ -91,6 +91,12 @@ Current public-life/order v8 actor-countermove note:
 - these actor countermoves read structured SocialMemory residue (`CauseKey`, outcome marker, `Weight`, `State`, `SourceClanId`, `OriginDate`) and skip current-month memories; they do not parse memory summaries, receipt summaries, `LastInterventionSummary`, `LastRefusalResponseSummary`, or `DomainEvent.Summary`.
 - any durable shame, fear, favor, grudge, or obligation after the actor countermove is still written only by `SocialMemoryAndRelations` through existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`. v8 adds no new relationship table, person table, memory namespace, schema bump, or migration.
 
+Current public-life/order v13 home-household response note:
+- v12 local responses such as `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` can now leave durable SocialMemory residue on the later monthly pass, but only after `PopulationAndHouseholds` has resolved the command and exposed structured aftermath.
+- `SocialMemoryAndRelations` reads `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode` through queries and converts `Relieved`, `Contained`, `Strained`, or `Ignored` into existing memory/narrative/climate state.
+- This pass still represents thin-chain structure, not thick household-status formulas: no household class ladder, yamen incentive model, or repeated-response ledger is introduced yet.
+- The reader must not parse `LastLocalResponseSummary`, command receipt text, memory summary prose, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

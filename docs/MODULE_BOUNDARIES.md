@@ -259,6 +259,7 @@ Current routing note:
 - reads optional `OrderAndBanditry` public-life order aftermath through `IOrderAndBanditryQueries` when turning recent accepted, partial, or refused `添雇巡丁`, `严缉路匪`, or related order carryover into owner-owned obligation, fear, shame, favor, or grudge residue
 - reads structured public-life refusal response aftermath through `IOrderAndBanditryQueries`, optional `IOfficeAndCareerQueries`, and optional `IFamilyCoreQueries`; it may use response command / outcome / trace codes, but must not parse `DomainEvent.Summary`, receipt summaries, or `LastInterventionSummary`
 - later-month public-life response residue drift is SocialMemory-owned: it may adjust only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`, reusing existing schema `3` fields such as memory weight, cause key, lifecycle state, narrative pressures, and climate axes
+- reads structured home-household local response aftermath through `IPopulationAndHouseholdsQueries`; it may use `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`, but must not parse `LastLocalResponseSummary` or treat a household local response as county order / yamen / family repair
 - v8 owner-module actor countermoves may read SocialMemory snapshots, but `SocialMemoryAndRelations` still owns only durable residue. It does not resolve route-watch, yamen, clerk, elder, or household-guarantee countermoves.
 - consumes scoped trade shock, exam, death, marriage, branch, heir, and warfare events to mutate only its own climate, memory, narrative, and tempering state
 
@@ -676,3 +677,9 @@ Current lite note:
 - `OrderAndBanditry` still owns refused / partial order authority and route-watch repair; `OfficeAndCareer` still owns county-yamen/document/clerk response; `FamilyCore` still owns elder explanation and household guarantee; `SocialMemoryAndRelations` still owns durable shame/fear/favor/grudge/obligation residue.
 - Application projections may expose bounded home-household affordances only from projected read models. UI and Unity may copy the resulting projected affordance / receipt fields only, and must not query modules or compute local response effectiveness.
 - v12 bumps `PopulationAndHouseholds` schema from `2` to `3`, adds same-namespace migration and save roundtrip proof, and adds no `PersonRegistry` expansion, manager/controller layer, or `HouseholdId` command target.
+
+## 2026-04-25 playable closure v13 home-household social-memory readback note
+- `public-life-order-home-household-social-memory-v13` keeps the same rule-driven command / residue / social-memory / response loop and adds only the later SocialMemory readback layer for v12 local responses.
+- `SocialMemoryAndRelations` reads structured `PopulationAndHouseholds` local-response aftermath and writes only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` records. It does not resolve `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信`, and it does not repair order, yamen, family, public-life, population, or registry state.
+- Application may join the resulting `SocialMemoryEntrySnapshot` onto home-household local response receipts as projected readback. Unity and shell adapters may copy that receipt text only; they must not compute durable residue, query modules, or parse summaries.
+- v13 adds only additive `SocialMemoryKinds` constants and no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.

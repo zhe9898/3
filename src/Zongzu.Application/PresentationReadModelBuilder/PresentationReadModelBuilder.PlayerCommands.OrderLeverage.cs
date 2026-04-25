@@ -277,6 +277,7 @@ public sealed partial class PresentationReadModelBuilder
             || memory.CauseKey.StartsWith("order.public_life.fund_local_watch", StringComparison.Ordinal)
             || memory.CauseKey.StartsWith("order.public_life.suppress_banditry", StringComparison.Ordinal)
             || memory.CauseKey.StartsWith("order.public_life.response", StringComparison.Ordinal)
+            || memory.CauseKey.StartsWith("order.public_life.household_response", StringComparison.Ordinal)
             || memory.CauseKey.StartsWith("order.public_life.negotiate_with_outlaws", StringComparison.Ordinal)
             || memory.CauseKey.StartsWith("order.public_life.tolerate_disorder", StringComparison.Ordinal);
     }

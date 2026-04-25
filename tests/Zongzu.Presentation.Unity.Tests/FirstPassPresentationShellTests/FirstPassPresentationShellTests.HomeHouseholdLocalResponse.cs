@@ -57,7 +57,7 @@ public sealed partial class FirstPassPresentationShellTests
                         OutcomeSummary = "本户已缓",
                         LeverageSummary = "本户回应只结算自家劳力、债压、民困与迁徙险。",
                         CostSummary = "本户余账：民困58，债压49，丁力37，迁徙之念62。",
-                        ReadbackSummary = "张家户：后账已从本户脚程上缓下。",
+                        ReadbackSummary = "张家户：后账已从本户脚程上缓下。 社会记忆读回：人情23，本户后账已缓。",
                         TargetLabel = "张家户",
                     },
                 ],
@@ -80,5 +80,6 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(receipt.OutcomeSummary, Is.EqualTo("本户已缓"));
         Assert.That(receipt.CostSummary, Does.Contain("迁徙之念"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("张家户"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("社会记忆读回"));
     }
 }
