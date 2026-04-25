@@ -48,7 +48,7 @@ public sealed partial class FamilyCoreModule
             clan.LastRefusalResponseSummary = clan.LastConflictTrace;
             clan.LastRefusalResponseOutcomeCode = PublicLifeOrderResponseOutcomeCodes.Ignored;
             clan.LastRefusalResponseTraceCode = PublicLifeOrderResponseTraceCodes.FamilyActorGuaranteeAvoided;
-            clan.ResponseCarryoverMonths = 1;
+            clan.ResponseCarryoverMonths = 2;
             scope.RecordDiff(
                 $"{clan.ClanName}族老避开前案担保，房支争力{clan.BranchTension}，调停势{clan.MediationMomentum}。",
                 clan.Id.Value.ToString());
@@ -77,7 +77,7 @@ public sealed partial class FamilyCoreModule
                 ? PublicLifeOrderResponseOutcomeCodes.Repaired
                 : PublicLifeOrderResponseOutcomeCodes.Contained;
             clan.LastRefusalResponseTraceCode = PublicLifeOrderResponseTraceCodes.FamilyActorElderQuietExplanation;
-            clan.ResponseCarryoverMonths = 1;
+            clan.ResponseCarryoverMonths = 2;
             scope.RecordDiff(
                 $"{clan.ClanName}族老私下解释前案，调停势{clan.MediationMomentum}，房支争力{clan.BranchTension}。",
                 clan.Id.Value.ToString());

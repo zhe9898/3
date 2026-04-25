@@ -54,8 +54,6 @@ public sealed class PublicLifeOrderResidueDecayFrictionRuleDrivenTests
             simulation,
             PublicLifeOrderResponseOutcomeCodes.Repaired,
             PlayerCommandNames.RepairLocalWatchGuarantee);
-        int memoryCountBeforeRepeatCommand = socialState.Memories.Count;
-
         simulation.AdvanceOneMonth();
 
         SocialMemoryEntrySnapshot repairedAfterDrift = FindResponseMemory(
@@ -64,6 +62,8 @@ public sealed class PublicLifeOrderResidueDecayFrictionRuleDrivenTests
             PlayerCommandNames.RepairLocalWatchGuarantee);
         Assert.That(repairedAfterDrift.Weight, Is.LessThan(repairedBeforeDrift.Weight));
         Assert.That(repairedAfterDrift.Summary, Does.Contain("后账渐平"));
+
+        int memoryCountBeforeRepeatCommand = socialState.Memories.Count;
 
         PlayerCommandResult repeatResponse = commandService.IssueIntent(
             simulation,

@@ -55,6 +55,23 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(affordanceCodes, Does.Contain(PlayerCommandNames.RepairLocalWatchGuarantee));
         Assert.That(affordanceCodes, Does.Contain(PlayerCommandNames.PressCountyYamenDocument));
         Assert.That(affordanceCodes, Does.Contain(PlayerCommandNames.AskClanEldersExplain));
+        PlayerCommandAffordanceSnapshot[] playableResponseAffordances = monthNPlusOne.PlayerCommands.Affordances
+            .Where(affordance => affordance.SettlementId == settlementId
+                                 && (affordance.CommandName == PlayerCommandNames.RepairLocalWatchGuarantee
+                                     || affordance.CommandName == PlayerCommandNames.PressCountyYamenDocument
+                                     || affordance.CommandName == PlayerCommandNames.AskClanEldersExplain))
+            .ToArray();
+        Assert.That(playableResponseAffordances, Has.Length.GreaterThanOrEqualTo(3));
+        foreach (PlayerCommandAffordanceSnapshot affordance in playableResponseAffordances)
+        {
+            Assert.That(affordance.IsEnabled, Is.True);
+            Assert.That(affordance.Label, Is.Not.Empty);
+            Assert.That(affordance.AvailabilitySummary, Is.Not.Empty);
+            Assert.That(affordance.ExecutionSummary, Is.Not.Empty);
+            Assert.That(affordance.LeverageSummary, Is.Not.Empty);
+            Assert.That(affordance.CostSummary, Is.Not.Empty);
+            Assert.That(affordance.ReadbackSummary, Is.Not.Empty);
+        }
 
         int memoryCountBeforeResponse = socialState.Memories.Count;
         PlayerCommandResult response = commandService.IssueIntent(

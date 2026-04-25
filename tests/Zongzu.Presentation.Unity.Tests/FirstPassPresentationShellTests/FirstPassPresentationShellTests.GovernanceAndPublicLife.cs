@@ -258,6 +258,71 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_ProjectsActorCountermoveReadbackWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Receipts =
+            [
+                new PlayerCommandReceiptSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OrderAndBanditry,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.CompensateRunnerMisread,
+                    Label = "脚户误读反噬",
+                    Summary = "路上后账被脚户误读，怨尾再起。",
+                    OutcomeSummary = "后账恶化",
+                    ReadbackSummary = "脚户误读反噬：后账恶化，地面反噬与恐惧继续加重。",
+                    TargetLabel = "县门榜下",
+                },
+                new PlayerCommandReceiptSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PressCountyYamenDocument,
+                    Label = "县门自补落地",
+                    Summary = "县门自行把前案补入正道。",
+                    OutcomeSummary = "后账已修复",
+                    ReadbackSummary = "县门自补落地：县门已补落地，文移进入案牍正道。",
+                    TargetLabel = "主簿",
+                },
+                new PlayerCommandReceiptSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.FamilyCore,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    ClanId = new ClanId(1),
+                    CommandName = PlayerCommandNames.AskClanEldersExplain,
+                    Label = "族老自解释",
+                    Summary = "族老私下解释前案。",
+                    OutcomeSummary = "后账已修复",
+                    ReadbackSummary = "族老自解释：族老解释缓下羞面，本户担保重新站住。",
+                    TargetLabel = "张宗",
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        SettlementNodeViewModel settlementNode = shell.DeskSandbox.Settlements.Single();
+
+        Assert.That(settlementNode.PublicLifeRecentReceipts.Select(static receipt => receipt.Label), Does.Contain("脚户误读反噬"));
+        Assert.That(settlementNode.PublicLifeRecentReceipts.Select(static receipt => receipt.Label), Does.Contain("县门自补落地"));
+        Assert.That(settlementNode.PublicLifeRecentReceipts.Select(static receipt => receipt.Label), Does.Contain("族老自解释"));
+        Assert.That(
+            settlementNode.PublicLifeRecentReceipts.Select(static receipt => receipt.ReadbackSummary),
+            Has.Some.Contains("后账恶化"));
+        Assert.That(
+            settlementNode.PublicLifeRecentReceipts.Select(static receipt => receipt.ReadbackSummary),
+            Has.Some.Contains("县门已补落地"));
+        Assert.That(
+            settlementNode.PublicLifeRecentReceipts.Select(static receipt => receipt.ReadbackSummary),
+            Has.Some.Contains("族老解释缓下羞面"));
+    }
+
+    [Test]
     public void Compose_UsesPublicLifeFallbackWhenProjectionAndCommandsAreAbsent()
     {
         PresentationReadModelBundle bundle = CreateBundle();

@@ -303,3 +303,10 @@ At integration level, verify:
 - Structured-read acceptance must prove actor countermoves read `SocialMemoryEntrySnapshot.CauseKey`, outcome marker, `Weight`, `State`, `SourceClanId`, and `OriginDate`, skip current-month memories, and do not parse summaries or receipt prose.
 - Readback acceptance must prove public-life receipts, governance lanes, family-facing surfaces, and Unity projection adapters can show actor-countermove aftermath only from projected fields.
 - Save/schema acceptance: no new persisted fields, no schema bump, and no migration are expected for v8; it reuses SocialMemory schema `3` and existing v6 owner response trace fields.
+
+## Playable closure v9 actor-countermove readback hardening acceptance - 2026-04-25
+- `public-life-order-actor-countermove-readback-v9` must prove all three owner modules have soft and hard actor-countermove coverage across v8/v9 without adding an actor manager, event pool, UI authority, or new persisted fields.
+- Minimum playable response-loop acceptance must prove visible refusal/partial residue leads to at least three bounded response affordances with projected availability, leverage, cost, execution, and next-readback text; hidden command codes alone are insufficient.
+- SocialMemory acceptance must prove actor traces are owner-state facts first: Order/Office traces are read on the following monthly pass, while Family traces may be read in the same scheduler pass through module order and response carryover, without parsing summaries or using UI timers.
+- Presentation acceptance must prove Unity/shell readback copies projected actor-countermove receipts only, including order, office, and family labels/result text, and does not query modules or compute effectiveness.
+- Save/schema acceptance: no schema bump, migration, or new persisted fields are expected for v9.
