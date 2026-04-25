@@ -24,8 +24,11 @@ public sealed partial class PresentationReadModelBuilder
                 ? snapshot
                 : null;
             int grievancePressure = narrative?.GrudgePressure ?? 0;
-            string familyOwnerLaneReturnGuidance = BuildFamilyOwnerLaneReturnSurfaceGuidance(
-                SelectRecentLocalResponseHouseholdForClan(bundle.Households, clan));
+            HouseholdPressureSnapshot? familyOwnerLaneReturnHousehold =
+                SelectRecentLocalResponseHouseholdForClan(bundle.Households, clan);
+            string familyOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildFamilyOwnerLaneReturnSurfaceGuidance(familyOwnerLaneReturnHousehold),
+                BuildFamilyOwnerLaneReturnStatusGuidance(familyOwnerLaneReturnHousehold, clan));
 
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.SupportSeniorBranch,
@@ -124,8 +127,11 @@ public sealed partial class PresentationReadModelBuilder
         foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
         {
             bool canReviewPetitions = jurisdiction.PetitionBacklog > 0 || jurisdiction.PetitionPressure > 0;
-            string officeOwnerLaneReturnGuidance = BuildOfficeOwnerLaneReturnSurfaceGuidance(
-                SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, jurisdiction.SettlementId));
+            HouseholdPressureSnapshot? officeOwnerLaneReturnHousehold =
+                SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, jurisdiction.SettlementId);
+            string officeOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildOfficeOwnerLaneReturnSurfaceGuidance(officeOwnerLaneReturnHousehold),
+                BuildOfficeOwnerLaneReturnStatusGuidance(officeOwnerLaneReturnHousehold, jurisdiction));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.PetitionViaOfficeChannels,
                 jurisdiction.SettlementId,
@@ -225,6 +231,7 @@ public sealed partial class PresentationReadModelBuilder
                 .OrderByDescending(static entry => entry.Prestige)
                 .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
                 .ToArray();
+            ClanSnapshot? leadClan = localClans.FirstOrDefault();
             ClanNarrativeSnapshot[] localNarratives = localClans
                 .Where(clan => narrativesByClan.ContainsKey(clan.Id.Value))
                 .Select(clan => narrativesByClan[clan.Id.Value])
@@ -233,11 +240,18 @@ public sealed partial class PresentationReadModelBuilder
             ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[publicLife.SettlementId.Value].ToArray();
             IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
                 SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
+            disorderBySettlement.TryGetValue(publicLife.SettlementId.Value, out SettlementDisorderSnapshot? disorder);
             HouseholdPressureSnapshot? ownerLaneReturnHousehold =
                 SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, publicLife.SettlementId);
-            string orderOwnerLaneReturnGuidance = BuildOrderOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold);
-            string officeOwnerLaneReturnGuidance = BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold);
-            string familyOwnerLaneReturnGuidance = BuildFamilyOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold);
+            string orderOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildOrderOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
+                BuildOrderOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, disorder));
+            string officeOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
+                BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction));
+            string familyOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildFamilyOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
+                BuildFamilyOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, leadClan));
 
             if (jurisdiction is not null)
             {
@@ -260,7 +274,7 @@ public sealed partial class PresentationReadModelBuilder
                     targetLabel: publicLife.DominantVenueLabel);
             }
 
-            if (disorderBySettlement.TryGetValue(publicLife.SettlementId.Value, out SettlementDisorderSnapshot? disorder))
+            if (disorder is not null)
             {
                 string administrativeReachSummary = OrderAndBanditryCommandResolver.DetermineAdministrativeReachExecutionSummary(jurisdiction);
 
@@ -315,7 +329,6 @@ public sealed partial class PresentationReadModelBuilder
                     targetLabel: publicLife.DominantVenueLabel);
             }
 
-            ClanSnapshot? leadClan = localClans.FirstOrDefault();
             if (leadClan is not null)
             {
                 yield return BuildPlayerCommandAffordanceSnapshot(

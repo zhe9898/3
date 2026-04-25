@@ -143,6 +143,11 @@ Current public-life/order v22 owner-lane handoff entry readback note:
 - The copy may name existing owner-lane command labels such as `添雇巡丁`, `押文催县门`, or `请族老解释`, but durable shame/fear/favor/grudge/obligation still comes only from structured aftermath read by `SocialMemoryAndRelations`.
 - `SocialMemoryAndRelations` must not parse `承接入口`, owner-lane guidance prose, receipt prose, `LastLocalResponseSummary`, or `DomainEvent.Summary`.
 
+Current public-life/order v23 owner-lane receipt status readback note:
+- `归口状态`, `已归口到巡丁/路匪 lane`, `已归口到县门/文移 lane`, `已归口到族老/担保 lane`, `归口不等于修好`, and `仍看 owner lane 下月读回` are projected readback cues, not durable social memory state.
+- `已归口` does not mean "社会其他人接手"; it only says the after-account is now visible on the owning Order / Office / Family lane through existing structured response trace fields.
+- `SocialMemoryAndRelations` must not parse `归口状态`, owner-lane status prose, receipt prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, or `DomainEvent.Summary`; durable shame/fear/favor/grudge/obligation still comes only from structured aftermath.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

@@ -186,6 +186,8 @@ Current M3 local-conflict note:
 - v19 home-household follow-up affordance readback is projection-time only: read models derive `续接提示` / `换招提示` / `冷却提示` / `续接读回` from existing household fields and structured local response codes for the next command window. It adds no scheduler step, no same-command SocialMemory write, no cooldown ledger, and no thick household rule loop.
 - v20 owner-lane return guidance is projection-time only: read models derive `外部后账归位`, `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` from existing household fields and structured local response codes. It adds no scheduler step, no same-command SocialMemory write, no owner-lane ledger, and no thick household rule loop.
 - v21 owner-lane surface readback is projection-time only: read models copy that owner-lane return guidance into Office/Governance and Family-facing surfaces from existing structured household response fields. It adds no scheduler step, no same-command SocialMemory write, no owner-lane ledger, no household target field, and no thick household rule loop.
+- v22 owner-lane handoff entry readback is projection-time only: read models append `承接入口` labels for existing owner-lane affordances without adding a scheduler step, command queue, command target, or persisted ledger.
+- v23 owner-lane receipt status readback is projection-time only: read models append `归口状态` from existing owner-module structured response traces plus existing household local-response structure. `已归口` is not "社会其他人接手" and not automatic repair; it adds no scheduler step, no same-command SocialMemory write, no receipt-status ledger, no owner-lane ledger, and no thick household rule loop.
 - `ConflictAndForce.Lite` may also carry campaign-fatigue and escort-strain fallout across months; those penalties recover during its own owned pass
 
 ### Phase 3: month-end diff generation
@@ -272,6 +274,7 @@ Current public-life/order v9/v10/v11/v12 note:
 - v20 adds owner-lane return guidance on top of v12-v19: receipts and the next projected local response surface can say that Order, Office, Family, or SocialMemory still own the external after-account. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
 - v21 carries owner-lane return guidance into Office/Governance and Family-facing readback surfaces on top of v20. This remains projection/readback guidance over existing state, not a new command system, event pool, or persisted ledger.
 - v22 adds projected `承接入口` labels on top of v21 so those surfaces can point back to existing owner-lane command affordances. This does not add a scheduler step, command queue, command target, persisted ledger, or outcome calculation.
+- v23 adds projected `归口状态` on top of v22 so those surfaces can say when an existing owner lane has already received a structured response trace. This remains projection/readback guidance, not a social takeover, new scheduler step, event pool, persisted ledger, or outcome calculation.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window

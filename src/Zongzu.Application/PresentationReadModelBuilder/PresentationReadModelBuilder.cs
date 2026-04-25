@@ -108,7 +108,8 @@ public sealed partial class PresentationReadModelBuilder
             bundle.GovernanceSettlements,
             bundle.Notifications,
             bundle.PlayerCommands.Receipts,
-            bundle.Households);
+            bundle.Households,
+            bundle.OfficeJurisdictions);
         bundle.HallDocket = BuildHallDocketStack(bundle);
         bundle.InfluenceFootprint = BuildInfluenceFootprint(bundle);
         bundle.Debug = BuildDebugSnapshot(simulation, bundle.Notifications);

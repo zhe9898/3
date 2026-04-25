@@ -430,7 +430,10 @@ public class ProjectReferenceTests
 
         Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
         Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
         Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("社会其他人"));
+        Assert.That(source, Does.Not.Contain("接手"));
         Assert.That(source, Does.Not.Contain("PlayerCommandService"));
         Assert.That(source, Does.Not.Contain("IssueModuleCommand"));
         Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
@@ -444,8 +447,13 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("UpgradeFromSchema"));
         Assert.That(source, Does.Not.Contain("Migration"));
         Assert.That(source, Does.Contain("HouseholdPressureSnapshot"));
+        Assert.That(source, Does.Contain("SettlementDisorderSnapshot"));
+        Assert.That(source, Does.Contain("JurisdictionAuthoritySnapshot"));
+        Assert.That(source, Does.Contain("ClanSnapshot"));
         Assert.That(source, Does.Contain("LastLocalResponseCommandCode"));
         Assert.That(source, Does.Contain("LastLocalResponseOutcomeCode"));
+        Assert.That(source, Does.Contain("LastRefusalResponseCommandCode"));
+        Assert.That(source, Does.Contain("LastRefusalResponseOutcomeCode"));
         Assert.That(source, Does.Contain("LocalResponseCarryoverMonths"));
         Assert.That(source, Does.Contain("外部后账归位"));
         Assert.That(source, Does.Contain("该走巡丁/路匪 lane"));
@@ -456,6 +464,12 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("添雇巡丁"));
         Assert.That(source, Does.Contain("押文催县门"));
         Assert.That(source, Does.Contain("请族老解释"));
+        Assert.That(source, Does.Contain("归口状态"));
+        Assert.That(source, Does.Contain("已归口到巡丁/路匪 lane"));
+        Assert.That(source, Does.Contain("已归口到县门/文移 lane"));
+        Assert.That(source, Does.Contain("已归口到族老/担保 lane"));
+        Assert.That(source, Does.Contain("归口不等于修好"));
+        Assert.That(source, Does.Contain("仍看 owner lane 下月读回"));
     }
 
     [Test]

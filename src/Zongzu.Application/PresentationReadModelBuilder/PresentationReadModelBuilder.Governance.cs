@@ -268,7 +268,8 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<SettlementGovernanceLaneSnapshot> governanceSettlements,
         IReadOnlyList<NarrativeNotificationSnapshot> notifications,
         IReadOnlyList<PlayerCommandReceiptSnapshot> receipts,
-        IReadOnlyList<HouseholdPressureSnapshot> households)
+        IReadOnlyList<HouseholdPressureSnapshot> households,
+        IReadOnlyList<JurisdictionAuthoritySnapshot> jurisdictions)
     {
         if (focus.UrgencyScore <= 0 || focus.SettlementId == default)
         {
@@ -284,8 +285,13 @@ public sealed partial class PresentationReadModelBuilder
             receipts,
             focus.SettlementId,
             lane);
-        string ownerLaneReturnGuidance = BuildOfficeOwnerLaneReturnSurfaceGuidance(
-            SelectRecentLocalResponseHouseholdForSettlement(households, focus.SettlementId));
+        JurisdictionAuthoritySnapshot? jurisdiction = jurisdictions
+            .FirstOrDefault(entry => entry.SettlementId == focus.SettlementId);
+        HouseholdPressureSnapshot? ownerLaneReturnHousehold =
+            SelectRecentLocalResponseHouseholdForSettlement(households, focus.SettlementId);
+        string ownerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+            BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
+            BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction));
 
         string headline = !string.IsNullOrWhiteSpace(relatedNotification?.Title)
             ? relatedNotification.Title

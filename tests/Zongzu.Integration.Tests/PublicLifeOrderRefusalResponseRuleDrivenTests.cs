@@ -1101,6 +1101,73 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("承接入口"));
         Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("请族老解释"));
         Assert.That(familyLaneAffordance.LeverageSummary, Does.Contain("请族老调停"));
+
+        int memoryCountBeforeOwnerLaneResponses = socialState.Memories.Count;
+        PlayerCommandResult orderLaneReturn = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.RepairLocalWatchGuarantee,
+            });
+        PlayerCommandResult officeLaneReturn = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.PressCountyYamenDocument,
+            });
+        ClanStateData leadClanForStatus = familyState.Clans
+            .Where(clan => clan.HomeSettlementId == settlementId)
+            .OrderByDescending(static clan => clan.Prestige)
+            .ThenBy(static clan => clan.Id.Value)
+            .First();
+        PlayerCommandResult familyLaneReturn = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                ClanId = leadClanForStatus.Id,
+                CommandName = PlayerCommandNames.AskClanEldersExplain,
+            });
+
+        Assert.That(orderLaneReturn.Accepted, Is.True);
+        Assert.That(orderLaneReturn.ModuleKey, Is.EqualTo(KnownModuleKeys.OrderAndBanditry));
+        Assert.That(officeLaneReturn.Accepted, Is.True);
+        Assert.That(officeLaneReturn.ModuleKey, Is.EqualTo(KnownModuleKeys.OfficeAndCareer));
+        Assert.That(familyLaneReturn.Accepted, Is.True);
+        Assert.That(familyLaneReturn.ModuleKey, Is.EqualTo(KnownModuleKeys.FamilyCore));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeOwnerLaneResponses),
+            "Owner-lane归口 response commands must still leave durable SocialMemory to the later monthly reader.");
+
+        PresentationReadModelBundle afterOwnerLaneReturn = builder.BuildForM2(simulation);
+        PlayerCommandAffordanceSnapshot orderStatusAffordance = afterOwnerLaneReturn.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.FundLocalWatch
+                                 && affordance.SettlementId == settlementId);
+        Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("归口状态"));
+        Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("已归口到巡丁/路匪 lane"));
+        Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("补保巡丁"));
+        Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("归口不等于修好"));
+        Assert.That(orderStatusAffordance.ReadbackSummary, Does.Contain("仍看 owner lane 下月读回"));
+
+        PlayerCommandAffordanceSnapshot officeStatusAffordance = afterOwnerLaneReturn.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.PetitionViaOfficeChannels
+                                 && affordance.SettlementId == settlementId);
+        Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("归口状态"));
+        Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("已归口到县门/文移 lane"));
+        Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("押文催县门"));
+        Assert.That(officeStatusAffordance.LeverageSummary, Does.Contain("归口不等于修好"));
+        Assert.That(afterOwnerLaneReturn.GovernanceDocket.GuidanceSummary, Does.Contain("归口状态"));
+        Assert.That(afterOwnerLaneReturn.GovernanceDocket.GuidanceSummary, Does.Contain("已归口到县门/文移 lane"));
+        Assert.That(afterOwnerLaneReturn.GovernanceDocket.GuidanceSummary, Does.Contain("仍看 owner lane 下月读回"));
+
+        PlayerCommandAffordanceSnapshot familyStatusAffordance = afterOwnerLaneReturn.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.InviteClanEldersMediation
+                                 && affordance.ClanId == leadClanForStatus.Id);
+        Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("归口状态"));
+        Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("已归口到族老/担保 lane"));
+        Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("请族老解释"));
+        Assert.That(familyStatusAffordance.LeverageSummary, Does.Contain("归口不等于修好"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)
