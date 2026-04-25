@@ -18,6 +18,16 @@ Use history to sharpen:
 - readable labels, source notes, regional topology, calibration bands, and anti-anachronism checks
 - module ownership, save/schema impact, event metadata, projections, and acceptance tests
 
+## Current Repo Anchors
+
+For Renzong work, distinguish historical/design plausibility from current implementation:
+- `RENZONG_PRESSURE_CHAIN_SPEC.md` is the fuller design target; `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` is the live topology ledger
+- historical pressure becomes code only through module-owned state, structured events, metadata, tests, and projection/read-model surfaces
+- current public-life/order readback phrases such as `县门未落地`, `地方拖延`, `后账仍在`, `社会记忆读回`, `续接提示`, `换招提示`, `冷却提示`, and `续接读回` are projection carriers for local yamen friction, public reputation, household cost, and remembered residue; they must not become fixed historical event triggers
+- current shell and Unity surfaces may show court, frontier, disaster, office, public-life, and campaign pressure as objects/notices/boards, but they must not resolve historical authority in UI code
+- historical fidelity must stay scale-aware: use dense named actors only where pressure, player reach, or source confidence justifies it; use county/route/office pressure summaries elsewhere
+- if a historical correction changes a label or descriptor only, use `zongzu-content-authoring`; if it changes a chain, use `zongzu-pressure-chain`; if it changes persistence, use `zongzu-save-and-schema`
+
 ## Use This Skill When
 
 - adding or reviewing mechanics tied to clans, households, lineage power, commoner survival, trade, service, office, exams, literacy, schools, influence, prestige, factional pull, imperial-local bargaining, official family entanglement, tax, local order, banditry, rebellion, polity formation, dynasty rise or collapse, warfare, ritual, local custom, naming, or social status
@@ -58,6 +68,7 @@ Use history to sharpen:
    - temporal validity: exact year, reign band, dynasty band, or broad premodern abstraction
    - abstraction level: documentary fact, scholarly interpretation, gameplay simplification, or fictionalized descriptor
    - gameplay locus: person, household, lineage, settlement, route, office, market, temple, court, campaign, realm, or background flavor
+   - fidelity budget: dense agent, named stub, household/pool, settlement summary, route pressure, or realm climate
 
    If the task does not specify these, do not silently invent certainty. Use "premodern/imperial China inspired" or state a provisional assumption.
 
@@ -108,6 +119,7 @@ For prompts like `北宋仁宗`, `庆历`, `王安石`, `皇权`, `改史`, `谋
 - Do not create a fantasy timeline editor; large historical changes require accumulated leverage, institutions, resources, force, legitimacy, and backlash.
 - Do not flatten China into generic East Asian flavor.
 - Do not flatten dynasties and regions into one county texture.
+- Do not model every historically interesting person, office, county, or route at full fidelity unless a pressure chain or player reach needs it.
 - Do not let a capital, frontier, water-network county, inland road county, or market town prove facts for every place.
 - Do not treat lineage force as a generic army.
 - Do not turn every clash into a campaign board.
@@ -117,6 +129,7 @@ For prompts like `北宋仁宗`, `庆历`, `王安石`, `皇权`, `改史`, `谋
 - Prefer source-calibrated pressure carriers over lore dumps.
 - Prefer node, route, posture, supply, rumor, yamen, temple, market, and lineage mechanisms over abstract map decoration.
 - Prefer confidence bands and scenario assumptions over fake precision.
+- Prefer source-calibrated abstraction by scale: named carriers for focal chains, summary pressure for distant institutions, and promotion hooks for later re-entry.
 
 ## Zongzu-Specific Guidance
 

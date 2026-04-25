@@ -15,6 +15,7 @@ public static class HouseholdSocialDriftKeys
     public const string EnterService = "EnterService";
     public const string ShadowDrift = "ShadowDrift";
     public const string LineageAbsorption = "LineageAbsorption";
+    public const string PublicOrderAftermath = "PublicOrderAftermath";
 }
 
 public static class HouseholdSocialPressureSignalKeys
@@ -27,6 +28,7 @@ public static class HouseholdSocialPressureSignalKeys
     public const string LineageProtection = "LineageProtection";
     public const string YamenContact = "YamenContact";
     public const string DisorderOutlet = "DisorderOutlet";
+    public const string PublicLifeOrderResidue = "PublicLifeOrderResidue";
 }
 
 public static class InfluenceReachKeys

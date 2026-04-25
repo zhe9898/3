@@ -32,7 +32,9 @@ public sealed partial class PresentationReadModelBuilder
 
         if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.SocialMemoryAndRelations))
         {
-            bundle.ClanNarratives = queries.GetRequired<ISocialMemoryAndRelationsQueries>().GetClanNarratives();
+            ISocialMemoryAndRelationsQueries socialQueries = queries.GetRequired<ISocialMemoryAndRelationsQueries>();
+            bundle.ClanNarratives = socialQueries.GetClanNarratives();
+            bundle.SocialMemories = socialQueries.GetMemories();
         }
 
         bundle.PersonDossiers = BuildPersonDossiers(simulation.FeatureManifest, queries);
@@ -105,7 +107,9 @@ public sealed partial class PresentationReadModelBuilder
             bundle.GovernanceFocus,
             bundle.GovernanceSettlements,
             bundle.Notifications,
-            bundle.PlayerCommands.Receipts);
+            bundle.PlayerCommands.Receipts,
+            bundle.Households,
+            bundle.OfficeJurisdictions);
         bundle.HallDocket = BuildHallDocketStack(bundle);
         bundle.InfluenceFootprint = BuildInfluenceFootprint(bundle);
         bundle.Debug = BuildDebugSnapshot(simulation, bundle.Notifications);

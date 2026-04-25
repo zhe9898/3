@@ -59,6 +59,18 @@ public sealed record ClanSnapshot
 
     public string LastConflictTrace { get; init; } = string.Empty;
 
+    public string LastRefusalResponseCommandCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; init; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; init; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; init; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; init; }
+
     public string LastLifecycleCommandCode { get; init; } = string.Empty;
 
     public string LastLifecycleCommandLabel { get; init; } = string.Empty;

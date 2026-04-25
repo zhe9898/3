@@ -1,7 +1,7 @@
 interface:
   display_name: "Zongzu Ancient China"
-  short_description: "Ground Chinese-ancient topics in sources, Renzong pressure, modules, and shell surfaces"
-  default_prompt: "Use $zongzu-ancient-china to source-calibrate this historical topic and translate it into Zongzu period, region, pressure, module, shell, and confidence guidance."
+  short_description: "Ground Chinese-ancient topics in sources, Renzong pressure, fidelity scale, modules, and shell surfaces"
+  default_prompt: "Use $zongzu-ancient-china to source-calibrate this historical topic and translate it into Zongzu period, region, pressure, fidelity scale, module, shell, and confidence guidance."
 
 policy:
   allow_implicit_invocation: true

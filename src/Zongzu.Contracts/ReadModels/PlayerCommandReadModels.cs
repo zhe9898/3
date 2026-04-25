@@ -33,6 +33,15 @@ public static class PlayerCommandNames
     public const string SuppressBanditry = "SuppressBanditry";
     public const string NegotiateWithOutlaws = "NegotiateWithOutlaws";
     public const string TolerateDisorder = "TolerateDisorder";
+    public const string RepairLocalWatchGuarantee = "RepairLocalWatchGuarantee";
+    public const string AskClanEldersExplain = "AskClanEldersExplain";
+    public const string PressCountyYamenDocument = "PressCountyYamenDocument";
+    public const string CompensateRunnerMisread = "CompensateRunnerMisread";
+    public const string DeferHardPressure = "DeferHardPressure";
+    public const string RedirectRoadReport = "RedirectRoadReport";
+    public const string RestrictNightTravel = "RestrictNightTravel";
+    public const string PoolRunnerCompensation = "PoolRunnerCompensation";
+    public const string SendHouseholdRoadMessage = "SendHouseholdRoadMessage";
     public const string DraftCampaignPlan = WarfareCampaignCommandNames.DraftCampaignPlan;
     public const string CommitMobilization = WarfareCampaignCommandNames.CommitMobilization;
     public const string ProtectSupplyLine = WarfareCampaignCommandNames.ProtectSupplyLine;
@@ -91,6 +100,12 @@ public sealed record PlayerCommandAffordanceSnapshot
 
     public string ExecutionSummary { get; init; } = string.Empty;
 
+    public string LeverageSummary { get; init; } = string.Empty;
+
+    public string CostSummary { get; init; } = string.Empty;
+
+    public string ReadbackSummary { get; init; } = string.Empty;
+
     public string TargetLabel { get; init; } = string.Empty;
 }
 
@@ -113,6 +128,12 @@ public sealed record PlayerCommandReceiptSnapshot
     public string OutcomeSummary { get; init; } = string.Empty;
 
     public string ExecutionSummary { get; init; } = string.Empty;
+
+    public string LeverageSummary { get; init; } = string.Empty;
+
+    public string CostSummary { get; init; } = string.Empty;
+
+    public string ReadbackSummary { get; init; } = string.Empty;
 
     public string TargetLabel { get; init; } = string.Empty;
 }

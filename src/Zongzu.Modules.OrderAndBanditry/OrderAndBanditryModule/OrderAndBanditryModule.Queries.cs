@@ -111,6 +111,16 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
                 DisorderPressure = settlement.DisorderPressure,
 
+                BlackRoutePressure = settlement.BlackRoutePressure,
+
+                CoercionRisk = settlement.CoercionRisk,
+
+                ImplementationDrag = settlement.ImplementationDrag,
+
+                RouteShielding = settlement.RouteShielding,
+
+                RetaliationRisk = settlement.RetaliationRisk,
+
                 LastPressureReason = settlement.LastPressureReason,
 
                 LastInterventionCommandCode = settlement.LastInterventionCommandCode,
@@ -121,7 +131,29 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
 
                 LastInterventionOutcome = settlement.LastInterventionOutcome,
 
+                LastInterventionOutcomeCode = settlement.LastInterventionOutcomeCode,
+
+                LastInterventionRefusalCode = settlement.LastInterventionRefusalCode,
+
+                LastInterventionPartialCode = settlement.LastInterventionPartialCode,
+
+                LastInterventionTraceCode = settlement.LastInterventionTraceCode,
+
                 InterventionCarryoverMonths = settlement.InterventionCarryoverMonths,
+
+                RefusalCarryoverMonths = settlement.RefusalCarryoverMonths,
+
+                LastRefusalResponseCommandCode = settlement.LastRefusalResponseCommandCode,
+
+                LastRefusalResponseCommandLabel = settlement.LastRefusalResponseCommandLabel,
+
+                LastRefusalResponseSummary = settlement.LastRefusalResponseSummary,
+
+                LastRefusalResponseOutcomeCode = settlement.LastRefusalResponseOutcomeCode,
+
+                LastRefusalResponseTraceCode = settlement.LastRefusalResponseTraceCode,
+
+                ResponseCarryoverMonths = settlement.ResponseCarryoverMonths,
 
             };
 

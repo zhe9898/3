@@ -55,6 +55,12 @@ public static class OfficeAndCareerStateProjection
                     CurrentAdministrativeTask = lead.CurrentAdministrativeTask,
                     AdministrativeTaskLoad = administrativeTaskLoad,
                     LastPetitionOutcome = lead.LastPetitionOutcome,
+                    LastRefusalResponseCommandCode = lead.LastRefusalResponseCommandCode,
+                    LastRefusalResponseCommandLabel = lead.LastRefusalResponseCommandLabel,
+                    LastRefusalResponseSummary = lead.LastRefusalResponseSummary,
+                    LastRefusalResponseOutcomeCode = lead.LastRefusalResponseOutcomeCode,
+                    LastRefusalResponseTraceCode = lead.LastRefusalResponseTraceCode,
+                    ResponseCarryoverMonths = lead.ResponseCarryoverMonths,
                     LastAdministrativeTrace =
                         $"{lead.DisplayName}以{lead.OfficeTitle}主事，乡面杖力{jurisdictionLeverage}，词牍压{petitionPressure}，积案{petitionBacklog}，所办差遣为{lead.CurrentAdministrativeTask}。{lead.LastPetitionOutcome}",
                 };

@@ -27,6 +27,7 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         PlayerCommandNames.SuspendClanRelief,
         PlayerCommandNames.InviteClanEldersMediation,
         PlayerCommandNames.InviteClanEldersPubliclyBroker,
+        PlayerCommandNames.AskClanEldersExplain,
     ];
 
     private static readonly string[] EventNames =
@@ -67,7 +68,7 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
 
-    public override int ModuleSchemaVersion => 7;
+    public override int ModuleSchemaVersion => 8;
 
     public override SimulationPhase Phase => SimulationPhase.FamilyStructure;
 
@@ -109,6 +110,7 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
     {
         IWorldSettlementsQueries settlementsQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
         IPersonRegistryQueries registryQueries = scope.GetRequiredQuery<IPersonRegistryQueries>();
+        ISocialMemoryAndRelationsQueries? socialQueries = TryGetSocialMemoryQueries(scope);
         GameDate currentDate = scope.Context.CurrentDate;
 
         // Age progression for persons not yet registered in PersonRegistry
@@ -250,7 +252,9 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
             clan.BranchFavorPressure = Math.Max(0, clan.BranchFavorPressure - 1);
             clan.ReliefSanctionPressure = Math.Max(0, clan.ReliefSanctionPressure - 1);
 
-            if (ClanStateUnchanged(
+            bool actorCountermoveChanged = ApplyPublicLifeFamilyActorCountermove(scope, clan, socialQueries);
+
+            if (!actorCountermoveChanged && ClanStateUnchanged(
                     clan,
                     oldPrestige,
                     oldSupportReserve,
@@ -292,6 +296,10 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
                 && string.Equals(clan.LastConflictCommandCode, PlayerCommandNames.PermitBranchSeparation, StringComparison.Ordinal))
             {
                 scope.Emit(FamilyCoreEventNames.BranchSeparationApproved, $"{clan.ClanName}分房之议已定。", clan.Id.Value.ToString());
+            }
+            if (clan.ResponseCarryoverMonths > 0)
+            {
+                clan.ResponseCarryoverMonths -= 1;
             }
         }
     }

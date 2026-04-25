@@ -82,6 +82,18 @@ public sealed class ClanStateData
 
     public string LastConflictTrace { get; set; } = string.Empty;
 
+    public string LastRefusalResponseCommandCode { get; set; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; set; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; set; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; set; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; set; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; set; }
+
     public string LastLifecycleCommandCode { get; set; } = string.Empty;
 
     public string LastLifecycleCommandLabel { get; set; } = string.Empty;

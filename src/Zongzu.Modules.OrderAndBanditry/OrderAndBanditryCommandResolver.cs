@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 
@@ -11,6 +13,10 @@ public sealed class OrderAndBanditryCommandContext
     public PlayerCommandRequest Command { get; init; } = new();
 
     public IOfficeAndCareerQueries? OfficeQueries { get; init; }
+
+    public IFamilyCoreQueries? FamilyQueries { get; init; }
+
+    public ISocialMemoryAndRelationsQueries? SocialMemoryQueries { get; init; }
 }
 
 public static class OrderAndBanditryCommandResolver
@@ -21,6 +27,10 @@ public static class OrderAndBanditryCommandResolver
 
         PlayerCommandRequest command = context.Command;
         OrderAdministrativeReachProfile administrativeReach = ResolveAdministrativeReach(context.OfficeQueries, command.SettlementId);
+        PublicLifeResponseResidueFriction responseFriction = ResolvePublicLifeResponseResidueFriction(
+            context.SocialMemoryQueries,
+            context.FamilyQueries,
+            command);
         OrderPublicLifeCommandResult resolution = new OrderAndBanditryModule().HandlePublicLifeCommand(
             context.State,
             new OrderPublicLifeCommand
@@ -28,11 +38,14 @@ public static class OrderAndBanditryCommandResolver
                 SettlementId = command.SettlementId,
                 CommandName = command.CommandName,
                 CommandLabel = DeterminePublicLifeCommandLabel(command.CommandName),
-                BenefitShift = administrativeReach.BenefitShift,
+                BenefitShift = administrativeReach.BenefitShift + responseFriction.OrderBenefitShift,
                 ShieldingShift = administrativeReach.ShieldingShift,
-                BacklashShift = administrativeReach.BacklashShift,
+                BacklashShift = administrativeReach.BacklashShift + responseFriction.OrderBacklashShift,
                 LeakageShift = administrativeReach.LeakageShift,
-                ReachSummaryTail = administrativeReach.SummaryTail,
+                ReachSummaryTail = CombineSummaryTails(administrativeReach.SummaryTail, responseFriction.SummaryTail),
+                ResponseRepairSupport = responseFriction.RepairSupport,
+                ResponseHardeningDrag = responseFriction.HardeningDrag,
+                ResponseResidueSummaryTail = responseFriction.SummaryTail,
             });
 
         return new PlayerCommandResult
@@ -58,6 +71,9 @@ public static class OrderAndBanditryCommandResolver
             PlayerCommandNames.SuppressBanditry => "严缉路匪",
             PlayerCommandNames.NegotiateWithOutlaws => "遣人议路",
             PlayerCommandNames.TolerateDisorder => "暂缓穷追",
+            PlayerCommandNames.RepairLocalWatchGuarantee => "补保巡丁",
+            PlayerCommandNames.CompensateRunnerMisread => "赔脚户误读",
+            PlayerCommandNames.DeferHardPressure => "暂缓强压",
             _ => commandName,
         };
     }
@@ -148,6 +164,119 @@ public static class OrderAndBanditryCommandResolver
         }
 
         return OrderAdministrativeReachProfile.Neutral;
+    }
+
+    private static PublicLifeResponseResidueFriction ResolvePublicLifeResponseResidueFriction(
+        ISocialMemoryAndRelationsQueries? socialQueries,
+        IFamilyCoreQueries? familyQueries,
+        PlayerCommandRequest command)
+    {
+        if (socialQueries is null)
+        {
+            return PublicLifeResponseResidueFriction.Neutral;
+        }
+
+        HashSet<ClanId> localClanIds = ResolveLocalClanIds(familyQueries, command);
+        if (localClanIds.Count == 0)
+        {
+            return PublicLifeResponseResidueFriction.Neutral;
+        }
+
+        int repaired = 0;
+        int contained = 0;
+        int escalated = 0;
+        int ignored = 0;
+
+        foreach (SocialMemoryEntrySnapshot memory in socialQueries.GetMemories()
+                     .Where(static memory => memory.State == MemoryLifecycleState.Active)
+                     .Where(static memory => memory.CauseKey.StartsWith("order.public_life.response.", StringComparison.Ordinal))
+                     .Where(memory => memory.SourceClanId.HasValue && localClanIds.Contains(memory.SourceClanId.Value)))
+        {
+            if (memory.CauseKey.Contains($".{PublicLifeOrderResponseOutcomeCodes.Repaired}.", StringComparison.Ordinal))
+            {
+                repaired += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{PublicLifeOrderResponseOutcomeCodes.Contained}.", StringComparison.Ordinal))
+            {
+                contained += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{PublicLifeOrderResponseOutcomeCodes.Escalated}.", StringComparison.Ordinal))
+            {
+                escalated += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{PublicLifeOrderResponseOutcomeCodes.Ignored}.", StringComparison.Ordinal))
+            {
+                ignored += memory.Weight;
+            }
+        }
+
+        return PublicLifeResponseResidueFriction.FromWeights(repaired, contained, escalated, ignored);
+    }
+
+    private static HashSet<ClanId> ResolveLocalClanIds(
+        IFamilyCoreQueries? familyQueries,
+        PlayerCommandRequest command)
+    {
+        if (command.ClanId.HasValue)
+        {
+            return [command.ClanId.Value];
+        }
+
+        return familyQueries is null
+            ? []
+            : familyQueries.GetClans()
+                .Where(clan => clan.HomeSettlementId == command.SettlementId)
+                .Select(static clan => clan.Id)
+                .ToHashSet();
+    }
+
+    private static string CombineSummaryTails(string first, string second)
+    {
+        if (string.IsNullOrWhiteSpace(first))
+        {
+            return second;
+        }
+
+        if (string.IsNullOrWhiteSpace(second))
+        {
+            return first;
+        }
+
+        return $"{first}{second}";
+    }
+
+    private readonly record struct PublicLifeResponseResidueFriction(
+        int RepairedWeight,
+        int ContainedWeight,
+        int EscalatedWeight,
+        int IgnoredWeight)
+    {
+        public int RepairSupport => Math.Clamp((RepairedWeight / 18) + (ContainedWeight / 30), 0, 4);
+
+        public int HardeningDrag => Math.Clamp((EscalatedWeight / 14) + (IgnoredWeight / 18), 0, 6);
+
+        public int OrderBenefitShift => Math.Clamp(RepairSupport - (HardeningDrag / 2), -3, 4);
+
+        public int OrderBacklashShift => HardeningDrag;
+
+        public string SummaryTail => RepairSupport == 0 && HardeningDrag == 0
+            ? string.Empty
+            : $" 社会记忆回读：修复余重{RepairedWeight}、暂压余重{ContainedWeight}、恶化余重{EscalatedWeight}、放置余重{IgnoredWeight}。";
+
+        public static PublicLifeResponseResidueFriction Neutral => new(0, 0, 0, 0);
+
+        public static PublicLifeResponseResidueFriction FromWeights(
+            int repairedWeight,
+            int containedWeight,
+            int escalatedWeight,
+            int ignoredWeight)
+        {
+            return new(
+                Math.Clamp(repairedWeight, 0, 200),
+                Math.Clamp(containedWeight, 0, 200),
+                Math.Clamp(escalatedWeight, 0, 200),
+                Math.Clamp(ignoredWeight, 0, 200));
+        }
     }
 
     private readonly record struct OrderAdministrativeReachProfile(

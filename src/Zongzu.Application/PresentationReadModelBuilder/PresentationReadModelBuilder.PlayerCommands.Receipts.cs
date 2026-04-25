@@ -17,6 +17,16 @@ public sealed partial class PresentationReadModelBuilder
         Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = IndexFirstBySettlement(
             bundle.OfficeJurisdictions,
             static entry => entry.SettlementId);
+        Dictionary<int, SettlementPublicLifeSnapshot> publicLifeBySettlement = IndexFirstBySettlement(
+            bundle.PublicLifeSettlements,
+            static entry => entry.SettlementId);
+        ILookup<int, ClanSnapshot> clansBySettlement = bundle.Clans.ToLookup(static entry => entry.HomeSettlementId.Value);
+        Dictionary<int, ClanNarrativeSnapshot> narrativesByClan = bundle.ClanNarratives
+            .ToDictionary(static entry => entry.ClanId.Value, static entry => entry);
+        ILookup<int, ClanTradeSnapshot> tradesBySettlement = bundle.ClanTrades
+            .ToLookup(static entry => entry.PrimarySettlementId.Value);
+        ILookup<int, ClanTradeRouteSnapshot> routesBySettlement = bundle.ClanTradeRoutes
+            .ToLookup(static entry => entry.SettlementId.Value);
 
         foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
         {
@@ -39,15 +49,67 @@ public sealed partial class PresentationReadModelBuilder
                     jurisdiction.LastPetitionOutcome,
                     targetLabel: jurisdiction.LeadOfficialName);
             }
+
+            if (HasPublicLifeOrderResponseReceipt(jurisdiction))
+            {
+                yield return BuildPlayerCommandReceiptSnapshot(
+                    jurisdiction.LastRefusalResponseCommandCode,
+                    jurisdiction.SettlementId,
+                    jurisdiction.LastRefusalResponseSummary,
+                    RenderPublicLifeResponseOutcome(jurisdiction.LastRefusalResponseOutcomeCode),
+                    executionSummary: BuildOfficeResponseAftermathSummary(jurisdiction),
+                    readbackSummary: BuildOfficeResponseAftermathSummary(jurisdiction),
+                    targetLabel: string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
+                        ? jurisdiction.LeadOfficeTitle
+                        : jurisdiction.LeadOfficialName,
+                    labelOverride: jurisdiction.LastRefusalResponseCommandLabel);
+            }
         }
 
         foreach (SettlementDisorderSnapshot disorder in bundle.SettlementDisorder.OrderBy(static entry => entry.SettlementId.Value))
         {
             jurisdictionsBySettlement.TryGetValue(disorder.SettlementId.Value, out JurisdictionAuthoritySnapshot? jurisdiction);
-            PlayerCommandReceiptSnapshot? receipt = BuildOrderPublicLifeReceipt(disorder, jurisdiction);
+            publicLifeBySettlement.TryGetValue(disorder.SettlementId.Value, out SettlementPublicLifeSnapshot? publicLife);
+            ClanSnapshot[] localClans = clansBySettlement[disorder.SettlementId.Value]
+                .OrderByDescending(static entry => entry.Prestige)
+                .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
+                .ToArray();
+            ClanNarrativeSnapshot[] localNarratives = localClans
+                .Where(clan => narrativesByClan.ContainsKey(clan.Id.Value))
+                .Select(clan => narrativesByClan[clan.Id.Value])
+                .ToArray();
+            ClanTradeSnapshot[] localTrades = tradesBySettlement[disorder.SettlementId.Value].ToArray();
+            ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[disorder.SettlementId.Value].ToArray();
+            IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
+                SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
+
+            PlayerCommandReceiptSnapshot? receipt = BuildOrderPublicLifeReceipt(
+                disorder,
+                jurisdiction,
+                publicLife,
+                localClans,
+                localNarratives,
+                localTrades,
+                localRoutes,
+                localSocialMemories);
             if (receipt is not null)
             {
                 yield return receipt;
+            }
+
+            if (HasPublicLifeOrderResponseReceipt(disorder))
+            {
+                yield return BuildPlayerCommandReceiptSnapshot(
+                    disorder.LastRefusalResponseCommandCode,
+                    disorder.SettlementId,
+                    disorder.LastRefusalResponseSummary,
+                    RenderPublicLifeResponseOutcome(disorder.LastRefusalResponseOutcomeCode),
+                    executionSummary: BuildOrderResponseAftermathSummary(disorder),
+                    readbackSummary: CombinePublicLifeResponseText(
+                        BuildOrderResponseAftermathSummary(disorder),
+                        BuildOrderSocialMemoryReadbackSummary(localSocialMemories)),
+                    targetLabel: disorder.SettlementId.Value.ToString(),
+                    labelOverride: disorder.LastRefusalResponseCommandLabel);
             }
         }
 
@@ -58,39 +120,154 @@ public sealed partial class PresentationReadModelBuilder
                 continue;
             }
 
+            CommandLeverageProjection escortProjection = BuildOrderPublicLifeLeverageProjection(
+                PlayerCommandNames.EscortRoadReport,
+                null,
+                disorder,
+                null,
+                [],
+                [],
+                [],
+                [],
+                []);
+
             yield return BuildPlayerCommandReceiptSnapshot(
                 PlayerCommandNames.EscortRoadReport,
                 disorder.SettlementId,
                 disorder.LastPressureReason,
                 $"路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。",
+                leverageSummary: escortProjection.LeverageSummary,
+                costSummary: escortProjection.CostSummary,
+                readbackSummary: escortProjection.ReadbackSummary,
                 targetLabel: disorder.SettlementId.Value.ToString());
         }
 
         foreach (ClanSnapshot clan in bundle.Clans.OrderBy(static entry => entry.HomeSettlementId.Value))
         {
-            if (!string.Equals(clan.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersPubliclyBroker, StringComparison.Ordinal))
+            if (!string.Equals(clan.LastConflictCommandCode, PlayerCommandNames.InviteClanEldersPubliclyBroker, StringComparison.Ordinal)
+                && !string.Equals(clan.LastConflictCommandCode, PlayerCommandNames.AskClanEldersExplain, StringComparison.Ordinal))
             {
                 continue;
             }
 
             yield return BuildPlayerCommandReceiptSnapshot(
-                PlayerCommandNames.InviteClanEldersPubliclyBroker,
+                clan.LastConflictCommandCode,
                 clan.HomeSettlementId,
                 clan.LastConflictTrace,
                 clan.LastConflictOutcome,
+                readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
+                    ? BuildFamilyResponseAftermathSummary(clan)
+                    : string.Empty,
                 clanId: clan.Id,
-                targetLabel: clan.ClanName);
+                targetLabel: clan.ClanName,
+                labelOverride: clan.LastConflictCommandLabel);
         }
+    }
+
+    private static bool HasPublicLifeOrderResponseReceipt(SettlementDisorderSnapshot disorder)
+    {
+        return !string.IsNullOrWhiteSpace(disorder.LastRefusalResponseCommandCode)
+            && !string.IsNullOrWhiteSpace(disorder.LastRefusalResponseOutcomeCode);
+    }
+
+    private static bool HasPublicLifeOrderResponseReceipt(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        return !string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseCommandCode)
+            && !string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseOutcomeCode);
+    }
+
+    private static bool HasPublicLifeOrderResponseReceipt(ClanSnapshot clan)
+    {
+        return !string.IsNullOrWhiteSpace(clan.LastRefusalResponseCommandCode)
+            && !string.IsNullOrWhiteSpace(clan.LastRefusalResponseOutcomeCode);
+    }
+
+    private static string RenderPublicLifeResponseOutcome(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "后账已修复",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "后账暂压",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "后账恶化",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "后账放置",
+            _ => outcomeCode,
+        };
+    }
+
+    private static string BuildOfficeResponseAftermathSummary(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        if (!HasPublicLifeOrderResponseReceipt(jurisdiction))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseCommandLabel)
+            ? jurisdiction.LastRefusalResponseCommandCode
+            : jurisdiction.LastRefusalResponseCommandLabel;
+        string yamenTail = jurisdiction.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "县门已补落地，文移进入案牍正道。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "县门正道仍滞，递报先把路情暂压。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "胥吏继续拖延，后账转成新的积案。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "县门未接住前案，后账仍在。",
+            _ => jurisdiction.LastRefusalResponseOutcomeCode,
+        };
+        return $"{commandLabel}：{yamenTail}积案{jurisdiction.PetitionBacklog}，胥吏牵制{jurisdiction.ClerkDependence}。";
+    }
+
+    private static string BuildFamilyResponseAftermathSummary(ClanSnapshot clan)
+    {
+        if (!HasPublicLifeOrderResponseReceipt(clan))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = string.IsNullOrWhiteSpace(clan.LastRefusalResponseCommandLabel)
+            ? clan.LastRefusalResponseCommandCode
+            : clan.LastRefusalResponseCommandLabel;
+        string familyTail = clan.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "族老解释缓下羞面，本户担保重新站住。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "族老解释先压住街口议论，本户仍欠人情。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "族老解释反使议论翻起，怨尾加深。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "族老未接住前案，担保欠账仍在。",
+            _ => clan.LastRefusalResponseOutcomeCode,
+        };
+        return $"{commandLabel}：{familyTail}门望{clan.Prestige}，调停势{clan.MediationMomentum}，房支争力{clan.BranchTension}。";
     }
 
     private static PlayerCommandReceiptSnapshot? BuildOrderPublicLifeReceipt(
         SettlementDisorderSnapshot disorder,
-        JurisdictionAuthoritySnapshot? jurisdiction)
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife,
+        IReadOnlyList<ClanSnapshot> localClans,
+        IReadOnlyList<ClanNarrativeSnapshot> localNarratives,
+        IReadOnlyList<ClanTradeSnapshot> localTrades,
+        IReadOnlyList<ClanTradeRouteSnapshot> localRoutes,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
     {
-        if (string.IsNullOrWhiteSpace(disorder.LastInterventionCommandCode))
+        if (string.IsNullOrWhiteSpace(disorder.LastInterventionCommandCode)
+            || !IsOrderPublicLifeCommand(disorder.LastInterventionCommandCode))
         {
             return null;
         }
+
+        CommandLeverageProjection leverageProjection = BuildOrderPublicLifeLeverageProjection(
+            disorder.LastInterventionCommandCode,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes,
+            localSocialMemories);
+
+        string socialMemoryReadback = BuildOrderSocialMemoryReadbackSummary(localSocialMemories);
+        string readbackSummary = string.IsNullOrWhiteSpace(socialMemoryReadback)
+            ? leverageProjection.ReadbackSummary
+            : string.Join(" ", new[] { leverageProjection.ReadbackSummary, socialMemoryReadback }
+                .Where(static value => !string.IsNullOrWhiteSpace(value)));
 
         return BuildPlayerCommandReceiptSnapshot(
             disorder.LastInterventionCommandCode,
@@ -98,6 +275,9 @@ public sealed partial class PresentationReadModelBuilder
             disorder.LastInterventionSummary,
             disorder.LastInterventionOutcome,
             executionSummary: BuildOrderAdministrativeAftermathExecutionSummary(disorder, jurisdiction),
+            leverageSummary: leverageProjection.LeverageSummary,
+            costSummary: leverageProjection.CostSummary,
+            readbackSummary: readbackSummary,
             targetLabel: disorder.SettlementId.Value.ToString(),
             labelOverride: disorder.LastInterventionCommandLabel);
     }
@@ -149,13 +329,16 @@ public sealed partial class PresentationReadModelBuilder
                     ? PlayerCommandNames.InviteClanEldersMediation
                     : clan.LastConflictCommandCode;
                 receipts.Add(BuildPlayerCommandReceiptSnapshot(
-                    commandName,
-                    clan.HomeSettlementId,
-                    clan.LastConflictTrace,
-                    clan.LastConflictOutcome,
-                    clanId: clan.Id,
-                    targetLabel: clan.ClanName,
-                    labelOverride: string.IsNullOrWhiteSpace(clan.LastConflictCommandLabel)
+                commandName,
+                clan.HomeSettlementId,
+                clan.LastConflictTrace,
+                clan.LastConflictOutcome,
+                readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
+                    ? BuildFamilyResponseAftermathSummary(clan)
+                    : string.Empty,
+                clanId: clan.Id,
+                targetLabel: clan.ClanName,
+                labelOverride: string.IsNullOrWhiteSpace(clan.LastConflictCommandLabel)
                         ? "祠堂议决"
                         : clan.LastConflictCommandLabel));
             }
@@ -213,7 +396,10 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         receipts.AddRange(BuildPublicLifeReceipts(bundle));
-        return receipts
+        receipts.AddRange(BuildHomeHouseholdLocalResponseReceipts(bundle));
+        IReadOnlyList<PlayerCommandReceiptSnapshot> ordinaryHouseholdResponseReceipts =
+            AddOrdinaryHouseholdResponseReceiptSurface(receipts, bundle.HouseholdSocialPressures);
+        return ordinaryHouseholdResponseReceipts
             .GroupBy(static receipt => (
                 receipt.ModuleKey,
                 receipt.SurfaceKey,

@@ -107,11 +107,16 @@ public sealed partial class SaveMigrationPipelineTests
             settlement.AdministrativeSuppressionWindow = 0;
             settlement.EscalationBandLabel = string.Empty;
             settlement.LastPressureTrace = string.Empty;
-            settlement.LastInterventionCommandCode = null!;
-            settlement.LastInterventionCommandLabel = null!;
-            settlement.LastInterventionSummary = null!;
-            settlement.LastInterventionOutcome = null!;
+            settlement.LastInterventionCommandCode = PlayerCommandNames.FundLocalWatch;
+            settlement.LastInterventionCommandLabel = "添雇巡丁";
+            settlement.LastInterventionSummary = "legacy public-life order summary";
+            settlement.LastInterventionOutcome = "legacy public-life order outcome";
+            settlement.LastInterventionOutcomeCode = null!;
+            settlement.LastInterventionRefusalCode = null!;
+            settlement.LastInterventionPartialCode = null!;
+            settlement.LastInterventionTraceCode = null!;
             settlement.InterventionCarryoverMonths = 4;
+            settlement.RefusalCarryoverMonths = 4;
         }
 
         saveRoot.ModuleStates[KnownModuleKeys.OrderAndBanditry] = new ModuleStateEnvelope
@@ -158,7 +163,25 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 5
                 && step.TargetVersion == 6),
             Is.True);
-        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(7));
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OrderAndBanditry
+                && step.SourceVersion == 6
+                && step.TargetVersion == 7),
+            Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OrderAndBanditry
+                && step.SourceVersion == 7
+                && step.TargetVersion == 8),
+            Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OrderAndBanditry
+                && step.SourceVersion == 8
+                && step.TargetVersion == 9),
+            Is.True);
+        Assert.That(migratedSave.ModuleStates[KnownModuleKeys.OrderAndBanditry].ModuleSchemaVersion, Is.EqualTo(9));
         Assert.That(migratedState.Settlements, Is.Not.Empty);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.BlackRoutePressure > 0), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.CoercionRisk >= 0), Is.True);
@@ -167,12 +190,20 @@ public sealed partial class SaveMigrationPipelineTests
         Assert.That(migratedState.Settlements.All(static settlement => settlement.RouteShielding >= 0), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.RetaliationRisk >= 0), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.InterventionCarryoverMonths is >= 0 and <= 1), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.RefusalCarryoverMonths is >= 0 and <= 1), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.EscalationBandLabel)), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => !string.IsNullOrWhiteSpace(settlement.LastPressureTrace)), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionCommandCode is not null), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionCommandLabel is not null), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionSummary is not null), Is.True);
         Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionOutcome is not null), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionOutcomeCode == OrderInterventionOutcomeCodes.Accepted), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionRefusalCode is not null), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionPartialCode is not null), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.LastInterventionTraceCode == OrderInterventionTraceCodes.AcceptedFollowThrough), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.LastRefusalResponseCommandCode is not null), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.LastRefusalResponseOutcomeCode is not null), Is.True);
+        Assert.That(migratedState.Settlements.All(static settlement => settlement.ResponseCarryoverMonths is >= 0 and <= 1), Is.True);
     }
 
     [Test]

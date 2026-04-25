@@ -177,6 +177,18 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
 
                 LastExplanation = career.LastExplanation,
 
+                LastRefusalResponseCommandCode = career.LastRefusalResponseCommandCode,
+
+                LastRefusalResponseCommandLabel = career.LastRefusalResponseCommandLabel,
+
+                LastRefusalResponseSummary = career.LastRefusalResponseSummary,
+
+                LastRefusalResponseOutcomeCode = career.LastRefusalResponseOutcomeCode,
+
+                LastRefusalResponseTraceCode = career.LastRefusalResponseTraceCode,
+
+                ResponseCarryoverMonths = career.ResponseCarryoverMonths,
+
             };
 
         }
@@ -219,6 +231,18 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
                 PetitionOutcomeCategory = OfficeAndCareerDescriptors.DeterminePetitionOutcomeCategory(jurisdiction.LastPetitionOutcome),
 
                 LastAdministrativeTrace = jurisdiction.LastAdministrativeTrace,
+
+                LastRefusalResponseCommandCode = jurisdiction.LastRefusalResponseCommandCode,
+
+                LastRefusalResponseCommandLabel = jurisdiction.LastRefusalResponseCommandLabel,
+
+                LastRefusalResponseSummary = jurisdiction.LastRefusalResponseSummary,
+
+                LastRefusalResponseOutcomeCode = jurisdiction.LastRefusalResponseOutcomeCode,
+
+                LastRefusalResponseTraceCode = jurisdiction.LastRefusalResponseTraceCode,
+
+                ResponseCarryoverMonths = jurisdiction.ResponseCarryoverMonths,
 
             };
 

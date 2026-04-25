@@ -86,7 +86,8 @@ Every release line must pass:
   - county-public-life summaries can also surface official-notice, street-talk, road-report, prefecture-dispatch, and contention wording on hall / desk nodes without introducing authority UI
   - `PublicLifeAndRumor` day-facing short-band passes may distinguish hot and calm yamen surfaces through office task-load / clerk-dependence queries without emitting short-band diffs/events or writing office state
   - legacy `PublicLifeAndRumor` schema `1 -> 2 -> 3 -> 4` saves migrate through the default loaders and backfill cadence, venue-channel, plus channel-contention descriptors conservatively enough to keep current M2+ paths loadable
-- legacy `OrderAndBanditry` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6` saves migrate through the default loaders and backfill black-route pressure, paper reach, shielding / retaliation, empty intervention-receipt fields, plus clamped one-month intervention-follow-through state conservatively enough to keep current M3+ paths loadable
+- legacy `OrderAndBanditry` schema `1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9` saves migrate through the default loaders and backfill black-route pressure, paper reach, shielding / retaliation, empty intervention-receipt fields, clamped one-month intervention-follow-through state, structured public-life order outcome/refusal/partial trace fields, and public-life refusal response trace fields conservatively enough to keep current M3+ paths loadable
+- legacy `PopulationAndHouseholds` schema `2 -> 3` saves migrate through the default loaders and backfill home-household local response trace fields conservatively enough to keep current M2+ paths loadable
 - legacy `WorldSettlements` schema `1` saves migrate through schema `7` through the default loaders, backfilling settlement tiers and the chain-6 flood-disaster declaration watermark conservatively enough to continue load on current M2+ paths
 - legacy `SocialMemoryAndRelations` schema `2` saves migrate to schema `3`, backfilling clan emotional climates from existing narratives and keeping `GameDate` fields valid for save/load roundtrip
 
@@ -103,7 +104,8 @@ Every release line must pass:
 - recent bounded order interventions can echo into the next monthly pass through order-owned carryover state, and trade may only react by reading the corresponding order queries
 - bounded public-life order interventions may also scale against office-owned jurisdiction reach when governance-lite is enabled, while order-only paths remain neutral
 - those same public-life order affordances may also surface a read-only office-aware execution summary without introducing UI-owned authority logic
-- public-life order closure must prove a full playable-thin loop: Month N public-life/order pressure appears on a settlement surface, the player issues one bounded order command, `OrderAndBanditry` resolves acceptance/refusal and receipt state, and Month N+1 governance/order readback changes without UI authority or cross-module mutation
+- public-life order closure must prove a full playable-thin loop: Month N public-life/order pressure appears on a settlement surface, the player issues one bounded order command, `OrderAndBanditry` resolves accepted/partial/refused outcome and receipt state, and Month N+1 governance/order readback changes without UI authority or cross-module mutation
+- public-life order social-memory residue must prove Month N `添雇巡丁` or `严缉路匪` mutates only order-owned command/carryover/refusal-trace state, Month N+1 `SocialMemoryAndRelations` reads structured order aftermath and writes only social-memory memory/narrative/climate state, and the durable residue appears in read models and shell readback
 - governance-lite office runs may also convert recent order-intervention carryover into office-owned backlog / petition / task-load fallout on the next month, but only by reading order queries and without writing order state back
 - those same public-life order receipts may also surface a read-only office-aftermath execution summary when next-month jurisdiction traces still carry that order command’s follow-through
 - runtime-only interaction-pressure and hotspot summaries may also surface that same order-linked office aftermath as read-only administrative-task / backlog context without entering save compatibility
@@ -131,13 +133,13 @@ Every release line must pass:
 - migrated local-conflict loads can surface runtime-only migration steps and current hotspots through the read-only debug shell
 - migration reports preserve enabled-module and module-envelope key sets unless an explicit migration says otherwise
 - migration preparation leaves source save data unchanged while reporting consistency status on the prepared copy
-- legacy `OrderAndBanditry` schema `1` saves migrate to schema `2`, then `3`, then `4`, then `5`, then `6`, backfilling black-route pressure first, paper-compliance / implementation-drag fields second, route-shielding / retaliation-risk fields third, intervention receipts fourth, and intervention-follow-through bounds fifth inside the same envelope only
+- legacy `OrderAndBanditry` schema `1` saves migrate to schema `2`, then `3`, then `4`, then `5`, then `6`, then `7`, then `8`, then `9`, backfilling black-route pressure first, paper-compliance / implementation-drag fields second, route-shielding / retaliation-risk fields third, intervention receipts fourth, intervention-follow-through bounds fifth, structured outcome/refusal/partial trace fields sixth, and refusal response trace fields seventh inside the same envelope only
 - legacy `TradeAndIndustry` schema `1` saves migrate to schema `2` and then `3`, backfilling gray-route ledgers first and route-level blockage / seizure mirrors second inside the same envelope only
 - campaign aftermath can push deterministic owned-state fatigue / escort-strain fallout into `ConflictAndForce` without cross-module writes
 - `ConflictAndForce` campaign-fatigue fallout must reduce only conflict-owned readiness / command / escort posture and recover through later monthly passes
 - post-MVP black-route migration tests stay inside `OrderAndBanditry` and `TradeAndIndustry` module envelopes and do not create a standalone module key
 - stable M2/M3 bootstraps remain isolated from `OfficeAndCareer` unless the governance-lite path is selected
-- legacy `FamilyCore` saves migrate through current schema `7` through the default loaders without changing enabled-module or module-envelope key sets
+- legacy `FamilyCore` saves migrate through current schema `8` through the default loaders without changing enabled-module or module-envelope key sets
 - family command handling resolves through `FamilyCoreCommandResolver` and mutates only `FamilyCore` directly; `SocialMemoryAndRelations` may be read for deterministic pressure-tempering friction and may react later through family queries, not same-command cross-module writes
 - family lifecycle commands surface in family read models and hall / council projections without adding any authority logic to UI
 - autonomous marriage resolution must bind concrete spouse links before births can occur; newly arranged marriages do not also produce a same-month birth
@@ -170,8 +172,8 @@ Every release line must pass:
 - `OfficeAndCareer.Lite` can grant explainable appointments and jurisdiction leverage deterministically once queue pressure and backing cross threshold
 - governance-lite office service can progress through bounded promotion/demotion pressure, administrative tasks, and petition outcomes deterministically
 - governance-lite office service may also absorb recent order-command aftermath into office-owned task load, petition backlog, petition pressure, and leverage drift through query seams only
-- legacy governance-lite office saves migrate from schema `1` through schema `6` without changing enabled-module or module-envelope key sets
-- legacy governance-lite office saves reconstruct v2-only task/petition/service descriptors first, then backfill queue pressure, clerk dependence, amnesty de-duplication, office post / waiting-list state, clerk-capture watermarks, and official-defection risk conservatively enough to continue replay on the current schema path
+- legacy governance-lite office saves migrate from schema `1` through schema `7` without changing enabled-module or module-envelope key sets
+- legacy governance-lite office saves reconstruct v2-only task/petition/service descriptors first, then backfill queue pressure, clerk dependence, amnesty de-duplication, office post / waiting-list state, clerk-capture watermarks, official-defection risk, and public-life refusal response trace fields conservatively enough to continue replay on the current schema path
 - governance-lite jurisdiction queries expose clerk dependence and administrative task load so order/trade slices can distinguish paper orders from actual local reach without direct office-state writes
 - future office-depth projections distinguish credential, actual post, clerk dependence, patron / family pull, evaluation pressure, and memorial attack risk rather than treating official rank as automatic authority
 - court-facing office context, if shown before the imperial pack exists, remains watch-only appointment rumor / reform talk / censor-pressure / dispatch wording and does not resolve court decisions inside `OfficeAndCareer`
@@ -250,3 +252,209 @@ At integration level, verify:
 - Presentation acceptance must include projection-absent fallback: desk/great-hall public-life surfaces remain stable and expose no synthesized order affordances or receipts.
 - Architecture acceptance must guard against WorldManager/PersonManager/CharacterManager/god-controller drift, UI authority drift, application/presentation mutation paths inside modules, and `PersonRegistry` expansion beyond identity fields.
 - Save/schema result for this v2 chain: no save/schema impact.
+
+## Playable closure v3 leverage acceptance - 2026-04-24
+- `chain1-public-life-order-leverage-v3` must prove Month N public-life/order pressure exposes a visible leverage explanation before command issue, the bounded order command still resolves in `OrderAndBanditry`, and Month N+1 governance/order readback carries the leverage/cost/residue explanation forward.
+- Integration acceptance must show affordance leverage, receipt cost, and next-month governance docket readback for an accepted public-life order command without adding a new command, event, save field, or cross-module write path.
+- Presentation acceptance must show Unity shell adapters copy projected leverage/cost/readback fields and fall back safely when those projections are absent; Unity must not compute authority formulas.
+- Relationship acceptance for this pass is projection-only: durable favor, shame, debt, fear, grudge, or obligation state remains future `SocialMemoryAndRelations` work unless a later task explicitly adds owner-state schema and migration.
+- Save/schema result for this v3 chain: no persisted state impact; the only schema documentation change is runtime read-model shape.
+
+## Playable closure v4 social-memory residue acceptance - 2026-04-25
+- `public-life-order-social-memory-residue-v4` must prove Month N public-life/order command resolution remains inside `OrderAndBanditry`, while Month N+1 durable obligation, favor, shame, fear, or grudge residue is persisted only by `SocialMemoryAndRelations`.
+- Integration acceptance must show the full rule-driven loop: accepted `添雇巡丁` or `严缉路匪`, structured order aftermath query, SocialMemory-owned memory/climate/narrative residue, public-life receipt readback, governance readback, and shell visibility.
+- Save acceptance must show the new residue entries roundtrip through the existing SocialMemory schema `3`; because no new persisted field is added, no `3 -> 4` migration is expected for this pass.
+- Architecture acceptance must guard against `DomainEvent.Summary` parsing, Application/UI/Unity social-memory writes, manager/god-controller drift, and `PersonRegistry` expansion.
+
+## Playable closure v5 refusal-residue acceptance - 2026-04-25
+- `public-life-order-refusal-residue-v5` must prove this is a rule-driven command / aftermath / social-memory readback loop, not an event-centered or event-pool design.
+- Order acceptance must cover accepted, partial, and refused `添雇巡丁` / `严缉路匪` paths and prove command time mutates only `OrderAndBanditry` state.
+- SocialMemory acceptance must prove same-month command resolution does not write SocialMemory, while Month N+1 refused or partial aftermath writes durable `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` residue only inside `SocialMemoryAndRelations`.
+- Read-model acceptance must prove public-life receipts, governance lanes/dockets, family-facing `SocialMemories`, and shell surfaces expose `县门未落地`, `地方拖延`, `后账仍在`, and `社会记忆读回` from projections only.
+- Save acceptance must prove `OrderAndBanditry` schema `7 -> 8` migration and save/load preservation of structured refusal trace plus SocialMemory refusal residue; SocialMemory remains schema `3`.
+- Architecture acceptance must guard against `LastInterventionSummary` / `DomainEvent.Summary` parsing, Application/UI/Unity social-memory writes, forbidden manager/god-controller names, and `PersonRegistry` expansion.
+
+## Playable closure v6 refusal-response acceptance - 2026-04-25
+- `public-life-order-refusal-response-v6` must prove this is a rule-driven command / residue / social-memory / response loop, not an event-centered or event-pool design.
+- Read-model acceptance must prove v5 refusal / partial residue projects Month N+1 bounded response affordances for the public-life, governance, and family-facing surfaces.
+- Command acceptance must prove `补保巡丁`, `赔脚户误读`, and `暂缓强压` mutate only `OrderAndBanditry`; `押文催县门` and `改走递报` mutate only `OfficeAndCareer`; `请族老解释` mutates only `FamilyCore` at command time.
+- Same-month acceptance must prove response command handling does not mutate `SocialMemoryAndRelations`.
+- SocialMemory acceptance must prove Month N+2 reads structured response aftermath and adjusts only `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`, without parsing `DomainEvent.Summary`, receipt text, or `LastInterventionSummary`.
+- Outcome acceptance must cover at least two paths among `Repaired`, `Contained`, `Escalated`, and `Ignored`; focused tests should include both a repair/containment path and an escalation or ignored path.
+- Projection acceptance must prove public-life receipts, governance lane / docket, family-facing readback, and shell fields expose whether the后账 was repaired, temporarily contained, worsened, or left aside, plus projected shame/fear/favor/grudge/obligation changes.
+- Unity acceptance must prove shell adapters display projected response readback only and never query simulation modules or compute response outcome.
+- Save acceptance must prove `OrderAndBanditry` `8 -> 9`, `OfficeAndCareer` `6 -> 7`, and `FamilyCore` `7 -> 8` migrations plus save/load preservation of response trace fields; `SocialMemoryAndRelations` remains schema `3`.
+- Architecture acceptance must guard boundary drift, summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v7 residue-decay / repeat-friction acceptance - 2026-04-25
+- `public-life-order-residue-decay-friction-v7` must prove the response afterlife remains a rule-driven command / residue / social-memory / response loop, not an event-centered or event-pool design.
+- SocialMemory acceptance must prove response memories recorded in Month N+2 are skipped for same-month drift, then later soften or harden only through `SocialMemoryAndRelations` updates to existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`.
+- At least one repaired path must show declining response memory weight and projected `后账渐平` readback.
+- At least one escalated or ignored path must show hardening response memory weight and projected `后账转硬` or equivalent hardening readback.
+- Repeat-friction acceptance must prove later `OrderAndBanditry`, `OfficeAndCareer`, and/or `FamilyCore` commands read structured SocialMemory response cause keys and weights, mutate only their owning module at command time, and do not write SocialMemory.
+- Projection acceptance must prove public-life / governance / family readback can expose the later social residue state from read models only.
+- Save/schema acceptance: no new persisted fields, no schema bump, and no migration are expected for v7; it reuses SocialMemory schema `3` and existing v6 owner response trace fields.
+- Architecture acceptance must guard against parsing social-memory summary prose, receipt prose, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary` for drift or repeat friction.
+
+## Playable closure v8 actor-countermove / passive back-pressure acceptance - 2026-04-25
+- `public-life-order-actor-countermove-v8` must prove the response afterlife remains a rule-driven command / residue / social-memory / response loop, not an event-centered, event-pool, or autonomous-manager design.
+- Actor-countermove acceptance must prove existing SocialMemory response residue can trigger a later monthly owner-module countermove without a new player command.
+- Soft-path acceptance must cover a repaired or contained residue case such as `巡丁自补保`, proving `OrderAndBanditry` mutates only order-owned route pressure and existing response trace fields.
+- Hard-path acceptance must cover an escalated or ignored residue case such as `胥吏续拖`, proving `OfficeAndCareer` mutates only office-owned clerk/docket pressure and existing response trace fields.
+- Structured-read acceptance must prove actor countermoves read `SocialMemoryEntrySnapshot.CauseKey`, outcome marker, `Weight`, `State`, `SourceClanId`, and `OriginDate`, skip current-month memories, and do not parse summaries or receipt prose.
+- Readback acceptance must prove public-life receipts, governance lanes, family-facing surfaces, and Unity projection adapters can show actor-countermove aftermath only from projected fields.
+- Save/schema acceptance: no new persisted fields, no schema bump, and no migration are expected for v8; it reuses SocialMemory schema `3` and existing v6 owner response trace fields.
+
+## Playable closure v9 actor-countermove readback hardening acceptance - 2026-04-25
+- `public-life-order-actor-countermove-readback-v9` must prove all three owner modules have soft and hard actor-countermove coverage across v8/v9 without adding an actor manager, event pool, UI authority, or new persisted fields.
+- Minimum playable response-loop acceptance must prove visible refusal/partial residue leads to at least three bounded response affordances with projected availability, leverage, cost, execution, and next-readback text; hidden command codes alone are insufficient.
+- SocialMemory acceptance must prove actor traces are owner-state facts first: Order/Office traces are read on the following monthly pass, while Family traces may be read in the same scheduler pass through module order and response carryover, without parsing summaries or using UI timers.
+- Presentation acceptance must prove Unity/shell readback copies projected actor-countermove receipts only, including order, office, and family labels/result text, and does not query modules or compute effectiveness.
+- Save/schema acceptance: no schema bump, migration, or new persisted fields are expected for v9.
+
+## Playable closure v10 ordinary-household readback acceptance - 2026-04-25
+- `public-life-order-ordinary-household-readback-v10` must prove ordinary households are part of the same rule-driven command / residue / social-memory / response / readback loop, not a separate event-chain, event-pool, or household-control subsystem.
+- Read-model acceptance must prove Month N refused / partial `添雇巡丁` or `严缉路匪` residue projects a Month N+1 `HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue` signal for affected ordinary households.
+- Boundary acceptance must prove the projection reads structured order / office / family aftermath fields and does not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastRefusalResponseSummary`.
+- Command acceptance remains unchanged: response affordances are still owned by `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`; ordinary households carry pressure readback and indirect leverage context, but they do not own a new command surface.
+- Projection acceptance must show route fear, runner/watch misunderstanding, household labor/debt/migration strain, and yamen delay where projected, while leaving `PopulationAndHouseholds` state unmutated by read-model composition.
+- Unity acceptance must prove Desk Sandbox settlement pressure displays the projected ordinary-household after-account only from `PresentationReadModelBundle.HouseholdSocialPressures`.
+- Save/schema acceptance: v10 adds runtime read-model constants only and introduces no persisted fields, schema bump, migration, or save roundtrip requirement.
+
+## Playable closure v11 ordinary-household play-surface acceptance - 2026-04-25
+- `public-life-order-ordinary-household-play-surface-v11` must prove ordinary-household pressure becomes a costed response choice surface, while staying inside the same rule-driven command / residue / social-memory / response / readback loop.
+- Read-model acceptance must prove Month N+1 response affordances for `补保巡丁`, `赔脚户误读`, `押文催县门`, `改走递报`, `暂缓强压`, or `请族老解释` can display which ordinary household is carrying the visible后账.
+- Choice-surface acceptance must prove response affordances expose projected availability, leverage, cost, owner-module execution, and next-readback text that mention the affected household, without adding household-owned order commands.
+- Command acceptance must prove issuing a response mutates only `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore` at command time, and does not mutate `PopulationAndHouseholds` or same-month `SocialMemoryAndRelations`.
+- Receipt acceptance must prove the response receipt carries ordinary-household readback after owner-module resolution, while durable residue remains for later `SocialMemoryAndRelations` monthly handling.
+- Unity acceptance must prove Desk Sandbox public-life command affordances and receipts copy projected ordinary-household response text only.
+- Architecture acceptance must guard against summary parsing, UI/Application outcome computation, forbidden manager/god-controller names, `PersonRegistry` expansion, and household-control drift.
+- Save/schema acceptance: v11 is runtime projection enrichment only and introduces no persisted fields, command request shape change, schema bump, migration, or save roundtrip requirement.
+
+## Playable closure v12 home-household local response acceptance - 2026-04-25
+- `public-life-order-home-household-local-response-v12` must prove ordinary-household pressure now has a first low-power home-household command loop, while staying rule-driven and avoiding event-pool / event-centered authority.
+- Read-model acceptance must prove v5 refusal / partial residue plus v10/v11 household pressure projects Month N+1 affordances for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from projected read models only.
+- Command acceptance must prove issuing a local response mutates only `PopulationAndHouseholds` household labor, debt, distress, migration, and `LastLocalResponse*` / `LocalResponseCarryoverMonths` fields at command time.
+- Same-month acceptance must prove the local response does not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`; those modules still own their own public-order, yamen, family, and durable social-memory accounts.
+- Outcome acceptance must cover at least two household local response paths among `Relieved`, `Contained`, `Strained`, and `Ignored`, including a successful relief/containment path and an eating-cost/strained path.
+- Projection acceptance must prove public-life / family-facing / household readback exposes the local response result and household cost (`本户已缓`, `本户暂压`, `本户吃紧`, or `本户放置`) without implying county order or social memory was repaired by the household.
+- Unity acceptance must prove shell adapters display projected home-household affordances and receipts only, never query `PopulationAndHouseholds`, select hidden household targets, or compute response outcome.
+- Save/schema acceptance must prove `PopulationAndHouseholds` schema `2 -> 3` migration plus save/load preservation of local response trace fields. `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` schema versions do not change in v12.
+- Architecture acceptance must guard boundary drift, summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, UI/Application outcome computation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v13 home-household social-memory readback acceptance - 2026-04-25
+- `public-life-order-home-household-social-memory-v13` must prove the v12 local response loop continues into Month N+2 SocialMemory-owned residue without becoming an event-chain, event-pool, or UI-owned rule layer.
+- Command-time acceptance remains strict: issuing `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信` mutates only `PopulationAndHouseholds` and does not mutate same-month `SocialMemoryAndRelations`.
+- SocialMemory acceptance must prove Month N+2 reads structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`, then writes only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates`.
+- Path acceptance must cover at least two local response outcomes, including a relief/favor path and a strained/debt or shame path.
+- Projection acceptance must prove home-household receipts expose the resulting SocialMemory readback while still saying the household response did not repair county order, yamen, or family authority.
+- Unity acceptance must prove shell adapters copy projected receipt readback only and do not compute SocialMemory residue or parse summaries.
+- Save/schema acceptance: v13 adds no persisted fields, no schema bump, and no migration; existing v12 `PopulationAndHouseholds` schema `3` save/load proof remains sufficient for the local response trace fields.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v14 home-household repeat-friction acceptance - 2026-04-25
+- `public-life-order-home-household-repeat-friction-v14` must prove v13 SocialMemory residue can influence a later local household response as bounded local friction without becoming a thick social formula or UI-owned rule path.
+- Command acceptance must prove `PopulationAndHouseholds` reads structured `SocialMemoryEntrySnapshot` cause keys and weights, then mutates only household labor, debt, distress, migration, and `LastLocalResponse*` fields.
+- Same-command acceptance must prove the repeat response does not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- Path acceptance must cover at least one relieved/favor support path and one strained/debt drag path.
+- Projection acceptance must prove local response affordances and receipts expose `旧账记忆` / `社会记忆读回` hints from read models only.
+- Unity acceptance must prove shell adapters copy projected hints and do not compute local response effectiveness.
+- Save/schema acceptance: v14 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v15 common-household response texture acceptance - 2026-04-25
+- `public-life-order-common-household-response-texture-v15` must prove ordinary household state gives the local response lane readable play texture without becoming thick household-class simulation.
+- Command acceptance must prove `PopulationAndHouseholds` derives texture from existing household fields (`DebtPressure`, `LaborCapacity`, `Distress`, `MigrationRisk`, `DependentCount`, `LaborerCount`, and `Livelihood`) and mutates only household labor, debt, distress, migration, and `LastLocalResponse*` fields.
+- Same-command acceptance must prove texture-adjusted commands do not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- Path acceptance must cover at least two texture paths, including debt-heavy compensation and labor-thin night restriction / road messaging.
+- Projection acceptance must prove local response affordances and receipts expose `本户底色` hints from read models only, while UI/Application/Unity do not compute final response effectiveness.
+- Unity acceptance must prove shell adapters copy projected `本户底色` fields and do not query modules or resolve outcomes.
+- Save/schema acceptance: v15 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v16 home-household response capacity acceptance - 2026-04-25
+- `public-life-order-home-household-response-capacity-v16` must prove the v12-v15 home-household lane now shows a projected `回应承受线` before thick household rules are added.
+- Read-model acceptance must prove Month N+1 local response affordances expose bearable / risky / unfit capacity for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from existing household fields only.
+- Path acceptance must cover at least a debt-over-line compensation path, a labor-floor road-message path, and a migration-high night-travel path that remains useful when avoidance is the only local move.
+- Command acceptance must prove issuing a capacity-shaped local response mutates only `PopulationAndHouseholds` at command time and can resolve as `Strained` without mutating `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- Projection acceptance must prove affordances and receipts expose `回应承受线`, `承受线代价`, and `承受线读回` from read models only, while Application/UI/Unity do not compute final command outcome.
+- Unity acceptance must prove shell adapters copy projected capacity fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
+- Save/schema acceptance: v16 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v17 home-household response tradeoff forecast acceptance - 2026-04-25
+- `public-life-order-home-household-response-tradeoff-v17` must prove the v12-v16 home-household lane now shows projected `取舍预判` before thick household rules are added.
+- Read-model acceptance must prove Month N+1 local response affordances expose `预期收益`, `反噬尾巴`, and `外部后账` for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from existing household fields only.
+- Choice acceptance must prove the three options read differently: night travel favors migration / night-road relief, runner compensation favors calming `脚户误读` while risking `新欠账`, and road messaging favors `路情` clarity while spending `丁力`.
+- Command acceptance must prove issuing a tradeoff-shaped local response mutates only `PopulationAndHouseholds` at command time without mutating `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- Projection acceptance must prove affordances and receipts expose `取舍预判`, `预期收益`, `反噬尾巴`, `外部后账`, and `取舍读回` from read models only, while Application/UI/Unity do not compute final command outcome.
+- Unity acceptance must prove shell adapters copy projected tradeoff forecast fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
+- Save/schema acceptance: v17 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v18 home-household short-term consequence readback acceptance - 2026-04-25
+- `public-life-order-home-household-short-term-readback-v18` must prove the v12-v17 home-household lane now shows receipt-side `短期后果` after a local household response resolves, before thick household rules are added.
+- Projection acceptance must prove receipts expose `缓住项`, `挤压项`, and `仍欠外部后账` for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time without mutating `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- SocialMemory acceptance must prove the later reader does not parse `短期后果`, `缓住项`, `挤压项`, `仍欠外部后账`, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected short-term consequence receipt fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
+- Save/schema acceptance: v18 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v19 home-household follow-up affordance acceptance - 2026-04-25
+- `public-life-order-home-household-follow-up-affordance-v19` must prove the v12-v18 home-household lane now shows projected repeat/switch/cooldown hints on the next local response surface, before thick household rules are added.
+- Projection acceptance must prove affordances expose `续接提示`, `换招提示`, `冷却提示`, and `续接读回` for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time without mutating `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- SocialMemory acceptance must prove the later reader does not parse `续接提示`, `换招提示`, `冷却提示`, `续接读回`, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected follow-up affordance fields and do not query modules, select hidden household targets, resolve outcomes, write SocialMemory, or maintain a cooldown ledger.
+- Save/schema acceptance: v19 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v20 owner-lane return guidance acceptance - 2026-04-25
+- `public-life-order-owner-lane-return-guidance-v20` must prove the v12-v19 home-household lane now returns unresolved external after-accounts to their owning lanes, before thick household or county rules are added.
+- Projection acceptance must prove receipts and the next affordance/readback expose `外部后账归位`, `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Coverage acceptance must include at least one Order lane direction for 巡丁/路匪/route pressure and one Office or Family lane direction for 县门/文移/胥吏 or 族老/担保.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time and same-month handling does not mutate `SocialMemoryAndRelations`.
+- SocialMemory acceptance must prove the later reader does not parse `外部后账归位`, `该走巡丁`, `该走县门`, `该走族老`, `本户不能代修`, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected owner-lane guidance fields and do not query modules, compute owner lanes, resolve outcomes, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
+- Save/schema acceptance: v20 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, no owner-lane ledger, no household target field, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.
+
+## Playable closure v21 owner-lane return surface readback acceptance - 2026-04-26
+- `public-life-order-owner-lane-return-surface-readback-v21` must prove the v20 owner-lane return guidance now appears on the lane-facing read surfaces that own the next action, without becoming a new command system or event pool.
+- Projection acceptance must prove Office/Governance surfaces expose `该走县门/文移 lane` and Family-facing surfaces expose `该走族老/担保 lane` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Coverage acceptance must keep Order lane visibility for 巡丁/路匪/route pressure while also proving at least one Office/Governance and one Family-facing owner-lane return surface.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time and same-month handling does not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`.
+- SocialMemory acceptance must prove the later reader does not parse Office/Governance or Family-facing owner-lane guidance, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters display projected Office/Governance and Family owner-lane guidance only and do not query modules, compute owner lanes, resolve outcomes, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
+- Save/schema acceptance: v21 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, no owner-lane ledger, no household target field, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.
+
+## Playable closure v22 owner-lane handoff entry readback acceptance - 2026-04-26
+- `public-life-order-owner-lane-handoff-entry-readback-v22` must prove v21 owner-lane return surfaces can also name projected `承接入口` labels for existing owner-lane affordances without becoming a command queue, event pool, or recommendation ledger.
+- Projection acceptance must prove Order, Office/Governance, and Family surfaces expose lane-specific existing command-entry wording such as `添雇巡丁`, `押文催县门`, and `请族老解释` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time and same-month handling does not mutate `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`.
+- SocialMemory acceptance must prove the later reader does not parse `承接入口`, owner-lane guidance prose, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected `承接入口` text only and do not query modules, navigate/execute commands from prose, compute owner lanes, resolve outcomes, write SocialMemory, maintain an owner-lane ledger, or invent a hidden household target.
+- Save/schema acceptance: v22 adds no persisted fields, no schema bump, no migration, no command target shape change, no command queue, no cooldown ledger, no owner-lane ledger, no household target field, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.
+
+## Playable closure v23 owner-lane receipt status readback acceptance - 2026-04-26
+- `public-life-order-owner-lane-receipt-status-readback-v23` must prove v22 owner-lane surfaces can also show projected `归口状态` when an existing owner lane already has a structured response trace.
+- Projection acceptance must prove Order, Office/Governance, and Family surfaces can expose `已归口到巡丁/路匪 lane`, `已归口到县门/文移 lane`, and `已归口到族老/担保 lane` from existing `HouseholdPressureSnapshot.LastLocalResponse*` plus owner-module `LastRefusalResponse*` fields only.
+- Meaning acceptance must prove `已归口` is not "社会其他人接手" and not automatic repair: projected copy must include `归口不等于修好` and `仍看 owner lane 下月读回`.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time; later owner-lane responses mutate only `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`; same-month handling does not mutate `SocialMemoryAndRelations`.
+- SocialMemory acceptance must prove the later reader does not parse `归口状态`, `已归口到巡丁`, `已归口到县门`, `已归口到族老`, `归口不等于修好`, `仍看 owner lane 下月读回`, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected `归口状态` text only and do not query modules, compute归口, resolve outcomes, write SocialMemory, maintain an owner-lane or receipt-status ledger, or invent a hidden household target.
+- Save/schema acceptance: v23 adds no persisted fields, no schema bump, no migration, no command target shape change, no command queue, no cooldown ledger, no owner-lane ledger, no receipt-status ledger, no household target field, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.
+
+## Playable closure v24 owner-lane outcome reading guidance acceptance - 2026-04-26
+- `public-life-order-owner-lane-outcome-reading-guidance-v24` must prove v23 owner-lane surfaces can also show projected `归口后读法` after an existing owner lane has a structured outcome code.
+- Projection acceptance must prove readback exposes `已修复：先停本户加压` and at least one non-repaired reading such as `恶化转硬：别让本户代扛` or `暂压留账：仍看本 lane 下月` from existing owner-module `LastRefusalResponseOutcomeCode` values only.
+- Meaning acceptance must prove ordinary home-household response is not a universal repair lane: `归口后读法` tells the player how to read the owner-lane result after归口, while actual road-watch / yamen-document / elder-guarantee handling still belongs to `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time; later owner-lane responses mutate only `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`; same-month handling does not mutate `SocialMemoryAndRelations`.
+- SocialMemory acceptance must prove the later reader does not parse `归口后读法`, `已修复：先停本户加压`, `暂压留账`, `恶化转硬`, `放置未接`, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected `归口后读法` text only and do not query modules, compute owner-lane outcome meaning, write SocialMemory, maintain an outcome / owner-lane / receipt-status ledger, or invent a hidden household target.
+- Save/schema acceptance: v24 adds no persisted fields, no schema bump, no migration, no command target shape change, no command queue, no cooldown ledger, no owner-lane ledger, no receipt-status ledger, no outcome ledger, no household target field, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.

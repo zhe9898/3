@@ -333,7 +333,10 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(ownHouseholdReach.HasLocalAgency, Is.True);
 
-        Assert.That(ownHouseholdReach.HasCommandAffordance, Is.False);
+        Assert.That(ownHouseholdReach.HasCommandAffordance, Is.True);
+        Assert.That(ownHouseholdReach.CommandSummary, Does.Contain("暂缩夜行"));
+        Assert.That(ownHouseholdReach.CommandSummary, Does.Contain("凑钱赔脚户"));
+        Assert.That(ownHouseholdReach.CommandSummary, Does.Contain("遣少丁递信"));
 
         Assert.That(observedHouseholdReach.IsActive, Is.True);
 

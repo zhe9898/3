@@ -77,6 +77,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 4, 5, MigrateFamilyCoreStateV4ToV5);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 5, 6, MigrateFamilyCoreStateV5ToV6);
         pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 6, 7, MigrateFamilyCoreStateV6ToV7);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.FamilyCore, 7, 8, MigrateFamilyCoreStateV7ToV8);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 1, 2, MigratePublicLifeAndRumorStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 2, 3, MigratePublicLifeAndRumorStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PublicLifeAndRumor, 3, 4, MigratePublicLifeAndRumorStateV3ToV4);
@@ -85,6 +86,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 3, 4, MigrateOfficeAndCareerStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 4, 5, MigrateOfficeAndCareerStateV4ToV5);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 5, 6, MigrateOfficeAndCareerStateV5ToV6);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OfficeAndCareer, 6, 7, MigrateOfficeAndCareerStateV6ToV7);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 1, 2, MigrateTradeAndIndustryStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 2, 3, MigrateTradeAndIndustryStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.TradeAndIndustry, 3, 4, MigrateTradeAndIndustryStateV3ToV4);
@@ -94,6 +96,8 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 4, 5, MigrateOrderAndBanditryStateV4ToV5);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 5, 6, MigrateOrderAndBanditryStateV5ToV6);
         pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 6, 7, MigrateOrderAndBanditryStateV6ToV7);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 7, 8, MigrateOrderAndBanditryStateV7ToV8);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.OrderAndBanditry, 8, 9, MigrateOrderAndBanditryStateV8ToV9);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 1, 2, MigrateConflictAndForceStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 2, 3, MigrateConflictAndForceStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.ConflictAndForce, 3, 4, MigrateConflictAndForceStateV3ToV4);
@@ -101,6 +105,7 @@ public static partial class SimulationBootstrapper
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 2, 3, MigrateWarfareCampaignStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.WarfareCampaign, 3, 4, MigrateWarfareCampaignStateV3ToV4);
         pipeline.RegisterModuleMigration(KnownModuleKeys.PopulationAndHouseholds, 1, 2, MigratePopulationAndHouseholdsStateV1ToV2);
+        pipeline.RegisterModuleMigration(KnownModuleKeys.PopulationAndHouseholds, 2, 3, MigratePopulationAndHouseholdsStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.SocialMemoryAndRelations, 1, 2, MigrateSocialMemoryAndRelationsStateV1ToV2);
         pipeline.RegisterModuleMigration(KnownModuleKeys.SocialMemoryAndRelations, 2, 3, MigrateSocialMemoryAndRelationsStateV2ToV3);
         pipeline.RegisterModuleMigration(KnownModuleKeys.EducationAndExams, 1, 2, MigrateEducationAndExamsStateV1ToV2);
@@ -159,6 +164,20 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.PopulationAndHouseholds,
             ModuleSchemaVersion = 2,
+            Payload = serializer.Serialize(typeof(PopulationAndHouseholdsState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigratePopulationAndHouseholdsStateV2ToV3(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        PopulationAndHouseholdsState migratedState = (PopulationAndHouseholdsState)serializer.Deserialize(typeof(PopulationAndHouseholdsState), envelope.Payload);
+        PopulationAndHouseholdsStateProjection.UpgradeFromSchemaV2ToV3(migratedState);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.PopulationAndHouseholds,
+            ModuleSchemaVersion = 3,
             Payload = serializer.Serialize(typeof(PopulationAndHouseholdsState), migratedState),
         };
     }
@@ -520,6 +539,30 @@ public static partial class SimulationBootstrapper
         };
     }
 
+    private static ModuleStateEnvelope MigrateFamilyCoreStateV7ToV8(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        FamilyCoreState migratedState = (FamilyCoreState)serializer.Deserialize(typeof(FamilyCoreState), envelope.Payload);
+        migratedState.Clans ??= [];
+
+        foreach (ClanStateData clan in migratedState.Clans)
+        {
+            clan.LastRefusalResponseCommandCode ??= string.Empty;
+            clan.LastRefusalResponseCommandLabel ??= string.Empty;
+            clan.LastRefusalResponseSummary ??= string.Empty;
+            clan.LastRefusalResponseOutcomeCode ??= string.Empty;
+            clan.LastRefusalResponseTraceCode ??= string.Empty;
+            clan.ResponseCarryoverMonths = Math.Clamp(clan.ResponseCarryoverMonths, 0, 2);
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.FamilyCore,
+            ModuleSchemaVersion = 8,
+            Payload = serializer.Serialize(typeof(FamilyCoreState), migratedState),
+        };
+    }
+
     private static ModuleStateEnvelope MigratePublicLifeAndRumorStateV1ToV2(ModuleStateEnvelope envelope)
     {
         MessagePackModuleStateSerializer serializer = new();
@@ -652,6 +695,43 @@ public static partial class SimulationBootstrapper
         {
             ModuleKey = KnownModuleKeys.OfficeAndCareer,
             ModuleSchemaVersion = 6,
+            Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOfficeAndCareerStateV6ToV7(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OfficeAndCareerState migratedState = (OfficeAndCareerState)serializer.Deserialize(typeof(OfficeAndCareerState), envelope.Payload);
+        migratedState.People ??= [];
+        migratedState.Jurisdictions ??= [];
+
+        foreach (OfficeCareerState career in migratedState.People)
+        {
+            career.LastRefusalResponseCommandCode ??= string.Empty;
+            career.LastRefusalResponseCommandLabel ??= string.Empty;
+            career.LastRefusalResponseSummary ??= string.Empty;
+            career.LastRefusalResponseOutcomeCode ??= string.Empty;
+            career.LastRefusalResponseTraceCode ??= string.Empty;
+            career.ResponseCarryoverMonths = Math.Clamp(career.ResponseCarryoverMonths, 0, 1);
+        }
+
+        foreach (JurisdictionAuthorityState jurisdiction in migratedState.Jurisdictions)
+        {
+            jurisdiction.LastRefusalResponseCommandCode ??= string.Empty;
+            jurisdiction.LastRefusalResponseCommandLabel ??= string.Empty;
+            jurisdiction.LastRefusalResponseSummary ??= string.Empty;
+            jurisdiction.LastRefusalResponseOutcomeCode ??= string.Empty;
+            jurisdiction.LastRefusalResponseTraceCode ??= string.Empty;
+            jurisdiction.ResponseCarryoverMonths = Math.Clamp(jurisdiction.ResponseCarryoverMonths, 0, 1);
+        }
+
+        migratedState.Jurisdictions = OfficeAndCareerStateProjection.BuildJurisdictions(migratedState.People);
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OfficeAndCareer,
+            ModuleSchemaVersion = 7,
             Payload = serializer.Serialize(typeof(OfficeAndCareerState), migratedState),
         };
     }
@@ -930,6 +1010,71 @@ public static partial class SimulationBootstrapper
             ModuleSchemaVersion = 7,
             Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
         };
+    }
+
+    private static ModuleStateEnvelope MigrateOrderAndBanditryStateV7ToV8(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState migratedState = (OrderAndBanditryState)serializer.Deserialize(typeof(OrderAndBanditryState), envelope.Payload);
+
+        migratedState.Settlements ??= [];
+        foreach (SettlementDisorderState settlement in migratedState.Settlements)
+        {
+            settlement.LastInterventionCommandCode ??= string.Empty;
+            settlement.LastInterventionCommandLabel ??= string.Empty;
+            settlement.LastInterventionSummary ??= string.Empty;
+            settlement.LastInterventionOutcome ??= string.Empty;
+            settlement.LastInterventionOutcomeCode = string.IsNullOrWhiteSpace(settlement.LastInterventionOutcomeCode)
+                ? InferLegacyOrderOutcomeCode(settlement)
+                : settlement.LastInterventionOutcomeCode;
+            settlement.LastInterventionRefusalCode ??= string.Empty;
+            settlement.LastInterventionPartialCode ??= string.Empty;
+            settlement.LastInterventionTraceCode = string.IsNullOrWhiteSpace(settlement.LastInterventionTraceCode)
+                ? (string.IsNullOrWhiteSpace(settlement.LastInterventionCommandCode)
+                    ? string.Empty
+                    : OrderInterventionTraceCodes.AcceptedFollowThrough)
+                : settlement.LastInterventionTraceCode;
+            settlement.InterventionCarryoverMonths = Math.Clamp(settlement.InterventionCarryoverMonths, 0, 1);
+            settlement.RefusalCarryoverMonths = Math.Clamp(settlement.RefusalCarryoverMonths, 0, 1);
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OrderAndBanditry,
+            ModuleSchemaVersion = 8,
+            Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
+        };
+    }
+
+    private static ModuleStateEnvelope MigrateOrderAndBanditryStateV8ToV9(ModuleStateEnvelope envelope)
+    {
+        MessagePackModuleStateSerializer serializer = new();
+        OrderAndBanditryState migratedState = (OrderAndBanditryState)serializer.Deserialize(typeof(OrderAndBanditryState), envelope.Payload);
+
+        migratedState.Settlements ??= [];
+        foreach (SettlementDisorderState settlement in migratedState.Settlements)
+        {
+            settlement.LastRefusalResponseCommandCode ??= string.Empty;
+            settlement.LastRefusalResponseCommandLabel ??= string.Empty;
+            settlement.LastRefusalResponseSummary ??= string.Empty;
+            settlement.LastRefusalResponseOutcomeCode ??= string.Empty;
+            settlement.LastRefusalResponseTraceCode ??= string.Empty;
+            settlement.ResponseCarryoverMonths = Math.Clamp(settlement.ResponseCarryoverMonths, 0, 1);
+        }
+
+        return new ModuleStateEnvelope
+        {
+            ModuleKey = KnownModuleKeys.OrderAndBanditry,
+            ModuleSchemaVersion = 9,
+            Payload = serializer.Serialize(typeof(OrderAndBanditryState), migratedState),
+        };
+    }
+
+    private static string InferLegacyOrderOutcomeCode(SettlementDisorderState settlement)
+    {
+        return string.IsNullOrWhiteSpace(settlement.LastInterventionCommandCode)
+            ? string.Empty
+            : OrderInterventionOutcomeCodes.Accepted;
     }
 
     private static ModuleStateEnvelope MigrateConflictAndForceStateV1ToV2(ModuleStateEnvelope envelope)

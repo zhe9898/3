@@ -122,6 +122,12 @@ public sealed record GovernanceDocketSnapshot
 
     public string RecentReceiptExecutionSummary { get; init; } = string.Empty;
 
+    public string RecentReceiptLeverageSummary { get; init; } = string.Empty;
+
+    public string RecentReceiptCostSummary { get; init; } = string.Empty;
+
+    public string RecentReceiptReadbackSummary { get; init; } = string.Empty;
+
     public string Headline { get; init; } = string.Empty;
 
     public string WhyNowSummary { get; init; } = string.Empty;

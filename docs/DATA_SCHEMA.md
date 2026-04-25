@@ -176,6 +176,12 @@ public sealed class ClanStateData {
     string LastConflictCommandLabel;
     string LastConflictOutcome;
     string LastConflictTrace;
+    string LastRefusalResponseCommandCode;
+    string LastRefusalResponseCommandLabel;
+    string LastRefusalResponseSummary;
+    string LastRefusalResponseOutcomeCode;
+    string LastRefusalResponseTraceCode;
+    int ResponseCarryoverMonths;
     string LastLifecycleCommandCode;
     string LastLifecycleCommandLabel;
     string LastLifecycleOutcome;
@@ -202,9 +208,10 @@ public sealed class FamilyPersonState {
 ```
 
 Current note:
-- `FamilyCore` schema `7` owns lineage-conflict, lifecycle pressure, clan-scoped kinship, care burden, funeral debt, remedy confidence, and charity-obligation state inside the family namespace
+- `FamilyCore` schema `8` owns lineage-conflict, lifecycle pressure, clan-scoped kinship, care burden, funeral debt, remedy confidence, charity-obligation state, and family-owned public-life refusal response trace fields inside the family namespace
 - marriage/heir/mourning/care/funeral pressures remain authoritative family state even when projected through the hall, family council, or social-memory read models
 - births and marriage-in spouses create identity anchors through `PersonRegistry` command surfaces, but `FamilyCore` owns the clan-scoped facts: `SpouseId`, `FatherId`, `MotherId`, and `ChildrenIds`
+- `LastRefusalResponse*` and `ResponseCarryoverMonths` record `FamilyCore`-owned bounded responses such as `请族老解释`; v8 family actor countermoves such as `族老自解释` or `族老避羞` reuse those same trace fields. They are structured aftermath fields for later readback and SocialMemory reads, not receipt text that other modules may parse
 
 ### PopulationAndHouseholds state
 Owns:
@@ -219,7 +226,39 @@ public sealed record PopulationState {
     Dictionary<PersonId, PopulationPersonState> People;
     Dictionary<SettlementId, PopulationSettlementState> Settlements;
 }
+
+public sealed class PopulationHouseholdState {
+    HouseholdId Id;
+    SettlementId SettlementId;
+    ClanId? SponsorClanId;
+    string HouseholdName;
+    int LaborCapacity;
+    int DebtPressure;
+    int Distress;
+    int MigrationRisk;
+    string LastLocalResponseCommandCode;
+    string LastLocalResponseCommandLabel;
+    string LastLocalResponseOutcomeCode;
+    string LastLocalResponseTraceCode;
+    string LastLocalResponseSummary;
+    int LocalResponseCarryoverMonths;
+}
 ```
+
+Current note:
+- `PopulationAndHouseholds` schema `3` owns home-household local response traces for public-life/order after-accounts. These fields record bounded household-seat responses such as `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`.
+- `LastLocalResponse*` and `LocalResponseCarryoverMonths` mutate only inside the population namespace and describe household labor, debt, distress, and migration-risk aftermath. They do not repair `OrderAndBanditry` refusal authority, county-yamen/document landing, family explanation, or SocialMemory residue.
+- v13 `SocialMemoryAndRelations` may read `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode` through `HouseholdPressureSnapshot` on the later monthly pass, but this does not make population own durable memory residue and does not add population fields.
+- v14 `PopulationAndHouseholds` may read existing SocialMemory snapshots for the same household as local repeat friction, but this reads `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, and `State` only and adds no population state fields.
+- v16 `回应承受线` capacity affordance adds no new state fields: projected capacity and command-time capacity summary are derived from existing debt, labor, distress, migration, dependent, laborer, and livelihood fields.
+- v17 `取舍预判` tradeoff forecast adds no new state fields: projected benefit / recoil / external-boundary text and command-time tradeoff summary are derived from existing debt, labor, distress, migration, dependent, laborer, and livelihood fields.
+- v19 `续接提示` / `换招提示` / `冷却提示` / `续接读回` follow-up affordance adds no new state fields: projected follow-up hints are derived from existing household fields and structured `LastLocalResponse*` codes only.
+- v20 `外部后账归位` owner-lane return guidance adds no new state fields: projected `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` are derived from existing household fields and structured `LastLocalResponse*` codes only.
+- v21 owner-lane surface readback adds no new state fields: Office/Governance and Family-facing copies of `外部后账归位` are runtime projections derived from existing household response structure, settlement scope, and sponsor-clan scope only.
+- v22 owner-lane handoff entry readback adds no new state fields: projected `承接入口` labels name existing Order / Office / Family affordances from the same structured household response projection and do not create a command queue, owner-lane ledger, or household target.
+- v23 owner-lane receipt status readback adds no new state fields: projected `归口状态` / `已归口到... lane` strings are derived from existing owner-module response trace fields plus existing household local-response structure and do not create a receipt-status ledger, owner-lane ledger, or household target.
+- v24 owner-lane outcome reading guidance adds no new state fields: projected `归口后读法` strings are derived from existing owner-module `LastRefusalResponseOutcomeCode` values and do not create an outcome ledger, receipt-status ledger, owner-lane ledger, household target, schema bump, or migration.
+- Migration `2 -> 3` initializes local-response strings to empty values and clamps `LocalResponseCarryoverMonths` to `0..1`.
 
 ### SocialMemoryAndRelations state
 Owns:
@@ -282,6 +321,28 @@ public sealed class PersonPressureTemperingState {
 Current note:
 - `SocialMemoryAndRelations` schema `3` persists pressure-tempering state. Clan climates and person tempering ledgers are module-owned residue from household distress, lineage conflict, trade pressure, exam outcomes, death, marriage, and warfare aftermath.
 - `SocialMemoryAndRelations` reads foreign pressure through queries or scoped domain events only. It does not write family, population, trade, education, office, order, force, or campaign state.
+- public-life order residue v4 uses existing schema `3` fields rather than adding a new persisted shape: `Memories` carry public-order cause/kind entries, `ClanNarratives` carry the lasting social interpretation, and `ClanEmotionalClimates` carry obligation, fear, shame, anger, trust, bitterness, or volatility changes
+- public-life order refusal residue v5 still uses SocialMemory schema `3`: refused or partial `添雇巡丁` / `严缉路匪` read structured Order outcome/refusal/partial codes and then write only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` records
+- public-life order response residue v6 still uses SocialMemory schema `3`: Month N+2 response aftermath reads structured `LastRefusalResponseCommandCode`, `LastRefusalResponseOutcomeCode`, `LastRefusalResponseTraceCode`, and `ResponseCarryoverMonths` fields from Order / Office / Family query snapshots, then writes only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` records
+- public-life order residue decay / repeat friction v7 still uses SocialMemory schema `3`: later-month softening, hardening, and command-friction signals reuse existing `MemoryRecordState.Weight`, `MonthlyDecay`, `LifecycleState`, `CauseKey`, `ClanNarratives`, and `ClanEmotionalClimates`; no SocialMemory `3 -> 4` migration is required
+- public-life order actor countermove / passive back-pressure v8 still uses SocialMemory schema `3`: `OrderAndBanditry`, `OfficeAndCareer`, and `FamilyCore` read existing `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, `SourceClanId`, and `OriginDate` values, skip current-month response memories, and then write only their own existing v6 response trace fields. No SocialMemory field, index, namespace, migration, or save-envelope change is introduced
+- home-household local response readback v13 still uses SocialMemory schema `3`: Month N+2 SocialMemory reads structured `PopulationAndHouseholds` local response aftermath (`LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, `LastLocalResponseTraceCode`) and writes only existing `Memories`, `ClanNarratives`, and `ClanEmotionalClimates` records. It does not parse `LastLocalResponseSummary` and does not add a new persisted field, index, namespace, or migration
+- home-household repeat friction v14 still uses SocialMemory schema `3`: `PopulationAndHouseholds` reads existing `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, and clan/household scope as command-time friction inputs, but it does not write SocialMemory state and does not require a SocialMemory `3 -> 4` migration
+- home-household response capacity v16 still uses SocialMemory schema `3`: SocialMemory does not read `回应承受线`, `承受线代价`, `承受线读回`, or `LastLocalResponseSummary`; later residue still comes only from structured local response aftermath fields
+- home-household response tradeoff forecast v17 still uses SocialMemory schema `3`: SocialMemory does not read `取舍预判`, `预期收益`, `反噬尾巴`, `外部后账`, or `LastLocalResponseSummary`; later residue still comes only from structured local response aftermath fields
+- home-household short-term consequence readback v18 still uses SocialMemory schema `3`: SocialMemory does not read `短期后果`, `缓住项`, `挤压项`, `仍欠外部后账`, or `LastLocalResponseSummary`; later residue still comes only from structured local response aftermath fields
+- home-household follow-up affordance v19 still uses SocialMemory schema `3`: SocialMemory does not read `续接提示`, `换招提示`, `冷却提示`, `续接读回`, or `LastLocalResponseSummary`; later residue still comes only from structured local response aftermath fields
+- home-household owner-lane return guidance v20 still uses SocialMemory schema `3`: SocialMemory does not read `外部后账归位`, `该走巡丁`, `该走县门`, `该走族老`, `本户不能代修`, or `LastLocalResponseSummary`; later residue still comes only from structured local response aftermath fields
+- home-household owner-lane surface readback v21 still uses SocialMemory schema `3`: SocialMemory does not read Office/Governance or Family-facing copies of `外部后账归位`; later residue still comes only from structured local response aftermath fields
+- home-household owner-lane handoff entry readback v22 still uses SocialMemory schema `3`: SocialMemory does not read `承接入口`, owner-lane command-entry labels, or receipt prose; later residue still comes only from structured local response aftermath fields
+- home-household owner-lane receipt status readback v23 still uses SocialMemory schema `3`: SocialMemory does not read `归口状态`, `已归口到巡丁`, `已归口到县门`, `已归口到族老`, `归口不等于修好`, `仍看 owner lane 下月读回`, `LastRefusalResponseSummary`, or receipt prose; later residue still comes only from structured aftermath fields
+- current public-order residue cause keys include `order.public_life.escort_road_report`, `order.public_life.fund_local_watch`, `order.public_life.suppress_banditry`, `order.public_life.negotiate_with_outlaws`, and `order.public_life.tolerate_disorder`
+- v5 refusal / partial cause keys include `order.public_life.fund_local_watch.refused`, `order.public_life.fund_local_watch.partial`, `order.public_life.suppress_banditry.refused`, and `order.public_life.suppress_banditry.partial`
+- v6 response cause keys use `order.public_life.response`; durable meaning comes from structured outcome codes `Repaired`, `Contained`, `Escalated`, and `Ignored`, never from `DomainEvent.Summary`, receipt summary, or `LastInterventionSummary`
+- v13 home-household local response cause keys use `order.public_life.household_response.{HouseholdId}.{CommandCode}.{OutcomeCode}.{TraceCode}`; durable meaning comes from structured outcome codes `Relieved`, `Contained`, `Strained`, and `Ignored`, never from `LastLocalResponseSummary` or receipt prose
+- v14 repeat friction reads the same `order.public_life.household_response.{HouseholdId}` cause-key family and weights; it does not add a new key family or persisted ledger
+- v7 repeat-friction readers in `OrderAndBanditry`, `OfficeAndCareer`, and `FamilyCore` read projected `SocialMemoryEntrySnapshot` cause keys and weights only; they do not add persisted fields and do not parse social-memory summary prose
+- v8 actor countermove readers use structured SocialMemory cause keys, outcome markers, weights, source clan, lifecycle state, and origin date only; they do not parse `DomainEvent.Summary`, memory summaries, receipt summaries, `LastInterventionSummary`, or `LastRefusalResponseSummary`
 - `LastUpdated` on climate / tempering records must be a valid `GameDate` even for default or migrated state; default `0000-00` dates are invalid save data.
 - `SocialMemoryAndRelations.PressureTempered` and `SocialMemoryAndRelations.EmotionalPressureShifted` are runtime receipts after owned state mutation; their metadata does not extend save schema.
 
@@ -473,6 +534,12 @@ public sealed class OfficeCareerState {
     string LastOutcome;
     string LastPetitionOutcome;
     string LastExplanation;
+    string LastRefusalResponseCommandCode;
+    string LastRefusalResponseCommandLabel;
+    string LastRefusalResponseSummary;
+    string LastRefusalResponseOutcomeCode;
+    string LastRefusalResponseTraceCode;
+    int ResponseCarryoverMonths;
 }
 
 public sealed class JurisdictionAuthorityState {
@@ -489,13 +556,20 @@ public sealed class JurisdictionAuthorityState {
     int AdministrativeTaskLoad;
     string LastPetitionOutcome;
     string LastAdministrativeTrace;
+    string LastRefusalResponseCommandCode;
+    string LastRefusalResponseCommandLabel;
+    string LastRefusalResponseSummary;
+    string LastRefusalResponseOutcomeCode;
+    string LastRefusalResponseTraceCode;
+    int ResponseCarryoverMonths;
 }
 ```
 
 Current lite note:
-- the active governance-lite v6 slice persists office careers, candidate waiting pressure, clerk dependence, service progression, petition handling, settlement jurisdiction leverage, jurisdiction-level administrative task load, official post/waiting-list skeleton state, `LastAppliedAmnestyWave` for chain-4 amnesty de-duplication, `ActiveClerkCaptureSettlementIds` for chain-7 edge de-duplication, and `OfficialDefectionRisk` for chain-9 risk-before-receipt resolution
+- the active governance-lite v7 slice persists office careers, candidate waiting pressure, clerk dependence, service progression, petition handling, settlement jurisdiction leverage, jurisdiction-level administrative task load, official post/waiting-list skeleton state, `LastAppliedAmnestyWave` for chain-4 amnesty de-duplication, `ActiveClerkCaptureSettlementIds` for chain-7 edge de-duplication, `OfficialDefectionRisk` for chain-9 risk-before-receipt resolution, and office-owned public-life refusal response trace fields
 - office leverage now remains owned by `OfficeAndCareer` while downstream order/force modules may read it through queries only
 - the lighter office v2.1 slice adds only derived query/read-model labels such as administrative-task tier, petition-outcome category, and authority-trajectory wording; it does not add new saved fields
+- `LastRefusalResponse*` and `ResponseCarryoverMonths` record county-yamen and document-routing responses such as `押文催县门` and `改走递报`; v8 office actor countermoves such as `县门自补落地` or `胥吏续拖` reuse those same trace fields. They are office-owned structured aftermath, not a new workflow manager
 
 ### OrderAndBanditry state
 ```csharp
@@ -525,13 +599,28 @@ public sealed class SettlementDisorderState {
     string LastInterventionCommandLabel;
     string LastInterventionSummary;
     string LastInterventionOutcome;
+    string LastInterventionOutcomeCode;
+    string LastInterventionRefusalCode;
+    string LastInterventionPartialCode;
+    string LastInterventionTraceCode;
     int InterventionCarryoverMonths;
+    int RefusalCarryoverMonths;
+    string LastRefusalResponseCommandCode;
+    string LastRefusalResponseCommandLabel;
+    string LastRefusalResponseSummary;
+    string LastRefusalResponseOutcomeCode;
+    string LastRefusalResponseTraceCode;
+    int ResponseCarryoverMonths;
 }
 ```
 
 Current lite note:
-- the current M3 slice persists settlement-level disorder plus black-route pressure summaries, paper-compliance visibility, implementation-drag friction, route-shielding relief, and retaliation-risk backlash
-- bounded public-life order interventions now also persist a one-month follow-through window so recent road-watch / crackdown / negotiation choices can echo into the next monthly pass without creating a second authority surface
+- the current M3 slice persists settlement-level disorder plus black-route pressure summaries, paper-compliance visibility, implementation-drag friction, route-shielding relief, retaliation-risk backlash, and public-life order trace fields
+- `OrderAndBanditry` schema `8` adds structured public-life order outcome/refusal/partial trace fields plus `RefusalCarryoverMonths`; migration `7 -> 8` backfills legacy intervention receipts as accepted follow-through and clamps both carryover windows
+- `OrderAndBanditry` schema `9` adds order-owned public-life refusal response trace fields plus `ResponseCarryoverMonths`; migration `8 -> 9` initializes those fields conservatively so `添雇巡丁` / `严缉路匪` post-refusal repair can survive save/load before SocialMemory reads it
+- bounded public-life order interventions now persist one-month follow-through or refusal carryover windows so recent road-watch / crackdown / negotiation choices can echo into the next monthly pass without creating a second authority surface
+- `SettlementDisorderSnapshot` exposes the same structured aftermath fields, including black-route pressure, coercion risk, implementation drag, route shielding, and retaliation risk, so downstream modules can read order aftermath without parsing receipt text
+- `LastRefusalResponse*` and `ResponseCarryoverMonths` record order-owned response commands such as `补保巡丁`, `赔脚户误读`, and `暂缓强压`; v8 order actor countermoves such as `巡丁自补保` or `脚户误读反噬` reuse those same trace fields. The response outcome code is one of `Repaired`, `Contained`, `Escalated`, or `Ignored`
 - outlaw actors/camps remain deferred to a later deeper slice
 - black-route pressure snapshots stay inside `OrderAndBanditry` even when `TradeAndIndustry` reads them through query seams
 
@@ -679,6 +768,7 @@ public sealed class PresentationReadModelBundle {
     string ReplayHash;
     IReadOnlyList<ClanSnapshot> Clans;
     IReadOnlyList<ClanNarrativeSnapshot> ClanNarratives;
+    IReadOnlyList<SocialMemoryEntrySnapshot> SocialMemories;
     IReadOnlyList<PersonDossierSnapshot> PersonDossiers;
     IReadOnlyList<SettlementSnapshot> Settlements;
     IReadOnlyList<PopulationSettlementSnapshot> PopulationSettlements;
@@ -785,6 +875,10 @@ public sealed class PlayerCommandAffordanceSnapshot {
     string Summary;
     bool IsEnabled;
     string AvailabilitySummary;
+    string ExecutionSummary;
+    string LeverageSummary;
+    string CostSummary;
+    string ReadbackSummary;
     string TargetLabel;
 }
 
@@ -797,6 +891,10 @@ public sealed class PlayerCommandReceiptSnapshot {
     string Label;
     string Summary;
     string OutcomeSummary;
+    string ExecutionSummary;
+    string LeverageSummary;
+    string CostSummary;
+    string ReadbackSummary;
     string TargetLabel;
 }
 
@@ -886,10 +984,22 @@ public sealed class ModulePayloadFootprintSnapshot {
 
 Current note:
 - the read-model bundle now carries `ClanNarratives` so lineage conflict, shame, and favor pressure can be shown in the family council without reading module state directly
+- the read-model bundle now also carries `SocialMemories` so family, public-life order receipts, governance lanes, and shell adapters can show durable SocialMemory-owned residue without querying module state from UI
 - the read-model bundle now also carries runtime-only `PersonDossiers` composed from existing `PersonRegistry`, `FamilyCore`, `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, and optional `SocialMemoryAndRelations` queries; this does not add a root schema, module schema, save namespace, migration, or authoritative person table
 - the read-model bundle now also carries `Households`, `HouseholdSocialPressures`, and `InfluenceFootprint` as runtime-only joins across household, lineage, market, education, yamen, public-life, order, and force projections; these fields are not saved and do not create a player route system
+- `HouseholdSocialPressures` may include runtime-only v10 keys such as `HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue` and `HouseholdSocialDriftKeys.PublicOrderAftermath` to show ordinary-household public-life/order after-account readback. These keys are read-model constants, not persisted module state, and they do not require a schema bump or migration.
+- v11 may use that projected household pressure to enrich `PlayerCommandAffordanceSnapshot` and `PlayerCommandReceiptSnapshot` leverage / cost / execution / readback strings for public-life refusal responses. This remains runtime presentation data; it does not add `HouseholdId` to `PlayerCommandRequest`, does not add module state, and does not require a schema bump or migration.
+- v12 adds persisted `PopulationAndHouseholds` local response traces for home-household commands. The projected affordances / receipts still come from read models, and `PlayerCommandRequest` still stays settlement / optional clan scoped; the persisted authority change is limited to population-owned household pressure and local response trace fields.
+- v15 common-household response texture adds no new schema shape: command-time texture is derived from existing `HouseholdPressureSnapshot` / `PopulationHouseholdState` fields (`DebtPressure`, `LaborCapacity`, `Distress`, `MigrationRisk`, `DependentCount`, `LaborerCount`, `Livelihood`) and projected as runtime `本户底色` text only.
+- v16 home-household response capacity adds no new schema shape: projected `回应承受线` / `承受线代价` / `承受线读回` strings are runtime read-model data, and command-time capacity summaries reuse existing `LastLocalResponseSummary` rather than adding a capacity ledger.
+- v17 home-household response tradeoff forecast adds no new schema shape: projected `取舍预判` / `预期收益` / `反噬尾巴` / `外部后账` strings are runtime read-model data, and command-time tradeoff summaries reuse existing `LastLocalResponseSummary` rather than adding a tradeoff ledger.
+- v19 home-household follow-up affordance adds no new schema shape: projected `续接提示` / `换招提示` / `冷却提示` / `续接读回` strings are runtime read-model data and do not add a cooldown ledger or repeated-response counter.
+- v20 home-household owner-lane return guidance adds no new schema shape: projected `外部后账归位`, `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` strings are runtime read-model data and do not add an owner-lane ledger, household target field, or module state.
+- v21 owner-lane surface readback adds no new schema shape: projected Office/Governance and Family-facing owner-lane strings reuse existing `PlayerCommandAffordanceSnapshot` / `GovernanceDocketSnapshot` fields and do not add an owner-lane ledger, household target field, module state, or migration.
+- v23 owner-lane receipt status readback adds no new schema shape: projected `归口状态` strings reuse existing `PlayerCommandAffordanceSnapshot` / `GovernanceDocketSnapshot` fields and existing owner-module response traces; they do not add a receipt-status ledger, owner-lane ledger, household target field, module state, or migration.
 - `InfluenceFootprint` distinguishes the player's anchor household (`OwnHousehold`, local agency) from observed household pressure (`ObservedHouseholds`, indirect influence only)
-- `PlayerCommands` now spans family, office, and warfare affordances/receipts as read-only presentation data only
+- `PlayerCommands` now spans family, office, order, and warfare affordances/receipts as read-only presentation data only
+- public-life order command affordances/receipts may include runtime-only `LeverageSummary`, `CostSummary`, and `ReadbackSummary` strings; v5 readback may include structured `县门未落地`, `地方拖延`, and `后账仍在` text plus SocialMemory refusal residue, v6/v7 readback may include repaired / contained / escalated / ignored response residue and later `后账渐平` / `后账转硬` SocialMemory summaries, v8 readback may include owner-module actor countermove labels such as `巡丁自补保`, `胥吏续拖`, `县门自补落地`, `族老自解释`, or `族老避羞`, and governance docket may copy the projected receipt/gateway text for next-month readback. v12 home-household local response receipts may also show `本户已缓`, `本户暂压`, `本户吃紧`, or `本户放置`; v16-v23 may add runtime-only `回应承受线`, `取舍预判`, `短期后果`, `续接提示`, `外部后账归位`, owner-lane surface readback, `承接入口`, and `归口状态` strings; only the v12 `PopulationAndHouseholds` local response trace fields are saved, while projection strings remain non-authoritative.
 - family command targeting is expressed through optional `ClanId` plus `TargetLabel`; it does not create a new save namespace
 
 Diagnostics harness note:

@@ -14,3 +14,37 @@ public enum BandConcentration
     TerritoryHolding = 4,
     RebelGovernance = 5,
 }
+
+public static class OrderInterventionOutcomeCodes
+{
+    public const string Accepted = "accepted";
+    public const string Partial = "partial";
+    public const string Refused = "refused";
+}
+
+public static class OrderInterventionRefusalCodes
+{
+    public const string MissingSettlement = "missing_settlement";
+    public const string UnknownCommand = "unknown_command";
+    public const string WatchmenRefused = "watchmen_refused";
+    public const string SuppressionRefused = "suppression_refused";
+}
+
+public static class OrderInterventionPartialCodes
+{
+    public const string CountyDrag = "county_drag";
+    public const string WatchMisread = "watch_misread";
+    public const string SuppressionBacklash = "suppression_backlash";
+}
+
+public static class OrderInterventionTraceCodes
+{
+    public const string AcceptedFollowThrough = "accepted_follow_through";
+    public const string WatchCountyDrag = "watch_county_drag";
+    public const string WatchGroundRefusal = "watch_ground_refusal";
+    public const string SuppressionCountyDrag = "suppression_county_drag";
+    public const string SuppressionBacklash = "suppression_backlash";
+    public const string SuppressionGroundRefusal = "suppression_ground_refusal";
+    public const string MissingSettlement = "missing_settlement";
+    public const string UnknownCommand = "unknown_command";
+}

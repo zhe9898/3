@@ -15,6 +15,16 @@ public sealed record SettlementDisorderSnapshot
 
     public int DisorderPressure { get; init; }
 
+    public int BlackRoutePressure { get; init; }
+
+    public int CoercionRisk { get; init; }
+
+    public int ImplementationDrag { get; init; }
+
+    public int RouteShielding { get; init; }
+
+    public int RetaliationRisk { get; init; }
+
     public string LastPressureReason { get; init; } = string.Empty;
 
     public string LastInterventionCommandCode { get; init; } = string.Empty;
@@ -25,7 +35,29 @@ public sealed record SettlementDisorderSnapshot
 
     public string LastInterventionOutcome { get; init; } = string.Empty;
 
+    public string LastInterventionOutcomeCode { get; init; } = string.Empty;
+
+    public string LastInterventionRefusalCode { get; init; } = string.Empty;
+
+    public string LastInterventionPartialCode { get; init; } = string.Empty;
+
+    public string LastInterventionTraceCode { get; init; } = string.Empty;
+
     public int InterventionCarryoverMonths { get; init; }
+
+    public int RefusalCarryoverMonths { get; init; }
+
+    public string LastRefusalResponseCommandCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; init; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; init; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; init; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; init; }
 }
 
 public sealed record OutlawBandSnapshot

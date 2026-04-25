@@ -16,6 +16,8 @@ public sealed class FamilyCoreCommandContext
     public IPersonRegistryQueries? PersonRegistryQueries { get; init; }
 
     public ISocialMemoryAndRelationsQueries? SocialMemoryQueries { get; init; }
+
+    public IOrderAndBanditryQueries? OrderQueries { get; init; }
 }
 
 public static partial class FamilyCoreCommandResolver
@@ -119,6 +121,12 @@ public static partial class FamilyCoreCommandResolver
                 clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}请族老出面，在县门与街口先行解说，免得堂内争议扩成众口公议。";
                 break;
             }
+            case PlayerCommandNames.AskClanEldersExplain:
+                ApplyClanEldersPublicLifeExplanation(
+                    clan,
+                    ResolveOrderResidue(context.OrderQueries, command.SettlementId),
+                    ResolvePublicLifeResponseResidueFriction(context.SocialMemoryQueries, clan.Id));
+                break;
             default:
                 return BuildRejectedFamilyResult(command, $"宗房不识此令：{command.CommandName}。");
         }
@@ -158,6 +166,7 @@ public static partial class FamilyCoreCommandResolver
             PlayerCommandNames.SuspendClanRelief => "停其接济",
             PlayerCommandNames.InviteClanEldersMediation => "请族老调停",
             PlayerCommandNames.InviteClanEldersPubliclyBroker => "请族老出面",
+            PlayerCommandNames.AskClanEldersExplain => "请族老解释",
             _ => commandName,
         };
     }
@@ -196,14 +205,176 @@ public static partial class FamilyCoreCommandResolver
 
     private static bool IsPublicLifeFamilyCommand(string commandName)
     {
-        return string.Equals(commandName, PlayerCommandNames.InviteClanEldersPubliclyBroker, StringComparison.Ordinal);
+        return string.Equals(commandName, PlayerCommandNames.InviteClanEldersPubliclyBroker, StringComparison.Ordinal)
+            || string.Equals(commandName, PlayerCommandNames.AskClanEldersExplain, StringComparison.Ordinal);
     }
 
     private static string DeterminePublicLifeFamilyCommandLabel(string commandName)
     {
+        if (string.Equals(commandName, PlayerCommandNames.AskClanEldersExplain, StringComparison.Ordinal))
+        {
+            return "请族老解释";
+        }
+
         return string.Equals(commandName, PlayerCommandNames.InviteClanEldersPubliclyBroker, StringComparison.Ordinal)
             ? "请族老出面"
             : DetermineFamilyCommandLabel(commandName);
+    }
+
+    private static void ApplyClanEldersPublicLifeExplanation(
+        ClanStateData clan,
+        SettlementDisorderSnapshot? orderResidue,
+        PublicLifeResponseResidueFriction responseFriction)
+    {
+        bool hasResidue = HasRefusalOrPartialResidue(orderResidue);
+        string outcomeCode = PublicLifeOrderResponseOutcomeCodes.Ignored;
+        string traceCode = PublicLifeOrderResponseTraceCodes.FamilyResponseIgnored;
+        string summary = "族老未接上前案，后账仍放在原处。";
+
+        if (hasResidue)
+        {
+            int standing =
+                clan.Prestige
+                + (clan.SupportReserve * 2)
+                + clan.MediationMomentum
+                + responseFriction.StandingShift;
+            bool hardeningBlocksExplanation = responseFriction.HardeningDrag >= 6 && standing < 24;
+            bool hasEnoughStanding = standing >= 12 && !hardeningBlocksExplanation;
+
+            if (hardeningBlocksExplanation)
+            {
+                outcomeCode = PublicLifeOrderResponseOutcomeCodes.Ignored;
+                traceCode = PublicLifeOrderResponseTraceCodes.FamilyResponseIgnored;
+                summary = "族老出面太迟，旧后账已经转硬，街口只当本户又来遮羞。";
+                clan.MediationMomentum = Math.Clamp(clan.MediationMomentum + 2, 0, 100);
+                clan.BranchTension = Math.Clamp(clan.BranchTension + 2, 0, 100);
+                clan.BranchFavorPressure = Math.Clamp(clan.BranchFavorPressure + 1, 0, 100);
+            }
+            else
+            {
+                outcomeCode = hasEnoughStanding
+                    ? PublicLifeOrderResponseOutcomeCodes.Repaired
+                    : PublicLifeOrderResponseOutcomeCodes.Contained;
+                traceCode = PublicLifeOrderResponseTraceCodes.FamilyElderExplained;
+                summary = hasEnoughStanding
+                    ? "族老在县门与街口解释本户前意，公开羞面被缓下。"
+                    : "族老先把街口议论压住，但本户担保仍欠人情。";
+
+                clan.MediationMomentum = Math.Clamp(clan.MediationMomentum + (hasEnoughStanding ? 9 : 6) + responseFriction.MediationShift, 0, 100);
+                clan.BranchTension = Math.Max(0, clan.BranchTension - (hasEnoughStanding ? 5 : 3));
+                clan.BranchFavorPressure = Math.Max(0, clan.BranchFavorPressure - (hasEnoughStanding ? 3 : 1));
+                clan.ReliefSanctionPressure = Math.Max(0, clan.ReliefSanctionPressure - 1);
+                if (hasEnoughStanding)
+                {
+                    clan.Prestige = Math.Clamp(clan.Prestige + 1, 0, 100);
+                }
+                else if (clan.SupportReserve > 0)
+                {
+                    clan.SupportReserve -= 1;
+                }
+            }
+        }
+
+        summary = AppendResponseFrictionSummary(summary, responseFriction);
+        ApplyRefusalResponseReceipt(
+            clan,
+            PlayerCommandNames.AskClanEldersExplain,
+            DeterminePublicLifeFamilyCommandLabel(PlayerCommandNames.AskClanEldersExplain),
+            summary,
+            outcomeCode,
+            traceCode);
+        clan.LastConflictOutcome = summary;
+        clan.LastConflictTrace = $"{clan.ClanName}{summary}";
+    }
+
+    private static PublicLifeResponseResidueFriction ResolvePublicLifeResponseResidueFriction(
+        ISocialMemoryAndRelationsQueries? socialQueries,
+        ClanId clanId)
+    {
+        if (socialQueries is null)
+        {
+            return PublicLifeResponseResidueFriction.Neutral;
+        }
+
+        int repaired = 0;
+        int contained = 0;
+        int escalated = 0;
+        int ignored = 0;
+
+        foreach (SocialMemoryEntrySnapshot memory in socialQueries.GetMemoriesByClan(clanId)
+                     .Where(static memory => memory.State == MemoryLifecycleState.Active)
+                     .Where(static memory => memory.CauseKey.StartsWith("order.public_life.response.", StringComparison.Ordinal)))
+        {
+            if (memory.CauseKey.Contains($".{PublicLifeOrderResponseOutcomeCodes.Repaired}.", StringComparison.Ordinal))
+            {
+                repaired += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{PublicLifeOrderResponseOutcomeCodes.Contained}.", StringComparison.Ordinal))
+            {
+                contained += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{PublicLifeOrderResponseOutcomeCodes.Escalated}.", StringComparison.Ordinal))
+            {
+                escalated += memory.Weight;
+            }
+            else if (memory.CauseKey.Contains($".{PublicLifeOrderResponseOutcomeCodes.Ignored}.", StringComparison.Ordinal))
+            {
+                ignored += memory.Weight;
+            }
+        }
+
+        return PublicLifeResponseResidueFriction.FromWeights(repaired, contained, escalated, ignored);
+    }
+
+    private static string AppendResponseFrictionSummary(
+        string summary,
+        PublicLifeResponseResidueFriction responseFriction)
+    {
+        return string.IsNullOrWhiteSpace(responseFriction.SummaryTail)
+            ? summary
+            : $"{summary}{responseFriction.SummaryTail}";
+    }
+
+    private static SettlementDisorderSnapshot? ResolveOrderResidue(
+        IOrderAndBanditryQueries? orderQueries,
+        SettlementId settlementId)
+    {
+        if (orderQueries is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return orderQueries.GetRequiredSettlementDisorder(settlementId);
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
+    private static bool HasRefusalOrPartialResidue(SettlementDisorderSnapshot? orderResidue)
+    {
+        return orderResidue is not null
+            && (string.Equals(orderResidue.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Refused, StringComparison.Ordinal)
+                || string.Equals(orderResidue.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Partial, StringComparison.Ordinal));
+    }
+
+    private static void ApplyRefusalResponseReceipt(
+        ClanStateData clan,
+        string commandName,
+        string commandLabel,
+        string summary,
+        string outcomeCode,
+        string traceCode)
+    {
+        clan.LastRefusalResponseCommandCode = commandName;
+        clan.LastRefusalResponseCommandLabel = commandLabel;
+        clan.LastRefusalResponseSummary = summary;
+        clan.LastRefusalResponseOutcomeCode = outcomeCode;
+        clan.LastRefusalResponseTraceCode = traceCode;
+        clan.ResponseCarryoverMonths = 2;
     }
 
     private static bool IsFamilyCommandPersonAlive(FamilyPersonState person, IPersonRegistryQueries? registryQueries)
@@ -225,4 +396,39 @@ public static partial class FamilyCoreCommandResolver
         return registryAgeMonths >= 0 ? registryAgeMonths : person.AgeMonths;
     }
 
+    private readonly record struct PublicLifeResponseResidueFriction(
+        int RepairedWeight,
+        int ContainedWeight,
+        int EscalatedWeight,
+        int IgnoredWeight)
+    {
+        private int SoftSignal => Math.Clamp((RepairedWeight / 18) + (ContainedWeight / 32), 0, 6);
+
+        private int HardSignal => Math.Clamp((EscalatedWeight / 12) + (IgnoredWeight / 16), 0, 8);
+
+        public int StandingShift => Math.Clamp(SoftSignal - HardSignal, -8, 6);
+
+        public int MediationShift => Math.Clamp(SoftSignal / 2, 0, 3);
+
+        public int HardeningDrag => HardSignal;
+
+        public string SummaryTail => SoftSignal == 0 && HardSignal == 0
+            ? string.Empty
+            : $" 社会记忆回读：修复余重{RepairedWeight}、暂压余重{ContainedWeight}、恶化余重{EscalatedWeight}、放置余重{IgnoredWeight}。";
+
+        public static PublicLifeResponseResidueFriction Neutral => new(0, 0, 0, 0);
+
+        public static PublicLifeResponseResidueFriction FromWeights(
+            int repairedWeight,
+            int containedWeight,
+            int escalatedWeight,
+            int ignoredWeight)
+        {
+            return new(
+                Math.Clamp(repairedWeight, 0, 200),
+                Math.Clamp(containedWeight, 0, 200),
+                Math.Clamp(escalatedWeight, 0, 200),
+                Math.Clamp(ignoredWeight, 0, 200));
+        }
+    }
 }

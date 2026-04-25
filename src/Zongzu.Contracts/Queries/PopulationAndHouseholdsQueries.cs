@@ -36,6 +36,18 @@ public sealed record HouseholdPressureSnapshot
     public int DependentCount { get; init; }
 
     public int LaborerCount { get; init; }
+
+    public string LastLocalResponseCommandCode { get; init; } = string.Empty;
+
+    public string LastLocalResponseCommandLabel { get; init; } = string.Empty;
+
+    public string LastLocalResponseOutcomeCode { get; init; } = string.Empty;
+
+    public string LastLocalResponseTraceCode { get; init; } = string.Empty;
+
+    public string LastLocalResponseSummary { get; init; } = string.Empty;
+
+    public int LocalResponseCarryoverMonths { get; init; }
 }
 
 public sealed record PopulationSettlementSnapshot

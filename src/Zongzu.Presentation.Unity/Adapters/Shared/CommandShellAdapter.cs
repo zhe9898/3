@@ -16,6 +16,9 @@ internal static class CommandShellAdapter
 				Label = command.Label,
 				Summary = command.Summary,
 				AvailabilitySummary = command.AvailabilitySummary,
+				LeverageSummary = command.LeverageSummary,
+				CostSummary = command.CostSummary,
+				ReadbackSummary = command.ReadbackSummary,
 				IsEnabled = command.IsEnabled
 			})
 			.ToArray();
@@ -30,7 +33,10 @@ internal static class CommandShellAdapter
 				CommandName = receipt.CommandName,
 				Label = receipt.Label,
 				Summary = receipt.Summary,
-				OutcomeSummary = receipt.OutcomeSummary
+				OutcomeSummary = receipt.OutcomeSummary,
+				LeverageSummary = receipt.LeverageSummary,
+				CostSummary = receipt.CostSummary,
+				ReadbackSummary = receipt.ReadbackSummary
 			})
 			.ToArray();
 	}

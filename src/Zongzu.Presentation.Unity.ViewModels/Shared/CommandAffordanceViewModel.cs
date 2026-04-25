@@ -12,6 +12,12 @@ public sealed class CommandAffordanceViewModel
 
 	public string AvailabilitySummary { get; set; } = string.Empty;
 
+	public string LeverageSummary { get; set; } = string.Empty;
+
+	public string CostSummary { get; set; } = string.Empty;
+
+	public string ReadbackSummary { get; set; } = string.Empty;
+
 	public bool IsEnabled { get; set; }
 }
 }

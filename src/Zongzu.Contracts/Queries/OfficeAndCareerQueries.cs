@@ -60,6 +60,18 @@ public sealed record OfficeCareerSnapshot
     public string AuthorityTrajectorySummary { get; init; } = string.Empty;
 
     public string LastExplanation { get; init; } = string.Empty;
+
+    public string LastRefusalResponseCommandCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; init; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; init; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; init; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; init; }
 }
 
 public sealed record JurisdictionAuthoritySnapshot
@@ -93,6 +105,18 @@ public sealed record JurisdictionAuthoritySnapshot
     public string PetitionOutcomeCategory { get; init; } = string.Empty;
 
     public string LastAdministrativeTrace { get; init; } = string.Empty;
+
+    public string LastRefusalResponseCommandCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseCommandLabel { get; init; } = string.Empty;
+
+    public string LastRefusalResponseSummary { get; init; } = string.Empty;
+
+    public string LastRefusalResponseOutcomeCode { get; init; } = string.Empty;
+
+    public string LastRefusalResponseTraceCode { get; init; } = string.Empty;
+
+    public int ResponseCarryoverMonths { get; init; }
 }
 
 public interface IOfficeAndCareerQueries

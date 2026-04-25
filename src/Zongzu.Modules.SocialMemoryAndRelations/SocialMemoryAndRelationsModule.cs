@@ -77,7 +77,6 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
         ITradeAndIndustryQueries? tradeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.TradeAndIndustry)
             ? scope.GetRequiredQuery<ITradeAndIndustryQueries>()
             : null;
-
         IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
         IReadOnlyList<HouseholdPressureSnapshot> households = populationQueries.GetHouseholds();
         Dictionary<ClanId, ClanTradeSnapshot> tradeByClan = tradeQueries is null
@@ -120,6 +119,12 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
         IPopulationAndHouseholdsQueries populationQueries = scope.GetRequiredQuery<IPopulationAndHouseholdsQueries>();
         ITradeAndIndustryQueries? tradeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.TradeAndIndustry)
             ? scope.GetRequiredQuery<ITradeAndIndustryQueries>()
+            : null;
+        IOrderAndBanditryQueries? orderQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OrderAndBanditry)
+            ? scope.GetRequiredQuery<IOrderAndBanditryQueries>()
+            : null;
+        IOfficeAndCareerQueries? officeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OfficeAndCareer)
+            ? scope.GetRequiredQuery<IOfficeAndCareerQueries>()
             : null;
 
         IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
@@ -199,6 +204,20 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
 
             scope.Emit(SocialMemoryAndRelationsEventNames.ClanNarrativeUpdated, $"{clan.ClanName}乡议口气有变。");
         }
+
+        if (orderQueries is not null)
+        {
+            IReadOnlyList<SettlementDisorderSnapshot> settlementDisorder = orderQueries.GetSettlementDisorder();
+            ApplyPublicLifeOrderAftermathResidue(scope, clans, settlementDisorder);
+            ApplyPublicLifeOrderResponseAftermathResidue(
+                scope,
+                clans,
+                settlementDisorder,
+                officeQueries?.GetJurisdictions() ?? Array.Empty<JurisdictionAuthoritySnapshot>());
+        }
+
+        ApplyHomeHouseholdLocalResponseResidue(scope, clans, households);
+        ApplyPublicLifeOrderResponseResidueDrift(scope, clans);
     }
 
     public override void HandleEvents(ModuleEventHandlingScope<SocialMemoryAndRelationsState> scope)

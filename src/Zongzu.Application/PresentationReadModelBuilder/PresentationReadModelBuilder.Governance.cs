@@ -24,6 +24,7 @@ public sealed partial class PresentationReadModelBuilder
         Dictionary<int, SettlementDisorderSnapshot> disorderBySettlement = IndexFirstBySettlement(
             bundle.SettlementDisorder,
             static entry => entry.SettlementId);
+        ILookup<int, ClanSnapshot> clansBySettlement = bundle.Clans.ToLookup(static entry => entry.HomeSettlementId.Value);
 
         return bundle.OfficeJurisdictions
             .OrderBy(static jurisdiction => jurisdiction.SettlementId.Value)
@@ -31,10 +32,26 @@ public sealed partial class PresentationReadModelBuilder
             {
                 publicLifeBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out SettlementPublicLifeSnapshot? publicLife);
                 disorderBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out SettlementDisorderSnapshot? disorder);
+                ClanSnapshot[] localClans = clansBySettlement[jurisdiction.SettlementId.Value].ToArray();
 
-                string orderAftermathSummary = disorder is null
+                string orderAdministrativeAftermathSummary = disorder is null
                     ? string.Empty
                     : BuildOrderAdministrativeAftermathExecutionSummary(disorder, jurisdiction);
+                string orderLandingAftermathSummary = disorder is null
+                    ? string.Empty
+                    : BuildOrderLandingAftermathSummary(disorder);
+                string orderResponseAftermathSummary = disorder is null
+                    ? string.Empty
+                    : BuildOrderResponseAftermathSummary(disorder);
+                string officeResponseAftermathSummary = BuildOfficeResponseAftermathSummary(jurisdiction);
+                string socialMemoryAftermathSummary = BuildOrderSocialMemoryReadbackSummary(
+                    SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans));
+                string orderAftermathSummary = CombineGovernanceDocketText(
+                    orderLandingAftermathSummary,
+                    orderResponseAftermathSummary,
+                    officeResponseAftermathSummary,
+                    orderAdministrativeAftermathSummary,
+                    socialMemoryAftermathSummary);
                 string focusLabel = ResolveGovernanceFocusLabel(publicLife, jurisdiction);
                 string leadLabel = string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
                     ? jurisdiction.LeadOfficeTitle
@@ -184,11 +201,17 @@ public sealed partial class PresentationReadModelBuilder
     {
         return commandName switch
         {
+            PlayerCommandNames.PressCountyYamenDocument => hasOrderAftermath ? 0 : 2,
+            PlayerCommandNames.RedirectRoadReport => hasOrderAftermath ? 1 : 2,
+            PlayerCommandNames.RepairLocalWatchGuarantee => hasOrderAftermath ? 2 : 5,
+            PlayerCommandNames.CompensateRunnerMisread => hasOrderAftermath ? 2 : 5,
+            PlayerCommandNames.DeferHardPressure => hasOrderAftermath ? 2 : 5,
+            PlayerCommandNames.AskClanEldersExplain => hasOrderAftermath ? 3 : 6,
             PlayerCommandNames.PostCountyNotice => hasOrderAftermath ? 0 : 1,
             PlayerCommandNames.DispatchRoadReport => 0,
-            PlayerCommandNames.EscortRoadReport => 2,
-            PlayerCommandNames.FundLocalWatch => 3,
-            PlayerCommandNames.InviteClanEldersPubliclyBroker => 4,
+            PlayerCommandNames.EscortRoadReport => 4,
+            PlayerCommandNames.FundLocalWatch => 5,
+            PlayerCommandNames.InviteClanEldersPubliclyBroker => 6,
             PlayerCommandNames.SuppressBanditry => hasOrderAftermath ? 6 : 5,
             PlayerCommandNames.NegotiateWithOutlaws => 6,
             PlayerCommandNames.TolerateDisorder => 7,
@@ -203,13 +226,11 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
-        string prompt = $"眼下可先以{affordance.Label}应对{affordance.TargetLabel}；{affordance.AvailabilitySummary}";
-        if (string.IsNullOrWhiteSpace(affordance.ExecutionSummary))
-        {
-            return prompt;
-        }
-
-        return $"{prompt} {affordance.ExecutionSummary}";
+        return CombineGovernanceDocketText(
+            $"眼下可先以{affordance.Label}应对{affordance.TargetLabel}；{affordance.AvailabilitySummary}",
+            affordance.LeverageSummary,
+            affordance.CostSummary,
+            affordance.ExecutionSummary);
     }
 
     private static GovernanceFocusSnapshot BuildGovernanceFocus(
@@ -246,7 +267,9 @@ public sealed partial class PresentationReadModelBuilder
         GovernanceFocusSnapshot focus,
         IReadOnlyList<SettlementGovernanceLaneSnapshot> governanceSettlements,
         IReadOnlyList<NarrativeNotificationSnapshot> notifications,
-        IReadOnlyList<PlayerCommandReceiptSnapshot> receipts)
+        IReadOnlyList<PlayerCommandReceiptSnapshot> receipts,
+        IReadOnlyList<HouseholdPressureSnapshot> households,
+        IReadOnlyList<JurisdictionAuthoritySnapshot> jurisdictions)
     {
         if (focus.UrgencyScore <= 0 || focus.SettlementId == default)
         {
@@ -262,6 +285,13 @@ public sealed partial class PresentationReadModelBuilder
             receipts,
             focus.SettlementId,
             lane);
+        JurisdictionAuthoritySnapshot? jurisdiction = jurisdictions
+            .FirstOrDefault(entry => entry.SettlementId == focus.SettlementId);
+        HouseholdPressureSnapshot? ownerLaneReturnHousehold =
+            SelectRecentLocalResponseHouseholdForSettlement(households, focus.SettlementId);
+        string ownerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+            BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
+            BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction));
 
         string headline = !string.IsNullOrWhiteSpace(relatedNotification?.Title)
             ? relatedNotification.Title
@@ -294,6 +324,7 @@ public sealed partial class PresentationReadModelBuilder
             recentReceipt);
         string guidanceSummary = CombineGovernanceDocketText(
             handlingSummary,
+            ownerLaneReturnGuidance,
             focus.SuggestedCommandPrompt,
             relatedNotification?.WhatNext ?? string.Empty);
 
@@ -321,6 +352,9 @@ public sealed partial class PresentationReadModelBuilder
             RecentReceiptSummary = recentReceipt?.Summary ?? string.Empty,
             RecentReceiptOutcomeSummary = recentReceipt?.OutcomeSummary ?? string.Empty,
             RecentReceiptExecutionSummary = recentReceipt?.ExecutionSummary ?? string.Empty,
+            RecentReceiptLeverageSummary = recentReceipt?.LeverageSummary ?? string.Empty,
+            RecentReceiptCostSummary = recentReceipt?.CostSummary ?? string.Empty,
+            RecentReceiptReadbackSummary = recentReceipt?.ReadbackSummary ?? string.Empty,
             Headline = headline,
             WhyNowSummary = whyNowSummary,
             PublicMomentumSummary = focus.PublicMomentumSummary,
@@ -351,6 +385,8 @@ public sealed partial class PresentationReadModelBuilder
     {
         return EnumerateReceiptsForSurface(receipts, PlayerCommandSurfaceKeys.PublicLife, settlementId)
             .OrderBy(receipt => GetGovernanceDocketReceiptPriority(receipt, lane))
+            .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.ReadbackSummary))
+            .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.LeverageSummary))
             .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.ExecutionSummary))
             .ThenByDescending(static receipt => !string.IsNullOrWhiteSpace(receipt.OutcomeSummary))
             .ThenBy(static receipt => receipt.CommandName, StringComparer.Ordinal)
@@ -421,6 +457,9 @@ public sealed partial class PresentationReadModelBuilder
             $"近已按{lead}处置。",
             receipt.Summary,
             receipt.OutcomeSummary,
+            receipt.LeverageSummary,
+            receipt.CostSummary,
+            receipt.ReadbackSummary,
             receipt.ExecutionSummary);
     }
 
@@ -477,6 +516,7 @@ public sealed partial class PresentationReadModelBuilder
             "已下处置" => CombineGovernanceDocketText(
                 $"{leadLabel}前番已按{recentReceipt?.Label ?? recentReceipt?.CommandName}处置，眼下续理{taskLabel}。".Trim(),
                 recentReceipt?.OutcomeSummary ?? string.Empty,
+                recentReceipt?.ReadbackSummary ?? string.Empty,
                 recentReceipt?.ExecutionSummary ?? string.Empty),
             "待即刻应对" => CombineGovernanceDocketText(
                 $"{leadLabel}眼下尚未腾出手，仍须先应{relatedNotification?.Title}。".Trim(),

@@ -1,7 +1,7 @@
 interface:
   display_name: "Zongzu Game Design"
-  short_description: "Deepen Zongzu design into rules, pressure, leverage, shell, and codebase fit"
-  default_prompt: "Use $zongzu-game-design to turn this Zongzu topic into a whole-system pass across loop, pressure locus, player leverage, module contracts, shell projection, tests, and cut discipline."
+  short_description: "Deepen Zongzu design into rules, pressure, leverage, fidelity budget, shell, and codebase fit"
+  default_prompt: "Use $zongzu-game-design to turn this Zongzu topic into a whole-system pass across loop, pressure locus, player leverage, fidelity/scale budget, module contracts, shell projection, tests, and cut discipline."
 
 policy:
   allow_implicit_invocation: true

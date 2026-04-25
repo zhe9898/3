@@ -32,7 +32,10 @@ internal static class WarfareCampaignShellAdapter
 					CommandName = receipt.CommandName,
 					Label = receipt.Label,
 					Summary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.Summary),
-					OutcomeSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.OutcomeSummary)
+					OutcomeSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.OutcomeSummary),
+					LeverageSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.LeverageSummary),
+					CostSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.CostSummary),
+					ReadbackSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.ReadbackSummary)
 				})
 				.ToArray(),
 			CampaignBoards = context.OrderedCampaigns

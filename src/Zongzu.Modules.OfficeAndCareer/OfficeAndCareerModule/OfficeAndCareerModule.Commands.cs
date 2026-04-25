@@ -10,6 +10,9 @@ public sealed partial class OfficeAndCareerModule
         {
             State = scope.State,
             Command = scope.Command,
+            OrderQueries = scope.TryGetQuery<IOrderAndBanditryQueries>(),
+            FamilyQueries = scope.TryGetQuery<IFamilyCoreQueries>(),
+            SocialMemoryQueries = scope.TryGetQuery<ISocialMemoryAndRelationsQueries>(),
         });
     }
 }

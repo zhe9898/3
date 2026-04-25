@@ -95,6 +95,12 @@ public sealed partial class SaveMigrationPipelineTests
                 && step.SourceVersion == 5
                 && step.TargetVersion == 6),
             Is.True);
+        Assert.That(
+            reloaded.LoadMigrationReport.ModuleSteps.Any(static step =>
+                step.ModuleKey == KnownModuleKeys.OfficeAndCareer
+                && step.SourceVersion == 6
+                && step.TargetVersion == 7),
+            Is.True);
         Assert.That(reloaded.LoadMigrationReport.ConsistencyPassed, Is.True);
 
         SaveRoot reloadedSave = reloaded.ExportSave();
@@ -102,12 +108,14 @@ public sealed partial class SaveMigrationPipelineTests
             typeof(OfficeAndCareerState),
             reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].Payload);
 
-        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(6));
+        Assert.That(reloadedSave.ModuleStates[KnownModuleKeys.OfficeAndCareer].ModuleSchemaVersion, Is.EqualTo(7));
         Assert.That(migratedState.People.Any(static career => career.ServiceMonths > 0), Is.True);
         Assert.That(migratedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.CurrentAdministrativeTask)), Is.True);
         Assert.That(migratedState.People.Any(static career => !string.IsNullOrWhiteSpace(career.LastPetitionOutcome)), Is.True);
         Assert.That(migratedState.People.Any(static career => career.AppointmentPressure >= 0), Is.True);
         Assert.That(migratedState.ActiveClerkCaptureSettlementIds, Is.Not.Null);
+        Assert.That(migratedState.People.All(static career => career.LastRefusalResponseCommandCode is not null), Is.True);
+        Assert.That(migratedState.People.All(static career => career.ResponseCarryoverMonths is >= 0 and <= 1), Is.True);
     }
 
     [Test]

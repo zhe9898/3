@@ -24,6 +24,11 @@ public sealed partial class PresentationReadModelBuilder
                 ? snapshot
                 : null;
             int grievancePressure = narrative?.GrudgePressure ?? 0;
+            HouseholdPressureSnapshot? familyOwnerLaneReturnHousehold =
+                SelectRecentLocalResponseHouseholdForClan(bundle.Households, clan);
+            string familyOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildFamilyOwnerLaneReturnSurfaceGuidance(familyOwnerLaneReturnHousehold),
+                BuildFamilyOwnerLaneReturnStatusGuidance(familyOwnerLaneReturnHousehold, clan));
 
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.SupportSeniorBranch,
@@ -72,6 +77,8 @@ public sealed partial class PresentationReadModelBuilder
                     ? "争议已起，请族老最能先缓祠堂气口。"
                     : "当前祠堂争议未盛，暂不必惊动族老。",
                 clanId: clan.Id,
+                leverageSummary: familyOwnerLaneReturnGuidance,
+                readbackSummary: familyOwnerLaneReturnGuidance,
                 targetLabel: clan.ClanName));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.ArrangeMarriage,
@@ -120,6 +127,11 @@ public sealed partial class PresentationReadModelBuilder
         foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
         {
             bool canReviewPetitions = jurisdiction.PetitionBacklog > 0 || jurisdiction.PetitionPressure > 0;
+            HouseholdPressureSnapshot? officeOwnerLaneReturnHousehold =
+                SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, jurisdiction.SettlementId);
+            string officeOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildOfficeOwnerLaneReturnSurfaceGuidance(officeOwnerLaneReturnHousehold),
+                BuildOfficeOwnerLaneReturnStatusGuidance(officeOwnerLaneReturnHousehold, jurisdiction));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.PetitionViaOfficeChannels,
                 jurisdiction.SettlementId,
@@ -127,7 +139,9 @@ public sealed partial class PresentationReadModelBuilder
                 canReviewPetitions,
                 canReviewPetitions
                     ? $"积案{jurisdiction.PetitionBacklog}，可先批结一轮。"
-                    : "本处暂无待批词状。"));
+                    : "本处暂无待批词状。",
+                leverageSummary: officeOwnerLaneReturnGuidance,
+                readbackSummary: officeOwnerLaneReturnGuidance));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.DeployAdministrativeLeverage,
                 jurisdiction.SettlementId,
@@ -135,7 +149,9 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.JurisdictionLeverage >= 12,
                 jurisdiction.JurisdictionLeverage >= 12
                     ? $"乡面杠杆{jurisdiction.JurisdictionLeverage}，足可催动里甲与吏胥。"
-                    : "此地官箴未足，不宜强行发签。"));
+                    : "此地官箴未足，不宜强行发签。",
+                leverageSummary: officeOwnerLaneReturnGuidance,
+                readbackSummary: officeOwnerLaneReturnGuidance));
         }
 
         foreach (CampaignMobilizationSignalSnapshot signal in bundle.CampaignMobilizationSignals.OrderBy(static entry => entry.SettlementId.Value))
@@ -173,7 +189,8 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         affordances.AddRange(BuildPublicLifeAffordances(bundle));
-        return affordances;
+        affordances.AddRange(BuildHomeHouseholdLocalResponseAffordances(bundle));
+        return AddOrdinaryHouseholdResponseChoiceSurface(affordances, bundle.HouseholdSocialPressures);
     }
 
     private static PlayerCommandAffordanceSnapshot BuildWarfareAffordance(
@@ -200,10 +217,41 @@ public sealed partial class PresentationReadModelBuilder
             bundle.SettlementDisorder,
             static entry => entry.SettlementId);
         ILookup<int, ClanSnapshot> clansBySettlement = bundle.Clans.ToLookup(static entry => entry.HomeSettlementId.Value);
+        Dictionary<int, ClanNarrativeSnapshot> narrativesByClan = bundle.ClanNarratives
+            .ToDictionary(static entry => entry.ClanId.Value, static entry => entry);
+        ILookup<int, ClanTradeSnapshot> tradesBySettlement = bundle.ClanTrades
+            .ToLookup(static entry => entry.PrimarySettlementId.Value);
+        ILookup<int, ClanTradeRouteSnapshot> routesBySettlement = bundle.ClanTradeRoutes
+            .ToLookup(static entry => entry.SettlementId.Value);
 
         foreach (SettlementPublicLifeSnapshot publicLife in bundle.PublicLifeSettlements.OrderBy(static entry => entry.SettlementId.Value))
         {
             jurisdictionsBySettlement.TryGetValue(publicLife.SettlementId.Value, out JurisdictionAuthoritySnapshot? jurisdiction);
+            ClanSnapshot[] localClans = clansBySettlement[publicLife.SettlementId.Value]
+                .OrderByDescending(static entry => entry.Prestige)
+                .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
+                .ToArray();
+            ClanSnapshot? leadClan = localClans.FirstOrDefault();
+            ClanNarrativeSnapshot[] localNarratives = localClans
+                .Where(clan => narrativesByClan.ContainsKey(clan.Id.Value))
+                .Select(clan => narrativesByClan[clan.Id.Value])
+                .ToArray();
+            ClanTradeSnapshot[] localTrades = tradesBySettlement[publicLife.SettlementId.Value].ToArray();
+            ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[publicLife.SettlementId.Value].ToArray();
+            IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
+                SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
+            disorderBySettlement.TryGetValue(publicLife.SettlementId.Value, out SettlementDisorderSnapshot? disorder);
+            HouseholdPressureSnapshot? ownerLaneReturnHousehold =
+                SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, publicLife.SettlementId);
+            string orderOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildOrderOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
+                BuildOrderOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, disorder));
+            string officeOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
+                BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction));
+            string familyOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildFamilyOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
+                BuildFamilyOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, leadClan));
 
             if (jurisdiction is not null)
             {
@@ -213,6 +261,7 @@ public sealed partial class PresentationReadModelBuilder
                     $"{publicLife.NodeLabel}街谈已热，可先借榜示压住众口。",
                     publicLife.StreetTalkHeat >= 40 || publicLife.PublicLegitimacy < 55,
                     $"榜示分量{publicLife.DocumentaryWeight}，由{jurisdiction.LeadOfficialName}主其晓谕。",
+                    readbackSummary: officeOwnerLaneReturnGuidance,
                     targetLabel: publicLife.NodeLabel);
 
                 yield return BuildPlayerCommandAffordanceSnapshot(
@@ -221,18 +270,52 @@ public sealed partial class PresentationReadModelBuilder
                     $"{publicLife.DominantVenueLabel}消息往来已有迟滞，可先遣吏催报。",
                     publicLife.RoadReportLag >= 36 || publicLife.CourierRisk >= 35,
                     $"递报险数{publicLife.CourierRisk}，查验周折{publicLife.VerificationCost}。",
+                    readbackSummary: officeOwnerLaneReturnGuidance,
                     targetLabel: publicLife.DominantVenueLabel);
             }
 
-            if (disorderBySettlement.TryGetValue(publicLife.SettlementId.Value, out SettlementDisorderSnapshot? disorder))
+            if (disorder is not null)
             {
                 string administrativeReachSummary = OrderAndBanditryCommandResolver.DetermineAdministrativeReachExecutionSummary(jurisdiction);
 
-                foreach (PlayerCommandAffordanceSnapshot affordance in BuildSupplementalOrderPublicLifeAffordances(publicLife, disorder, administrativeReachSummary))
+                foreach (PlayerCommandAffordanceSnapshot affordance in BuildSupplementalOrderPublicLifeAffordances(
+                    publicLife,
+                    disorder,
+                    jurisdiction,
+                    localClans,
+                    localNarratives,
+                    localTrades,
+                    localRoutes,
+                    localSocialMemories,
+                    administrativeReachSummary,
+                    orderOwnerLaneReturnGuidance))
                 {
                     yield return affordance;
                 }
 
+                foreach (PlayerCommandAffordanceSnapshot affordance in BuildPublicLifeOrderResponseAffordances(
+                    publicLife,
+                    disorder,
+                    jurisdiction,
+                    localClans,
+                    localSocialMemories,
+                    orderOwnerLaneReturnGuidance,
+                    officeOwnerLaneReturnGuidance,
+                    familyOwnerLaneReturnGuidance))
+                {
+                    yield return affordance;
+                }
+
+                CommandLeverageProjection escortProjection = BuildOrderPublicLifeLeverageProjection(
+                    PlayerCommandNames.EscortRoadReport,
+                    publicLife,
+                    disorder,
+                    jurisdiction,
+                    localClans,
+                    localNarratives,
+                    localTrades,
+                    localRoutes,
+                    localSocialMemories);
                 yield return BuildPlayerCommandAffordanceSnapshot(
                     PlayerCommandNames.EscortRoadReport,
                     publicLife.SettlementId,
@@ -240,13 +323,12 @@ public sealed partial class PresentationReadModelBuilder
                     disorder.RoutePressure >= 28 || publicLife.CourierRisk >= 32,
                     $"路压{disorder.RoutePressure}，镇压之需{disorder.SuppressionDemand}。",
                     executionSummary: administrativeReachSummary,
+                    leverageSummary: escortProjection.LeverageSummary,
+                    costSummary: escortProjection.CostSummary,
+                    readbackSummary: JoinOwnerLaneReturnSurfaceText(escortProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
                     targetLabel: publicLife.DominantVenueLabel);
             }
 
-            ClanSnapshot? leadClan = clansBySettlement[publicLife.SettlementId.Value]
-                .OrderByDescending(static entry => entry.Prestige)
-                .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
-                .FirstOrDefault();
             if (leadClan is not null)
             {
                 yield return BuildPlayerCommandAffordanceSnapshot(
@@ -256,16 +338,171 @@ public sealed partial class PresentationReadModelBuilder
                     publicLife.StreetTalkHeat >= 45 || publicLife.MarketRumorFlow >= 45,
                     $"街谈{publicLife.StreetTalkHeat}，市语流势{publicLife.MarketRumorFlow}。",
                     clanId: leadClan.Id,
+                    readbackSummary: familyOwnerLaneReturnGuidance,
                     targetLabel: leadClan.ClanName);
             }
         }
     }
 
+    private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildPublicLifeOrderResponseAffordances(
+        SettlementPublicLifeSnapshot publicLife,
+        SettlementDisorderSnapshot disorder,
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        IReadOnlyList<ClanSnapshot> localClans,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
+        string orderOwnerLaneReturnGuidance,
+        string officeOwnerLaneReturnGuidance,
+        string familyOwnerLaneReturnGuidance)
+    {
+        if (!HasPublicLifeOrderRefusalOrPartialResidue(disorder))
+        {
+            yield break;
+        }
+
+        string responseReadback = CombinePublicLifeResponseText(
+            BuildOrderLandingAftermathSummary(disorder),
+            BuildOrderResponseAftermathSummary(disorder),
+            BuildOrderSocialMemoryReadbackSummary(localSocialMemories));
+        string targetLabel = string.IsNullOrWhiteSpace(publicLife.DominantVenueLabel)
+            ? publicLife.NodeLabel
+            : publicLife.DominantVenueLabel;
+        bool watchResidue = string.Equals(disorder.LastInterventionCommandCode, PlayerCommandNames.FundLocalWatch, StringComparison.Ordinal);
+        bool suppressionResidue = string.Equals(disorder.LastInterventionCommandCode, PlayerCommandNames.SuppressBanditry, StringComparison.Ordinal);
+
+        if (watchResidue)
+        {
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.RepairLocalWatchGuarantee,
+                publicLife.SettlementId,
+                $"{targetLabel}的巡丁后账已露出来，可补保巡丁，把本户担保重新接住。",
+                true,
+                $"前案为{RenderOrderInterventionLabel(disorder)}；{RenderOrderOutcomeLabelForReadback(disorder.LastInterventionOutcomeCode)}。",
+                executionSummary: "由本户补出担保、口粮与巡丁解释，仍交由OrderAndBanditry解析地面是否接住。",
+                leverageSummary: "只动路面担保、巡丁口粮与本户信誉；成败要看巡丁、脚户与路面口风。",
+                costSummary: "需再押钱粮、人手和公开担保，若前案误读未解，仍可能只压住一半。",
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, orderOwnerLaneReturnGuidance),
+                targetLabel: targetLabel);
+
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.CompensateRunnerMisread,
+                publicLife.SettlementId,
+                $"{targetLabel}的脚户误读正在传开，可先赔脚户误读，压住脚路口角。",
+                true,
+                $"误读/拖延来自结构化前案余波：{RenderOrderPartialLabel(disorder.LastInterventionPartialCode)}。",
+                executionSummary: "由本户拿现钱和解释去对脚户、巡丁说清前案，不替县门补文移。",
+                leverageSummary: "只触达脚户、巡丁与路面解释，不代替县门补落地。",
+                costSummary: "赔付会花现钱和人情，换来脚路传话先缓。",
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, orderOwnerLaneReturnGuidance, officeOwnerLaneReturnGuidance),
+                targetLabel: targetLabel);
+        }
+
+        if (suppressionResidue)
+        {
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.DeferHardPressure,
+                publicLife.SettlementId,
+                $"{publicLife.NodeLabel}强压后账仍在，可暂缓强压，先压住地面反噬。",
+                true,
+                $"前案为{RenderOrderInterventionLabel(disorder)}；报复险{disorder.RetaliationRisk}，胁迫险{disorder.CoercionRisk}。",
+                executionSummary: "暂收强压口径，让路面先降温；后续是否转硬仍由OrderAndBanditry和SocialMemory读回。",
+                leverageSummary: "只走治安与路面人手收束强压余波，不改官署或宗房账。",
+                costSummary: "明面反噬会缓，但路匪尾巴未必马上收净。",
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, orderOwnerLaneReturnGuidance),
+                targetLabel: publicLife.NodeLabel);
+        }
+
+        if (jurisdiction is not null)
+        {
+            string leadLabel = string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
+                ? jurisdiction.LeadOfficeTitle
+                : jurisdiction.LeadOfficialName;
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.PressCountyYamenDocument,
+                publicLife.SettlementId,
+                $"{leadLabel}可押文催县门，把拖延后账落到案牍上。",
+                true,
+                $"县门积案{jurisdiction.PetitionBacklog}，胥吏牵制{jurisdiction.ClerkDependence}。",
+                executionSummary: $"眼下由{leadLabel}触达县门文移，成败要看文移、胥吏与官面余力。",
+                leverageSummary: "官署只处理催办、文移落地与胥吏拖延。",
+                costSummary: "若胥吏牵制太重，押文会变成新的积案与恶化后账。",
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, officeOwnerLaneReturnGuidance),
+                targetLabel: leadLabel);
+
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.RedirectRoadReport,
+                publicLife.SettlementId,
+                $"{leadLabel}可改走递报，绕开县门拖滞，先把路情送出。",
+                true,
+                $"递报险数{publicLife.CourierRisk}，县门积案{jurisdiction.PetitionBacklog}。",
+                executionSummary: $"递报仍归{leadLabel}经手；只是改走文移路径。",
+                leverageSummary: "官署处理递报路径，不能直接修复巡丁或宗房羞面。",
+                costSummary: "只能暂压后账，正路未补时仍留余波。",
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, officeOwnerLaneReturnGuidance),
+                targetLabel: leadLabel);
+        }
+
+        ClanSnapshot? leadClan = localClans.FirstOrDefault();
+        if (leadClan is not null)
+        {
+            yield return BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.AskClanEldersExplain,
+                publicLife.SettlementId,
+                $"{leadClan.ClanName}可请族老解释，让本户把前案用意说清。",
+                true,
+                $"宗房门望{leadClan.Prestige}，余力{leadClan.SupportReserve}，房支争力{leadClan.BranchTension}。",
+                executionSummary: "由FamilyCore处理族老出面、羞面缓解与担保欠账，不替治安或县门落命令。",
+                leverageSummary: "族老只处理公开解释与本户担保，不替治安或县门落命令。",
+                costSummary: "解释能缓羞面，也可能留下人情欠账。",
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, familyOwnerLaneReturnGuidance),
+                clanId: leadClan.Id,
+                targetLabel: leadClan.ClanName);
+        }
+    }
+
+    private static bool HasPublicLifeOrderRefusalOrPartialResidue(SettlementDisorderSnapshot disorder)
+    {
+        return string.Equals(disorder.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Refused, StringComparison.Ordinal)
+            || string.Equals(disorder.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Partial, StringComparison.Ordinal);
+    }
+
+    private static string CombinePublicLifeResponseText(params string[] parts)
+    {
+        return string.Join(" ", parts.Where(static part => !string.IsNullOrWhiteSpace(part)));
+    }
+
+    private static string RenderOrderOutcomeLabelForReadback(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            OrderInterventionOutcomeCodes.Refused => "前案被拒",
+            OrderInterventionOutcomeCodes.Partial => "前案半落地",
+            OrderInterventionOutcomeCodes.Accepted => "前案已落地",
+            _ => outcomeCode,
+        };
+    }
+
     private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildSupplementalOrderPublicLifeAffordances(
         SettlementPublicLifeSnapshot publicLife,
         SettlementDisorderSnapshot disorder,
-        string administrativeReachSummary)
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        IReadOnlyList<ClanSnapshot> localClans,
+        IReadOnlyList<ClanNarrativeSnapshot> localNarratives,
+        IReadOnlyList<ClanTradeSnapshot> localTrades,
+        IReadOnlyList<ClanTradeRouteSnapshot> localRoutes,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
+        string administrativeReachSummary,
+        string orderOwnerLaneReturnGuidance)
     {
+        CommandLeverageProjection watchProjection = BuildOrderPublicLifeLeverageProjection(
+            PlayerCommandNames.FundLocalWatch,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes,
+            localSocialMemories);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.FundLocalWatch,
             publicLife.SettlementId,
@@ -273,8 +510,21 @@ public sealed partial class PresentationReadModelBuilder
             disorder.RoutePressure >= 22 || disorder.DisorderPressure >= 24,
             $"路压{disorder.RoutePressure}，地面不靖{disorder.DisorderPressure}。",
             executionSummary: administrativeReachSummary,
+            leverageSummary: watchProjection.LeverageSummary,
+            costSummary: watchProjection.CostSummary,
+            readbackSummary: JoinOwnerLaneReturnSurfaceText(watchProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
             targetLabel: publicLife.DominantVenueLabel);
 
+        CommandLeverageProjection suppressionProjection = BuildOrderPublicLifeLeverageProjection(
+            PlayerCommandNames.SuppressBanditry,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes,
+            localSocialMemories);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.SuppressBanditry,
             publicLife.SettlementId,
@@ -282,8 +532,21 @@ public sealed partial class PresentationReadModelBuilder
             disorder.BanditThreat >= 36 || disorder.SuppressionDemand >= 32,
             $"盗压{disorder.BanditThreat}，镇压之需{disorder.SuppressionDemand}。",
             executionSummary: administrativeReachSummary,
+            leverageSummary: suppressionProjection.LeverageSummary,
+            costSummary: suppressionProjection.CostSummary,
+            readbackSummary: JoinOwnerLaneReturnSurfaceText(suppressionProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
             targetLabel: publicLife.NodeLabel);
 
+        CommandLeverageProjection negotiateProjection = BuildOrderPublicLifeLeverageProjection(
+            PlayerCommandNames.NegotiateWithOutlaws,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes,
+            localSocialMemories);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.NegotiateWithOutlaws,
             publicLife.SettlementId,
@@ -291,8 +554,21 @@ public sealed partial class PresentationReadModelBuilder
             disorder.BanditThreat >= 24 || disorder.DisorderPressure >= 28,
             $"盗压{disorder.BanditThreat}，地面不靖{disorder.DisorderPressure}。",
             executionSummary: administrativeReachSummary,
+            leverageSummary: negotiateProjection.LeverageSummary,
+            costSummary: negotiateProjection.CostSummary,
+            readbackSummary: JoinOwnerLaneReturnSurfaceText(negotiateProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
             targetLabel: publicLife.DominantVenueLabel);
 
+        CommandLeverageProjection tolerateProjection = BuildOrderPublicLifeLeverageProjection(
+            PlayerCommandNames.TolerateDisorder,
+            publicLife,
+            disorder,
+            jurisdiction,
+            localClans,
+            localNarratives,
+            localTrades,
+            localRoutes,
+            localSocialMemories);
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.TolerateDisorder,
             publicLife.SettlementId,
@@ -300,6 +576,9 @@ public sealed partial class PresentationReadModelBuilder
             disorder.BanditThreat >= 18 || disorder.RoutePressure >= 18 || disorder.DisorderPressure >= 18,
             $"盗压{disorder.BanditThreat}，路压{disorder.RoutePressure}，地面不靖{disorder.DisorderPressure}。",
             executionSummary: administrativeReachSummary,
+            leverageSummary: tolerateProjection.LeverageSummary,
+            costSummary: tolerateProjection.CostSummary,
+            readbackSummary: JoinOwnerLaneReturnSurfaceText(tolerateProjection.ReadbackSummary, orderOwnerLaneReturnGuidance),
             targetLabel: publicLife.NodeLabel);
     }
 }

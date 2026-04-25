@@ -176,6 +176,19 @@ Current M3 local-conflict note:
 - only activated local-conflict response state may feed same-month order relief; calm or standing-but-untriggered posture stays visible but does not leak relief
 - `ConflictAndForce.Lite` still reads only published query state and does not mutate `OrderAndBanditry` directly
 - `OfficeAndCareer.Lite`, when enabled through the governance-lite path, now runs ahead of conflict/order so jurisdiction leverage can be read as bounded same-month administrative support without direct writes
+- `SocialMemoryAndRelations` currently runs before `OrderAndBanditry` in the monthly module order, so it may read the prior public-life order carryover once, persist social residue inside its own state, and leave Order to decay or clear its carryover later in the same month
+- `PopulationAndHouseholds` runs before `SocialMemoryAndRelations`, so v13 home-household local response residue reads structured local response command/outcome/trace fields after the population pass and relies on SocialMemory cause-key de-duplication rather than UI timers or summary parsing
+- v14 home-household repeat friction is command-time and query-driven: when the player issues a later local response, `PopulationAndHouseholds` reads already-persisted SocialMemory snapshots and mutates only its own household state, so no scheduler shortcut or same-command SocialMemory write is introduced
+- v15 common-household response texture is also command-time and population-owned: the resolver derives debt/labor/distress/migration texture from existing household state and mutates only the local household response cost/outcome fields. It adds no scheduler step, no same-command SocialMemory write, and no UI-owned rule path.
+- v16 home-household response capacity is projection-time plus command-time only: read models derive `回应承受线` from existing household fields, while `PopulationAndHouseholds` resolves any issued local command inside its own namespace. It adds no scheduler step, no same-command SocialMemory write, and no thick household rule loop.
+- v17 home-household response tradeoff forecast is projection-time plus command-time only: read models derive `取舍预判` / `预期收益` / `反噬尾巴` / `外部后账` from existing household fields, while `PopulationAndHouseholds` resolves any issued local command inside its own namespace. It adds no scheduler step, no same-command SocialMemory write, and no thick household rule loop.
+- v18 home-household short-term consequence readback is receipt projection only: read models derive `短期后果：缓住项` / `挤压项` / `仍欠外部后账` from existing household fields and structured local response codes after the owning command has resolved. It adds no scheduler step, no same-command SocialMemory write, and no thick household rule loop.
+- v19 home-household follow-up affordance readback is projection-time only: read models derive `续接提示` / `换招提示` / `冷却提示` / `续接读回` from existing household fields and structured local response codes for the next command window. It adds no scheduler step, no same-command SocialMemory write, no cooldown ledger, and no thick household rule loop.
+- v20 owner-lane return guidance is projection-time only: read models derive `外部后账归位`, `该走巡丁/路匪 lane`, `该走县门/文移 lane`, `该走族老/担保 lane`, and `本户不能代修` from existing household fields and structured local response codes. It adds no scheduler step, no same-command SocialMemory write, no owner-lane ledger, and no thick household rule loop.
+- v21 owner-lane surface readback is projection-time only: read models copy that owner-lane return guidance into Office/Governance and Family-facing surfaces from existing structured household response fields. It adds no scheduler step, no same-command SocialMemory write, no owner-lane ledger, no household target field, and no thick household rule loop.
+- v22 owner-lane handoff entry readback is projection-time only: read models append `承接入口` labels for existing owner-lane affordances without adding a scheduler step, command queue, command target, or persisted ledger.
+- v23 owner-lane receipt status readback is projection-time only: read models append `归口状态` from existing owner-module structured response traces plus existing household local-response structure. `已归口` is not "社会其他人接手" and not automatic repair; it adds no scheduler step, no same-command SocialMemory write, no receipt-status ledger, no owner-lane ledger, and no thick household rule loop.
+- v24 owner-lane outcome reading guidance is projection-time only: read models append `归口后读法` from existing owner-module outcome codes. It explains whether the owner-lane result reads as `已修复`, `暂压留账`, `恶化转硬`, or `放置未接`, but it adds no scheduler step, no same-command SocialMemory write, no outcome ledger, no receipt-status ledger, no owner-lane ledger, and no thick household rule loop.
 - `ConflictAndForce.Lite` may also carry campaign-fatigue and escort-strain fallout across months; those penalties recover during its own owned pass
 
 ### Phase 3: month-end diff generation
@@ -212,6 +225,58 @@ The normal rule remains:
 - player action is monthly
 - ordinary day steps are not separate player turns
 - the player should usually choose after seeing the month-end projection, not after every internal day-level movement
+
+Current public-life/order v3 note:
+- home-household leverage, cost, and readback for public-life order commands are read at the monthly shell from current projections before command issue, then read again after the next monthly pass through command receipts and governance/order docket projections
+- this does not make `xun` a lower authority grid and does not add a daily player turn; the authority mutation still belongs to the owning module command resolver and later monthly module passes
+
+Current public-life/order v4 note:
+- Month N accepted order commands such as `添雇巡丁` or `严缉路匪` mutate only `OrderAndBanditry` command receipt and carryover state at command time
+- Month N+1 `SocialMemoryAndRelations` reads structured order aftermath through `IOrderAndBanditryQueries`, writes durable memory/narrative/climate residue, and exposes it to read models before projection
+
+Current public-life/order v5 note:
+- Month N public-life/order commands may resolve as accepted, partial, or refused inside `OrderAndBanditry`; the module owns the structured outcome/refusal/partial/trace codes and any carryover.
+- Same-month command resolution must not mutate `SocialMemoryAndRelations`; Month N+1 SocialMemory reads prior-month structured Order trace before Order clears the carryover later in the monthly pass.
+- The loop is rule-driven command / aftermath / social-memory readback, not an event-chain or event-pool design; `DomainEvent.Summary` and receipt prose are not rule input.
+- this is a rule-driven monthly residue path over query-visible state, not an event pool and not `DomainEvent.Summary` parsing; UI and Unity receive only the projected residue/readback text
+
+Current public-life/order v6 note:
+- Month N refused or partial `添雇巡丁` / `严缉路匪` residue becomes a Month N+1 projected response surface, not an automatic authority mutation.
+- The response command resolves in the owner module: `OrderAndBanditry` for road-watch / route-pressure repair, `OfficeAndCareer` for county-yamen / document-route repair, and `FamilyCore` for elder explanation / home-household guarantee repair.
+- Same-month response command handling mutates only the owner module response trace and related owner pressure fields; it must not mutate `SocialMemoryAndRelations`.
+- Month N+2 `SocialMemoryAndRelations` reads structured response aftermath from query snapshots and adjusts durable memory/narrative/climate residue. It must not parse `DomainEvent.Summary`, receipt text, `LastInterventionSummary`, or UI readback strings.
+- Family response carryover remains visible long enough for SocialMemory because `FamilyCore` runs before `SocialMemoryAndRelations` in the current monthly order; duplicate memory writes are guarded by SocialMemory's existing cause checks rather than by UI timers.
+- The projected readback may say whether the后账 was repaired, contained, worsened, or left aside, but the command result itself remains owner-owned state.
+
+Current public-life/order v7 note:
+- after Month N+2 response residue exists, later monthly SocialMemory passes may make it `后账渐平`, `后账暂压留账`, `后账转硬`, or `后账放置发酸` by changing only SocialMemory-owned memory weight, clan narrative pressure, and clan emotional climate.
+- SocialMemory skips current-month response memories for drift, so recording the response residue and aging/hardening it remain separate deterministic month steps.
+- later owner-module commands may read structured SocialMemory response memories and local clan scope as repeat-friction inputs. Order repair, yamen催办, and族老解释 still resolve in their owner module and do not write SocialMemory at command time.
+- v7 adds no new persisted fields or migration; the cadence proof is over existing SocialMemory schema `3` plus v6 owner response trace fields.
+
+Current public-life/order v8 note:
+- after response residue exists, later monthly owner-module rules may read structured SocialMemory response memories and resolve small actor countermoves without a new player command. Order owns route-watch / runner self-movement, Office owns yamen / clerk docket movement, and Family owns elder / household-guarantee movement.
+- actor countermoves skip memories whose `OriginDate` is the current month, and they read cause keys, outcome markers, weights, lifecycle state, source clan, and origin date rather than summaries.
+- `OrderAndBanditry` and `OfficeAndCareer` currently run after `SocialMemoryAndRelations`, so their actor countermove traces are read by SocialMemory on the following monthly pass. `FamilyCore` runs before `SocialMemoryAndRelations`, so family actor traces are owner-state facts first and may be read in the same scheduler pass when response carryover remains visible; SocialMemory duplicate-cause guards keep this deterministic without UI timers.
+- v8 adds no scheduler phase, no manager/controller layer, no persisted fields, and no migration. Application, UI, and Unity may only display projected readback.
+
+Current public-life/order v9/v10/v11/v12 note:
+- v9 hardens the same response afterlife by proving soft and hard actor-countermove readbacks plus minimum playable response affordances; it still adds no scheduler phase, manager/controller, or persisted fields.
+- v10 adds ordinary-household visibility as a projection/readback layer: Month N refused / partial residue can become a Month N+1 household social-pressure signal showing night-road fear, runner/watch misunderstanding, labor/debt/migration strain, and yamen delay.
+- ordinary-household v10 readback does not make `PopulationAndHouseholds` resolve public-life order commands and does not mutate household state during projection. The response commands still resolve in `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore`, while SocialMemory residue remains owned by `SocialMemoryAndRelations`.
+- v11 turns that same projected ordinary-household pressure into costed response choice and receipt text on the existing public-life response affordances. The projection may name the affected household, show the tradeoff, and say which owner module will resolve the response, but it does not add a household command target or compute whether the response works.
+- v10/v11 add runtime read-model constants / projection enrichment only and no save/schema migration.
+- v12 adds the first home-household local response commands after that projection: `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`. They resolve through `PopulationAndHouseholds` at command time, mutate only household labor/debt/distress/migration plus local response trace fields, and still do not repair Order / Office / Family / SocialMemory aftermath.
+- v12 same-month handling does not mutate `SocialMemoryAndRelations`; any durable shame/fear/favor/grudge/obligation residue remains SocialMemory-owned. Save impact is `PopulationAndHouseholds` schema `2 -> 3` with a local migration.
+- v16 adds response-capacity readback on top of v12-v15: `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` can show bearable / risky / unfit `回应承受线` before command issue, and receipts can copy the resulting capacity readback. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
+- v17 adds tradeoff forecast readback on top of v12-v16: `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` can show expected benefit, recoil tail, and external-afteraccount boundary before command issue, and receipts can copy the resulting tradeoff readback. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
+- v18 adds short-term consequence readback on top of v12-v17: receipts can say what was locally eased (`缓住项`), what got squeezed (`挤压项`), and which外部后账 remains outside household authority. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
+- v19 adds follow-up affordance readback on top of v12-v18: the next projected local response surface can say whether repeating or switching a home-household move is续接, 换招, or should cool down. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
+- v20 adds owner-lane return guidance on top of v12-v19: receipts and the next projected local response surface can say that Order, Office, Family, or SocialMemory still own the external after-account. This remains a rule-driven command / aftermath / social-memory readback loop, not an event-pool design.
+- v21 carries owner-lane return guidance into Office/Governance and Family-facing readback surfaces on top of v20. This remains projection/readback guidance over existing state, not a new command system, event pool, or persisted ledger.
+- v22 adds projected `承接入口` labels on top of v21 so those surfaces can point back to existing owner-lane command affordances. This does not add a scheduler step, command queue, command target, persisted ledger, or outcome calculation.
+- v23 adds projected `归口状态` on top of v22 so those surfaces can say when an existing owner lane has already received a structured response trace. This remains projection/readback guidance, not a social takeover, new scheduler step, event pool, persisted ledger, or outcome calculation.
+- v24 adds projected `归口后读法` on top of v23 so those surfaces can say how to read the existing owner-lane outcome after归口. This remains projection/readback guidance, not a new command system, event pool, persisted ledger, or outcome calculation.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window
