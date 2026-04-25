@@ -182,6 +182,7 @@ Current routing note:
 - migration risk
 - household pressure summaries
 - projected ordinary-household public-life/order after-account readback may join household pressure with Order / Office / Family traces, but this remains an Application read-model projection and does not make `PopulationAndHouseholds` own order commands or response traces
+- projected ordinary-household public-life/order response choice text may join that same pressure with existing public-life command affordances / receipts, but this remains Application read-model enrichment and does not add household command ownership or a household target to command requests
 - household membership per PersonId
 - health resilience and health status per PersonId
 - person activity per PersonId
@@ -650,3 +651,10 @@ Current lite note:
 - Application projections may join `HouseholdPressureSnapshot` with structured `OrderAndBanditry`, `OfficeAndCareer`, and `FamilyCore` aftermath snapshots to expose `PublicLifeOrderResidue` household pressure readback.
 - Unity and shell adapters may copy that projected household readback into Desk Sandbox settlement pressure, but they must not query modules, parse summaries, compute effectiveness, mutate household state, or create a new household-control surface.
 - v10 adds runtime read-model constants only and no persisted fields, schema bump, migration, or `PersonRegistry` expansion.
+
+## 2026-04-25 playable closure v11 ordinary-household play-surface note
+- `public-life-order-ordinary-household-play-surface-v11` makes the v10 household readback playable by attaching visible household stakes to existing response affordances and receipts.
+- `PopulationAndHouseholds` remains the ordinary-household state owner. It still does not resolve order repair, county-yamen催办, family explanation, response traces, or social residue.
+- Application projections may select a visible `HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue` household and append that household's stakes to `PlayerCommandAffordanceSnapshot` / `PlayerCommandReceiptSnapshot` leverage, cost, execution, and readback text.
+- The selected household is a projected stake, not an authoritative command target. `PlayerCommandRequest` remains settlement / optional clan scoped, and owning modules still resolve the response.
+- v11 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or household-control surface.

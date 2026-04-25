@@ -366,6 +366,45 @@ public sealed partial class FirstPassPresentationShellTests
                 ],
             },
         ];
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OrderAndBanditry,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.RepairLocalWatchGuarantee,
+                    Label = "repair watch guarantee",
+                    Summary = "costed response choice",
+                    IsEnabled = true,
+                    AvailabilitySummary = "Kiln Wu household is the visible ordinary-household stake.",
+                    ExecutionSummary = "OrderAndBanditry resolves the response.",
+                    LeverageSummary = "Kiln Wu household carries the road-watch pressure.",
+                    CostSummary = "Spend guarantee on Kiln Wu household first.",
+                    ReadbackSummary = "Next readback watches Kiln Wu household.",
+                    TargetLabel = "road mouth / Kiln Wu household",
+                },
+            ],
+            Receipts =
+            [
+                new PlayerCommandReceiptSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OrderAndBanditry,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.RepairLocalWatchGuarantee,
+                    Label = "repair watch guarantee",
+                    Summary = "response resolved",
+                    OutcomeSummary = "contained",
+                    LeverageSummary = "Kiln Wu household remains on the receipt.",
+                    CostSummary = "Kiln Wu household cost is visible.",
+                    ReadbackSummary = "Kiln Wu household readback is projected only.",
+                    TargetLabel = "road mouth / Kiln Wu household",
+                },
+            ],
+        };
 
         PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
         SettlementNodeViewModel settlementNode = shell.DeskSandbox.Settlements.Single();
@@ -373,6 +412,12 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlementNode.PressureSummary, Does.Contain("Kiln Wu household"));
         Assert.That(settlementNode.PressureSummary, Does.Contain("road-watch after-account"));
         Assert.That(settlementNode.PressureSummary, Does.Contain("runner misread"));
+        Assert.That(settlementNode.PublicLifeCommandAffordances.Single().TargetLabel, Does.Contain("Kiln Wu household"));
+        Assert.That(settlementNode.PublicLifeCommandAffordances.Single().LeverageSummary, Does.Contain("Kiln Wu household"));
+        Assert.That(settlementNode.PublicLifeCommandAffordances.Single().CostSummary, Does.Contain("Kiln Wu household"));
+        Assert.That(settlementNode.PublicLifeCommandAffordances.Single().ReadbackSummary, Does.Contain("Kiln Wu household"));
+        Assert.That(settlementNode.PublicLifeRecentReceipts.Single().TargetLabel, Does.Contain("Kiln Wu household"));
+        Assert.That(settlementNode.PublicLifeRecentReceipts.Single().ReadbackSummary, Does.Contain("projected only"));
     }
 
     [Test]

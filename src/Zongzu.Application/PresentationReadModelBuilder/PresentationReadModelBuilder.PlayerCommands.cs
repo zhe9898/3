@@ -173,7 +173,7 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         affordances.AddRange(BuildPublicLifeAffordances(bundle));
-        return affordances;
+        return AddOrdinaryHouseholdResponseChoiceSurface(affordances, bundle.HouseholdSocialPressures);
     }
 
     private static PlayerCommandAffordanceSnapshot BuildWarfareAffordance(

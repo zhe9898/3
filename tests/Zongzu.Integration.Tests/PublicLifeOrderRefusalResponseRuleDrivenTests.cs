@@ -285,6 +285,8 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
             KnownModuleKeys.OrderAndBanditry);
         PopulationAndHouseholdsState populationState = simulation.GetModuleStateForTesting<PopulationAndHouseholdsState>(
             KnownModuleKeys.PopulationAndHouseholds);
+        SocialMemoryAndRelationsState socialState = simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(
+            KnownModuleKeys.SocialMemoryAndRelations);
 
         HouseholdId ordinaryHouseholdId = new(populationState.Households.Max(static household => household.Id.Value) + 1);
         PopulationHouseholdState ordinaryHousehold = new()
@@ -321,7 +323,8 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         settlement.RetaliationRisk = 16;
         settlement.CoercionRisk = 12;
 
-        PlayerCommandResult partial = new PlayerCommandService().IssueIntent(
+        PlayerCommandService commandService = new();
+        PlayerCommandResult partial = commandService.IssueIntent(
             simulation,
             new PlayerCommandRequest
             {
@@ -352,9 +355,43 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
             .Any(affordance => affordance.SettlementId == settlementId
                                && affordance.CommandName == PlayerCommandNames.RepairLocalWatchGuarantee),
             Is.True);
+        PlayerCommandAffordanceSnapshot repairAffordance = monthNPlusOne.PlayerCommands.Affordances
+            .First(affordance => affordance.SettlementId == settlementId
+                                 && affordance.CommandName == PlayerCommandNames.RepairLocalWatchGuarantee);
+        Assert.That(repairAffordance.TargetLabel, Does.Contain(ordinaryHousehold.HouseholdName));
+        Assert.That(repairAffordance.AvailabilitySummary, Does.Contain(ordinaryHousehold.HouseholdName));
+        Assert.That(repairAffordance.ExecutionSummary, Does.Contain("命令所有者"));
+        Assert.That(repairAffordance.LeverageSummary, Does.Contain(ordinaryHousehold.HouseholdName));
+        Assert.That(repairAffordance.CostSummary, Does.Contain(ordinaryHousehold.HouseholdName));
+        Assert.That(repairAffordance.ReadbackSummary, Does.Contain(ordinaryHousehold.HouseholdName));
         Assert.That(ordinaryHousehold.Distress, Is.EqualTo(distressBeforeProjection));
         Assert.That(ordinaryHousehold.DebtPressure, Is.EqualTo(debtBeforeProjection));
         Assert.That(ordinaryHousehold.MigrationRisk, Is.EqualTo(migrationBeforeProjection));
+
+        int memoryCountBeforeResponse = socialState.Memories.Count;
+        PlayerCommandResult response = commandService.IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = settlementId,
+                CommandName = PlayerCommandNames.RepairLocalWatchGuarantee,
+            });
+
+        Assert.That(response.Accepted, Is.True);
+        Assert.That(ordinaryHousehold.Distress, Is.EqualTo(distressBeforeProjection));
+        Assert.That(ordinaryHousehold.DebtPressure, Is.EqualTo(debtBeforeProjection));
+        Assert.That(ordinaryHousehold.MigrationRisk, Is.EqualTo(migrationBeforeProjection));
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeResponse),
+            "Same-month response command must not write SocialMemory.");
+
+        PresentationReadModelBundle afterResponse = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot responseReceipt = afterResponse.PlayerCommands.Receipts
+            .First(receipt => receipt.SettlementId == settlementId
+                              && receipt.CommandName == PlayerCommandNames.RepairLocalWatchGuarantee);
+        Assert.That(responseReceipt.TargetLabel, Does.Contain(ordinaryHousehold.HouseholdName));
+        Assert.That(responseReceipt.LeverageSummary, Does.Contain(ordinaryHousehold.HouseholdName));
+        Assert.That(responseReceipt.CostSummary, Does.Contain(ordinaryHousehold.HouseholdName));
+        Assert.That(responseReceipt.ReadbackSummary, Does.Contain(ordinaryHousehold.HouseholdName));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)

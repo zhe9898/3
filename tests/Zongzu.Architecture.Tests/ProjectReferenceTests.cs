@@ -327,6 +327,29 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Ordinary_household_response_play_surface_must_use_projected_household_pressures_only()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.OrdinaryHouseholdSurface.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(source, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(source, Does.Not.Contain("PopulationAndHouseholdsState"));
+        Assert.That(source, Does.Not.Contain(".Memories.Add"));
+        Assert.That(source, Does.Contain("HouseholdSocialPressureSignalKeys.PublicLifeOrderResidue"));
+        Assert.That(source, Does.Contain("PlayerCommandAffordanceSnapshot"));
+        Assert.That(source, Does.Contain("PlayerCommandReceiptSnapshot"));
+    }
+
+    [Test]
     public void Public_life_response_friction_readers_must_not_parse_social_memory_summary()
     {
         string[] sourcePaths =

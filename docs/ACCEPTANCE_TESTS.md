@@ -319,3 +319,13 @@ At integration level, verify:
 - Projection acceptance must show route fear, runner/watch misunderstanding, household labor/debt/migration strain, and yamen delay where projected, while leaving `PopulationAndHouseholds` state unmutated by read-model composition.
 - Unity acceptance must prove Desk Sandbox settlement pressure displays the projected ordinary-household after-account only from `PresentationReadModelBundle.HouseholdSocialPressures`.
 - Save/schema acceptance: v10 adds runtime read-model constants only and introduces no persisted fields, schema bump, migration, or save roundtrip requirement.
+
+## Playable closure v11 ordinary-household play-surface acceptance - 2026-04-25
+- `public-life-order-ordinary-household-play-surface-v11` must prove ordinary-household pressure becomes a costed response choice surface, while staying inside the same rule-driven command / residue / social-memory / response / readback loop.
+- Read-model acceptance must prove Month N+1 response affordances for `补保巡丁`, `赔脚户误读`, `押文催县门`, `改走递报`, `暂缓强压`, or `请族老解释` can display which ordinary household is carrying the visible后账.
+- Choice-surface acceptance must prove response affordances expose projected availability, leverage, cost, owner-module execution, and next-readback text that mention the affected household, without adding household-owned order commands.
+- Command acceptance must prove issuing a response mutates only `OrderAndBanditry`, `OfficeAndCareer`, or `FamilyCore` at command time, and does not mutate `PopulationAndHouseholds` or same-month `SocialMemoryAndRelations`.
+- Receipt acceptance must prove the response receipt carries ordinary-household readback after owner-module resolution, while durable residue remains for later `SocialMemoryAndRelations` monthly handling.
+- Unity acceptance must prove Desk Sandbox public-life command affordances and receipts copy projected ordinary-household response text only.
+- Architecture acceptance must guard against summary parsing, UI/Application outcome computation, forbidden manager/god-controller names, `PersonRegistry` expansion, and household-control drift.
+- Save/schema acceptance: v11 is runtime projection enrichment only and introduces no persisted fields, command request shape change, schema bump, migration, or save roundtrip requirement.
