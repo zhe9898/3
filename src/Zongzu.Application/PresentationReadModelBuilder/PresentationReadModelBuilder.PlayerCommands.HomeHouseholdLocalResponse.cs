@@ -43,28 +43,41 @@ public sealed partial class PresentationReadModelBuilder
             BuildHomeHouseholdLocalResponseTradeoffForecast(PlayerCommandNames.PoolRunnerCompensation, household, residue.Score);
         HouseholdLocalResponseTradeoffForecast roadMessageTradeoff =
             BuildHomeHouseholdLocalResponseTradeoffForecast(PlayerCommandNames.SendHouseholdRoadMessage, household, residue.Score);
+        HouseholdLocalResponseFollowUpHint nightTravelFollowUp =
+            BuildHomeHouseholdLocalResponseFollowUpHint(PlayerCommandNames.RestrictNightTravel, household);
+        HouseholdLocalResponseFollowUpHint compensationFollowUp =
+            BuildHomeHouseholdLocalResponseFollowUpHint(PlayerCommandNames.PoolRunnerCompensation, household);
+        HouseholdLocalResponseFollowUpHint roadMessageFollowUp =
+            BuildHomeHouseholdLocalResponseFollowUpHint(PlayerCommandNames.SendHouseholdRoadMessage, household);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.RestrictNightTravel,
             anchor.SettlementId,
             $"{householdName}可先暂缩夜行，少走夜路、渡口与黑路，把拒落/半落地后账先从自家脚程上压住。",
             (migrationRisk >= 28 || residue.Score >= 25) && nightTravelCapacity.IsEnabled,
-            JoinHomeHouseholdLocalResponseText($"本户迁徙之念{migrationRisk}，{residue.Label}{residue.Score}。", socialMemoryHint, nightTravelCapacity.AvailabilitySummary),
+            JoinHomeHouseholdLocalResponseText(
+                $"本户迁徙之念{migrationRisk}，{residue.Label}{residue.Score}。",
+                socialMemoryHint,
+                nightTravelCapacity.AvailabilitySummary,
+                nightTravelFollowUp.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理本户劳力、债压、民困和迁徙险；不替治安、县门或族老修复前案。",
             leverageSummary: JoinHomeHouseholdLocalResponseText(
                 $"本户只动自家夜行、脚程与临时避险。{residue.Summary}",
                 nightTravelTradeoff.BenefitSummary,
-                nightTravelTradeoff.BoundarySummary),
+                nightTravelTradeoff.BoundarySummary,
+                nightTravelFollowUp.LeverageSummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：丁力会被收紧，债压可能小涨；当前丁力{laborCapacity}，债压{debtPressure}。",
                 nightTravelCapacity.CostSummary,
-                nightTravelTradeoff.RecoilSummary),
+                nightTravelTradeoff.RecoilSummary,
+                nightTravelFollowUp.CostSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的迁徙之念、丁力和后账是否转为已缓、暂压或吃紧。",
                 nightTravelCapacity.ReadbackSummary,
                 nightTravelTradeoff.ReadbackSummary,
                 nightTravelTradeoff.BoundarySummary,
+                nightTravelFollowUp.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
 
@@ -73,22 +86,29 @@ public sealed partial class PresentationReadModelBuilder
             anchor.SettlementId,
             $"{householdName}可凑钱赔脚户，把误读和街口话头先压住，免得家户羞面继续外翻。",
             (distress >= 35 || residue.Score >= 20) && compensationCapacity.IsEnabled,
-            JoinHomeHouseholdLocalResponseText($"本户民困{distress}，债压{debtPressure}，脚路后账可见。", socialMemoryHint, compensationCapacity.AvailabilitySummary),
+            JoinHomeHouseholdLocalResponseText(
+                $"本户民困{distress}，债压{debtPressure}，脚路后账可见。",
+                socialMemoryHint,
+                compensationCapacity.AvailabilitySummary,
+                compensationFollowUp.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理本户现钱、人情与民困变化；不替OrderAndBanditry补巡丁权威。",
             leverageSummary: JoinHomeHouseholdLocalResponseText(
                 "本户拿钱和人情先对脚户解释，只能压住自家牵连的误读。",
                 compensationTradeoff.BenefitSummary,
-                compensationTradeoff.BoundarySummary),
+                compensationTradeoff.BoundarySummary,
+                compensationFollowUp.LeverageSummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：债压会抬升，换取民困和迁徙险暂缓；当前债压{debtPressure}。",
                 compensationCapacity.CostSummary,
-                compensationTradeoff.RecoilSummary),
+                compensationTradeoff.RecoilSummary,
+                compensationFollowUp.CostSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的民困是否下降，债压是否转成新的欠账。",
                 compensationCapacity.ReadbackSummary,
                 compensationTradeoff.ReadbackSummary,
                 compensationTradeoff.BoundarySummary,
+                compensationFollowUp.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
 
@@ -97,22 +117,29 @@ public sealed partial class PresentationReadModelBuilder
             anchor.SettlementId,
             $"{householdName}可遣少丁递信，把路情和脚户说法先问清，再决定是否继续压。",
             laborCapacity >= 18 && residue.Score >= 18 && roadMessageCapacity.IsEnabled,
-            JoinHomeHouseholdLocalResponseText($"本户丁力{laborCapacity}，{residue.Label}{residue.Score}。", socialMemoryHint, roadMessageCapacity.AvailabilitySummary),
+            JoinHomeHouseholdLocalResponseText(
+                $"本户丁力{laborCapacity}，{residue.Label}{residue.Score}。",
+                socialMemoryHint,
+                roadMessageCapacity.AvailabilitySummary,
+                roadMessageFollowUp.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理自家派丁与劳力抽动；递信不等于官署递报。",
             leverageSummary: JoinHomeHouseholdLocalResponseText(
                 "本户只能派自家少丁跑一趟，换一点路情清楚和街口解释。",
                 roadMessageTradeoff.BenefitSummary,
-                roadMessageTradeoff.BoundarySummary),
+                roadMessageTradeoff.BoundarySummary,
+                roadMessageFollowUp.LeverageSummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：丁力会下降，若本已薄弱会变成吃紧后账；当前丁力{laborCapacity}。",
                 roadMessageCapacity.CostSummary,
-                roadMessageTradeoff.RecoilSummary),
+                roadMessageTradeoff.RecoilSummary,
+                roadMessageFollowUp.CostSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的丁力、迁徙之念和后账读回。",
                 roadMessageCapacity.ReadbackSummary,
                 roadMessageTradeoff.ReadbackSummary,
                 roadMessageTradeoff.BoundarySummary,
+                roadMessageFollowUp.ReadbackSummary,
                 socialMemoryReadback),
             targetLabel: householdName);
     }
@@ -370,6 +397,96 @@ public sealed partial class PresentationReadModelBuilder
         return new HouseholdLocalResponseShortTermConsequenceReadback(relief, squeeze, external);
     }
 
+    private static HouseholdLocalResponseFollowUpHint BuildHomeHouseholdLocalResponseFollowUpHint(
+        string commandName,
+        HouseholdPressureSnapshot? household)
+    {
+        if (household is null || string.IsNullOrWhiteSpace(household.LastLocalResponseCommandCode))
+        {
+            return HouseholdLocalResponseFollowUpHint.Empty;
+        }
+
+        bool repeatsLastCommand = string.Equals(
+            commandName,
+            household.LastLocalResponseCommandCode,
+            StringComparison.Ordinal);
+        string priorLabel = string.IsNullOrWhiteSpace(household.LastLocalResponseCommandLabel)
+            ? RenderHomeHouseholdLocalResponseCommandLabel(household.LastLocalResponseCommandCode)
+            : household.LastLocalResponseCommandLabel;
+        string currentLabel = RenderHomeHouseholdLocalResponseCommandLabel(commandName);
+        string availability = BuildHomeHouseholdLocalResponseFollowUpAvailability(
+            priorLabel,
+            household.LastLocalResponseOutcomeCode,
+            repeatsLastCommand);
+        string leverage = repeatsLastCommand
+            ? $"续接边界：重复{priorLabel}仍只处理本户脚边，不修巡丁、县门、族老或社会记忆后账。"
+            : $"换招提示：从{priorLabel}转到{currentLabel}只是换一种本户小动作，外部后账仍要原 owning module。";
+        string cost = BuildHomeHouseholdLocalResponseFollowUpCost(household, repeatsLastCommand);
+        string readback = repeatsLastCommand
+            ? $"续接读回：看重复{priorLabel}是否只是把后账在本户内转压，还是能继续缓住一头。"
+            : $"续接读回：看换招是否把余波转缓，还是留下新的债压、丁力或迁徙尾巴。";
+
+        return new HouseholdLocalResponseFollowUpHint(availability, leverage, cost, readback);
+    }
+
+    private static string BuildHomeHouseholdLocalResponseFollowUpAvailability(
+        string priorLabel,
+        string outcomeCode,
+        bool repeatsLastCommand)
+    {
+        if (repeatsLastCommand)
+        {
+            return outcomeCode switch
+            {
+                HouseholdLocalResponseOutcomeCodes.Relieved => $"续接提示：上次{priorLabel}已缓，重复只宜轻接，不必把本户继续往硬处压。",
+                HouseholdLocalResponseOutcomeCodes.Contained => $"续接提示：上次{priorLabel}只是暂压，重复可接一点余波，但外部后账仍未清。",
+                HouseholdLocalResponseOutcomeCodes.Strained => $"续接提示：上次{priorLabel}已吃紧，本月重复容易把家计压过线。",
+                HouseholdLocalResponseOutcomeCodes.Ignored => $"续接提示：上次{priorLabel}未接住，重复多半仍弱，宜先换招或等外部读回。",
+                _ => $"续接提示：上次{priorLabel}后账仍在，重复前先看本户承受线。",
+            };
+        }
+
+        return outcomeCode switch
+        {
+            HouseholdLocalResponseOutcomeCodes.Relieved => $"续接提示：上次{priorLabel}已缓，换招只宜轻接余波，不宜把本户当巡丁。",
+            HouseholdLocalResponseOutcomeCodes.Contained => $"续接提示：上次{priorLabel}暂压，换招是在补自家脚边，不是修县门和巡防。",
+            HouseholdLocalResponseOutcomeCodes.Strained => $"续接提示：上次{priorLabel}已吃紧，换招前先看债压和丁力。",
+            HouseholdLocalResponseOutcomeCodes.Ignored => $"续接提示：上次{priorLabel}放置，换招可问路或止口舌，但外部后账仍要另看。",
+            _ => $"续接提示：上次{priorLabel}余波未明，换招也只算本户小动作。",
+        };
+    }
+
+    private static string BuildHomeHouseholdLocalResponseFollowUpCost(
+        HouseholdPressureSnapshot household,
+        bool repeatsLastCommand)
+    {
+        string pressure = $"冷却提示：当前民困{household.Distress}，债压{household.DebtPressure}，丁力{household.LaborCapacity}，迁徙之念{household.MigrationRisk}";
+        if (household.LastLocalResponseOutcomeCode == HouseholdLocalResponseOutcomeCodes.Strained)
+        {
+            return repeatsLastCommand
+                ? $"{pressure}；本月再压容易叠成新尾巴。"
+                : $"{pressure}；换招前先避开继续叠债或叠丁力。";
+        }
+
+        if (household.LastLocalResponseOutcomeCode == HouseholdLocalResponseOutcomeCodes.Relieved)
+        {
+            return $"{pressure}；已缓的一头不宜马上再当主力。";
+        }
+
+        return $"{pressure}；仍要防止把外部后账转成自家硬账。";
+    }
+
+    private static string RenderHomeHouseholdLocalResponseCommandLabel(string commandName)
+    {
+        return commandName switch
+        {
+            PlayerCommandNames.RestrictNightTravel => "暂缩夜行",
+            PlayerCommandNames.PoolRunnerCompensation => "凑钱赔脚户",
+            PlayerCommandNames.SendHouseholdRoadMessage => "遣少丁递信",
+            _ => commandName,
+        };
+    }
+
     private static HouseholdLocalResponseAffordanceCapacity BuildNightTravelCapacity(
         HouseholdPressureSnapshot household,
         int residueScore,
@@ -460,6 +577,16 @@ public sealed partial class PresentationReadModelBuilder
     {
         public static HouseholdLocalResponseShortTermConsequenceReadback Empty { get; } =
             new(string.Empty, string.Empty, string.Empty);
+    }
+
+    private readonly record struct HouseholdLocalResponseFollowUpHint(
+        string AvailabilitySummary,
+        string LeverageSummary,
+        string CostSummary,
+        string ReadbackSummary)
+    {
+        public static HouseholdLocalResponseFollowUpHint Empty { get; } =
+            new(string.Empty, string.Empty, string.Empty, string.Empty);
     }
 
     private static string JoinHomeHouseholdLocalResponseText(params string[] parts)

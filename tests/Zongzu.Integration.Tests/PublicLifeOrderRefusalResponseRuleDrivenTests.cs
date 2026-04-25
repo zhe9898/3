@@ -1016,6 +1016,21 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
             "Same-month capacity-shaped local response must not write SocialMemory.");
 
         PresentationReadModelBundle afterResponse = builder.BuildForM2(simulation);
+        PlayerCommandAffordanceSnapshot repeatRoadMessageAffordance = afterResponse.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.SendHouseholdRoadMessage
+                                 && affordance.TargetLabel == anchorHousehold.HouseholdName);
+        PlayerCommandAffordanceSnapshot switchedCompensationAffordance = afterResponse.PlayerCommands.Affordances
+            .First(affordance => affordance.CommandName == PlayerCommandNames.PoolRunnerCompensation
+                                 && affordance.TargetLabel == anchorHousehold.HouseholdName);
+        Assert.That(repeatRoadMessageAffordance.AvailabilitySummary, Does.Contain("续接提示"));
+        Assert.That(repeatRoadMessageAffordance.AvailabilitySummary, Does.Contain("已吃紧"));
+        Assert.That(repeatRoadMessageAffordance.CostSummary, Does.Contain("冷却提示"));
+        Assert.That(repeatRoadMessageAffordance.CostSummary, Does.Contain("本月再压"));
+        Assert.That(repeatRoadMessageAffordance.ReadbackSummary, Does.Contain("续接读回"));
+        Assert.That(switchedCompensationAffordance.LeverageSummary, Does.Contain("换招提示"));
+        Assert.That(switchedCompensationAffordance.LeverageSummary, Does.Contain("外部后账"));
+        Assert.That(switchedCompensationAffordance.CostSummary, Does.Contain("换招前"));
+
         PlayerCommandReceiptSnapshot receipt = afterResponse.PlayerCommands.Receipts
             .First(candidate => candidate.CommandName == PlayerCommandNames.SendHouseholdRoadMessage
                                 && candidate.TargetLabel == anchorHousehold.HouseholdName);

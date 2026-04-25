@@ -400,3 +400,12 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy projected short-term consequence receipt fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
 - Save/schema acceptance: v18 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v19 home-household follow-up affordance acceptance - 2026-04-25
+- `public-life-order-home-household-follow-up-affordance-v19` must prove the v12-v18 home-household lane now shows projected repeat/switch/cooldown hints on the next local response surface, before thick household rules are added.
+- Projection acceptance must prove affordances expose `续接提示`, `换招提示`, `冷却提示`, and `续接读回` for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from existing projected household fields and structured `LastLocalResponse*` codes only.
+- Command acceptance remains strict: issuing the local response mutates only `PopulationAndHouseholds` at command time without mutating `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- SocialMemory acceptance must prove the later reader does not parse `续接提示`, `换招提示`, `冷却提示`, `续接读回`, `LastLocalResponseSummary`, receipt prose, or `DomainEvent.Summary`; durable residue still comes from structured aftermath fields.
+- Unity acceptance must prove shell adapters copy projected follow-up affordance fields and do not query modules, select hidden household targets, resolve outcomes, write SocialMemory, or maintain a cooldown ledger.
+- Save/schema acceptance: v19 adds no persisted fields, no schema bump, no migration, no command target shape change, no cooldown ledger, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
