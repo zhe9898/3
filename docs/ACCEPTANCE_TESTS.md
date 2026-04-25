@@ -381,3 +381,13 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy projected capacity fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
 - Save/schema acceptance: v16 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.
+
+## Playable closure v17 home-household response tradeoff forecast acceptance - 2026-04-25
+- `public-life-order-home-household-response-tradeoff-v17` must prove the v12-v16 home-household lane now shows projected `取舍预判` before thick household rules are added.
+- Read-model acceptance must prove Month N+1 local response affordances expose `预期收益`, `反噬尾巴`, and `外部后账` for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信` from existing household fields only.
+- Choice acceptance must prove the three options read differently: night travel favors migration / night-road relief, runner compensation favors calming `脚户误读` while risking `新欠账`, and road messaging favors `路情` clarity while spending `丁力`.
+- Command acceptance must prove issuing a tradeoff-shaped local response mutates only `PopulationAndHouseholds` at command time without mutating `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, or `PersonRegistry`.
+- Projection acceptance must prove affordances and receipts expose `取舍预判`, `预期收益`, `反噬尾巴`, `外部后账`, and `取舍读回` from read models only, while Application/UI/Unity do not compute final command outcome.
+- Unity acceptance must prove shell adapters copy projected tradeoff forecast fields and do not query modules, select hidden household targets, resolve outcomes, or write SocialMemory.
+- Save/schema acceptance: v17 adds no persisted fields, no schema bump, no migration, no command target shape change, and no new SocialMemory field.
+- Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, and Application/UI/Unity writes to SocialMemory.

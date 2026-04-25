@@ -971,9 +971,18 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(compensationAffordance.ReadbackSummary, Does.Contain("承受线读回"));
         Assert.That(nightTravelAffordance.IsEnabled, Is.True);
         Assert.That(nightTravelAffordance.AvailabilitySummary, Does.Contain("迁徙之念已急"));
+        Assert.That(nightTravelAffordance.LeverageSummary, Does.Contain("取舍预判"));
+        Assert.That(nightTravelAffordance.LeverageSummary, Does.Contain("预期收益"));
+        Assert.That(nightTravelAffordance.CostSummary, Does.Contain("反噬尾巴"));
+        Assert.That(nightTravelAffordance.ReadbackSummary, Does.Contain("取舍读回"));
         Assert.That(roadMessageAffordance.IsEnabled, Is.False);
         Assert.That(roadMessageAffordance.AvailabilitySummary, Does.Contain("丁力已贴地"));
+        Assert.That(roadMessageAffordance.LeverageSummary, Does.Contain("路情"));
+        Assert.That(roadMessageAffordance.CostSummary, Does.Contain("丁力薄"));
+        Assert.That(roadMessageAffordance.ReadbackSummary, Does.Contain("外部后账"));
         Assert.That(roadMessageAffordance.ReadbackSummary, Does.Contain("承受线读回"));
+        Assert.That(compensationAffordance.LeverageSummary, Does.Contain("脚户误读"));
+        Assert.That(compensationAffordance.CostSummary, Does.Contain("新欠账"));
 
         int memoryCountBeforeResponse = socialState.Memories.Count;
         int routePressureBeforeResponse = settlement.RoutePressure;
@@ -997,6 +1006,8 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(anchorHousehold.LastLocalResponseTraceCode, Is.EqualTo(HouseholdLocalResponseTraceCodes.HouseholdRoadMessageSent));
         Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("回应承受线"));
         Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("丁力已贴地"));
+        Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("取舍预判"));
+        Assert.That(anchorHousehold.LastLocalResponseSummary, Does.Contain("外部后账"));
         Assert.That(settlement.RoutePressure, Is.EqualTo(routePressureBeforeResponse));
         Assert.That(settlement.LastRefusalResponseCommandCode, Is.EqualTo(orderResponseBefore));
         Assert.That(string.Join("|", familyState.Clans.Select(static clan => clan.LastRefusalResponseCommandCode)), Is.EqualTo(familyResponsesBefore));
@@ -1009,8 +1020,13 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
             .First(candidate => candidate.CommandName == PlayerCommandNames.SendHouseholdRoadMessage
                                 && candidate.TargetLabel == anchorHousehold.HouseholdName);
         Assert.That(receipt.Summary, Does.Contain("回应承受线"));
+        Assert.That(receipt.Summary, Does.Contain("取舍预判"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("预期收益"));
+        Assert.That(receipt.LeverageSummary, Does.Contain("外部后账"));
         Assert.That(receipt.CostSummary, Does.Contain("承受线代价"));
+        Assert.That(receipt.CostSummary, Does.Contain("反噬尾巴"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("承受线读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("取舍读回"));
     }
 
     private static SettlementId SelectSettlementWithDisorder(PresentationReadModelBundle bundle)

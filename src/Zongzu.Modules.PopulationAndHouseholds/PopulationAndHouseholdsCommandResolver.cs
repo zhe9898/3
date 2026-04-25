@@ -107,6 +107,7 @@ public static class PopulationAndHouseholdsCommandResolver
             : $"{household.HouseholdName}暂缩夜行，少走夜路、渡口和黑路，迁徙之念缓到{household.MigrationRisk}。";
         summary = AppendHouseholdTextureSummary(summary, textureProfile);
         summary = AppendHouseholdCapacitySummary(summary, textureProfile);
+        summary = AppendHouseholdTradeoffSummary(summary, command.CommandName, household);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -158,6 +159,7 @@ public static class PopulationAndHouseholdsCommandResolver
             : $"{household.HouseholdName}凑钱赔了脚户误读，街口误会先缓，民困降到{household.Distress}。";
         summary = AppendHouseholdTextureSummary(summary, textureProfile);
         summary = AppendHouseholdCapacitySummary(summary, textureProfile);
+        summary = AppendHouseholdTradeoffSummary(summary, command.CommandName, household);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -210,6 +212,7 @@ public static class PopulationAndHouseholdsCommandResolver
             : $"{household.HouseholdName}遣少丁递信，先把路情和脚户说法递清，迁徙之念调到{household.MigrationRisk}。";
         summary = AppendHouseholdTextureSummary(summary, textureProfile);
         summary = AppendHouseholdCapacitySummary(summary, textureProfile);
+        summary = AppendHouseholdTradeoffSummary(summary, command.CommandName, household);
         summary = AppendResidueFrictionSummary(summary, residueFriction);
 
         ApplyLocalResponseReceipt(
@@ -342,6 +345,17 @@ public static class PopulationAndHouseholdsCommandResolver
             : $"{summary}{textureProfile.CapacityTail}";
     }
 
+    private static string AppendHouseholdTradeoffSummary(
+        string summary,
+        string commandName,
+        PopulationHouseholdState household)
+    {
+        string tail = BuildHouseholdTradeoffSummaryTail(commandName, household);
+        return string.IsNullOrWhiteSpace(tail)
+            ? summary
+            : $"{summary}{tail}";
+    }
+
     private static string BuildHouseholdTextureSummaryTail(PopulationHouseholdState household)
     {
         List<string> notes = [];
@@ -394,6 +408,28 @@ public static class PopulationAndHouseholdsCommandResolver
         return notes.Count == 0
             ? string.Empty
             : $" 回应承受线：{string.Join("；", notes)}。";
+    }
+
+    private static string BuildHouseholdTradeoffSummaryTail(
+        string commandName,
+        PopulationHouseholdState household)
+    {
+        return commandName switch
+        {
+            PlayerCommandNames.RestrictNightTravel =>
+                household.LaborCapacity < 30
+                    ? " 取舍预判：预期收益是先压夜路与迁徙险，反噬尾巴是薄丁户会把避险换成口粮吃紧；外部后账仍不补巡丁、不催县门。"
+                    : " 取舍预判：预期收益是先压夜路与迁徙险，反噬尾巴是丁力小耗、债压轻浮；外部后账仍不补巡丁、不催县门。",
+            PlayerCommandNames.PoolRunnerCompensation =>
+                household.DebtPressure >= 80
+                    ? " 取舍预判：预期收益是先止脚户误读和街口口舌，反噬尾巴是债账高时容易坐成新欠账；外部后账仍不补巡丁、不催县门。"
+                    : " 取舍预判：预期收益是先止脚户误读和街口口舌，反噬尾巴是用钱和人情换暂缓；外部后账仍不补巡丁、不催县门。",
+            PlayerCommandNames.SendHouseholdRoadMessage =>
+                household.LaborCapacity < 32
+                    ? " 取舍预判：预期收益是换回路情和脚户说法，反噬尾巴是抽少丁出门会压住家计；外部后账仍不等于官署递报。"
+                    : " 取舍预判：预期收益是换回路情和脚户说法，反噬尾巴是耗丁力但债压较轻；外部后账仍不等于官署递报。",
+            _ => string.Empty,
+        };
     }
 
     private static string AppendResidueFrictionSummary(

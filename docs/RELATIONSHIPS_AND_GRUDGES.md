@@ -113,6 +113,11 @@ Current public-life/order v16 home-household response capacity note:
 - A debt-over-line or labor-floor household may make `凑钱赔脚户` or `遣少丁递信` unfit in the read model and may make a forced command resolve as `Strained`, but only `PopulationAndHouseholds` writes that local response trace at command time.
 - `SocialMemoryAndRelations` still waits for its later monthly pass and reads only structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`; it must not parse `回应承受线`, `承受线代价`, `承受线读回`, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
 
+Current public-life/order v17 home-household response tradeoff note:
+- `取舍预判`, `预期收益`, `反噬尾巴`, and `外部后账` are projection / Population command-time readability cues, not durable social memory state.
+- The forecast may explain why `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信` feels different in play, but only structured local response aftermath can later become durable memory.
+- `SocialMemoryAndRelations` still waits for its later monthly pass and reads only structured `LastLocalResponseCommandCode`, `LastLocalResponseOutcomeCode`, and `LastLocalResponseTraceCode`; it must not parse `取舍预判`, `预期收益`, `反噬尾巴`, `外部后账`, `LastLocalResponseSummary`, receipt text, or `DomainEvent.Summary`.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

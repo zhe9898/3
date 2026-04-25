@@ -396,6 +396,8 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("HouseholdPressureSnapshot"));
         Assert.That(source, Does.Contain("HouseholdLocalResponseAffordanceCapacity"));
         Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseAffordanceCapacity"));
+        Assert.That(source, Does.Contain("HouseholdLocalResponseTradeoffForecast"));
+        Assert.That(source, Does.Contain("BuildHomeHouseholdLocalResponseTradeoffForecast"));
         Assert.That(source, Does.Contain("IsEnabled"));
         Assert.That(source, Does.Contain("LastLocalResponseCommandCode"));
         Assert.That(source, Does.Contain("PlayerCommandAffordanceSnapshot"));
@@ -482,6 +484,7 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("memory.Summary"));
         Assert.That(source, Does.Contain("ResolveHomeHouseholdLocalResponseTextureProfile"));
         Assert.That(source, Does.Contain("BuildHouseholdCapacitySummaryTail"));
+        Assert.That(source, Does.Contain("BuildHouseholdTradeoffSummaryTail"));
         Assert.That(source, Does.Contain("HouseholdLocalResponseTextureProfile"));
         Assert.That(source, Does.Contain("DebtCapacityBroken"));
         Assert.That(source, Does.Contain("LaborCapacityBroken"));

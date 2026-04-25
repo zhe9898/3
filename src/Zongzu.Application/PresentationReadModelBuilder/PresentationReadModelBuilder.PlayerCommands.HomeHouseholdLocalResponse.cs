@@ -37,6 +37,12 @@ public sealed partial class PresentationReadModelBuilder
             BuildHomeHouseholdLocalResponseAffordanceCapacity(PlayerCommandNames.PoolRunnerCompensation, household, residue.Score);
         HouseholdLocalResponseAffordanceCapacity roadMessageCapacity =
             BuildHomeHouseholdLocalResponseAffordanceCapacity(PlayerCommandNames.SendHouseholdRoadMessage, household, residue.Score);
+        HouseholdLocalResponseTradeoffForecast nightTravelTradeoff =
+            BuildHomeHouseholdLocalResponseTradeoffForecast(PlayerCommandNames.RestrictNightTravel, household, residue.Score);
+        HouseholdLocalResponseTradeoffForecast compensationTradeoff =
+            BuildHomeHouseholdLocalResponseTradeoffForecast(PlayerCommandNames.PoolRunnerCompensation, household, residue.Score);
+        HouseholdLocalResponseTradeoffForecast roadMessageTradeoff =
+            BuildHomeHouseholdLocalResponseTradeoffForecast(PlayerCommandNames.SendHouseholdRoadMessage, household, residue.Score);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.RestrictNightTravel,
@@ -46,13 +52,19 @@ public sealed partial class PresentationReadModelBuilder
             JoinHomeHouseholdLocalResponseText($"本户迁徙之念{migrationRisk}，{residue.Label}{residue.Score}。", socialMemoryHint, nightTravelCapacity.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理本户劳力、债压、民困和迁徙险；不替治安、县门或族老修复前案。",
-            leverageSummary: $"本户只动自家夜行、脚程与临时避险。{residue.Summary}",
+            leverageSummary: JoinHomeHouseholdLocalResponseText(
+                $"本户只动自家夜行、脚程与临时避险。{residue.Summary}",
+                nightTravelTradeoff.BenefitSummary,
+                nightTravelTradeoff.BoundarySummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：丁力会被收紧，债压可能小涨；当前丁力{laborCapacity}，债压{debtPressure}。",
-                nightTravelCapacity.CostSummary),
+                nightTravelCapacity.CostSummary,
+                nightTravelTradeoff.RecoilSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的迁徙之念、丁力和后账是否转为已缓、暂压或吃紧。",
                 nightTravelCapacity.ReadbackSummary,
+                nightTravelTradeoff.ReadbackSummary,
+                nightTravelTradeoff.BoundarySummary,
                 socialMemoryReadback),
             targetLabel: householdName);
 
@@ -64,13 +76,19 @@ public sealed partial class PresentationReadModelBuilder
             JoinHomeHouseholdLocalResponseText($"本户民困{distress}，债压{debtPressure}，脚路后账可见。", socialMemoryHint, compensationCapacity.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理本户现钱、人情与民困变化；不替OrderAndBanditry补巡丁权威。",
-            leverageSummary: "本户拿钱和人情先对脚户解释，只能压住自家牵连的误读。",
+            leverageSummary: JoinHomeHouseholdLocalResponseText(
+                "本户拿钱和人情先对脚户解释，只能压住自家牵连的误读。",
+                compensationTradeoff.BenefitSummary,
+                compensationTradeoff.BoundarySummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：债压会抬升，换取民困和迁徙险暂缓；当前债压{debtPressure}。",
-                compensationCapacity.CostSummary),
+                compensationCapacity.CostSummary,
+                compensationTradeoff.RecoilSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的民困是否下降，债压是否转成新的欠账。",
                 compensationCapacity.ReadbackSummary,
+                compensationTradeoff.ReadbackSummary,
+                compensationTradeoff.BoundarySummary,
                 socialMemoryReadback),
             targetLabel: householdName);
 
@@ -82,13 +100,19 @@ public sealed partial class PresentationReadModelBuilder
             JoinHomeHouseholdLocalResponseText($"本户丁力{laborCapacity}，{residue.Label}{residue.Score}。", socialMemoryHint, roadMessageCapacity.AvailabilitySummary),
             clanId: anchor.SponsorClanId,
             executionSummary: "由PopulationAndHouseholds处理自家派丁与劳力抽动；递信不等于官署递报。",
-            leverageSummary: "本户只能派自家少丁跑一趟，换一点路情清楚和街口解释。",
+            leverageSummary: JoinHomeHouseholdLocalResponseText(
+                "本户只能派自家少丁跑一趟，换一点路情清楚和街口解释。",
+                roadMessageTradeoff.BenefitSummary,
+                roadMessageTradeoff.BoundarySummary),
             costSummary: JoinHomeHouseholdLocalResponseText(
                 $"代价：丁力会下降，若本已薄弱会变成吃紧后账；当前丁力{laborCapacity}。",
-                roadMessageCapacity.CostSummary),
+                roadMessageCapacity.CostSummary,
+                roadMessageTradeoff.RecoilSummary),
             readbackSummary: JoinHomeHouseholdLocalResponseText(
                 $"下月看{householdName}的丁力、迁徙之念和后账读回。",
                 roadMessageCapacity.ReadbackSummary,
+                roadMessageTradeoff.ReadbackSummary,
+                roadMessageTradeoff.BoundarySummary,
                 socialMemoryReadback),
             targetLabel: householdName);
     }
@@ -105,6 +129,8 @@ public sealed partial class PresentationReadModelBuilder
                 SelectHomeHouseholdLocalResponseSocialMemories(bundle.SocialMemories, household);
             HouseholdLocalResponseAffordanceCapacity responseCapacity =
                 BuildHomeHouseholdLocalResponseAffordanceCapacity(household.LastLocalResponseCommandCode, household, 0);
+            HouseholdLocalResponseTradeoffForecast responseTradeoff =
+                BuildHomeHouseholdLocalResponseTradeoffForecast(household.LastLocalResponseCommandCode, household, 0);
 
             yield return BuildPlayerCommandReceiptSnapshot(
                 household.LastLocalResponseCommandCode,
@@ -113,13 +139,19 @@ public sealed partial class PresentationReadModelBuilder
                 RenderHomeHouseholdLocalResponseOutcome(household.LastLocalResponseOutcomeCode),
                 clanId: household.SponsorClanId,
                 executionSummary: BuildHomeHouseholdLocalResponseExecutionSummary(household),
-                leverageSummary: "本户回应只结算自家劳力、债压、民困与迁徙险；不改治安、县门、宗房或社会记忆。",
+                leverageSummary: JoinHomeHouseholdLocalResponseText(
+                    "本户回应只结算自家劳力、债压、民困与迁徙险；不改治安、县门、宗房或社会记忆。",
+                    responseTradeoff.BenefitSummary,
+                    responseTradeoff.BoundarySummary),
                 costSummary: JoinHomeHouseholdLocalResponseText(
                     BuildHomeHouseholdLocalResponseCostSummary(household),
-                    responseCapacity.CostSummary),
+                    responseCapacity.CostSummary,
+                    responseTradeoff.RecoilSummary),
                 readbackSummary: JoinHomeHouseholdLocalResponseText(
                     BuildHomeHouseholdLocalResponseReadbackSummary(household, localSocialMemories),
-                    responseCapacity.ReadbackSummary),
+                    responseCapacity.ReadbackSummary,
+                    responseTradeoff.ReadbackSummary,
+                    responseTradeoff.BoundarySummary),
                 targetLabel: household.HouseholdName,
                 labelOverride: household.LastLocalResponseCommandLabel);
         }
@@ -216,6 +248,66 @@ public sealed partial class PresentationReadModelBuilder
         };
     }
 
+    private static HouseholdLocalResponseTradeoffForecast BuildHomeHouseholdLocalResponseTradeoffForecast(
+        string commandName,
+        HouseholdPressureSnapshot? household,
+        int residueScore)
+    {
+        if (household is null)
+        {
+            return HouseholdLocalResponseTradeoffForecast.Empty;
+        }
+
+        return commandName switch
+        {
+            PlayerCommandNames.RestrictNightTravel => BuildNightTravelTradeoff(household, residueScore),
+            PlayerCommandNames.PoolRunnerCompensation => BuildRunnerCompensationTradeoff(household),
+            PlayerCommandNames.SendHouseholdRoadMessage => BuildRoadMessageTradeoff(household),
+            _ => HouseholdLocalResponseTradeoffForecast.Empty,
+        };
+    }
+
+    private static HouseholdLocalResponseTradeoffForecast BuildNightTravelTradeoff(
+        HouseholdPressureSnapshot household,
+        int residueScore)
+    {
+        string benefit = household.MigrationRisk >= 70 || residueScore >= 45
+            ? "取舍预判：预期收益：先压夜路、渡口与迁徙险，迁徙之念高时最有用。"
+            : "取舍预判：预期收益：先把自家脚程从夜路和渡口抽回来，给后账留一点缓冲。";
+        string recoil = household.LaborCapacity < 30 || household.DependentCount > household.LaborerCount + 1
+            ? "反噬尾巴：会挤丁力，薄丁户容易把避险换成口粮吃紧。"
+            : "反噬尾巴：丁力小耗，债压可能轻微上浮。";
+        string boundary = "外部后账：不补巡丁、不催县门、不替族老解释。";
+        string readback = "取舍读回：看迁徙之念是否下降，丁力和债压是否留下新尾巴。";
+        return new HouseholdLocalResponseTradeoffForecast(benefit, recoil, boundary, readback);
+    }
+
+    private static HouseholdLocalResponseTradeoffForecast BuildRunnerCompensationTradeoff(HouseholdPressureSnapshot household)
+    {
+        string benefit = household.Distress >= 60
+            ? "取舍预判：预期收益：先止脚户误读和街口口舌，民困高时能缓脸面。"
+            : "取舍预判：预期收益：用现钱和人情把脚户误读先压成小账。";
+        string recoil = household.DebtPressure >= 80
+            ? "反噬尾巴：会抬债，债账高时容易坐成新欠账。"
+            : "反噬尾巴：用钱和人情换口舌暂缓。";
+        string boundary = "外部后账：不补巡丁、不催县门、不替族老解释。";
+        string readback = "取舍读回：看口舌是否压住，债压是否坐成新欠账。";
+        return new HouseholdLocalResponseTradeoffForecast(benefit, recoil, boundary, readback);
+    }
+
+    private static HouseholdLocalResponseTradeoffForecast BuildRoadMessageTradeoff(HouseholdPressureSnapshot household)
+    {
+        string benefit = household.MigrationRisk >= 55
+            ? "取舍预判：预期收益：换回路情和脚户说法，避免继续按误读行事。"
+            : "取舍预判：预期收益：先问清路情和脚户说法，再决定是否继续压。";
+        string recoil = household.LaborCapacity < 32 || household.DependentCount > household.LaborerCount + 1
+            ? "反噬尾巴：抽少丁出门，丁力薄时会压住家计。"
+            : "反噬尾巴：耗丁力但债压较轻。";
+        string boundary = "外部后账：这只是本户递信，不等于官署递报，也不补巡丁权威。";
+        string readback = "取舍读回：看路情是否问清，丁力是否掉到吃紧线。";
+        return new HouseholdLocalResponseTradeoffForecast(benefit, recoil, boundary, readback);
+    }
+
     private static HouseholdLocalResponseAffordanceCapacity BuildNightTravelCapacity(
         HouseholdPressureSnapshot household,
         int residueScore,
@@ -287,6 +379,16 @@ public sealed partial class PresentationReadModelBuilder
     {
         public static HouseholdLocalResponseAffordanceCapacity Empty { get; } =
             new(true, string.Empty, string.Empty, string.Empty);
+    }
+
+    private readonly record struct HouseholdLocalResponseTradeoffForecast(
+        string BenefitSummary,
+        string RecoilSummary,
+        string BoundarySummary,
+        string ReadbackSummary)
+    {
+        public static HouseholdLocalResponseTradeoffForecast Empty { get; } =
+            new(string.Empty, string.Empty, string.Empty, string.Empty);
     }
 
     private static string JoinHomeHouseholdLocalResponseText(params string[] parts)

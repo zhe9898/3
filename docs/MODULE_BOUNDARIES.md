@@ -205,6 +205,7 @@ Current routing note:
 - v14 repeat friction may read structured `SocialMemoryEntrySnapshot` cause keys and weights for the same household through `ISocialMemoryAndRelationsQueries`, but it still mutates only population-owned household state and must not parse memory summaries or write SocialMemory state
 - v15 common-household response texture may derive local command cost and outcome pressure from existing population-owned household fields such as debt, labor, distress, migration risk, dependents, laborers, and livelihood. This remains `PopulationAndHouseholds` command-time logic and adds no new household target, schema field, or foreign authority.
 - v16 response capacity affordance may project `回应承受线` and may add command-time capacity summary tails from those same existing household fields. It does not add persisted capacity state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
+- v17 response tradeoff forecast may project `取舍预判` / `预期收益` / `反噬尾巴` / `外部后账` and may add command-time tradeoff summary tails from those same existing household fields. It does not add persisted tradeoff state, does not change command targeting, and does not let Application / UI / Unity compute final local response outcomes.
 
 ### Emits events
 - `HouseholdDebtSpiked`
@@ -706,3 +707,10 @@ Current lite note:
 - `PopulationAndHouseholds` may use the same existing fields to mark a forced local response as `Strained` and append a capacity summary tail, but it still writes only household labor, debt, distress, migration, and local response trace fields.
 - Application projections may show whether `暂缩夜行`, `凑钱赔脚户`, or `遣少丁递信` is bearable, risky, or currently unfit. UI and Unity may copy those projected fields only and must not compute command outcome, query modules, or write SocialMemory.
 - v16 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.
+
+## 2026-04-25 playable closure v17 home-household response tradeoff forecast note
+- `public-life-order-home-household-response-tradeoff-v17` adds projected `取舍预判` to the same home-household local response lane.
+- The tradeoff forecast is derived only from existing household read-model fields and existing command-time household state: debt pressure, labor capacity, distress, migration risk, dependents, laborers, and livelihood. It is not a new saved ledger.
+- `PopulationAndHouseholds` may append command-time tradeoff summary tails for `暂缩夜行`, `凑钱赔脚户`, and `遣少丁递信`, but it still writes only household labor, debt, distress, migration, and local response trace fields.
+- Application projections may show expected benefit, recoil tail, and external-afteraccount boundary so the player can distinguish migration avoidance, runner compensation, and road-message choices. UI and Unity may copy those projected fields only and must not compute command outcome, query modules, or write SocialMemory.
+- v17 adds no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, or command-target shape change.
