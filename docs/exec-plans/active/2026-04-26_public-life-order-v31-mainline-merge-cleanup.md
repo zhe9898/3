@@ -1,5 +1,11 @@
 # Public-Life Order Closure v31: Mainline Merge And Branch Cleanup
 
+## Result Note - 2026-04-26
+- `main` was fast-forwarded to the validated v31 topic head and pushed.
+- Validation passed: build, focused integration / architecture / Unity presentation tests, `git diff --check`, and full no-build solution tests.
+- Merged public-life/order v25, v26, and v27-v30 topic branches were deleted locally and remotely.
+- No runtime rule, persisted state, schema, migration, command, projection wording, ledger, manager/controller, or `PersonRegistry` expansion was added by v31.
+
 ## Goal
 - Land the completed public-life/order v20-v30 owner-lane closure arc on `main`.
 - Clean up the now-merged topic branches after validation.
@@ -57,11 +63,11 @@
 - None. Branch cleanup is limited to the public-life/order v25-v30 topic branches that are ancestors of `main` after merge.
 
 ## Evidence Checklist
-- [ ] topic branch committed and pushed with V31 plan
-- [ ] `main` fast-forwarded to v31 topic head
-- [ ] `dotnet build Zongzu.sln --no-restore`
-- [ ] focused integration / architecture / Unity presentation tests
-- [ ] `git diff --check`
-- [ ] `dotnet test Zongzu.sln --no-build`
-- [ ] `main` pushed
-- [ ] merged v25/v26/v27-v30 branches deleted locally and remotely
+- [x] topic branch committed and pushed with V31 plan
+- [x] `main` fast-forwarded to v31 topic head
+- [x] `dotnet build Zongzu.sln --no-restore`
+- [x] focused integration / architecture / Unity presentation tests
+- [x] `git diff --check`
+- [x] `dotnet test Zongzu.sln --no-build`
+- [x] `main` pushed
+- [x] merged v25/v26/v27-v30 branches deleted locally and remotely
