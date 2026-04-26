@@ -700,10 +700,10 @@ public sealed partial class FirstPassPresentationShellTests
         const string regime = "官员摇摆读回：张元退避风险78，需继续观察OfficeAndCareer lane。";
         const string route = "运河/脚路读回：只作Trade/Order/PublicLife投影，不新开运河账本。";
         const string residue = "余味健康读回：旧怨31仍在，后续由SocialMemoryAndRelations月推进沉淀。";
-        const string courtEntry = "朝议压力读回：已有政策窗口读回，Court后手不直写地方。";
-        const string courtDispatch = "文移到达读回：县门执行承接读回仍归OfficeAndCareer。";
-        const string courtPublic = "公议读法读回：Office/PublicLife分读。";
-        const string courtNoLoop = "Court-policy防回压：不是本户也不是县门独吞朝廷后账。";
+        const string courtEntry = "朝议压力读回：政策语气读回，朝廷后手仍不直写地方。";
+        const string courtDispatch = "文移到达读回：文移指向读回，县门承接姿态仍归OfficeAndCareer。";
+        const string courtPublic = "公议读法读回：公议承压读法，Office/PublicLife分读。";
+        const string courtNoLoop = "Court-policy防回压：不是本户硬扛朝廷后账，朝廷后手仍不直写地方。";
         bundle.GovernanceSettlements =
         [
             new SettlementGovernanceLaneSnapshot

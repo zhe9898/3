@@ -443,12 +443,16 @@ public class ProjectReferenceTests
         Assert.That(governanceSource, Does.Contain("Office闭环防回压"));
         Assert.That(governanceSource, Does.Contain("朝议压力读回"));
         Assert.That(governanceSource, Does.Contain("政策窗口读回"));
+        Assert.That(governanceSource, Does.Contain("政策语气读回"));
         Assert.That(governanceSource, Does.Contain("文移到达读回"));
+        Assert.That(governanceSource, Does.Contain("文移指向读回"));
         Assert.That(governanceSource, Does.Contain("县门执行承接读回"));
+        Assert.That(governanceSource, Does.Contain("县门承接姿态"));
         Assert.That(governanceSource, Does.Contain("公议读法读回"));
-        Assert.That(governanceSource, Does.Contain("Court后手不直写地方"));
+        Assert.That(governanceSource, Does.Contain("公议承压读法"));
+        Assert.That(governanceSource, Does.Contain("朝廷后手仍不直写地方"));
         Assert.That(governanceSource, Does.Contain("Office/PublicLife分读"));
-        Assert.That(governanceSource, Does.Contain("不是本户也不是县门独吞朝廷后账"));
+        Assert.That(governanceSource, Does.Contain("不是本户硬扛朝廷后账"));
         Assert.That(governanceSource, Does.Contain("Court-policy防回压"));
         Assert.That(governanceSource, Does.Contain("OfficeAndCareer lane"));
         Assert.That(governanceSource, Does.Contain("本户不能代修"));
@@ -503,6 +507,95 @@ public class ProjectReferenceTests
         Assert.That(publicLifeModule, Does.Contain("ModuleSchemaVersion => 4"));
         Assert.That(socialModule, Does.Contain("ModuleSchemaVersion => 3"));
         Assert.That(schemaRules, Does.Contain("court-policy process readback v93-v100 adds no persisted fields"));
+    }
+
+    [Test]
+    public void Court_policy_process_thickening_v109_v116_must_stay_owner_lane_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string publicLifeSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PublicLifeAndRumor",
+            "PublicLifeAndRumorModule",
+            "PublicLifeAndRumorModule.cs"));
+        string officeSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.OfficeAndCareer",
+            "OfficeAndCareerModule",
+            "OfficeAndCareerModule.PolicyImplementation.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "DeskSandbox", "DeskSandboxShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "PublicLife", "PublicLifeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string personRegistrySource = string.Join(Environment.NewLine, EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry"))
+            .Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-process-thickening-v109-v116.md"));
+
+        foreach (string token in new[]
+                 {
+                     "政策语气读回",
+                     "文移指向读回",
+                     "县门承接姿态",
+                     "公议承压读法",
+                     "朝廷后手仍不直写地方",
+                     "不是本户硬扛朝廷后账",
+                 })
+        {
+            Assert.That(governanceSource, Does.Contain(token));
+            Assert.That(publicLifeSource, Does.Contain(token));
+        }
+
+        Assert.That(officeSource, Does.Contain("PolicyImplementationProfile"));
+        Assert.That(officeSource, Does.Contain("DomainEventMetadataKeys.PolicyImplementationOutcome"));
+        Assert.That(officeSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(officeSource, Does.Not.Contain(".Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("OfficialNoticeLine"));
+        Assert.That(governanceSource, Does.Not.Contain("PrefectureDispatchLine"));
+        Assert.That(governanceSource, Does.Not.Contain("LastAdministrativeTrace"));
+        Assert.That(governanceSource, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(publicLifeSource, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(publicLifeSource, Does.Not.Contain("LastAdministrativeTrace"));
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("PolicyImplementationOutcome"));
+        Assert.That(personRegistrySource, Does.Not.Contain("PolicyImplementation"));
+        Assert.That(personRegistrySource, Does.Not.Contain("CourtAgenda"));
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Court*", SearchOption.TopDirectoryOnly), Is.Empty);
+
+        foreach (string forbidden in new[]
+                 {
+                     "DispatchLedger",
+                     "PolicyLedger",
+                     "CourtProcessLedger",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "PolicyImplementationLedger",
+                     "GetMutableModuleState",
+                     "PlayerCommandService",
+                 })
+        {
+            Assert.That(governanceSource, Does.Not.Contain(forbidden));
+            Assert.That(publicLifeSource, Does.Not.Contain(forbidden));
+            Assert.That(unitySource, Does.Not.Contain(forbidden));
+        }
+
+        Assert.That(schemaRules, Does.Contain("court-policy process thickening v109-v116 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy process thickening v109-v116 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No full Court module"));
     }
 
     [Test]
@@ -607,6 +700,12 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("县门执行承接读回"));
         Assert.That(source, Does.Not.Contain("公议读法读回"));
         Assert.That(source, Does.Not.Contain("Court-policy防回压"));
+        Assert.That(source, Does.Not.Contain("政策语气读回"));
+        Assert.That(source, Does.Not.Contain("文移指向读回"));
+        Assert.That(source, Does.Not.Contain("县门承接姿态"));
+        Assert.That(source, Does.Not.Contain("公议承压读法"));
+        Assert.That(source, Does.Not.Contain("朝廷后手仍不直写地方"));
+        Assert.That(source, Does.Not.Contain("不是本户硬扛朝廷后账"));
         Assert.That(source, Does.Not.Contain("不是普通家户再扛"));
         Assert.That(source, Does.Not.Contain("本户不能代修"));
         Assert.That(source, Does.Not.Contain("PlayerCommandService"));

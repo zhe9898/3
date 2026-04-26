@@ -193,6 +193,12 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(affectedPublicLife.OfficialNoticeLine, Does.Contain("县门执行读回"));
         Assert.That(affectedPublicLife.OfficialNoticeLine, Does.Contain("OfficeAndCareer"));
         Assert.That(affectedPublicLife.OfficialNoticeLine, Does.Contain("本户不能代修"));
+        Assert.That(affectedPublicLife.OfficialNoticeLine, Does.Contain("政策语气读回"));
+        Assert.That(affectedPublicLife.OfficialNoticeLine, Does.Contain("县门承接姿态"));
+        Assert.That(affectedPublicLife.PrefectureDispatchLine, Does.Contain("文移指向读回"));
+        Assert.That(affectedPublicLife.PrefectureDispatchLine, Does.Contain("朝廷后手仍不直写地方"));
+        Assert.That(affectedPublicLife.ContentionSummary, Does.Contain("公议承压读法"));
+        Assert.That(affectedPublicLife.ChannelSummary, Does.Contain("不是本户硬扛朝廷后账"));
 
         SocialMemoryAndRelationsState socialState =
             simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(KnownModuleKeys.SocialMemoryAndRelations);
@@ -214,13 +220,17 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(governance.OfficeLaneNoLoopGuardSummary, Does.Contain("本户不再代修"));
         Assert.That(governance.CourtPolicyEntryReadbackSummary, Does.Contain("朝议压力读回"));
         Assert.That(governance.CourtPolicyEntryReadbackSummary, Does.Contain("政策窗口读回"));
+        Assert.That(governance.CourtPolicyEntryReadbackSummary, Does.Contain("政策语气读回"));
         Assert.That(governance.CourtPolicyDispatchReadbackSummary, Does.Contain("文移到达读回"));
         Assert.That(governance.CourtPolicyDispatchReadbackSummary, Does.Contain("县门执行承接读回"));
+        Assert.That(governance.CourtPolicyDispatchReadbackSummary, Does.Contain("文移指向读回"));
+        Assert.That(governance.CourtPolicyDispatchReadbackSummary, Does.Contain("县门承接姿态"));
         Assert.That(governance.CourtPolicyPublicReadbackSummary, Does.Contain("公议读法读回"));
         Assert.That(governance.CourtPolicyPublicReadbackSummary, Does.Contain("Office/PublicLife分读"));
+        Assert.That(governance.CourtPolicyPublicReadbackSummary, Does.Contain("公议承压读法"));
         Assert.That(governance.CourtPolicyNoLoopGuardSummary, Does.Contain("Court-policy防回压"));
-        Assert.That(governance.CourtPolicyNoLoopGuardSummary, Does.Contain("不是本户也不是县门独吞朝廷后账"));
-        Assert.That(governance.CourtPolicyNoLoopGuardSummary, Does.Contain("Court后手不直写地方"));
+        Assert.That(governance.CourtPolicyNoLoopGuardSummary, Does.Contain("朝廷后手仍不直写地方"));
+        Assert.That(governance.CourtPolicyNoLoopGuardSummary, Does.Contain("不是本户硬扛朝廷后账"));
         Assert.That(governance.GovernanceSummary, Does.Contain("县门执行读回"));
         Assert.That(governance.GovernanceSummary, Does.Contain("朝议压力读回"));
         Assert.That(governance.GovernanceSummary, Does.Contain("Court-policy防回压"));
