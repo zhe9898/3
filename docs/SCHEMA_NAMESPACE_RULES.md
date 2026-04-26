@@ -169,6 +169,7 @@ Example:
 - old M2, M3, and governance-lite saves still load cleanly while `WarfareCampaign` remains disabled in their manifests
 - no existing stable path gains a `WarfareCampaign` envelope implicitly; only the campaign-enabled path does
 - built-in migration now upgrades legacy campaign-enabled saves from schema `1` to `2` to `3` by reconstructing board labels, command-fit wording, commander summaries, bounded route descriptors, and directive descriptors inside the same namespace
+- force/campaign/regime owner-lane readback v69-v76 adds no persisted fields: `WarfareLaneEntryReadbackSummary`, `ForceReadinessReadbackSummary`, `CampaignAftermathReadbackSummary`, `WarfareLaneReceiptClosureSummary`, `WarfareLaneResidueFollowUpSummary`, and `WarfareLaneNoLoopGuardSummary` are runtime read-model / ViewModel fields over existing `ConflictAndForce`, `WarfareCampaign`, `OfficeAndCareer`, and `SocialMemoryAndRelations` snapshots. No root/module schema version change, migration, save roundtrip change, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, projection cache, or save manifest update is required.
 
 ## Post-MVP preflight namespace policy
 - black-route depth must not create a standalone `BlackRoute` namespace; current save data for that slice already stays inside `OrderAndBanditry` and `TradeAndIndustry`

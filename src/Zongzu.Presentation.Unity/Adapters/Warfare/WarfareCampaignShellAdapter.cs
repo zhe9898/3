@@ -35,7 +35,13 @@ internal static class WarfareCampaignShellAdapter
 					OutcomeSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.OutcomeSummary),
 					LeverageSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.LeverageSummary),
 					CostSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.CostSummary),
-					ReadbackSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.ReadbackSummary)
+					ReadbackSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.ReadbackSummary),
+					WarfareLaneEntryReadbackSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.WarfareLaneEntryReadbackSummary),
+					ForceReadinessReadbackSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.ForceReadinessReadbackSummary),
+					CampaignAftermathReadbackSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.CampaignAftermathReadbackSummary),
+					WarfareLaneReceiptClosureSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.WarfareLaneReceiptClosureSummary),
+					WarfareLaneResidueFollowUpSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.WarfareLaneResidueFollowUpSummary),
+					WarfareLaneNoLoopGuardSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(receipt.WarfareLaneNoLoopGuardSummary)
 				})
 				.ToArray(),
 			CampaignBoards = context.OrderedCampaigns

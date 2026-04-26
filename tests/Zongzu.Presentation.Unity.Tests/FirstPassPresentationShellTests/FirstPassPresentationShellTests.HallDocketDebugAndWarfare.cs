@@ -607,4 +607,75 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(shell.Warfare.CampaignBoards[0].AftermathDocketSummary, Does.Contain("清路札"));
     }
 
+    [Test]
+    public void Compose_CopiesProjectedWarfareLaneClosureFieldsOnly()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.CampaignMobilizationSignals =
+        [
+            new CampaignMobilizationSignalSnapshot
+            {
+                SettlementId = new SettlementId(1),
+                SettlementName = "兰溪",
+                AvailableForceCount = 180,
+                Readiness = 58,
+                CommandCapacity = 62,
+                ResponseActivationLevel = 44,
+                OrderSupportLevel = 36,
+                MobilizationWindowLabel = "Narrow",
+            },
+        ];
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.WarfareCampaign,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Warfare,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.ProtectSupplyLine,
+                    Label = "护粮稳线",
+                    IsEnabled = true,
+                    WarfareLaneEntryReadbackSummary = "军务承接入口：回到WarfareCampaign/ConflictAndForce。",
+                    ForceReadinessReadbackSummary = "Force承接读回：可调之众180。",
+                    CampaignAftermathReadbackSummary = "战后后账读回：渡口村落待安辑。",
+                    WarfareLaneReceiptClosureSummary = "军务后手收口读回：军令只说明已落案头。",
+                    WarfareLaneResidueFollowUpSummary = "军务余味续接读回：恐惧12仍在。",
+                    WarfareLaneNoLoopGuardSummary = "军务闭环防回压：不是普通家户硬扛。",
+                },
+            ],
+            Receipts =
+            [
+                new PlayerCommandReceiptSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.WarfareCampaign,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Warfare,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.ProtectSupplyLine,
+                    Label = "护粮稳线",
+                    Summary = "军令已落案头。",
+                    OutcomeSummary = "先保渡口粮线。",
+                    WarfareLaneEntryReadbackSummary = "军务承接入口：回到WarfareCampaign/ConflictAndForce。",
+                    ForceReadinessReadbackSummary = "Force承接读回：可调之众180。",
+                    CampaignAftermathReadbackSummary = "战后后账读回：渡口村落待安辑。",
+                    WarfareLaneReceiptClosureSummary = "军务后手收口读回：军令只说明已落案头。",
+                    WarfareLaneResidueFollowUpSummary = "军务余味续接读回：恐惧12仍在。",
+                    WarfareLaneNoLoopGuardSummary = "军务闭环防回压：不是普通家户硬扛。",
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+
+        CommandAffordanceViewModel affordance = shell.Warfare.CommandAffordances.Single();
+        CommandReceiptViewModel receipt = shell.Warfare.RecentReceipts.Single();
+
+        Assert.That(affordance.WarfareLaneEntryReadbackSummary, Does.Contain("军务承接入口"));
+        Assert.That(affordance.ForceReadinessReadbackSummary, Does.Contain("Force承接读回"));
+        Assert.That(affordance.WarfareLaneNoLoopGuardSummary, Does.Contain("军务闭环防回压"));
+        Assert.That(receipt.CampaignAftermathReadbackSummary, Does.Contain("战后后账读回"));
+        Assert.That(receipt.WarfareLaneReceiptClosureSummary, Does.Contain("军务后手收口读回"));
+    }
+
 }

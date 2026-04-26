@@ -1119,6 +1119,13 @@ Current backend Family relief choice v61-v68 note:
 - New readback text such as `Family救济选择读回`, `接济义务读回`, `宗房余力读回`, and `不是普通家户再扛` is runtime projection only and is not saved.
 - Ordinary home-household response remains a low-power `PopulationAndHouseholds` lane. It is not a universal repair lane for Family relief, lineage-house face, sponsor-clan pressure, or durable social residue.
 
+Current backend Force/Campaign/Regime owner-lane readback v69-v76 note:
+- v69-v76 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, or projection cache.
+- `ConflictAndForce`, `WarfareCampaign`, `OfficeAndCareer`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` schema versions remain unchanged.
+- New read-model / Unity fields `WarfareLaneEntryReadbackSummary`, `ForceReadinessReadbackSummary`, `CampaignAftermathReadbackSummary`, `WarfareLaneReceiptClosureSummary`, `WarfareLaneResidueFollowUpSummary`, and `WarfareLaneNoLoopGuardSummary` are runtime projections only and are not saved.
+- These fields are derived from existing structured campaign/force/office/clan snapshots and `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State` / `OriginDate`; they are not derived from `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected military prose.
+- Ordinary home-household response remains a low-power `PopulationAndHouseholds` lane. It is not a universal repair lane for campaign aftermath, force readiness, military order, regime coordination, or durable social residue.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

@@ -109,6 +109,18 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(warfareItem.SourceModuleKeys, Does.Contain(KnownModuleKeys.WarfareCampaign));
 
+        Assert.That(warfareItem.GuidanceSummary, Does.Contain("军务承接入口"));
+
+        Assert.That(warfareItem.GuidanceSummary, Does.Contain("Force承接读回"));
+
+        Assert.That(warfareItem.GuidanceSummary, Does.Contain("战后后账读回"));
+
+        Assert.That(warfareItem.GuidanceSummary, Does.Contain("军务闭环防回压"));
+
+        Assert.That(bundle.GovernanceSettlements.Any(static governance =>
+            governance.CampaignAftermathReadbackSummary.Contains("战后后账读回", StringComparison.Ordinal)
+            && governance.WarfareLaneNoLoopGuardSummary.Contains("不是把军务后账误读成县门/Order后账", StringComparison.Ordinal)), Is.True);
+
         Assert.That(shell.GreatHall.WarfareSummary, Is.Not.Empty);
 
         Assert.That(shell.DeskSandbox.Settlements.Any(static settlement => !string.IsNullOrWhiteSpace(settlement.CampaignSummary)), Is.True);
@@ -306,6 +318,25 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(shell.Warfare.CommandAffordances.Any(static command => command.IsEnabled), Is.True);
 
+        PlayerCommandAffordanceSnapshot warfareAffordance = bundle.PlayerCommands.Affordances.First(command =>
+            string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.Warfare, StringComparison.Ordinal)
+            && string.Equals(command.CommandName, PlayerCommandNames.ProtectSupplyLine, StringComparison.Ordinal));
+
+        Assert.That(warfareAffordance.WarfareLaneEntryReadbackSummary, Does.Contain("军务承接入口"));
+
+        Assert.That(warfareAffordance.ForceReadinessReadbackSummary, Does.Contain("Force承接读回"));
+
+        Assert.That(warfareAffordance.CampaignAftermathReadbackSummary, Does.Contain("战后后账读回"));
+
+        Assert.That(warfareAffordance.WarfareLaneNoLoopGuardSummary, Does.Contain("军务闭环防回压"));
+
+        CommandAffordanceViewModel warfareShellAffordance = shell.Warfare.CommandAffordances.First(command =>
+            string.Equals(command.CommandName, PlayerCommandNames.ProtectSupplyLine, StringComparison.Ordinal));
+
+        Assert.That(warfareShellAffordance.WarfareLaneEntryReadbackSummary, Is.EqualTo(warfareAffordance.WarfareLaneEntryReadbackSummary));
+
+        Assert.That(warfareShellAffordance.ForceReadinessReadbackSummary, Is.EqualTo(warfareAffordance.ForceReadinessReadbackSummary));
+
     }
 
 
@@ -394,6 +425,21 @@ public sealed partial class M2LiteIntegrationTests
         Assert.That(shell.Office.RecentReceipts.Any(static receipt => string.Equals(receipt.CommandName, PlayerCommandNames.PetitionViaOfficeChannels, StringComparison.Ordinal)), Is.True);
 
         Assert.That(shell.Warfare.RecentReceipts.Any(static receipt => string.Equals(receipt.CommandName, PlayerCommandNames.ProtectSupplyLine, StringComparison.Ordinal)), Is.True);
+
+        PlayerCommandReceiptSnapshot warfareReceipt = afterBundle.PlayerCommands.Receipts.First(receipt =>
+            string.Equals(receipt.SurfaceKey, PlayerCommandSurfaceKeys.Warfare, StringComparison.Ordinal)
+            && string.Equals(receipt.CommandName, PlayerCommandNames.ProtectSupplyLine, StringComparison.Ordinal));
+
+        Assert.That(warfareReceipt.WarfareLaneReceiptClosureSummary, Does.Contain("军务后手收口读回"));
+
+        Assert.That(warfareReceipt.WarfareLaneNoLoopGuardSummary, Does.Contain("不是普通家户硬扛"));
+
+        CommandReceiptViewModel shellWarfareReceipt = shell.Warfare.RecentReceipts.First(receipt =>
+            string.Equals(receipt.CommandName, PlayerCommandNames.ProtectSupplyLine, StringComparison.Ordinal));
+
+        Assert.That(shellWarfareReceipt.WarfareLaneReceiptClosureSummary, Is.EqualTo(warfareReceipt.WarfareLaneReceiptClosureSummary));
+
+        Assert.That(shellWarfareReceipt.WarfareLaneNoLoopGuardSummary, Is.EqualTo(warfareReceipt.WarfareLaneNoLoopGuardSummary));
 
     }
 

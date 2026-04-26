@@ -141,3 +141,10 @@ This document is governance/orchestration only. It has no runtime, save/schema, 
 - External calibration is intentionally narrow: Microsoft Learn .NET testing/diagnostics/logging, Unity assembly/metadata/profiler/pooling/UI guidance, WCAG 2.2, and Xbox Accessibility Guidelines calibrate proof quality, hot-path discipline, Unity organization, and readability.
 - Skill guidance now treats performance, scheduling, and algorithm choices as first-class boundary questions: name hot path, cardinality, cap/watermark/cadence, deterministic tie-break, cache invalidation, save/schema impact, and validation lane before adding broad complexity.
 - This alignment is docs/skill governance only. It has no runtime behavior, save/schema, migration, deterministic replay, or Unity asset impact; no runtime/performance validation is required.
+
+## Skill Alignment Through V76 - 2026-04-26
+
+- The whole-skill pass now also anchors v61-v68 Family relief choice and v69-v76 Force/Campaign/Regime owner-lane readback closure. The intended sequencing is architecture boundaries -> game design -> pressure-chain -> content authoring -> save/schema -> simulation validation -> UI shell -> ancient-China grounding.
+- V69-V76 is projection/readback guidance only: `军务承接入口`, `Force承接读回`, `战后后账读回`, `军务后手收口读回`, `军务余味续接读回`, `军务闭环防回压`, `不是普通家户硬扛`, and `不是把军务后账误读成县门/Order后账` are projected strings over existing structured read models.
+- Ownership remains skill-aligned: `ConflictAndForce` owns force posture/readiness, `WarfareCampaign` owns campaign boards/directives/aftermath, `OfficeAndCareer` owns office coordination/regime authority, `PopulationAndHouseholds` owns ordinary local household response only, and `SocialMemoryAndRelations` owns durable residue in its own cadence.
+- Save/schema result: v69-v76 adds no persisted state, schema bump, migration, new ledger, household target field, manager/controller layer, `PersonRegistry` expansion, Unity authority, or Application-owned rule layer. Validation is code/test evidence, not runtime performance work.

@@ -204,16 +204,44 @@ public sealed partial class PresentationReadModelBuilder
                 readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance)));
         }
 
+        Dictionary<int, CampaignFrontSnapshot> campaignsByAnchorSettlement = bundle.Campaigns
+            .OrderByDescending(static campaign => campaign.IsActive)
+            .ThenByDescending(static campaign => campaign.FrontPressure)
+            .ThenBy(static campaign => campaign.CampaignId.Value)
+            .GroupBy(static campaign => campaign.AnchorSettlementId.Value)
+            .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<int, JurisdictionAuthoritySnapshot> warfareJurisdictionsBySettlement = IndexFirstBySettlement(
+            bundle.OfficeJurisdictions,
+            static entry => entry.SettlementId);
+        ILookup<int, ClanSnapshot> warfareClansBySettlement = bundle.Clans
+            .ToLookup(static entry => entry.HomeSettlementId.Value);
+
         foreach (CampaignMobilizationSignalSnapshot signal in bundle.CampaignMobilizationSignals.OrderBy(static entry => entry.SettlementId.Value))
         {
+            campaignsByAnchorSettlement.TryGetValue(signal.SettlementId.Value, out CampaignFrontSnapshot? campaign);
+            warfareJurisdictionsBySettlement.TryGetValue(signal.SettlementId.Value, out JurisdictionAuthoritySnapshot? jurisdiction);
+            ClanSnapshot[] localClans = warfareClansBySettlement[signal.SettlementId.Value]
+                .OrderByDescending(static clan => clan.Prestige)
+                .ThenBy(static clan => clan.ClanName, StringComparer.Ordinal)
+                .ToArray();
+            IReadOnlyList<SocialMemoryEntrySnapshot> localCampaignSocialMemories =
+                SelectLocalCampaignSocialMemories(bundle.SocialMemories, localClans);
+            WarfareLaneClosureReadback warfareLaneClosure = BuildWarfareLaneClosureReadback(
+                signal,
+                campaign,
+                jurisdiction,
+                localCampaignSocialMemories);
+
             affordances.Add(BuildWarfareAffordance(
                 signal,
+                warfareLaneClosure,
                 PlayerCommandNames.DraftCampaignPlan,
                 "先在案头筹议关津、驿报与前后队次，不急于放大边缘摩擦。",
                 true,
                 "此令偏向先定方略，不急发众。"));
             affordances.Add(BuildWarfareAffordance(
                 signal,
+                warfareLaneClosure,
                 PlayerCommandNames.CommitMobilization,
                 "发檄点兵，先聚守丁、乡勇与护运之众，再定前压与驻防。",
                 !string.Equals(signal.MobilizationWindowLabel, "Closed", StringComparison.Ordinal),
@@ -222,6 +250,7 @@ public sealed partial class PresentationReadModelBuilder
                     : $"当前动员窗为{RenderMobilizationWindow(signal.MobilizationWindowLabel)}。"));
             affordances.Add(BuildWarfareAffordance(
                 signal,
+                warfareLaneClosure,
                 PlayerCommandNames.ProtectSupplyLine,
                 "催督粮道与渡口，优先保住转运、驿报与军前补给。",
                 signal.AvailableForceCount > 0,
@@ -230,6 +259,7 @@ public sealed partial class PresentationReadModelBuilder
                     : "当前无可调之众。"));
             affordances.Add(BuildWarfareAffordance(
                 signal,
+                warfareLaneClosure,
                 PlayerCommandNames.WithdrawToBarracks,
                 "暂收行伍归营，整顿伤员、粮册与营中号令。",
                 signal.AvailableForceCount > 0,
@@ -245,17 +275,28 @@ public sealed partial class PresentationReadModelBuilder
 
     private static PlayerCommandAffordanceSnapshot BuildWarfareAffordance(
         CampaignMobilizationSignalSnapshot signal,
+        WarfareLaneClosureReadback warfareLaneClosure,
         string commandName,
         string summary,
         bool isEnabled,
         string availabilitySummary)
     {
+        string readback = BuildWarfareLaneClosureReadbackText(warfareLaneClosure);
         return BuildPlayerCommandAffordanceSnapshot(
             commandName,
             signal.SettlementId,
             summary,
             isEnabled,
-            availabilitySummary);
+            availabilitySummary,
+            leverageSummary: readback,
+            readbackSummary: readback,
+            warfareLaneEntryReadbackSummary: warfareLaneClosure.EntryReadbackSummary,
+            forceReadinessReadbackSummary: warfareLaneClosure.ForceReadinessReadbackSummary,
+            campaignAftermathReadbackSummary: warfareLaneClosure.CampaignAftermathReadbackSummary,
+            warfareLaneReceiptClosureSummary: warfareLaneClosure.ReceiptClosureSummary,
+            warfareLaneResidueFollowUpSummary: warfareLaneClosure.ResidueFollowUpSummary,
+            warfareLaneNoLoopGuardSummary: warfareLaneClosure.NoLoopGuardSummary,
+            targetLabel: signal.SettlementName);
     }
 
     private static string BuildFamilyReliefChoiceReadback(ClanSnapshot clan)

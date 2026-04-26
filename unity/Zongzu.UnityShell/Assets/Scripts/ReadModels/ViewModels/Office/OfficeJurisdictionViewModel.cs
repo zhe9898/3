@@ -28,6 +28,18 @@ public sealed class OfficeJurisdictionViewModel
 
 	public string OfficeLaneNoLoopGuardSummary { get; set; } = string.Empty;
 
+	public string WarfareLaneEntryReadbackSummary { get; set; } = string.Empty;
+
+	public string ForceReadinessReadbackSummary { get; set; } = string.Empty;
+
+	public string CampaignAftermathReadbackSummary { get; set; } = string.Empty;
+
+	public string WarfareLaneReceiptClosureSummary { get; set; } = string.Empty;
+
+	public string WarfareLaneResidueFollowUpSummary { get; set; } = string.Empty;
+
+	public string WarfareLaneNoLoopGuardSummary { get; set; } = string.Empty;
+
 	public string RegimeOfficeReadbackSummary { get; set; } = string.Empty;
 
 	public string CanalRouteReadbackSummary { get; set; } = string.Empty;

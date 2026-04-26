@@ -607,6 +607,115 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Force_campaign_owner_lane_readback_must_stay_projection_only_and_schema_neutral()
+    {
+        string helperSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.WarfareLaneClosure.cs"));
+        string projectionSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.cs"),
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.Receipts.cs"),
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.Governance.cs"),
+            Path.Combine(SrcDir, "Zongzu.Contracts", "ReadModels", "PlayerCommandReadModels.cs"),
+            Path.Combine(SrcDir, "Zongzu.Contracts", "ReadModels", "GovernanceReadModels.cs"),
+        }.Select(File.ReadAllText));
+        string unityAdapterSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Shared", "CommandShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Warfare", "WarfareCampaignShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "DeskSandbox", "DeskSandboxShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string unityViewModelSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Shared", "CommandAffordanceViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Shared", "CommandReceiptViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "DeskSandbox", "SettlementNodeViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Office", "OfficeJurisdictionViewModel.cs"),
+        }.Select(File.ReadAllText));
+        string socialMemorySource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.cs"));
+
+        foreach (string field in new[]
+                 {
+                     "WarfareLaneEntryReadbackSummary",
+                     "ForceReadinessReadbackSummary",
+                     "CampaignAftermathReadbackSummary",
+                     "WarfareLaneReceiptClosureSummary",
+                     "WarfareLaneResidueFollowUpSummary",
+                     "WarfareLaneNoLoopGuardSummary",
+                 })
+        {
+            Assert.That(projectionSource, Does.Contain(field), field);
+            Assert.That(unityAdapterSource, Does.Contain(field), field);
+            Assert.That(unityViewModelSource, Does.Contain(field), field);
+        }
+
+        Assert.That(helperSource, Does.Contain("BuildWarfareLaneClosureReadback"));
+        Assert.That(helperSource, Does.Contain("BuildWarfareLaneEntryReadbackSummary"));
+        Assert.That(helperSource, Does.Contain("BuildForceReadinessReadbackSummary"));
+        Assert.That(helperSource, Does.Contain("BuildCampaignAftermathReadbackSummary"));
+        Assert.That(helperSource, Does.Contain("BuildWarfareLaneReceiptClosureSummary"));
+        Assert.That(helperSource, Does.Contain("BuildWarfareLaneResidueFollowUpSummary"));
+        Assert.That(helperSource, Does.Contain("BuildWarfareLaneNoLoopGuardSummary"));
+        Assert.That(helperSource, Does.Contain("SelectLocalCampaignSocialMemories"));
+        Assert.That(helperSource, Does.Contain("CampaignMobilizationSignalSnapshot"));
+        Assert.That(helperSource, Does.Contain("CampaignFrontSnapshot"));
+        Assert.That(helperSource, Does.Contain("JurisdictionAuthoritySnapshot"));
+        Assert.That(helperSource, Does.Contain("SocialMemoryEntrySnapshot"));
+        Assert.That(helperSource, Does.Contain("CauseKey.StartsWith(\"campaign."));
+        Assert.That(helperSource, Does.Contain("军务承接入口"));
+        Assert.That(helperSource, Does.Contain("Force承接读回"));
+        Assert.That(helperSource, Does.Contain("战后后账读回"));
+        Assert.That(helperSource, Does.Contain("军务后手收口读回"));
+        Assert.That(helperSource, Does.Contain("军务余味续接读回"));
+        Assert.That(helperSource, Does.Contain("军务闭环防回压"));
+        Assert.That(helperSource, Does.Contain("不是普通家户硬扛"));
+        Assert.That(helperSource, Does.Contain("不是把军务后账误读成县门/Order后账"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "DomainEvent.Summary",
+                     "domainEvent.Summary",
+                     "LastInterventionSummary",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "memory.Summary",
+                     "IssueModuleCommand",
+                     "GetMutableModuleState",
+                     "OwnerLaneLedger",
+                     "CampaignClosureLedger",
+                     "ForceClosureLedger",
+                     "HouseholdTarget",
+                     "PersonRegistryState",
+                     "ModuleSchemaVersion",
+                     "UpgradeFromSchema",
+                     "Migration",
+                 })
+        {
+            Assert.That(helperSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(socialMemorySource, Does.Not.Contain("军务承接入口"));
+        Assert.That(socialMemorySource, Does.Not.Contain("Force承接读回"));
+        Assert.That(socialMemorySource, Does.Not.Contain("战后后账读回"));
+        Assert.That(socialMemorySource, Does.Not.Contain("军务后手收口读回"));
+        Assert.That(socialMemorySource, Does.Not.Contain("军务闭环防回压"));
+
+        Assert.That(unityAdapterSource, Does.Not.Contain("Zongzu.Application"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("Zongzu.Modules."));
+        Assert.That(unityAdapterSource, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("DomainEventMetadataKeys"));
+    }
+
+    [Test]
     public void Family_relief_choice_must_stay_family_owned_and_schema_neutral()
     {
         string resolverSource = File.ReadAllText(Path.Combine(

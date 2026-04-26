@@ -296,3 +296,11 @@ V61-V68 adds `GrantClanRelief` as a FamilyCore-owned command. It may reduce pres
 If the relief choice later leaves social residue, `SocialMemoryAndRelations` must read structured Family aftermath in its monthly cadence and write existing memory/narrative/climate records. It must not parse `Family救济选择读回`, `接济义务读回`, `宗房余力读回`, `不是普通家户再扛`, receipt prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, SocialMemory summary prose, or `DomainEvent.Summary`.
 
 The ordinary home-household line still cannot repair lineage-house face or durable social memory by itself. V61-V68 adds no memory namespace, relationship table, relief ledger, charity ledger, Family closure ledger, guarantee ledger, schema bump, or migration.
+
+## Backend Force/Campaign/Regime owner-lane readback v69-v76 note
+
+V69-V76 adds military owner-lane closure readback over existing campaign, force, office, and SocialMemory snapshots. `军务承接入口`, `Force承接读回`, `战后后账读回`, `军务后手收口读回`, `军务余味续接读回`, `军务闭环防回压`, `不是普通家户硬扛`, and `不是把军务后账误读成县门/Order后账` are projected cues, not durable social-memory facts by themselves.
+
+`SocialMemoryAndRelations` still owns only later durable shame/fear/favor/grudge/obligation residue. It may read structured campaign/force aftermath and `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, and `OriginDate`, but no reader may parse military closure projection prose, SocialMemory summary prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, receipt prose, or `DomainEvent.Summary`.
+
+The ordinary home-household line still cannot repair campaign aftermath, force readiness, military order, regime coordination, or durable social memory by itself. V69-V76 adds no memory namespace, relationship table, military closure ledger, owner-lane ledger, cooldown ledger, schema bump, or migration.

@@ -29,6 +29,15 @@ public sealed partial class PresentationReadModelBuilder
         ILookup<int, OfficeCareerSnapshot> officeCareersBySettlement = bundle.OfficeCareers
             .ToLookup(static entry => entry.SettlementId.Value);
         ILookup<int, ClanSnapshot> clansBySettlement = bundle.Clans.ToLookup(static entry => entry.HomeSettlementId.Value);
+        Dictionary<int, CampaignFrontSnapshot> campaignsBySettlement = bundle.Campaigns
+            .OrderByDescending(static campaign => campaign.IsActive)
+            .ThenByDescending(static campaign => campaign.FrontPressure)
+            .ThenBy(static campaign => campaign.CampaignId.Value)
+            .GroupBy(static campaign => campaign.AnchorSettlementId.Value)
+            .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<int, CampaignMobilizationSignalSnapshot> campaignSignalsBySettlement = IndexFirstBySettlement(
+            bundle.CampaignMobilizationSignals,
+            static entry => entry.SettlementId);
 
         return bundle.OfficeJurisdictions
             .OrderBy(static jurisdiction => jurisdiction.SettlementId.Value)
@@ -43,6 +52,10 @@ public sealed partial class PresentationReadModelBuilder
                     SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
                 IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories =
                     SelectLocalOfficePolicySocialMemories(bundle.SocialMemories, localClans);
+                IReadOnlyList<SocialMemoryEntrySnapshot> localCampaignSocialMemories =
+                    SelectLocalCampaignSocialMemories(bundle.SocialMemories, localClans);
+                campaignsBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out CampaignFrontSnapshot? campaign);
+                campaignSignalsBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out CampaignMobilizationSignalSnapshot? signal);
                 HouseholdPressureSnapshot? familyLaneHousehold =
                     SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, jurisdiction.SettlementId);
                 ClanSnapshot? familyLaneClan = SelectFamilyLaneClosureClan(localClans);
@@ -50,6 +63,11 @@ public sealed partial class PresentationReadModelBuilder
                     familyLaneHousehold,
                     familyLaneClan,
                     localOrderSocialMemories);
+                WarfareLaneClosureReadback warfareLaneClosure = BuildWarfareLaneClosureReadback(
+                    signal,
+                    campaign,
+                    jurisdiction,
+                    localCampaignSocialMemories);
 
                 string orderAdministrativeAftermathSummary = disorder is null
                     ? string.Empty
@@ -107,6 +125,8 @@ public sealed partial class PresentationReadModelBuilder
                     officeLaneReceiptClosure,
                     familyLaneClosure.ReceiptClosureSummary,
                     familyLaneClosure.NoLoopGuardSummary,
+                    warfareLaneClosure.CampaignAftermathReadbackSummary,
+                    warfareLaneClosure.NoLoopGuardSummary,
                     regimeOfficeReadback);
 
                 return new SettlementGovernanceLaneSnapshot
@@ -146,6 +166,12 @@ public sealed partial class PresentationReadModelBuilder
                     FamilyLaneReceiptClosureSummary = familyLaneClosure.ReceiptClosureSummary,
                     FamilyLaneResidueFollowUpSummary = familyLaneClosure.ResidueFollowUpSummary,
                     FamilyLaneNoLoopGuardSummary = familyLaneClosure.NoLoopGuardSummary,
+                    WarfareLaneEntryReadbackSummary = warfareLaneClosure.EntryReadbackSummary,
+                    ForceReadinessReadbackSummary = warfareLaneClosure.ForceReadinessReadbackSummary,
+                    CampaignAftermathReadbackSummary = warfareLaneClosure.CampaignAftermathReadbackSummary,
+                    WarfareLaneReceiptClosureSummary = warfareLaneClosure.ReceiptClosureSummary,
+                    WarfareLaneResidueFollowUpSummary = warfareLaneClosure.ResidueFollowUpSummary,
+                    WarfareLaneNoLoopGuardSummary = warfareLaneClosure.NoLoopGuardSummary,
                     RegimeOfficeReadbackSummary = regimeOfficeReadback,
                     CanalRouteReadbackSummary = canalRouteReadback,
                     ResidueHealthSummary = residueHealth,
@@ -645,6 +671,12 @@ public sealed partial class PresentationReadModelBuilder
             FamilyLaneReceiptClosureSummary = lead.FamilyLaneReceiptClosureSummary,
             FamilyLaneResidueFollowUpSummary = lead.FamilyLaneResidueFollowUpSummary,
             FamilyLaneNoLoopGuardSummary = lead.FamilyLaneNoLoopGuardSummary,
+            WarfareLaneEntryReadbackSummary = lead.WarfareLaneEntryReadbackSummary,
+            ForceReadinessReadbackSummary = lead.ForceReadinessReadbackSummary,
+            CampaignAftermathReadbackSummary = lead.CampaignAftermathReadbackSummary,
+            WarfareLaneReceiptClosureSummary = lead.WarfareLaneReceiptClosureSummary,
+            WarfareLaneResidueFollowUpSummary = lead.WarfareLaneResidueFollowUpSummary,
+            WarfareLaneNoLoopGuardSummary = lead.WarfareLaneNoLoopGuardSummary,
             RegimeOfficeReadbackSummary = lead.RegimeOfficeReadbackSummary,
             CanalRouteReadbackSummary = lead.CanalRouteReadbackSummary,
             ResidueHealthSummary = lead.ResidueHealthSummary,
@@ -707,6 +739,8 @@ public sealed partial class PresentationReadModelBuilder
             lane?.OrderAdministrativeAftermathSummary ?? string.Empty,
             lane?.OfficeImplementationReadbackSummary ?? string.Empty,
             lane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
+            lane?.CampaignAftermathReadbackSummary ?? string.Empty,
+            lane?.WarfareLaneNoLoopGuardSummary ?? string.Empty,
             lane?.RegimeOfficeReadbackSummary ?? string.Empty,
             lane?.CanalRouteReadbackSummary ?? string.Empty,
             relatedNotification?.WhyItHappened ?? string.Empty);
@@ -741,6 +775,12 @@ public sealed partial class PresentationReadModelBuilder
             lane?.FamilyLaneReceiptClosureSummary ?? string.Empty,
             lane?.FamilyLaneResidueFollowUpSummary ?? string.Empty,
             lane?.FamilyLaneNoLoopGuardSummary ?? string.Empty,
+            lane?.WarfareLaneEntryReadbackSummary ?? string.Empty,
+            lane?.ForceReadinessReadbackSummary ?? string.Empty,
+            lane?.CampaignAftermathReadbackSummary ?? string.Empty,
+            lane?.WarfareLaneReceiptClosureSummary ?? string.Empty,
+            lane?.WarfareLaneResidueFollowUpSummary ?? string.Empty,
+            lane?.WarfareLaneNoLoopGuardSummary ?? string.Empty,
             lane?.ResidueHealthSummary ?? string.Empty,
             focus.SuggestedCommandPrompt,
             relatedNotification?.WhatNext ?? string.Empty);
@@ -788,6 +828,12 @@ public sealed partial class PresentationReadModelBuilder
             FamilyLaneReceiptClosureSummary = lane?.FamilyLaneReceiptClosureSummary ?? string.Empty,
             FamilyLaneResidueFollowUpSummary = lane?.FamilyLaneResidueFollowUpSummary ?? string.Empty,
             FamilyLaneNoLoopGuardSummary = lane?.FamilyLaneNoLoopGuardSummary ?? string.Empty,
+            WarfareLaneEntryReadbackSummary = lane?.WarfareLaneEntryReadbackSummary ?? string.Empty,
+            ForceReadinessReadbackSummary = lane?.ForceReadinessReadbackSummary ?? string.Empty,
+            CampaignAftermathReadbackSummary = lane?.CampaignAftermathReadbackSummary ?? string.Empty,
+            WarfareLaneReceiptClosureSummary = lane?.WarfareLaneReceiptClosureSummary ?? string.Empty,
+            WarfareLaneResidueFollowUpSummary = lane?.WarfareLaneResidueFollowUpSummary ?? string.Empty,
+            WarfareLaneNoLoopGuardSummary = lane?.WarfareLaneNoLoopGuardSummary ?? string.Empty,
             RegimeOfficeReadbackSummary = lane?.RegimeOfficeReadbackSummary ?? string.Empty,
             CanalRouteReadbackSummary = lane?.CanalRouteReadbackSummary ?? string.Empty,
             ResidueHealthSummary = lane?.ResidueHealthSummary ?? string.Empty,
@@ -993,6 +1039,16 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         if (!string.IsNullOrWhiteSpace(settlement.OfficeLaneNoLoopGuardSummary))
+        {
+            score += 6;
+        }
+
+        if (!string.IsNullOrWhiteSpace(settlement.CampaignAftermathReadbackSummary))
+        {
+            score += 12;
+        }
+
+        if (!string.IsNullOrWhiteSpace(settlement.WarfareLaneNoLoopGuardSummary))
         {
             score += 6;
         }

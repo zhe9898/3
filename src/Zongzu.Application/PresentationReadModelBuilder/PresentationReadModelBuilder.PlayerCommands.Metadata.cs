@@ -24,6 +24,12 @@ public sealed partial class PresentationReadModelBuilder
         string familyLaneReceiptClosureSummary = "",
         string familyLaneResidueFollowUpSummary = "",
         string familyLaneNoLoopGuardSummary = "",
+        string warfareLaneEntryReadbackSummary = "",
+        string forceReadinessReadbackSummary = "",
+        string campaignAftermathReadbackSummary = "",
+        string warfareLaneReceiptClosureSummary = "",
+        string warfareLaneResidueFollowUpSummary = "",
+        string warfareLaneNoLoopGuardSummary = "",
         string targetLabel = "",
         string? labelOverride = null)
     {
@@ -51,6 +57,12 @@ public sealed partial class PresentationReadModelBuilder
             FamilyLaneReceiptClosureSummary = familyLaneReceiptClosureSummary,
             FamilyLaneResidueFollowUpSummary = familyLaneResidueFollowUpSummary,
             FamilyLaneNoLoopGuardSummary = familyLaneNoLoopGuardSummary,
+            WarfareLaneEntryReadbackSummary = warfareLaneEntryReadbackSummary,
+            ForceReadinessReadbackSummary = forceReadinessReadbackSummary,
+            CampaignAftermathReadbackSummary = campaignAftermathReadbackSummary,
+            WarfareLaneReceiptClosureSummary = warfareLaneReceiptClosureSummary,
+            WarfareLaneResidueFollowUpSummary = warfareLaneResidueFollowUpSummary,
+            WarfareLaneNoLoopGuardSummary = warfareLaneNoLoopGuardSummary,
             TargetLabel = targetLabel,
         };
     }
@@ -72,6 +84,12 @@ public sealed partial class PresentationReadModelBuilder
         string familyLaneReceiptClosureSummary = "",
         string familyLaneResidueFollowUpSummary = "",
         string familyLaneNoLoopGuardSummary = "",
+        string warfareLaneEntryReadbackSummary = "",
+        string forceReadinessReadbackSummary = "",
+        string campaignAftermathReadbackSummary = "",
+        string warfareLaneReceiptClosureSummary = "",
+        string warfareLaneResidueFollowUpSummary = "",
+        string warfareLaneNoLoopGuardSummary = "",
         string targetLabel = "",
         string? labelOverride = null)
     {
@@ -98,6 +116,12 @@ public sealed partial class PresentationReadModelBuilder
             FamilyLaneReceiptClosureSummary = familyLaneReceiptClosureSummary,
             FamilyLaneResidueFollowUpSummary = familyLaneResidueFollowUpSummary,
             FamilyLaneNoLoopGuardSummary = familyLaneNoLoopGuardSummary,
+            WarfareLaneEntryReadbackSummary = warfareLaneEntryReadbackSummary,
+            ForceReadinessReadbackSummary = forceReadinessReadbackSummary,
+            CampaignAftermathReadbackSummary = campaignAftermathReadbackSummary,
+            WarfareLaneReceiptClosureSummary = warfareLaneReceiptClosureSummary,
+            WarfareLaneResidueFollowUpSummary = warfareLaneResidueFollowUpSummary,
+            WarfareLaneNoLoopGuardSummary = warfareLaneNoLoopGuardSummary,
             TargetLabel = targetLabel,
         };
     }

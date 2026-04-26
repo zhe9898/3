@@ -409,3 +409,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - black-route depth now has explicit preflight query seams: pressure snapshots stay aligned with `OrderAndBanditry`, while gray-route / illicit ledger snapshots stay aligned with `TradeAndIndustry`
 - the first active authority slice now persists paper-compliance, implementation-drag, route-shielding, retaliation-risk, administrative suppression-window, escalation-band, seizure-risk, and diversion-band fields inside those two owned modules only
 - no standalone `BlackRoute` module key or save namespace should be introduced; future black-route migrations must stay inside the `OrderAndBanditry` and `TradeAndIndustry` module envelopes
+
+## Backend Force/Campaign/Regime owner-lane readback v69-v76 integration note
+- V69-V76 is projection/readback closure over existing warfare-lite and force/regime snapshots. It is not a new command system, event pool, event-chain body, thick campaign AI, force economy, Office override, Order repair path, or persisted closure ledger.
+- Governance, owner-lane docket, warfare command affordances, and campaign receipts may show `军务承接入口`, `Force承接读回`, `战后后账读回`, `军务后手收口读回`, `军务余味续接读回`, `军务闭环防回压`, `不是普通家户硬扛`, and `不是把军务后账误读成县门/Order后账`.
+- The readback may read structured `CampaignMobilizationSignalSnapshot`, `CampaignFrontSnapshot`, `JurisdictionAuthoritySnapshot`, `ClanSnapshot`, and `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State` / `OriginDate`. It must not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, campaign prose, or projected readback text.
+- `ConflictAndForce`, `WarfareCampaign`, and `OfficeAndCareer` keep their state ownership. `PopulationAndHouseholds` remains a local household response lane, and `SocialMemoryAndRelations` remains the later durable residue owner.
+- Unity copies projected DTO fields only. It does not query modules, compute closure, infer owner lanes, maintain ledgers, or write SocialMemory.
+- Save/schema result: no persisted state, schema bump, migration, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.

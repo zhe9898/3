@@ -121,6 +121,18 @@ public sealed record PlayerCommandAffordanceSnapshot
 
     public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
+    public string WarfareLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string ForceReadinessReadbackSummary { get; init; } = string.Empty;
+
+    public string CampaignAftermathReadbackSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
     public string TargetLabel { get; init; } = string.Empty;
 }
 
@@ -163,6 +175,18 @@ public sealed record PlayerCommandReceiptSnapshot
     public string FamilyLaneResidueFollowUpSummary { get; init; } = string.Empty;
 
     public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string ForceReadinessReadbackSummary { get; init; } = string.Empty;
+
+    public string CampaignAftermathReadbackSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string TargetLabel { get; init; } = string.Empty;
 }

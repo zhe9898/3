@@ -74,6 +74,18 @@ public sealed record SettlementGovernanceLaneSnapshot
 
     public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
+    public string WarfareLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string ForceReadinessReadbackSummary { get; init; } = string.Empty;
+
+    public string CampaignAftermathReadbackSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 
     public string CanalRouteReadbackSummary { get; init; } = string.Empty;
@@ -126,6 +138,18 @@ public sealed record GovernanceFocusSnapshot
     public string FamilyLaneResidueFollowUpSummary { get; init; } = string.Empty;
 
     public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string ForceReadinessReadbackSummary { get; init; } = string.Empty;
+
+    public string CampaignAftermathReadbackSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 
@@ -223,6 +247,18 @@ public sealed record GovernanceDocketSnapshot
     public string FamilyLaneResidueFollowUpSummary { get; init; } = string.Empty;
 
     public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string ForceReadinessReadbackSummary { get; init; } = string.Empty;
+
+    public string CampaignAftermathReadbackSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string WarfareLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 

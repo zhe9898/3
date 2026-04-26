@@ -433,3 +433,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Application projections may show `Family救济选择读回`, `接济义务读回`, `宗房余力读回`, and `不是普通家户再扛` after the owning module state is available. Those strings are runtime guidance only.
 - Determinism depends on command target, query snapshots, fixed ordering, and fixed formulas. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected Family prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 - The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for Family relief, lineage-house face, sponsor-clan pressure, or SocialMemory after-accounts.
+
+## Current backend Force/Campaign/Regime owner-lane readback v69-v76 note
+
+- V69-V76 keeps the same scheduler shape: no new phase, event pool, event-chain body, campaign loop, or same-command SocialMemory write is introduced.
+- Application projections read structured campaign, force, office, clan, and SocialMemory snapshots after owning modules have already resolved their state.
+- Governance, owner-lane docket, warfare affordances, and campaign receipts may show `军务承接入口`, `Force承接读回`, `战后后账读回`, `军务后手收口读回`, `军务余味续接读回`, and `军务闭环防回压`, but those strings are runtime guidance only.
+- Determinism depends on query snapshots, fixed ordering, and stable cause keys. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected military prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for campaign aftermath, force readiness, military order, regime coordination, or SocialMemory after-accounts.

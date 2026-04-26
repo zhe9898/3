@@ -447,6 +447,15 @@ public sealed partial class PresentationReadModelBuilder
                 readbackSummary: BuildOfficeImplementationAffordanceGuidance(jurisdiction)));
         }
 
+        Dictionary<int, CampaignMobilizationSignalSnapshot> signalsBySettlement = IndexFirstBySettlement(
+            bundle.CampaignMobilizationSignals,
+            static entry => entry.SettlementId);
+        Dictionary<int, JurisdictionAuthoritySnapshot> warfareJurisdictionsBySettlement = IndexFirstBySettlement(
+            bundle.OfficeJurisdictions,
+            static entry => entry.SettlementId);
+        ILookup<int, ClanSnapshot> warfareClansBySettlement = bundle.Clans
+            .ToLookup(static entry => entry.HomeSettlementId.Value);
+
         foreach (CampaignFrontSnapshot campaign in bundle.Campaigns.OrderBy(static entry => entry.CampaignId.Value))
         {
             if (string.IsNullOrWhiteSpace(campaign.ActiveDirectiveLabel)
@@ -455,11 +464,33 @@ public sealed partial class PresentationReadModelBuilder
                 continue;
             }
 
+            signalsBySettlement.TryGetValue(campaign.AnchorSettlementId.Value, out CampaignMobilizationSignalSnapshot? signal);
+            warfareJurisdictionsBySettlement.TryGetValue(campaign.AnchorSettlementId.Value, out JurisdictionAuthoritySnapshot? jurisdiction);
+            ClanSnapshot[] localClans = warfareClansBySettlement[campaign.AnchorSettlementId.Value]
+                .OrderByDescending(static clan => clan.Prestige)
+                .ThenBy(static clan => clan.ClanName, StringComparer.Ordinal)
+                .ToArray();
+            IReadOnlyList<SocialMemoryEntrySnapshot> localCampaignSocialMemories =
+                SelectLocalCampaignSocialMemories(bundle.SocialMemories, localClans);
+            WarfareLaneClosureReadback warfareLaneClosure = BuildWarfareLaneClosureReadback(
+                signal,
+                campaign,
+                jurisdiction,
+                localCampaignSocialMemories);
+
             receipts.Add(BuildPlayerCommandReceiptSnapshot(
                 campaign.ActiveDirectiveCode,
                 campaign.AnchorSettlementId,
                 campaign.LastDirectiveTrace,
                 campaign.ActiveDirectiveSummary,
+                readbackSummary: BuildWarfareLaneClosureReadbackText(warfareLaneClosure),
+                warfareLaneEntryReadbackSummary: warfareLaneClosure.EntryReadbackSummary,
+                forceReadinessReadbackSummary: warfareLaneClosure.ForceReadinessReadbackSummary,
+                campaignAftermathReadbackSummary: warfareLaneClosure.CampaignAftermathReadbackSummary,
+                warfareLaneReceiptClosureSummary: warfareLaneClosure.ReceiptClosureSummary,
+                warfareLaneResidueFollowUpSummary: warfareLaneClosure.ResidueFollowUpSummary,
+                warfareLaneNoLoopGuardSummary: warfareLaneClosure.NoLoopGuardSummary,
+                targetLabel: campaign.CampaignName,
                 labelOverride: campaign.ActiveDirectiveLabel));
         }
 

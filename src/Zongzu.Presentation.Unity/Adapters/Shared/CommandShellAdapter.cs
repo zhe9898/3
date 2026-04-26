@@ -26,6 +26,12 @@ internal static class CommandShellAdapter
 				FamilyLaneReceiptClosureSummary = command.FamilyLaneReceiptClosureSummary,
 				FamilyLaneResidueFollowUpSummary = command.FamilyLaneResidueFollowUpSummary,
 				FamilyLaneNoLoopGuardSummary = command.FamilyLaneNoLoopGuardSummary,
+				WarfareLaneEntryReadbackSummary = command.WarfareLaneEntryReadbackSummary,
+				ForceReadinessReadbackSummary = command.ForceReadinessReadbackSummary,
+				CampaignAftermathReadbackSummary = command.CampaignAftermathReadbackSummary,
+				WarfareLaneReceiptClosureSummary = command.WarfareLaneReceiptClosureSummary,
+				WarfareLaneResidueFollowUpSummary = command.WarfareLaneResidueFollowUpSummary,
+				WarfareLaneNoLoopGuardSummary = command.WarfareLaneNoLoopGuardSummary,
 				IsEnabled = command.IsEnabled
 			})
 			.ToArray();
@@ -50,7 +56,13 @@ internal static class CommandShellAdapter
 				FamilyHouseFaceReadbackSummary = receipt.FamilyHouseFaceReadbackSummary,
 				FamilyLaneReceiptClosureSummary = receipt.FamilyLaneReceiptClosureSummary,
 				FamilyLaneResidueFollowUpSummary = receipt.FamilyLaneResidueFollowUpSummary,
-				FamilyLaneNoLoopGuardSummary = receipt.FamilyLaneNoLoopGuardSummary
+				FamilyLaneNoLoopGuardSummary = receipt.FamilyLaneNoLoopGuardSummary,
+				WarfareLaneEntryReadbackSummary = receipt.WarfareLaneEntryReadbackSummary,
+				ForceReadinessReadbackSummary = receipt.ForceReadinessReadbackSummary,
+				CampaignAftermathReadbackSummary = receipt.CampaignAftermathReadbackSummary,
+				WarfareLaneReceiptClosureSummary = receipt.WarfareLaneReceiptClosureSummary,
+				WarfareLaneResidueFollowUpSummary = receipt.WarfareLaneResidueFollowUpSummary,
+				WarfareLaneNoLoopGuardSummary = receipt.WarfareLaneNoLoopGuardSummary
 			})
 			.ToArray();
 	}
