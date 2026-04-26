@@ -50,6 +50,9 @@ flowchart LR
 
     WS -->|"RegimeLegitimacyShifted"| OFFICE
     OFFICE -->|"OfficeDefected"| OFFICE
+
+    WS -->|"CanalWindowChanged"| TRADE
+    WS -->|"CanalWindowChanged"| ORDER
 ```
 
 ## Thin-Chain Ledger
@@ -65,6 +68,7 @@ flowchart LR
 | 7. Clerk capture public life | `OfficeAndCareer.ClerkCaptureDeepened -> PublicLife heat` | settlement jurisdiction | yes, bounded scheduler drain | office-owned `ActiveClerkCaptureSettlementIds`; clears only when condition falls | `ClerkCaptureDeepened` carries office profile metadata; PublicLife heat scales from that profile | `OfficeCourtRegimePressureChainTests.Chain7_RealScheduler_ClerkCaptureDrainsIntoScopedPublicLifeAndDoesNotRepeat` plus office/public-life handler tests |
 | 8. Court agenda policy window | `WorldSettlements.CourtAgendaPressureAccumulated -> OfficeAndCareer.PolicyWindowOpened` | court/global source allocated to one jurisdiction | yes, bounded scheduler handling | allocation rule opens exactly one selected court-facing jurisdiction in the thin slice; local drag can absorb the signal | `PolicyWindowOpened` carries office-owned policy-window profile metadata | `OfficeCourtRegimePressureChainTests.Chain8_RealScheduler_CourtAgendaOpensOnlyOneCourtFacingWindow`; `Chain789OfficePressureHandlerTests` |
 | 9. Regime legitimacy office defection | `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected` | regime/global source allocated to one highest-risk official | yes, bounded scheduler handling | risk allocation chooses one official; default `MandateConfidence = 70` prevents unseeded crisis; authority/reputation can buffer low mandate pressure | `OfficeDefected` carries office-owned defection profile metadata after appointment mutation | `OfficeCourtRegimePressureChainTests.Chain9_RealScheduler_RegimePressureDefectsOnlyOneHighRiskOfficial`; `Chain789OfficePressureHandlerTests` |
+| 10. Canal window trade/order pressure | `WorldSettlements.CanalWindowChanged -> TradeAndIndustry route/market pressure` and `WorldSettlements.CanalWindowChanged -> OrderAndBanditry route pressure` | water/canal-exposed settlement | yes, bounded scheduler handling | transition edge on `CanalWindow`; handlers select exposed settlements from structured `IWorldSettlementsQueries` and keep off-scope settlements untouched | Trade emits route-blocked receipt if existing route risk crosses threshold; Order emits black-route pressure receipt if existing black-route pressure crosses threshold | `CanalWindowTradeHandlerTests`; `CanalWindowOrderHandlerTests`; `EventContractHealth_CanalWindowChangedHasTradeAndOrderAuthorityConsumers` |
 
 ## Freeze Rules
 
@@ -93,6 +97,7 @@ The thin topology leaves these fuller branches intentionally unimplemented:
 - Chain 7: official evaluation, memorial attacks, petition delay, trade dispute delay, clerk factions, recommended clerk / shiye intervention. The current handler already uses a first office-to-public profile from `ClerkDependence`, `PetitionBacklog`, `AdministrativeTaskLoad`, `PetitionPressure`, authority tier, and jurisdiction leverage, but it is not yet the full official-clerk-execution chain.
 - Chain 8: court process state, policy wording, appointment slate, dispatch arrival, local implementation drag, policy capture, downstream household/market/public consequences. The current handler already uses a first office-owned policy-window profile from mandate deficit, authority tier, jurisdiction leverage, petition signal, administrative task load, clerk dependence, and petition backlog, but it is not yet the full court-agenda/policy-dispatch chain.
 - Chain 9: regime recognition, grain-route control, household compliance, public legitimacy, ritual claim, force backing, rebellion-to-polity and dynasty-cycle consequences. The current handler already uses a first office-owned defection profile from mandate deficit, demotion pressure, clerk pressure, petition pressure, reputation strain, and authority/reputation buffer, but it is not yet the full regime-recognition/compliance chain.
+- Chain 10: canal dredging politics, formal shipment allocation, canal-office paperwork, boatmen, route factions, market substitution, and durable public/social residue. The current handler only returns canal-window facts to existing `TradeAndIndustry` and `OrderAndBanditry` owner lanes through existing fields; it is not a full canal economy, patrol AI, or yamen implementation formula.
 
 ## Next Thickening Priority
 

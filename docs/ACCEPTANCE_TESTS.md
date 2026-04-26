@@ -507,3 +507,9 @@ At integration level, verify:
 - Focused integration acceptance must prove emitted-without-authority-consumer and declared-but-not-emitted examples include owner/evidence backlinks while preserving the v33 no-unclassified gate.
 - Architecture acceptance must prove owner/evidence backlinks live in diagnostics/tests, do not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastLocalResponseSummary`, and do not create Application/UI/Unity authority.
 - Save/schema acceptance: v34 evidence backlinks are runtime/test diagnostics only and add no persisted fields, no module envelope, no root/module schema version change, no migration, no event-health ledger, and no save roundtrip change.
+
+## Backend canal-window Trade/Order v35 acceptance - 2026-04-26
+- `WorldSettlements.CanalWindowChanged` must be consumed by both `TradeAndIndustry` and `OrderAndBanditry` through declared `ConsumedEvents`, so the ten-year event-contract health run no longer treats it as emitted-without-authority-consumer debt.
+- Focused module acceptance must prove a closed canal window adjusts only water/canal-exposed Trade state and only water/canal-exposed Order state, with comparable off-scope settlements unchanged.
+- Architecture acceptance must prove the handlers use structured canal-window metadata plus `IWorldSettlementsQueries`, not `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastLocalResponseSummary`.
+- Save/schema acceptance: v35 adds no persisted fields, no module envelope, no root/module schema version change, no migration, no canal ledger, no owner-lane ledger, no UI/Unity authority, and no save roundtrip change.

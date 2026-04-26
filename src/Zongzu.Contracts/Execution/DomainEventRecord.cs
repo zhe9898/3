@@ -87,6 +87,13 @@ public static class DomainEventMetadataKeys
     public const string DisasterLocalDisorderSoil = "disasterLocalDisorderSoil";
     public const string DisasterRouteRupturePressure = "disasterRouteRupturePressure";
     public const string DisasterSuppressionBuffer = "disasterSuppressionBuffer";
+    public const string CanalWindow = "canalWindow";
+    public const string CanalWindowBefore = "canalWindowBefore";
+    public const string CanalWindowAfter = "canalWindowAfter";
+    public const string RouteRiskDelta = "routeRiskDelta";
+    public const string MarketRiskDelta = "marketRiskDelta";
+    public const string RoutePressureDelta = "routePressureDelta";
+    public const string BlackRoutePressureDelta = "blackRoutePressureDelta";
     public const string CorveeWindow = "corveeWindow";
     public const string SettlementId = "settlementId";
     public const string DistressBefore = "distressBefore";
@@ -200,6 +207,7 @@ public static class DomainEventMetadataValues
     public const string CauseExamPass = "exam-pass";
     public const string CauseOfficialSupply = "official-supply";
     public const string CauseTaxSeason = "tax-season";
+    public const string CauseCanalWindow = "canal-window";
     public const string DisasterFlood = "flood";
     public const string SeverityFloodModerate = "flood-moderate";
     public const string SeverityFloodSevere = "flood-severe";

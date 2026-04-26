@@ -161,6 +161,14 @@ public sealed class TenYearSimulationHealthCheckTests
         Assert.That(projectionDebt, Does.Contain("[ProjectionOnlyReceipt; owner=FamilyCore; evidence=docs/MODULE_INTEGRATION_RULES.md#backend-event-contract-health"));
     }
 
+    [Test]
+    public void EventContractHealth_CanalWindowChangedHasTradeAndOrderAuthorityConsumers()
+    {
+        Assert.That(KnownEmittedWithoutAuthorityConsumers, Does.Not.Contain("WorldSettlements.CanalWindowChanged"));
+        Assert.That(new TradeAndIndustryModule().ConsumedEvents, Does.Contain(WorldSettlementsEventNames.CanalWindowChanged));
+        Assert.That(new OrderAndBanditryModule().ConsumedEvents, Does.Contain(WorldSettlementsEventNames.CanalWindowChanged));
+    }
+
     private static SaveRoot CreateCampaignEnabledStressSave()
     {
         GameSimulation simulation = SimulationBootstrapper.CreateP3CampaignSandboxBootstrap(20260421);
@@ -577,7 +585,6 @@ public sealed class TenYearSimulationHealthCheckTests
         "ConflictAndForce.CommanderWounded",
         "FamilyCore.FamilyMembersAged",
         "WorldSettlements.SeasonalFestivalArrived",
-        "WorldSettlements.CanalWindowChanged",
         "ConflictAndForce.ForceReadinessChanged",
         "PersonRegistry.PersonDeceased",
         "WorldSettlements.SettlementPressureChanged",
@@ -819,9 +826,6 @@ public sealed class TenYearSimulationHealthCheckTests
             ["WarfareCampaign.CampaignSupplyStrained"] = new(
                 EventContractHealthKind.AcceptanceTestGap,
                 "campaign supply strain is covered by focused warfare/campaign slices, not required in this seed"),
-            ["WorldSettlements.CanalWindowChanged"] = new(
-                EventContractHealthKind.FutureContract,
-                "canal window is a route/economy signal reserved for fuller trade/order use"),
             ["WorldSettlements.ComplianceModeShifted"] = new(
                 EventContractHealthKind.FutureContract,
                 "compliance mode is reserved for fuller regime/local compliance integration"),

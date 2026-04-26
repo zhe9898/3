@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 
@@ -82,7 +83,13 @@ internal static class SeasonBandAdvancer
             scope.Emit(
                 WorldSettlementsEventNames.CanalWindowChanged,
                 $"漕渠转{DescribeCanalWindow(season.CanalWindow)}。",
-                season.CanalWindow.ToString());
+                season.CanalWindow.ToString(),
+                new Dictionary<string, string>
+                {
+                    [DomainEventMetadataKeys.CanalWindow] = season.CanalWindow.ToString(),
+                    [DomainEventMetadataKeys.CanalWindowBefore] = previousCanal.ToString(),
+                    [DomainEventMetadataKeys.CanalWindowAfter] = season.CanalWindow.ToString(),
+                });
         }
 
         if (season.CorveeWindow != previousCorvee)

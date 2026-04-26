@@ -40,6 +40,7 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
         // Step 1b gap 3: world pulse / public life → trade routes & prices (no-op dispatch)
         WorldSettlementsEventNames.FloodRiskThresholdBreached,
         WorldSettlementsEventNames.RouteConstraintEmerged,
+        WorldSettlementsEventNames.CanalWindowChanged,
         WorldSettlementsEventNames.CorveeWindowChanged,
         WorldSettlementsEventNames.SeasonPhaseAdvanced,
         PublicLifeAndRumorEventNames.MarketBuzzRaised,

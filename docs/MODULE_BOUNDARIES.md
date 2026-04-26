@@ -805,3 +805,9 @@ Current lite note:
 - V34 adds diagnostic owner/evidence backlinks to classified event-contract debt. `owner=<module>` comes from the structured event key/module prefix; `evidence=<doc/test backlink>` comes from the classification kind.
 - The backlinks are developer diagnostics only. They do not move authority across modules, do not create an owner-lane registry, and do not let Application/UI/Unity compute command outcomes or owner lanes.
 - V34 adds no persisted fields, schema bump, migration, command system, projection surface, event-health ledger, `PersonRegistry` expansion, or manager/controller layer.
+
+## 2026-04-26 backend canal window v35 note
+- `WorldSettlements` owns `CanalWindow` state and publishes `WorldSettlements.CanalWindowChanged` with structured before/after metadata.
+- `TradeAndIndustry` may consume that fact to update only existing trade-owned market risk, route risk, blocked shipment, seizure-risk, and black-route ledger fields for water/canal-exposed settlements.
+- `OrderAndBanditry` may consume that fact to update only existing order-owned route pressure, black-route pressure, disorder pressure, suppression demand, and route-shielding fields for water/canal-exposed settlements.
+- V35 handlers choose locus through `IWorldSettlementsQueries`; they must not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastLocalResponseSummary`, and they do not create persisted canal/owner-lane state.

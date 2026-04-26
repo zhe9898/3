@@ -708,6 +708,36 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Canal_window_owner_lane_handlers_must_use_structured_world_reads()
+    {
+        string tradeSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.TradeAndIndustry",
+            "TradeAndIndustryModule",
+            "TradeAndIndustryModule.CampaignEvents.cs"));
+        string orderSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.OrderAndBanditry",
+            "OrderAndBanditryModule",
+            "OrderAndBanditryModule.cs"));
+
+        foreach (string source in new[] { tradeSource, orderSource })
+        {
+            Assert.That(source, Does.Contain("WorldSettlementsEventNames.CanalWindowChanged"));
+            Assert.That(source, Does.Contain("IWorldSettlementsQueries"));
+            Assert.That(source, Does.Contain("DomainEventMetadataKeys.CanalWindowAfter"));
+            Assert.That(source, Does.Not.Contain("domainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        }
+
+        Assert.That(tradeSource, Does.Contain("TradeAndIndustryEventNames.RouteBusinessBlocked"));
+        Assert.That(orderSource, Does.Contain("OrderAndBanditryEventNames.BlackRoutePressureRaised"));
+        Assert.That(tradeSource, Does.Not.Contain("ModuleSchemaVersion => 5"));
+        Assert.That(orderSource, Does.Not.Contain("ModuleSchemaVersion => 10"));
+    }
+
+    [Test]
     public void PersonRecord_must_remain_identity_only()
     {
         string personTypesPath = Path.Combine(SrcDir, "Zongzu.Contracts", "PersonRegistryTypes.cs");

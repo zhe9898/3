@@ -248,3 +248,7 @@ The world should support:
 - false reconciliation
 - delayed revenge
 - generational inheritance of narrative
+
+## Backend canal-window v35 note
+
+`WorldSettlements.CanalWindowChanged` now returns first to `TradeAndIndustry` and `OrderAndBanditry` owner lanes. This does not create immediate shame, favor, fear, obligation, or grudge records. If canal-window pressure later becomes durable social residue, `SocialMemoryAndRelations` must read structured owner aftermath in its own cadence and write its own existing memory state rather than parsing canal event summaries or trade/order receipt prose.

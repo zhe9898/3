@@ -248,11 +248,171 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
                     // TODO Step 2: 按维度入口调整路况 / 粮价 / 商路风险 / 发 RouteBusinessBlocked。
                     break;
 
+                case WorldSettlementsEventNames.CanalWindowChanged:
+                    ApplyCanalWindowTradePressure(scope, domainEvent);
+                    break;
+
                 case WorldSettlementsEventNames.SeasonPhaseAdvanced:
                     ApplyHarvestPricePulse(scope, domainEvent);
                     break;
             }
         }
+    }
+
+    private static void ApplyCanalWindowTradePressure(
+        ModuleEventHandlingScope<TradeAndIndustryState> scope,
+        IDomainEvent domainEvent)
+    {
+        string canalWindow = ResolveCanalWindow(domainEvent);
+        CanalTradePressureProfile profile = canalWindow switch
+        {
+            nameof(CanalWindow.Closed) => new(8, 6, -3, 2, 1, 4, 3, 2),
+            nameof(CanalWindow.Limited) => new(4, 3, -1, 1, 1, 2, 1, 1),
+            nameof(CanalWindow.Open) => new(-4, -3, 2, -1, -1, -2, -2, -1),
+            _ => default,
+        };
+
+        if (profile == default)
+        {
+            return;
+        }
+
+        IWorldSettlementsQueries worldQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        HashSet<SettlementId> exposedSettlements = BuildCanalExposedSettlementIds(worldQueries);
+        if (exposedSettlements.Count == 0)
+        {
+            return;
+        }
+
+        HashSet<SettlementId> changedSettlements = [];
+        foreach (SettlementMarketState market in scope.State.Markets
+            .Where(market => exposedSettlements.Contains(market.SettlementId))
+            .OrderBy(static market => market.SettlementId.Value))
+        {
+            int oldLocalRisk = market.LocalRisk;
+            int oldDemand = market.Demand;
+            int oldPriceIndex = market.PriceIndex;
+
+            market.LocalRisk = Math.Clamp(market.LocalRisk + profile.MarketRiskDelta, 0, 100);
+            market.Demand = Math.Clamp(market.Demand + profile.DemandDelta, 0, 100);
+            market.PriceIndex = Math.Clamp(market.PriceIndex + profile.PriceIndexDelta, 50, 150);
+
+            SettlementBlackRouteLedgerState ledger = GetOrCreateBlackRouteLedger(scope.State, market.SettlementId);
+            ledger.ShadowPriceIndex = Math.Clamp(Math.Max(ledger.ShadowPriceIndex, 100) + profile.ShadowPriceDelta, 70, 180);
+            ledger.DiversionShare = Math.Clamp(ledger.DiversionShare + profile.DiversionDelta, 0, 100);
+            ledger.BlockedShipmentCount = Math.Clamp(ledger.BlockedShipmentCount + profile.BlockedShipmentDelta, 0, 12);
+            ledger.SeizureRisk = Math.Clamp(ledger.SeizureRisk + profile.SeizureRiskDelta, 0, 100);
+            ledger.DiversionBandLabel = DetermineDiversionBandLabel(ledger);
+            ledger.LastLedgerTrace =
+                $"{market.MarketName}受漕渠窗口{canalWindow}牵动，正货周转与私下分流一并重排。";
+
+            if (oldLocalRisk != market.LocalRisk
+                || oldDemand != market.Demand
+                || oldPriceIndex != market.PriceIndex)
+            {
+                changedSettlements.Add(market.SettlementId);
+            }
+        }
+
+        foreach (RouteTradeState route in scope.State.Routes
+            .Where(route => route.IsActive && exposedSettlements.Contains(route.SettlementId))
+            .OrderBy(static route => route.RouteId))
+        {
+            int oldRisk = route.Risk;
+            int oldBlocked = route.BlockedShipmentCount;
+            int oldSeizure = route.SeizureRisk;
+
+            route.Risk = Math.Clamp(route.Risk + profile.RouteRiskDelta, 0, 100);
+            route.LastMargin = Math.Clamp(route.LastMargin - profile.RouteRiskDelta, -20, 30);
+            route.BlockedShipmentCount = Math.Clamp(route.BlockedShipmentCount + profile.BlockedShipmentDelta, 0, 6);
+            route.SeizureRisk = Math.Clamp(route.SeizureRisk + profile.SeizureRiskDelta, 0, 100);
+            route.RouteConstraintLabel = DetermineRouteConstraintLabel(route);
+            route.LastRouteTrace =
+                $"{route.RouteName}受漕渠窗口{canalWindow}牵动，路险{route.Risk}、阻货{route.BlockedShipmentCount}、查缉险{route.SeizureRisk}。";
+
+            if (oldRisk != route.Risk || oldBlocked != route.BlockedShipmentCount || oldSeizure != route.SeizureRisk)
+            {
+                changedSettlements.Add(route.SettlementId);
+            }
+
+            if (oldRisk < 60 && route.Risk >= 60)
+            {
+                scope.Emit(
+                    TradeAndIndustryEventNames.RouteBusinessBlocked,
+                    $"{route.RouteName}因漕渠窗口{canalWindow}而商路受阻。",
+                    route.SettlementId.Value.ToString(),
+                    BuildCanalTradeMetadata(domainEvent, profile, route.SettlementId));
+            }
+        }
+
+        foreach (SettlementId settlementId in changedSettlements.OrderBy(static id => id.Value))
+        {
+            scope.RecordDiff(
+                $"{settlementId.Value}地漕渠窗口{canalWindow}落入商路读数：市险变{profile.MarketRiskDelta}，路险变{profile.RouteRiskDelta}。",
+                settlementId.Value.ToString());
+        }
+    }
+
+    private static string ResolveCanalWindow(IDomainEvent domainEvent)
+    {
+        if (domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.CanalWindowAfter, out string? metadataWindow)
+            && !string.IsNullOrWhiteSpace(metadataWindow))
+        {
+            return metadataWindow;
+        }
+
+        return domainEvent.EntityKey ?? string.Empty;
+    }
+
+    private static Dictionary<string, string> BuildCanalTradeMetadata(
+        IDomainEvent domainEvent,
+        CanalTradePressureProfile profile,
+        SettlementId settlementId)
+    {
+        return new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseCanalWindow,
+            [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+            [DomainEventMetadataKeys.SettlementId] = settlementId.Value.ToString(),
+            [DomainEventMetadataKeys.CanalWindow] = ResolveCanalWindow(domainEvent),
+            [DomainEventMetadataKeys.RouteRiskDelta] = profile.RouteRiskDelta.ToString(),
+            [DomainEventMetadataKeys.MarketRiskDelta] = profile.MarketRiskDelta.ToString(),
+        };
+    }
+
+    private static HashSet<SettlementId> BuildCanalExposedSettlementIds(IWorldSettlementsQueries worldQueries)
+    {
+        HashSet<SettlementId> interfaceNodes = worldQueries.GetSettlements()
+            .Where(static settlement => settlement.NodeKind is SettlementNodeKind.CanalJunction
+                or SettlementNodeKind.Wharf
+                or SettlementNodeKind.Ferry)
+            .Select(static settlement => settlement.Id)
+            .ToHashSet();
+
+        HashSet<SettlementId> exposed = new(interfaceNodes);
+        foreach (RouteSnapshot route in worldQueries.GetRoutes().OrderBy(static route => route.Id.Value))
+        {
+            bool waterRoute = route.Medium is RouteMedium.WaterCanal
+                or RouteMedium.WaterRiver
+                or RouteMedium.FerryLink;
+            bool touchesInterface = interfaceNodes.Contains(route.Origin)
+                || interfaceNodes.Contains(route.Destination)
+                || route.Waypoints.Any(interfaceNodes.Contains);
+
+            if (!waterRoute && !touchesInterface)
+            {
+                continue;
+            }
+
+            exposed.Add(route.Origin);
+            exposed.Add(route.Destination);
+            foreach (SettlementId waypoint in route.Waypoints)
+            {
+                exposed.Add(waypoint);
+            }
+        }
+
+        return exposed;
     }
 
     private static void ApplyHarvestPricePulse(ModuleEventHandlingScope<TradeAndIndustryState> scope, IDomainEvent domainEvent)
@@ -293,4 +453,14 @@ public sealed partial class TradeAndIndustryModule : ModuleRunner<TradeAndIndust
             }
         }
     }
+
+    private readonly record struct CanalTradePressureProfile(
+        int RouteRiskDelta,
+        int MarketRiskDelta,
+        int DemandDelta,
+        int PriceIndexDelta,
+        int BlockedShipmentDelta,
+        int SeizureRiskDelta,
+        int DiversionDelta,
+        int ShadowPriceDelta);
 }

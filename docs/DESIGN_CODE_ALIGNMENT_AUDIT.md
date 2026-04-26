@@ -1,5 +1,11 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v35 delta - 2026-04-26
+
+- Backend canal-window v35 removes `WorldSettlements.CanalWindowChanged` from future-contract debt by giving it real `TradeAndIndustry` and `OrderAndBanditry` owner-lane consumers.
+- `WorldSettlements` still owns the canal-window state and emits a structured fact with before/after metadata. Trade mutates only existing market/route/black-route ledger fields; Order mutates only existing route pressure / black-route pressure / suppression-demand fields.
+- V35 remains a thin pressure-chain hookup, not a thick canal economy, event pool, command system, UI rule path, persisted ledger, schema bump, migration, manager/controller layer, or `PersonRegistry` expansion.
+
 ## v34 delta - 2026-04-26
 
 - Backend event-contract health v34 adds diagnostic evidence backlinks to the v32-v33 classification surface: visible classified debt now includes `owner=<module>` and `evidence=<doc/test backlink>`.

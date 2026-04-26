@@ -65,6 +65,7 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
         // Step 1b gap 3: world pulse / public life → order baseline (no-op dispatch)
         WorldSettlementsEventNames.FloodRiskThresholdBreached,
         WorldSettlementsEventNames.RouteConstraintEmerged,
+        WorldSettlementsEventNames.CanalWindowChanged,
         WorldSettlementsEventNames.CorveeWindowChanged,
         WorldSettlementsEventNames.DisasterDeclared,
         PublicLifeAndRumorEventNames.PrefectureDispatchPressed,
@@ -1281,6 +1282,10 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
                     ApplyCorveeWindowDisorderPressure(scope, domainEvent);
                     break;
 
+                case WorldSettlementsEventNames.CanalWindowChanged:
+                    ApplyCanalWindowRoutePressure(scope, domainEvent);
+                    break;
+
                 case WorldSettlementsEventNames.DisasterDeclared:
                     ApplyDisasterDisorderPressure(scope, domainEvent);
                     break;
@@ -1300,6 +1305,138 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
                     break;
             }
         }
+    }
+
+    private static void ApplyCanalWindowRoutePressure(
+        ModuleEventHandlingScope<OrderAndBanditryState> scope,
+        IDomainEvent domainEvent)
+    {
+        string canalWindow = ResolveCanalWindow(domainEvent);
+        CanalOrderPressureProfile profile = canalWindow switch
+        {
+            nameof(CanalWindow.Closed) => new(8, 5, 2, 2, -2),
+            nameof(CanalWindow.Limited) => new(4, 2, 1, 1, -1),
+            nameof(CanalWindow.Open) => new(-4, -3, 0, -1, 2),
+            _ => default,
+        };
+
+        if (profile == default)
+        {
+            return;
+        }
+
+        IWorldSettlementsQueries worldQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
+        HashSet<SettlementId> exposedSettlements = BuildCanalExposedSettlementIds(worldQueries);
+        if (exposedSettlements.Count == 0)
+        {
+            return;
+        }
+
+        foreach (SettlementDisorderState settlement in scope.State.Settlements
+            .Where(settlement => exposedSettlements.Contains(settlement.SettlementId))
+            .OrderBy(static settlement => settlement.SettlementId.Value))
+        {
+            int oldRoutePressure = settlement.RoutePressure;
+            int oldBlackRoutePressure = settlement.BlackRoutePressure;
+            int oldDisorderPressure = settlement.DisorderPressure;
+            int oldSuppressionDemand = settlement.SuppressionDemand;
+            int oldRouteShielding = settlement.RouteShielding;
+
+            settlement.RoutePressure = Math.Clamp(settlement.RoutePressure + profile.RoutePressureDelta, 0, 100);
+            settlement.BlackRoutePressure = Math.Clamp(settlement.BlackRoutePressure + profile.BlackRoutePressureDelta, 0, 100);
+            settlement.DisorderPressure = Math.Clamp(settlement.DisorderPressure + profile.DisorderDelta, 0, 100);
+            settlement.SuppressionDemand = Math.Clamp(settlement.SuppressionDemand + profile.SuppressionDemandDelta, 0, 100);
+            settlement.RouteShielding = Math.Clamp(settlement.RouteShielding + profile.RouteShieldingDelta, 0, 100);
+            settlement.EscalationBandLabel = DetermineEscalationBandLabel(settlement.BlackRoutePressure, settlement.CoercionRisk);
+            settlement.LastPressureReason =
+                $"{settlement.SettlementId.Value}地漕渠窗口{canalWindow}压到路面，巡丁与私路只能按本地治安账承接。";
+            settlement.LastPressureTrace =
+                $"漕渠窗口{canalWindow}：路压变{profile.RoutePressureDelta}，私路压变{profile.BlackRoutePressureDelta}，镇压需变{profile.SuppressionDemandDelta}，护路得力变{profile.RouteShieldingDelta}。";
+
+            if (oldRoutePressure == settlement.RoutePressure
+                && oldBlackRoutePressure == settlement.BlackRoutePressure
+                && oldDisorderPressure == settlement.DisorderPressure
+                && oldSuppressionDemand == settlement.SuppressionDemand
+                && oldRouteShielding == settlement.RouteShielding)
+            {
+                continue;
+            }
+
+            scope.RecordDiff(
+                $"{settlement.SettlementId.Value}地漕渠窗口{canalWindow}回到路面治安：路压{oldRoutePressure}->{settlement.RoutePressure}，私路{oldBlackRoutePressure}->{settlement.BlackRoutePressure}。",
+                settlement.SettlementId.Value.ToString());
+
+            if (oldBlackRoutePressure < 60 && settlement.BlackRoutePressure >= 60)
+            {
+                scope.Emit(
+                    OrderAndBanditryEventNames.BlackRoutePressureRaised,
+                    $"{settlement.SettlementId.Value}地漕渠窗口{canalWindow}后私路压抬头。",
+                    settlement.SettlementId.Value.ToString(),
+                    BuildCanalOrderMetadata(domainEvent, profile, settlement.SettlementId));
+            }
+        }
+    }
+
+    private static Dictionary<string, string> BuildCanalOrderMetadata(
+        IDomainEvent domainEvent,
+        CanalOrderPressureProfile profile,
+        SettlementId settlementId)
+    {
+        return new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseCanalWindow,
+            [DomainEventMetadataKeys.SourceEventType] = domainEvent.EventType,
+            [DomainEventMetadataKeys.SettlementId] = settlementId.Value.ToString(),
+            [DomainEventMetadataKeys.CanalWindow] = ResolveCanalWindow(domainEvent),
+            [DomainEventMetadataKeys.RoutePressureDelta] = profile.RoutePressureDelta.ToString(),
+            [DomainEventMetadataKeys.BlackRoutePressureDelta] = profile.BlackRoutePressureDelta.ToString(),
+        };
+    }
+
+    private static string ResolveCanalWindow(IDomainEvent domainEvent)
+    {
+        if (domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.CanalWindowAfter, out string? metadataWindow)
+            && !string.IsNullOrWhiteSpace(metadataWindow))
+        {
+            return metadataWindow;
+        }
+
+        return domainEvent.EntityKey ?? string.Empty;
+    }
+
+    private static HashSet<SettlementId> BuildCanalExposedSettlementIds(IWorldSettlementsQueries worldQueries)
+    {
+        HashSet<SettlementId> interfaceNodes = worldQueries.GetSettlements()
+            .Where(static settlement => settlement.NodeKind is SettlementNodeKind.CanalJunction
+                or SettlementNodeKind.Wharf
+                or SettlementNodeKind.Ferry)
+            .Select(static settlement => settlement.Id)
+            .ToHashSet();
+
+        HashSet<SettlementId> exposed = new(interfaceNodes);
+        foreach (RouteSnapshot route in worldQueries.GetRoutes().OrderBy(static route => route.Id.Value))
+        {
+            bool waterRoute = route.Medium is RouteMedium.WaterCanal
+                or RouteMedium.WaterRiver
+                or RouteMedium.FerryLink;
+            bool touchesInterface = interfaceNodes.Contains(route.Origin)
+                || interfaceNodes.Contains(route.Destination)
+                || route.Waypoints.Any(interfaceNodes.Contains);
+
+            if (!waterRoute && !touchesInterface)
+            {
+                continue;
+            }
+
+            exposed.Add(route.Origin);
+            exposed.Add(route.Destination);
+            foreach (SettlementId waypoint in route.Waypoints)
+            {
+                exposed.Add(waypoint);
+            }
+        }
+
+        return exposed;
     }
 
     private static void ApplyCorveeWindowDisorderPressure(
@@ -1660,4 +1797,11 @@ public sealed partial class OrderAndBanditryModule : ModuleRunner<OrderAndBandit
         int LocalDisorderSoil,
         int RouteRupturePressure,
         int SuppressionBuffer);
+
+    private readonly record struct CanalOrderPressureProfile(
+        int RoutePressureDelta,
+        int BlackRoutePressureDelta,
+        int DisorderDelta,
+        int SuppressionDemandDelta,
+        int RouteShieldingDelta);
 }

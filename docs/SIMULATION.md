@@ -286,6 +286,7 @@ Current public-life/order v9/v10/v11/v12 note:
 - v32 adds backend event-contract health classification to the ten-year diagnostics. It classifies `DomainEvent` contract debt after simulation has run; it does not affect scheduler order, command resolution, module state, projection authority, or save/schema compatibility.
 - v33 adds a no-unclassified gate to that same ten-year diagnostic pass. The assertion runs after simulation has produced runtime event counts and does not affect scheduler order, command resolution, module state, projection authority, or save/schema compatibility.
 - v34 adds owner/evidence backlinks to that same diagnostic readback. The report formats `owner=<module>` from structured event keys and `evidence=<doc/test backlink>` from classification kind after simulation has run; it does not affect scheduler order, command resolution, module state, projection authority, UI/Unity authority, or save/schema compatibility.
+- v35 turns `WorldSettlements.CanalWindowChanged` into a thin same-month owner-lane handoff. The bounded fresh-event drain lets `TradeAndIndustry` and `OrderAndBanditry` consume the structured canal-window fact and mutate only their own existing water/route pressure fields. This is still not an event pool, not a thick canal economy, and not a UI/Unity rule path.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window
