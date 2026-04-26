@@ -846,3 +846,12 @@ Current lite note:
 - `SocialMemoryAndRelations` still writes durable shame/favor/grudge/obligation residue only in its later monthly pass. It must not read Family-lane projection prose such as `Family承接入口`, `族老解释读回`, `本户担保读回`, `宗房脸面读回`, `Family后手收口读回`, `Family余味续接读回`, or `Family闭环防回压` as authority input.
 - Unity and shell code may copy the projected Family-lane closure fields only. They must not query modules, compute Family closure, infer guarantee success, maintain any Family closure / owner-lane / receipt ledger, or write SocialMemory.
 - V53-V60 adds no persisted fields, schema bump, migration, Family closure ledger, guarantee ledger, owner-lane ledger, receipt-status ledger, outcome ledger, cooldown ledger, follow-up ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.
+
+## 2026-04-26 backend Family relief choice v61-v68 note
+- `FamilyCore` owns `GrantClanRelief`. The command is a bounded sibling to existing Family conflict commands and resolves inside the module from existing clan fields only.
+- The command may reduce `CharityObligation`, `ReliefSanctionPressure`, `BranchTension`, and `BranchFavorPressure`, spend `SupportReserve`, raise `MediationMomentum`, and write existing conflict outcome/trace fields. It must not mutate `PopulationAndHouseholds`, `SocialMemoryAndRelations`, `OrderAndBanditry`, `OfficeAndCareer`, or `PublicLifeAndRumor`.
+- `Application` may route/catalog the command and project `Family救济选择读回`, `接济义务读回`, `宗房余力读回`, and `不是普通家户再扛`. It may not compute whether the relief succeeds, choose hidden household targets, or maintain a relief/owner-lane ledger.
+- `PopulationAndHouseholds` remains the ordinary home-household low-power response lane. `GrantClanRelief` is not a backdoor household repair command and does not write household local-response traces.
+- `SocialMemoryAndRelations` remains the later durable residue owner. Same-command Family relief does not write memories; any later shame/favor/grudge/obligation pass must read structured aftermath, not projection or receipt prose.
+- Unity and shell code may copy projected command affordance/receipt fields only. They must not query modules, compute Family relief, infer sponsor targeting, or write SocialMemory.
+- V61-V68 adds no persisted fields, schema bump, migration, relief ledger, charity ledger, guarantee ledger, Family closure ledger, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.

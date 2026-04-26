@@ -607,6 +607,84 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Family_relief_choice_must_stay_family_owned_and_schema_neutral()
+    {
+        string resolverSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.FamilyCore",
+            "FamilyCoreCommandResolver.cs"));
+        string profileSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.FamilyCore",
+            "FamilyCoreCommandResolver.Profiles.cs"));
+        string familyModuleSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.FamilyCore",
+            "FamilyCoreModule.cs"));
+        string projectionSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.cs"));
+        string receiptsSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.Receipts.cs"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+
+        Match grantBlock = Regex.Match(
+            resolverSource,
+            @"case PlayerCommandNames\.GrantClanRelief:(?<body>.*?)case PlayerCommandNames\.SuspendClanRelief:",
+            RegexOptions.Singleline);
+        Match readbackBuilder = Regex.Match(
+            projectionSource,
+            @"private static string BuildFamilyReliefChoiceReadback\(ClanSnapshot clan\)\s*\{(?<body>.*?)\n    \}",
+            RegexOptions.Singleline);
+
+        Assert.That(grantBlock.Success, Is.True, "Expected FamilyCore GrantClanRelief command block.");
+        Assert.That(readbackBuilder.Success, Is.True, "Expected projection-only Family relief readback builder.");
+        Assert.That(resolverSource, Does.Contain("PlayerCommandNames.GrantClanRelief"));
+        Assert.That(profileSource, Does.Contain("ResolveGrantClanReliefProfile"));
+        Assert.That(profileSource, Does.Contain("ApplyFamilyReliefProfile"));
+        Assert.That(profileSource, Does.Contain("CharityObligation"));
+        Assert.That(profileSource, Does.Contain("SupportReserve"));
+        Assert.That(profileSource, Does.Contain("ReliefSanctionPressure"));
+        Assert.That(familyModuleSource, Does.Contain("ModuleSchemaVersion => 8"));
+        Assert.That(familyModuleSource, Does.Contain("PlayerCommandNames.GrantClanRelief"));
+        Assert.That(projectionSource, Does.Contain("BuildFamilyReliefChoiceReadback"));
+        Assert.That(projectionSource, Does.Contain("Family\u6551\u6d4e\u9009\u62e9\u8bfb\u56de"));
+        Assert.That(projectionSource, Does.Contain("\u4e0d\u662f\u666e\u901a\u5bb6\u6237\u518d\u625b"));
+        Assert.That(receiptsSource, Does.Contain("PlayerCommandNames.GrantClanRelief"));
+        Assert.That(schemaRules, Does.Contain("family relief choice v61-v68 adds no persisted fields"));
+
+        string[] forbiddenAuthorityTokens =
+        [
+            "PopulationAndHouseholdsState",
+            "SocialMemoryAndRelationsState",
+            ".Memories.Add",
+            "DomainEvent.Summary",
+            "LastLocalResponseSummary",
+            "LastInterventionSummary",
+            "ReliefLedger",
+            "FamilyClosureLedger",
+            "OwnerLaneLedger",
+            "CooldownLedger",
+            "HouseholdTarget",
+            "PersonRegistry.Register",
+            "GetMutableModuleState",
+            "IssueModuleCommand",
+        ];
+
+        foreach (string token in forbiddenAuthorityTokens)
+        {
+            Assert.That(grantBlock.Groups["body"].Value, Does.Not.Contain(token), token);
+            Assert.That(profileSource, Does.Not.Contain(token), token);
+            Assert.That(readbackBuilder.Groups["body"].Value, Does.Not.Contain(token), token);
+        }
+    }
+
+    [Test]
     public void Ordinary_household_order_residue_projection_must_use_structured_after_account_fields()
     {
         string sourcePath = Path.Combine(

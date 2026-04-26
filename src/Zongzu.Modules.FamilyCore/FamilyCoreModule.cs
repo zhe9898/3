@@ -24,6 +24,7 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         PlayerCommandNames.SupportSeniorBranch,
         PlayerCommandNames.OrderFormalApology,
         PlayerCommandNames.PermitBranchSeparation,
+        PlayerCommandNames.GrantClanRelief,
         PlayerCommandNames.SuspendClanRelief,
         PlayerCommandNames.InviteClanEldersMediation,
         PlayerCommandNames.InviteClanEldersPubliclyBroker,

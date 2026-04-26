@@ -288,3 +288,11 @@ V53-V60 adds Family-lane closure readback over the same structured residue surfa
 `SocialMemoryAndRelations` still owns only later durable shame/favor/grudge/obligation residue. Application projections may read `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, and `OriginDate` alongside structured Family snapshots, but no SocialMemory reader may parse Family-lane projection prose, SocialMemory summary prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, receipt prose, or `DomainEvent.Summary`.
 
 `FamilyCore` owns clan elder explanation, household guarantee, lineage-house face, and sponsor-clan pressure. The ordinary home-household line remains a low-power local response surface; it cannot repair Family guarantee face or durable social memory by itself. V53-V60 adds no memory namespace, relationship table, Family closure ledger, guarantee ledger, schema bump, or migration.
+
+## Backend Family relief choice v61-v68 note
+
+V61-V68 adds `GrantClanRelief` as a FamilyCore-owned command. It may reduce pressure already stored in `FamilyCore`, but it is not itself a durable shame/favor/grudge/obligation record and does not write `SocialMemoryAndRelations` in the same command.
+
+If the relief choice later leaves social residue, `SocialMemoryAndRelations` must read structured Family aftermath in its monthly cadence and write existing memory/narrative/climate records. It must not parse `Family救济选择读回`, `接济义务读回`, `宗房余力读回`, `不是普通家户再扛`, receipt prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, SocialMemory summary prose, or `DomainEvent.Summary`.
+
+The ordinary home-household line still cannot repair lineage-house face or durable social memory by itself. V61-V68 adds no memory namespace, relationship table, relief ledger, charity ledger, Family closure ledger, guarantee ledger, schema bump, or migration.

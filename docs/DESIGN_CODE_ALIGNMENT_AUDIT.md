@@ -1,5 +1,14 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v61-v68 delta - 2026-04-26
+
+- Family relief choice depth v61-v68 adds the thin `GrantClanRelief` command as a bounded Family lane choice after v53-v60 made the lane readable. It is not a new command system, event pool, thick clan economy, clan elder AI, branch-faction model, complete guarantee formula, household repair lane, or relief ledger.
+- `FamilyCore` owns the result. The resolver reads existing clan pressure fields and mutates only existing `FamilyCore` state: `CharityObligation`, `SupportReserve`, `BranchTension`, `BranchFavorPressure`, `ReliefSanctionPressure`, `MediationMomentum`, and existing conflict receipt fields.
+- `Application` adds catalog routing and projected affordance/readback text such as `Family救济选择读回`, `接济义务读回`, `宗房余力读回`, and `不是普通家户再扛`; it does not compute command results.
+- `PopulationAndHouseholds` remains the ordinary low-power local response lane and is not mutated by `GrantClanRelief`. Same-command handling does not write `SocialMemoryAndRelations`; durable shame/favor/grudge/obligation residue remains later structured SocialMemory work.
+- Unity presentation copies the projected command fields only. Unity does not query modules, compute Family relief, infer sponsor targeting, maintain a relief/owner-lane ledger, or write SocialMemory.
+- Save/schema audit: v61-v68 adds no persisted state, root/module schema bump, migration, save manifest change, relief / charity / guarantee / owner-lane / receipt / outcome / cooldown / follow-up ledger, household target field, manager/god-controller path, or `PersonRegistry` expansion.
+
 ## v53-v60 delta - 2026-04-26
 
 - Family owner-lane closure v53-v60 closes the Family readback after public-life/order external after-accounts are already pointed back to `FamilyCore`. It is projection/readback guidance, not a new command system, event pool, thick clan economy, clan elder AI, branch-faction model, complete guarantee formula, or household repair lane.

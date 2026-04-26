@@ -77,6 +77,42 @@ public static partial class FamilyCoreCommandResolver
                 new CommandResolutionFactor("救济制裁", reliefBand)));
     }
 
+    private static FamilyReliefResolutionProfile ResolveGrantClanReliefProfile(ClanStateData clan)
+    {
+        int obligationBand = CommandResolutionBands.Score(clan.CharityObligation, 12, 28, 48);
+        int reliefBand = CommandResolutionBands.Score(clan.ReliefSanctionPressure, 10, 25, 45);
+        int branchPressureBand = CommandResolutionBands.Score(clan.BranchTension, 20, 45, 70);
+        int supportBand = CommandResolutionBands.Score(clan.SupportReserve, 8, 25, 45);
+        int prestigeBand = CommandResolutionBands.Score(clan.Prestige, 35, 55, 75);
+
+        int supportCost = Math.Clamp(
+            3 + obligationBand + reliefBand + Math.Max(0, 2 - supportBand),
+            3,
+            9);
+        int charityRelief = Math.Clamp(7 + (obligationBand * 3) + supportBand + (prestigeBand / 2), 5, 22);
+        int sanctionRelief = Math.Clamp(4 + (reliefBand * 3) + supportBand, 3, 16);
+        int branchRelief = Math.Clamp(2 + branchPressureBand + supportBand + (prestigeBand / 2), 1, 10);
+        int branchBacklash = clan.SupportReserve <= supportCost + 3 && branchPressureBand >= 2 ? 2 : 0;
+        int favorRelief = clan.BranchFavorPressure > 0
+            ? Math.Clamp(1 + reliefBand, 1, 5)
+            : 0;
+        int mediationLift = Math.Clamp(2 + supportBand + (prestigeBand / 2), 2, 8);
+
+        return new FamilyReliefResolutionProfile(
+            CharityObligationDelta: -charityRelief,
+            SupportReserveDelta: -supportCost,
+            BranchTensionDelta: -branchRelief + branchBacklash,
+            BranchFavorPressureDelta: -favorRelief,
+            ReliefSanctionPressureDelta: -sanctionRelief,
+            MediationMomentumDelta: mediationLift,
+            ExecutionSummary: CommandResolutionProfileText.RenderFactors(
+                new CommandResolutionFactor("接济义务", obligationBand),
+                new CommandResolutionFactor("救济制裁", reliefBand),
+                new CommandResolutionFactor("房支争势", branchPressureBand),
+                new CommandResolutionFactor("宗房余力", supportBand),
+                new CommandResolutionFactor("门第声势", prestigeBand)));
+    }
+
     private static FamilyConflictResolutionProfile ResolveSuspendReliefProfile(ClanStateData clan)
     {
         int branchPressureBand = CommandResolutionBands.Score(clan.BranchTension, 20, 45, 70);
@@ -133,6 +169,16 @@ public static partial class FamilyCoreCommandResolver
         clan.MediationMomentum = ApplyPressureDelta(clan.MediationMomentum, profile.MediationMomentumDelta);
         clan.SupportReserve = ApplyPressureDelta(clan.SupportReserve, profile.SupportReserveDelta);
         clan.ReliefSanctionPressure = ApplyPressureDelta(clan.ReliefSanctionPressure, profile.ReliefSanctionPressureDelta);
+    }
+
+    private static void ApplyFamilyReliefProfile(ClanStateData clan, FamilyReliefResolutionProfile profile)
+    {
+        clan.CharityObligation = ApplyPressureDelta(clan.CharityObligation, profile.CharityObligationDelta);
+        clan.SupportReserve = ApplyPressureDelta(clan.SupportReserve, profile.SupportReserveDelta);
+        clan.BranchTension = ApplyPressureDelta(clan.BranchTension, profile.BranchTensionDelta);
+        clan.BranchFavorPressure = ApplyPressureDelta(clan.BranchFavorPressure, profile.BranchFavorPressureDelta);
+        clan.ReliefSanctionPressure = ApplyPressureDelta(clan.ReliefSanctionPressure, profile.ReliefSanctionPressureDelta);
+        clan.MediationMomentum = ApplyPressureDelta(clan.MediationMomentum, profile.MediationMomentumDelta);
     }
 
     private static int ApplyPressureDelta(int value, int delta)

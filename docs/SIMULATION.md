@@ -425,3 +425,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Public-life, family-facing, governance, docket, and receipt readback may show `Family承接入口`, `族老解释读回`, `本户担保读回`, `宗房脸面读回`, `Family后手收口读回`, `Family余味续接读回`, and `Family闭环防回压`, but those strings are runtime guidance only.
 - Determinism depends on query snapshots, fixed ordering, and stable cause keys. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected Family prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 - The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for clan elder explanation, household guarantee, lineage-house face, sponsor-clan pressure, or SocialMemory after-accounts.
+
+## Current backend Family relief choice v61-v68 note
+
+- V61-V68 adds one command-time FamilyCore resolution, `GrantClanRelief`, and no scheduler phase, event pool, Family loop, or same-command SocialMemory write.
+- The command reads the targeted clan and deterministic integer fields already owned by `FamilyCore`; it updates existing support/charity/branch/relief/mediation pressure fields and existing conflict receipt fields only.
+- Application projections may show `Family救济选择读回`, `接济义务读回`, `宗房余力读回`, and `不是普通家户再扛` after the owning module state is available. Those strings are runtime guidance only.
+- Determinism depends on command target, query snapshots, fixed ordering, and fixed formulas. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected Family prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for Family relief, lineage-house face, sponsor-clan pressure, or SocialMemory after-accounts.

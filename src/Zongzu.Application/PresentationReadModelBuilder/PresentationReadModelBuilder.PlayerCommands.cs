@@ -65,6 +65,34 @@ public sealed partial class PresentationReadModelBuilder
                     : "分房之议未炽，暂可留待后断。",
                 clanId: clan.Id,
                 targetLabel: clan.ClanName));
+            string familyReliefChoiceReadback = BuildFamilyReliefChoiceReadback(clan);
+            bool familyReliefPressureVisible =
+                clan.CharityObligation >= 8
+                || clan.ReliefSanctionPressure >= 8
+                || clan.BranchTension >= 18;
+            affordances.Add(BuildPlayerCommandAffordanceSnapshot(
+                PlayerCommandNames.GrantClanRelief,
+                clan.HomeSettlementId,
+                $"{clan.ClanName}可拨族产接济，把接济义务、救济制裁与房支争力先在宗房里接住。",
+                clan.SupportReserve >= 3 && familyReliefPressureVisible,
+                clan.SupportReserve < 3
+                    ? $"宗房余力{clan.SupportReserve}，眼下开不了接济。"
+                    : familyReliefPressureVisible
+                        ? $"接济义务{clan.CharityObligation}，救济制裁{clan.ReliefSanctionPressure}，宗房余力{clan.SupportReserve}。"
+                        : "接济义务尚未成压势，暂不必另开族产。",
+                clanId: clan.Id,
+                executionSummary: "由FamilyCore处理宗房是否开接济；不由普通家户、Application、UI或Unity计算结果。",
+                leverageSummary: familyReliefChoiceReadback,
+                costSummary: $"宗房余力读回：会花宗房余力；当前余力{clan.SupportReserve}，不是另造救济账本。",
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(familyReliefChoiceReadback, familyOwnerLaneReturnGuidance),
+                familyLaneEntryReadbackSummary: familyLaneClosure.EntryReadbackSummary,
+                familyElderExplanationReadbackSummary: familyLaneClosure.ElderExplanationReadbackSummary,
+                familyGuaranteeReadbackSummary: familyLaneClosure.GuaranteeReadbackSummary,
+                familyHouseFaceReadbackSummary: familyLaneClosure.HouseFaceReadbackSummary,
+                familyLaneReceiptClosureSummary: familyLaneClosure.ReceiptClosureSummary,
+                familyLaneResidueFollowUpSummary: familyLaneClosure.ResidueFollowUpSummary,
+                familyLaneNoLoopGuardSummary: familyLaneClosure.NoLoopGuardSummary,
+                targetLabel: clan.ClanName));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.SuspendClanRelief,
                 clan.HomeSettlementId,
@@ -228,6 +256,11 @@ public sealed partial class PresentationReadModelBuilder
             summary,
             isEnabled,
             availabilitySummary);
+    }
+
+    private static string BuildFamilyReliefChoiceReadback(ClanSnapshot clan)
+    {
+        return $"Family救济选择读回：接济义务读回{clan.CharityObligation}，宗房余力读回{clan.SupportReserve}，救济制裁读回{clan.ReliefSanctionPressure}，房支争力读回{clan.BranchTension}；只有FamilyCore能解析是否开族产接济，不是普通家户再扛。";
     }
 
     private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildPublicLifeAffordances(PresentationReadModelBundle bundle)

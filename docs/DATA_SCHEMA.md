@@ -1112,6 +1112,13 @@ Current backend Family-lane closure v53-v60 note:
 - These fields are derived from existing structured `ClanSnapshot`, `HouseholdPressureSnapshot`, `SponsorClanId`, Family response trace codes, and `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State`; they are not derived from `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected Family prose.
 - Ordinary home-household response remains a low-power `PopulationAndHouseholds` lane. It can explain local relief/strain, but it is not a universal repair lane for clan elder explanation, household guarantee, lineage-house face, sponsor-clan pressure, or durable social residue.
 
+Current backend Family relief choice v61-v68 note:
+- v61-v68 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, relief ledger, charity ledger, guarantee ledger, Family closure ledger, owner-lane ledger, cooldown ledger, household target field, or projection cache.
+- `FamilyCore` remains schema `8`; `PopulationAndHouseholds` remains schema `3`; `SocialMemoryAndRelations` remains schema `3`.
+- `GrantClanRelief` reuses existing `FamilyCore` persisted fields: `CharityObligation`, `SupportReserve`, `BranchTension`, `BranchFavorPressure`, `ReliefSanctionPressure`, `MediationMomentum`, and existing conflict receipt fields.
+- New readback text such as `Family救济选择读回`, `接济义务读回`, `宗房余力读回`, and `不是普通家户再扛` is runtime projection only and is not saved.
+- Ordinary home-household response remains a low-power `PopulationAndHouseholds` lane. It is not a universal repair lane for Family relief, lineage-house face, sponsor-clan pressure, or durable social residue.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

@@ -88,6 +88,24 @@ public static partial class FamilyCoreCommandResolver
                 clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}准其分房，先将同火之争拆回两房自理。";
                 break;
             }
+            case PlayerCommandNames.GrantClanRelief:
+            {
+                if (clan.SupportReserve < 3)
+                {
+                    return BuildRejectedFamilyResult(command, $"{clan.ClanName}宗房余力太浅，眼下开不了族产接济。");
+                }
+
+                if (clan.CharityObligation < 8 && clan.ReliefSanctionPressure < 8 && clan.BranchTension < 18)
+                {
+                    return BuildRejectedFamilyResult(command, $"{clan.ClanName}眼下接济义务未成压势，暂不必另开族产。");
+                }
+
+                FamilyReliefResolutionProfile profile = ResolveGrantClanReliefProfile(clan);
+                ApplyFamilyReliefProfile(clan, profile);
+                clan.LastConflictOutcome = $"已开族产接济，接济义务缓到{clan.CharityObligation}，救济制裁压到{clan.ReliefSanctionPressure}，房支争力到{clan.BranchTension}，宗房余力余{clan.SupportReserve}。";
+                clan.LastConflictTrace = $"{clan.ClanName}按{profile.ExecutionSummary}拨出族产接济，先让受压房支有米钱和台阶可接；这仍是FamilyCore内的宗房选择，不是普通家户再扛。";
+                break;
+            }
             case PlayerCommandNames.SuspendClanRelief:
             {
                 FamilyConflictResolutionProfile profile = ApplyConflictSocialModifier(
@@ -163,6 +181,7 @@ public static partial class FamilyCoreCommandResolver
             PlayerCommandNames.SupportSeniorBranch => "偏护嫡支",
             PlayerCommandNames.OrderFormalApology => "责令赔礼",
             PlayerCommandNames.PermitBranchSeparation => "准其分房",
+            PlayerCommandNames.GrantClanRelief => "拨族产接济",
             PlayerCommandNames.SuspendClanRelief => "停其接济",
             PlayerCommandNames.InviteClanEldersMediation => "请族老调停",
             PlayerCommandNames.InviteClanEldersPubliclyBroker => "请族老出面",

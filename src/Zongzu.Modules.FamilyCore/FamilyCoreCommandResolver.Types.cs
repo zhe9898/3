@@ -30,6 +30,15 @@ public static partial class FamilyCoreCommandResolver
         int ReliefSanctionPressureDelta,
         string ExecutionSummary);
 
+    private readonly record struct FamilyReliefResolutionProfile(
+        int CharityObligationDelta,
+        int SupportReserveDelta,
+        int BranchTensionDelta,
+        int BranchFavorPressureDelta,
+        int ReliefSanctionPressureDelta,
+        int MediationMomentumDelta,
+        string ExecutionSummary);
+
     private readonly record struct FamilyMarriageResolutionProfile(
         int MarriageAllianceValueLift,
         int MarriageAlliancePressureRelief,

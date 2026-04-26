@@ -126,6 +126,36 @@ public sealed class FamilyCoreCommandResolverTests
         Assert.That(trustedAfter.MediationMomentum, Is.GreaterThan(neutralAfter.MediationMomentum));
     }
 
+    [Test]
+    public void IssueIntent_GrantClanRelief_SpendsReserveAndRelievesFamilyPressure()
+    {
+        FamilyCoreState state = BuildConflictState();
+        ClanStateData before = CloneClan(state.Clans.Single());
+
+        PlayerCommandResult result = FamilyCoreCommandResolver.IssueIntent(new FamilyCoreCommandContext
+        {
+            State = state,
+            CurrentDate = new GameDate(1200, 4),
+            Command = BuildCommand(PlayerCommandNames.GrantClanRelief),
+        });
+
+        ClanStateData after = state.Clans.Single();
+        Assert.That(result.Accepted, Is.True);
+        Assert.That(result.ModuleKey, Is.EqualTo(KnownModuleKeys.FamilyCore));
+        Assert.That(result.SurfaceKey, Is.EqualTo(PlayerCommandSurfaceKeys.Family));
+        Assert.That(result.CommandName, Is.EqualTo(PlayerCommandNames.GrantClanRelief));
+        Assert.That(after.LastConflictCommandCode, Is.EqualTo(PlayerCommandNames.GrantClanRelief));
+        Assert.That(after.SupportReserve, Is.LessThan(before.SupportReserve));
+        Assert.That(after.CharityObligation, Is.LessThan(before.CharityObligation));
+        Assert.That(after.ReliefSanctionPressure, Is.LessThan(before.ReliefSanctionPressure));
+        Assert.That(after.BranchTension, Is.LessThan(before.BranchTension));
+        Assert.That(after.BranchFavorPressure, Is.LessThan(before.BranchFavorPressure));
+        Assert.That(after.MediationMomentum, Is.GreaterThan(before.MediationMomentum));
+        Assert.That(after.LastConflictTrace, Does.Contain("FamilyCore"));
+        Assert.That(after.LastConflictTrace, Does.Contain("\u63a5\u6d4e\u4e49\u52a1"));
+        Assert.That(after.LastConflictTrace, Does.Contain("\u4e0d\u662f\u666e\u901a\u5bb6\u6237\u518d\u625b"));
+    }
+
     private static FamilyCoreState BuildConflictState()
     {
         FamilyCoreState state = new();
@@ -141,6 +171,7 @@ public sealed class FamilyCoreCommandResolverTests
             SeparationPressure = 58,
             BranchFavorPressure = 56,
             ReliefSanctionPressure = 24,
+            CharityObligation = 48,
             MediationMomentum = 12,
         });
         state.People.Add(new FamilyPersonState
@@ -180,6 +211,7 @@ public sealed class FamilyCoreCommandResolverTests
             MediationMomentum = source.MediationMomentum,
             BranchFavorPressure = source.BranchFavorPressure,
             ReliefSanctionPressure = source.ReliefSanctionPressure,
+            CharityObligation = source.CharityObligation,
         };
     }
 

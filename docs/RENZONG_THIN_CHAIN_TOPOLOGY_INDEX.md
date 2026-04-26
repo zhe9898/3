@@ -102,9 +102,9 @@ The thin topology leaves these fuller branches intentionally unimplemented:
 
 ## Next Thickening Priority
 
-After this freeze, deepen rule density in this order unless an explicit ExecPlan says otherwise:
+After v38-v60 made office/yamen and Family owner-lane readback visible, and v61-v68 added the first bounded FamilyCore relief choice, deepen rule density in this order unless an explicit ExecPlan says otherwise:
 
-1. public-life and map projection for office/yamen implementation, because v37 now produces the backend `PolicyImplemented` fact but the player still needs readable county-gate / hall-surface consequences;
-2. household/family relief choice depth, after v36's sponsor-clan pressure handoff has enough readback to become a bounded command surface;
-3. force/campaign and regime depth, only after local burden, legitimacy, and office execution are readable;
-4. fuller court-policy process, only after policy wording, dispatch arrival, and public-life interpretation have owner lanes rather than an office-only thin receipt.
+1. force/campaign and regime depth, now that local burden, legitimacy, office execution, and first Family relief choice surfaces are readable;
+2. fuller court-policy process, only after policy wording, dispatch arrival, and public-life interpretation keep owner lanes rather than becoming an office-only thin receipt;
+3. household/family relief choice variants, only as bounded FamilyCore commands that reuse existing fields or carry explicit schema/migration plans;
+4. social-memory residue deepening for Family relief, only from structured aftermath and never from `Family救济选择读回`, receipt prose, or `DomainEvent.Summary`.

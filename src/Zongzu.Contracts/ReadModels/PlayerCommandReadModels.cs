@@ -23,6 +23,7 @@ public static class PlayerCommandNames
     public const string SupportSeniorBranch = "SupportSeniorBranch";
     public const string OrderFormalApology = "OrderFormalApology";
     public const string PermitBranchSeparation = "PermitBranchSeparation";
+    public const string GrantClanRelief = "GrantClanRelief";
     public const string SuspendClanRelief = "SuspendClanRelief";
     public const string InviteClanEldersMediation = "InviteClanEldersMediation";
     public const string InviteClanEldersPubliclyBroker = "InviteClanEldersPubliclyBroker";

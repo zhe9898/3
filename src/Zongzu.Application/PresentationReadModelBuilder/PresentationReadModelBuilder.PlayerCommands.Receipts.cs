@@ -375,6 +375,9 @@ public sealed partial class PresentationReadModelBuilder
                     SelectRecentLocalResponseHouseholdForClan(bundle.Households, clan),
                     clan,
                     familySocialMemories);
+                string familyReliefChoiceReadback = string.Equals(commandName, PlayerCommandNames.GrantClanRelief, StringComparison.Ordinal)
+                    ? BuildFamilyReliefChoiceReadback(clan)
+                    : string.Empty;
                 receipts.Add(BuildPlayerCommandReceiptSnapshot(
                     commandName,
                     clan.HomeSettlementId,
@@ -382,6 +385,7 @@ public sealed partial class PresentationReadModelBuilder
                     clan.LastConflictOutcome,
                     readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
                         ? CombinePublicLifeResponseText(
+                            familyReliefChoiceReadback,
                             BuildFamilyResponseAftermathSummary(clan),
                             BuildFamilyLaneClosureReadbackText(familyLaneClosure),
                             BuildOwnerLaneFollowUpReceiptClosure(
@@ -389,7 +393,9 @@ public sealed partial class PresentationReadModelBuilder
                                 OwnerLaneReturnSourceFamily,
                                 clan.LastRefusalResponseCommandCode,
                                 clan.LastRefusalResponseOutcomeCode))
-                        : BuildFamilyLaneClosureReadbackText(familyLaneClosure),
+                        : JoinOwnerLaneReturnSurfaceText(
+                            familyReliefChoiceReadback,
+                            BuildFamilyLaneClosureReadbackText(familyLaneClosure)),
                     familyLaneEntryReadbackSummary: familyLaneClosure.EntryReadbackSummary,
                     familyElderExplanationReadbackSummary: familyLaneClosure.ElderExplanationReadbackSummary,
                     familyGuaranteeReadbackSummary: familyLaneClosure.GuaranteeReadbackSummary,

@@ -369,6 +369,14 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Unity copies projected DTO fields only. It does not query modules, compute closure, infer guarantee success, maintain ledgers, or write SocialMemory.
 - Save/schema result: no persisted state, schema bump, migration, Family closure ledger, guarantee ledger, owner-lane ledger, receipt-status ledger, outcome ledger, cooldown ledger, follow-up ledger, household target field, or save-manifest change.
 
+## Backend Family relief choice v61-v68 integration note
+- V61-V68 adds one bounded FamilyCore command, `GrantClanRelief`, after Family closure readback makes sponsor-clan pressure legible. It is a rule-driven command/readback addition, not an event pool, thick clan economy, elder AI, branch-faction model, guarantee formula, or persisted relief ledger.
+- `FamilyCore` resolves the command against existing `CharityObligation`, `SupportReserve`, `BranchTension`, `BranchFavorPressure`, `ReliefSanctionPressure`, and `MediationMomentum` fields. It writes only `FamilyCore` state and existing conflict receipt fields.
+- `Application` routes/catalogs and projects Family-facing affordance/readback copy. It must not compute command results, parse receipt prose, choose hidden household targets, or maintain relief/owner-lane state.
+- `PopulationAndHouseholds` is not mutated by `GrantClanRelief`; ordinary household local response remains low-power relief/strain and not a universal fix line. `SocialMemoryAndRelations` is not written during the same command and may only handle later durable residue from structured aftermath.
+- Unity copies projected DTO fields only. It does not query modules, compute relief outcome, infer sponsor targeting, maintain ledgers, or write SocialMemory.
+- Save/schema result: no persisted state, schema bump, migration, relief ledger, charity ledger, guarantee ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
+
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace
 - `OfficeAndCareer.Lite` now reads `EducationAndExams`, `SocialMemoryAndRelations`, and optional `OrderAndBanditry` projections only

@@ -96,6 +96,12 @@ public static class PlayerCommandCatalog
             FamilyCoreCommandResolver.DetermineFamilyCommandLabel(PlayerCommandNames.PermitBranchSeparation),
             "\u5f53\u524d\u5b58\u6863\u672a\u542f\u7528\u5b97\u623f\u88c1\u65ad\u3002"),
         new(
+            PlayerCommandNames.GrantClanRelief,
+            KnownModuleKeys.FamilyCore,
+            PlayerCommandSurfaceKeys.Family,
+            FamilyCoreCommandResolver.DetermineFamilyCommandLabel(PlayerCommandNames.GrantClanRelief),
+            "\u5f53\u524d\u5b58\u6863\u672a\u542f\u7528\u5b97\u623f\u88c1\u65ad\u3002"),
+        new(
             PlayerCommandNames.SuspendClanRelief,
             KnownModuleKeys.FamilyCore,
             PlayerCommandSurfaceKeys.Family,

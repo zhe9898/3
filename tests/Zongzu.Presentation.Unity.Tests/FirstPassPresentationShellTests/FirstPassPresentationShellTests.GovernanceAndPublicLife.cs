@@ -203,6 +203,63 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_ProjectsGrantClanReliefAffordanceAsCopiedFamilyFields()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        const string readback = "Family relief projected readback";
+        const string entryReadback = "Family entry projected field";
+        const string elderReadback = "Family elder projected field";
+        const string guaranteeReadback = "Family guarantee projected field";
+        const string faceReadback = "Family face projected field";
+        const string closureReadback = "Family closure projected field";
+        const string residueReadback = "Family residue projected field";
+        const string noLoopReadback = "Family no-loop projected field";
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.FamilyCore,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Family,
+                    SettlementId = new SettlementId(1),
+                    ClanId = new ClanId(1),
+                    CommandName = PlayerCommandNames.GrantClanRelief,
+                    Label = "Grant clan relief",
+                    Summary = "Open a bounded FamilyCore relief choice.",
+                    AvailabilitySummary = "Projected available.",
+                    ExecutionSummary = "FamilyCore resolves.",
+                    LeverageSummary = readback,
+                    CostSummary = "Uses projected reserve cost.",
+                    ReadbackSummary = readback,
+                    FamilyLaneEntryReadbackSummary = entryReadback,
+                    FamilyElderExplanationReadbackSummary = elderReadback,
+                    FamilyGuaranteeReadbackSummary = guaranteeReadback,
+                    FamilyHouseFaceReadbackSummary = faceReadback,
+                    FamilyLaneReceiptClosureSummary = closureReadback,
+                    FamilyLaneResidueFollowUpSummary = residueReadback,
+                    FamilyLaneNoLoopGuardSummary = noLoopReadback,
+                    TargetLabel = "Projected clan",
+                    IsEnabled = true,
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        CommandAffordanceViewModel command = shell.FamilyCouncil.CommandAffordances
+            .Single(command => command.CommandName == PlayerCommandNames.GrantClanRelief);
+
+        Assert.That(command.ReadbackSummary, Is.EqualTo(readback));
+        Assert.That(command.FamilyLaneEntryReadbackSummary, Is.EqualTo(entryReadback));
+        Assert.That(command.FamilyElderExplanationReadbackSummary, Is.EqualTo(elderReadback));
+        Assert.That(command.FamilyGuaranteeReadbackSummary, Is.EqualTo(guaranteeReadback));
+        Assert.That(command.FamilyHouseFaceReadbackSummary, Is.EqualTo(faceReadback));
+        Assert.That(command.FamilyLaneReceiptClosureSummary, Is.EqualTo(closureReadback));
+        Assert.That(command.FamilyLaneResidueFollowUpSummary, Is.EqualTo(residueReadback));
+        Assert.That(command.FamilyLaneNoLoopGuardSummary, Is.EqualTo(noLoopReadback));
+    }
+
+    [Test]
     public void Compose_ProjectsPublicLifeAffordancesAndReceiptsIntoSettlementNodes()
     {
         PresentationReadModelBundle bundle = CreateBundle();
