@@ -87,6 +87,12 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current court-policy memory-pressure readback v133-v140 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, or ledger
+- the new `政策旧账回压读回` text is runtime projection over existing `SocialMemoryEntrySnapshot`, `JurisdictionAuthoritySnapshot`, and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a memory-pressure cache or repeat-pressure field
+
 Current court-policy social-memory echo v125-v132 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, or ledger
@@ -1161,6 +1167,11 @@ Current court-policy local response v117-v124 note:
 - v117-v124 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, household target field, or projection cache.
 - `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
 - New local-response guidance such as `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账` is runtime command/readback projection over existing Office/PublicLife fields and existing Office response traces. It is not saved and does not require migration.
+
+Current court-policy memory-pressure readback v133-v140 note:
+- v133-v140 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, household target field, or projection cache.
+- `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New memory-pressure guidance such as `政策旧账回压读回`, `旧文移余味`, `下一次政策窗口读法`, `公议旧读法续压`, and `不是本户硬扛朝廷旧账` is runtime projection over existing SocialMemory and Office/PublicLife snapshots. It is not saved and does not require migration.
 
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment

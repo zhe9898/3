@@ -398,6 +398,14 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("政策回应余味续接读回"));
         Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("SocialMemoryAndRelations"));
         Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("政策旧账回压读回"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("旧文移余味"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("下一次政策窗口读法"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("公议旧读法续压"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("不是本户硬扛朝廷旧账"));
+        SettlementGovernanceLaneSnapshot offScopeGovernance =
+            afterSecond.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(20));
+        Assert.That(offScopeGovernance.OfficeLaneResidueFollowUpSummary, Does.Not.Contain("政策旧账回压读回"));
     }
 
     [Test]

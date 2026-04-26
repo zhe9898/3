@@ -75,6 +75,12 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Court-policy memory-pressure readback v133-v140 presentation note
+
+Governance, office, docket, desk, and public-life surfaces may show `政策旧账回压读回` only when it is already present in projected governance/readback fields. The wording should make clear that `旧文移余味` and `公议旧读法续压` are old SocialMemory pressure context entering the next policy-window readback, not a new Court command, not an Order after-account, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, memory-pressure weight, or next-window outcomes.
+
 ### Court-policy social-memory echo v125-v132 presentation note
 
 Governance, office, docket, desk, and public-life surfaces may show delayed `政策回应余味续接读回` only when it is already present in projected governance/readback fields. The wording should make clear that durable residue came from `OfficeAndCareer/PublicLifeAndRumor` structured aftermath and later `SocialMemoryAndRelations` monthly sediment, not from an Order after-account, a home-household repair path, or a UI-computed policy result.

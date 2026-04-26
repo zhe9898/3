@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v133-v140 court-policy memory-pressure readback - 2026-04-27
+
+- Chain 8 now projects old court-policy local-response residue into a later visible policy window as `政策旧账回压读回`. The readback is built from structured `SocialMemory` cause/type/weight plus current `JurisdictionAuthoritySnapshot` / `SettlementPublicLifeSnapshot` values.
+- Code alignment: `OfficeAndCareer` still owns policy window and county document/report aftermath; `PublicLifeAndRumor` still owns public interpretation; `SocialMemoryAndRelations` still owns durable residue; Application only assembles a projected old-residue pressure readback; Unity copies existing governance/office fields.
+- The new readback names `旧文移余味`, `下一次政策窗口读法`, and `公议旧读法续压`, but does not calculate success, reopen policy state, or write a repeat-pressure ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v133-v140 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v125-v132 court-policy social-memory echo - 2026-04-27
 
 - Chain 8 now has a delayed SocialMemory echo after the v117-v124 county document/report response. `SocialMemoryAndRelations` writes durable `office.policy_local_response...` residue only during a later monthly pass and only from structured `JurisdictionAuthoritySnapshot` response fields.

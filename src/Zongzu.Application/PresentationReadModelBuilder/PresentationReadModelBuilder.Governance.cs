@@ -106,7 +106,8 @@ public sealed partial class PresentationReadModelBuilder
                 string regimeOfficeReadback = BuildRegimeOfficeReadbackSummary(localOfficeCareers, jurisdiction);
                 string officeLaneEntryReadback = BuildOfficeLaneEntryReadbackSummary(jurisdiction);
                 string officeLaneReceiptClosure = BuildOfficeLaneReceiptClosureSummary(jurisdiction);
-                string officeLaneResidueFollowUp = BuildOfficeLaneResidueFollowUpSummary(localOfficeSocialMemories, jurisdiction);
+                string officeLaneResidueFollowUp =
+                    BuildOfficeLaneResidueFollowUpSummary(localOfficeSocialMemories, jurisdiction, publicLife);
                 string officeLaneNoLoopGuard = BuildOfficeLaneNoLoopGuardSummary(
                     jurisdiction,
                     localOfficeCareers,
@@ -397,7 +398,8 @@ public sealed partial class PresentationReadModelBuilder
 
     private static string BuildOfficeLaneResidueFollowUpSummary(
         IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
-        JurisdictionAuthoritySnapshot jurisdiction)
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
     {
         SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
         if (residue is null)
@@ -422,7 +424,14 @@ public sealed partial class PresentationReadModelBuilder
                 _ => "续接提示：政策回应余味仍看Office/PublicLife后续月读回。",
             };
 
-            return $"政策回应余味续接读回：{commandLabel}留下{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}；{responseFollowUp} 仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷后账。";
+            string memoryPressureReadback = BuildCourtPolicyMemoryPressureReadbackSummary(
+                residue,
+                localResponseCause,
+                jurisdiction,
+                publicLife);
+            return CombineGovernanceDocketText(
+                $"政策回应余味续接读回：{commandLabel}留下{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}；{responseFollowUp} 仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷后账。",
+                memoryPressureReadback);
         }
 
         string category = ReadOfficePolicyResidueCategory(residue.CauseKey);
@@ -436,6 +445,47 @@ public sealed partial class PresentationReadModelBuilder
         };
 
         return $"Office余味续接读回：{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}仍在；{followUp} 仍由SocialMemoryAndRelations后续月沉淀，不是本户再修。";
+    }
+
+    private static string BuildCourtPolicyMemoryPressureReadbackSummary(
+        SocialMemoryEntrySnapshot residue,
+        OfficePolicyLocalResponseResidueCause localResponseCause,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (!HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        string traceLabel = RenderCourtPolicyLocalResponseTraceLabel(localResponseCause.TraceCode);
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        int noticeVisibility = publicLife?.NoticeVisibility ?? 0;
+        int streetTalkHeat = publicLife?.StreetTalkHeat ?? 0;
+        int publicLegitimacy = publicLife?.PublicLegitimacy ?? 0;
+        return $"政策旧账回压读回：旧文移余味（{traceLabel}、{outcomeLabel}、{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}）进入下一次政策窗口读法；公议旧读法续压：榜示{noticeVisibility}、街谈{streetTalkHeat}、公议{publicLegitimacy}；仍由Office/PublicLife/SocialMemory分读，不是本户硬扛朝廷旧账。";
+    }
+
+    private static string RenderCourtPolicyLocalResponseTraceLabel(string traceCode)
+    {
+        return traceCode switch
+        {
+            PublicLifeOrderResponseTraceCodes.OfficeYamenLanded => "县门承接旧痕",
+            PublicLifeOrderResponseTraceCodes.OfficeReportRerouted => "递报改道旧痕",
+            _ => "文移旧痕",
+        };
+    }
+
+    private static string RenderCourtPolicyLocalResponseOutcomeLabel(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "已转稳",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "暂压",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "转硬",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "放置",
+            _ => "未定",
+        };
     }
 
     private static string BuildOfficeLaneNoLoopGuardSummary(

@@ -764,6 +764,60 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Court_policy_memory_pressure_readback_v133_v140_must_remain_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-memory-pressure-readback-v133-v140.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyMemoryPressureReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("政策旧账回压读回"));
+        Assert.That(governanceSource, Does.Contain("旧文移余味"));
+        Assert.That(governanceSource, Does.Contain("下一次政策窗口读法"));
+        Assert.That(governanceSource, Does.Contain("SocialMemoryEntrySnapshot"));
+        Assert.That(governanceSource, Does.Contain("OfficePolicyLocalResponseResidueCause"));
+        Assert.That(governanceSource, Does.Contain("HasCourtPolicyProcessReadback"));
+        Assert.That(governanceSource, Does.Contain("RenderCourtPolicyLocalResponseTraceLabel"));
+
+        Assert.That(governanceSource, Does.Not.Contain("residue.Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("memory.Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("OfficialNoticeLine"));
+        Assert.That(governanceSource, Does.Not.Contain("PrefectureDispatchLine"));
+        Assert.That(governanceSource, Does.Not.Contain("LastAdministrativeTrace"));
+        Assert.That(governanceSource, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(governanceSource, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(governanceSource, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(governanceSource, Does.Not.Contain("CourtProcessLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("PolicyLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("MemoryPressureLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("WorldManager"));
+        Assert.That(governanceSource, Does.Not.Contain("PersonManager"));
+        Assert.That(governanceSource, Does.Not.Contain("CharacterManager"));
+
+        Assert.That(schemaRules, Does.Contain("court-policy memory-pressure readback v133-v140 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy memory-pressure readback v133-v140 note"));
+        Assert.That(moduleBoundaries, Does.Contain("Court-policy memory-pressure readback v133-v140 boundary note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No full court engine"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No dispatch ledger"));
+        Assert.That(execPlan, Does.Contain("memory-pressure ledger"));
+    }
+
+    [Test]
     public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
     {
         string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));

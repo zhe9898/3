@@ -420,7 +420,7 @@ public sealed partial class FirstPassPresentationShellTests
     public void Compose_CopiesCourtPolicySocialMemoryEchoWithoutShellAuthority()
     {
         PresentationReadModelBundle bundle = CreateBundle();
-        const string policyEcho = "政策回应余味续接读回：县门轻催留下人情27；仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷后账。";
+        const string policyEcho = "政策回应余味续接读回：县门轻催留下人情27；政策旧账回压读回：旧文移余味进入下一次政策窗口读法；公议旧读法续压；仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷旧账。";
         bundle.GovernanceSettlements =
         [
             new SettlementGovernanceLaneSnapshot
@@ -437,7 +437,9 @@ public sealed partial class FirstPassPresentationShellTests
 
         Assert.That(settlement.OfficeLaneResidueFollowUpSummary, Is.EqualTo(policyEcho));
         Assert.That(settlement.GovernanceSummary, Does.Contain(policyEcho));
+        Assert.That(settlement.OfficeLaneResidueFollowUpSummary, Does.Contain("政策旧账回压读回"));
         Assert.That(jurisdiction.OfficeLaneResidueFollowUpSummary, Is.EqualTo(policyEcho));
+        Assert.That(jurisdiction.OfficeLaneResidueFollowUpSummary, Does.Contain("旧文移余味"));
     }
 
     [Test]
