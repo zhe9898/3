@@ -77,7 +77,7 @@ public sealed class OfficeCourtRegimePressureChainTests
     }
 
     [Test]
-    public void Chain8_RealScheduler_CourtAgendaOpensOnlyOneCourtFacingWindow()
+    public void Chain8_RealScheduler_CourtAgendaDrainsIntoOnePolicyImplementation()
     {
         FeatureManifest manifest = BuildManifest(includePublicLife: false);
         IReadOnlyList<IModuleRunner> modules = BuildModules(includePublicLife: false);
@@ -118,6 +118,29 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowAdministrativeDrag], Is.EqualTo("0"));
         Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowClerkDrag], Is.EqualTo("0"));
         Assert.That(windows[0].Metadata[DomainEventMetadataKeys.PolicyWindowBacklogDrag], Is.EqualTo("0"));
+
+        IDomainEvent[] implementations = events
+            .Where(static e => e.EventType == OfficeAndCareerEventNames.PolicyImplemented)
+            .ToArray();
+        Assert.That(implementations.Length, Is.EqualTo(1),
+            "The scheduler's bounded drain must let the policy window resolve into one Office-owned implementation outcome in the same month.");
+        Assert.That(implementations[0].EntityKey, Is.EqualTo("10"));
+        Assert.That(
+            implementations[0].Metadata[DomainEventMetadataKeys.SourceEventType],
+            Is.EqualTo(OfficeAndCareerEventNames.PolicyWindowOpened));
+        Assert.That(
+            implementations[0].Metadata[DomainEventMetadataKeys.PolicyImplementationOutcome],
+            Is.EqualTo(DomainEventMetadataValues.PolicyImplementationRapid));
+        Assert.That(implementations[0].Metadata[DomainEventMetadataKeys.PolicyImplementationScore], Is.EqualTo("100"));
+        Assert.That(implementations[0].Metadata[DomainEventMetadataKeys.PolicyImplementationWindowPressure], Is.EqualTo("84"));
+        Assert.That(implementations[0].Metadata[DomainEventMetadataKeys.PolicyImplementationDocketDrag], Is.EqualTo("0"));
+        Assert.That(implementations[0].Metadata[DomainEventMetadataKeys.PolicyImplementationClerkCapture], Is.EqualTo("0"));
+        Assert.That(implementations[0].Metadata[DomainEventMetadataKeys.PolicyImplementationLocalBuffer], Is.EqualTo("44"));
+        Assert.That(implementations[0].Metadata[DomainEventMetadataKeys.PolicyImplementationPaperCompliance], Is.EqualTo("59"));
+        Assert.That(
+            Array.IndexOf(events, implementations[0]),
+            Is.GreaterThan(Array.IndexOf(events, windows[0])),
+            "PolicyImplemented must be downstream of PolicyWindowOpened, not a parallel application-layer shortcut.");
     }
 
     [Test]

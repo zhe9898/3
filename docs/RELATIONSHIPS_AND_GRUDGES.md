@@ -258,3 +258,9 @@ The world should support:
 `FamilyCore` now receives a thin same-month signal when existing `PopulationAndHouseholds` household burden facts identify a sponsor clan. This is family pressure, not social memory: charity obligation, reserve drawdown, branch tension, and relief sanction pressure remain family-owned lifecycle pressure. It does not immediately create shame, fear, favor, obligation, or grudge records in `SocialMemoryAndRelations`.
 
 If household-family burden later becomes durable social residue, `SocialMemoryAndRelations` must read structured Population/Family aftermath in its own cadence and write its own existing memory state. It must not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, v36 lifecycle wording, or family receipt text.
+
+## Backend office/yamen implementation drag v37 note
+
+`OfficeAndCareer.PolicyImplemented` is an office-owned implementation receipt, not a social memory. It can say whether a policy window moved rapidly, dragged in the yamen docket, was captured by clerks, or stayed at paper compliance, but shame, fear, favor, obligation, and grudge residue still belong to a later `SocialMemoryAndRelations` pass if such a pass is explicitly added.
+
+V37 adds no SocialMemory field, memory namespace, relationship table, residue ledger, schema bump, or migration. `SocialMemoryAndRelations` must not parse `PolicyImplemented` summaries, policy-window prose, diagnostic labels, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastLocalResponseSummary` to create residue.

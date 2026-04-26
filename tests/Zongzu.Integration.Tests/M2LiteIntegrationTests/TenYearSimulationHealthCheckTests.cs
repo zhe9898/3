@@ -621,6 +621,7 @@ public sealed class TenYearSimulationHealthCheckTests
         "FamilyCore.MarriageAllianceArranged",
         "OfficeAndCareer.AmnestyApplied",
         "OfficeAndCareer.OfficeDefected",
+        "OfficeAndCareer.PolicyImplemented",
         "OfficeAndCareer.PolicyWindowOpened",
         "OfficeAndCareer.YamenOverloaded",
         "OrderAndBanditry.DisorderSpike",
@@ -751,6 +752,9 @@ public sealed class TenYearSimulationHealthCheckTests
             ["OfficeAndCareer.PolicyWindowOpened"] = new(
                 EventContractHealthKind.AcceptanceTestGap,
                 "policy-window chain is proven by focused pressure-chain tests rather than this stress seed"),
+            ["OfficeAndCareer.PolicyImplemented"] = new(
+                EventContractHealthKind.AcceptanceTestGap,
+                "policy implementation drag is proven by focused office/yamen implementation tests rather than this stress seed"),
             ["OfficeAndCareer.YamenOverloaded"] = new(
                 EventContractHealthKind.AcceptanceTestGap,
                 "tax/yamen/public-life chain is proven by focused pressure-chain tests rather than this stress seed"),

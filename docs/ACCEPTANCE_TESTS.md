@@ -521,3 +521,11 @@ At integration level, verify:
 - Architecture acceptance must prove the handler uses structured event/entity/metadata and population query snapshots only, not `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `PopulationAndHouseholdsState`, foreign mutable state, Application/UI/Unity authority, forbidden manager names, or `PersonRegistry` expansion.
 - SocialMemory acceptance must prove v36 same-month handling does not mutate `SocialMemoryAndRelations`; durable residue remains a later structured read/write concern.
 - Save/schema acceptance: v36 adds no persisted fields, no module envelope, no root/module schema version change, no migration, no relief ledger, no sponsor-lane ledger, no household target field, no SocialMemory field, no UI/Unity authority, and no save roundtrip change.
+
+## Backend office/yamen implementation drag v37 acceptance - 2026-04-26
+- `OfficeAndCareer` must declare `PolicyImplemented` as a published event and `PolicyWindowOpened` as a consumed event.
+- Focused module acceptance must prove `PolicyWindowOpened` can resolve to dragged, captured, and paper-compliance implementation outcomes while mutating only matching-settlement `OfficeAndCareer` state; off-scope jurisdictions must remain unchanged.
+- Integration acceptance must prove the real monthly scheduler can drain `CourtAgendaPressureAccumulated -> PolicyWindowOpened -> PolicyImplemented` in the same month through bounded fresh-event rounds.
+- Architecture acceptance must prove the handler uses structured `PolicyWindow*` metadata, `EntityKey` / `SettlementId`, and office-owned state only, not `DomainEvent.Summary`, receipt prose, response summaries, foreign mutable state, Application/UI/Unity authority, forbidden manager names, or `PersonRegistry` expansion.
+- SocialMemory acceptance: v37 same-month handling does not write `SocialMemoryAndRelations`; durable shame/fear/favor/grudge/obligation residue remains a later structured read/write concern if added.
+- Save/schema acceptance: v37 adds no persisted fields, no module envelope, no root/module schema version change, no migration, no policy ledger, no yamen workflow state, no owner-lane ledger, no SocialMemory field, no UI/Unity authority, and no save roundtrip change.

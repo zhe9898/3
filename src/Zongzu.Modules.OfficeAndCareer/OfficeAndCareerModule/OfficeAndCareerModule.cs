@@ -53,6 +53,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         OfficeAndCareerEventNames.ClerkCaptureDeepened,
         // Chain 8 thin slice: policy window opened
         OfficeAndCareerEventNames.PolicyWindowOpened,
+        OfficeAndCareerEventNames.PolicyImplemented,
         // Chain 9 thin slice: office defected
         OfficeAndCareerEventNames.OfficeDefected,
 
@@ -83,6 +84,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         WorldSettlementsEventNames.FrontierStrainEscalated,
         // Chain 8 thin slice: court agenda pressure → policy window
         WorldSettlementsEventNames.CourtAgendaPressureAccumulated,
+        OfficeAndCareerEventNames.PolicyWindowOpened,
         // Chain 9 thin slice: regime legitimacy shift → office defection
         WorldSettlementsEventNames.RegimeLegitimacyShifted,
 
@@ -376,6 +378,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
         DispatchImperialRhythmEvents(scope);
         DispatchFrontierStrainEvents(scope);
         DispatchCourtAgendaEvents(scope);
+        DispatchPolicyWindowImplementationEvents(scope);
         DispatchRegimeEvents(scope);
 
         IReadOnlyList<WarfareCampaignEventBundle> warfareEvents = WarfareCampaignEventBundler.Build(scope.Events);

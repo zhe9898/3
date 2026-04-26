@@ -360,6 +360,7 @@ Current routing note:
 - petition backlog / petition outcomes
 - jurisdiction-level clerk dependence and administrative task load
 - clerk-capture edge watermarks for office-owned escalation receipts
+- policy-window implementation drag outcome, including rapid, dragged, captured, or paper-compliance resolution through existing office/yamen fields
 - official defection risk before office-owned appointment loss
 - office-owned public-life refusal response trace for county-yamen催办, 文移落地, and 胥吏拖延 outcomes
 - official influence projections
@@ -375,6 +376,7 @@ Current routing note:
 - current administrative task tier and stable task label
 - petition outcome category plus latest petition outcome trace
 - promotion / demotion pressure labels and authority-trajectory summary
+- current policy implementation aftermath only after `OfficeAndCareer` has written its own task/backlog/clerk state
 - current official defection risk when governance-lite exposes regime pressure
 - office-owned public-life refusal response aftermath fields for governance docket readback
 
@@ -404,6 +406,7 @@ Current routing note:
 - `OfficialSupplyRequisition`
 - `ClerkCaptureDeepened`
 - `PolicyWindowOpened`
+- `PolicyImplemented`
 - `OfficeDefected`
 
 ### Does not own
@@ -415,6 +418,7 @@ Current routing note:
 - war battle plans
 - foreign order state, black-route pressure, or intervention carryover directly
 - family or social-memory residue, including shame/fear/favor/grudge/obligation records
+- court-policy wording state, county workflow ledgers, policy implementation ledgers, or UI-computed yamen effectiveness
 
 ## 8. OrderAndBanditry
 ### Owns

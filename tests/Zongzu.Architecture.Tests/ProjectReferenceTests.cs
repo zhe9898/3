@@ -340,6 +340,50 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Office_policy_implementation_drag_must_use_structured_policy_window_metadata_only()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.OfficeAndCareer",
+            "OfficeAndCareerModule",
+            "OfficeAndCareerModule.PolicyImplementation.cs");
+        string source = File.ReadAllText(sourcePath);
+        string module = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.OfficeAndCareer",
+            "OfficeAndCareerModule",
+            "OfficeAndCareerModule.cs"));
+        string contracts = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "Events",
+            "OfficeAndCareerEventNames.cs"));
+
+        Assert.That(source, Does.Contain("OfficeAndCareerEventNames.PolicyWindowOpened"));
+        Assert.That(source, Does.Contain("OfficeAndCareerEventNames.PolicyImplemented"));
+        Assert.That(source, Does.Contain("DomainEventMetadataKeys.PolicyWindowPressure"));
+        Assert.That(source, Does.Contain("DomainEventMetadataKeys.PolicyImplementationOutcome"));
+        Assert.That(source, Does.Contain("ReadMetadataInt(sourceEvent"));
+        Assert.That(source, Does.Contain("ResolveSettlementMetadata"));
+        Assert.That(source, Does.Contain("domainEvent.EntityKey"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("domainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain(".Summary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(source, Does.Not.Contain("PolicyImplementationLedger"));
+        Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+        Assert.That(source, Does.Not.Contain("CooldownLedger"));
+        Assert.That(source, Does.Not.Contain("OfficeAndCareerStateProjection.UpgradeFromSchema"));
+        Assert.That(module, Does.Contain("OfficeAndCareerEventNames.PolicyWindowOpened"));
+        Assert.That(module, Does.Contain("OfficeAndCareerEventNames.PolicyImplemented"));
+        Assert.That(contracts, Does.Contain("PolicyImplemented"));
+    }
+
+    [Test]
     public void Ordinary_household_order_residue_projection_must_use_structured_after_account_fields()
     {
         string sourcePath = Path.Combine(

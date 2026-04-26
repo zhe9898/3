@@ -185,6 +185,13 @@ public static class DomainEventMetadataKeys
     public const string PolicyWindowAdministrativeDrag = "policyWindowAdministrativeDrag";
     public const string PolicyWindowClerkDrag = "policyWindowClerkDrag";
     public const string PolicyWindowBacklogDrag = "policyWindowBacklogDrag";
+    public const string PolicyImplementationOutcome = "policyImplementationOutcome";
+    public const string PolicyImplementationScore = "policyImplementationScore";
+    public const string PolicyImplementationWindowPressure = "policyImplementationWindowPressure";
+    public const string PolicyImplementationDocketDrag = "policyImplementationDocketDrag";
+    public const string PolicyImplementationClerkCapture = "policyImplementationClerkCapture";
+    public const string PolicyImplementationLocalBuffer = "policyImplementationLocalBuffer";
+    public const string PolicyImplementationPaperCompliance = "policyImplementationPaperCompliance";
     public const string DefectionRisk = "defectionRisk";
     public const string DefectionBaselinePressure = "defectionBaselinePressure";
     public const string DefectionMandateDeficit = "defectionMandateDeficit";
@@ -223,6 +230,10 @@ public static class DomainEventMetadataValues
     public const string CauseCourt = "court";
     public const string CauseRegime = "regime";
     public const string CauseClerkCapture = "clerk-capture";
+    public const string PolicyImplementationRapid = "rapid";
+    public const string PolicyImplementationDragged = "dragged";
+    public const string PolicyImplementationCaptured = "captured";
+    public const string PolicyImplementationPaperCompliance = "paper-compliance";
     public const string CauseSocialPressure = "social-pressure";
     public const string CausePressureTempering = "pressure-tempering";
 }

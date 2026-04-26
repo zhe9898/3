@@ -1,5 +1,12 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v37 delta - 2026-04-26
+
+- Backend office/yamen implementation drag v37 deepens Renzong chain 8 without turning it into a thick court or county formula: `OfficeAndCareer` consumes its own `PolicyWindowOpened` event and emits `PolicyImplemented` after mutating only existing office-owned task, backlog, clerk, leverage, promotion/demotion, and petition-outcome fields.
+- The implementation reads structured `PolicyWindow*` metadata, `EntityKey` / `SettlementId`, and current `OfficeAndCareer` jurisdiction state. It does not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- The scheduler proof remains a bounded month-end drain: `CourtAgendaPressureAccumulated -> PolicyWindowOpened -> PolicyImplemented` can complete in the same month, but only inside `OfficeAndCareer` ownership. No Application/UI/Unity code computes the outcome.
+- Save/schema audit: v37 adds runtime metadata constants only and reuses `OfficeAndCareer` schema `7`. There is no root/module schema bump, migration, policy ledger, yamen workflow object, owner-lane ledger, PersonRegistry expansion, or new manager/god-controller path.
+
 ## v36 delta - 2026-04-26
 
 - Backend household-family burden v36 deepens the first "ordinary household breathes into lineage pressure" priority: structured `PopulationAndHouseholds` household burden facts now return to `FamilyCore` sponsor-clan pressure.

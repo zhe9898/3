@@ -574,6 +574,7 @@ public sealed class JurisdictionAuthorityState {
 ```
 
 Current lite note:
+- v37 policy implementation drag adds no new saved fields: `PolicyImplemented` is a runtime `DomainEvent` emitted after `OfficeAndCareer` mutates existing task, backlog, clerk, leverage, promotion/demotion, petition-outcome, and explanation fields. New `PolicyImplementation*` metadata keys are runtime payload only and do not require an `OfficeAndCareer` schema bump, migration, policy ledger, yamen workflow object, owner-lane ledger, or save roundtrip change.
 - the active governance-lite v7 slice persists office careers, candidate waiting pressure, clerk dependence, service progression, petition handling, settlement jurisdiction leverage, jurisdiction-level administrative task load, official post/waiting-list skeleton state, `LastAppliedAmnestyWave` for chain-4 amnesty de-duplication, `ActiveClerkCaptureSettlementIds` for chain-7 edge de-duplication, `OfficialDefectionRisk` for chain-9 risk-before-receipt resolution, and office-owned public-life refusal response trace fields
 - office leverage now remains owned by `OfficeAndCareer` while downstream order/force modules may read it through queries only
 - the lighter office v2.1 slice adds only derived query/read-model labels such as administrative-task tier, petition-outcome category, and authority-trajectory wording; it does not add new saved fields
