@@ -488,3 +488,10 @@ At integration level, verify:
 - Unity acceptance must prove shell adapters copy v27-v30 projected text only and do not query modules, compute follow-up or closure validity, write SocialMemory, maintain a stale-guidance / follow-up / SocialMemory / outcome / owner-lane / receipt-status ledger, or invent a hidden household target.
 - Save/schema acceptance: v27-v30 add no persisted fields, no schema bump, no migration, no command target shape change, no command queue, no cooldown ledger, no owner-lane ledger, no receipt-status ledger, no outcome ledger, no stale-guidance ledger, no follow-up ledger, no SocialMemory ledger, no household target field, and no new SocialMemory field.
 - Architecture acceptance must guard summary parsing, forbidden manager/god-controller names, `PersonRegistry` expansion, foreign state mutation, Application/UI/Unity authority drift, and no new schema without migration docs/tests.
+
+## Backend event contract health v32 acceptance - 2026-04-26
+- Ten-year simulation diagnostics must classify emitted-but-unconsumed and declared-but-not-emitted DomainEvent contract debt rather than leaving it as unlabelled noise.
+- Classification acceptance must include `ProjectionOnlyReceipt`, `FutureContract`, `DormantSeededPath`, and `AcceptanceTestGap`; `AlignmentBug` remains an explicit future category, not an implicit assumption.
+- Diagnostic key acceptance must prevent false debt caused by double module prefixes such as `OfficeAndCareer.OfficeAndCareer.*`.
+- Architecture acceptance remains strict: v32 must not add event-pool authority, new gameplay rules, command surfaces, persisted state, schema bump, migration, manager/controller layers, `PersonRegistry` expansion, Application/UI/Unity authority, or summary parsing.
+- Save/schema acceptance: v32 diagnostic classifications are runtime/test evidence only and add no persisted fields, no module envelope, no root/module schema version change, no migration, and no save roundtrip change.

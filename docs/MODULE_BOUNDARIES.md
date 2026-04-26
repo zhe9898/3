@@ -787,3 +787,10 @@ Current lite note:
 - v29 `public-life-order-owner-lane-no-loop-guard` adds projected `闭环防回压` so stale guidance does not point back at the home household after the owner lane has closed or hardened.
 - v30 records that v20-v30 are one thin projection/readback closure arc. `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` keep the same ownership split; Application only projects structured fields and Unity copies DTO fields.
 - v27-v30 add no persisted fields, schema bump, migration, `PersonRegistry` expansion, manager/controller layer, cooldown ledger, owner-lane ledger, receipt-status ledger, outcome ledger, follow-up ledger, SocialMemory ledger, household target field, command queue, or command-target shape change.
+
+## 2026-04-26 backend event contract health v32 note
+- V32 is a diagnostic/readback classification pass for `DomainEvent` contract health. It does not move authority across module boundaries.
+- Emitted-but-unconsumed and declared-but-not-emitted events may be classified as projection-only receipts, future contracts, dormant seeded paths, acceptance-test gaps, alignment bugs, or unclassified debt.
+- `PublishedEvents` / `ConsumedEvents` remain module-owned contract declarations; the classification table in integration tests is evidence about current debt, not a new runtime registry or owner-lane ledger.
+- Diagnostics may normalize event keys for display, but no Application/UI/Unity layer may compute module authority from those labels or parse `DomainEvent.Summary`.
+- V32 adds no persisted fields, schema bump, migration, command system, projection surface, `PersonRegistry` expansion, or manager/controller layer.

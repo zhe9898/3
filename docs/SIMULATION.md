@@ -283,6 +283,7 @@ Current public-life/order v9/v10/v11/v12 note:
 - v25 adds projected `社会余味读回` on top of v24 so those surfaces can say whether the later SocialMemory pass has made the owner-lane residue read as `后账渐平`, `后账暂压留账`, `后账转硬`, or `后账放置发酸`. This remains projection/readback guidance, not a new command system, event pool, persisted ledger, or outcome/residue calculation.
 - v26 adds projected `余味冷却提示` / `余味续接提示` / `余味换招提示` on top of v25 so those surfaces can say how to read the visible social residue as cool-down, owner-lane continuation, owner-lane tactic switch, or waiting. This remains projection/readback guidance, not a new command system, event pool, persisted ledger, or follow-up calculation.
 - v27-v30 add projected `现有入口读法`, `后手收口读回`, and `闭环防回压` on top of v26 so owner-lane affordances and receipts read as a closure surface rather than a loop back to the home household. This remains projection/readback guidance, not a new command system, event pool, persisted ledger, or follow-up calculation.
+- v32 adds backend event-contract health classification to the ten-year diagnostics. It classifies `DomainEvent` contract debt after simulation has run; it does not affect scheduler order, command resolution, module state, projection authority, or save/schema compatibility.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window

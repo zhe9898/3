@@ -206,4 +206,5 @@ Development builds must expose:
 Current repository note:
 - the first-pass shell now carries a read-only debug panel whose `Scale`, `Pressure`, `Hotspots`, `Migration`, and `Warnings` sections reorganize the same runtime-only diagnostics into scan-friendly developer buckets
 - latest-month debug traces, pressure/scale summaries, hotspot summaries, payload headlines/footprints, and migration summaries are runtime diagnostics only and are not part of save compatibility
+- v32 event-contract health classifications may appear only as developer diagnostics. Player-facing UI and Unity shell surfaces must not compute authority or owner lanes from those diagnostic labels, and must not parse `DomainEvent.Summary`.
 - a minimal Unity host shell now also lives at `/unity/Zongzu.UnityShell`; treat it as the scene/asset workspace for hand-built UI, while authoritative simulation and read-model composition remain in `src/`

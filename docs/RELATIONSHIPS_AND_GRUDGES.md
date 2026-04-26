@@ -171,6 +171,11 @@ Current public-life/order v27-v30 owner-lane closure audit note:
 - Projection may read structured owner outcome codes and `SocialMemoryEntrySnapshot.CauseKey`, `State`, `Weight`, and `OriginDate`; no reader may parse SocialMemory summary prose, owner-lane guidance prose, receipt prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`.
 - v27-v30 add no memory namespace, relationship table, follow-up ledger, stale-guidance ledger, schema bump, or migration.
 
+Current backend event contract health v32 note:
+- V32 diagnostic classifications for `DomainEvent` contract debt are not social memories, relationship edges, grudges, favors, shame, fear, or obligations.
+- `SocialMemoryAndRelations` still writes durable residue only from structured aftermath and scoped events; it must not parse diagnostic classification labels, `DomainEvent.Summary`, receipt prose, or projection text.
+- V32 adds no memory namespace, relationship table, residue ledger, schema bump, or migration.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

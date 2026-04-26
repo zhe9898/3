@@ -78,6 +78,7 @@ Example:
 - runtime load-migration reports and hotspot summaries are explanatory overlays only; they do not extend root or module save namespaces
 - runtime scale summaries, payload-footprint summaries, and migration-consistency warnings are also explanatory overlays only
 - runtime domain-event targeting and cause metadata used by the event-handling seam is also non-persisted and does not extend save namespaces
+- runtime event-contract health classifications used by ten-year diagnostics are also non-persisted and do not extend save namespaces
 - migration preparation must not mutate the caller's source save root; consistency reporting happens on cloned preparation data only
 
 ## Versioning rules
@@ -142,6 +143,7 @@ Example:
 - public-life order owner-lane social-residue readback v25 adds no persisted fields: `社会余味读回` text is runtime projection over existing SocialMemory response cause keys, state, weight, origin date, and owner-lane response traces. SocialMemory same-month de-duplication now preserves distinct response residues by `CauseKey` as well as memory kind, but all module schema versions remain unchanged and no migration is required.
 - public-life order owner-lane social-residue follow-up guidance v26 adds no persisted fields: `余味冷却提示` / `余味续接提示` / `余味换招提示` text is runtime projection over existing SocialMemory response cause keys, state, weight, origin date, and owner-lane response outcome traces; all module schema versions remain unchanged and no migration is required.
 - public-life order owner-lane closure v27-v30 adds no persisted fields: `现有入口读法`, `后手收口读回`, and `闭环防回压` text is runtime projection over existing SocialMemory response cause keys, state, weight, origin date, and owner-lane response outcome traces; all module schema versions remain unchanged and no migration is required.
+- backend event contract health v32 adds no persisted fields: diagnostic classifications for `DomainEvent` contract debt are runtime/test evidence only, and all module schema versions remain unchanged with no migration required.
 - `ConflictAndForce` now has a conflict-enabled M3 local-conflict path and seeds module-owned settlement force posture plus explicit response activation/support fields only when the feature is enabled
 - legacy M3 local-conflict saves with `ConflictAndForce` schema `1` now migrate through a built-in `1 -> 2` module step during default local-conflict load
 - built-in migration now also upgrades legacy `ConflictAndForce` schema `2` saves to schema `3` by backfilling zero campaign-fatigue / escort-strain fields and empty fallout traces inside the same namespace

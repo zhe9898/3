@@ -307,6 +307,27 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Event_contract_health_diagnostics_must_stay_runtime_only()
+    {
+        string diagnosticSourcePath = Path.Combine(
+            TestsDir,
+            "Zongzu.Integration.Tests",
+            "M2LiteIntegrationTests",
+            "TenYearSimulationHealthCheckTests.cs");
+        string diagnosticSource = File.ReadAllText(diagnosticSourcePath);
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+
+        Assert.That(diagnosticSource, Does.Contain("EventContractHealthClassifications"));
+        Assert.That(diagnosticSource, Does.Contain("ProjectionOnlyReceipt"));
+        Assert.That(diagnosticSource, Does.Contain("FutureContract"));
+        Assert.That(diagnosticSource, Does.Contain("DormantSeededPath"));
+        Assert.That(diagnosticSource, Does.Contain("AcceptanceTestGap"));
+        Assert.That(diagnosticSource, Does.Contain("FormatEventContractKey"));
+        Assert.That(diagnosticSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(schemaRules, Does.Contain("backend event contract health v32 adds no persisted fields"));
+    }
+
+    [Test]
     public void Ordinary_household_order_residue_projection_must_use_structured_after_account_fields()
     {
         string sourcePath = Path.Combine(

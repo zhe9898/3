@@ -1,5 +1,12 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v32 delta - 2026-04-26
+
+- Backend event-contract health v32 adds explicit ten-year diagnostic classifications for emitted-but-unconsumed and declared-but-not-emitted `DomainEvent` contract debt.
+- v32 treats `DomainEvent` as a deterministic fact-propagation tool after module rules resolve. It is not an event-pool design, not a new pressure-chain body, and not a new gameplay rule layer.
+- v32 adds no persisted state, schema bump, migration, command surface, projection wording, manager/controller layer, Application/UI/Unity authority, or `PersonRegistry` expansion.
+- Validation evidence is focused on integration diagnostics: current known contract debt has classifications and diagnostic event keys no longer double-prefix module-owned event names.
+
 ## v31 delta - 2026-04-26
 
 - Public-life/order closure v31 is an operational merge/cleanup pass: it lands the already validated v20-v30 owner-lane closure arc on `main` and removes merged topic branches after validation.
@@ -61,6 +68,7 @@
 - `Zongzu.Presentation.Unity.ViewModels` 与 `Zongzu.Presentation.Unity` 是只读 presentation seam；Unity host shell 已存在于 `unity/Zongzu.UnityShell`，但权威模拟仍在 `src/`，且模拟项目不得引用 Unity API。
 - 当前 SDK 基线以 `global.json` 和项目文件为准，现为 .NET SDK `10.0.202` 线。
 - 当前分支已落地 public-life/order v3-v30 闭环：v20-v26 完成 `外部后账归位` / `承接入口` / `归口状态` / `归口后读法` / `社会余味读回` / `余味冷却提示` / `余味续接提示` / `余味换招提示`，v27 把 `现有入口读法` 投到既有 owner-lane affordance，v28 把 `后手收口读回` 投到 owner-lane receipt，v29 用 `闭环防回压` 防旧提示回压本户，v30 锁定审计证据；整段仍不新增 schema、command queue、owner-lane ledger、receipt-status ledger、outcome ledger、follow-up ledger、SocialMemory ledger 或 thick household rule loop。
+- 当前 V32 后端健康检查把 DomainEvent contract debt 显式分类为 projection-only receipt / future contract / dormant seeded path / acceptance-test gap / alignment bug / unclassified debt；这是诊断证据，不是事件池、命令系统、schema 变化或新规则。
 - `FamilyCore`、`OfficeAndCareer`、`OrderAndBanditry`、`WarfareCampaign` 的已迁移命令路径通过 module-owned `HandleCommand(...)` seam 解析；`PlayerCommandService` / `PlayerCommandCatalog` 只负责 catalog lookup、feature fallback 与路由。
 - `PresentationReadModelBundle.SocialMemories`、command `LeverageSummary` / `CostSummary` / `ReadbackSummary`、governance receipt readback 都是 read-model/projection surface，Unity shell 只复制这些字段。
 
