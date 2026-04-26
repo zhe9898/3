@@ -121,7 +121,7 @@ If Family closure guidance cannot be derived from existing structured snapshots,
 - [x] focused tests
 - [x] `git diff --check`
 - [x] `dotnet test Zongzu.sln --no-build`
-- [ ] commit and push
+- [x] commit and push
 
 ## Evidence Notes
 
@@ -137,3 +137,6 @@ If Family closure guidance cannot be derived from existing structured snapshots,
   - `dotnet build Zongzu.sln --no-restore`
   - `git diff --check`
   - `dotnet test Zongzu.sln --no-build`
+- Commit / push:
+  - `108ea7a Close family owner-lane readback v53-v60`
+  - pushed `codex/family-lane-closure-v53-v60`
