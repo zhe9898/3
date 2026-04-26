@@ -417,3 +417,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - `ConflictAndForce`, `WarfareCampaign`, and `OfficeAndCareer` keep their state ownership. `PopulationAndHouseholds` remains a local household response lane, and `SocialMemoryAndRelations` remains the later durable residue owner.
 - Unity copies projected DTO fields only. It does not query modules, compute closure, infer owner lanes, maintain ledgers, or write SocialMemory.
 - Save/schema result: no persisted state, schema bump, migration, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
+
+## Backend Warfare directive choice depth v77-v84 integration note
+- V77-V84 keeps the existing WarfareCampaign command seam. `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` are still resolved by `WarfareCampaignCommandResolver` and write only existing directive state.
+- The new readback wording may show `军令选择读回`, `案头筹议选择`, `点兵加压选择`, `粮道护持选择`, `归营止损选择`, `WarfareCampaign拥有军令`, and `军务选择不是县门文移代打`. These are command/readback cues, not an event pool, directive ledger, or yamen/Order substitute.
+- Application projections may compose directive-choice readback with v69-v76 military closure guidance from structured campaign snapshots. They must not compute military success, force readiness, official paperwork outcomes, household repair, durable residue, or owner-lane closure.
+- `ConflictAndForce`, `OfficeAndCareer`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` are not mutated by the command. Later durable residue must still come from structured aftermath in `SocialMemoryAndRelations`, never from readback prose.
+- Unity copies the projected command/receipt fields only. It does not query modules, execute from prose, infer owner lanes, maintain ledgers, or write SocialMemory.
+- Save/schema result: no persisted state, schema bump, migration, directive ledger, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.

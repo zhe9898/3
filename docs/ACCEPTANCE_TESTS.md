@@ -579,3 +579,12 @@ At integration level, verify:
 - Architecture acceptance: guard no Application/UI/Unity authority drift, no summary parsing, no forbidden manager/god-controller names, no `PersonRegistry` expansion, no force/campaign closure ledger, no household target field, and no new schema without migration docs/tests.
 - Save/schema acceptance: v69-v76 add no persisted fields, no module envelope, no root/module schema version change, no migration, no force/campaign closure / owner-lane / cooldown / follow-up ledger, no household target field, and no save roundtrip change.
 - Focused proof: `M2LiteIntegrationTests`, `ProjectReferenceTests`, and `FirstPassPresentationShellTests` cover campaign/force/governance projection, architecture guards, and Unity copy-only behavior.
+
+## Backend Warfare directive choice depth v77-v84 acceptance - 2026-04-26
+- Command acceptance: `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` resolve through `WarfareCampaignCommandResolver` and mutate only existing `WarfareCampaign` directive fields.
+- Read-model acceptance: warfare affordances and campaign receipts expose `军令选择读回` plus the appropriate `案头筹议选择`, `点兵加压选择`, `粮道护持选择`, or `归营止损选择` wording alongside v69-v76 closure guidance.
+- Meaning acceptance: `WarfareCampaign拥有军令`; the military choice is not county-yamen paperwork, not an Order/public-life repair, and not an ordinary home-household line.
+- SocialMemory acceptance: no reader parses `军令选择读回`, directive-choice prose, `LastDirectiveTrace`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, receipt prose, or `DomainEvent.Summary`.
+- UI/Unity acceptance: shell and Unity ViewModels copy projected directive-choice readback only. They must not query modules, compute directive success, infer owner lanes, parse prose, or write SocialMemory.
+- Architecture acceptance: guard no Application/UI/Unity authority drift, no summary parsing, no forbidden manager/god-controller names, no `PersonRegistry` expansion, no directive/owner-lane ledger, no household target field, and no new schema without migration docs/tests.
+- Save/schema acceptance: v77-v84 add no persisted fields, no module envelope, no root/module schema version change, no migration, no directive / force / campaign / owner-lane / cooldown / follow-up ledger, no household target field, and no save roundtrip change.

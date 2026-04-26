@@ -864,3 +864,10 @@ Current lite note:
 - `SocialMemoryAndRelations` may later read structured campaign/force aftermath and write durable shame/fear/favor/grudge/obligation residue in its own cadence. It must not parse projected strings, receipt prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`.
 - Unity and shell code copy projected fields only. They must not query simulation modules, compute Force/Campaign closure, infer yamen/Order ownership from military after-accounts, maintain ledgers, or write SocialMemory.
 - V69-V76 adds no persisted fields, schema bump, migration, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.
+
+## 2026-04-26 backend Warfare directive choice depth v77-v84 note
+- `WarfareCampaign` remains the sole owner of military directive choice, active directive code/label/summary, and `LastDirectiveTrace`. `ConflictAndForce` still owns force posture/readiness, `OfficeAndCareer` still owns official coordination, and `PopulationAndHouseholds` remains ordinary local household response only.
+- V77-V84 adds no new command system: the existing `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` commands now read back as `军令选择读回` with `案头筹议选择`, `点兵加压选择`, `粮道护持选择`, or `归营止损选择`.
+- `Application` may compose that directive-choice readback with v69-v76 closure guidance from structured `CampaignMobilizationSignalSnapshot` and `CampaignFrontSnapshot` values. It must not compute command success, force readiness, county paperwork substitutes, owner-lane closure, or durable residue.
+- `Unity` copies the projected command/receipt `ReadbackSummary` and warfare lane fields only; it must not query modules, infer owner lanes, execute from prose, parse summaries, or write SocialMemory.
+- V77-V84 adds no persisted fields, schema bump, migration, directive ledger, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.

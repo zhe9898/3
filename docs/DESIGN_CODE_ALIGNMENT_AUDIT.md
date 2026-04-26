@@ -1,5 +1,12 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v77-v84 delta - 2026-04-26
+
+- Warfare directive choice depth v77-v84 makes existing `WarfareCampaign` commands read as owner-lane choices: `DraftCampaignPlan` -> `案头筹议选择`, `CommitMobilization` -> `点兵加压选择`, `ProtectSupplyLine` -> `粮道护持选择`, and `WithdrawToBarracks` -> `归营止损选择`.
+- This is still the rule-driven command / aftermath / social-memory / readback loop. It is not a new command system, event pool, tactical battle layer, thick military economy, county-yamen substitute, ordinary-household repair path, or regime AI.
+- Code alignment: `WarfareCampaignCommandResolver` mutates only existing `WarfareCampaign` directive fields; `PresentationReadModelBuilder` projects `军令选择读回` alongside v69-v76 military closure guidance; Unity shell copies the projected `ReadbackSummary` and lane fields only.
+- Save/schema audit: v77-v84 adds no persisted state, root/module schema bump, migration, save manifest change, directive / campaign / force / owner-lane / cooldown / follow-up ledger, household target field, manager/god-controller path, or `PersonRegistry` expansion.
+
 ## v61-v68 delta - 2026-04-26
 
 - Family relief choice depth v61-v68 adds the thin `GrantClanRelief` command as a bounded Family lane choice after v53-v60 made the lane readable. It is not a new command system, event pool, thick clan economy, clan elder AI, branch-faction model, complete guarantee formula, household repair lane, or relief ledger.

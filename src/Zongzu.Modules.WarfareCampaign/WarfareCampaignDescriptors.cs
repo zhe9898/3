@@ -120,6 +120,20 @@ public static class WarfareCampaignDescriptors
         };
     }
 
+    public static string BuildDirectiveChoiceReadbackSummary(string directiveCode, string settlementName)
+    {
+        string choiceLabel = directiveCode switch
+        {
+            WarfareCampaignCommandNames.DraftCampaignPlan => "案头筹议选择",
+            WarfareCampaignCommandNames.CommitMobilization => "点兵加压选择",
+            WarfareCampaignCommandNames.ProtectSupplyLine => "粮道护持选择",
+            WarfareCampaignCommandNames.WithdrawToBarracks => "归营止损选择",
+            _ => "案头观势选择",
+        };
+
+        return $"军令选择读回：{choiceLabel}已落在{settlementName}的WarfareCampaign案头；WarfareCampaign拥有军令，Force只读力役/战备，Office只读官面协调，军务选择不是县门文移代打，也不是普通家户硬扛。";
+    }
+
     public static string BuildCommanderSummary(
         string settlementName,
         LocalForcePoolSnapshot localForce,

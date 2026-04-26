@@ -716,6 +716,101 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Warfare_directive_choice_depth_must_stay_warfare_owned_and_schema_neutral()
+    {
+        string resolverSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.WarfareCampaign",
+            "WarfareCampaignCommandResolver.cs"));
+        string descriptorSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.WarfareCampaign",
+            "WarfareCampaignDescriptors.cs"));
+        string warfareModuleSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.WarfareCampaign",
+            "WarfareCampaignModule",
+            "WarfareCampaignModule.cs"));
+        string choiceProjectionSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.WarfareDirectiveChoice.cs"));
+        string compositionSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.cs"),
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.Receipts.cs"),
+        }.Select(File.ReadAllText));
+        string unityAdapterSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Shared", "CommandShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Warfare", "WarfareCampaignShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+
+        Assert.That(resolverSource, Does.Contain("BuildDirectiveChoiceReadbackSummary"));
+        Assert.That(resolverSource, Does.Contain("ActiveDirectiveCode"));
+        Assert.That(resolverSource, Does.Contain("LastDirectiveTrace"));
+        Assert.That(descriptorSource, Does.Contain("BuildDirectiveChoiceReadbackSummary"));
+        Assert.That(choiceProjectionSource, Does.Contain("BuildWarfareDirectiveChoiceReadback"));
+        Assert.That(compositionSource, Does.Contain("BuildWarfareDirectiveChoiceReadback"));
+        Assert.That(compositionSource, Does.Contain("JoinOwnerLaneReturnSurfaceText"));
+        Assert.That(choiceProjectionSource, Does.Contain("CampaignMobilizationSignalSnapshot"));
+        Assert.That(choiceProjectionSource, Does.Contain("CampaignFrontSnapshot"));
+
+        foreach (string token in new[]
+                 {
+                     "军令选择读回",
+                     "案头筹议选择",
+                     "点兵加压选择",
+                     "粮道护持选择",
+                     "归营止损选择",
+                     "WarfareCampaign拥有军令",
+                     "军务选择不是县门文移代打",
+                     "不是普通家户硬扛",
+                 })
+        {
+            Assert.That(descriptorSource + choiceProjectionSource, Does.Contain(token), token);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "DomainEvent.Summary",
+                     "domainEvent.Summary",
+                     "LastInterventionSummary",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "memory.Summary",
+                     "ConflictAndForceState",
+                     "OfficeAndCareerState",
+                     "PopulationAndHouseholdsState",
+                     "SocialMemoryAndRelationsState",
+                     "FamilyCoreState",
+                     "IssueModuleCommand",
+                     "GetMutableModuleState",
+                     "OwnerLaneLedger",
+                     "CampaignDirectiveLedger",
+                     "CampaignClosureLedger",
+                     "ForceClosureLedger",
+                     "HouseholdTarget",
+                     "PersonRegistryState",
+                     "ModuleSchemaVersion => 5",
+                     "UpgradeFromSchema",
+                 })
+        {
+            Assert.That(resolverSource + choiceProjectionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(warfareModuleSource, Does.Contain("ModuleSchemaVersion => 4"));
+        Assert.That(schemaRules, Does.Contain("warfare directive choice v77-v84 adds no persisted fields"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("Zongzu.Application"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("Zongzu.Modules."));
+        Assert.That(unityAdapterSource, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("DomainEventMetadataKeys"));
+    }
+
+    [Test]
     public void Family_relief_choice_must_stay_family_owned_and_schema_neutral()
     {
         string resolverSource = File.ReadAllText(Path.Combine(

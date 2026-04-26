@@ -734,6 +734,7 @@ Current lite note:
 - the active lite slice owns bounded campaign boards plus mobilization signals derived from `ConflictAndForce`, `WorldSettlements`, and optional `OfficeAndCareer` queries only
 - schema `3` now also persists module-owned campaign-intent descriptors: directive code/label/summary plus last directive trace
 - built-in `1 -> 2 -> 3` migration backfills labels, route descriptors, and directive descriptors deterministically for legacy campaign-enabled saves
+- v77-v84 warfare directive choice depth reuses those existing directive fields. `军令选择读回`, `案头筹议选择`, `点兵加压选择`, `粮道护持选择`, `归营止损选择`, `WarfareCampaign拥有军令`, and `军务选择不是县门文移代打` are command/readback text over existing fields, not new persisted state.
 - current lite presentation deliberately phrases campaign boards in Chinese-ancient desk-sandbox language while keeping the authoritative rules campaign-level only
 - current lite aftermath now drives trade/order/office/social consequences through runtime-only warfare events plus module-owned handler updates, without adding new save fields to those downstream modules
 - this slice remains campaign-level: no unit micro, no detached battlefield map, and no separate force-ownership model
@@ -1010,6 +1011,7 @@ Current note:
 - `PlayerCommands` now spans family, office, order, and warfare affordances/receipts as read-only presentation data only
 - public-life order command affordances/receipts may include runtime-only `LeverageSummary`, `CostSummary`, and `ReadbackSummary` strings; v5 readback may include structured `县门未落地`, `地方拖延`, and `后账仍在` text plus SocialMemory refusal residue, v6/v7 readback may include repaired / contained / escalated / ignored response residue and later `后账渐平` / `后账转硬` SocialMemory summaries, v8 readback may include owner-module actor countermove labels such as `巡丁自补保`, `胥吏续拖`, `县门自补落地`, `族老自解释`, or `族老避羞`, and governance docket may copy the projected receipt/gateway text for next-month readback. v12 home-household local response receipts may also show `本户已缓`, `本户暂压`, `本户吃紧`, or `本户放置`; v16-v30 may add runtime-only `回应承受线`, `取舍预判`, `短期后果`, `续接提示`, `外部后账归位`, owner-lane surface readback, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `余味冷却提示` / `余味续接提示` / `余味换招提示`, `现有入口读法`, `后手收口读回`, and `闭环防回压` strings; only the v12 `PopulationAndHouseholds` local response trace fields are saved, while projection strings remain non-authoritative.
 - family command targeting is expressed through optional `ClanId` plus `TargetLabel`; it does not create a new save namespace
+- v77-v84 warfare directive-choice readback may appear in runtime `PlayerCommandAffordanceSnapshot.ReadbackSummary` and `PlayerCommandReceiptSnapshot.ReadbackSummary` as `军令选择读回`, `粮道护持选择`, or `WarfareCampaign拥有军令`. These strings are not saved as authoritative projection state and do not add a schema namespace, migration, directive ledger, owner-lane ledger, or save-manifest entry.
 
 Diagnostics harness note:
 - longer multi-seed sweep reports and budget evaluations are runtime-only application diagnostics

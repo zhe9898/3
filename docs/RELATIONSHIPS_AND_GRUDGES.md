@@ -304,3 +304,11 @@ V69-V76 adds military owner-lane closure readback over existing campaign, force,
 `SocialMemoryAndRelations` still owns only later durable shame/fear/favor/grudge/obligation residue. It may read structured campaign/force aftermath and `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, and `OriginDate`, but no reader may parse military closure projection prose, SocialMemory summary prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, receipt prose, or `DomainEvent.Summary`.
 
 The ordinary home-household line still cannot repair campaign aftermath, force readiness, military order, regime coordination, or durable social memory by itself. V69-V76 adds no memory namespace, relationship table, military closure ledger, owner-lane ledger, cooldown ledger, schema bump, or migration.
+
+## Backend Warfare directive choice depth v77-v84 note
+
+V77-V84 adds `军令选择读回` for existing WarfareCampaign commands. `案头筹议选择`, `点兵加压选择`, `粮道护持选择`, and `归营止损选择` explain which military posture the player selected, but they are not durable shame, favor, fear, grudge, or obligation records by themselves.
+
+`SocialMemoryAndRelations` must not parse `军令选择读回`, `WarfareCampaign拥有军令`, `军务选择不是县门文移代打`, receipt prose, `LastDirectiveTrace`, SocialMemory summary prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`. Later military social residue must still come from structured campaign/force aftermath in its own monthly cadence.
+
+The ordinary home-household line still cannot repair military directives or campaign aftertaste. V77-V84 adds no memory namespace, relationship table, directive ledger, military closure ledger, owner-lane ledger, cooldown ledger, schema bump, or migration.

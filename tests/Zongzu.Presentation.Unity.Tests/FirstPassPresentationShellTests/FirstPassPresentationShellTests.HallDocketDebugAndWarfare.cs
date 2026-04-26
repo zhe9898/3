@@ -637,6 +637,7 @@ public sealed partial class FirstPassPresentationShellTests
                     CommandName = PlayerCommandNames.ProtectSupplyLine,
                     Label = "护粮稳线",
                     IsEnabled = true,
+                    ReadbackSummary = "军令选择读回：粮道护持选择，WarfareCampaign拥有军令；军务选择不是县门文移代打，不是普通家户硬扛。",
                     WarfareLaneEntryReadbackSummary = "军务承接入口：回到WarfareCampaign/ConflictAndForce。",
                     ForceReadinessReadbackSummary = "Force承接读回：可调之众180。",
                     CampaignAftermathReadbackSummary = "战后后账读回：渡口村落待安辑。",
@@ -656,6 +657,7 @@ public sealed partial class FirstPassPresentationShellTests
                     Label = "护粮稳线",
                     Summary = "军令已落案头。",
                     OutcomeSummary = "先保渡口粮线。",
+                    ReadbackSummary = "军令选择读回：粮道护持选择，WarfareCampaign拥有军令；军务选择不是县门文移代打，不是普通家户硬扛。",
                     WarfareLaneEntryReadbackSummary = "军务承接入口：回到WarfareCampaign/ConflictAndForce。",
                     ForceReadinessReadbackSummary = "Force承接读回：可调之众180。",
                     CampaignAftermathReadbackSummary = "战后后账读回：渡口村落待安辑。",
@@ -671,9 +673,13 @@ public sealed partial class FirstPassPresentationShellTests
         CommandAffordanceViewModel affordance = shell.Warfare.CommandAffordances.Single();
         CommandReceiptViewModel receipt = shell.Warfare.RecentReceipts.Single();
 
+        Assert.That(affordance.ReadbackSummary, Does.Contain("军令选择读回"));
+        Assert.That(affordance.ReadbackSummary, Does.Contain("WarfareCampaign拥有军令"));
         Assert.That(affordance.WarfareLaneEntryReadbackSummary, Does.Contain("军务承接入口"));
         Assert.That(affordance.ForceReadinessReadbackSummary, Does.Contain("Force承接读回"));
         Assert.That(affordance.WarfareLaneNoLoopGuardSummary, Does.Contain("军务闭环防回压"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("军令选择读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("军务选择不是县门文移代打"));
         Assert.That(receipt.CampaignAftermathReadbackSummary, Does.Contain("战后后账读回"));
         Assert.That(receipt.WarfareLaneReceiptClosureSummary, Does.Contain("军务后手收口读回"));
     }

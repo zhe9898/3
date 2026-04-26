@@ -477,13 +477,19 @@ public sealed partial class PresentationReadModelBuilder
                 campaign,
                 jurisdiction,
                 localCampaignSocialMemories);
+            string directiveChoiceReadback = BuildWarfareDirectiveChoiceReadback(
+                campaign.ActiveDirectiveCode,
+                signal,
+                campaign);
 
             receipts.Add(BuildPlayerCommandReceiptSnapshot(
                 campaign.ActiveDirectiveCode,
                 campaign.AnchorSettlementId,
                 campaign.LastDirectiveTrace,
                 campaign.ActiveDirectiveSummary,
-                readbackSummary: BuildWarfareLaneClosureReadbackText(warfareLaneClosure),
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(
+                    directiveChoiceReadback,
+                    BuildWarfareLaneClosureReadbackText(warfareLaneClosure)),
                 warfareLaneEntryReadbackSummary: warfareLaneClosure.EntryReadbackSummary,
                 forceReadinessReadbackSummary: warfareLaneClosure.ForceReadinessReadbackSummary,
                 campaignAftermathReadbackSummary: warfareLaneClosure.CampaignAftermathReadbackSummary,

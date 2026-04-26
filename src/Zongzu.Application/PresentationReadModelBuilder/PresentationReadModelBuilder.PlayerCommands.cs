@@ -234,6 +234,7 @@ public sealed partial class PresentationReadModelBuilder
 
             affordances.Add(BuildWarfareAffordance(
                 signal,
+                campaign,
                 warfareLaneClosure,
                 PlayerCommandNames.DraftCampaignPlan,
                 "先在案头筹议关津、驿报与前后队次，不急于放大边缘摩擦。",
@@ -241,6 +242,7 @@ public sealed partial class PresentationReadModelBuilder
                 "此令偏向先定方略，不急发众。"));
             affordances.Add(BuildWarfareAffordance(
                 signal,
+                campaign,
                 warfareLaneClosure,
                 PlayerCommandNames.CommitMobilization,
                 "发檄点兵，先聚守丁、乡勇与护运之众，再定前压与驻防。",
@@ -250,6 +252,7 @@ public sealed partial class PresentationReadModelBuilder
                     : $"当前动员窗为{RenderMobilizationWindow(signal.MobilizationWindowLabel)}。"));
             affordances.Add(BuildWarfareAffordance(
                 signal,
+                campaign,
                 warfareLaneClosure,
                 PlayerCommandNames.ProtectSupplyLine,
                 "催督粮道与渡口，优先保住转运、驿报与军前补给。",
@@ -259,6 +262,7 @@ public sealed partial class PresentationReadModelBuilder
                     : "当前无可调之众。"));
             affordances.Add(BuildWarfareAffordance(
                 signal,
+                campaign,
                 warfareLaneClosure,
                 PlayerCommandNames.WithdrawToBarracks,
                 "暂收行伍归营，整顿伤员、粮册与营中号令。",
@@ -275,13 +279,16 @@ public sealed partial class PresentationReadModelBuilder
 
     private static PlayerCommandAffordanceSnapshot BuildWarfareAffordance(
         CampaignMobilizationSignalSnapshot signal,
+        CampaignFrontSnapshot? campaign,
         WarfareLaneClosureReadback warfareLaneClosure,
         string commandName,
         string summary,
         bool isEnabled,
         string availabilitySummary)
     {
-        string readback = BuildWarfareLaneClosureReadbackText(warfareLaneClosure);
+        string readback = JoinOwnerLaneReturnSurfaceText(
+            BuildWarfareDirectiveChoiceReadback(commandName, signal, campaign),
+            BuildWarfareLaneClosureReadbackText(warfareLaneClosure));
         return BuildPlayerCommandAffordanceSnapshot(
             commandName,
             signal.SettlementId,

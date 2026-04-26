@@ -441,3 +441,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Governance, owner-lane docket, warfare affordances, and campaign receipts may show `军务承接入口`, `Force承接读回`, `战后后账读回`, `军务后手收口读回`, `军务余味续接读回`, and `军务闭环防回压`, but those strings are runtime guidance only.
 - Determinism depends on query snapshots, fixed ordering, and stable cause keys. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected military prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 - The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for campaign aftermath, force readiness, military order, regime coordination, or SocialMemory after-accounts.
+
+## Current backend Warfare directive choice depth v77-v84 note
+
+- V77-V84 keeps command-time resolution inside the existing `WarfareCampaign` module. No scheduler phase, event pool, campaign loop, tactical layer, or same-command SocialMemory write is introduced.
+- `DraftCampaignPlan`, `CommitMobilization`, `ProtectSupplyLine`, and `WithdrawToBarracks` update only existing active directive fields and `LastDirectiveTrace`; `ConflictAndForce`, `OfficeAndCareer`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` are not mutated by that command.
+- Application projections may show `军令选择读回`, `案头筹议选择`, `点兵加压选择`, `粮道护持选择`, `归营止损选择`, `WarfareCampaign拥有军令`, and `军务选择不是县门文移代打` after the owning module state is available. Those strings are runtime guidance only.
+- Determinism depends on command target, existing campaign/mobilization snapshots, fixed ordering, and fixed formulas. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected military prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for military directives, campaign aftermath, force readiness, county paperwork, or SocialMemory after-accounts.

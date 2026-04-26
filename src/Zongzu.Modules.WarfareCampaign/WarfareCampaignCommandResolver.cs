@@ -35,6 +35,7 @@ public static class WarfareCampaignCommandResolver
 
         string directiveLabel = WarfareCampaignDescriptors.DetermineDirectiveLabel(command.CommandName);
         string directiveSummary = WarfareCampaignDescriptors.BuildDirectiveSummary(command.CommandName, signal.SettlementName);
+        string directiveChoiceReadback = WarfareCampaignDescriptors.BuildDirectiveChoiceReadbackSummary(command.CommandName, signal.SettlementName);
         signal.ActiveDirectiveCode = command.CommandName;
         signal.ActiveDirectiveLabel = directiveLabel;
         signal.ActiveDirectiveSummary = directiveSummary;
@@ -46,7 +47,7 @@ public static class WarfareCampaignCommandResolver
             campaign.ActiveDirectiveCode = command.CommandName;
             campaign.ActiveDirectiveLabel = directiveLabel;
             campaign.ActiveDirectiveSummary = directiveSummary;
-            campaign.LastDirectiveTrace = $"{signal.SettlementName}已收到军令“{directiveLabel}”：{directiveSummary}";
+            campaign.LastDirectiveTrace = $"{signal.SettlementName}已收到军令“{directiveLabel}”：{directiveSummary} {directiveChoiceReadback}";
         }
 
         return new PlayerCommandResult
@@ -58,7 +59,7 @@ public static class WarfareCampaignCommandResolver
             ClanId = command.ClanId,
             CommandName = command.CommandName,
             Label = directiveLabel,
-            Summary = $"{signal.SettlementName}已改用军令“{directiveLabel}”。{directiveSummary}",
+            Summary = $"{signal.SettlementName}已改用军令“{directiveLabel}”。{directiveSummary} {directiveChoiceReadback}",
             TargetLabel = $"据点 {command.SettlementId.Value}",
         };
     }

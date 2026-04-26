@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Application;
 using Zongzu.Contracts;
@@ -267,11 +268,21 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(result.Summary, Is.Not.Empty);
 
+        Assert.That(result.Summary, Does.Contain("军令选择读回"));
+
+        Assert.That(result.Summary, Does.Contain("粮道护持选择"));
+
+        Assert.That(result.Summary, Does.Contain("WarfareCampaign拥有军令"));
+
         Assert.That(campaign.ActiveDirectiveLabel, Is.EqualTo(result.Label));
 
         Assert.That(campaign.ActiveDirectiveSummary, Is.Not.Empty);
 
         Assert.That(campaign.LastDirectiveTrace, Is.Not.Empty);
+
+        Assert.That(campaign.LastDirectiveTrace, Does.Contain("军令选择读回"));
+
+        Assert.That(campaign.LastDirectiveTrace, Does.Contain("不是普通家户硬扛"));
 
         Assert.That(signal.ActiveDirectiveLabel, Is.EqualTo(result.Label));
 
@@ -322,6 +333,14 @@ public sealed partial class M2LiteIntegrationTests
             string.Equals(command.SurfaceKey, PlayerCommandSurfaceKeys.Warfare, StringComparison.Ordinal)
             && string.Equals(command.CommandName, PlayerCommandNames.ProtectSupplyLine, StringComparison.Ordinal));
 
+        Assert.That(warfareAffordance.ReadbackSummary, Does.Contain("军令选择读回"));
+
+        Assert.That(warfareAffordance.ReadbackSummary, Does.Contain("粮道护持选择"));
+
+        Assert.That(warfareAffordance.ReadbackSummary, Does.Contain("WarfareCampaign拥有军令"));
+
+        Assert.That(warfareAffordance.ReadbackSummary, Does.Contain("军务选择不是县门文移代打"));
+
         Assert.That(warfareAffordance.WarfareLaneEntryReadbackSummary, Does.Contain("军务承接入口"));
 
         Assert.That(warfareAffordance.ForceReadinessReadbackSummary, Does.Contain("Force承接读回"));
@@ -332,6 +351,8 @@ public sealed partial class M2LiteIntegrationTests
 
         CommandAffordanceViewModel warfareShellAffordance = shell.Warfare.CommandAffordances.First(command =>
             string.Equals(command.CommandName, PlayerCommandNames.ProtectSupplyLine, StringComparison.Ordinal));
+
+        Assert.That(warfareShellAffordance.ReadbackSummary, Is.EqualTo(warfareAffordance.ReadbackSummary));
 
         Assert.That(warfareShellAffordance.WarfareLaneEntryReadbackSummary, Is.EqualTo(warfareAffordance.WarfareLaneEntryReadbackSummary));
 
@@ -376,6 +397,19 @@ public sealed partial class M2LiteIntegrationTests
 
             });
 
+        SaveRoot beforeWarfareCommandSave = simulation.ExportSave();
+        Dictionary<string, string> nonWarfarePayloadsBeforeCommand = CaptureModulePayloads(
+            beforeWarfareCommandSave,
+            KnownModuleKeys.ConflictAndForce,
+            KnownModuleKeys.FamilyCore,
+            KnownModuleKeys.OfficeAndCareer,
+            KnownModuleKeys.OrderAndBanditry,
+            KnownModuleKeys.PopulationAndHouseholds,
+            KnownModuleKeys.SocialMemoryAndRelations);
+        string warfarePayloadBeforeCommand = CaptureModulePayload(
+            beforeWarfareCommandSave,
+            KnownModuleKeys.WarfareCampaign);
+
         PlayerCommandResult warfareResult = service.IssueIntent(
 
             simulation,
@@ -389,6 +423,8 @@ public sealed partial class M2LiteIntegrationTests
                 CommandName = PlayerCommandNames.ProtectSupplyLine,
 
             });
+
+        SaveRoot afterWarfareCommandSave = simulation.ExportSave();
 
 
         PresentationReadModelBundle afterBundle = builder.BuildForM2(simulation);
@@ -409,6 +445,20 @@ public sealed partial class M2LiteIntegrationTests
         Assert.That(warfareResult.Accepted, Is.True);
 
         Assert.That(warfareResult.Label, Is.Not.Empty);
+
+        Assert.That(warfareResult.Summary, Does.Contain("军令选择读回"));
+
+        Assert.That(warfareResult.Summary, Does.Contain("粮道护持选择"));
+
+        Assert.That(warfareResult.Summary, Does.Contain("WarfareCampaign拥有军令"));
+
+        Assert.That(warfareResult.Summary, Does.Contain("不是普通家户硬扛"));
+
+        AssertModulePayloadsUnchanged(nonWarfarePayloadsBeforeCommand, afterWarfareCommandSave);
+
+        Assert.That(
+            CaptureModulePayload(afterWarfareCommandSave, KnownModuleKeys.WarfareCampaign),
+            Is.Not.EqualTo(warfarePayloadBeforeCommand));
 
         Assert.That(jurisdiction.LastAdministrativeTrace, Is.Not.Empty);
 
@@ -434,13 +484,47 @@ public sealed partial class M2LiteIntegrationTests
 
         Assert.That(warfareReceipt.WarfareLaneNoLoopGuardSummary, Does.Contain("不是普通家户硬扛"));
 
+        Assert.That(warfareReceipt.ReadbackSummary, Does.Contain("军令选择读回"));
+
+        Assert.That(warfareReceipt.ReadbackSummary, Does.Contain("粮道护持选择"));
+
+        Assert.That(warfareReceipt.ReadbackSummary, Does.Contain("军务选择不是县门文移代打"));
+
         CommandReceiptViewModel shellWarfareReceipt = shell.Warfare.RecentReceipts.First(receipt =>
             string.Equals(receipt.CommandName, PlayerCommandNames.ProtectSupplyLine, StringComparison.Ordinal));
+
+        Assert.That(shellWarfareReceipt.ReadbackSummary, Does.Contain("军令选择读回"));
+
+        Assert.That(shellWarfareReceipt.ReadbackSummary, Does.Contain("粮道护持选择"));
 
         Assert.That(shellWarfareReceipt.WarfareLaneReceiptClosureSummary, Is.EqualTo(warfareReceipt.WarfareLaneReceiptClosureSummary));
 
         Assert.That(shellWarfareReceipt.WarfareLaneNoLoopGuardSummary, Is.EqualTo(warfareReceipt.WarfareLaneNoLoopGuardSummary));
 
+    }
+
+    private static Dictionary<string, string> CaptureModulePayloads(SaveRoot saveRoot, params string[] moduleKeys)
+    {
+        return moduleKeys.ToDictionary(
+            static moduleKey => moduleKey,
+            moduleKey => CaptureModulePayload(saveRoot, moduleKey),
+            StringComparer.Ordinal);
+    }
+
+    private static string CaptureModulePayload(SaveRoot saveRoot, string moduleKey)
+    {
+        Assert.That(saveRoot.ModuleStates.ContainsKey(moduleKey), Is.True, moduleKey);
+        return Convert.ToBase64String(saveRoot.ModuleStates[moduleKey].Payload);
+    }
+
+    private static void AssertModulePayloadsUnchanged(
+        IReadOnlyDictionary<string, string> expectedPayloads,
+        SaveRoot actualSaveRoot)
+    {
+        foreach ((string moduleKey, string expectedPayload) in expectedPayloads)
+        {
+            Assert.That(CaptureModulePayload(actualSaveRoot, moduleKey), Is.EqualTo(expectedPayload), moduleKey);
+        }
     }
 
 
