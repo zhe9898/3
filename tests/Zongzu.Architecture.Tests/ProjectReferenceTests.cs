@@ -323,11 +323,20 @@ public class ProjectReferenceTests
         Assert.That(diagnosticSource, Does.Contain("DormantSeededPath"));
         Assert.That(diagnosticSource, Does.Contain("AcceptanceTestGap"));
         Assert.That(diagnosticSource, Does.Contain("FormatEventContractKey"));
+        Assert.That(diagnosticSource, Does.Contain("GetEventContractOwnerLane"));
+        Assert.That(diagnosticSource, Does.Contain("EventContractEvidenceBacklinks"));
+        Assert.That(diagnosticSource, Does.Contain("owner="));
+        Assert.That(diagnosticSource, Does.Contain("evidence="));
         Assert.That(diagnosticSource, Does.Contain("CollectEventContractDebt"));
         Assert.That(diagnosticSource, Does.Contain("AssertNoUnclassifiedEventContractDebt"));
         Assert.That(diagnosticSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(diagnosticSource, Does.Not.Contain("OwnerLaneLedger"));
+        Assert.That(diagnosticSource, Does.Not.Contain("EventHealthLedger"));
+        Assert.That(diagnosticSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(diagnosticSource, Does.Not.Contain("PlayerCommandService"));
         Assert.That(schemaRules, Does.Contain("backend event contract health v32 adds no persisted fields"));
         Assert.That(schemaRules, Does.Contain("backend event contract health v33 adds no persisted fields"));
+        Assert.That(schemaRules, Does.Contain("backend event contract health v34 adds no persisted fields"));
     }
 
     [Test]

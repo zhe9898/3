@@ -1,5 +1,11 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v34 delta - 2026-04-26
+
+- Backend event-contract health v34 adds diagnostic evidence backlinks to the v32-v33 classification surface: visible classified debt now includes `owner=<module>` and `evidence=<doc/test backlink>`.
+- The owner lane is read from the structured event key/module prefix and the evidence backlink is selected from the diagnostic classification kind. V34 does not parse `DomainEvent.Summary`, receipt prose, SocialMemory prose, `LastInterventionSummary`, or `LastLocalResponseSummary`.
+- V34 remains diagnostic/test evidence only. It adds no gameplay rule, event-pool authority, command surface, projection wording, persisted state, schema bump, migration, manager/controller layer, Application/UI/Unity authority, event-health ledger, or `PersonRegistry` expansion.
+
 ## v33 delta - 2026-04-26
 
 - Backend event-contract health v33 turns the v32 classification table into a hard ten-year diagnostic gate: emitted-but-unconsumed and declared-but-not-emitted `DomainEvent` contract debt may no longer remain `Unclassified` in the current health run.

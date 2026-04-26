@@ -181,6 +181,11 @@ Current backend event contract health v33 note:
 - `SocialMemoryAndRelations` still must not parse diagnostic labels, `DomainEvent.Summary`, receipt prose, projection text, `LastInterventionSummary`, or `LastLocalResponseSummary`.
 - V33 adds no memory namespace, relationship table, residue ledger, schema bump, or migration.
 
+Current backend event contract health v34 note:
+- V34's owner/evidence backlinks are also diagnostic/test evidence only. They are not social memories, relationship edges, grudges, favors, shame, fear, obligations, or durable residue.
+- `SocialMemoryAndRelations` still must not parse diagnostic owner labels, evidence backlinks, `DomainEvent.Summary`, receipt prose, projection text, `LastInterventionSummary`, or `LastLocalResponseSummary`.
+- V34 adds no memory namespace, relationship table, residue ledger, event-health ledger, schema bump, or migration.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance

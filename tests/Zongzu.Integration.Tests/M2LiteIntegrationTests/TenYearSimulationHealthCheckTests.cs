@@ -102,6 +102,16 @@ public sealed class TenYearSimulationHealthCheckTests
         Assert.That(
             EventContractHealthClassifications.Values.Select(static classification => classification.Kind),
             Does.Contain(EventContractHealthKind.AcceptanceTestGap));
+
+        string[] missingEvidenceBacklinks = EventContractHealthClassifications
+            .Where(static pair => string.IsNullOrWhiteSpace(GetEventContractEvidenceBacklink(pair.Value)))
+            .Select(static pair => pair.Key)
+            .ToArray();
+
+        Assert.That(
+            missingEvidenceBacklinks,
+            Is.Empty,
+            "Missing event contract evidence backlinks: " + string.Join(", ", missingEvidenceBacklinks));
     }
 
     [Test]
@@ -131,6 +141,24 @@ public sealed class TenYearSimulationHealthCheckTests
         Assert.That(exception, Is.Not.Null);
         Assert.That(exception!.Message, Does.Contain("Unclassified"));
         Assert.That(exception.Message, Does.Contain("Example.UnknownContract"));
+    }
+
+    [Test]
+    public void EventContractHealth_ClassificationReadbackIncludesOwnerAndEvidenceBacklinks()
+    {
+        string emittedNote = FormatEventContractHealthNote("OrderAndBanditry.BlackRoutePressureRaised");
+        Assert.That(emittedNote, Does.Contain("contract=FutureContract"));
+        Assert.That(emittedNote, Does.Contain("owner=OrderAndBanditry"));
+        Assert.That(emittedNote, Does.Contain("evidence=docs/RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md#backend-event-contract-health"));
+        Assert.That(emittedNote, Does.Contain("black-route pressure"));
+
+        string declaredDebt = FormatClassifiedEventDebt("OfficeAndCareer.YamenOverloaded", null);
+        Assert.That(declaredDebt, Does.Contain("[AcceptanceTestGap; owner=OfficeAndCareer; evidence=docs/ACCEPTANCE_TESTS.md#backend-event-contract-health"));
+        Assert.That(declaredDebt, Does.Contain("tax/yamen/public-life chain"));
+
+        string projectionDebt = FormatClassifiedEventDebt("FamilyCore.ClanPrestigeAdjusted", 3);
+        Assert.That(projectionDebt, Does.Contain("FamilyCore.ClanPrestigeAdjusted x3"));
+        Assert.That(projectionDebt, Does.Contain("[ProjectionOnlyReceipt; owner=FamilyCore; evidence=docs/MODULE_INTEGRATION_RULES.md#backend-event-contract-health"));
     }
 
     private static SaveRoot CreateCampaignEnabledStressSave()
@@ -318,13 +346,24 @@ public sealed class TenYearSimulationHealthCheckTests
     {
         string count = emittedCount.HasValue ? $" x{emittedCount.Value}" : string.Empty;
         EventContractHealthClassification classification = ClassifyEventContract(eventKey);
-        return $"{eventKey}{count} [{classification.Kind}: {classification.Rationale}]";
+        return $"{eventKey}{count} [{classification.Kind}; owner={GetEventContractOwnerLane(eventKey)}; evidence={GetEventContractEvidenceBacklink(classification)}: {classification.Rationale}]";
     }
 
     private static string FormatEventContractHealthNote(string eventKey)
     {
         EventContractHealthClassification classification = ClassifyEventContract(eventKey);
-        return $"contract={classification.Kind}, note={classification.Rationale}";
+        return $"contract={classification.Kind}, owner={GetEventContractOwnerLane(eventKey)}, evidence={GetEventContractEvidenceBacklink(classification)}, note={classification.Rationale}";
+    }
+
+    private static string GetEventContractOwnerLane(string eventKey)
+    {
+        int separator = eventKey.IndexOf('.');
+        return separator > 0 ? eventKey[..separator] : "Unknown";
+    }
+
+    private static string GetEventContractEvidenceBacklink(EventContractHealthClassification classification)
+    {
+        return EventContractEvidenceBacklinks.For(classification.Kind);
     }
 
     private static EventContractHealthClassification ClassifyEventContract(string eventKey)
@@ -605,6 +644,30 @@ public sealed class TenYearSimulationHealthCheckTests
     private static readonly EventContractHealthClassification UnclassifiedEventContract = new(
         EventContractHealthKind.Unclassified,
         "new diagnostic debt; classify before using it as evidence");
+
+    private static class EventContractEvidenceBacklinks
+    {
+        public const string ProjectionOnlyReceipt = "docs/MODULE_INTEGRATION_RULES.md#backend-event-contract-health";
+        public const string FutureContract = "docs/RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md#backend-event-contract-health";
+        public const string DormantSeededPath = "tests/Zongzu.Integration.Tests/M2LiteIntegrationTests/TenYearSimulationHealthCheckTests.cs#CampaignEnabledStressSandbox_TenYearHealthReport";
+        public const string AcceptanceTestGap = "docs/ACCEPTANCE_TESTS.md#backend-event-contract-health";
+        public const string AlignmentBug = "docs/DESIGN_CODE_ALIGNMENT_AUDIT.md#backend-event-contract-health";
+        public const string Unclassified = "docs/exec-plans/active/2026-04-26_backend-event-contract-health-evidence-backlinks-v34.md#rollback--fallback-plan";
+
+        public static string For(EventContractHealthKind kind)
+        {
+            return kind switch
+            {
+                EventContractHealthKind.ProjectionOnlyReceipt => ProjectionOnlyReceipt,
+                EventContractHealthKind.FutureContract => FutureContract,
+                EventContractHealthKind.DormantSeededPath => DormantSeededPath,
+                EventContractHealthKind.AcceptanceTestGap => AcceptanceTestGap,
+                EventContractHealthKind.AlignmentBug => AlignmentBug,
+                EventContractHealthKind.Unclassified => Unclassified,
+                _ => Unclassified,
+            };
+        }
+    }
 
     private static readonly IReadOnlyDictionary<string, EventContractHealthClassification> EventContractHealthClassifications =
         new Dictionary<string, EventContractHealthClassification>(StringComparer.Ordinal)

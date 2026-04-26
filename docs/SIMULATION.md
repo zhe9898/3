@@ -285,6 +285,7 @@ Current public-life/order v9/v10/v11/v12 note:
 - v27-v30 add projected `现有入口读法`, `后手收口读回`, and `闭环防回压` on top of v26 so owner-lane affordances and receipts read as a closure surface rather than a loop back to the home household. This remains projection/readback guidance, not a new command system, event pool, persisted ledger, or follow-up calculation.
 - v32 adds backend event-contract health classification to the ten-year diagnostics. It classifies `DomainEvent` contract debt after simulation has run; it does not affect scheduler order, command resolution, module state, projection authority, or save/schema compatibility.
 - v33 adds a no-unclassified gate to that same ten-year diagnostic pass. The assertion runs after simulation has produced runtime event counts and does not affect scheduler order, command resolution, module state, projection authority, or save/schema compatibility.
+- v34 adds owner/evidence backlinks to that same diagnostic readback. The report formats `owner=<module>` from structured event keys and `evidence=<doc/test backlink>` from classification kind after simulation has run; it does not affect scheduler order, command resolution, module state, projection authority, UI/Unity authority, or save/schema compatibility.
 
 Optional exception:
 - extremely urgent red-band items may open a narrow interrupt-style response window

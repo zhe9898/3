@@ -800,3 +800,8 @@ Current lite note:
 - Current emitted-without-authority-consumer and declared-but-not-emitted debt must classify as projection-only receipt, future contract, dormant seeded path, acceptance-test gap, or alignment bug before the health report is used as evidence.
 - This remains a test/readback boundary guard. It is not an event pool, not an event-chain design body, not an authority registry, and not a UI/Unity command or projection surface.
 - V33 adds no persisted fields, schema bump, migration, command system, projection surface, `PersonRegistry` expansion, or manager/controller layer.
+
+## 2026-04-26 backend event contract health v34 note
+- V34 adds diagnostic owner/evidence backlinks to classified event-contract debt. `owner=<module>` comes from the structured event key/module prefix; `evidence=<doc/test backlink>` comes from the classification kind.
+- The backlinks are developer diagnostics only. They do not move authority across modules, do not create an owner-lane registry, and do not let Application/UI/Unity compute command outcomes or owner lanes.
+- V34 adds no persisted fields, schema bump, migration, command system, projection surface, event-health ledger, `PersonRegistry` expansion, or manager/controller layer.

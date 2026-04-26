@@ -78,7 +78,7 @@ flowchart LR
 8. Generic downstream events must either carry cause metadata or keep projection wording cause-neutral.
 9. Projection may explain why-now and what-next, but it may not become a second authority layer.
 10. Application services may route commands and compose read models, but they may not absorb chain rules while the owning modules are still being shaped.
-11. Ten-year diagnostic event-contract debt must be classified before it is used as design evidence. V32 classifications are diagnostic-only: `ProjectionOnlyReceipt`, `FutureContract`, `DormantSeededPath`, `AcceptanceTestGap`, `AlignmentBug`, or `Unclassified`. V33 hardens this into a no-unclassified gate for the current ten-year health run. The classification table and gate do not create an event pool, do not make `DomainEvent` the design body, and do not change persisted module state.
+11. Ten-year diagnostic event-contract debt must be classified before it is used as design evidence. V32 classifications are diagnostic-only: `ProjectionOnlyReceipt`, `FutureContract`, `DormantSeededPath`, `AcceptanceTestGap`, `AlignmentBug`, or `Unclassified`. V33 hardens this into a no-unclassified gate for the current ten-year health run. V34 adds diagnostic `owner=<module>` and `evidence=<doc/test backlink>` readback over the classified debt. The classification table, gate, and evidence backlinks do not create an event pool, do not make `DomainEvent` the design body, and do not change persisted module state.
 
 ## Full-Chain Debt
 

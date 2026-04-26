@@ -1017,7 +1017,7 @@ Diagnostics harness note:
 - named settlement hotspot summaries for local-conflict stress runs are also runtime-only diagnostics
 - load-migration summaries shown in debug/presentation are runtime-only diagnostics derived from the active load path
 - scale summaries and top module payload footprints are also runtime-only diagnostics
-- event-contract health classifications and the v33 no-unclassified gate for emitted-but-unconsumed or declared-but-not-emitted `DomainEvent` names are also runtime-only diagnostics
+- event-contract health classifications, the v33 no-unclassified gate, and the v34 owner/evidence backlinks for emitted-but-unconsumed or declared-but-not-emitted `DomainEvent` names are also runtime-only diagnostics
 - payload-summary headlines and migration-consistency status are also runtime-only diagnostics
 - player-command affordances and receipts in the presentation bundle are also runtime-only read models
 - household social-pressure and influence-footprint snapshots in the presentation bundle are also runtime-only read models

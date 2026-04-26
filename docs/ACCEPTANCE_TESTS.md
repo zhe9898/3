@@ -501,3 +501,9 @@ At integration level, verify:
 - Focused integration acceptance must prove the no-unclassified gate rejects a synthetic unclassified debt entry and the 120-month campaign health report passes with current debt explicitly classified.
 - Architecture acceptance must prove the gate lives in diagnostics/tests, does not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastLocalResponseSummary`, and does not create Application/UI/Unity authority.
 - Save/schema acceptance: v33 diagnostic gate is runtime/test evidence only and adds no persisted fields, no module envelope, no root/module schema version change, no migration, and no save roundtrip change.
+
+## Backend event contract health v34 acceptance - 2026-04-26
+- Ten-year simulation diagnostics must show event-contract classification readback with a structured `owner=<module>` lane and an `evidence=<doc/test backlink>` for visible classified debt.
+- Focused integration acceptance must prove emitted-without-authority-consumer and declared-but-not-emitted examples include owner/evidence backlinks while preserving the v33 no-unclassified gate.
+- Architecture acceptance must prove owner/evidence backlinks live in diagnostics/tests, do not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastLocalResponseSummary`, and do not create Application/UI/Unity authority.
+- Save/schema acceptance: v34 evidence backlinks are runtime/test diagnostics only and add no persisted fields, no module envelope, no root/module schema version change, no migration, no event-health ledger, and no save roundtrip change.
