@@ -117,4 +117,5 @@ If a useful Family relief choice cannot be expressed through existing `FamilyCor
 - [x] focused tests (FamilyCore, Integration, Unity presentation pass)
 - [x] `git diff --check` (passes)
 - [x] `dotnet test Zongzu.sln --no-build` (passes)
-- [ ] commit and push
+- [x] commit `c065104` (`Add family relief choice command v61-v68`)
+- [x] push `origin/codex/family-relief-choice-v61-v68`
