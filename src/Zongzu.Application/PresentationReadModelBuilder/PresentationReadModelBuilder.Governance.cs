@@ -35,6 +35,10 @@ public sealed partial class PresentationReadModelBuilder
             .ThenBy(static campaign => campaign.CampaignId.Value)
             .GroupBy(static campaign => campaign.AnchorSettlementId.Value)
             .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<int, AftermathDocketSnapshot> aftermathDocketsByCampaign = bundle.CampaignAftermathDockets
+            .OrderBy(static docket => docket.CampaignId.Value)
+            .GroupBy(static docket => docket.CampaignId.Value)
+            .ToDictionary(static group => group.Key, static group => group.First());
         Dictionary<int, CampaignMobilizationSignalSnapshot> campaignSignalsBySettlement = IndexFirstBySettlement(
             bundle.CampaignMobilizationSignals,
             static entry => entry.SettlementId);
@@ -66,6 +70,9 @@ public sealed partial class PresentationReadModelBuilder
                 WarfareLaneClosureReadback warfareLaneClosure = BuildWarfareLaneClosureReadback(
                     signal,
                     campaign,
+                    campaign is not null && aftermathDocketsByCampaign.TryGetValue(campaign.CampaignId.Value, out AftermathDocketSnapshot? aftermathDocket)
+                        ? aftermathDocket
+                        : null,
                     jurisdiction,
                     localCampaignSocialMemories);
 

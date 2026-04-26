@@ -57,6 +57,8 @@ public sealed class PresentationReadModelBundle
 
     public IReadOnlyList<CampaignMobilizationSignalSnapshot> CampaignMobilizationSignals { get; set; } = [];
 
+    public IReadOnlyList<AftermathDocketSnapshot> CampaignAftermathDockets { get; set; } = [];
+
     public IReadOnlyList<NarrativeNotificationSnapshot> Notifications { get; set; } = [];
 
     public PlayerCommandSurfaceSnapshot PlayerCommands { get; set; } = new();

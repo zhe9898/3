@@ -455,6 +455,10 @@ public sealed partial class PresentationReadModelBuilder
             static entry => entry.SettlementId);
         ILookup<int, ClanSnapshot> warfareClansBySettlement = bundle.Clans
             .ToLookup(static entry => entry.HomeSettlementId.Value);
+        Dictionary<int, AftermathDocketSnapshot> aftermathDocketsByCampaign = bundle.CampaignAftermathDockets
+            .OrderBy(static docket => docket.CampaignId.Value)
+            .GroupBy(static docket => docket.CampaignId.Value)
+            .ToDictionary(static group => group.Key, static group => group.First());
 
         foreach (CampaignFrontSnapshot campaign in bundle.Campaigns.OrderBy(static entry => entry.CampaignId.Value))
         {
@@ -465,6 +469,7 @@ public sealed partial class PresentationReadModelBuilder
             }
 
             signalsBySettlement.TryGetValue(campaign.AnchorSettlementId.Value, out CampaignMobilizationSignalSnapshot? signal);
+            aftermathDocketsByCampaign.TryGetValue(campaign.CampaignId.Value, out AftermathDocketSnapshot? aftermathDocket);
             warfareJurisdictionsBySettlement.TryGetValue(campaign.AnchorSettlementId.Value, out JurisdictionAuthoritySnapshot? jurisdiction);
             ClanSnapshot[] localClans = warfareClansBySettlement[campaign.AnchorSettlementId.Value]
                 .OrderByDescending(static clan => clan.Prestige)
@@ -475,6 +480,7 @@ public sealed partial class PresentationReadModelBuilder
             WarfareLaneClosureReadback warfareLaneClosure = BuildWarfareLaneClosureReadback(
                 signal,
                 campaign,
+                aftermathDocket,
                 jurisdiction,
                 localCampaignSocialMemories);
             string directiveChoiceReadback = BuildWarfareDirectiveChoiceReadback(

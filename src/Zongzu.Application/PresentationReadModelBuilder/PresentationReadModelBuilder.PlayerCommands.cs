@@ -210,6 +210,10 @@ public sealed partial class PresentationReadModelBuilder
             .ThenBy(static campaign => campaign.CampaignId.Value)
             .GroupBy(static campaign => campaign.AnchorSettlementId.Value)
             .ToDictionary(static group => group.Key, static group => group.First());
+        Dictionary<int, AftermathDocketSnapshot> aftermathDocketsByCampaign = bundle.CampaignAftermathDockets
+            .OrderBy(static docket => docket.CampaignId.Value)
+            .GroupBy(static docket => docket.CampaignId.Value)
+            .ToDictionary(static group => group.Key, static group => group.First());
         Dictionary<int, JurisdictionAuthoritySnapshot> warfareJurisdictionsBySettlement = IndexFirstBySettlement(
             bundle.OfficeJurisdictions,
             static entry => entry.SettlementId);
@@ -219,6 +223,10 @@ public sealed partial class PresentationReadModelBuilder
         foreach (CampaignMobilizationSignalSnapshot signal in bundle.CampaignMobilizationSignals.OrderBy(static entry => entry.SettlementId.Value))
         {
             campaignsByAnchorSettlement.TryGetValue(signal.SettlementId.Value, out CampaignFrontSnapshot? campaign);
+            AftermathDocketSnapshot? aftermathDocket = campaign is not null
+                && aftermathDocketsByCampaign.TryGetValue(campaign.CampaignId.Value, out AftermathDocketSnapshot? docket)
+                    ? docket
+                    : null;
             warfareJurisdictionsBySettlement.TryGetValue(signal.SettlementId.Value, out JurisdictionAuthoritySnapshot? jurisdiction);
             ClanSnapshot[] localClans = warfareClansBySettlement[signal.SettlementId.Value]
                 .OrderByDescending(static clan => clan.Prestige)
@@ -229,6 +237,7 @@ public sealed partial class PresentationReadModelBuilder
             WarfareLaneClosureReadback warfareLaneClosure = BuildWarfareLaneClosureReadback(
                 signal,
                 campaign,
+                aftermathDocket,
                 jurisdiction,
                 localCampaignSocialMemories);
 

@@ -1128,6 +1128,12 @@ Current backend Force/Campaign/Regime owner-lane readback v69-v76 note:
 - These fields are derived from existing structured campaign/force/office/clan snapshots and `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State` / `OriginDate`; they are not derived from `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected military prose.
 - Ordinary home-household response remains a low-power `PopulationAndHouseholds` lane. It is not a universal repair lane for campaign aftermath, force readiness, military order, regime coordination, or durable social residue.
 
+Current backend Warfare aftermath docket readback v85-v92 note:
+- v85-v92 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, aftermath ledger, relief ledger, route-repair ledger, owner-lane ledger, cooldown ledger, household target field, or projection cache.
+- `WarfareCampaign` remains schema `4`; existing persisted `AftermathDocketState` fields (`Merits`, `Blames`, `ReliefNeeds`, `RouteRepairs`, and `DocketSummary`) already carry the campaign aftermath docket.
+- New runtime read-model exposure `PresentationReadModelBundle.CampaignAftermathDockets` and readback text such as `战后案卷读回`, `记功簿读回`, `劾责状读回`, `抚恤簿读回`, `清路札读回`, `WarfareCampaign拥有战后案卷`, `战后案卷不是县门/Order代算`, and `不是普通家户补战后` are projections only and are not saved.
+- Application/Unity read structured docket lists and counts only; they do not parse `DocketSummary`, receipt prose, `LastDirectiveTrace`, `DomainEvent.Summary`, or SocialMemory summary prose.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

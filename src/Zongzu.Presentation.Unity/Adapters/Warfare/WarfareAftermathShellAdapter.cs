@@ -8,45 +8,6 @@ namespace Zongzu.Presentation.Unity;
 
 internal static class WarfareAftermathShellAdapter
 {
-	private sealed class AftermathDocketSignals
-	{
-		public bool Merit { get; init; }
-
-		public bool Blame { get; init; }
-
-		public bool Relief { get; init; }
-
-		public bool Disorder { get; init; }
-
-		public bool HasSignals => Merit || Blame || Relief || Disorder;
-
-		public string ComposeClauseText()
-		{
-			List<string> clauses = new List<string>();
-			if (Merit)
-			{
-				clauses.Add("记功簿");
-			}
-
-			if (Blame)
-			{
-				clauses.Add("劾责状");
-			}
-
-			if (Relief)
-			{
-				clauses.Add("抚恤簿");
-			}
-
-			if (Disorder)
-			{
-				clauses.Add("清路札");
-			}
-
-			return string.Join("、", clauses);
-		}
-	}
-
 	internal static string BuildGreatHallAftermathDocketSummary(
 		PresentationReadModelBundle bundle,
 		IReadOnlyList<NarrativeNotificationSnapshot> notifications)
@@ -54,36 +15,29 @@ internal static class WarfareAftermathShellAdapter
 		ArgumentNullException.ThrowIfNull(bundle);
 		ArgumentNullException.ThrowIfNull(notifications);
 
-		if (bundle.Campaigns.Count == 0)
+		if (bundle.Campaigns.Count == 0 || bundle.CampaignAftermathDockets.Count == 0)
 		{
 			return "堂上尚无战后案牍。";
 		}
 
-		CampaignFrontSnapshot leadCampaign = bundle.Campaigns
-			.OrderByDescending(campaign => campaign.FrontPressure)
-			.ThenByDescending(campaign => campaign.MobilizedForceCount)
-			.ThenBy(campaign => campaign.CampaignId.Value)
-			.First();
-		SettlementSnapshot? settlement = bundle.Settlements
-			.FirstOrDefault(candidate => candidate.Id == leadCampaign.AnchorSettlementId);
-		PopulationSettlementSnapshot? population = bundle.PopulationSettlements
-			.FirstOrDefault(candidate => candidate.SettlementId == leadCampaign.AnchorSettlementId);
-		JurisdictionAuthoritySnapshot? jurisdiction = bundle.OfficeJurisdictions
-			.FirstOrDefault(candidate => candidate.SettlementId == leadCampaign.AnchorSettlementId);
-		AftermathDocketSignals signals = BuildAftermathDocketSignals(
-			leadCampaign.AnchorSettlementId,
-			settlement,
-			population,
-			jurisdiction,
-			leadCampaign,
-			notifications);
-
-		if (!signals.HasSignals)
+		CampaignFrontSnapshot? leadCampaign = bundle.Campaigns
+			.Join(
+				bundle.CampaignAftermathDockets,
+				campaign => campaign.CampaignId,
+				docket => docket.CampaignId,
+				(campaign, docket) => new { campaign, docket })
+			.OrderByDescending(entry => CountDocketEntries(entry.docket))
+			.ThenByDescending(entry => entry.campaign.FrontPressure)
+			.ThenBy(entry => entry.campaign.CampaignId.Value)
+			.Select(entry => entry.campaign)
+			.FirstOrDefault();
+		if (leadCampaign is null)
 		{
-			return leadCampaign.AnchorSettlementName + "堂案仍以军报与粮道札记为主。";
+			return "堂上尚无战后案牍。";
 		}
 
-		return leadCampaign.AnchorSettlementName + "堂案今并载" + signals.ComposeClauseText() + "。";
+		AftermathDocketSnapshot docket = bundle.CampaignAftermathDockets.First(entry => entry.CampaignId == leadCampaign.CampaignId);
+		return leadCampaign.AnchorSettlementName + "堂案今并载" + ComposeDocketClauseText(docket) + "。";
 	}
 
 	internal static string BuildSettlementAftermathSummary(
@@ -91,89 +45,57 @@ internal static class WarfareAftermathShellAdapter
 		PopulationSettlementSnapshot? population,
 		JurisdictionAuthoritySnapshot? jurisdiction,
 		CampaignFrontSnapshot? campaign,
+		AftermathDocketSnapshot? aftermathDocket,
 		IReadOnlyList<NarrativeNotificationSnapshot> notifications)
 	{
 		ArgumentNullException.ThrowIfNull(settlement);
 		ArgumentNullException.ThrowIfNull(notifications);
 
-		AftermathDocketSignals signals = BuildAftermathDocketSignals(
-			settlement.Id,
-			settlement,
-			population,
-			jurisdiction,
-			campaign,
-			notifications);
-		if (!signals.HasSignals)
+		if (campaign is null || aftermathDocket is null || CountDocketEntries(aftermathDocket) == 0)
 		{
 			return "战后案牍未起。";
 		}
 
-		return "战后案牍：" + signals.ComposeClauseText() + "。";
+		return "战后案牍：" + ComposeDocketClauseText(aftermathDocket) + "。";
 	}
 
 	internal static string BuildCampaignAftermathDocketSummary(
 		CampaignFrontSnapshot campaign,
+		AftermathDocketSnapshot? aftermathDocket,
 		SettlementSnapshot? settlement,
 		IReadOnlyList<NarrativeNotificationSnapshot> notifications)
 	{
 		ArgumentNullException.ThrowIfNull(campaign);
 		ArgumentNullException.ThrowIfNull(notifications);
 
-		AftermathDocketSignals signals = BuildAftermathDocketSignals(
-			campaign.AnchorSettlementId,
-			settlement,
-			null,
-			null,
-			campaign,
-			notifications);
-		if (!signals.HasSignals)
+		if (aftermathDocket is null || CountDocketEntries(aftermathDocket) == 0)
 		{
 			return campaign.IsActive ? "军机案下仍止于军报与路报。" : "军机案下尚未并成赏罚抚恤诸册。";
 		}
 
-		return "军机案今并载" + signals.ComposeClauseText() + "。";
+		return "军机案今并载" + ComposeDocketClauseText(aftermathDocket) + "。";
 	}
 
-	private static AftermathDocketSignals BuildAftermathDocketSignals(
-		SettlementId settlementId,
-		SettlementSnapshot? settlement,
-		PopulationSettlementSnapshot? population,
-		JurisdictionAuthoritySnapshot? jurisdiction,
-		CampaignFrontSnapshot? campaign,
-		IReadOnlyList<NarrativeNotificationSnapshot> notifications)
+	private static int CountDocketEntries(AftermathDocketSnapshot docket)
 	{
-		NarrativeNotificationSnapshot[] source = notifications
-			.Where(notification =>
-				notification.MatchesSourceModule(KnownModuleKeys.WarfareCampaign)
-				|| notification.MatchesSettlementScope(settlementId))
-			.ToArray();
+		return docket.Merits.Count + docket.Blames.Count + docket.ReliefNeeds.Count + docket.RouteRepairs.Count;
+	}
 
-		bool merit = source.Any(static notification =>
-				notification.HasTraceFromModule(KnownModuleKeys.FamilyCore)
-				|| notification.HasTraceFromModule(KnownModuleKeys.SocialMemoryAndRelations))
-			|| campaign != null && campaign.IsActive && campaign.MoraleState >= 55 && campaign.SupplyState >= 50;
-		bool blame = source.Any(static notification =>
-				notification.HasTraceFromModule(KnownModuleKeys.OfficeAndCareer)
-				|| notification.HasTraceFromModule(KnownModuleKeys.ConflictAndForce))
-			|| campaign != null && (!campaign.IsActive || campaign.FrontPressure >= 60)
-			|| (jurisdiction?.PetitionBacklog ?? 0) >= 8;
-		bool relief = source.Any(static notification =>
-				notification.HasTraceFromModule(KnownModuleKeys.PopulationAndHouseholds)
-				|| notification.HasTraceFromModule(KnownModuleKeys.WorldSettlements))
-			|| population != null && (population.CommonerDistress >= 40 || population.MigrationPressure >= 35)
-			|| settlement != null && (settlement.Security <= 55 || settlement.Prosperity <= 58);
-		bool disorder = source.Any(static notification =>
-				notification.HasTraceFromModule(KnownModuleKeys.OrderAndBanditry)
-				|| notification.HasTraceFromModule(KnownModuleKeys.TradeAndIndustry))
-			|| settlement != null && settlement.Security < 58
-			|| campaign != null && (campaign.SupplyState < 45 || campaign.Routes.Any(route => route.Pressure > route.Security));
+	private static string ComposeDocketClauseText(AftermathDocketSnapshot docket)
+	{
+		List<string> clauses = new List<string>();
+		AppendDocketClause(clauses, docket.Merits, "记功簿");
+		AppendDocketClause(clauses, docket.Blames, "劾责状");
+		AppendDocketClause(clauses, docket.ReliefNeeds, "抚恤簿");
+		AppendDocketClause(clauses, docket.RouteRepairs, "清路札");
+		return clauses.Count == 0 ? "军报与路报" : string.Join("、", clauses);
+	}
 
-		return new AftermathDocketSignals
+	private static void AppendDocketClause(List<string> clauses, IReadOnlyList<string> entries, string label)
+	{
+		if (entries.Count > 0)
 		{
-			Merit = merit,
-			Blame = blame,
-			Relief = relief,
-			Disorder = disorder
-		};
+			clauses.Add(label);
+		}
 	}
 }

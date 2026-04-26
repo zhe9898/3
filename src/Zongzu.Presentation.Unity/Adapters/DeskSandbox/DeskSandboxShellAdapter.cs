@@ -27,6 +27,7 @@ internal static class DeskSandboxShellAdapter
 					JurisdictionAuthoritySnapshot? jurisdiction = context.GetJurisdiction(settlement.Id);
 					SettlementGovernanceLaneSnapshot? governance = context.GetGovernance(settlement.Id);
 					CampaignFrontSnapshot? campaign = context.GetCampaign(settlement.Id);
+					AftermathDocketSnapshot? aftermathDocket = context.GetAftermathDocket(campaign);
 					CampaignMobilizationSignalSnapshot? mobilizationSignal = context.GetMobilizationSignal(settlement.Id);
 					ClanTradeRouteSnapshot[] clanTradeRoutes = context.GetClanTradeRoutes(settlement.Id);
 					HouseholdSocialPressureSnapshot[] householdPressures = context.GetHouseholdPressures(settlement.Id);
@@ -42,7 +43,7 @@ internal static class DeskSandboxShellAdapter
 						PublicLifeSummary = publicLife == null ? "乡里街谈未起，县门榜示亦未壅塞。" : PublicLifeShellAdapter.BuildSettlementPublicLifeSummary(publicLife),
 						GovernanceSummary = OfficeShellAdapter.BuildSettlementGovernanceFallbackSummary(jurisdiction),
 						CampaignSummary = WarfareCampaignShellAdapter.BuildSettlementCampaignSummary(campaign, mobilizationSignal, settlement, clanTradeRoutes),
-						AftermathSummary = WarfareAftermathShellAdapter.BuildSettlementAftermathSummary(settlement, populationSettlement, jurisdiction, campaign, notifications),
+						AftermathSummary = WarfareAftermathShellAdapter.BuildSettlementAftermathSummary(settlement, populationSettlement, jurisdiction, campaign, aftermathDocket, notifications),
 						PressureSummary = BuildSettlementHouseholdPressureSummary(populationSettlement, householdPressures),
 						HallAgendaSummary = hallAgenda.Summary,
 						HallAgendaItems = hallAgenda.Items,

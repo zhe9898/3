@@ -312,3 +312,11 @@ V77-V84 adds `军令选择读回` for existing WarfareCampaign commands. `案头
 `SocialMemoryAndRelations` must not parse `军令选择读回`, `WarfareCampaign拥有军令`, `军务选择不是县门文移代打`, receipt prose, `LastDirectiveTrace`, SocialMemory summary prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`. Later military social residue must still come from structured campaign/force aftermath in its own monthly cadence.
 
 The ordinary home-household line still cannot repair military directives or campaign aftertaste. V77-V84 adds no memory namespace, relationship table, directive ledger, military closure ledger, owner-lane ledger, cooldown ledger, schema bump, or migration.
+
+## Backend Warfare aftermath docket readback v85-v92 note
+
+V85-V92 adds `战后案卷读回` for existing WarfareCampaign aftermath dockets. `记功簿读回`, `劾责状读回`, `抚恤簿读回`, and `清路札读回` explain how the campaign-owned after-account is filed, but they are not durable shame, favor, fear, grudge, or obligation records by themselves.
+
+`SocialMemoryAndRelations` must not parse `战后案卷读回`, docket readback prose, `DocketSummary`, receipt prose, `LastDirectiveTrace`, SocialMemory summary prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`. Later military social residue must still come from structured campaign/force aftermath in its own monthly cadence.
+
+The ordinary home-household line still cannot repair campaign aftermath dockets. V85-V92 adds no memory namespace, relationship table, aftermath ledger, relief ledger, route-repair ledger, military closure ledger, owner-lane ledger, cooldown ledger, schema bump, or migration.

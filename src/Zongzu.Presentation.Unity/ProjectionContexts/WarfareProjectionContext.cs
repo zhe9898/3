@@ -19,6 +19,8 @@ internal sealed class WarfareProjectionContext
 
 	internal ILookup<int, ClanTradeRouteSnapshot> ClanTradeRoutesBySettlement { get; private init; } = EmptyClanTradeRouteLookup.Instance;
 
+	internal IReadOnlyDictionary<int, AftermathDocketSnapshot> AftermathDocketsByCampaign { get; private init; } = new Dictionary<int, AftermathDocketSnapshot>();
+
 	internal CampaignFrontSnapshot[] OrderedCampaigns { get; private init; } = [];
 
 	internal CampaignMobilizationSignalSnapshot[] OrderedMobilizationSignals { get; private init; } = [];
@@ -46,6 +48,10 @@ internal sealed class WarfareProjectionContext
 			.ToLookup(route => route.SettlementId.Value);
 		IReadOnlyDictionary<int, SettlementSnapshot> settlementsById = bundle.Settlements
 			.ToDictionary(settlement => settlement.Id.Value, settlement => settlement);
+		IReadOnlyDictionary<int, AftermathDocketSnapshot> aftermathDocketsByCampaign = bundle.CampaignAftermathDockets
+			.OrderBy(docket => docket.CampaignId.Value)
+			.GroupBy(docket => docket.CampaignId.Value)
+			.ToDictionary(group => group.Key, group => group.First());
 		CampaignFrontSnapshot? leadCampaign = bundle.Campaigns
 			.OrderByDescending(campaign => campaign.FrontPressure)
 			.ThenByDescending(campaign => campaign.MobilizedForceCount)
@@ -69,6 +75,7 @@ internal sealed class WarfareProjectionContext
 				: bundle.Campaigns.Max(campaign => campaign.FrontPressure),
 			SettlementsById = settlementsById,
 			ClanTradeRoutesBySettlement = clanTradeRoutesBySettlement,
+			AftermathDocketsByCampaign = aftermathDocketsByCampaign,
 			OrderedCampaigns = orderedCampaigns,
 			OrderedMobilizationSignals = bundle.CampaignMobilizationSignals
 				.OrderByDescending(signal => signal.ResponseActivationLevel)

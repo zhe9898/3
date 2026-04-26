@@ -449,3 +449,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Application projections may show `军令选择读回`, `案头筹议选择`, `点兵加压选择`, `粮道护持选择`, `归营止损选择`, `WarfareCampaign拥有军令`, and `军务选择不是县门文移代打` after the owning module state is available. Those strings are runtime guidance only.
 - Determinism depends on command target, existing campaign/mobilization snapshots, fixed ordering, and fixed formulas. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected military prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 - The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for military directives, campaign aftermath, force readiness, county paperwork, or SocialMemory after-accounts.
+
+## Current backend Warfare aftermath docket readback v85-v92 note
+
+- V85-V92 keeps the scheduler shape unchanged: no new phase, event pool, campaign loop, tactical layer, post-battle cleanup command, or same-command SocialMemory write is introduced.
+- Existing `WarfareCampaign` monthly/projection logic owns aftermath docket creation. Application reads `AftermathDocketSnapshot` lists after the owning module state is available and projects `战后案卷读回` plus docket-count labels.
+- Unity reads projected aftermath docket snapshots/fields only; it must not infer docket contents from notifications, event traces, settlement stats, receipt prose, or `DocketSummary`.
+- Determinism depends on existing campaign state, structured docket lists, fixed ordering, and stable read-model assembly. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected military prose, `LastDirectiveTrace`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for campaign aftermath dockets, merits/blames, relief needs, route repairs, or SocialMemory after-accounts.

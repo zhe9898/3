@@ -591,6 +591,18 @@ public sealed partial class FirstPassPresentationShellTests
                 ],
             },
         ];
+        bundle.CampaignAftermathDockets =
+        [
+            new AftermathDocketSnapshot
+            {
+                CampaignId = new CampaignId(1),
+                Merits = ["兰溪行伍士气未堕，押队将佐宜录军功簿。"],
+                Blames = ["兰溪前沿压迫过甚，主将号令未能及时收束。"],
+                ReliefNeeds = ["兰溪百姓受战事牵连，宜先议免役与安置流民。"],
+                RouteRepairs = ["渡口粮线久受冲压，宜遣工匠巡修桥渡。"],
+                DocketSummary = "兰溪战后案卷：功1条、责1条、恤1条、修路1条。",
+            },
+        ];
 
         PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
 
@@ -640,7 +652,7 @@ public sealed partial class FirstPassPresentationShellTests
                     ReadbackSummary = "军令选择读回：粮道护持选择，WarfareCampaign拥有军令；军务选择不是县门文移代打，不是普通家户硬扛。",
                     WarfareLaneEntryReadbackSummary = "军务承接入口：回到WarfareCampaign/ConflictAndForce。",
                     ForceReadinessReadbackSummary = "Force承接读回：可调之众180。",
-                    CampaignAftermathReadbackSummary = "战后后账读回：渡口村落待安辑。",
+                    CampaignAftermathReadbackSummary = "战后后账读回：渡口村落待安辑。 战后案卷读回：记功簿读回1条，WarfareCampaign拥有战后案卷；战后案卷不是县门/Order代算，不是普通家户补战后。",
                     WarfareLaneReceiptClosureSummary = "军务后手收口读回：军令只说明已落案头。",
                     WarfareLaneResidueFollowUpSummary = "军务余味续接读回：恐惧12仍在。",
                     WarfareLaneNoLoopGuardSummary = "军务闭环防回压：不是普通家户硬扛。",
@@ -660,7 +672,7 @@ public sealed partial class FirstPassPresentationShellTests
                     ReadbackSummary = "军令选择读回：粮道护持选择，WarfareCampaign拥有军令；军务选择不是县门文移代打，不是普通家户硬扛。",
                     WarfareLaneEntryReadbackSummary = "军务承接入口：回到WarfareCampaign/ConflictAndForce。",
                     ForceReadinessReadbackSummary = "Force承接读回：可调之众180。",
-                    CampaignAftermathReadbackSummary = "战后后账读回：渡口村落待安辑。",
+                    CampaignAftermathReadbackSummary = "战后后账读回：渡口村落待安辑。 战后案卷读回：记功簿读回1条，WarfareCampaign拥有战后案卷；战后案卷不是县门/Order代算，不是普通家户补战后。",
                     WarfareLaneReceiptClosureSummary = "军务后手收口读回：军令只说明已落案头。",
                     WarfareLaneResidueFollowUpSummary = "军务余味续接读回：恐惧12仍在。",
                     WarfareLaneNoLoopGuardSummary = "军务闭环防回压：不是普通家户硬扛。",
@@ -681,6 +693,10 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(receipt.ReadbackSummary, Does.Contain("军令选择读回"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("军务选择不是县门文移代打"));
         Assert.That(receipt.CampaignAftermathReadbackSummary, Does.Contain("战后后账读回"));
+        Assert.That(receipt.CampaignAftermathReadbackSummary, Does.Contain("战后案卷读回"));
+        Assert.That(receipt.CampaignAftermathReadbackSummary, Does.Contain("WarfareCampaign拥有战后案卷"));
+        Assert.That(receipt.CampaignAftermathReadbackSummary, Does.Contain("战后案卷不是县门/Order代算"));
+        Assert.That(receipt.CampaignAftermathReadbackSummary, Does.Contain("不是普通家户补战后"));
         Assert.That(receipt.WarfareLaneReceiptClosureSummary, Does.Contain("军务后手收口读回"));
     }
 

@@ -1,5 +1,12 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v85-v92 delta - 2026-04-26
+
+- Warfare aftermath docket readback now uses existing `WarfareCampaign.AftermathDockets` snapshots rather than notification inference or prose parsing. `PresentationReadModelBundle.CampaignAftermathDockets` feeds Application readback and Unity shell copy-only surfaces.
+- Application projects `战后案卷读回` with `记功簿读回`, `劾责状读回`, `抚恤簿读回`, `清路札读回`, `WarfareCampaign拥有战后案卷`, `战后案卷不是县门/Order代算`, `不是普通家户补战后`, and `军务案卷防回压`.
+- Ownership is still explicit: `WarfareCampaign` owns aftermath dockets; Office/public-life/order do not backfill military after-accounts; ordinary households do not repair campaign aftermath; UI/Unity display projected fields only.
+- Save/schema audit: v85-v92 adds no persisted state, root/module schema bump, migration, save manifest change, aftermath / route-repair / relief / owner-lane / cooldown / follow-up ledger, household target field, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v77-v84 delta - 2026-04-26
 
 - Warfare directive choice depth v77-v84 makes existing `WarfareCampaign` commands read as owner-lane choices: `DraftCampaignPlan` -> `案头筹议选择`, `CommitMobilization` -> `点兵加压选择`, `ProtectSupplyLine` -> `粮道护持选择`, and `WithdrawToBarracks` -> `归营止损选择`.
@@ -162,7 +169,7 @@
 
 ## 当前判断
 
-文档和代码总体对齐：模块边界、调度顺序、只读 presentation seam、Unity host shell 定位、PersonRegistry 基线、死亡事件通道、lite 模块接入方式、public-life/order v3-v30 闭环、Order schema `9`、Office schema `7`、Family schema `8`、Population schema `3` 和 SocialMemory schema `3` response-residue drift / actor-countermove back-pressure / ordinary-household readback/play-surface / home-household local response / home-household social-memory readback/repeat-friction / common-household response texture / home-household response capacity / home-household response tradeoff forecast / home-household short-term consequence readback / home-household follow-up affordance readback / external after-account owner-lane return guidance / owner-lane surface readback / owner-lane handoff entry readback / owner-lane receipt status readback / owner-lane outcome reading guidance / owner-lane social-residue readback / owner-lane social-residue follow-up guidance / owner-lane affordance echo / owner-lane receipt closure / owner-lane no-loop guard / minimum playable response readback，已经和当前代码事实一致。
+文档和代码总体对齐：模块边界、调度顺序、只读 presentation seam、Unity host shell 定位、PersonRegistry 基线、死亡事件通道、lite 模块接入方式、public-life/order v3-v30 闭环、Order schema `9`、Office schema `7`、Family schema `8`、Population schema `3`、SocialMemory schema `3`，以及 WarfareCampaign directive choice v77-v84 / aftermath docket readback v85-v92 的 projection-only 筋骨，已经和当前代码事实一致。
 
 仍应视为真实后续债务：
 - 仁宗 pressure-chain 1-9 当前是 thin topology proof，不等同于完整社会公式或完整历史模拟；完整链条债务以 `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` 和各 chain profile 为准。

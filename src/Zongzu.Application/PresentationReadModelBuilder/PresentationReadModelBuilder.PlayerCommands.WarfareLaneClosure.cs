@@ -11,12 +11,13 @@ public sealed partial class PresentationReadModelBuilder
     private static WarfareLaneClosureReadback BuildWarfareLaneClosureReadback(
         CampaignMobilizationSignalSnapshot? signal,
         CampaignFrontSnapshot? campaign,
+        AftermathDocketSnapshot? aftermathDocket,
         JurisdictionAuthoritySnapshot? jurisdiction,
         IReadOnlyList<SocialMemoryEntrySnapshot> localCampaignSocialMemories)
     {
         string entry = BuildWarfareLaneEntryReadbackSummary(signal, campaign);
         string force = BuildForceReadinessReadbackSummary(signal);
-        string aftermath = BuildCampaignAftermathReadbackSummary(campaign);
+        string aftermath = BuildCampaignAftermathReadbackSummary(campaign, aftermathDocket);
         string closure = BuildWarfareLaneReceiptClosureSummary(campaign);
         string residue = BuildWarfareLaneResidueFollowUpSummary(localCampaignSocialMemories, campaign);
         string noLoop = BuildWarfareLaneNoLoopGuardSummary(signal, campaign, jurisdiction, localCampaignSocialMemories);
@@ -74,7 +75,9 @@ public sealed partial class PresentationReadModelBuilder
         return $"Force承接读回：可调之众{signal.AvailableForceCount}，战备{signal.Readiness}，指挥容量{signal.CommandCapacity}，响应{signal.ResponseActivationLevel}，秩序支援{signal.OrderSupportLevel}；本地力役、护运余力与动员疲惫归ConflictAndForce读。";
     }
 
-    private static string BuildCampaignAftermathReadbackSummary(CampaignFrontSnapshot? campaign)
+    private static string BuildCampaignAftermathReadbackSummary(
+        CampaignFrontSnapshot? campaign,
+        AftermathDocketSnapshot? aftermathDocket)
     {
         if (campaign is null)
         {
@@ -84,8 +87,44 @@ public sealed partial class PresentationReadModelBuilder
         string aftermath = string.IsNullOrWhiteSpace(campaign.LastAftermathSummary)
             ? "暂未有战后案头，但前线、粮道、士气仍需沿Campaign lane观察。"
             : campaign.LastAftermathSummary;
+        string docketReadback = BuildCampaignAftermathDocketReadbackSummary(campaign, aftermathDocket);
 
-        return $"战后后账读回：{aftermath} 前线{campaign.FrontPressure}，粮道{campaign.SupplyStateLabel}，士气{campaign.MoraleStateLabel}，民面暴露{campaign.CivilianExposure}；收束仍回WarfareCampaign，不由普通家户或Office单独补账。";
+        return JoinOwnerLaneReturnSurfaceText(
+            $"战后后账读回：{aftermath} 前线{campaign.FrontPressure}，粮道{campaign.SupplyStateLabel}，士气{campaign.MoraleStateLabel}，民面暴露{campaign.CivilianExposure}；收束仍回WarfareCampaign，不由普通家户或Office单独补账。",
+            docketReadback);
+    }
+
+    private static string BuildCampaignAftermathDocketReadbackSummary(
+        CampaignFrontSnapshot campaign,
+        AftermathDocketSnapshot? aftermathDocket)
+    {
+        if (aftermathDocket is null)
+        {
+            return $"战后案卷读回：{campaign.CampaignName}暂未投出案卷条目；WarfareCampaign拥有战后案卷，军务案卷防回压，不把战后案卷交给县门/Order代算，也不是普通家户补战后。";
+        }
+
+        string meritReadback = BuildDocketCountReadback("记功簿读回", aftermathDocket.Merits);
+        string blameReadback = BuildDocketCountReadback("劾责状读回", aftermathDocket.Blames);
+        string reliefReadback = BuildDocketCountReadback("抚恤簿读回", aftermathDocket.ReliefNeeds);
+        string routeReadback = BuildDocketCountReadback("清路札读回", aftermathDocket.RouteRepairs);
+
+        return JoinOwnerLaneReturnSurfaceText(
+            $"战后案卷读回：{campaign.CampaignName}案卷已有记功{aftermathDocket.Merits.Count}、劾责{aftermathDocket.Blames.Count}、抚恤{aftermathDocket.ReliefNeeds.Count}、清路{aftermathDocket.RouteRepairs.Count}；WarfareCampaign拥有战后案卷。",
+            meritReadback,
+            blameReadback,
+            reliefReadback,
+            routeReadback,
+            "军务案卷防回压：战后案卷不是县门/Order代算，不是普通家户补战后；SocialMemory若有后续余味，只能读结构化 aftermath 与 cause key，不解析案卷文案或事件摘要。");
+    }
+
+    private static string BuildDocketCountReadback(string label, IReadOnlyList<string> entries)
+    {
+        if (entries.Count == 0)
+        {
+            return $"{label}：暂无条目。";
+        }
+
+        return $"{label}：{entries.Count}条。";
     }
 
     private static string BuildWarfareLaneReceiptClosureSummary(CampaignFrontSnapshot? campaign)

@@ -871,3 +871,10 @@ Current lite note:
 - `Application` may compose that directive-choice readback with v69-v76 closure guidance from structured `CampaignMobilizationSignalSnapshot` and `CampaignFrontSnapshot` values. It must not compute command success, force readiness, county paperwork substitutes, owner-lane closure, or durable residue.
 - `Unity` copies the projected command/receipt `ReadbackSummary` and warfare lane fields only; it must not query modules, infer owner lanes, execute from prose, parse summaries, or write SocialMemory.
 - V77-V84 adds no persisted fields, schema bump, migration, directive ledger, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.
+
+## 2026-04-26 backend Warfare aftermath docket readback v85-v92 note
+- `WarfareCampaign` remains the owner of campaign aftermath dockets: merits, blames, relief needs, route repairs, and docket summary. `OfficeAndCareer` owns county paperwork, `OrderAndBanditry` owns public-order aftermath, and `PopulationAndHouseholds` remains ordinary local household response only.
+- V85-V92 adds no new command system or aftermath formula. It exposes existing `AftermathDocketSnapshot` values through runtime read models and projects `战后案卷读回`, `记功簿读回`, `劾责状读回`, `抚恤簿读回`, `清路札读回`, `WarfareCampaign拥有战后案卷`, `战后案卷不是县门/Order代算`, `不是普通家户补战后`, and `军务案卷防回压`.
+- `Application` may count structured docket lists and compose readback text. It must not parse `DocketSummary`, `LastDirectiveTrace`, receipt prose, `DomainEvent.Summary`, or SocialMemory prose, and must not compute campaign outcomes.
+- `Unity` reads `CampaignAftermathDockets` and projected command/governance fields only. It must not infer merits, blame, relief, or route repair from notifications, event traces, settlement stats, or prose.
+- V85-V92 adds no persisted fields, schema bump, migration, aftermath ledger, relief ledger, route-repair ledger, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.

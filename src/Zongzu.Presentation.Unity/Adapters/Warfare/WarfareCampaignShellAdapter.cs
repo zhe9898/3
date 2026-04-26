@@ -48,6 +48,7 @@ internal static class WarfareCampaignShellAdapter
 				.Select(campaign =>
 				{
 					context.SettlementsById.TryGetValue(campaign.AnchorSettlementId.Value, out SettlementSnapshot? settlement);
+					context.AftermathDocketsByCampaign.TryGetValue(campaign.CampaignId.Value, out AftermathDocketSnapshot? aftermathDocket);
 					ClanTradeRouteSnapshot[] clanTradeRoutes = context.ClanTradeRoutesBySettlement[campaign.AnchorSettlementId.Value]
 						.OrderBy(route => route.RouteName, StringComparer.Ordinal)
 						.ToArray();
@@ -78,7 +79,7 @@ internal static class WarfareCampaignShellAdapter
 						CoordinationSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(campaign.OfficeCoordinationTrace),
 						CommanderSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(campaign.CommanderSummary),
 						AftermathSummary = WarfareCampaignTextAdapter.RenderCampaignSurfaceText(campaign.LastAftermathSummary),
-						AftermathDocketSummary = WarfareAftermathShellAdapter.BuildCampaignAftermathDocketSummary(campaign, settlement, notifications),
+						AftermathDocketSummary = WarfareAftermathShellAdapter.BuildCampaignAftermathDocketSummary(campaign, aftermathDocket, settlement, notifications),
 						Routes = campaign.Routes.Select(route => new CampaignRouteViewModel
 						{
 							RouteLabel = route.RouteLabel,

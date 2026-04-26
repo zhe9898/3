@@ -18,6 +18,7 @@ internal sealed class DeskSandboxProjectionContext
 	private readonly Dictionary<int, SettlementGovernanceLaneSnapshot> _governanceBySettlement;
 	private readonly Dictionary<int, CampaignFrontSnapshot> _campaignsBySettlement;
 	private readonly Dictionary<int, CampaignMobilizationSignalSnapshot> _mobilizationSignalsBySettlement;
+	private readonly Dictionary<int, AftermathDocketSnapshot> _aftermathDocketsByCampaign;
 
 	private DeskSandboxProjectionContext(
 		SettlementSnapshot[] orderedSettlements,
@@ -30,7 +31,8 @@ internal sealed class DeskSandboxProjectionContext
 		Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement,
 		Dictionary<int, SettlementGovernanceLaneSnapshot> governanceBySettlement,
 		Dictionary<int, CampaignFrontSnapshot> campaignsBySettlement,
-		Dictionary<int, CampaignMobilizationSignalSnapshot> mobilizationSignalsBySettlement)
+		Dictionary<int, CampaignMobilizationSignalSnapshot> mobilizationSignalsBySettlement,
+		Dictionary<int, AftermathDocketSnapshot> aftermathDocketsByCampaign)
 	{
 		OrderedSettlements = orderedSettlements;
 		_populationBySettlement = populationBySettlement;
@@ -43,6 +45,7 @@ internal sealed class DeskSandboxProjectionContext
 		_governanceBySettlement = governanceBySettlement;
 		_campaignsBySettlement = campaignsBySettlement;
 		_mobilizationSignalsBySettlement = mobilizationSignalsBySettlement;
+		_aftermathDocketsByCampaign = aftermathDocketsByCampaign;
 	}
 
 	internal SettlementSnapshot[] OrderedSettlements { get; }
@@ -62,7 +65,11 @@ internal sealed class DeskSandboxProjectionContext
 			bundle.OfficeJurisdictions.ToDictionary(jurisdiction => jurisdiction.SettlementId.Value, jurisdiction => jurisdiction),
 			bundle.GovernanceSettlements.ToDictionary(settlement => settlement.SettlementId.Value, settlement => settlement),
 			bundle.Campaigns.ToDictionary(campaign => campaign.AnchorSettlementId.Value, campaign => campaign),
-			bundle.CampaignMobilizationSignals.ToDictionary(signal => signal.SettlementId.Value, signal => signal));
+			bundle.CampaignMobilizationSignals.ToDictionary(signal => signal.SettlementId.Value, signal => signal),
+			bundle.CampaignAftermathDockets
+				.OrderBy(docket => docket.CampaignId.Value)
+				.GroupBy(docket => docket.CampaignId.Value)
+				.ToDictionary(group => group.Key, group => group.First()));
 	}
 
 	internal PopulationSettlementSnapshot? GetPopulation(SettlementId settlementId)
@@ -115,6 +122,17 @@ internal sealed class DeskSandboxProjectionContext
 	{
 		_campaignsBySettlement.TryGetValue(settlementId.Value, out CampaignFrontSnapshot? campaign);
 		return campaign;
+	}
+
+	internal AftermathDocketSnapshot? GetAftermathDocket(CampaignFrontSnapshot? campaign)
+	{
+		if (campaign is null)
+		{
+			return null;
+		}
+
+		_aftermathDocketsByCampaign.TryGetValue(campaign.CampaignId.Value, out AftermathDocketSnapshot? docket);
+		return docket;
 	}
 
 	internal CampaignMobilizationSignalSnapshot? GetMobilizationSignal(SettlementId settlementId)

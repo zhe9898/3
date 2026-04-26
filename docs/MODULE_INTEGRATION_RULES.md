@@ -425,3 +425,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - `ConflictAndForce`, `OfficeAndCareer`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` are not mutated by the command. Later durable residue must still come from structured aftermath in `SocialMemoryAndRelations`, never from readback prose.
 - Unity copies the projected command/receipt fields only. It does not query modules, execute from prose, infer owner lanes, maintain ledgers, or write SocialMemory.
 - Save/schema result: no persisted state, schema bump, migration, directive ledger, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
+
+## Backend Warfare aftermath docket readback v85-v92 integration note
+- V85-V92 reuses the existing `WarfareCampaign` aftermath docket seam. `AftermathDocketSnapshot.Merits`, `Blames`, `ReliefNeeds`, and `RouteRepairs` are structured campaign-owned read data, not a new command surface, event pool, or post-battle ledger.
+- Application projections may show `战后案卷读回`, `记功簿读回`, `劾责状读回`, `抚恤簿读回`, `清路札读回`, `WarfareCampaign拥有战后案卷`, `战后案卷不是县门/Order代算`, `不是普通家户补战后`, and `军务案卷防回压` from those lists only.
+- `OfficeAndCareer`, `OrderAndBanditry`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` are not mutated by the readback. Later durable residue must still come from structured aftermath in `SocialMemoryAndRelations`, never from docket/readback prose.
+- Unity copies or renders projected aftermath docket snapshots only. It does not derive docket contents from notifications, event traces, settlement stats, receipt prose, or `DocketSummary`.
+- Save/schema result: no persisted state, schema bump, migration, aftermath ledger, relief ledger, route-repair ledger, force/campaign closure ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.

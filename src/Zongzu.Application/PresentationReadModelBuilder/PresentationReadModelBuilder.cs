@@ -92,6 +92,7 @@ public sealed partial class PresentationReadModelBuilder
             IWarfareCampaignQueries warfareQueries = queries.GetRequired<IWarfareCampaignQueries>();
             bundle.Campaigns = warfareQueries.GetCampaigns();
             bundle.CampaignMobilizationSignals = warfareQueries.GetMobilizationSignals();
+            bundle.CampaignAftermathDockets = warfareQueries.GetAftermathDockets();
         }
 
         if (simulation.FeatureManifest.IsEnabled(KnownModuleKeys.NarrativeProjection))
