@@ -21,6 +21,7 @@ Current content-bearing surfaces include:
 - player-facing module summaries, event summaries, projection copy, and ViewModel labels in `src/`
 - Unity shell labels/assets under `unity/Zongzu.UnityShell` only when presentation assets are actually touched
 - current public-life/order readback wording is downstream projection text; examples include `社会记忆读回`, `县门未落地`, `地方拖延`, `后账仍在`, `续接提示`, `换招提示`, `冷却提示`, `续接读回`, `外部后账归位`, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, and `闭环防回压`
+- current canal/route/order wording such as `漕渠窗口`, `商路读数`, `巡丁`, `私路`, `护路`, and `路面压力` should remain projection or diagnostic wording unless a module-owned rule explicitly reads structured data for it
 - generated Unity art/content under `unity/Zongzu.UnityShell/Assets/Art/Generated` needs source/provenance manifests and `.meta` discipline, but it must not become simulation authority
 - authored content and generated assets need cardinality discipline: large tables, descriptor banks, image sets, or localization surfaces should declare stable IDs, provenance, validation path, and whether the runtime reads them as rules-data or presentation-only content
 

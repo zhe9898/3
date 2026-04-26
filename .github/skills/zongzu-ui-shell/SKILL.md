@@ -37,6 +37,7 @@ The current repository has both a pure C# presentation adapter layer and a minim
 - player-command affordance and receipt surfaces now include projected `LeverageSummary`, `CostSummary`, and `ReadbackSummary`
 - public-life/order v18 readback may include `PresentationReadModelBundle.SocialMemories`, `HouseholdSocialPressure`, governance recent-receipt summaries, and home-household local response receipt text
 - current v19 adds projection-only follow-up hints for repeat/switch/cooldown affordances; v20-v30 add projection-only owner-lane return guidance, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, and `闭环防回压`; shell surfaces may show those hints only from projected affordance/readback fields
+- current v35 canal-window Trade/Order results are module/projection state; shell surfaces may display projected route, market, canal, private-route, or order-pressure readback, but may not compute route exposure, water-route selection, event-consumer status, or owner-lane outcomes
 - WCAG 2.2 and Xbox Accessibility Guidelines calibrate contrast, focus/read order, semantic labels, status announcements, and narration parity for shell surfaces; they do not turn the shell into a generic dashboard
 - Unity UI performance guidance calibrates shell implementation only: split static/dynamic canvas work when needed, avoid per-frame layout/raycast churn, use precomputed ViewModels/projection contexts, and never scan long simulation histories from a visible surface
 

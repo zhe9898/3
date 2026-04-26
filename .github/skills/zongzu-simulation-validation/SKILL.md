@@ -23,6 +23,8 @@ Useful current validation surfaces include:
 - `tests/Zongzu.Presentation.Unity.Tests` for presentation adapter/ViewModel work
 - public-life/order validation on the current branch should cover Order accepted/partial/refused command tests, response-lane owner tests, SocialMemory next-month residue tests, PopulationAndHouseholds local-response tests, schema/migration lanes for `OrderAndBanditry` schema `9`, `OfficeAndCareer` schema `7`, `FamilyCore` schema `8`, and `PopulationAndHouseholds` schema `3`, architecture guards for module-owned command seams, and Unity projection-copy tests
 - current v19-v30 follow-up and owner-lane readback validation should prove projection-only derivation, no SocialMemory prose parsing, no receipt or `DomainEvent.Summary` parsing, no schema bump, no command outcome calculation in Application/UI/Unity, no follow-up/owner-lane ledger, and focused integration/presentation assertions before any full-solution test
+- current v32-v34 event-contract validation should prove classification coverage, no `Unclassified` debt in the ten-year diagnostic, structured `owner=<module>` / `evidence=<doc-or-test>` readback, and no use of diagnostic output as runtime authority
+- current v35 canal-window validation should prove `WorldSettlements.CanalWindowChanged` has Trade and Order authority consumers, structured metadata beats summary/entity prose, exposed water-route/canal settlements change, off-scope settlements stay untouched, and no schema/migration changed
 - performance validation is evidence-driven: use focused tests for behavior, long-run diagnostics for pressure health, replay/hash checks for determinism, and `dotnet-counters` or profiler output only when CPU, allocation, GC, memory, exception rate, or frame cost is the actual risk
 
 When health diagnostics report events with no authority consumer or declared events that never appear, classify them before changing code: projection-only receipt, dormant/future contract, seeded-path gap, acceptance-test gap, or alignment bug.
@@ -75,6 +77,7 @@ When health diagnostics report events with no authority consumer or declared eve
    Event flow/observability:
    - compare `PublishedEvents` and `ConsumedEvents` against emitted events in tests or diagnostics
    - classify emitted-but-unconsumed or declared-but-never-emitted events as projection-only receipt, future contract, dormant source, or alignment bug
+   - fail or escalate when the current diagnostic lane reports `Unclassified` event-contract debt
    - do not treat `DomainEvent.Summary` parsing as a valid authority path
 
    Pressure health:

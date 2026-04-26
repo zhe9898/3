@@ -36,6 +36,7 @@ Current public-life/order schema anchors:
 - `PopulationAndHouseholds` schema `3` owns home-household local response command/aftermath fields
 - `SocialMemoryAndRelations` schema `3` owns durable social residue; later readback paths use existing memory/narrative/climate state unless a new persisted SocialMemory field is added
 - current v19 follow-up affordance hints and v20-v30 owner-lane return/status/outcome/residue/no-loop readback are projection-only and remain no-save/no-schema unless a future cooldown ledger, owner-lane ledger, repeat counter, target field, persisted projection cache, or other new persisted field is introduced
+- current v35 canal-window owner-lane handoff is no-save/no-schema: `canalWindowBefore` / `canalWindowAfter` are runtime event metadata, and `TradeAndIndustry` schema `4`, `OrderAndBanditry` schema `9`, and `WorldSettlements` schema `8` stay unchanged because only existing owned state fields are adjusted
 - performance caches, projection indexes, Unity pooled objects, debug counters, and read-model traversal helpers are no-save/no-schema unless their data is persisted as module-owned authority
 - migration/load cost is a real schema concern: large new histories, denormalized readback ledgers, or content inventories need bounded payload shape, deterministic defaults, and migration tests
 
