@@ -17,6 +17,9 @@ public sealed partial class PresentationReadModelBuilder
         List<PlayerCommandAffordanceSnapshot> affordances = new();
         Dictionary<int, ClanNarrativeSnapshot> narrativesByClan = bundle.ClanNarratives
             .ToDictionary(static narrative => narrative.ClanId.Value, static narrative => narrative);
+        Dictionary<int, SettlementPublicLifeSnapshot> publicLifeBySettlement = IndexFirstBySettlement(
+            bundle.PublicLifeSettlements,
+            static entry => entry.SettlementId);
 
         foreach (ClanSnapshot clan in bundle.Clans.OrderBy(static entry => entry.ClanName, StringComparer.Ordinal))
         {
@@ -182,6 +185,12 @@ public sealed partial class PresentationReadModelBuilder
                 BuildOfficeOwnerLaneReturnSurfaceGuidance(officeOwnerLaneReturnHousehold),
                 BuildOfficeOwnerLaneReturnStatusGuidance(officeOwnerLaneReturnHousehold, jurisdiction, officeOwnerLaneSocialMemories));
             string officeImplementationGuidance = BuildOfficeImplementationAffordanceGuidance(jurisdiction);
+            publicLifeBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out SettlementPublicLifeSnapshot? publicLife);
+            string courtPolicyLocalResponseGuidance = BuildCourtPolicyLocalResponseGuidance(jurisdiction, publicLife);
+            string officeReadbackGuidance = JoinOwnerLaneReturnSurfaceText(
+                officeOwnerLaneReturnGuidance,
+                officeImplementationGuidance,
+                courtPolicyLocalResponseGuidance);
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.PetitionViaOfficeChannels,
                 jurisdiction.SettlementId,
@@ -190,8 +199,8 @@ public sealed partial class PresentationReadModelBuilder
                 canReviewPetitions
                     ? $"积案{jurisdiction.PetitionBacklog}，可先批结一轮。"
                     : "本处暂无待批词状。",
-                leverageSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
-                readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance)));
+                leverageSummary: officeReadbackGuidance,
+                readbackSummary: officeReadbackGuidance));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.DeployAdministrativeLeverage,
                 jurisdiction.SettlementId,
@@ -200,8 +209,8 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.JurisdictionLeverage >= 12
                     ? $"乡面杠杆{jurisdiction.JurisdictionLeverage}，足可催动里甲与吏胥。"
                     : "此地官箴未足，不宜强行发签。",
-                leverageSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
-                readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance)));
+                leverageSummary: officeReadbackGuidance,
+                readbackSummary: officeReadbackGuidance));
         }
 
         Dictionary<int, CampaignFrontSnapshot> campaignsByAnchorSettlement = bundle.Campaigns
@@ -320,6 +329,29 @@ public sealed partial class PresentationReadModelBuilder
         return $"Family救济选择读回：接济义务读回{clan.CharityObligation}，宗房余力读回{clan.SupportReserve}，救济制裁读回{clan.ReliefSanctionPressure}，房支争力读回{clan.BranchTension}；只有FamilyCore能解析是否开族产接济，不是普通家户再扛。";
     }
 
+    private static string BuildCourtPolicyLocalResponseGuidance(
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (jurisdiction is null || !HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        string nodeLabel = publicLife?.NodeLabel ?? $"Settlement {jurisdiction.SettlementId.Value}";
+        int dispatchPressure = publicLife?.PrefectureDispatchPressure ?? 0;
+        int documentaryWeight = publicLife?.DocumentaryWeight ?? 0;
+        int courierRisk = publicLife?.CourierRisk ?? 0;
+        return JoinOwnerLaneReturnSurfaceText(
+            $"政策回应入口：{nodeLabel}可轻续县门文移或改走递报；这只是地方承接姿态，不是本户硬扛朝廷后账。",
+            $"文移续接选择：积案{jurisdiction.PetitionBacklog}，词牍压{jurisdiction.PetitionPressure}，胥吏牵制{jurisdiction.ClerkDependence}，州县催牒压{dispatchPressure}，文书重{documentaryWeight}，递报险{courierRisk}。",
+            "公议降温只读回：PublicLifeAndRumor读街面怎么传，OfficeAndCareer读县门是否接住；Application/UI/Unity不计算政策成败。",
+            BuildCourtPolicyEntryReadbackSummary(jurisdiction, publicLife),
+            BuildCourtPolicyDispatchReadbackSummary(jurisdiction, publicLife),
+            BuildCourtPolicyPublicReadbackSummary(jurisdiction, publicLife),
+            BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife));
+    }
+
     private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildPublicLifeAffordances(PresentationReadModelBundle bundle)
     {
         Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = IndexFirstBySettlement(
@@ -362,6 +394,11 @@ public sealed partial class PresentationReadModelBuilder
                 BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
                 BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction, localSocialMemories));
             string officeImplementationGuidance = BuildOfficeImplementationAffordanceGuidance(jurisdiction);
+            string courtPolicyLocalResponseGuidance = BuildCourtPolicyLocalResponseGuidance(jurisdiction, publicLife);
+            string officePolicyGuidance = JoinOwnerLaneReturnSurfaceText(
+                officeOwnerLaneReturnGuidance,
+                officeImplementationGuidance,
+                courtPolicyLocalResponseGuidance);
             FamilyLaneClosureReadback familyLaneClosure = BuildFamilyLaneClosureReadback(
                 ownerLaneReturnHousehold,
                 leadClan,
@@ -370,6 +407,9 @@ public sealed partial class PresentationReadModelBuilder
                 BuildFamilyOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
                 BuildFamilyOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, leadClan, localSocialMemories),
                 BuildFamilyLaneClosureReadbackText(familyLaneClosure));
+            bool hasCourtPolicyLocalResponse = jurisdiction is not null
+                && HasCourtPolicyProcessReadback(jurisdiction, publicLife);
+            bool hasOrderResidue = disorder is not null && HasPublicLifeOrderRefusalOrPartialResidue(disorder);
 
             if (jurisdiction is not null)
             {
@@ -377,19 +417,49 @@ public sealed partial class PresentationReadModelBuilder
                     PlayerCommandNames.PostCountyNotice,
                     publicLife.SettlementId,
                     $"{publicLife.NodeLabel}街谈已热，可先借榜示压住众口。",
-                    publicLife.StreetTalkHeat >= 40 || publicLife.PublicLegitimacy < 55,
+                    publicLife.StreetTalkHeat >= 40 || publicLife.PublicLegitimacy < 55 || hasCourtPolicyLocalResponse,
                     $"榜示分量{publicLife.DocumentaryWeight}，由{jurisdiction.LeadOfficialName}主其晓谕。",
-                    readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
+                    leverageSummary: courtPolicyLocalResponseGuidance,
+                    readbackSummary: officePolicyGuidance,
                     targetLabel: publicLife.NodeLabel);
 
                 yield return BuildPlayerCommandAffordanceSnapshot(
                     PlayerCommandNames.DispatchRoadReport,
                     publicLife.SettlementId,
                     $"{publicLife.DominantVenueLabel}消息往来已有迟滞，可先遣吏催报。",
-                    publicLife.RoadReportLag >= 36 || publicLife.CourierRisk >= 35,
+                    publicLife.RoadReportLag >= 36 || publicLife.CourierRisk >= 35 || hasCourtPolicyLocalResponse,
                     $"递报险数{publicLife.CourierRisk}，查验周折{publicLife.VerificationCost}。",
-                    readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
+                    leverageSummary: courtPolicyLocalResponseGuidance,
+                    readbackSummary: officePolicyGuidance,
                     targetLabel: publicLife.DominantVenueLabel);
+
+                if (hasCourtPolicyLocalResponse && !hasOrderResidue)
+                {
+                    string leadLabel = ResolveOfficeLeadLabel(jurisdiction);
+                    yield return BuildPlayerCommandAffordanceSnapshot(
+                        PlayerCommandNames.PressCountyYamenDocument,
+                        publicLife.SettlementId,
+                        $"{leadLabel}可轻押政策文移，让县门把朝议压力先接回案牍；不是本户替朝廷补账。",
+                        true,
+                        $"县门积案{jurisdiction.PetitionBacklog}，胥吏牵制{jurisdiction.ClerkDependence}，词牍压{jurisdiction.PetitionPressure}。",
+                        executionSummary: "由OfficeAndCareer解析县门轻催、文移续接与胥吏拖延；Application/UI/Unity只读投影，不计算政策成败。",
+                        leverageSummary: courtPolicyLocalResponseGuidance,
+                        costSummary: $"会耗官面余力与县门脸面；当前乡面杠力{jurisdiction.JurisdictionLeverage}，文书重{publicLife.DocumentaryWeight}，递报险{publicLife.CourierRisk}。",
+                        readbackSummary: officePolicyGuidance,
+                        targetLabel: leadLabel);
+
+                    yield return BuildPlayerCommandAffordanceSnapshot(
+                        PlayerCommandNames.RedirectRoadReport,
+                        publicLife.SettlementId,
+                        $"{leadLabel}可改走递报，把政策执行读法先送回上游文移口；不计算政策成败。",
+                        true,
+                        $"递报险数{publicLife.CourierRisk}，查验周折{publicLife.VerificationCost}，州县催牒压{publicLife.PrefectureDispatchPressure}。",
+                        executionSummary: "由OfficeAndCareer处理递报改道；PublicLifeAndRumor只读街面解释，Application/UI/Unity只复制 projected fields。",
+                        leverageSummary: courtPolicyLocalResponseGuidance,
+                        costSummary: "只能暂压文移拥滞和公议追问，不能替县门、朝廷或本户结清政策后账。",
+                        readbackSummary: officePolicyGuidance,
+                        targetLabel: leadLabel);
+                }
             }
 
             if (disorder is not null)
@@ -418,7 +488,7 @@ public sealed partial class PresentationReadModelBuilder
                     localClans,
                     localSocialMemories,
                     orderOwnerLaneReturnGuidance,
-                    JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
+                    officePolicyGuidance,
                     familyOwnerLaneReturnGuidance,
                     familyLaneClosure))
                 {

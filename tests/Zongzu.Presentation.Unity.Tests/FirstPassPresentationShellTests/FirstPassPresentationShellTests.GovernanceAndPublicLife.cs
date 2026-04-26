@@ -357,6 +357,66 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_CopiesCourtPolicyLocalResponseAffordancesWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        const string officeGuidance = "政策回应入口：押文催县门，让OfficeAndCareer读县门承接姿态；不是本户硬扛朝廷后账。 文移续接选择：改走递报，仍由OfficeAndCareer处理文移承接；不计算政策成败。";
+        const string publicGuidance = "公议降温只读回：PublicLifeAndRumor读街面怎么传；Application/UI/Unity不计算政策成败。 朝廷后手仍不直写地方。";
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Office,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PressCountyYamenDocument,
+                    Label = "押文催县门",
+                    Summary = "轻押政策文移，让县门先接回案牍。",
+                    AvailabilitySummary = "政策文移压力已到县门，但尚无本户后账。",
+                    LeverageSummary = officeGuidance,
+                    ReadbackSummary = officeGuidance,
+                    TargetLabel = "兰溪县门",
+                    IsEnabled = true,
+                },
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PostCountyNotice,
+                    Label = "张榜晓谕",
+                    Summary = "只把县门榜下的公议读法压稳。",
+                    AvailabilitySummary = "榜示和街谈正在解释政策文移。",
+                    LeverageSummary = publicGuidance,
+                    ReadbackSummary = publicGuidance,
+                    TargetLabel = "县门榜下",
+                    IsEnabled = true,
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        CommandAffordanceViewModel officeCommand = shell.Office.CommandAffordances
+            .Single(command => command.CommandName == PlayerCommandNames.PressCountyYamenDocument);
+        SettlementNodeViewModel settlementNode = shell.DeskSandbox.Settlements.Single();
+        CommandAffordanceViewModel publicCommand = settlementNode.PublicLifeCommandAffordances
+            .Single(command => command.CommandName == PlayerCommandNames.PostCountyNotice);
+
+        Assert.That(officeCommand.LeverageSummary, Is.EqualTo(officeGuidance));
+        Assert.That(officeCommand.ReadbackSummary, Is.EqualTo(officeGuidance));
+        Assert.That(officeCommand.Summary, Does.Contain("政策文移"));
+        Assert.That(officeCommand.AvailabilitySummary, Does.Contain("尚无本户后账"));
+        Assert.That(officeCommand.LeverageSummary, Does.Contain("OfficeAndCareer读县门承接姿态"));
+        Assert.That(officeCommand.LeverageSummary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(publicCommand.LeverageSummary, Is.EqualTo(publicGuidance));
+        Assert.That(publicCommand.ReadbackSummary, Is.EqualTo(publicGuidance));
+        Assert.That(publicCommand.LeverageSummary, Does.Contain("PublicLifeAndRumor读街面怎么传"));
+        Assert.That(publicCommand.LeverageSummary, Does.Contain("Application/UI/Unity不计算政策成败"));
+    }
+
+    [Test]
     public void Compose_ProjectsSocialMemoryOrderReadbackWithoutShellAuthority()
     {
         PresentationReadModelBundle bundle = CreateBundle();

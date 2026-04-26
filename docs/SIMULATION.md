@@ -478,3 +478,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - `OfficeAndCareer` resolves policy tone, document direction, and county-gate implementation posture from existing structured policy-window / implementation metadata and office state. `PublicLifeAndRumor` resolves public interpretation from structured `PolicyImplemented` metadata and public-life scalar state.
 - Application may project `政策语气读回`, `文移指向读回`, `县门承接姿态`, `公议承压读法`, `朝廷后手仍不直写地方`, and `不是本户硬扛朝廷后账` only after owner modules have resolved. UI/Unity copy these fields only.
 - SocialMemory durable residue remains later-month only and must read structured aftermath. The same-month court-policy process must not write SocialMemory, parse projection prose, or treat a household as carrying the court after-account.
+
+## Current backend court-policy local response v117-v124 note
+
+- V117-V124 keeps the same scheduler shape and adds no new phase, event pool, court loop, policy ledger, or same-command SocialMemory write.
+- When existing office scalar pressure shows policy-process strain, `OfficeAndCareer` may resolve the reused `PressCountyYamenDocument` / `RedirectRoadReport` commands as local document/report continuations. This remains deterministic owner-lane command handling, not Application policy success calculation.
+- Application may project `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账` only from structured snapshots and existing command affordance/receipt fields. UI/Unity copy these fields only.
+- Same-month handling must not write durable SocialMemory residue. Future residue readers must use structured aftermath and must not parse court-policy projection prose or public-life notice/dispatch wording.

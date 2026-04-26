@@ -271,6 +271,108 @@ public sealed class OfficeCourtRegimePressureChainTests
     }
 
     [Test]
+    public void Chain8_CourtPolicyLocalResponseAffordanceResolvesThroughOfficeLaneWithoutOrderResidue()
+    {
+        FeatureManifest manifest = BuildManifest(includePublicLife: true);
+        IReadOnlyList<IModuleRunner> modules = BuildModules(includePublicLife: true);
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1022, 6),
+            KernelState.Create(894),
+            manifest,
+            modules);
+
+        SeedWorld(simulation.GetModuleStateForTesting<WorldSettlementsState>(KnownModuleKeys.WorldSettlements));
+        simulation.GetModuleStateForTesting<WorldSettlementsState>(KnownModuleKeys.WorldSettlements)
+            .CurrentSeason.Imperial.MandateConfidence = 30;
+
+        FamilyCoreState familyState = simulation.GetModuleStateForTesting<FamilyCoreState>(KnownModuleKeys.FamilyCore);
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Qinghe Zhang",
+            HomeSettlementId = new SettlementId(10),
+            Prestige = 55,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(1),
+        });
+
+        OfficeAndCareerState officeState = simulation.GetModuleStateForTesting<OfficeAndCareerState>(KnownModuleKeys.OfficeAndCareer);
+        officeState.People.Add(MakeOfficial(
+            1,
+            10,
+            authorityTier: 3,
+            clerk: 35,
+            backlog: 40,
+            leverage: 20,
+            petition: 30,
+            reputation: 50));
+        officeState.People.Single(static career => career.PersonId == new PersonId(1)).AdministrativeTaskLoad = 50;
+        officeState.People.Add(MakeOfficial(2, 20, authorityTier: 3, leverage: 10));
+
+        PublicLifeAndRumorState publicLifeState =
+            simulation.GetModuleStateForTesting<PublicLifeAndRumorState>(KnownModuleKeys.PublicLifeAndRumor);
+        publicLifeState.Settlements.Add(MakePublicLife(10));
+        publicLifeState.Settlements.Add(MakePublicLife(20));
+
+        simulation.AdvanceOneMonth();
+
+        PresentationReadModelBuilder builder = new();
+        PresentationReadModelBundle afterFirst = builder.BuildForM2(simulation);
+        PlayerCommandAffordanceSnapshot pressAffordance = afterFirst.PlayerCommands.Affordances
+            .Single(affordance => affordance.SettlementId == new SettlementId(10)
+                                  && affordance.CommandName == PlayerCommandNames.PressCountyYamenDocument);
+        Assert.That(pressAffordance.IsEnabled, Is.True);
+        Assert.That(pressAffordance.LeverageSummary, Does.Contain("政策回应入口"));
+        Assert.That(pressAffordance.LeverageSummary, Does.Contain("文移续接选择"));
+        Assert.That(pressAffordance.LeverageSummary, Does.Contain("公议降温只读回"));
+        Assert.That(pressAffordance.LeverageSummary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(pressAffordance.ExecutionSummary, Does.Contain("OfficeAndCareer"));
+        Assert.That(pressAffordance.ExecutionSummary, Does.Contain("不计算政策成败"));
+
+        PlayerCommandAffordanceSnapshot redirectAffordance = afterFirst.PlayerCommands.Affordances
+            .Single(affordance => affordance.SettlementId == new SettlementId(10)
+                                  && affordance.CommandName == PlayerCommandNames.RedirectRoadReport);
+        Assert.That(redirectAffordance.LeverageSummary, Does.Contain("政策回应入口"));
+        Assert.That(redirectAffordance.ExecutionSummary, Does.Contain("projected fields"));
+
+        SettlementGovernanceLaneSnapshot governance =
+            afterFirst.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(governance.SuggestedCommandName, Is.EqualTo(PlayerCommandNames.PressCountyYamenDocument));
+        Assert.That(governance.SuggestedCommandPrompt, Does.Contain("政策回应入口"));
+        Assert.That(governance.SuggestedCommandPrompt, Does.Contain("文移续接选择"));
+
+        SocialMemoryAndRelationsState socialState =
+            simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(KnownModuleKeys.SocialMemoryAndRelations);
+        int memoryCountBeforeCommand = socialState.Memories.Count;
+        PlayerCommandResult response = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = new SettlementId(10),
+                CommandName = PlayerCommandNames.PressCountyYamenDocument,
+            });
+
+        Assert.That(response.Accepted, Is.True);
+        Assert.That(response.Summary, Does.Contain("政策文移续接"));
+        OfficeCareerState affectedOfficial = officeState.People.Single(static career => career.PersonId == new PersonId(1));
+        OfficeCareerState offScopeOfficial = officeState.People.Single(static career => career.PersonId == new PersonId(2));
+        Assert.That(affectedOfficial.LastRefusalResponseCommandCode, Is.EqualTo(PlayerCommandNames.PressCountyYamenDocument));
+        Assert.That(affectedOfficial.LastRefusalResponseOutcomeCode, Is.EqualTo(PublicLifeOrderResponseOutcomeCodes.Contained));
+        Assert.That(affectedOfficial.LastRefusalResponseSummary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(offScopeOfficial.LastRefusalResponseCommandCode, Is.Empty);
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeCommand),
+            "Same-month policy local response may write Office structured aftermath, but must not write durable SocialMemory residue.");
+
+        PresentationReadModelBundle afterCommand = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot receipt = afterCommand.PlayerCommands.Receipts
+            .First(receipt => receipt.SettlementId == new SettlementId(10)
+                              && receipt.CommandName == PlayerCommandNames.PressCountyYamenDocument);
+        Assert.That(receipt.ReadbackSummary, Does.Contain("政策回应入口"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Court-policy"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("OfficeAndCareer"));
+    }
+
+    [Test]
     public void Chain9_RealScheduler_RegimePressureDefectsOnlyOneHighRiskOfficial()
     {
         FeatureManifest manifest = BuildManifest(includePublicLife: false);

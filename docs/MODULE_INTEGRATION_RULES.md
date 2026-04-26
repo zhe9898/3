@@ -453,3 +453,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Application projections may show `政策语气读回`, `文移指向读回`, `县门承接姿态`, `公议承压读法`, `朝廷后手仍不直写地方`, and `不是本户硬扛朝廷后账` from structured `JurisdictionAuthoritySnapshot` and `SettlementPublicLifeSnapshot` fields only.
 - The integration must not parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected court-policy prose.
 - Unity copies projected court-policy thickening fields only. Save/schema result: no persisted state, schema bump, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
+
+## Backend court-policy local response v117-v124 integration note
+- V117-V124 adds bounded local response affordances to Chain 8 without changing the owner lanes. The same path remains `CourtAgendaPressureAccumulated -> PolicyWindowOpened -> PolicyImplemented -> PublicLifeAndRumor`.
+- `PressCountyYamenDocument` and `RedirectRoadReport` are reused as `OfficeAndCareer` document/report continuations when structured office scalar pressure shows policy-process strain. `PostCountyNotice` and `DispatchRoadReport` remain public-life surfaces for public interpretation and notice/report visibility.
+- Application projections may show `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账`, but must not compute policy success or choose outcomes from prose.
+- The integration must not parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected court-policy prose.
+- Unity copies projected command/readback fields only. Save/schema result: no persisted state, schema bump, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.

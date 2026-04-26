@@ -30,6 +30,9 @@ public sealed partial class PresentationReadModelBuilder
 
         foreach (JurisdictionAuthoritySnapshot jurisdiction in bundle.OfficeJurisdictions.OrderBy(static entry => entry.SettlementId.Value))
         {
+            publicLifeBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out SettlementPublicLifeSnapshot? publicLife);
+            string courtPolicyLocalResponseGuidance = BuildCourtPolicyLocalResponseGuidance(jurisdiction, publicLife);
+
             if (string.Equals(jurisdiction.CurrentAdministrativeTask, "张榜晓谕", StringComparison.Ordinal))
             {
                 yield return BuildPlayerCommandReceiptSnapshot(
@@ -37,7 +40,9 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.SettlementId,
                 jurisdiction.LastAdministrativeTrace,
                 jurisdiction.LastPetitionOutcome,
-                readbackSummary: BuildOfficeImplementationAffordanceGuidance(jurisdiction),
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(
+                    BuildOfficeImplementationAffordanceGuidance(jurisdiction),
+                    courtPolicyLocalResponseGuidance),
                 targetLabel: jurisdiction.LeadOfficialName);
             }
 
@@ -48,7 +53,9 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.SettlementId,
                 jurisdiction.LastAdministrativeTrace,
                 jurisdiction.LastPetitionOutcome,
-                readbackSummary: BuildOfficeImplementationAffordanceGuidance(jurisdiction),
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(
+                    BuildOfficeImplementationAffordanceGuidance(jurisdiction),
+                    courtPolicyLocalResponseGuidance),
                 targetLabel: jurisdiction.LeadOfficialName);
             }
 
@@ -74,6 +81,7 @@ public sealed partial class PresentationReadModelBuilder
                             OwnerLaneReturnSourceOffice,
                             jurisdiction.LastRefusalResponseCommandCode,
                             jurisdiction.LastRefusalResponseOutcomeCode),
+                        courtPolicyLocalResponseGuidance,
                         BuildOfficeLaneNoLoopGuardSummary(jurisdiction, [], [])),
                     targetLabel: string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
                         ? jurisdiction.LeadOfficeTitle

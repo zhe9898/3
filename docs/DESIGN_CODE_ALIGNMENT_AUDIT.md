@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v117-v124 court-policy local response affordance - 2026-04-27
+
+- Chain 8 now exposes a first bounded local-response affordance layer after the v109-v116 process readback. `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, and `公议降温只读回` describe what the player can try locally without becoming court authority.
+- Code alignment: `PressCountyYamenDocument` and `RedirectRoadReport` remain existing `OfficeAndCareer` command resolution paths; `PostCountyNotice` and `DispatchRoadReport` remain public-life/player-facing surfaces. `OfficeAndCareer` reads existing office scalar pressure and structured response fields, while `PublicLifeAndRumor` keeps public interpretation.
+- Application only routes, assembles, and projects from structured snapshots. Unity copies command/readback fields only. Neither layer calculates policy success or turns the court-policy aftermath into a home-household, Order, or standalone Office after-account.
+- No reader may parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v117-v124 adds no persisted state, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v109-v116 court-policy process thickening - 2026-04-27
 
 - Chain 8 now has its first rule-density readback layer over the existing `WorldSettlements.CourtAgendaPressureAccumulated -> OfficeAndCareer.PolicyWindowOpened -> OfficeAndCareer.PolicyImplemented -> PublicLifeAndRumor` path.

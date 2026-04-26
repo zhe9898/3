@@ -599,6 +599,101 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Court_policy_local_response_v117_v124_must_reuse_office_lane_and_remain_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string playerCommandSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.cs"),
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.Receipts.cs"),
+        }.Select(File.ReadAllText));
+        string officeCommandSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.OfficeAndCareer",
+            "OfficeAndCareerCommandResolver.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "PublicLife", "PublicLifeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-local-response-v117-v124.md"));
+
+        Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyLocalResponseGuidance"));
+        Assert.That(playerCommandSource, Does.Contain("政策回应入口"));
+        Assert.That(playerCommandSource, Does.Contain("文移续接选择"));
+        Assert.That(playerCommandSource, Does.Contain("公议降温只读回"));
+        Assert.That(playerCommandSource, Does.Contain("PressCountyYamenDocument"));
+        Assert.That(playerCommandSource, Does.Contain("RedirectRoadReport"));
+        Assert.That(governanceSource, Does.Contain("hasCourtPolicyProcess"));
+        Assert.That(governanceSource, Does.Contain("GetGovernanceAffordancePriority"));
+
+        Assert.That(officeCommandSource, Does.Contain("HasCourtPolicyLocalResponsePressure"));
+        Assert.That(officeCommandSource, Does.Contain("政策文移续接"));
+        Assert.That(officeCommandSource, Does.Contain("政策递报改道"));
+        Assert.That(officeCommandSource, Does.Contain("PetitionPressure"));
+        Assert.That(officeCommandSource, Does.Contain("AdministrativeTaskLoad"));
+        Assert.That(officeCommandSource, Does.Contain("PetitionBacklog"));
+        Assert.That(officeCommandSource, Does.Contain("ClerkDependence"));
+
+        foreach (string source in new[] { governanceSource, officeCommandSource })
+        {
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("OfficialNoticeLine"));
+            Assert.That(source, Does.Not.Contain("PrefectureDispatchLine"));
+            Assert.That(source, Does.Not.Contain("LastAdministrativeTrace"));
+            Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("WorldManager"));
+            Assert.That(source, Does.Not.Contain("PersonManager"));
+            Assert.That(source, Does.Not.Contain("CharacterManager"));
+            Assert.That(source, Does.Not.Contain("GodController"));
+            Assert.That(source, Does.Not.Contain("PolicyLedger"));
+            Assert.That(source, Does.Not.Contain("CourtProcessLedger"));
+            Assert.That(source, Does.Not.Contain("DispatchLedger"));
+            Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+            Assert.That(source, Does.Not.Contain("CooldownLedger"));
+        }
+
+        foreach (string source in new[] { governanceSource, officeCommandSource, playerCommandSource, unitySource })
+        {
+            Assert.That(source, Does.Not.Contain("WorldManager"));
+            Assert.That(source, Does.Not.Contain("PersonManager"));
+            Assert.That(source, Does.Not.Contain("CharacterManager"));
+            Assert.That(source, Does.Not.Contain("GodController"));
+            Assert.That(source, Does.Not.Contain("PolicyLedger"));
+            Assert.That(source, Does.Not.Contain("CourtProcessLedger"));
+            Assert.That(source, Does.Not.Contain("DispatchLedger"));
+            Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+            Assert.That(source, Does.Not.Contain("CooldownLedger"));
+        }
+
+        Assert.That(playerCommandSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(playerCommandSource, Does.Not.Contain("OfficialNoticeLine"));
+        Assert.That(playerCommandSource, Does.Not.Contain("PrefectureDispatchLine"));
+        Assert.That(playerCommandSource, Does.Not.Contain("LastLocalResponseSummary"));
+
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("PolicyImplementationOutcome"));
+        Assert.That(unitySource, Does.Not.Contain("BuildCourtPolicyLocalResponseGuidance"));
+        Assert.That(schemaRules, Does.Contain("court-policy local response v117-v124 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy local response v117-v124 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No full court engine"));
+    }
+
+    [Test]
     public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
     {
         string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));

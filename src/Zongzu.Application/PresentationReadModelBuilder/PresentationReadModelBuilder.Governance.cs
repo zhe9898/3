@@ -101,10 +101,6 @@ public sealed partial class PresentationReadModelBuilder
                 string recentOrderCommandName = disorder?.LastInterventionCommandCode ?? string.Empty;
                 string recentOrderCommandLabel = disorder?.LastInterventionCommandLabel ?? string.Empty;
                 bool hasOrderAftermath = !string.IsNullOrWhiteSpace(orderAftermathSummary);
-                PlayerCommandAffordanceSnapshot? suggestedAffordance = SelectPrimaryGovernanceAffordance(
-                    bundle.PlayerCommands.Affordances,
-                    jurisdiction.SettlementId,
-                    hasOrderAftermath);
                 string officeImplementationReadback = BuildOfficeImplementationReadbackSummary(jurisdiction, publicLife);
                 string officeNextStepReadback = BuildOfficeImplementationNextStepSummary(jurisdiction);
                 string regimeOfficeReadback = BuildRegimeOfficeReadbackSummary(localOfficeCareers, jurisdiction);
@@ -119,6 +115,12 @@ public sealed partial class PresentationReadModelBuilder
                 string courtPolicyDispatchReadback = BuildCourtPolicyDispatchReadbackSummary(jurisdiction, publicLife);
                 string courtPolicyPublicReadback = BuildCourtPolicyPublicReadbackSummary(jurisdiction, publicLife);
                 string courtPolicyNoLoopGuard = BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife);
+                bool hasCourtPolicyProcess = !string.IsNullOrWhiteSpace(courtPolicyEntryReadback);
+                PlayerCommandAffordanceSnapshot? suggestedAffordance = SelectPrimaryGovernanceAffordance(
+                    bundle.PlayerCommands.Affordances,
+                    jurisdiction.SettlementId,
+                    hasOrderAftermath,
+                    hasCourtPolicyProcess);
                 string canalRouteReadback = BuildCanalRouteReadbackSummary(publicLife, disorder, localRoutes);
                 string residueHealth = BuildResidueHealthSummary(
                     localOrderSocialMemories,
@@ -756,26 +758,30 @@ public sealed partial class PresentationReadModelBuilder
     private static PlayerCommandAffordanceSnapshot? SelectPrimaryGovernanceAffordance(
         IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
         SettlementId settlementId,
-        bool hasOrderAftermath)
+        bool hasOrderAftermath,
+        bool hasCourtPolicyProcess)
     {
         return EnumerateAffordancesForSurface(affordances, PlayerCommandSurfaceKeys.PublicLife, settlementId)
-            .OrderBy(command => GetGovernanceAffordancePriority(command.CommandName, hasOrderAftermath))
+            .OrderBy(command => GetGovernanceAffordancePriority(command.CommandName, hasOrderAftermath, hasCourtPolicyProcess))
             .ThenBy(command => command.CommandName, StringComparer.Ordinal)
             .FirstOrDefault();
     }
 
-    private static int GetGovernanceAffordancePriority(string commandName, bool hasOrderAftermath)
+    private static int GetGovernanceAffordancePriority(
+        string commandName,
+        bool hasOrderAftermath,
+        bool hasCourtPolicyProcess)
     {
         return commandName switch
         {
-            PlayerCommandNames.PressCountyYamenDocument => hasOrderAftermath ? 0 : 2,
-            PlayerCommandNames.RedirectRoadReport => hasOrderAftermath ? 1 : 2,
+            PlayerCommandNames.PressCountyYamenDocument => hasOrderAftermath || hasCourtPolicyProcess ? 0 : 2,
+            PlayerCommandNames.RedirectRoadReport => hasOrderAftermath ? 1 : hasCourtPolicyProcess ? 1 : 2,
             PlayerCommandNames.RepairLocalWatchGuarantee => hasOrderAftermath ? 2 : 5,
             PlayerCommandNames.CompensateRunnerMisread => hasOrderAftermath ? 2 : 5,
             PlayerCommandNames.DeferHardPressure => hasOrderAftermath ? 2 : 5,
             PlayerCommandNames.AskClanEldersExplain => hasOrderAftermath ? 3 : 6,
-            PlayerCommandNames.PostCountyNotice => hasOrderAftermath ? 0 : 1,
-            PlayerCommandNames.DispatchRoadReport => 0,
+            PlayerCommandNames.PostCountyNotice => hasOrderAftermath ? 0 : hasCourtPolicyProcess ? 2 : 1,
+            PlayerCommandNames.DispatchRoadReport => hasCourtPolicyProcess && !hasOrderAftermath ? 3 : 0,
             PlayerCommandNames.EscortRoadReport => 4,
             PlayerCommandNames.FundLocalWatch => 5,
             PlayerCommandNames.InviteClanEldersPubliclyBroker => 6,
