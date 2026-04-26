@@ -36,8 +36,8 @@ The current repository has both a pure C# presentation adapter layer and a minim
 - presentation tests: `tests/Zongzu.Presentation.Unity.Tests`
 - player-command affordance and receipt surfaces now include projected `LeverageSummary`, `CostSummary`, and `ReadbackSummary`
 - public-life/order v18 readback may include `PresentationReadModelBundle.SocialMemories`, `HouseholdSocialPressure`, governance recent-receipt summaries, and home-household local response receipt text
-- current v19-v52 adds projection-only follow-up hints, owner-lane return/status/outcome/residue/no-loop readback, Office/yamen implementation readback, and Office-lane closure fields such as `OfficeLaneEntryReadbackSummary`, `OfficeLaneReceiptClosureSummary`, `OfficeLaneResidueFollowUpSummary`, and `OfficeLaneNoLoopGuardSummary`; shell surfaces may show those hints only from projected affordance/readback fields
-- current v35-v52 Trade/Order, Family sponsor, and Office/yamen results are module/projection state; shell surfaces may display projected route, market, canal, family, office, or order-pressure readback, but may not compute route exposure, sponsor targeting, Office closure, event-consumer status, or owner-lane outcomes
+- current v19-v108 adds projection-only follow-up hints, owner-lane return/status/outcome/residue/no-loop readback, Office/Family/Force/Warfare/Court process fields, directive-choice readbacks, aftermath docket readbacks, and closeout audit wording; shell surfaces may show those hints only from projected affordance/readback fields
+- current v35-v100 Trade/Order, Family, Office/yamen, Force/Campaign, Warfare, and Court-policy results are module/projection state; shell surfaces may display projected route, market, canal, family, office, force, campaign, aftermath, or court-policy readback, but may not compute route exposure, sponsor targeting, relief success, Office closure, campaign aftermath, court-policy outcomes, event-consumer status, or owner-lane outcomes
 - WCAG 2.2 and Xbox Accessibility Guidelines calibrate contrast, focus/read order, semantic labels, status announcements, and narration parity for shell surfaces; they do not turn the shell into a generic dashboard
 - Unity UI performance guidance calibrates shell implementation only: split static/dynamic canvas work when needed, avoid per-frame layout/raycast churn, use precomputed ViewModels/projection contexts, and never scan long simulation histories from a visible surface
 
@@ -149,7 +149,7 @@ For prompts like `great hall`, `desk sandbox`, `hall surface`, `notice tray`, `2
 - Desk sandbox is a local-world board with topology, routes, pressure, visibility, and reach, not a giant minimap or static infographic.
 - Notice tray separates urgent, consequential, and background pressure cleanly.
 - Public-life surfaces show reputation, rumor, visibility, and public pressure without becoming free-form prose.
-- Public-life/order shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, v19-v52 follow-up/owner-lane/Office-lane readback, but only by displaying projected read-model fields.
+- Public-life/order shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, v19-v108 follow-up/owner-lane/Office/Family/Force/Warfare/Court readback, but only by displaying projected read-model fields.
 - Conflict vignette should feel like aftermath and consequence.
 - Campaign-lite board is route, front, posture, supply, and aftermath pressure; it is later and scale-gated.
 - Debug panels may expose internals, but player-facing surfaces should turn state into readable consequence and bounded action.
