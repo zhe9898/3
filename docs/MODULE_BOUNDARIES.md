@@ -891,3 +891,9 @@ Current lite note:
 - `SocialMemoryAndRelations` may later read structured aftermath and cause keys for durable residue; it must not treat court-policy projection prose as an authority source.
 - `Unity` and shell code copy projected court-policy fields only. They must not query simulation modules, compute policy success, infer yamen/public-life ownership from prose, maintain dispatch/policy ledgers, or write SocialMemory.
 - V93-V100 adds no persisted fields, schema bump, migration, court module, dispatch ledger, policy closure ledger, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.
+
+## 2026-04-26 thin-chain closeout audit v101-v108 note
+- V101-V108 closes the current thin-chain skeleton only. It does not move authority between modules and does not add a new module, rule layer, command system, event pool, or production read-model field.
+- The closeout meaning is boundary evidence: each implemented thin chain has an owning source, module-owned mutation or projection lane, structured event/query seam, repetition guard, off-scope/no-touch proof where applicable, and a player-facing readback that keeps ordinary households, Family, Office, Order, Trade, Force/Campaign, Warfare, court-policy, and SocialMemory responsibilities separate.
+- The full-chain formulas remain outside this closeout. If a future pass deepens taxes, relief, famine, court process, regime recognition, campaign logistics, canal politics, or durable memory, that pass must name the owner module and schema/rule impact separately.
+- Application remains route/assemble only. UI and Unity remain projection display only. `PersonRegistry` remains identity-only.

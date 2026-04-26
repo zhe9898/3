@@ -440,3 +440,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The projection must not parse `DomainEvent.Summary`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 - Unity copies projected court-policy fields only. It does not query modules, compute policy outcome, infer ownership from prose, maintain dispatch/policy/owner-lane ledgers, or write SocialMemory.
 - Save/schema result: no persisted state, schema bump, migration, court module, dispatch ledger, policy closure ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
+
+## Thin-chain closeout audit v101-v108 integration note
+- V101-V108 adds no integration channel. It audits the existing Query / Command / DomainEvent / projection seams through v100 and records that the thin-chain skeleton is closed as topology evidence, not as full rule-density.
+- "Thin-chain closed" means each live chain has a documented source pressure, owner module, scheduler drain or delayed monthly residue path, structured metadata/query seam, repetition guard, off-scope boundary where needed, and readback surface. It does not mean the full historical or social formula is implemented.
+- No module may use this closeout as permission to parse `DomainEvent.Summary`, receipt prose, projected readback strings, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- No Application/UI/Unity code may convert the closeout into an owner-lane ledger, cooldown ledger, dispatch ledger, relief ledger, aftermath ledger, household target field, or second command/result layer.

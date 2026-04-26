@@ -1140,6 +1140,11 @@ Current backend court-policy process readback v93-v100 note:
 - New read-model / Unity fields `CourtPolicyEntryReadbackSummary`, `CourtPolicyDispatchReadbackSummary`, `CourtPolicyPublicReadbackSummary`, and `CourtPolicyNoLoopGuardSummary` are runtime projections only and are not saved.
 - These fields are derived from structured `JurisdictionAuthoritySnapshot` and `SettlementPublicLifeSnapshot` values; they are not derived from `DomainEvent.Summary`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 
+Current thin-chain closeout audit v101-v108 note:
+- v101-v108 adds no data shape. It records that v3-v100 thin-chain topology/readback evidence is closed while full-chain rule density remains future work.
+- No module envelope, root schema version, module schema version, save-manifest membership, migration, persisted projection cache, owner-lane ledger, cooldown ledger, dispatch ledger, relief ledger, aftermath ledger, household target field, or serialized payload shape changes.
+- Because this is docs/test governance only, existing module schema versions remain unchanged.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

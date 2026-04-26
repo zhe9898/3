@@ -506,6 +506,69 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string ui = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string relationships = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RELATIONSHIPS_AND_GRUDGES.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string audit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-26_thin-chain-closeout-audit-v101-v108.md"));
+
+        Assert.That(topologyIndex, Does.Contain("Thin-Chain Closeout Status - v101-v108"));
+        Assert.That(topologyIndex, Does.Contain("closed through v100"));
+        Assert.That(topologyIndex, Does.Contain("This is not a full-chain completion claim"));
+        Assert.That(topologyIndex, Does.Contain("Full-Chain Debt"));
+        Assert.That(topologyIndex, Does.Contain("v3-v100 thin-chain evidence"));
+
+        Assert.That(integrationRules, Does.Contain("Thin-chain closeout audit v101-v108 integration note"));
+        Assert.That(integrationRules, Does.Contain("It does not mean the full historical or social formula is implemented"));
+        Assert.That(moduleBoundaries, Does.Contain("thin-chain closeout audit v101-v108 note"));
+        Assert.That(schemaRules, Does.Contain("thin-chain closeout audit v101-v108 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current thin-chain closeout audit v101-v108 note"));
+        Assert.That(simulation, Does.Contain("Current thin-chain closeout audit v101-v108 note"));
+        Assert.That(ui, Does.Contain("v101-v108 closes the thin-chain readback skeleton"));
+        Assert.That(relationships, Does.Contain("Thin-chain closeout audit v101-v108 note"));
+        Assert.That(acceptance, Does.Contain("Backend thin-chain closeout audit v101-v108 acceptance"));
+        Assert.That(audit, Does.Contain("v101-v108 thin-chain closeout audit"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V108"));
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+        Assert.That(execPlan, Does.Contain("No schema or migration impact"));
+
+        foreach (string text in new[]
+                 {
+                     topologyIndex,
+                     integrationRules,
+                     moduleBoundaries,
+                     schemaRules,
+                     dataSchema,
+                     simulation,
+                     ui,
+                     relationships,
+                     acceptance,
+                     audit,
+                     skillMatrix,
+                     execPlan,
+                 })
+        {
+            Assert.That(text, Does.Not.Contain("full-chain completion is done"));
+            Assert.That(text, Does.Not.Contain("thin-chain closeout completes full-chain formulas"));
+            Assert.That(text, Does.Not.Contain("UI may compute owner-lane results"));
+        }
+    }
+
+    [Test]
     public void Social_memory_office_policy_residue_must_read_structured_office_snapshots_only()
     {
         string sourcePath = Path.Combine(

@@ -1,5 +1,12 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v101-v108 thin-chain closeout audit - 2026-04-26
+
+- The current implemented Renzong thin-chain skeleton is now treated as closed through v100. This means the repository has thin topology, owner-lane handoffs, projection/readback guidance, no-loop guardrails, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema evidence across the public-life/order, Family, Office, Trade/Order canal-window, Force/Campaign, Warfare aftermath, and court-policy process surfaces.
+- This is explicitly not a full-chain completion claim. The thicker rule debts remain in `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md`: household registration and tax/corvee depth, famine/relief economy, exam-office-public memory, non-amnesty imperial axes, frontier logistics, disaster recovery, office/clerk factions, full court process, regime recognition, canal politics, and long-run residue/recovery tuning.
+- Code alignment for v101-v108 is docs/test governance only. No production command, event, query, read-model, ViewModel, scheduler, persistence, Unity adapter, or module rule changes are introduced.
+- Save/schema audit: v101-v108 adds no persisted state, root/module schema bump, migration, save manifest change, ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v93-v100 delta - 2026-04-26
 
 - Court-policy process readback now projects the existing thin court/office/public-life path as `朝议压力读回`, `政策窗口读回`, `文移到达读回`, `县门执行承接读回`, `公议读法读回`, `Court后手不直写地方`, `Office/PublicLife分读`, `不是本户也不是县门独吞朝廷后账`, and `Court-policy防回压`.

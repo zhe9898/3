@@ -328,3 +328,11 @@ V93-V100 adds court-policy process readback over existing court pressure, Office
 `SocialMemoryAndRelations` must not parse those court-policy projection strings, `OfficialNoticeLine`, `PrefectureDispatchLine`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, SocialMemory summary prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`. Later residue must still come from structured owner aftermath in its own monthly cadence.
 
 The ordinary home-household line still cannot repair court-policy after-accounting, county-yamen implementation, or public legitimacy residue. V93-V100 adds no memory namespace, relationship table, court/policy/dispatch ledger, owner-lane ledger, cooldown ledger, schema bump, or migration.
+
+## Thin-chain closeout audit v101-v108 note
+
+V101-V108 treats thin-chain readback through v100 as closed, but this does not complete durable relationship depth.
+
+`SocialMemoryAndRelations` still owns long-lived shame, favor, fear, obligation, resentment, grudge, hardening, restraint, and reconciliation pressure. Future thickening of residue must read structured aftermath and cause keys, not projected closeout prose.
+
+The closeout adds no SocialMemory state, memory ledger, residue formula, schema bump, migration, or parsing of `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or projected owner-lane strings.

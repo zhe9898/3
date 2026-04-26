@@ -465,3 +465,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Governance, docket, office, and desk surfaces may show `朝议压力读回`, `政策窗口读回`, `文移到达读回`, `县门执行承接读回`, `公议读法读回`, and `Court-policy防回压`, but those strings are runtime guidance only.
 - Determinism depends on structured snapshots, fixed ordering, and stable read-model assembly. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 - The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for court-policy after-accounting, county-yamen implementation, public legitimacy, or SocialMemory after-accounts.
+
+## Current thin-chain closeout audit v101-v108 note
+
+- V101-V108 changes no scheduler behavior. It adds no phase, event drain, command cadence, projection pass, migration path, or runtime authority.
+- The closeout means the v3-v100 thin-chain skeleton has enough scheduler/projection evidence to be treated as closed for topology and readback purposes. It does not mean full historical/social formulas are implemented.
+- Future thickening must still name its cadence, repetition guard, pressure locus, owner module, no-touch boundary, and validation lane. The closeout must not be used as a shortcut for broad fanout, summary parsing, or UI-owned rule work.
