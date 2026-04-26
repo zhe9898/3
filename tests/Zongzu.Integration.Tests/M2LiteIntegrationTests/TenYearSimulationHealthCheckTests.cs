@@ -71,6 +71,7 @@ public sealed class TenYearSimulationHealthCheckTests
         TestContext.Out.WriteLine(report);
         TestContext.Progress.WriteLine(report);
 
+        AssertNoUnclassifiedEventContractDebt(diagnosticModules, eventCounts, consumptionProbe);
         Assert.That(settlementSamples, Has.Count.EqualTo(monthsToRun * watchedSettlements.Length));
         Assert.That(eventCounts.Values.Sum(), Is.GreaterThan(0));
         Assert.That(simulation.CurrentDate, Is.EqualTo(new GameDate(1210, 1)));
@@ -115,6 +116,21 @@ public sealed class TenYearSimulationHealthCheckTests
         Assert.That(
             FormatEventContractKey(KnownModuleKeys.FamilyCore, "ClanPrestigeAdjusted"),
             Is.EqualTo("FamilyCore.ClanPrestigeAdjusted"));
+    }
+
+    [Test]
+    public void EventContractHealth_NoUnclassifiedGateRejectsSyntheticDebt()
+    {
+        EventContractDebt[] syntheticDebt =
+        [
+            new("Example.UnknownContract", "synthetic-diagnostic-debt")
+        ];
+
+        Exception? exception = Assert.Catch(() => AssertNoUnclassifiedEventContractDebt(syntheticDebt));
+
+        Assert.That(exception, Is.Not.Null);
+        Assert.That(exception!.Message, Does.Contain("Unclassified"));
+        Assert.That(exception.Message, Does.Contain("Example.UnknownContract"));
     }
 
     private static SaveRoot CreateCampaignEnabledStressSave()
@@ -263,22 +279,24 @@ public sealed class TenYearSimulationHealthCheckTests
                 $"- {eventKey}: emitted={group.Value}, authorityConsumed={handled}, consumers=[{consumers}], {contractNote}");
         }
 
-        HashSet<string> emittedEventKeys = eventCounts.Keys
-            .Select(static key => FormatEventContractKey(key.ModuleKey, key.EventType))
-            .ToHashSet(StringComparer.Ordinal);
-        List<string> noAuthorityConsumer = eventCounts
-            .Where(pair => consumptionProbe.CountHandled(pair.Key.ModuleKey, pair.Key.EventType) == 0)
-            .OrderByDescending(static pair => pair.Value)
-            .Select(static pair => FormatClassifiedEventDebt(
-                FormatEventContractKey(pair.Key.ModuleKey, pair.Key.EventType),
-                pair.Value))
+        IReadOnlyList<EventContractDebt> diagnosticDebt = CollectEventContractDebt(modules, eventCounts, consumptionProbe);
+        List<string> noAuthorityConsumer = diagnosticDebt
+            .Where(static debt => string.Equals(
+                debt.Reason,
+                EventContractDebtReasons.EmittedWithoutAuthorityConsumer,
+                StringComparison.Ordinal))
+            .OrderByDescending(static debt => debt.EmittedCount ?? 0)
+            .ThenBy(static debt => debt.EventKey, StringComparer.Ordinal)
+            .Select(static debt => FormatClassifiedEventDebt(debt.EventKey, debt.EmittedCount))
             .Take(12)
             .ToList();
-        List<string> declaredButNeverEmitted = modules
-            .SelectMany(module => module.PublishedEvents.Select(eventType => FormatEventContractKey(module.ModuleKey, eventType)))
-            .Where(eventKey => !emittedEventKeys.Contains(eventKey))
-            .OrderBy(static value => value, StringComparer.Ordinal)
-            .Select(static eventKey => FormatClassifiedEventDebt(eventKey, null))
+        List<string> declaredButNeverEmitted = diagnosticDebt
+            .Where(static debt => string.Equals(
+                debt.Reason,
+                EventContractDebtReasons.DeclaredButNotEmitted,
+                StringComparison.Ordinal))
+            .OrderBy(static debt => debt.EventKey, StringComparer.Ordinal)
+            .Select(static debt => FormatClassifiedEventDebt(debt.EventKey, debt.EmittedCount))
             .Take(24)
             .ToList();
 
@@ -314,6 +332,60 @@ public sealed class TenYearSimulationHealthCheckTests
         return EventContractHealthClassifications.TryGetValue(eventKey, out EventContractHealthClassification? classification)
             ? classification
             : UnclassifiedEventContract;
+    }
+
+    private static IReadOnlyList<EventContractDebt> CollectEventContractDebt(
+        IReadOnlyList<IModuleRunner> modules,
+        IReadOnlyDictionary<(string ModuleKey, string EventType), int> eventCounts,
+        EventConsumptionProbe consumptionProbe)
+    {
+        HashSet<string> emittedEventKeys = eventCounts.Keys
+            .Select(static key => FormatEventContractKey(key.ModuleKey, key.EventType))
+            .ToHashSet(StringComparer.Ordinal);
+
+        List<EventContractDebt> debt = eventCounts
+            .Where(pair => consumptionProbe.CountHandled(pair.Key.ModuleKey, pair.Key.EventType) == 0)
+            .Select(static pair => new EventContractDebt(
+                FormatEventContractKey(pair.Key.ModuleKey, pair.Key.EventType),
+                EventContractDebtReasons.EmittedWithoutAuthorityConsumer,
+                pair.Value))
+            .ToList();
+
+        debt.AddRange(modules
+            .SelectMany(module => module.PublishedEvents.Select(eventType => FormatEventContractKey(module.ModuleKey, eventType)))
+            .Distinct(StringComparer.Ordinal)
+            .Where(eventKey => !emittedEventKeys.Contains(eventKey))
+            .Select(static eventKey => new EventContractDebt(
+                eventKey,
+                EventContractDebtReasons.DeclaredButNotEmitted)));
+
+        return debt
+            .OrderBy(static item => item.Reason, StringComparer.Ordinal)
+            .ThenBy(static item => item.EventKey, StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    private static void AssertNoUnclassifiedEventContractDebt(
+        IReadOnlyList<IModuleRunner> modules,
+        IReadOnlyDictionary<(string ModuleKey, string EventType), int> eventCounts,
+        EventConsumptionProbe consumptionProbe)
+    {
+        AssertNoUnclassifiedEventContractDebt(CollectEventContractDebt(modules, eventCounts, consumptionProbe));
+    }
+
+    private static void AssertNoUnclassifiedEventContractDebt(IEnumerable<EventContractDebt> diagnosticDebt)
+    {
+        string[] unclassified = diagnosticDebt
+            .Where(static debt => ClassifyEventContract(debt.EventKey).Kind == EventContractHealthKind.Unclassified)
+            .OrderBy(static debt => debt.EventKey, StringComparer.Ordinal)
+            .Select(static debt => $"{debt.EventKey} ({debt.Reason})")
+            .ToArray();
+
+        Assert.That(
+            unclassified,
+            Is.Empty,
+            "Unclassified event contract debt must be classified before ten-year diagnostics can be used as evidence: "
+            + string.Join("; ", unclassified));
     }
 
     private static void AppendDiffSurface(StringBuilder builder, IReadOnlyDictionary<string, int> diffCounts)
@@ -452,6 +524,12 @@ public sealed class TenYearSimulationHealthCheckTests
         counts[key] = current + 1;
     }
 
+    private static class EventContractDebtReasons
+    {
+        public const string EmittedWithoutAuthorityConsumer = "emitted-without-authority-consumer";
+        public const string DeclaredButNotEmitted = "declared-but-not-emitted";
+    }
+
     private static readonly string[] KnownEmittedWithoutAuthorityConsumers =
     [
         "FamilyCore.ClanPrestigeAdjusted",
@@ -471,7 +549,17 @@ public sealed class TenYearSimulationHealthCheckTests
         "OfficeAndCareer.OfficeLost",
         "FamilyCore.BirthRegistered",
         "PersonRegistry.PersonCreated",
-        "PopulationAndHouseholds.LivelihoodCollapsed"
+        "PopulationAndHouseholds.LivelihoodCollapsed",
+        "FamilyCore.CameOfAge",
+        "FamilyCore.LineageDisputeHardened",
+        "OfficeAndCareer.AuthorityChanged",
+        "OfficeAndCareer.OfficeTransfer",
+        "OrderAndBanditry.BanditThreatRaised",
+        "OrderAndBanditry.BlackRoutePressureRaised",
+        "OrderAndBanditry.OutlawGroupFormed",
+        "OrderAndBanditry.RouteUnsafeDueToBanditry",
+        "PopulationAndHouseholds.LaborShortage",
+        "SocialMemoryAndRelations.GrudgeEscalated"
     ];
 
     private static readonly string[] KnownDeclaredButNotEmitted =
@@ -500,7 +588,18 @@ public sealed class TenYearSimulationHealthCheckTests
         "SocialMemoryAndRelations.GrudgeSoftened",
         "TradeAndIndustry.GrainPriceSpike",
         "WarfareCampaign.CampaignSupplyStrained",
-        "WorldSettlements.ComplianceModeShifted"
+        "WorldSettlements.ComplianceModeShifted",
+        "WorldSettlements.CourtAgendaPressureAccumulated",
+        "WorldSettlements.DisasterDeclared",
+        "WorldSettlements.EpidemicOutbreak",
+        "WorldSettlements.ForceStationChanged",
+        "WorldSettlements.IllicitRouteExposed",
+        "WorldSettlements.ImperialRhythmChanged",
+        "WorldSettlements.NodeVisibilityDiscovered",
+        "WorldSettlements.RegimeLegitimacyShifted",
+        "WorldSettlements.ReliefDelivered",
+        "WorldSettlements.ReliefWithheld",
+        "WorldSettlements.RouteConstraintEmerged"
     ];
 
     private static readonly EventContractHealthClassification UnclassifiedEventContract = new(
@@ -537,6 +636,9 @@ public sealed class TenYearSimulationHealthCheckTests
             ["FamilyCore.BirthRegistered"] = new(
                 EventContractHealthKind.ProjectionOnlyReceipt,
                 "birth registration is family-owned lifecycle evidence after state mutation"),
+            ["FamilyCore.CameOfAge"] = new(
+                EventContractHealthKind.ProjectionOnlyReceipt,
+                "coming-of-age is a family-owned lifecycle threshold receipt after age state changes"),
             ["FamilyCore.ClanPrestigeAdjusted"] = new(
                 EventContractHealthKind.ProjectionOnlyReceipt,
                 "family prestige is already mutated by FamilyCore and read outward as a receipt"),
@@ -552,9 +654,15 @@ public sealed class TenYearSimulationHealthCheckTests
             ["FamilyCore.LineageMediationOpened"] = new(
                 EventContractHealthKind.DormantSeededPath,
                 "lineage mediation depends on a hardened dispute threshold"),
+            ["FamilyCore.LineageDisputeHardened"] = new(
+                EventContractHealthKind.ProjectionOnlyReceipt,
+                "lineage dispute hardening is family-owned conflict evidence for hall and diagnostics readback"),
             ["FamilyCore.MarriageAllianceArranged"] = new(
                 EventContractHealthKind.DormantSeededPath,
                 "marriage alliance depends on eligible lifecycle/social conditions"),
+            ["OfficeAndCareer.AuthorityChanged"] = new(
+                EventContractHealthKind.ProjectionOnlyReceipt,
+                "authority change is office-owned career evidence after appointment state mutation"),
             ["OfficeAndCareer.AmnestyApplied"] = new(
                 EventContractHealthKind.AcceptanceTestGap,
                 "amnesty chain is proven by focused pressure-chain tests rather than this stress seed"),
@@ -567,15 +675,30 @@ public sealed class TenYearSimulationHealthCheckTests
             ["OfficeAndCareer.OfficeLost"] = new(
                 EventContractHealthKind.ProjectionOnlyReceipt,
                 "office loss is office-owned appointment evidence unless a later owner subscribes"),
+            ["OfficeAndCareer.OfficeTransfer"] = new(
+                EventContractHealthKind.ProjectionOnlyReceipt,
+                "office transfer is office-owned career movement evidence after state mutation"),
             ["OfficeAndCareer.PolicyWindowOpened"] = new(
                 EventContractHealthKind.AcceptanceTestGap,
                 "policy-window chain is proven by focused pressure-chain tests rather than this stress seed"),
             ["OfficeAndCareer.YamenOverloaded"] = new(
                 EventContractHealthKind.AcceptanceTestGap,
                 "tax/yamen/public-life chain is proven by focused pressure-chain tests rather than this stress seed"),
+            ["OrderAndBanditry.BanditThreatRaised"] = new(
+                EventContractHealthKind.ProjectionOnlyReceipt,
+                "bandit threat has already mutated order-owned local pressure and is read outward as a receipt"),
+            ["OrderAndBanditry.BlackRoutePressureRaised"] = new(
+                EventContractHealthKind.FutureContract,
+                "black-route pressure is order-owned evidence reserved for fuller trade/order follow-on contracts"),
             ["OrderAndBanditry.DisorderSpike"] = new(
                 EventContractHealthKind.AcceptanceTestGap,
                 "disorder spike is proven by focused order/public-life pressure-chain tests rather than this stress seed"),
+            ["OrderAndBanditry.OutlawGroupFormed"] = new(
+                EventContractHealthKind.FutureContract,
+                "outlaw formation is order-owned evidence for later force/public-life/social follow-on contracts"),
+            ["OrderAndBanditry.RouteUnsafeDueToBanditry"] = new(
+                EventContractHealthKind.ProjectionOnlyReceipt,
+                "route unsafe state is already order-owned local pressure evidence unless later route owners subscribe"),
             ["OrderAndBanditry.SuppressionSucceeded"] = new(
                 EventContractHealthKind.DormantSeededPath,
                 "suppression success requires response conditions not forced by this stress seed"),
@@ -597,6 +720,9 @@ public sealed class TenYearSimulationHealthCheckTests
             ["PopulationAndHouseholds.HouseholdSubsistencePressureChanged"] = new(
                 EventContractHealthKind.AcceptanceTestGap,
                 "harvest/grain subsistence chain is proven by focused pressure-chain tests rather than this stress seed"),
+            ["PopulationAndHouseholds.LaborShortage"] = new(
+                EventContractHealthKind.ProjectionOnlyReceipt,
+                "labor shortage is population-owned household pressure evidence after local state mutation"),
             ["PopulationAndHouseholds.LivelihoodCollapsed"] = new(
                 EventContractHealthKind.FutureContract,
                 "livelihood collapse is population-owned evidence for later office/memory/trade follow-on contracts"),
@@ -618,6 +744,9 @@ public sealed class TenYearSimulationHealthCheckTests
             ["SocialMemoryAndRelations.GrudgeSoftened"] = new(
                 EventContractHealthKind.DormantSeededPath,
                 "grudge-softening threshold depends on later social-pressure relief"),
+            ["SocialMemoryAndRelations.GrudgeEscalated"] = new(
+                EventContractHealthKind.ProjectionOnlyReceipt,
+                "grudge escalation is SocialMemory-owned durable residue evidence after memory state mutation"),
             ["SocialMemoryAndRelations.PressureTempered"] = new(
                 EventContractHealthKind.ProjectionOnlyReceipt,
                 "pressure tempering is SocialMemory-owned residue after structured causes"),
@@ -633,6 +762,39 @@ public sealed class TenYearSimulationHealthCheckTests
             ["WorldSettlements.ComplianceModeShifted"] = new(
                 EventContractHealthKind.FutureContract,
                 "compliance mode is reserved for fuller regime/local compliance integration"),
+            ["WorldSettlements.CourtAgendaPressureAccumulated"] = new(
+                EventContractHealthKind.AcceptanceTestGap,
+                "court-agenda chain is proven by focused pressure-chain tests rather than this stress seed"),
+            ["WorldSettlements.DisasterDeclared"] = new(
+                EventContractHealthKind.AcceptanceTestGap,
+                "disaster-disorder chain is proven by focused pressure-chain tests rather than this stress seed"),
+            ["WorldSettlements.EpidemicOutbreak"] = new(
+                EventContractHealthKind.FutureContract,
+                "epidemic outbreak is reserved for fuller disease, relief, household, and memory contracts"),
+            ["WorldSettlements.ForceStationChanged"] = new(
+                EventContractHealthKind.FutureContract,
+                "force station movement is reserved for fuller force/order spatial contracts"),
+            ["WorldSettlements.IllicitRouteExposed"] = new(
+                EventContractHealthKind.FutureContract,
+                "illicit-route exposure is reserved for fuller black-route and office/order contracts"),
+            ["WorldSettlements.ImperialRhythmChanged"] = new(
+                EventContractHealthKind.AcceptanceTestGap,
+                "imperial-rhythm chain is proven by focused amnesty-disorder tests rather than this stress seed"),
+            ["WorldSettlements.NodeVisibilityDiscovered"] = new(
+                EventContractHealthKind.FutureContract,
+                "hidden-node discovery is reserved for fuller spatial skeleton and order contracts"),
+            ["WorldSettlements.RegimeLegitimacyShifted"] = new(
+                EventContractHealthKind.AcceptanceTestGap,
+                "regime-legitimacy chain is proven by focused pressure-chain tests rather than this stress seed"),
+            ["WorldSettlements.ReliefDelivered"] = new(
+                EventContractHealthKind.FutureContract,
+                "relief delivery is reserved for fuller disaster-relief and household/public-life contracts"),
+            ["WorldSettlements.ReliefWithheld"] = new(
+                EventContractHealthKind.FutureContract,
+                "relief withholding is reserved for fuller disaster-relief and memory/public-life contracts"),
+            ["WorldSettlements.RouteConstraintEmerged"] = new(
+                EventContractHealthKind.DormantSeededPath,
+                "route-constraint emission depends on spatial route conditions not guaranteed by this stress seed"),
             ["WorldSettlements.SeasonalFestivalArrived"] = new(
                 EventContractHealthKind.ProjectionOnlyReceipt,
                 "festival arrival is currently a calendar/public-life receipt"),
@@ -654,6 +816,11 @@ public sealed class TenYearSimulationHealthCheckTests
     private sealed record EventContractHealthClassification(
         EventContractHealthKind Kind,
         string Rationale);
+
+    private sealed record EventContractDebt(
+        string EventKey,
+        string Reason,
+        int? EmittedCount = null);
 
     private sealed record SettlementMonthSample(
         int Month,

@@ -495,3 +495,9 @@ At integration level, verify:
 - Diagnostic key acceptance must prevent false debt caused by double module prefixes such as `OfficeAndCareer.OfficeAndCareer.*`.
 - Architecture acceptance remains strict: v32 must not add event-pool authority, new gameplay rules, command surfaces, persisted state, schema bump, migration, manager/controller layers, `PersonRegistry` expansion, Application/UI/Unity authority, or summary parsing.
 - Save/schema acceptance: v32 diagnostic classifications are runtime/test evidence only and add no persisted fields, no module envelope, no root/module schema version change, no migration, and no save roundtrip change.
+
+## Backend event contract health v33 acceptance - 2026-04-26
+- Ten-year simulation diagnostics must fail when current emitted-without-authority-consumer or declared-but-not-emitted `DomainEvent` debt remains `Unclassified`.
+- Focused integration acceptance must prove the no-unclassified gate rejects a synthetic unclassified debt entry and the 120-month campaign health report passes with current debt explicitly classified.
+- Architecture acceptance must prove the gate lives in diagnostics/tests, does not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastLocalResponseSummary`, and does not create Application/UI/Unity authority.
+- Save/schema acceptance: v33 diagnostic gate is runtime/test evidence only and adds no persisted fields, no module envelope, no root/module schema version change, no migration, and no save roundtrip change.

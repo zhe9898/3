@@ -794,3 +794,9 @@ Current lite note:
 - `PublishedEvents` / `ConsumedEvents` remain module-owned contract declarations; the classification table in integration tests is evidence about current debt, not a new runtime registry or owner-lane ledger.
 - Diagnostics may normalize event keys for display, but no Application/UI/Unity layer may compute module authority from those labels or parse `DomainEvent.Summary`.
 - V32 adds no persisted fields, schema bump, migration, command system, projection surface, `PersonRegistry` expansion, or manager/controller layer.
+
+## 2026-04-26 backend event contract health v33 note
+- V33 adds a no-unclassified diagnostic gate over current ten-year event-contract debt. The gate reads emitted event keys, module `PublishedEvents`, and diagnostic consumer counts; it does not mutate module state or route commands.
+- Current emitted-without-authority-consumer and declared-but-not-emitted debt must classify as projection-only receipt, future contract, dormant seeded path, acceptance-test gap, or alignment bug before the health report is used as evidence.
+- This remains a test/readback boundary guard. It is not an event pool, not an event-chain design body, not an authority registry, and not a UI/Unity command or projection surface.
+- V33 adds no persisted fields, schema bump, migration, command system, projection surface, `PersonRegistry` expansion, or manager/controller layer.

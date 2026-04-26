@@ -1,5 +1,11 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v33 delta - 2026-04-26
+
+- Backend event-contract health v33 turns the v32 classification table into a hard ten-year diagnostic gate: emitted-but-unconsumed and declared-but-not-emitted `DomainEvent` contract debt may no longer remain `Unclassified` in the current health run.
+- V33 adds a debt collector plus `AssertNoUnclassifiedEventContractDebt` in integration diagnostics, and proves the helper rejects synthetic unclassified debt before the health report can be used as evidence.
+- V33 remains diagnostic/test evidence only. It adds no gameplay rule, event-pool authority, command surface, projection wording, persisted state, schema bump, migration, manager/controller layer, Application/UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v32 delta - 2026-04-26
 
 - Backend event-contract health v32 adds explicit ten-year diagnostic classifications for emitted-but-unconsumed and declared-but-not-emitted `DomainEvent` contract debt.

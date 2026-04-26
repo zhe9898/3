@@ -176,6 +176,11 @@ Current backend event contract health v32 note:
 - `SocialMemoryAndRelations` still writes durable residue only from structured aftermath and scoped events; it must not parse diagnostic classification labels, `DomainEvent.Summary`, receipt prose, or projection text.
 - V32 adds no memory namespace, relationship table, residue ledger, schema bump, or migration.
 
+Current backend event contract health v33 note:
+- V33's no-unclassified gate is also diagnostic/test evidence only. It does not create social memories, relationship edges, grudges, favors, shame, fear, obligations, or a durable event-debt ledger.
+- `SocialMemoryAndRelations` still must not parse diagnostic labels, `DomainEvent.Summary`, receipt prose, projection text, `LastInterventionSummary`, or `LastLocalResponseSummary`.
+- V33 adds no memory namespace, relationship table, residue ledger, schema bump, or migration.
+
 ## Typical event reactions
 - `MarriageArranged` may reduce some old tensions and create new obligations
 - `TradeDebtDefaulted` may create shame and property grievance
