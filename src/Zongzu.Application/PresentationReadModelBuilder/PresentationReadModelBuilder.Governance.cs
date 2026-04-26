@@ -448,7 +448,8 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         string nodeLabel = publicLife?.NodeLabel ?? $"Settlement {jurisdiction.SettlementId.Value}";
-        return $"朝议压力读回：{nodeLabel}已有政策窗口读回，官阶{jurisdiction.AuthorityTier}、词牍压{jurisdiction.PetitionPressure}、乡面杠力{jurisdiction.JurisdictionLeverage}；Court后手不直写地方，先由OfficeAndCareer开窗承接。";
+        string policyTone = ResolveCourtPolicyToneReadback(jurisdiction);
+        return $"朝议压力读回：{nodeLabel}已有政策窗口读回；政策语气读回：{policyTone}，官阶{jurisdiction.AuthorityTier}、词牍压{jurisdiction.PetitionPressure}、乡面杠力{jurisdiction.JurisdictionLeverage}；朝廷后手仍不直写地方，先由OfficeAndCareer开窗承接。";
     }
 
     private static string BuildCourtPolicyDispatchReadbackSummary(
@@ -464,7 +465,9 @@ public sealed partial class PresentationReadModelBuilder
         int documentaryWeight = publicLife?.DocumentaryWeight ?? 0;
         int verificationCost = publicLife?.VerificationCost ?? 0;
         int courierRisk = publicLife?.CourierRisk ?? 0;
-        return $"文移到达读回：州县催牒压{dispatchPressure}，文书重{documentaryWeight}，验看成本{verificationCost}，递送风险{courierRisk}；县门执行承接读回仍归OfficeAndCareer，公议读法另由PublicLifeAndRumor读。";
+        string documentDirection = ResolveCourtPolicyDocumentDirectionReadback(publicLife, jurisdiction);
+        string countyPosture = ResolveCourtPolicyCountyPostureReadback(jurisdiction);
+        return $"文移到达读回：文移指向读回：{documentDirection}；县门承接姿态：{countyPosture}；州县催牒压{dispatchPressure}，文书重{documentaryWeight}，验看成本{verificationCost}，递送风险{courierRisk}；县门执行承接读回仍归OfficeAndCareer，公议读法另由PublicLifeAndRumor读。";
     }
 
     private static string BuildCourtPolicyPublicReadbackSummary(
@@ -479,7 +482,8 @@ public sealed partial class PresentationReadModelBuilder
         int noticeVisibility = publicLife?.NoticeVisibility ?? 0;
         int streetTalkHeat = publicLife?.StreetTalkHeat ?? 0;
         int publicLegitimacy = publicLife?.PublicLegitimacy ?? 0;
-        return $"公议读法读回：榜示{noticeVisibility}，街谈{streetTalkHeat}，公议{publicLegitimacy}；Office/PublicLife分读：县门是否落地看OfficeAndCareer，街面怎么传看PublicLifeAndRumor。";
+        string publicReading = ResolveCourtPolicyPublicReadingReadback(publicLife);
+        return $"公议读法读回：公议承压读法：{publicReading}；榜示{noticeVisibility}，街谈{streetTalkHeat}，公议{publicLegitimacy}；Office/PublicLife分读：县门是否落地看OfficeAndCareer，街面怎么传看PublicLifeAndRumor。";
     }
 
     private static string BuildCourtPolicyNoLoopGuardSummary(
@@ -491,7 +495,80 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
-        return "Court-policy防回压：不是本户也不是县门独吞朝廷后账；Court后手不直写地方，Office/PublicLife分读，只显示已投影字段。";
+        return "Court-policy防回压：朝廷后手仍不直写地方；不是本户硬扛朝廷后账，也不是县门独吞朝廷后账；Office/PublicLife分读，只显示已投影字段。";
+    }
+
+    private static string ResolveCourtPolicyToneReadback(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        return jurisdiction.PetitionOutcomeCategory switch
+        {
+            "Stalled" => "催意偏硬，县门实办被胥吏截留",
+            "Delayed" => "催意已到县门，文移仍拖在案牍",
+            "Triaged" => "榜文先行，纸面先承接实办仍薄",
+            "Granted" => "急牍先过，官署暂能接住",
+            _ when jurisdiction.PetitionPressure >= 60 => "词牍压力偏硬，县门需先分轻重",
+            _ when jurisdiction.AdministrativeTaskLoad >= 60 => "案牍压力偏厚，文移先压执行口",
+            _ => "朝议压力转为县门可读的政策窗口",
+        };
+    }
+
+    private static string ResolveCourtPolicyDocumentDirectionReadback(
+        SettlementPublicLifeSnapshot? publicLife,
+        JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        int dispatchPressure = publicLife?.PrefectureDispatchPressure ?? 0;
+        int documentaryWeight = publicLife?.DocumentaryWeight ?? 0;
+
+        if (dispatchPressure >= 12 || documentaryWeight >= 35)
+        {
+            return "州县催牒已压到榜示与递报口";
+        }
+
+        if (jurisdiction.PetitionBacklog >= 12 || jurisdiction.AdministrativeTaskLoad >= 60)
+        {
+            return "文移先指向县门积案和承办次序";
+        }
+
+        return "文移先把朝议压力交给县门承接";
+    }
+
+    private static string ResolveCourtPolicyCountyPostureReadback(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        return jurisdiction.PetitionOutcomeCategory switch
+        {
+            "Stalled" => "胥吏截留，承接姿态偏硬且实办不清",
+            "Delayed" => "县门接牒但拖延，仍需Office后续读回",
+            "Triaged" => "纸面接住，实办薄，先冷却再看",
+            "Granted" => "急牍先过，官署暂缓",
+            _ when jurisdiction.ClerkDependence >= 60 => "胥吏牵制重，县门承接不稳",
+            _ when jurisdiction.AdministrativeTaskLoad >= 60 => "案牍偏重，承接先慢后看",
+            _ => "县门可承接，但结果仍看OfficeAndCareer",
+        };
+    }
+
+    private static string ResolveCourtPolicyPublicReadingReadback(SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (publicLife is null)
+        {
+            return "PublicLifeAndRumor尚无街面投影，只能等待榜示与街谈读回";
+        }
+
+        if (publicLife.PrefectureDispatchPressure >= 14 || publicLife.StreetTalkHeat >= 70)
+        {
+            return "街面把它读成州县催办已压近县门";
+        }
+
+        if (publicLife.PublicLegitimacy < 45 && publicLife.NoticeVisibility >= 35)
+        {
+            return "榜示可见但公信偏虚，街谈仍会追问实办";
+        }
+
+        if (publicLife.NoticeVisibility >= 35)
+        {
+            return "榜示先被看见，公议仍等县门实办";
+        }
+
+        return "公议还在探听，尚未把后账压回本户";
     }
 
     private static bool HasCourtPolicyProcessReadback(

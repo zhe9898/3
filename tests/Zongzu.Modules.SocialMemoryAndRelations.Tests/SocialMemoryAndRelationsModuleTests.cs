@@ -1124,6 +1124,8 @@ public sealed class SocialMemoryAndRelationsModuleTests
                     PetitionBacklog = 20,
                     AdministrativeTaskLoad = 62,
                     PetitionOutcomeCategory = "Stalled",
+                    LastPetitionOutcome = "projection prose must not drive residue",
+                    LastAdministrativeTrace = "政策语气读回 文移指向读回 公议承压读法",
                 },
                 new JurisdictionAuthoritySnapshot
                 {
@@ -1163,6 +1165,10 @@ public sealed class SocialMemoryAndRelationsModuleTests
         Assert.That(residue.Summary, Does.Contain("县门执行读回"));
         Assert.That(residue.Summary, Does.Contain("OfficeAndCareer"));
         Assert.That(residue.Summary, Does.Not.Contain("receipt prose"));
+        Assert.That(residue.Summary, Does.Not.Contain("projection prose must not drive residue"));
+        Assert.That(residue.Summary, Does.Not.Contain("政策语气读回"));
+        Assert.That(residue.Summary, Does.Not.Contain("文移指向读回"));
+        Assert.That(residue.Summary, Does.Not.Contain("公议承压读法"));
         Assert.That(socialState.Memories.Any(static memory => memory.SubjectClanId == new ClanId(2)), Is.False);
         Assert.That(socialState.ClanNarratives.Single(static narrative => narrative.ClanId == new ClanId(1)).FearPressure, Is.GreaterThan(0));
         Assert.That(context.Diff.Entries.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);

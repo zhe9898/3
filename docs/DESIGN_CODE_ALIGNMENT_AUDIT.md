@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v109-v116 court-policy process thickening - 2026-04-27
+
+- Chain 8 now has its first rule-density readback layer over the existing `WorldSettlements.CourtAgendaPressureAccumulated -> OfficeAndCareer.PolicyWindowOpened -> OfficeAndCareer.PolicyImplemented -> PublicLifeAndRumor` path.
+- Player-facing governance, office/docket, desk, and public-life surfaces may read `政策语气读回`, `文移指向读回`, `县门承接姿态`, `公议承压读法`, `朝廷后手仍不直写地方`, and `不是本户硬扛朝廷后账`.
+- Code alignment: `OfficeAndCareer` still owns policy-window and implementation outcome, `PublicLifeAndRumor` owns public interpretation from structured `PolicyImplemented` metadata, Application projects from structured `JurisdictionAuthoritySnapshot` / `SettlementPublicLifeSnapshot` scalar fields, and Unity copies projected fields only.
+- No reader may parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v109-v116 adds no persisted state, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v101-v108 thin-chain closeout audit - 2026-04-26
 
 - The current implemented Renzong thin-chain skeleton is now treated as closed through v100. This means the repository has thin topology, owner-lane handoffs, projection/readback guidance, no-loop guardrails, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema evidence across the public-life/order, Family, Office, Trade/Order canal-window, Force/Campaign, Warfare aftermath, and court-policy process surfaces.

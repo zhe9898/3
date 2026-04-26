@@ -312,11 +312,11 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
                 8,
                 5,
                 -8,
-                $"县门执行读回：胥吏把持，榜示可见但案牍未真落地；分数{score}，胥吏捕获{clerkCapture}，仍回OfficeAndCareer lane，本户不能代修。",
-                $"州牒已催，县门仍被胥吏与积案拖住；外部后账该回OfficeAndCareer lane。",
-                $"县门执行读回：胥吏把持，文移后账未清，押文催县门或改走递报仍需OfficeAndCareer。",
-                $"县门执行读回：胥吏把持，纸面{paperCompliance}，案牍拖{docketDrag}，本户不能代修官署。",
-                $"县门执行读回：captured，窗口压{windowPressure}，案牍拖{docketDrag}，胥吏捕获{clerkCapture}。"),
+                $"政策语气读回：催牒偏硬；县门执行读回：胥吏把持；县门承接姿态：榜示可见但案牍未真落地；分数{score}，胥吏捕获{clerkCapture}，仍回OfficeAndCareer lane，本户不能代修。",
+                $"文移指向读回：州牒已催，县门仍被胥吏与积案拖住；朝廷后手仍不直写地方，外部后账该回OfficeAndCareer lane。",
+                $"公议承压读法：街面把它读成县门被胥吏截留，押文催县门或改走递报仍需OfficeAndCareer。",
+                $"县门承接姿态：胥吏把持，纸面{paperCompliance}，案牍拖{docketDrag}；本户不能代修，不是本户硬扛朝廷后账。",
+                $"公议承压读法：captured，窗口压{windowPressure}，案牍拖{docketDrag}，胥吏捕获{clerkCapture}。"),
 
             DomainEventMetadataValues.PolicyImplementationPaperCompliance => new PolicyImplementationPublicReadback(
                 8,
@@ -324,11 +324,11 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
                 3,
                 2,
                 -2,
-                $"县门执行读回：纸面落地，榜示先过，实办仍薄；分数{score}，纸面{paperCompliance}，仍看OfficeAndCareer lane，本户不能代修。",
-                $"州牒暂见回声，但文移实办仍需OfficeAndCareer lane读回。",
-                $"县门执行读回：纸面落地，仍欠实办后账，可先冷却观察或轻催县门。",
-                $"县门执行读回：纸面落地不等于修好，案牍拖{docketDrag}，本户不能代修官署。",
-                $"县门执行读回：paper-compliance，窗口压{windowPressure}，纸面{paperCompliance}。"),
+                $"政策语气读回：榜文先行；县门执行读回：纸面落地；县门承接姿态：榜示先过，实办仍薄；分数{score}，纸面{paperCompliance}，仍看OfficeAndCareer lane，本户不能代修。",
+                $"文移指向读回：州牒暂见回声，但文移实办仍需OfficeAndCareer lane读回；朝廷后手仍不直写地方。",
+                $"公议承压读法：榜示先被看见，纸面落地仍欠实办后账，可先冷却观察或轻催县门。",
+                $"县门承接姿态：纸面落地不等于修好，案牍拖{docketDrag}；本户不能代修，不是本户硬扛朝廷后账。",
+                $"公议承压读法：paper-compliance，窗口压{windowPressure}，纸面{paperCompliance}。"),
 
             DomainEventMetadataValues.PolicyImplementationRapid => new PolicyImplementationPublicReadback(
                 3,
@@ -336,11 +336,11 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
                 -2,
                 -2,
                 4,
-                $"县门执行读回：急牍先行落地，榜示与案牍暂能接住；分数{score}，仍看OfficeAndCareer lane，本户不能代修其他 lane。",
-                $"州县文移已有回声，眼下宜冷却观察，后续仍看OfficeAndCareer lane。",
-                $"县门执行读回：急牍先过，可先冷却观察；若路面后账未消，仍回各 owner lane。",
-                $"县门执行读回：急牍先过，仍只说明官署这头暂缓，本户不能代修其他 lane。",
-                $"县门执行读回：rapid，窗口压{windowPressure}，分数{score}。"),
+                $"政策语气读回：急牍先过；县门执行读回：急牍先过；县门承接姿态：榜示与案牍暂能接住；分数{score}，仍看OfficeAndCareer lane，本户不能代修其他 lane。",
+                $"文移指向读回：州县文移已有回声，眼下宜冷却观察；朝廷后手仍不直写地方，后续仍看OfficeAndCareer lane。",
+                $"公议承压读法：急牍先过，街面暂缓；若路面后账未消，仍回各 owner lane。",
+                $"县门承接姿态：急牍先过，仍只说明官署这头暂缓；本户不能代修，不是本户硬扛朝廷后账。",
+                $"公议承压读法：rapid，窗口压{windowPressure}，分数{score}。"),
 
             _ => new PolicyImplementationPublicReadback(
                 14,
@@ -348,11 +348,11 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
                 6,
                 4,
                 -5,
-                $"县门执行读回：文移拖在案牍，榜示虽动，实办仍慢；分数{score}，案牍拖{docketDrag}，仍回OfficeAndCareer lane，本户不能代修。",
-                $"州牒催意已到，县门仍拖；外部后账该回OfficeAndCareer lane。",
-                $"县门执行读回：拖在案牍，押文催县门或改走递报仍需OfficeAndCareer。",
-                $"县门执行读回：文移拖延，胥吏捕获{clerkCapture}，本户不能代修官署。",
-                $"县门执行读回：dragged，窗口压{windowPressure}，案牍拖{docketDrag}。"),
+                $"政策语气读回：催意已到县门；县门执行读回：文移拖在案牍；县门承接姿态：榜示虽动，实办仍慢；分数{score}，案牍拖{docketDrag}，仍回OfficeAndCareer lane，本户不能代修。",
+                $"文移指向读回：州牒催意已到，县门仍拖；朝廷后手仍不直写地方，外部后账该回OfficeAndCareer lane。",
+                $"公议承压读法：街面看见文移拖在案牍，押文催县门或改走递报仍需OfficeAndCareer。",
+                $"县门承接姿态：文移拖延，胥吏捕获{clerkCapture}；本户不能代修，不是本户硬扛朝廷后账。",
+                $"公议承压读法：dragged，窗口压{windowPressure}，案牍拖{docketDrag}。"),
         };
     }
 

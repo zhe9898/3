@@ -471,3 +471,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - V101-V108 changes no scheduler behavior. It adds no phase, event drain, command cadence, projection pass, migration path, or runtime authority.
 - The closeout means the v3-v100 thin-chain skeleton has enough scheduler/projection evidence to be treated as closed for topology and readback purposes. It does not mean full historical/social formulas are implemented.
 - Future thickening must still name its cadence, repetition guard, pressure locus, owner module, no-touch boundary, and validation lane. The closeout must not be used as a shortcut for broad fanout, summary parsing, or UI-owned rule work.
+
+## Current backend court-policy process thickening v109-v116 note
+
+- V109-V116 keeps the v37/v93 scheduler shape: `CourtAgendaPressureAccumulated -> PolicyWindowOpened -> PolicyImplemented -> PublicLifeAndRumor` can drain through existing owner-lane handling, with no new phase, event pool, court loop, policy ledger, or same-command SocialMemory write.
+- `OfficeAndCareer` resolves policy tone, document direction, and county-gate implementation posture from existing structured policy-window / implementation metadata and office state. `PublicLifeAndRumor` resolves public interpretation from structured `PolicyImplemented` metadata and public-life scalar state.
+- Application may project `政策语气读回`, `文移指向读回`, `县门承接姿态`, `公议承压读法`, `朝廷后手仍不直写地方`, and `不是本户硬扛朝廷后账` only after owner modules have resolved. UI/Unity copy these fields only.
+- SocialMemory durable residue remains later-month only and must read structured aftermath. The same-month court-policy process must not write SocialMemory, parse projection prose, or treat a household as carrying the court after-account.
