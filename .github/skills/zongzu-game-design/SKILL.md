@@ -33,14 +33,23 @@ Use current code and `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` to distinguish imple
 - a chain is only "current" when real `PublishedEvents`, `ConsumedEvents`, scheduler drain behavior, metadata, off-scope tests, and projection/receipt behavior line up
 - long-run pressure saturation can be intended stress, missing recovery, missing allocation, or diagnostic debt; do not flatten it into a simple tuning problem
 - Unity shell presence does not change product authority: shell surfaces show read models and bounded command affordances, never direct court/world control
-- the current public-life/order closure is committed through v30 on `main`, with v31 as merge/cleanup evidence: v3-v5 establish leverage/cost/readback, SocialMemory residue, and structured Order refusal traces; v6-v11 deepen bounded response affordance/receipt/readback; v12-v18 add home-household local response ownership, memory echo, repeat friction, common-household texture, capacity, tradeoff forecast, and short-term receipt readback; v19 adds projection-only follow-up hints; v20-v30 add owner-lane return, surface, entry, status, outcome, social-residue, residue follow-up, existing-entry echo, receipt closure, and no-loop guard guidance
-- current v19-v30 follow-up and owner-lane readback are playable guidance, not new household omnipotence: they advise repeat, switch, cool down, return to the proper owner lane, or stop re-pressuring the home household from existing structured aftermath
-- treat public-life/order v18-v30 as a rule-driven command / aftermath / SocialMemory / home-household / owner-lane readback loop, not an event-chain or event-pool design
+- the current public-life/order closure is committed through v52 on `main`: v3-v30 close Order / home-household / owner-lane projection readback; v31 is merge/cleanup evidence; v32-v34 harden event-contract diagnostics; v35 links canal-window pressure to Trade/Order owner lanes; v36 links household burden to Family sponsor pressure; v37-v45 add Office/yamen implementation and readback; v46-v52 close Office-lane entry / receipt / residue / no-loop guidance
+- current v19-v52 follow-up and owner-lane readback are playable guidance, not new household omnipotence: they advise repeat, switch, cool down, return to the proper owner lane, or stop re-pressuring the home household from existing structured aftermath
+- treat public-life/order v18-v52 as a rule-driven command / aftermath / SocialMemory / home-household / owner-lane readback loop, not an event-chain or event-pool design
 - v32-v34 are evidence-quality passes for the backend event-contract graph, not new playable loops; they classify debt, gate unclassified debt, and show owner/evidence backlinks without adding runtime authority
-- v35 is a thin playable-world handoff, not a thick new system: canal-window pressure from `WorldSettlements` returns to existing `TradeAndIndustry` route/market state and `OrderAndBanditry` route/order pressure state through structured metadata, deterministic locus selection, and no-touch tests
+- v35-v52 are thin playable-world handoffs/readbacks, not thick new systems: canal-window pressure returns to Trade/Order, household burden returns to Family, and Office/yamen后手 remains in Office through structured metadata, query snapshots, projection fields, no-touch tests, and no schema/ledger/UI authority expansion
 - not every future contract should become immediate gameplay; first classify the debt, then graduate one owner lane only when the player-facing or simulation readback can stay bounded and testable
 - scale budget is part of design: use `SIMULATION_FIDELITY_MODEL.md` focus rings so full fidelity stays near the player or active pressure, while distant society remains alive through summarized pressure and promotion/demotion rules
 - a mechanic is not ready to implement until it names owner, cadence, state, projection, bounded command, resistance/refusal, test proof, and rough cardinality/fanout risk
+
+## External Calibration Anchors
+
+Use outside engineering and accessibility material as design calibration, not as a replacement for Zongzu's product direction:
+- .NET testing guidance reinforces small, behavior-focused design proof: a mechanic should have one clear claim per test lane, not a giant acceptance snapshot as its first proof.
+- .NET diagnostics and performance guidance reinforce naming the hot path and expected cardinality before widening simulation fidelity, adding global scans, or proposing caches.
+- Unity Profiler, object pooling, UI optimization, and assembly-boundary guidance apply to shell implementation and iteration cost; they do not justify moving command resolution, scheduler cadence, or state ownership into Unity.
+- WCAG/Xbox accessibility guidance reinforces that projected consequences must remain readable through contrast, focus order, labels, narration, and non-color cues, even when the surface is spatialized.
+- Historical/source calibration should sharpen pressure carriers and confidence bands; it should not force dense named-person simulation everywhere or turn source facts into fixed event triggers.
 
 ## Use This Skill When
 
@@ -142,6 +151,7 @@ For prompts like `rules driven`, `living world`, `main loop`, `MVP`, `vertical s
 - identify same-month vs delayed consequence
 - identify test and doc impact
 - identify fidelity ring, fanout/cardinality, and performance validation need when the feature scales across settlements, households, actors, routes, or notices
+- identify whether the proposal needs a scheduler cap, one-pass projection index, recurring-demand model, no-touch test, or explicit deferral before it can scale
 
 ## Output Rules
 
@@ -177,6 +187,6 @@ For prompts like `rules driven`, `living world`, `main loop`, `MVP`, `vertical s
 - The scale rule is: focus ring decides precision; prosperity and settlement scale decide pool thickness. A poor nearby household can deserve dense simulation; a rich distant city can remain mostly summarized until pressure or player reach promotes it.
 - Renzong-era and historical-process work should become pressure carriers and windows of possibility, not untouchable cutscenes.
 - A good command asks who executes it, who benefits, who loses face, who remembers, and where backlash can surface.
-- Current public-life order commands should continue to ask that question through the existing lane: the owning module resolves the bounded action, SocialMemory remembers durable social residue when in scope, household responses stay household-bounded, owner-lane return guidance stays projection-only, and shell readback explains leverage/cost/status without granting god control.
+- Current public-life order commands should continue to ask that question through the existing lane: the owning module resolves the bounded action, SocialMemory remembers durable social residue when in scope, household responses stay household-bounded, Family/Office/Order owner-lane return guidance stays projection-only, and shell readback explains leverage/cost/status without granting god control.
 - MVP should feel like sitting in the hall and hearing the world arrive, not sampling disconnected mechanics.
 - Later regions, scenarios, wars, courts, and dynasty-cycle systems should extend the same cadence, pressure, projection, and bounded-command spine.

@@ -35,10 +35,18 @@ Current public-life/order schema anchors:
 - `OfficeAndCareer` schema `7` and `FamilyCore` schema `8` own their response trace fields when their lanes resolve public-life/order pressure
 - `PopulationAndHouseholds` schema `3` owns home-household local response command/aftermath fields
 - `SocialMemoryAndRelations` schema `3` owns durable social residue; later readback paths use existing memory/narrative/climate state unless a new persisted SocialMemory field is added
-- current v19 follow-up affordance hints and v20-v30 owner-lane return/status/outcome/residue/no-loop readback are projection-only and remain no-save/no-schema unless a future cooldown ledger, owner-lane ledger, repeat counter, target field, persisted projection cache, or other new persisted field is introduced
-- current v35 canal-window owner-lane handoff is no-save/no-schema: `canalWindowBefore` / `canalWindowAfter` are runtime event metadata, and `TradeAndIndustry` schema `4`, `OrderAndBanditry` schema `9`, and `WorldSettlements` schema `8` stay unchanged because only existing owned state fields are adjusted
+- current v19-v52 follow-up, owner-lane return/status/outcome/residue/no-loop, Office/yamen readback, and Office-lane closure fields are projection-only and remain no-save/no-schema unless a future cooldown ledger, owner-lane ledger, repeat counter, target field, persisted projection cache, or other new persisted field is introduced
+- current v35-v52 thin handoffs/readbacks are no-save/no-schema unless persisted authority is explicitly added: canal-window metadata is runtime-only, v36 family sponsor pressure reuses `FamilyCore` schema `8`, v37-v52 Office/yamen implementation/readback and Office-lane closure reuse `OfficeAndCareer` schema `7`, `PublicLifeAndRumor` schema `4`, and `SocialMemoryAndRelations` schema `3`
 - performance caches, projection indexes, Unity pooled objects, debug counters, and read-model traversal helpers are no-save/no-schema unless their data is persisted as module-owned authority
 - migration/load cost is a real schema concern: large new histories, denormalized readback ledgers, or content inventories need bounded payload shape, deterministic defaults, and migration tests
+
+## External Calibration Anchors
+
+Use outside engineering guidance to sharpen persistence discipline:
+- .NET diagnostics and performance guidance apply to save load, migration, replay hash refresh, and large manifest/content reads when CPU, GC, allocation, or payload size is the risk.
+- High-performance logging can help hot migration diagnostics, but logs do not become save facts, player receipts, or migration authority.
+- Unity pooling and asset caches are presentation concerns unless data is serialized into a module-owned namespace; pooled objects are never save state.
+- Accessibility/ViewModel labels are runtime presentation fields unless explicitly persisted by an owning module with schema, migration, and round-trip tests.
 
 ## Workflow
 
@@ -120,6 +128,7 @@ Current public-life/order schema anchors:
 - Do not rely on runtime type discovery as the save contract.
 - Do not store UI-only presentation shape as authoritative simulation state.
 - Do not persist projection caches or performance indexes unless they are explicitly module-owned, versioned, invalidated, and tested.
+- Do not persist an optimization just because recomputation is inconvenient; first name recompute cost, cardinality, invalidation point, deterministic backfill, and migration burden.
 - Do not change feature-pack membership without load/manifest tests.
 - Prefer conservative default backfills that preserve deterministic behavior.
 - Do not add migration work where a simple "no persisted shape changed" note is the correct answer.

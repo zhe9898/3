@@ -21,11 +21,20 @@ That does not move authority into Unity:
 - authoritative simulation, scheduler, commands, events, save/load, and read-model composition stay in `src/`
 - `Zongzu.Kernel` and simulation modules must not reference Unity APIs
 - `src/Zongzu.Presentation.Unity` adapts `PresentationReadModelBundle` / ViewModels and must not resolve domain consequences
-- current player-command ViewModels may carry projected leverage, cost, readback, SocialMemory residue, home-household local response, v19 follow-up hint text, and v20-v30 owner-lane return/status/outcome/residue/no-loop readback; Unity shell code copies those fields only and must not query simulation modules directly or calculate owner-lane return guidance
-- current v35 canal-window Trade/Order readback is still outside Unity authority: Unity may bind projected route/market/order-pressure fields, but must not calculate canal exposure, choose affected settlements, inspect module event consumers, or infer command availability from event metadata
+- current player-command and governance/office ViewModels may carry projected leverage, cost, readback, SocialMemory residue, home-household local response, v19-v52 owner-lane / Office-lane readback fields, including `OfficeLaneEntryReadbackSummary`, `OfficeLaneReceiptClosureSummary`, `OfficeLaneResidueFollowUpSummary`, and `OfficeLaneNoLoopGuardSummary`; Unity shell code copies those fields only and must not query simulation modules directly or calculate owner-lane return guidance
+- current v35-v52 canal-window, Family sponsor, and Office/yamen readback is still outside Unity authority: Unity may bind projected route/market/order/family/office fields, but must not calculate canal exposure, sponsor targeting, affected settlements, Office closure, module event consumers, or command availability from event metadata
 - generated shell art currently appears under `unity/Zongzu.UnityShell/Assets/Art/Generated`; Unity asset work must preserve source/provenance manifests and matching `.meta` files
 - Unity performance work should start with the Profiler when behavior changes, then apply shell-only fixes such as cached references, object pooling for repeated notice/marker/UI objects, stable canvas/layer structure, and bounded per-frame work
 - Unity Editor MCP or live editor automation is not assumed available unless explicitly configured for the task
+
+## External Calibration Anchors
+
+Use Unity guidance as shell implementation discipline:
+- Assembly definitions help control Unity-side dependencies and iteration cost; they must preserve the one-way dependency from projected data into presentation.
+- Asset metadata guidance means `.meta` files, GUIDs, import settings, provenance manifests, and generated assets move together under version control.
+- Profiler and Memory Profiler evidence should precede claims about frame, GC, rendering, or memory improvements when Unity behavior changes.
+- Object pooling is for frequently created/destroyed shell rows, markers, and prefabs after churn is expected or measured; it must never pool authoritative simulation state or retained command outcomes.
+- UI optimization guidance maps to stable canvas/layer structure, cached component references, bounded row counts, and no per-frame rule or module queries.
 
 ## Workflow
 
@@ -88,8 +97,8 @@ That does not move authority into Unity:
    - keeps labels, visual grouping, and object grammar traceable to read models
    - has tests for adapter/ViewModel behavior before relying on scene polish
    - moves repeated read-only matching into contracts/read-model helpers when appropriate, not into MonoBehaviours
-- shows public-life/order refusal, response, residue, follow-up, owner-lane return, `承接入口`, `归口状态`, or `归口后读法` readback only when it is already present in projected command receipts, governance lanes, household pressure, owner-lane surfaces, or SocialMemory read models
-- shows canal-window route/market/order readback only when it is already present in projected read models or ViewModels, never by querying `WorldSettlements`, `TradeAndIndustry`, or `OrderAndBanditry` directly
+   - shows public-life/order refusal, response, residue, follow-up, owner-lane return, `承接入口`, `归口状态`, `归口后读法`, or Office-lane closure readback only when it is already present in projected command receipts, governance lanes, household pressure, owner-lane surfaces, Office surfaces, or SocialMemory read models
+   - shows canal-window route/market/order readback only when it is already present in projected read models or ViewModels, never by querying `WorldSettlements`, `TradeAndIndustry`, or `OrderAndBanditry` directly
    - follows Unity assembly and asset metadata guidance for shell organization without moving authority into Unity lifecycle methods
 
 6. Validate the surface.

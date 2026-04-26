@@ -27,15 +27,24 @@ Treat live repo facts as stronger than older plans. As of the current Zongzu lin
 - `MonthlyScheduler` runs prepare, three xun pulses, month pass, bounded fresh-event drain, then projection; same-month chains must prove they pass through that drain
 - `ModuleRunner<TState>` metadata (`AcceptedCommands`, `PublishedEvents`, `ConsumedEvents`, cadence, phase, schema version) is part of the contract surface and must be checked against real handlers/tests
 - read-only helpers on snapshots are allowed when they normalize traversal of existing projection payloads, such as settlement/module notification matching; they must not become ranking, visibility, scheduler, command, or authority policy
-- current public-life/order closure is committed through v30 on `main`; v31 is a merge/branch-cleanup evidence pass; v32-v34 are backend event-contract diagnostic, no-unclassified gate, and evidence-backlink passes; v35 turns `WorldSettlements.CanalWindowChanged` into a thin owner-lane handoff consumed by `TradeAndIndustry` and `OrderAndBanditry`
+- current public-life/order closure is committed through v52 on `main`; v31 is merge/branch-cleanup evidence, v32-v34 are backend event-contract diagnostic/evidence passes, v35 turns `WorldSettlements.CanalWindowChanged` into a thin Trade/Order handoff, v36 returns household burden to `FamilyCore`, v37-v45 implement Office/yamen implementation/readback, and v46-v52 close Office-lane entry / receipt / residue / no-loop guidance
 - `OrderAndBanditry`, `OfficeAndCareer`, `FamilyCore`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` each keep their own command/state/residue authority while `PlayerCommandService` and `PlayerCommandCatalog` route and describe commands
 - current save anchors include `TradeAndIndustry` schema `4`, `WorldSettlements` schema `8`, `OrderAndBanditry` schema `9`, `OfficeAndCareer` schema `7`, `FamilyCore` schema `8`, `PopulationAndHouseholds` schema `3`, and `SocialMemoryAndRelations` schema `3`
 - player-command `LeverageSummary` / `CostSummary` / `ReadbackSummary`, `HouseholdSocialPressure`, `PresentationReadModelBundle.SocialMemories`, and governance/home-household receipt readback are projection/read-model facts only
-- current v19 adds projection-only follow-up affordance hints for repeat/switch/cooldown readback; v20-v30 add projection-only owner-lane return guidance, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, and `闭环防回压` readback over existing structured snapshots
+- current v19-v52 projection readback includes follow-up hints, owner-lane return guidance, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, `闭环防回压`, plus Office-lane `Office承接入口`, `Office后手收口读回`, `Office余味续接读回`, and `Office闭环防回压` over existing structured snapshots
 - `OwnerLaneReturnSurface` is a projection helper, not an owner-lane ledger, cooldown ledger, command resolver, or summary parser; code, docs, architecture tests, integration tests, and Unity/presentation tests are part of the current branch evidence
 - event-contract health diagnostics classify emitted-but-unconsumed and declared-but-not-emitted event debt; they are test/diagnostic evidence only, not scheduler input, runtime authority, event-pool design, or a second rule layer
-- the v35 canal-window handoff uses structured `canalWindowBefore` / `canalWindowAfter` metadata, `IWorldSettlementsQueries`, deterministic exposed-settlement selection, and existing Trade/Order state only; it adds no schema, migration, canal ledger, owner-lane ledger, or UI authority
+- v35-v52 use structured metadata/query snapshots and existing owner state only: canal-window Trade/Order, household-family sponsor pressure, Office policy implementation/readback, and Office-lane closure add no schema, migration, ledger, household target field, `PersonRegistry` expansion, or UI/Unity authority
 - external calibration sources such as Microsoft Learn .NET testing/performance/diagnostics/logging guidance, Unity Profiler/object-pooling/UI optimization guidance, Unity assembly/asset metadata docs, WCAG 2.2, and Xbox Accessibility Guidelines calibrate testability, hot-path discipline, Unity organization, and shell readability; they do not override Zongzu module ownership
+
+## External Calibration Anchors
+
+Use current first-party guidance as calibration, not as authority over the repo:
+- Microsoft Learn .NET unit testing guidance supports fast, isolated, repeatable, self-checking tests; translate this into focused ownership/no-touch/scheduler tests rather than broad snapshots.
+- Microsoft Learn diagnostics and `dotnet-counters` support first-level CPU, GC, allocation, memory, and exception-rate investigation when preview or long-run behavior changes.
+- Microsoft Learn high-performance logging supports source-generated or delegate-cached logging for hot diagnostic paths; logs remain diagnostics and never become player receipts or rule input.
+- Unity assembly definitions, `.meta` files, Profiler, GC, object pooling, and UI optimization guidance apply only to `unity/` and `Zongzu.Presentation.Unity`; they never move authority into MonoBehaviours.
+- WCAG 2.2 and Xbox Accessibility Guidelines calibrate contrast, focus/read order, narration, and semantic labels for shell surfaces; they do not flatten the shell into a web dashboard.
 
 ## Use This Skill When
 
@@ -156,6 +165,9 @@ Treat performance as an architecture boundary, not a late polish pass:
 - performance caches must name owner, invalidation, determinism impact, and save/schema impact; no global mutable cache may become hidden authority
 - Unity hot-path advice applies only to the shell: cache component references, profile before pooling, pool repeated notice/marker/UI objects, and avoid rule work in `Update`
 - migration/load paths count as hot paths when old saves open; schema growth should consider payload size and deterministic default/backfill cost
+- algorithmic changes must state complexity and cardinality before landing: settlements, clans, households, people, routes, events, notices, or Unity objects touched per scheduler pass, projection build, save load, or frame
+- one-pass indexes over already-built snapshots are acceptable at query/projection boundaries; repeated LINQ/global scans in scheduler hot paths or Unity frame loops need evidence and a bounded replacement
+- deterministic ordering is part of architecture. Any sort, tie-break, cap, queue, or fanout rule must be stable across runtimes and seeds.
 
 ## Zongzu-Specific Guidance
 
@@ -165,7 +177,7 @@ Treat performance as an architecture boundary, not a late polish pass:
 - `Zongzu.Scheduler` orders the world and drains events; it should not become the domain brain.
 - Simulation modules own state and rules. They may query other modules, react to events, and emit facts, but they do not directly rewrite another module.
 - The current command seam already exists through module-owned `HandleCommand(...)`; new command logic should prefer that path.
-- For public-life/order work, preserve the current v31 mainline split: each owning module resolves its own command/traces, SocialMemory owns durable social residue, PopulationAndHouseholds owns home-household local response state, and Application/Unity copy projections only. v19 follow-up hints and v20-v30 owner-lane return/status/outcome/residue/no-loop readback remain projection-only and do not become a cooldown ledger, owner-lane ledger, follow-up ledger, command resolver, or rule layer.
+- For public-life/order work, preserve the current v52 mainline split: each owning module resolves its own command/traces, SocialMemory owns durable social residue, PopulationAndHouseholds owns home-household local response state, and Application/Unity copy projections only. v19-v52 follow-up, owner-lane return/status/outcome/residue/no-loop, Office implementation/readback, and Office-lane closure fields remain projection-only and do not become a cooldown ledger, owner-lane ledger, follow-up ledger, command resolver, or rule layer.
 - Application code may route, seed, and assemble, but it should stay thin and avoid becoming a second rules engine.
 - When application or presentation code starts repeating the same visible-selection logic, prefer a projection-local helper or read-only snapshot accessor over copying `LeadItem` / `SecondaryItems` or affordance-scan logic into every caller.
 - When application or presentation code repeats raw notification trace scans, prefer a narrow contracts/read-model helper such as settlement/module scope matching; keep caller-side ordering and UI choice outside the helper.

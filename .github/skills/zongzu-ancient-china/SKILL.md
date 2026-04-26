@@ -23,11 +23,20 @@ Use history to sharpen:
 For Renzong work, distinguish historical/design plausibility from current implementation:
 - `RENZONG_PRESSURE_CHAIN_SPEC.md` is the fuller design target; `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` is the live topology ledger
 - historical pressure becomes code only through module-owned state, structured events, metadata, tests, and projection/read-model surfaces
-- current public-life/order readback phrases such as `县门未落地`, `地方拖延`, `后账仍在`, `社会记忆读回`, `续接提示`, `换招提示`, `冷却提示`, `续接读回`, `外部后账归位`, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, and `闭环防回压` are projection carriers for local yamen friction, route/order repair, clan elder explanation, household cost, owner-lane return, remembered residue, and anti-loop interpretation; they must not become fixed historical event triggers
-- current v35 canal-window language should be treated as historically plausible water-network friction and route-order pressure: useful as a carrier for trade, patrol, private-route, and county road interpretation, but not proof of a universal formula for every Song county
+- current public-life/order readback phrases such as `县门未落地`, `地方拖延`, `后账仍在`, `社会记忆读回`, `续接提示`, `换招提示`, `冷却提示`, `续接读回`, `外部后账归位`, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, `闭环防回压`, `Office承接入口`, `Office后手收口读回`, `Office余味续接读回`, and `Office闭环防回压` are projection carriers for local yamen friction, route/order repair, clan elder explanation, household cost, owner-lane return, remembered residue, and anti-loop interpretation; they must not become fixed historical event triggers
+- current v35-v52 language should be treated as historically plausible pressure-carrier wording, not universal formula proof: canal-window friction can carry trade/order pressure, household burden can carry sponsor-clan pressure, and Office/yamen后手 can carry document/clerk delay readback without making every Song county identical
 - current shell and Unity surfaces may show court, frontier, disaster, office, public-life, and campaign pressure as objects/notices/boards, but they must not resolve historical authority in UI code
 - historical fidelity must stay scale-aware: use dense named actors only where pressure, player reach, or source confidence justifies it; use county/route/office pressure summaries elsewhere
 - if a historical correction changes a label or descriptor only, use `zongzu-content-authoring`; if it changes a chain, use `zongzu-pressure-chain`; if it changes persistence, use `zongzu-save-and-schema`
+
+## External Calibration Anchors
+
+Use outside history and implementation material as calibration with confidence bands:
+- Historical sources calibrate period, region, institution, route, office, and social practice; they do not by themselves prove a module formula, save field, or scripted event.
+- CHGIS-style geography can discipline map/topology/provenance; it does not prove travel cost, market intensity, disaster exposure, or player visibility without a Zongzu rule path.
+- CBDB-style person data can discipline named carriers, offices, kinship, postings, and networks; it does not require full-fidelity named agents everywhere.
+- Performance and fidelity budgets matter to history: dense named actors belong near focus rings, player reach, pressure chains, or high-confidence carriers; distant society may remain summarized until promoted.
+- Accessibility and shell guidance matter to historical presentation: period language should remain readable, narratable, and traceable to projected state.
 
 ## Use This Skill When
 

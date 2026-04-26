@@ -36,12 +36,20 @@ The current repository has both a pure C# presentation adapter layer and a minim
 - presentation tests: `tests/Zongzu.Presentation.Unity.Tests`
 - player-command affordance and receipt surfaces now include projected `LeverageSummary`, `CostSummary`, and `ReadbackSummary`
 - public-life/order v18 readback may include `PresentationReadModelBundle.SocialMemories`, `HouseholdSocialPressure`, governance recent-receipt summaries, and home-household local response receipt text
-- current v19 adds projection-only follow-up hints for repeat/switch/cooldown affordances; v20-v30 add projection-only owner-lane return guidance, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, and `闭环防回压`; shell surfaces may show those hints only from projected affordance/readback fields
-- current v35 canal-window Trade/Order results are module/projection state; shell surfaces may display projected route, market, canal, private-route, or order-pressure readback, but may not compute route exposure, water-route selection, event-consumer status, or owner-lane outcomes
+- current v19-v52 adds projection-only follow-up hints, owner-lane return/status/outcome/residue/no-loop readback, Office/yamen implementation readback, and Office-lane closure fields such as `OfficeLaneEntryReadbackSummary`, `OfficeLaneReceiptClosureSummary`, `OfficeLaneResidueFollowUpSummary`, and `OfficeLaneNoLoopGuardSummary`; shell surfaces may show those hints only from projected affordance/readback fields
+- current v35-v52 Trade/Order, Family sponsor, and Office/yamen results are module/projection state; shell surfaces may display projected route, market, canal, family, office, or order-pressure readback, but may not compute route exposure, sponsor targeting, Office closure, event-consumer status, or owner-lane outcomes
 - WCAG 2.2 and Xbox Accessibility Guidelines calibrate contrast, focus/read order, semantic labels, status announcements, and narration parity for shell surfaces; they do not turn the shell into a generic dashboard
 - Unity UI performance guidance calibrates shell implementation only: split static/dynamic canvas work when needed, avoid per-frame layout/raycast churn, use precomputed ViewModels/projection contexts, and never scan long simulation histories from a visible surface
 
 Unity Editor MCP / live editor automation is not assumed available unless explicitly configured. Most shell work should be proven first through read-model, adapter, and presentation tests.
+
+## External Calibration Anchors
+
+Use outside shell guidance only after preserving Zongzu's object-anchored surface grammar:
+- WCAG/Xbox guidance maps to readable hall/desk/notice objects: contrast, non-color cues, focus order, semantic labels, state values, and narration parity.
+- Unity UI optimization maps to bounded display counts, stable anchors, precomputed ViewModels, one-pass projection contexts, and avoiding repeated layout/raycast churn.
+- Unity Profiler evidence is for real Unity implementation/frame risks; pure read-model or copy changes usually need adapter/presentation tests instead.
+- .NET performance guidance applies to projection builders and adapters when a surface can grow across notices, households, routes, offices, or memories.
 
 ## Use This Skill When
 
@@ -95,11 +103,11 @@ Unity Editor MCP / live editor automation is not assumed available unless explic
    - what the main spatial anchor is
    - what consequence or pressure is being projected
    - what stays secondary, ambient, or debug-only
-- which module/read model owns the information
-- which adapter/ViewModel should carry the display shape
-- what test or screenshot/check should protect the behavior
-- whether repeated shell-side lookup should become a shared projection context or read-only snapshot helper instead of being re-derived in every adapter/test
-- whether the surface needs a bounded display count, one-pass read-model index, virtualized list, pooled Unity objects, or profiler check because it can grow across settlements, notices, households, or route markers
+   - which module/read model owns the information
+   - which adapter/ViewModel should carry the display shape
+   - what test or screenshot/check should protect the behavior
+   - whether repeated shell-side lookup should become a shared projection context or read-only snapshot helper instead of being re-derived in every adapter/test
+   - whether the surface needs a bounded display count, one-pass read-model index, virtualized list, pooled Unity objects, or profiler check because it can grow across settlements, notices, households, or route markers
 
 ## Short Prompt Expansion
 
@@ -141,7 +149,7 @@ For prompts like `great hall`, `desk sandbox`, `hall surface`, `notice tray`, `2
 - Desk sandbox is a local-world board with topology, routes, pressure, visibility, and reach, not a giant minimap or static infographic.
 - Notice tray separates urgent, consequential, and background pressure cleanly.
 - Public-life surfaces show reputation, rumor, visibility, and public pressure without becoming free-form prose.
-- Public-life/order shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, v19 follow-up hints, and v20-v30 owner-lane return/status/outcome/residue/no-loop readback, but only by displaying projected read-model fields.
+- Public-life/order shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, v19-v52 follow-up/owner-lane/Office-lane readback, but only by displaying projected read-model fields.
 - Conflict vignette should feel like aftermath and consequence.
 - Campaign-lite board is route, front, posture, supply, and aftermath pressure; it is later and scale-gated.
 - Debug panels may expose internals, but player-facing surfaces should turn state into readable consequence and bounded action.

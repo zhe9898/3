@@ -20,12 +20,20 @@ Current content-bearing surfaces include:
 - authored/generated content under `content/`
 - player-facing module summaries, event summaries, projection copy, and ViewModel labels in `src/`
 - Unity shell labels/assets under `unity/Zongzu.UnityShell` only when presentation assets are actually touched
-- current public-life/order readback wording is downstream projection text; examples include `社会记忆读回`, `县门未落地`, `地方拖延`, `后账仍在`, `续接提示`, `换招提示`, `冷却提示`, `续接读回`, `外部后账归位`, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, and `闭环防回压`
+- current public-life/order readback wording is downstream projection text; examples include `社会记忆读回`, `县门未落地`, `地方拖延`, `后账仍在`, `续接提示`, `换招提示`, `冷却提示`, `续接读回`, `外部后账归位`, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, `闭环防回压`, `Office承接入口`, `Office后手收口读回`, `Office余味续接读回`, `Office闭环防回压`, and `本户不再代修`
 - current canal/route/order wording such as `漕渠窗口`, `商路读数`, `巡丁`, `私路`, `护路`, and `路面压力` should remain projection or diagnostic wording unless a module-owned rule explicitly reads structured data for it
 - generated Unity art/content under `unity/Zongzu.UnityShell/Assets/Art/Generated` needs source/provenance manifests and `.meta` discipline, but it must not become simulation authority
 - authored content and generated assets need cardinality discipline: large tables, descriptor banks, image sets, or localization surfaces should declare stable IDs, provenance, validation path, and whether the runtime reads them as rules-data or presentation-only content
 
 Player-facing text should enter as source/module/read-model wording when practical; do not rely on Unity-only replacement passes to make authoritative summaries setting-appropriate. Debug/migration/diagnostic wording may stay modern and explicit.
+
+## External Calibration Anchors
+
+Use external material to improve content operations, not to make prose authoritative:
+- Unity asset metadata and project-organization guidance calibrate generated art/content handling: keep `.meta` files, provenance, naming, and folder intent stable.
+- WCAG/Xbox accessibility guidance calibrates player-facing copy and labels: important meaning needs contrast, non-color cues, semantic labels, and narration-friendly summaries.
+- Historical source calibration should record period, region, source confidence, and abstraction level when a descriptor becomes a pressure carrier or player-facing label.
+- Performance guidance applies to content scale: large descriptor banks should parse once, validate deterministically, expose stable IDs, and avoid becoming an unbounded runtime event pool.
 
 ## Workflow
 
@@ -102,9 +110,10 @@ Player-facing text should enter as source/module/read-model wording when practic
 - Preserve existing Chinese text exactly unless explicitly editing the wording.
 - Use UTF-8 and treat mojibake as a real bug.
 - Do not put authoritative rules in prose.
-- Do not infer accepted, partial, refused, repeated, switched, or cooled-down outcomes from prose; use structured owner-module trace fields, household snapshots, and SocialMemory read models.
+- Do not infer accepted, partial, refused, repeated, switched, cooled-down, Office-closed, or Family-guaranteed outcomes from prose; use structured owner-module trace fields, household snapshots, jurisdiction snapshots, FamilyCore snapshots, and SocialMemory read models.
 - Do not let content packs bypass module ownership, schema, manifest, or migration rules.
 - Do not use a large descriptor table as a disguised event pool; if code reads it, it needs stable IDs, validation, bounds, and an owner.
+- Do not make localization, generated-text inventories, or asset manifests grow without provenance, expected count, load path, and validation ownership.
 - Do not make narrative notifications the cause of state changes.
 - Prefer descriptors that expose pressure, actor incentives, place, office, memory, and consequence.
 - Prefer historically grounded language over modern administrative or genre shorthand.

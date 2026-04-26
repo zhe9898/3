@@ -25,8 +25,16 @@ Use live code facts before accepting docs as current:
 - performance/complexity proof is part of chain proof: every broad-to-local chain should name fanout, affected locus, no-touch boundary, scheduler drain cap, and whether the path is edge-triggered or recurring demand
 - current public-life/order closure is intentionally rule-driven rather than event-pool driven: commands mutate only their owning module's structured aftermath, later modules read through query seams when in scope, SocialMemory writes durable residue inside its own state, and projections/Unity copy the resulting readback
 - v3-v11 leverage/cost/readback/response fields are projection or owner-module traces; v12 adds `PopulationAndHouseholds` schema `3` home-household local response state; v13-v18 reuse existing schema seams for SocialMemory echo, repeat friction, capacity, tradeoff, and short-term receipt readback
-- current v19-v30 adds projection-only follow-up affordance hints, owner-lane return guidance, `承接入口`, `归口状态`, `归口后读法`, `社会余味读回`, `现有入口读法`, `后手收口读回`, and `闭环防回压`; v31 is merge/cleanup only. Keep the proof framed as projected owner-state readback with architecture, integration, Unity/presentation, and no-summary-parsing evidence
-- current v35 canal-window thin chain is the live example for graduating future-contract debt: `WorldSettlements.CanalWindowChanged` carries structured `canalWindowBefore` / `canalWindowAfter` metadata; `TradeAndIndustry` mutates existing market/route/black-route ledger state; `OrderAndBanditry` mutates existing route/order pressure state; off-scope route/settlement tests and diagnostic evidence prove the handoff
+- current v19-v52 adds projection-only follow-up affordance hints, owner-lane return/status/outcome/residue/no-loop readback, Office/yamen implementation readback, and Office-lane closure cues such as `Office承接入口`, `Office后手收口读回`, `Office余味续接读回`, and `Office闭环防回压`. Keep the proof framed as projected owner-state readback with architecture, integration, Unity/presentation, and no-summary-parsing evidence
+- current v35-v52 thin-chain examples graduate one owner lane at a time: canal-window pressure returns to Trade/Order, household burden returns to Family sponsor pressure, and Office/yamen后手 remains in Office. Each uses structured metadata/query snapshots, existing owner state, off-scope/no-touch tests, and no schema/ledger/UI authority expansion
+
+## External Calibration Anchors
+
+Use outside material to harden proof quality:
+- .NET unit-test guidance maps to small pressure-chain tests: one source, one locus, one owner mutation or readback, and one no-touch assertion before broad acceptance proof.
+- .NET diagnostics and `dotnet-counters` are useful when chain fanout, scheduler drain, allocation rate, exception rate, or long-run health is the real risk; they are not needed for projection-only wording changes.
+- Performance guidance should translate into cardinality and complexity notes: affected settlements, households, offices, routes, events, notices, and projection rows touched per month.
+- Unity and accessibility guidance apply after the read model exists: shell surfaces may visualize chain readback, but may not calculate pressure propagation or owner-lane status.
 
 ## Workflow
 
@@ -107,9 +115,10 @@ Use live code facts before accepting docs as current:
 - Do not call a chain complete when only one module emits an event.
 - Do not turn court, frontier, disaster, or regime pressure into a fixed scripted timeline.
 - Do not describe the public-life/order refusal/response/owner-lane readback loop as an event-chain unless the implementation actually moves through emitted command-time events; the current path is owner-command aftermath -> query/readback seam -> SocialMemory, household-owned residue/projection, or owner-lane return projection.
-- Do not call event-contract diagnostic classification itself a pressure chain; v32-v34 are graph evidence, while v35 is an actual thin handoff because owner modules consume the event and mutate their own state.
+- Do not call event-contract diagnostic classification itself a pressure chain; v32-v34 are graph evidence, while v35-v52 are actual thin handoff/readback passes only where owner modules consume/mutate their own state or projections expose existing owner-state aftermath.
 - Prefer source pressure -> owned state -> structured event -> read model -> bounded response.
 - Prefer edge events, watermarks, and recurring-demand state over repeating the same high-band shock every month.
 - Prefer explicit no-touch tests for unaffected settlements/modules.
 - Mark future contracts honestly instead of pretending they are consumed today.
 - Do not require full-chain evidence for a task that only claims thin-chain topology.
+- Do not hide algorithmic complexity behind "pressure spreads"; name the cap, watermark, deterministic ordering, affected locus, and off-scope boundary.

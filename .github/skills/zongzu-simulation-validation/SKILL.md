@@ -22,10 +22,18 @@ Useful current validation surfaces include:
 - `ModuleRunner<TState>` metadata for event, cadence, command, schema, and namespace contracts
 - `tests/Zongzu.Presentation.Unity.Tests` for presentation adapter/ViewModel work
 - public-life/order validation on the current branch should cover Order accepted/partial/refused command tests, response-lane owner tests, SocialMemory next-month residue tests, PopulationAndHouseholds local-response tests, schema/migration lanes for `OrderAndBanditry` schema `9`, `OfficeAndCareer` schema `7`, `FamilyCore` schema `8`, and `PopulationAndHouseholds` schema `3`, architecture guards for module-owned command seams, and Unity projection-copy tests
-- current v19-v30 follow-up and owner-lane readback validation should prove projection-only derivation, no SocialMemory prose parsing, no receipt or `DomainEvent.Summary` parsing, no schema bump, no command outcome calculation in Application/UI/Unity, no follow-up/owner-lane ledger, and focused integration/presentation assertions before any full-solution test
+- current v19-v52 follow-up, owner-lane, Office/yamen, and Office-lane closure validation should prove projection-only derivation, no SocialMemory prose parsing, no receipt or `DomainEvent.Summary` parsing, no schema bump, no command outcome calculation in Application/UI/Unity, no follow-up/owner-lane/Office ledger, and focused integration/presentation assertions before any full-solution test
 - current v32-v34 event-contract validation should prove classification coverage, no `Unclassified` debt in the ten-year diagnostic, structured `owner=<module>` / `evidence=<doc-or-test>` readback, and no use of diagnostic output as runtime authority
-- current v35 canal-window validation should prove `WorldSettlements.CanalWindowChanged` has Trade and Order authority consumers, structured metadata beats summary/entity prose, exposed water-route/canal settlements change, off-scope settlements stay untouched, and no schema/migration changed
+- current v35-v52 validation should prove each owner lane separately: canal-window has Trade/Order authority consumers, household burden reaches only sponsor `FamilyCore` pressure, Office implementation/readback stays Office-owned, Office-lane closure is projection-only, structured metadata/query snapshots beat prose, off-scope entities stay untouched, and no schema/migration changed
 - performance validation is evidence-driven: use focused tests for behavior, long-run diagnostics for pressure health, replay/hash checks for determinism, and `dotnet-counters` or profiler output only when CPU, allocation, GC, memory, exception rate, or frame cost is the actual risk
+
+## External Calibration Anchors
+
+- Apply Microsoft Learn unit-test guidance as a Zongzu rule of thumb: tests should be fast, isolated, repeatable, self-checking, and focused on one behavioral claim.
+- Use `dotnet-counters` / .NET diagnostics for first-level runtime evidence when CPU, GC, allocation rate, exception rate, memory, or long-run health is the risk.
+- Prefer high-performance logging patterns only for hot diagnostics; source-generated logging does not replace DomainEvent metadata, receipts, or projections.
+- Use Unity Profiler / Memory Profiler only for Unity shell implementation claims. Pure ViewModel/adapter changes usually need presentation tests, not editor profiling.
+- Accessibility validation should check whether projected meaning survives contrast, focus/read order, semantic labels, and narration, not whether the shell looks like a generic app.
 
 When health diagnostics report events with no authority consumer or declared events that never appear, classify them before changing code: projection-only receipt, dormant/future contract, seeded-path gap, acceptance-test gap, or alignment bug.
 
@@ -92,6 +100,8 @@ When health diagnostics report events with no authority consumer or declared eve
    - for .NET runtime checks, prefer `dotnet-counters`/built-in runtime metrics for first-level CPU, GC, allocation rate, memory, and exception signals
    - for Unity shell implementation, prefer Profiler/Memory Profiler/frame evidence when tooling is configured; do not require it for pure ViewModel or doc changes
    - keep replay inputs fixed when comparing performance runs so a changed workload is not mistaken for an optimization
+   - for scheduler or projection algorithm changes, record touched counts, sort/cap strategy, deterministic tie-breaks, and why a one-pass index or bounded queue is enough
+   - for long-run saturation, distinguish intended historical stress, missing recovery, missing allocation, over-broad fanout, and missing projection before changing formulas
 
    Save/migration:
    - verify root save version, module schema version, manifest membership, migration path, and round-trip tests
