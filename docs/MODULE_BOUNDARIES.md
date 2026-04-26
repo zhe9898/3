@@ -811,3 +811,10 @@ Current lite note:
 - `TradeAndIndustry` may consume that fact to update only existing trade-owned market risk, route risk, blocked shipment, seizure-risk, and black-route ledger fields for water/canal-exposed settlements.
 - `OrderAndBanditry` may consume that fact to update only existing order-owned route pressure, black-route pressure, disorder pressure, suppression demand, and route-shielding fields for water/canal-exposed settlements.
 - V35 handlers choose locus through `IWorldSettlementsQueries`; they must not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastLocalResponseSummary`, and they do not create persisted canal/owner-lane state.
+
+## 2026-04-26 backend household-family burden v36 note
+- `PopulationAndHouseholds` still owns household debt, distress, labor, migration, and local-response traces. Its household burden events are structured facts, not permission for another module to rewrite household state.
+- `FamilyCore` may consume `PopulationAndHouseholds.HouseholdDebtSpiked`, `PopulationAndHouseholds.HouseholdSubsistencePressureChanged`, and `PopulationAndHouseholds.HouseholdBurdenIncreased` through `IPopulationAndHouseholdsQueries.GetRequiredHousehold(...)`, then target only the household `SponsorClanId`.
+- The v36 handler mutates only existing family-owned fields: sponsor-clan charity obligation, support reserve, branch tension, relief sanction pressure, and lifecycle trace/outcome readback.
+- `SocialMemoryAndRelations` is not part of the same-month mutation path. Durable shame/fear/favor/grudge/obligation residue remains its own later structured read/write concern.
+- V36 adds no persisted fields, schema bump, migration, relief ledger, sponsor-lane ledger, household target field, manager/controller layer, `PersonRegistry` expansion, Application/UI/Unity authority, or summary parsing.

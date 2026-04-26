@@ -63,6 +63,7 @@ public sealed class RenzongPressureChainTests
             Id = new HouseholdId(1),
             HouseholdName = "张家",
             SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
             DebtPressure = 55,
             Distress = 50,
             LaborCapacity = 50,
@@ -185,11 +186,23 @@ public sealed class RenzongPressureChainTests
             Id = new HouseholdId(1),
             HouseholdName = "张家",
             SettlementId = new SettlementId(1),
+            SponsorClanId = new ClanId(1),
             DebtPressure = 55,
             Distress = 48,
             LaborCapacity = 80,
             MigrationRisk = 20,
             GrainStore = 50,
+        });
+
+        FamilyCoreState familyState = (FamilyCoreState)states[KnownModuleKeys.FamilyCore];
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang clan",
+            HomeSettlementId = new SettlementId(1),
+            CharityObligation = 6,
+            SupportReserve = 40,
+            BranchTension = 20,
         });
 
         OfficeAndCareerState officeState = (OfficeAndCareerState)states[KnownModuleKeys.OfficeAndCareer];
@@ -230,10 +243,13 @@ public sealed class RenzongPressureChainTests
         Assert.That(yamenIndex, Is.GreaterThan(debtIndex), "Real scheduler must drain household debt into yamen overload.");
 
         PopulationHouseholdState household = popState.Households.Single(static entry => entry.Id == new HouseholdId(1));
+        ClanStateData sponsorClan = familyState.Clans.Single(static entry => entry.Id == new ClanId(1));
         OfficeCareerState official = officeState.People.Single(static entry => entry.PersonId == new PersonId(1));
         SettlementPublicLifeState settlement = publicLifeState.Settlements.Single(static entry => entry.SettlementId == new SettlementId(1));
 
         Assert.That(household.DebtPressure, Is.GreaterThanOrEqualTo(70));
+        Assert.That(sponsorClan.CharityObligation, Is.GreaterThan(6));
+        Assert.That(sponsorClan.LastLifecycleTrace, Does.Contain("税役债压"));
         Assert.That(official.PetitionBacklog, Is.GreaterThanOrEqualTo(60));
         Assert.That(settlement.StreetTalkHeat, Is.GreaterThanOrEqualTo(15));
         Assert.That(

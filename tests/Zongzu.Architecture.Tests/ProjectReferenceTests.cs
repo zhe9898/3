@@ -409,6 +409,39 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Family_household_burden_handoff_must_use_structured_population_queries_only()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.FamilyCore",
+            "FamilyCoreModule.HouseholdBurdenEvents.cs");
+        string source = File.ReadAllText(sourcePath);
+        string familyModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.FamilyCore",
+            "FamilyCoreModule.cs"));
+
+        Assert.That(source, Does.Contain("IPopulationAndHouseholdsQueries"));
+        Assert.That(source, Does.Contain("GetRequiredHousehold"));
+        Assert.That(source, Does.Contain("SponsorClanId"));
+        Assert.That(source, Does.Contain("PopulationEventNames.HouseholdDebtSpiked"));
+        Assert.That(source, Does.Contain("PopulationEventNames.HouseholdSubsistencePressureChanged"));
+        Assert.That(source, Does.Contain("PopulationEventNames.HouseholdBurdenIncreased"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain(".Summary"));
+        Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("PopulationAndHouseholdsState"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+        Assert.That(source, Does.Not.Contain("CooldownLedger"));
+        Assert.That(familyModule, Does.Contain("PopulationEventNames.HouseholdDebtSpiked"));
+        Assert.That(familyModule, Does.Contain("PopulationEventNames.HouseholdSubsistencePressureChanged"));
+        Assert.That(familyModule, Does.Contain("PopulationEventNames.HouseholdBurdenIncreased"));
+    }
+
+    [Test]
     public void Home_household_local_response_projection_must_copy_projected_fields_only()
     {
         string sourcePath = Path.Combine(

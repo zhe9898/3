@@ -168,6 +168,13 @@ public static class DomainEventMetadataKeys
     public const string ExamAcademySignal = "examAcademySignal";
     public const string ExamClanStandingPressure = "examClanStandingPressure";
     public const string ExamKinshipRolePressure = "examKinshipRolePressure";
+    public const string HouseholdId = "householdId";
+    public const string HouseholdDistressSignal = "householdDistressSignal";
+    public const string HouseholdDebtSignal = "householdDebtSignal";
+    public const string FamilyCharityObligationDelta = "familyCharityObligationDelta";
+    public const string FamilySupportReserveDrawdown = "familySupportReserveDrawdown";
+    public const string FamilyBranchTensionDelta = "familyBranchTensionDelta";
+    public const string FamilyReliefSanctionDelta = "familyReliefSanctionDelta";
     public const string MandateConfidence = "mandateConfidence";
     public const string PressureScore = "pressureScore";
     public const string PolicyWindowPressure = "policyWindowPressure";

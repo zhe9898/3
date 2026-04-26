@@ -1,5 +1,11 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v36 delta - 2026-04-26
+
+- Backend household-family burden v36 deepens the first "ordinary household breathes into lineage pressure" priority: structured `PopulationAndHouseholds` household burden facts now return to `FamilyCore` sponsor-clan pressure.
+- `PopulationAndHouseholds` still owns household distress, debt, labor, migration, and local response state. `FamilyCore` reads `IPopulationAndHouseholdsQueries.GetRequiredHousehold(...)`, uses `SponsorClanId`, and mutates only existing family-owned fields such as `CharityObligation`, `SupportReserve`, `BranchTension`, `ReliefSanctionPressure`, and lifecycle readback text.
+- V36 remains a thin pressure-chain hookup, not a thick relief economy, family welfare ledger, command system, event pool, UI rule path, persisted ledger, schema bump, migration, manager/controller layer, or `PersonRegistry` expansion.
+
 ## v35 delta - 2026-04-26
 
 - Backend canal-window v35 removes `WorldSettlements.CanalWindowChanged` from future-contract debt by giving it real `TradeAndIndustry` and `OrderAndBanditry` owner-lane consumers.

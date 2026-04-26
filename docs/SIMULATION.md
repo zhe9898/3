@@ -391,3 +391,10 @@ A new module must declare:
 - what projections it publishes
 
 No module may insert ad hoc hidden execution outside the scheduler.
+
+## Current backend household-family burden v36 note
+
+- V36 uses the existing scheduler event-drain seam: `PopulationAndHouseholds` emits household burden facts, and `FamilyCore` consumes them in the bounded same-month fresh-event pass.
+- The path is `HouseholdDebtSpiked` / `HouseholdSubsistencePressureChanged` / `HouseholdBurdenIncreased` -> `IPopulationAndHouseholdsQueries.GetRequiredHousehold(...)` -> sponsor-clan `FamilyCore` pressure fields.
+- This is not a new scheduler phase, event pool, command system, or hidden recurring demand formula. It is a thin same-month handoff from structured household aftermath into existing family lifecycle pressure.
+- Determinism depends on event type/entity/metadata, query snapshots, and fixed formulas only. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, or local-response summaries.

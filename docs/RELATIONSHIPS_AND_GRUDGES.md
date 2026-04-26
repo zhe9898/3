@@ -252,3 +252,9 @@ The world should support:
 ## Backend canal-window v35 note
 
 `WorldSettlements.CanalWindowChanged` now returns first to `TradeAndIndustry` and `OrderAndBanditry` owner lanes. This does not create immediate shame, favor, fear, obligation, or grudge records. If canal-window pressure later becomes durable social residue, `SocialMemoryAndRelations` must read structured owner aftermath in its own cadence and write its own existing memory state rather than parsing canal event summaries or trade/order receipt prose.
+
+## Backend household-family burden v36 note
+
+`FamilyCore` now receives a thin same-month signal when existing `PopulationAndHouseholds` household burden facts identify a sponsor clan. This is family pressure, not social memory: charity obligation, reserve drawdown, branch tension, and relief sanction pressure remain family-owned lifecycle pressure. It does not immediately create shame, fear, favor, obligation, or grudge records in `SocialMemoryAndRelations`.
+
+If household-family burden later becomes durable social residue, `SocialMemoryAndRelations` must read structured Population/Family aftermath in its own cadence and write its own existing memory state. It must not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, v36 lifecycle wording, or family receipt text.

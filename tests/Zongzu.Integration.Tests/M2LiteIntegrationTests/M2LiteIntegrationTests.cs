@@ -748,9 +748,9 @@ public sealed partial class M2LiteIntegrationTests
 
                 NotificationCount = NarrativeProjectionModule.NotificationRetentionLimit,
 
-                // Pressure tempering kernel: schema v3 SocialMemory ledgers add
+                // Pressure tempering plus current thin owner-lane handoffs add
                 // bounded per-clan/per-person payload to the stress slice.
-                SavePayloadBytes = 126000,
+                SavePayloadBytes = 128000,
 
             },
 

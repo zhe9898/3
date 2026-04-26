@@ -513,3 +513,11 @@ At integration level, verify:
 - Focused module acceptance must prove a closed canal window adjusts only water/canal-exposed Trade state and only water/canal-exposed Order state, with comparable off-scope settlements unchanged.
 - Architecture acceptance must prove the handlers use structured canal-window metadata plus `IWorldSettlementsQueries`, not `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, or `LastLocalResponseSummary`.
 - Save/schema acceptance: v35 adds no persisted fields, no module envelope, no root/module schema version change, no migration, no canal ledger, no owner-lane ledger, no UI/Unity authority, and no save roundtrip change.
+
+## Backend household-family burden v36 acceptance - 2026-04-26
+- `FamilyCore` must declare and consume `PopulationAndHouseholds.HouseholdDebtSpiked`, `PopulationAndHouseholds.HouseholdSubsistencePressureChanged`, and `PopulationAndHouseholds.HouseholdBurdenIncreased` through the scheduler event-drain seam.
+- Focused module acceptance must prove sponsor-clan targeting via `IPopulationAndHouseholdsQueries.GetRequiredHousehold(...)` and `SponsorClanId`, with off-scope clans unchanged and no-sponsor households no-op.
+- Integration acceptance must prove a real monthly tax-season burden can drain into sponsor-clan `FamilyCore` pressure in the same month.
+- Architecture acceptance must prove the handler uses structured event/entity/metadata and population query snapshots only, not `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `PopulationAndHouseholdsState`, foreign mutable state, Application/UI/Unity authority, forbidden manager names, or `PersonRegistry` expansion.
+- SocialMemory acceptance must prove v36 same-month handling does not mutate `SocialMemoryAndRelations`; durable residue remains a later structured read/write concern.
+- Save/schema acceptance: v36 adds no persisted fields, no module envelope, no root/module schema version change, no migration, no relief ledger, no sponsor-lane ledger, no household target field, no SocialMemory field, no UI/Unity authority, and no save roundtrip change.

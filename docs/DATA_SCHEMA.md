@@ -1085,6 +1085,12 @@ Current lite note:
 - the active lite implementation persists one bounded campaign board per participating settlement rather than a free-growing battle log
 - mobilization signals stay campaign-owned once the warfare path is enabled, but they are still derived from upstream read-only force and office projections
 
+Current backend household-family burden v36 note:
+- v36 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, relief ledger, sponsor-lane ledger, household target field, or projection cache.
+- `PopulationAndHouseholds` remains schema `3`; `FamilyCore` remains schema `8`; `SocialMemoryAndRelations` remains schema `3`.
+- New event metadata keys for household-family burden are runtime `DomainEvent` payload only. They are not saved fields and do not require a migration.
+- The v36 handler reuses existing family-owned fields such as charity obligation, support reserve, branch tension, relief sanction pressure, and lifecycle trace/outcome readback.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

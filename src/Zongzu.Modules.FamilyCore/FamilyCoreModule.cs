@@ -64,6 +64,10 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
         DeathCauseEventNames.DeathByViolence,
         // Chain 3 thin slice: exam pass → clan prestige
         EducationAndExamsEventNames.ExamPassed,
+        // V36 thin slice: household tax/grain/frontier burden -> sponsor clan pressure.
+        PopulationEventNames.HouseholdDebtSpiked,
+        PopulationEventNames.HouseholdSubsistencePressureChanged,
+        PopulationEventNames.HouseholdBurdenIncreased,
     ];
 
     public override string ModuleKey => KnownModuleKeys.FamilyCore;
@@ -306,6 +310,7 @@ public sealed partial class FamilyCoreModule : ModuleRunner<FamilyCoreState>
 
     public override void HandleEvents(ModuleEventHandlingScope<FamilyCoreState> scope)
     {
+        DispatchHouseholdBurdenEvents(scope);
         DispatchTradeShockEvents(scope);
         DispatchViolentDeathEvents(scope);
         DispatchExamResultEvents(scope);
