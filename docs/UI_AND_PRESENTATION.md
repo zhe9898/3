@@ -75,6 +75,12 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Court-policy social-memory echo v125-v132 presentation note
+
+Governance, office, docket, desk, and public-life surfaces may show delayed `政策回应余味续接读回` only when it is already present in projected governance/readback fields. The wording should make clear that durable residue came from `OfficeAndCareer/PublicLifeAndRumor` structured aftermath and later `SocialMemoryAndRelations` monthly sediment, not from an Order after-account, a home-household repair path, or a UI-computed policy result.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success or social-memory weight.
+
 ## Wording lanes
 - detailed lane rules, ownership, and authoring workflow live in `WRITING_AND_COPY_GUIDELINES.md`
 - player-facing in-world surfaces should use theme-appropriate wording for the setting rather than modern product-dashboard language

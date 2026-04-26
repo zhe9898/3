@@ -694,6 +694,76 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Court_policy_social_memory_echo_v125_v132_must_remain_structured_and_schema_neutral()
+    {
+        string socialSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.CourtPolicyLocalResponseResidue.cs"));
+        string publicLifeOrderSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.PublicLifeOrderResponseResidue.cs"));
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string socialMemoryKinds = File.ReadAllText(Path.Combine(SrcDir, "Zongzu.Contracts", "SocialMemoryKinds.cs"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-social-memory-echo-v125-v132.md"));
+
+        Assert.That(socialSource, Does.Contain("ApplyCourtPolicyLocalResponseResidue"));
+        Assert.That(socialSource, Does.Contain("office.policy_local_response"));
+        Assert.That(socialSource, Does.Contain("SocialMemoryKinds.OfficePolicyLocalResponseResidue"));
+        Assert.That(socialSource, Does.Contain("IsCourtPolicyLocalResponseCarryover"));
+        Assert.That(socialSource, Does.Contain("JurisdictionAuthoritySnapshot"));
+        Assert.That(socialSource, Does.Contain("LastRefusalResponseCommandCode"));
+        Assert.That(socialSource, Does.Contain("LastRefusalResponseOutcomeCode"));
+        Assert.That(socialSource, Does.Contain("LastRefusalResponseTraceCode"));
+        Assert.That(publicLifeOrderSource, Does.Contain("!IsCourtPolicyLocalResponseCarryover(jurisdiction)"));
+        Assert.That(governanceSource, Does.Contain("政策回应余味续接读回"));
+        Assert.That(governanceSource, Does.Contain("office.policy_local_response"));
+        Assert.That(governanceSource, Does.Contain("TryReadOfficePolicyLocalResponseResidueCause"));
+        Assert.That(socialMemoryKinds, Does.Contain("OfficePolicyLocalResponseResidue"));
+
+        foreach (string source in new[] { socialSource, publicLifeOrderSource, governanceSource })
+        {
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("OfficialNoticeLine"));
+            Assert.That(source, Does.Not.Contain("PrefectureDispatchLine"));
+            Assert.That(source, Does.Not.Contain("LastAdministrativeTrace"));
+            Assert.That(source, Does.Not.Contain("LastPetitionOutcome"));
+            Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("WorldManager"));
+            Assert.That(source, Does.Not.Contain("PersonManager"));
+            Assert.That(source, Does.Not.Contain("CharacterManager"));
+            Assert.That(source, Does.Not.Contain("GodController"));
+            Assert.That(source, Does.Not.Contain("PolicyLedger"));
+            Assert.That(source, Does.Not.Contain("CourtProcessLedger"));
+            Assert.That(source, Does.Not.Contain("DispatchLedger"));
+            Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+            Assert.That(source, Does.Not.Contain("CooldownLedger"));
+            Assert.That(source, Does.Not.Contain("SocialMemoryLedger"));
+            Assert.That(source, Does.Not.Contain("PersonRegistry"));
+        }
+
+        Assert.That(schemaRules, Does.Contain("court-policy social-memory echo v125-v132 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy social-memory echo v125-v132 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No full court engine"));
+        Assert.That(execPlan, Does.Contain("No social-memory ledger"));
+    }
+
+    [Test]
     public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
     {
         string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));

@@ -126,6 +126,8 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
         IOfficeAndCareerQueries? officeQueries = scope.Context.FeatureManifest.IsEnabled(KnownModuleKeys.OfficeAndCareer)
             ? scope.GetRequiredQuery<IOfficeAndCareerQueries>()
             : null;
+        IReadOnlyList<JurisdictionAuthoritySnapshot> officeJurisdictions =
+            officeQueries?.GetJurisdictions() ?? Array.Empty<JurisdictionAuthoritySnapshot>();
 
         IReadOnlyList<ClanSnapshot> clans = familyQueries.GetClans();
         IReadOnlyList<HouseholdPressureSnapshot> households = populationQueries.GetHouseholds();
@@ -213,13 +215,14 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
                 scope,
                 clans,
                 settlementDisorder,
-                officeQueries?.GetJurisdictions() ?? Array.Empty<JurisdictionAuthoritySnapshot>());
+                officeJurisdictions);
         }
 
         ApplyHomeHouseholdLocalResponseResidue(scope, clans, households);
         if (officeQueries is not null)
         {
-            ApplyOfficePolicyImplementationResidue(scope, clans, officeQueries.GetJurisdictions());
+            ApplyOfficePolicyImplementationResidue(scope, clans, officeJurisdictions);
+            ApplyCourtPolicyLocalResponseResidue(scope, clans, officeJurisdictions);
         }
 
         ApplyPublicLifeOrderResponseResidueDrift(scope, clans);

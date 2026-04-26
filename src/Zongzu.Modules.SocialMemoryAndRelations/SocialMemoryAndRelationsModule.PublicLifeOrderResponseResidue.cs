@@ -96,7 +96,8 @@ public sealed partial class SocialMemoryAndRelationsModule
         return jurisdiction.ResponseCarryoverMonths > 0
             && !string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseCommandCode)
             && !string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseOutcomeCode)
-            && !string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseTraceCode);
+            && !string.IsNullOrWhiteSpace(jurisdiction.LastRefusalResponseTraceCode)
+            && !IsCourtPolicyLocalResponseCarryover(jurisdiction);
     }
 
     private static bool HasPublicLifeOrderResponseCarryover(ClanSnapshot clan)

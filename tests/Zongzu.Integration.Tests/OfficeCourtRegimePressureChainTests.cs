@@ -370,6 +370,34 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(receipt.ReadbackSummary, Does.Contain("政策回应入口"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("Court-policy"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("OfficeAndCareer"));
+
+        simulation.AdvanceOneMonth();
+
+        Assert.That(
+            socialState.Memories,
+            Has.Some.Matches<MemoryRecordState>(
+                memory => memory.CauseKey.StartsWith("office.policy_local_response.10.", StringComparison.Ordinal)
+                          && memory.Kind == SocialMemoryKinds.OfficePolicyLocalResponseResidue),
+            "The later SocialMemory pass may read Office's structured local-response aftermath and write durable residue.");
+        Assert.That(
+            socialState.Memories,
+            Has.None.Matches<MemoryRecordState>(
+                memory => memory.CauseKey.StartsWith("order.public_life.response.OfficeAndCareer", StringComparison.Ordinal)),
+            "Court-policy local response residue must not be mislabeled as an Order/PublicLife response debt.");
+
+        MemoryRecordState localResponseResidue = socialState.Memories.Single(
+            memory => memory.CauseKey.StartsWith("office.policy_local_response.10.", StringComparison.Ordinal));
+        Assert.That(localResponseResidue.Summary, Does.Contain("政策回应读回"));
+        Assert.That(localResponseResidue.Summary, Does.Contain("OfficeAndCareer/PublicLifeAndRumor"));
+        Assert.That(localResponseResidue.Summary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(localResponseResidue.Summary, Does.Not.Contain("政策文移续接"));
+
+        PresentationReadModelBundle afterSecond = builder.BuildForM2(simulation);
+        SettlementGovernanceLaneSnapshot afterSecondGovernance =
+            afterSecond.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("政策回应余味续接读回"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("SocialMemoryAndRelations"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("不是本户硬扛朝廷后账"));
     }
 
     [Test]

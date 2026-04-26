@@ -405,6 +405,26 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
+        if (TryReadOfficePolicyLocalResponseResidueCause(residue.CauseKey, out OfficePolicyLocalResponseResidueCause localResponseCause))
+        {
+            string commandLabel = localResponseCause.CommandCode switch
+            {
+                PlayerCommandNames.PressCountyYamenDocument => "县门轻催",
+                PlayerCommandNames.RedirectRoadReport => "递报改道",
+                _ => localResponseCause.CommandCode,
+            };
+            string responseFollowUp = localResponseCause.OutcomeCode switch
+            {
+                PublicLifeOrderResponseOutcomeCodes.Contained => "续接提示：政策回应余味已暂压，仍看Office/PublicLife下月是否接稳。",
+                PublicLifeOrderResponseOutcomeCodes.Escalated => "换招提示：政策回应余味转硬，先换Office-lane办法，不从本户硬补。",
+                PublicLifeOrderResponseOutcomeCodes.Ignored => "冷却提示：政策回应余味被放置，先停重复催压。",
+                PublicLifeOrderResponseOutcomeCodes.Repaired => "冷却提示：政策回应转稳，先等公议和县门读回。",
+                _ => "续接提示：政策回应余味仍看Office/PublicLife后续月读回。",
+            };
+
+            return $"政策回应余味续接读回：{commandLabel}留下{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}；{responseFollowUp} 仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷后账。";
+        }
+
         string category = ReadOfficePolicyResidueCategory(residue.CauseKey);
         string followUp = category switch
         {
@@ -597,11 +617,17 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         string settlementMarker = $".{jurisdiction.SettlementId.Value}.";
+        bool preferLocalResponseResidue = HasStructuredOfficeOwnerLaneResponse(jurisdiction);
         return localOfficeSocialMemories
             .Where(static memory => memory.State == MemoryLifecycleState.Active)
-            .Where(memory => memory.CauseKey.StartsWith("office.policy_implementation.", StringComparison.Ordinal)
-                             && memory.CauseKey.Contains(settlementMarker, StringComparison.Ordinal))
-            .OrderByDescending(static memory => memory.OriginDate.Year)
+            .Where(memory =>
+                (memory.CauseKey.StartsWith("office.policy_implementation.", StringComparison.Ordinal)
+                 || memory.CauseKey.StartsWith("office.policy_local_response.", StringComparison.Ordinal))
+                && memory.CauseKey.Contains(settlementMarker, StringComparison.Ordinal))
+            .OrderByDescending(memory =>
+                preferLocalResponseResidue
+                && memory.CauseKey.StartsWith("office.policy_local_response.", StringComparison.Ordinal))
+            .ThenByDescending(static memory => memory.OriginDate.Year)
             .ThenByDescending(static memory => memory.OriginDate.Month)
             .ThenByDescending(static memory => memory.Weight)
             .ThenBy(static memory => memory.Id.Value)
@@ -612,6 +638,30 @@ public sealed partial class PresentationReadModelBuilder
     {
         string[] parts = causeKey.Split('.');
         return parts.Length >= 4 ? parts[3] : string.Empty;
+    }
+
+    private static bool TryReadOfficePolicyLocalResponseResidueCause(
+        string causeKey,
+        out OfficePolicyLocalResponseResidueCause cause)
+    {
+        cause = default;
+        if (!causeKey.StartsWith("office.policy_local_response.", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        string[] parts = causeKey.Split('.');
+        if (parts.Length < 6)
+        {
+            return false;
+        }
+
+        cause = new OfficePolicyLocalResponseResidueCause(
+            SettlementId: parts[2],
+            CommandCode: parts[3],
+            OutcomeCode: parts[4],
+            TraceCode: string.Join(".", parts.Skip(5)));
+        return true;
     }
 
     private static bool IsOfficeImplementationCategory(string category)
@@ -709,7 +759,8 @@ public sealed partial class PresentationReadModelBuilder
         return socialMemories
             .Where(memory =>
                 memory.State == MemoryLifecycleState.Active
-                && memory.CauseKey.StartsWith("office.policy_implementation", StringComparison.Ordinal)
+                && (memory.CauseKey.StartsWith("office.policy_implementation", StringComparison.Ordinal)
+                    || memory.CauseKey.StartsWith("office.policy_local_response", StringComparison.Ordinal))
                 && memory.SourceClanId.HasValue
                 && localClanIds.Contains(memory.SourceClanId.Value))
             .OrderByDescending(static memory => memory.OriginDate.Year)
@@ -718,6 +769,12 @@ public sealed partial class PresentationReadModelBuilder
             .ThenBy(static memory => memory.Id.Value)
             .ToArray();
     }
+
+    private readonly record struct OfficePolicyLocalResponseResidueCause(
+        string SettlementId,
+        string CommandCode,
+        string OutcomeCode,
+        string TraceCode);
 
     private static ClanSnapshot? SelectFamilyLaneClosureClan(IReadOnlyList<ClanSnapshot> localClans)
     {

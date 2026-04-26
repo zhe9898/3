@@ -87,6 +87,13 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current court-policy social-memory echo v125-v132 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, or ledger
+- `SocialMemoryKinds.OfficePolicyLocalResponseResidue` is a code constant only; durable records use existing `MemoryRecordState` fields (`Kind`, `CauseKey`, `Type`, `Subtype`, `Weight`, dates, summary, lifecycle)
+- the structured cause prefix is `office.policy_local_response...`; it distinguishes delayed court-policy local-response residue from `order.public_life.response...` without adding schema
+- if future work needs a new persisted discriminator beyond existing memory fields, it must stop and add schema/migration documentation and tests first
+
 ### Save root
 ```csharp
 public sealed record SaveRoot {

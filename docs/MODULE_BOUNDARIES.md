@@ -28,6 +28,18 @@ Until a dedicated historical-process pack exists:
 
 A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
+## Court-policy social-memory echo v125-v132 boundary note
+
+Chain 8 v125-v132 keeps the same owner lanes while adding a delayed SocialMemory echo for court-policy local response:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns policy windows, county document/report command aftermath, and structured response fields such as `LastRefusalResponseCommandCode`, outcome, trace, and carryover.
+- `PublicLifeAndRumor` owns public interpretation, notice visibility, and street reading.
+- `SocialMemoryAndRelations` may write later durable residue from structured Office aftermath into existing memory/narrative/climate records.
+- Application may route, assemble, and project structured memory cause/type/weight; it must not calculate policy success.
+- Unity may copy projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/social-memory ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, receipt prose, public-life prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
 ## 0. PersonRegistry (Kernel layer, identity-only)
 ### Owns
 - person identity anchors: PersonId, display name, birth date, gender

@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v125-v132 court-policy social-memory echo - 2026-04-27
+
+- Chain 8 now has a delayed SocialMemory echo after the v117-v124 county document/report response. `SocialMemoryAndRelations` writes durable `office.policy_local_response...` residue only during a later monthly pass and only from structured `JurisdictionAuthoritySnapshot` response fields.
+- Code alignment: `OfficeAndCareer` still owns the command aftermath (`LastRefusalResponseCommandCode`, outcome, trace, carryover); `PublicLifeAndRumor` still owns street/public interpretation; `SocialMemoryAndRelations` owns durable fear/shame/favor/debt/grudge residue; Application only projects structured memory cause/type/weight; Unity copies projected governance fields.
+- The residue is explicitly not `order.public_life.response...`, not home-household debt, and not this household hard-carrying court after-accounts. Same-month command handling remains SocialMemory-neutral.
+- No reader may parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v125-v132 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / social-memory ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v117-v124 court-policy local response affordance - 2026-04-27
 
 - Chain 8 now exposes a first bounded local-response affordance layer after the v109-v116 process readback. `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, and `公议降温只读回` describe what the player can try locally without becoming court authority.

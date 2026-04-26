@@ -417,6 +417,30 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_CopiesCourtPolicySocialMemoryEchoWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        const string policyEcho = "政策回应余味续接读回：县门轻催留下人情27；仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷后账。";
+        bundle.GovernanceSettlements =
+        [
+            new SettlementGovernanceLaneSnapshot
+            {
+                SettlementId = new SettlementId(1),
+                OfficeLaneResidueFollowUpSummary = policyEcho,
+                GovernanceSummary = "县门仍在读政策回应。",
+            },
+        ];
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        SettlementNodeViewModel settlement = shell.DeskSandbox.Settlements.Single();
+        OfficeJurisdictionViewModel jurisdiction = shell.Office.Jurisdictions.Single();
+
+        Assert.That(settlement.OfficeLaneResidueFollowUpSummary, Is.EqualTo(policyEcho));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(policyEcho));
+        Assert.That(jurisdiction.OfficeLaneResidueFollowUpSummary, Is.EqualTo(policyEcho));
+    }
+
+    [Test]
     public void Compose_ProjectsSocialMemoryOrderReadbackWithoutShellAuthority()
     {
         PresentationReadModelBundle bundle = CreateBundle();

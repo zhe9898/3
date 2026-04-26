@@ -64,6 +64,19 @@ When changing one of those chains:
 - document whether a same-month follow-on uses the bounded scheduler drain or deliberately carries pressure into the next month
 - preserve the distinction between a thin topology proof and the full social chain
 
+### Chain 8 v125-v132 social-memory echo integration note
+
+Court-policy local response residue is a later-month SocialMemory integration, not a new event-pool path or ledger. `OfficeAndCareer` writes structured command aftermath; `SocialMemoryAndRelations` later reads `JurisdictionAuthoritySnapshot` response fields and may write an `office.policy_local_response...` memory. The same structured aftermath must not also be recorded as `order.public_life.response...`, and it must not be read as home-household debt.
+
+Allowed data path:
+- `OfficeAndCareer` query snapshot -> `SocialMemoryAndRelations` monthly pass -> existing SocialMemory memory/narrative/climate records
+- existing SocialMemory projection -> Application read model -> Unity copy-only ViewModels
+
+Forbidden data path:
+- parsing `DomainEvent.Summary`, command receipt prose, public-life notice/dispatch prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`
+- Application, UI, or Unity calculating whether the policy response succeeded
+- adding a Court module, dispatch/policy/court-process/owner-lane/cooldown/social-memory ledger, or global manager/controller to coordinate the echo
+
 ## Projection rules
 - projections are read models
 - projections may be cached

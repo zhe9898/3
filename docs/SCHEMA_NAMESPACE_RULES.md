@@ -80,6 +80,7 @@ Example:
 - runtime domain-event targeting and cause metadata used by the event-handling seam is also non-persisted and does not extend save namespaces
 - runtime event-contract health classifications used by ten-year diagnostics are also non-persisted and do not extend save namespaces
 - migration preparation must not mutate the caller's source save root; consistency reporting happens on cloned preparation data only
+- court-policy social-memory echo v125-v132 adds no persisted fields; it writes existing `MemoryRecordState` records with a new code constant and structured `CauseKey` only
 
 ## Versioning rules
 - root save uses one root version integer
@@ -91,7 +92,7 @@ Example:
 - `WorldSettlements` uses namespace `WorldSettlements` with schema version `8` for the active world-settlement slice plus chain-6 flood-disaster and chain-5 frontier-strain declaration watermark state
 - `FamilyCore` uses namespace `FamilyCore` with schema version `8`; v53-v60 Family-lane closure readback reads existing clan elder explanation, household guarantee, lineage-house face, sponsor pressure, and owner-response trace fields and adds no Family state
 - `PopulationAndHouseholds` uses namespace `PopulationAndHouseholds` with schema version `3`
-- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `3` for clan emotional climate, person pressure-tempering ledgers, public-life order accepted/refused/partial/response residue, later response-residue decay/hardening, v8 actor-countermove back-pressure inputs, v13 home-household local response residue, and v14 home-household repeat-friction inputs stored in existing memory/narrative/climate records. v15 common-household response texture through v30 owner-lane closure audit read existing fields/projections and add no SocialMemory state. V46-V52 Office-lane closure readback and v53-v60 Family-lane closure readback also read existing residue snapshots and add no SocialMemory state.
+- `SocialMemoryAndRelations` uses namespace `SocialMemoryAndRelations` with schema version `3` for clan emotional climate, person pressure-tempering ledgers, public-life order accepted/refused/partial/response residue, later response-residue decay/hardening, v8 actor-countermove back-pressure inputs, v13 home-household local response residue, and v14 home-household repeat-friction inputs stored in existing memory/narrative/climate records. v15 common-household response texture through v30 owner-lane closure audit read existing fields/projections and add no SocialMemory state. V46-V52 Office-lane closure readback and v53-v60 Family-lane closure readback also read existing residue snapshots and add no SocialMemory state. V125-V132 court-policy social-memory echo writes existing memory/narrative/climate fields only and adds no schema.
 - `EducationAndExams` uses namespace `EducationAndExams` with schema version `2`
 - `TradeAndIndustry` uses namespace `TradeAndIndustry` with schema version `4`
 - `PublicLifeAndRumor` uses namespace `PublicLifeAndRumor` with schema version `4` for the active county-public-life slice plus monthly-cadence, venue-channel, and channel-contention descriptors

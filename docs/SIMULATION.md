@@ -38,6 +38,12 @@ This keeps the design aligned with:
 - bounded player intervention
 - ordinary people, debt, illness, labor, and rumor feeling alive instead of being crushed into one large monthly jump
 
+## Current court-policy social-memory echo v125-v132 note
+
+The v125-v132 Chain 8 echo uses the existing monthly cadence. Month N player command handling may write `OfficeAndCareer` structured local-response aftermath, but it must not write durable SocialMemory residue in the same command step. A later `SocialMemoryAndRelations.RunMonth` pass may read structured `JurisdictionAuthoritySnapshot` response fields and write existing memory/narrative/climate records under `office.policy_local_response...`.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, or UI/Unity authority. The simulation proof should cover same-month neutrality, later-month residue, deterministic ordering by settlement/clan, and no prose parsing from receipts, public-life lines, or `DomainEvent.Summary`.
+
 ## Time layers
 
 ### Day authority step
