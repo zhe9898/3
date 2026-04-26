@@ -141,6 +141,7 @@ public sealed partial class PresentationReadModelBuilder
             string officeOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
                 BuildOfficeOwnerLaneReturnSurfaceGuidance(officeOwnerLaneReturnHousehold),
                 BuildOfficeOwnerLaneReturnStatusGuidance(officeOwnerLaneReturnHousehold, jurisdiction, officeOwnerLaneSocialMemories));
+            string officeImplementationGuidance = BuildOfficeImplementationAffordanceGuidance(jurisdiction);
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.PetitionViaOfficeChannels,
                 jurisdiction.SettlementId,
@@ -149,8 +150,8 @@ public sealed partial class PresentationReadModelBuilder
                 canReviewPetitions
                     ? $"积案{jurisdiction.PetitionBacklog}，可先批结一轮。"
                     : "本处暂无待批词状。",
-                leverageSummary: officeOwnerLaneReturnGuidance,
-                readbackSummary: officeOwnerLaneReturnGuidance));
+                leverageSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance)));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.DeployAdministrativeLeverage,
                 jurisdiction.SettlementId,
@@ -159,8 +160,8 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.JurisdictionLeverage >= 12
                     ? $"乡面杠杆{jurisdiction.JurisdictionLeverage}，足可催动里甲与吏胥。"
                     : "此地官箴未足，不宜强行发签。",
-                leverageSummary: officeOwnerLaneReturnGuidance,
-                readbackSummary: officeOwnerLaneReturnGuidance));
+                leverageSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
+                readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance)));
         }
 
         foreach (CampaignMobilizationSignalSnapshot signal in bundle.CampaignMobilizationSignals.OrderBy(static entry => entry.SettlementId.Value))
@@ -258,6 +259,7 @@ public sealed partial class PresentationReadModelBuilder
             string officeOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
                 BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
                 BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction, localSocialMemories));
+            string officeImplementationGuidance = BuildOfficeImplementationAffordanceGuidance(jurisdiction);
             string familyOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
                 BuildFamilyOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
                 BuildFamilyOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, leadClan, localSocialMemories));
@@ -270,7 +272,7 @@ public sealed partial class PresentationReadModelBuilder
                     $"{publicLife.NodeLabel}街谈已热，可先借榜示压住众口。",
                     publicLife.StreetTalkHeat >= 40 || publicLife.PublicLegitimacy < 55,
                     $"榜示分量{publicLife.DocumentaryWeight}，由{jurisdiction.LeadOfficialName}主其晓谕。",
-                    readbackSummary: officeOwnerLaneReturnGuidance,
+                    readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
                     targetLabel: publicLife.NodeLabel);
 
                 yield return BuildPlayerCommandAffordanceSnapshot(
@@ -279,7 +281,7 @@ public sealed partial class PresentationReadModelBuilder
                     $"{publicLife.DominantVenueLabel}消息往来已有迟滞，可先遣吏催报。",
                     publicLife.RoadReportLag >= 36 || publicLife.CourierRisk >= 35,
                     $"递报险数{publicLife.CourierRisk}，查验周折{publicLife.VerificationCost}。",
-                    readbackSummary: officeOwnerLaneReturnGuidance,
+                    readbackSummary: JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
                     targetLabel: publicLife.DominantVenueLabel);
             }
 
@@ -309,7 +311,7 @@ public sealed partial class PresentationReadModelBuilder
                     localClans,
                     localSocialMemories,
                     orderOwnerLaneReturnGuidance,
-                    officeOwnerLaneReturnGuidance,
+                    JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
                     familyOwnerLaneReturnGuidance))
                 {
                     yield return affordance;

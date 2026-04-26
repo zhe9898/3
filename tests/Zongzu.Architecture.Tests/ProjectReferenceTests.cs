@@ -384,6 +384,138 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Office_yamen_readback_spine_must_stay_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string playerCommandSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.cs"),
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.Receipts.cs"),
+        }.Select(File.ReadAllText));
+        string publicLifeSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PublicLifeAndRumor",
+            "PublicLifeAndRumorModule",
+            "PublicLifeAndRumorModule.cs"));
+
+        Assert.That(governanceSource, Does.Contain("BuildOfficeImplementationReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildOfficeImplementationNextStepSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildRegimeOfficeReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildCanalRouteReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildResidueHealthSummary"));
+        Assert.That(governanceSource, Does.Contain("PetitionOutcomeCategory"));
+        Assert.That(governanceSource, Does.Contain("OfficeImplementationReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("OfficeAndCareer lane"));
+        Assert.That(governanceSource, Does.Contain("本户不能代修"));
+        Assert.That(governanceSource, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(governanceSource, Does.Not.Contain("LastExplanation"));
+        Assert.That(governanceSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(governanceSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(governanceSource, Does.Not.Contain("OwnerLaneLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("CooldownLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("PolicyImplementationLedger"));
+
+        Assert.That(playerCommandSource, Does.Contain("BuildOfficeImplementationAffordanceGuidance"));
+        Assert.That(playerCommandSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(playerCommandSource, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(playerCommandSource, Does.Not.Contain("GetMutableModuleState"));
+
+        Assert.That(publicLifeSource, Does.Contain("OfficeAndCareerEventNames.PolicyImplemented"));
+        Assert.That(publicLifeSource, Does.Contain("ApplyPolicyImplementationHeat"));
+        Assert.That(publicLifeSource, Does.Contain("DomainEventMetadataKeys.PolicyImplementationOutcome"));
+        Assert.That(publicLifeSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(publicLifeSource, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(publicLifeSource, Does.Not.Contain("LastExplanation"));
+
+        string officeModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.OfficeAndCareer",
+            "OfficeAndCareerModule",
+            "OfficeAndCareerModule.cs"));
+        string publicLifeModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PublicLifeAndRumor",
+            "PublicLifeAndRumorModule",
+            "PublicLifeAndRumorModule.cs"));
+        string socialModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.cs"));
+        Assert.That(officeModule, Does.Contain("ModuleSchemaVersion => 7"));
+        Assert.That(publicLifeModule, Does.Contain("ModuleSchemaVersion => 4"));
+        Assert.That(socialModule, Does.Contain("ModuleSchemaVersion => 3"));
+    }
+
+    [Test]
+    public void Social_memory_office_policy_residue_must_read_structured_office_snapshots_only()
+    {
+        string sourcePath = Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.OfficePolicyResidue.cs");
+        string source = File.ReadAllText(sourcePath);
+
+        Assert.That(source, Does.Contain("JurisdictionAuthoritySnapshot"));
+        Assert.That(source, Does.Contain("PetitionOutcomeCategory"));
+        Assert.That(source, Does.Contain("AdministrativeTaskLoad"));
+        Assert.That(source, Does.Contain("ClerkDependence"));
+        Assert.That(source, Does.Contain("office.policy_implementation"));
+        Assert.That(source, Does.Contain("SocialMemoryKinds.OfficePolicyImplementationResidue"));
+        Assert.That(source, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(source, Does.Not.Contain("LastExplanation"));
+        Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
+        Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("receipt prose"));
+        Assert.That(source, Does.Not.Contain("外部后账归位"));
+        Assert.That(source, Does.Not.Contain("该走巡丁"));
+        Assert.That(source, Does.Not.Contain("该走县门"));
+        Assert.That(source, Does.Not.Contain("该走族老"));
+        Assert.That(source, Does.Not.Contain("本户不能代修"));
+        Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+    }
+
+    [Test]
+    public void Unity_office_yamen_readback_must_copy_projected_fields_only()
+    {
+        string adapterSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "DeskSandbox", "DeskSandboxShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string viewModelSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "DeskSandbox", "SettlementNodeViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Office", "OfficeJurisdictionViewModel.cs"),
+        }.Select(File.ReadAllText));
+
+        Assert.That(adapterSource, Does.Contain("OfficeImplementationReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("OfficeNextStepReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("RegimeOfficeReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("CanalRouteReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("ResidueHealthSummary"));
+        Assert.That(adapterSource, Does.Not.Contain("Zongzu.Application"));
+        Assert.That(adapterSource, Does.Not.Contain("Zongzu.Modules."));
+        Assert.That(adapterSource, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(adapterSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(adapterSource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(adapterSource, Does.Not.Contain("PetitionOutcomeCategory"));
+
+        Assert.That(viewModelSource, Does.Contain("OfficeImplementationReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("OfficeNextStepReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("RegimeOfficeReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("CanalRouteReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("ResidueHealthSummary"));
+    }
+
+    [Test]
     public void Ordinary_household_order_residue_projection_must_use_structured_after_account_fields()
     {
         string sourcePath = Path.Combine(

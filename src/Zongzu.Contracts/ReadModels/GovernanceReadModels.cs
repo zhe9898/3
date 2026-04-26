@@ -48,6 +48,16 @@ public sealed record SettlementGovernanceLaneSnapshot
 
     public string OrderAdministrativeAftermathSummary { get; init; } = string.Empty;
 
+    public string OfficeImplementationReadbackSummary { get; init; } = string.Empty;
+
+    public string OfficeNextStepReadbackSummary { get; init; } = string.Empty;
+
+    public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
+
+    public string CanalRouteReadbackSummary { get; init; } = string.Empty;
+
+    public string ResidueHealthSummary { get; init; } = string.Empty;
+
     public string GovernanceSummary { get; init; } = string.Empty;
 }
 
@@ -68,6 +78,16 @@ public sealed record GovernanceFocusSnapshot
     public string PublicPressureSummary { get; init; } = string.Empty;
 
     public string PublicMomentumSummary { get; init; } = string.Empty;
+
+    public string OfficeImplementationReadbackSummary { get; init; } = string.Empty;
+
+    public string OfficeNextStepReadbackSummary { get; init; } = string.Empty;
+
+    public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
+
+    public string CanalRouteReadbackSummary { get; init; } = string.Empty;
+
+    public string ResidueHealthSummary { get; init; } = string.Empty;
 
     public string SuggestedCommandName { get; init; } = string.Empty;
 
@@ -133,6 +153,16 @@ public sealed record GovernanceDocketSnapshot
     public string WhyNowSummary { get; init; } = string.Empty;
 
     public string PublicMomentumSummary { get; init; } = string.Empty;
+
+    public string OfficeImplementationReadbackSummary { get; init; } = string.Empty;
+
+    public string OfficeNextStepReadbackSummary { get; init; } = string.Empty;
+
+    public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
+
+    public string CanalRouteReadbackSummary { get; init; } = string.Empty;
+
+    public string ResidueHealthSummary { get; init; } = string.Empty;
 
     public string PhaseLabel { get; init; } = string.Empty;
 

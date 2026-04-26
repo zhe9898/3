@@ -907,6 +907,7 @@ public sealed partial class OfficeAndCareerModule : ModuleRunner<OfficeAndCareer
             {
                 [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseRegime,
                 [DomainEventMetadataKeys.SourceEventType] = regimeShift.EventType,
+                [DomainEventMetadataKeys.SettlementId] = defector.SettlementId.Value.ToString(),
                 [DomainEventMetadataKeys.PersonId] = defector.PersonId.Value.ToString(),
                 [DomainEventMetadataKeys.MandateConfidence] = mandateConfidence.ToString(),
                 [DomainEventMetadataKeys.DefectionRisk] = defector.OfficialDefectionRisk.ToString(),

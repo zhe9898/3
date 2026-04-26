@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Zongzu.Application;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 using Zongzu.Modules.EducationAndExams;
@@ -141,6 +142,90 @@ public sealed class OfficeCourtRegimePressureChainTests
             Array.IndexOf(events, implementations[0]),
             Is.GreaterThan(Array.IndexOf(events, windows[0])),
             "PolicyImplemented must be downstream of PolicyWindowOpened, not a parallel application-layer shortcut.");
+    }
+
+    [Test]
+    public void Chain8_OfficePolicyImplementationProjectsGovernanceReadbackAndNextMonthSocialResidue()
+    {
+        FeatureManifest manifest = BuildManifest(includePublicLife: true);
+        IReadOnlyList<IModuleRunner> modules = BuildModules(includePublicLife: true);
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1022, 6),
+            KernelState.Create(893),
+            manifest,
+            modules);
+
+        SeedWorld(simulation.GetModuleStateForTesting<WorldSettlementsState>(KnownModuleKeys.WorldSettlements));
+        simulation.GetModuleStateForTesting<WorldSettlementsState>(KnownModuleKeys.WorldSettlements)
+            .CurrentSeason.Imperial.MandateConfidence = 30;
+
+        FamilyCoreState familyState = simulation.GetModuleStateForTesting<FamilyCoreState>(KnownModuleKeys.FamilyCore);
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Qinghe Zhang",
+            HomeSettlementId = new SettlementId(10),
+            Prestige = 55,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(1),
+        });
+
+        OfficeAndCareerState officeState = simulation.GetModuleStateForTesting<OfficeAndCareerState>(KnownModuleKeys.OfficeAndCareer);
+        officeState.People.Add(MakeOfficial(1, 10, authorityTier: 3, leverage: 60));
+        officeState.People.Add(MakeOfficial(2, 20, authorityTier: 3, leverage: 10));
+
+        PublicLifeAndRumorState publicLifeState =
+            simulation.GetModuleStateForTesting<PublicLifeAndRumorState>(KnownModuleKeys.PublicLifeAndRumor);
+        publicLifeState.Settlements.Add(MakePublicLife(10));
+        publicLifeState.Settlements.Add(MakePublicLife(20));
+
+        SimulationMonthResult first = simulation.AdvanceOneMonth();
+
+        Assert.That(
+            first.DomainEvents,
+            Has.Some.Matches<IDomainEvent>(
+                e => e.EventType == OfficeAndCareerEventNames.PolicyImplemented
+                     && e.EntityKey == "10"
+                     && e.Metadata[DomainEventMetadataKeys.PolicyImplementationOutcome]
+                     == DomainEventMetadataValues.PolicyImplementationRapid));
+        SettlementPublicLifeState affectedPublicLife =
+            publicLifeState.Settlements.Single(static settlement => settlement.SettlementId == new SettlementId(10));
+        Assert.That(affectedPublicLife.OfficialNoticeLine, Does.Contain("县门执行读回"));
+        Assert.That(affectedPublicLife.OfficialNoticeLine, Does.Contain("OfficeAndCareer"));
+        Assert.That(affectedPublicLife.OfficialNoticeLine, Does.Contain("本户不能代修"));
+
+        SocialMemoryAndRelationsState socialState =
+            simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(KnownModuleKeys.SocialMemoryAndRelations);
+        Assert.That(
+            socialState.Memories,
+            Has.None.Matches<MemoryRecordState>(
+                memory => memory.CauseKey.StartsWith("office.policy_implementation.", StringComparison.Ordinal)),
+            "SocialMemory runs earlier in the same month and must not write immediate command-time residue.");
+
+        PresentationReadModelBundle afterFirst = new PresentationReadModelBuilder().BuildForM2(simulation);
+        SettlementGovernanceLaneSnapshot governance =
+            afterFirst.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(governance.OfficeImplementationReadbackSummary, Does.Contain("县门执行读回"));
+        Assert.That(governance.OfficeImplementationReadbackSummary, Does.Contain("OfficeAndCareer lane"));
+        Assert.That(governance.OfficeNextStepReadbackSummary, Does.Contain("县门/文移后手"));
+        Assert.That(governance.GovernanceSummary, Does.Contain("县门执行读回"));
+        Assert.That(afterFirst.GovernanceDocket.OfficeImplementationReadbackSummary, Does.Contain("县门执行读回"));
+        Assert.That(afterFirst.GovernanceDocket.GuidanceSummary, Does.Contain("县门/文移后手"));
+
+        simulation.AdvanceOneMonth();
+
+        Assert.That(
+            socialState.Memories,
+            Has.Some.Matches<MemoryRecordState>(
+                memory => memory.CauseKey.StartsWith("office.policy_implementation.10.", StringComparison.Ordinal)
+                          && memory.Kind == SocialMemoryKinds.OfficePolicyImplementationResidue),
+            "The next monthly SocialMemory pass may read Office's structured jurisdiction aftermath and write durable residue.");
+        MemoryRecordState residue = socialState.Memories.Single(
+            memory => memory.CauseKey.StartsWith("office.policy_implementation.10.", StringComparison.Ordinal));
+        Assert.That(residue.Summary, Does.Contain("县门执行读回"));
+        Assert.That(residue.Summary, Does.Contain("OfficeAndCareer"));
+        Assert.That(residue.Summary, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(residue.Summary, Does.Not.Contain("DomainEvent.Summary"));
     }
 
     [Test]

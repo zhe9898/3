@@ -1,5 +1,14 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v38-v45 delta - 2026-04-26
+
+- Backend office/yamen readback spine v38-v45 turns v37 `PolicyImplemented` into projected public-life, governance, office-lane, regime/office, route-map, residue-health, and Unity-facing readback without adding a county formula or command system.
+- `PublicLifeAndRumor` consumes structured `PolicyImplemented` / settlement-scoped `OfficeDefected` facts and mutates only existing public-life heat/notice/dispatch/legitimacy/readback fields. It reads metadata, not `DomainEvent.Summary`.
+- `PresentationReadModelBuilder` adds runtime governance fields for `OfficeImplementationReadbackSummary`, `OfficeNextStepReadbackSummary`, `RegimeOfficeReadbackSummary`, `CanalRouteReadbackSummary`, and `ResidueHealthSummary`; Application composes read models only and does not compute command results.
+- `SocialMemoryAndRelations` may write later-month `OfficePolicyImplementationResidue` from structured `JurisdictionAuthoritySnapshot` fields. Same-month command/event handling still does not write SocialMemory.
+- Unity presentation copies the new projected fields into ViewModels and summaries. Unity does not query modules, infer owner lanes, parse receipt prose, or write SocialMemory.
+- Save/schema audit: v38-v45 adds no persisted state, no root/module schema bump, no migration, no policy/yamen/owner-lane/cooldown ledger, no household target field, no manager/god-controller path, and no `PersonRegistry` expansion.
+
 ## v37 delta - 2026-04-26
 
 - Backend office/yamen implementation drag v37 deepens Renzong chain 8 without turning it into a thick court or county formula: `OfficeAndCareer` consumes its own `PolicyWindowOpened` event and emits `PolicyImplemented` after mutating only existing office-owned task, backlog, clerk, leverage, promotion/demotion, and petition-outcome fields.

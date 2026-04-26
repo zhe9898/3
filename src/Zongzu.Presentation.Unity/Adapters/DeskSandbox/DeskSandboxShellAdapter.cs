@@ -53,6 +53,15 @@ internal static class DeskSandboxShellAdapter
 					};
 
 					settlementNode.GovernanceSummary = GovernanceShellAdapter.BuildSettlementGovernanceSummary(settlementNode.GovernanceSummary, governance);
+					if (governance != null)
+					{
+						settlementNode.OfficeImplementationReadbackSummary = governance.OfficeImplementationReadbackSummary;
+						settlementNode.OfficeNextStepReadbackSummary = governance.OfficeNextStepReadbackSummary;
+						settlementNode.RegimeOfficeReadbackSummary = governance.RegimeOfficeReadbackSummary;
+						settlementNode.CanalRouteReadbackSummary = governance.CanalRouteReadbackSummary;
+						settlementNode.ResidueHealthSummary = governance.ResidueHealthSummary;
+					}
+
 					return settlementNode;
 				})
 				.ToArray()

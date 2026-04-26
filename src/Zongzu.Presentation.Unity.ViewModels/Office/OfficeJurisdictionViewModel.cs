@@ -15,5 +15,15 @@ public sealed class OfficeJurisdictionViewModel
 	public string PetitionOutcomeCategory { get; set; } = string.Empty;
 
 	public string LastPetitionOutcome { get; set; } = string.Empty;
+
+	public string OfficeImplementationReadbackSummary { get; set; } = string.Empty;
+
+	public string OfficeNextStepReadbackSummary { get; set; } = string.Empty;
+
+	public string RegimeOfficeReadbackSummary { get; set; } = string.Empty;
+
+	public string CanalRouteReadbackSummary { get; set; } = string.Empty;
+
+	public string ResidueHealthSummary { get; set; } = string.Empty;
 }
 }

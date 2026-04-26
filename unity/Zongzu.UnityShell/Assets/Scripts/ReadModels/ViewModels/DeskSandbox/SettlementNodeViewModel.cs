@@ -19,6 +19,16 @@ public sealed class SettlementNodeViewModel
 
 	public string GovernanceSummary { get; set; } = string.Empty;
 
+	public string OfficeImplementationReadbackSummary { get; set; } = string.Empty;
+
+	public string OfficeNextStepReadbackSummary { get; set; } = string.Empty;
+
+	public string RegimeOfficeReadbackSummary { get; set; } = string.Empty;
+
+	public string CanalRouteReadbackSummary { get; set; } = string.Empty;
+
+	public string ResidueHealthSummary { get; set; } = string.Empty;
+
     public string CampaignSummary { get; set; } = string.Empty;
 
     public string AftermathSummary { get; set; } = string.Empty;

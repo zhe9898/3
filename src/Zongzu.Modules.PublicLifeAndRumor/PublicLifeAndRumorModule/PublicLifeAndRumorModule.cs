@@ -53,6 +53,8 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
         OfficeAndCareerEventNames.YamenOverloaded,
         OrderAndBanditryEventNames.DisorderSpike,
         OfficeAndCareerEventNames.ClerkCaptureDeepened,
+        OfficeAndCareerEventNames.PolicyImplemented,
+        OfficeAndCareerEventNames.OfficeDefected,
     ];
 
     public override IReadOnlyCollection<string> ConsumedEvents => ConsumedEventNames;
@@ -108,6 +110,14 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
 
                 case OfficeAndCareerEventNames.ClerkCaptureDeepened:
                     ApplyClerkCaptureHeat(scope, domainEvent);
+                    break;
+
+                case OfficeAndCareerEventNames.PolicyImplemented:
+                    ApplyPolicyImplementationHeat(scope, domainEvent);
+                    break;
+
+                case OfficeAndCareerEventNames.OfficeDefected:
+                    ApplyOfficeDefectionHeat(scope, domainEvent);
                     break;
             }
         }
@@ -185,6 +195,167 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
         publicLife.LastPublicTrace = $"{pressureTrace}，街谈热度升至{publicLife.StreetTalkHeat}。";
     }
 
+    private static void ApplyPolicyImplementationHeat(
+        ModuleEventHandlingScope<PublicLifeAndRumorState> scope,
+        IDomainEvent domainEvent)
+    {
+        if (!TryResolveEventSettlementId(domainEvent, out SettlementId settlementId))
+        {
+            return;
+        }
+
+        SettlementPublicLifeState? publicLife = scope.State.Settlements
+            .FirstOrDefault(s => s.SettlementId == settlementId);
+        if (publicLife is null)
+        {
+            return;
+        }
+
+        string outcome = domainEvent.Metadata.TryGetValue(
+            DomainEventMetadataKeys.PolicyImplementationOutcome,
+            out string? rawOutcome)
+            ? rawOutcome
+            : DomainEventMetadataValues.PolicyImplementationDragged;
+        int score = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.PolicyImplementationScore);
+        int docketDrag = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.PolicyImplementationDocketDrag);
+        int clerkCapture = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.PolicyImplementationClerkCapture);
+        int paperCompliance = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.PolicyImplementationPaperCompliance);
+        int windowPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.PolicyImplementationWindowPressure);
+
+        PolicyImplementationPublicReadback readback = ResolvePolicyImplementationPublicReadback(
+            outcome,
+            score,
+            docketDrag,
+            clerkCapture,
+            paperCompliance,
+            windowPressure);
+
+        publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + readback.HeatDelta, 0, 100);
+        publicLife.NoticeVisibility = Math.Clamp(publicLife.NoticeVisibility + readback.NoticeDelta, 0, 100);
+        publicLife.PrefectureDispatchPressure = Math.Clamp(publicLife.PrefectureDispatchPressure + readback.DispatchDelta, 0, 100);
+        publicLife.RoadReportLag = Math.Clamp(publicLife.RoadReportLag + readback.RoadLagDelta, 0, 100);
+        publicLife.PublicLegitimacy = Math.Clamp(publicLife.PublicLegitimacy + readback.LegitimacyDelta, 0, 100);
+
+        publicLife.OfficialNoticeLine = readback.NoticeLine;
+        publicLife.PrefectureDispatchLine = readback.DispatchLine;
+        publicLife.ContentionSummary = readback.ContentionSummary;
+        publicLife.ChannelSummary = readback.ChannelSummary;
+        publicLife.LastPublicTrace = readback.Trace;
+    }
+
+    private static void ApplyOfficeDefectionHeat(
+        ModuleEventHandlingScope<PublicLifeAndRumorState> scope,
+        IDomainEvent domainEvent)
+    {
+        if (!TryResolveEventSettlementId(domainEvent, out SettlementId settlementId))
+        {
+            return;
+        }
+
+        SettlementPublicLifeState? publicLife = scope.State.Settlements
+            .FirstOrDefault(s => s.SettlementId == settlementId);
+        if (publicLife is null)
+        {
+            return;
+        }
+
+        int risk = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.DefectionRisk);
+        int mandateDeficit = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.DefectionMandateDeficit);
+        int clerkPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.DefectionClerkPressure);
+        int petitionPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.DefectionPetitionPressure);
+        int heatDelta = Math.Clamp(8 + (risk / 12) + (mandateDeficit / 8), 8, 22);
+        int dispatchDelta = Math.Clamp(4 + (petitionPressure / 8), 4, 14);
+        int legitimacyDelta = -Math.Clamp(2 + (risk / 20), 2, 8);
+
+        publicLife.StreetTalkHeat = Math.Clamp(publicLife.StreetTalkHeat + heatDelta, 0, 100);
+        publicLife.PrefectureDispatchPressure = Math.Clamp(publicLife.PrefectureDispatchPressure + dispatchDelta, 0, 100);
+        publicLife.RoadReportLag = Math.Clamp(publicLife.RoadReportLag + (clerkPressure / 4), 0, 100);
+        publicLife.PublicLegitimacy = Math.Clamp(publicLife.PublicLegitimacy + legitimacyDelta, 0, 100);
+        publicLife.ContentionSummary = $"官员摇摆读回：退避风险{risk}，天命缺口{mandateDeficit}，案牍/胥吏仍在牵制县门。";
+        publicLife.PrefectureDispatchLine = $"州县之间已见官员摇摆，仍需OfficeAndCareer lane继续读回。";
+        publicLife.LastPublicTrace =
+            $"官员摇摆读回：风险{risk}，胥吏压{clerkPressure}，词牍压{petitionPressure}，街谈升温{heatDelta}。";
+    }
+
+    private static bool TryResolveEventSettlementId(IDomainEvent domainEvent, out SettlementId settlementId)
+    {
+        if (domainEvent.Metadata.TryGetValue(DomainEventMetadataKeys.SettlementId, out string? rawSettlementId)
+            && int.TryParse(rawSettlementId, out int metadataSettlementId))
+        {
+            settlementId = new SettlementId(metadataSettlementId);
+            return true;
+        }
+
+        if (int.TryParse(domainEvent.EntityKey, out int entitySettlementId))
+        {
+            settlementId = new SettlementId(entitySettlementId);
+            return true;
+        }
+
+        settlementId = default;
+        return false;
+    }
+
+    private static PolicyImplementationPublicReadback ResolvePolicyImplementationPublicReadback(
+        string outcome,
+        int score,
+        int docketDrag,
+        int clerkCapture,
+        int paperCompliance,
+        int windowPressure)
+    {
+        return outcome switch
+        {
+            DomainEventMetadataValues.PolicyImplementationCaptured => new PolicyImplementationPublicReadback(
+                18,
+                6,
+                8,
+                5,
+                -8,
+                $"县门执行读回：胥吏把持，榜示可见但案牍未真落地；分数{score}，胥吏捕获{clerkCapture}，仍回OfficeAndCareer lane，本户不能代修。",
+                $"州牒已催，县门仍被胥吏与积案拖住；外部后账该回OfficeAndCareer lane。",
+                $"县门执行读回：胥吏把持，文移后账未清，押文催县门或改走递报仍需OfficeAndCareer。",
+                $"县门执行读回：胥吏把持，纸面{paperCompliance}，案牍拖{docketDrag}，本户不能代修官署。",
+                $"县门执行读回：captured，窗口压{windowPressure}，案牍拖{docketDrag}，胥吏捕获{clerkCapture}。"),
+
+            DomainEventMetadataValues.PolicyImplementationPaperCompliance => new PolicyImplementationPublicReadback(
+                8,
+                10,
+                3,
+                2,
+                -2,
+                $"县门执行读回：纸面落地，榜示先过，实办仍薄；分数{score}，纸面{paperCompliance}，仍看OfficeAndCareer lane，本户不能代修。",
+                $"州牒暂见回声，但文移实办仍需OfficeAndCareer lane读回。",
+                $"县门执行读回：纸面落地，仍欠实办后账，可先冷却观察或轻催县门。",
+                $"县门执行读回：纸面落地不等于修好，案牍拖{docketDrag}，本户不能代修官署。",
+                $"县门执行读回：paper-compliance，窗口压{windowPressure}，纸面{paperCompliance}。"),
+
+            DomainEventMetadataValues.PolicyImplementationRapid => new PolicyImplementationPublicReadback(
+                3,
+                8,
+                -2,
+                -2,
+                4,
+                $"县门执行读回：急牍先行落地，榜示与案牍暂能接住；分数{score}，仍看OfficeAndCareer lane，本户不能代修其他 lane。",
+                $"州县文移已有回声，眼下宜冷却观察，后续仍看OfficeAndCareer lane。",
+                $"县门执行读回：急牍先过，可先冷却观察；若路面后账未消，仍回各 owner lane。",
+                $"县门执行读回：急牍先过，仍只说明官署这头暂缓，本户不能代修其他 lane。",
+                $"县门执行读回：rapid，窗口压{windowPressure}，分数{score}。"),
+
+            _ => new PolicyImplementationPublicReadback(
+                14,
+                5,
+                6,
+                4,
+                -5,
+                $"县门执行读回：文移拖在案牍，榜示虽动，实办仍慢；分数{score}，案牍拖{docketDrag}，仍回OfficeAndCareer lane，本户不能代修。",
+                $"州牒催意已到，县门仍拖；外部后账该回OfficeAndCareer lane。",
+                $"县门执行读回：拖在案牍，押文催县门或改走递报仍需OfficeAndCareer。",
+                $"县门执行读回：文移拖延，胥吏捕获{clerkCapture}，本户不能代修官署。",
+                $"县门执行读回：dragged，窗口压{windowPressure}，案牍拖{docketDrag}。"),
+        };
+    }
+
     private static int ResolveClerkCaptureHeatDelta(IDomainEvent domainEvent)
     {
         if (!domainEvent.Metadata.ContainsKey(DomainEventMetadataKeys.ClerkCapturePressure))
@@ -253,6 +424,18 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
             ? parsed
             : 0;
     }
+
+    private readonly record struct PolicyImplementationPublicReadback(
+        int HeatDelta,
+        int NoticeDelta,
+        int DispatchDelta,
+        int RoadLagDelta,
+        int LegitimacyDelta,
+        string NoticeLine,
+        string DispatchLine,
+        string ContentionSummary,
+        string ChannelSummary,
+        string Trace);
 
     private static void RunSettlementPulse(ModuleExecutionScope<PublicLifeAndRumorState> scope, bool emitReadableOutput)
 

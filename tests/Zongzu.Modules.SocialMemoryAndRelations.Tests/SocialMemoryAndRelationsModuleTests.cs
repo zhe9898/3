@@ -1078,6 +1078,98 @@ public sealed class SocialMemoryAndRelationsModuleTests
     }
 
     [Test]
+    public void RunMonth_OfficePolicyImplementationResidue_ReadsStructuredOfficeSnapshotOnly()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(7),
+            Prestige = 55,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(1),
+        });
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(2),
+            ClanName = "Li",
+            HomeSettlementId = new SettlementId(8),
+            Prestige = 80,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(2),
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        queries.Register<IOfficeAndCareerQueries>(new StubOfficeQueries(
+            [
+                new JurisdictionAuthoritySnapshot
+                {
+                    SettlementId = new SettlementId(7),
+                    LeadOfficialName = "Zhang Yuan",
+                    LeadOfficeTitle = "Registrar",
+                    AuthorityTier = 3,
+                    JurisdictionLeverage = 20,
+                    ClerkDependence = 80,
+                    PetitionPressure = 30,
+                    PetitionBacklog = 20,
+                    AdministrativeTaskLoad = 62,
+                    PetitionOutcomeCategory = "Stalled",
+                },
+                new JurisdictionAuthoritySnapshot
+                {
+                    SettlementId = new SettlementId(8),
+                    LeadOfficialName = "Li Wen",
+                    LeadOfficeTitle = "Registrar",
+                    AuthorityTier = 1,
+                    JurisdictionLeverage = 80,
+                    ClerkDependence = 4,
+                    PetitionPressure = 4,
+                    PetitionBacklog = 2,
+                    AdministrativeTaskLoad = 6,
+                    PetitionOutcomeCategory = "Queued",
+                },
+            ]));
+        socialModule.RegisterQueries(socialState, queries);
+
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.OfficeAndCareer, FeatureMode.Lite);
+        KernelState kernelState = KernelState.Create(1412);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 10),
+            manifest,
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        MemoryRecordState residue = socialState.Memories.Single(memory => memory.CauseKey == "office.policy_implementation.7.Stalled");
+        Assert.That(residue.SubjectClanId, Is.EqualTo(new ClanId(1)));
+        Assert.That(residue.Kind, Is.EqualTo(SocialMemoryKinds.OfficePolicyImplementationResidue));
+        Assert.That(residue.Type, Is.EqualTo(MemoryType.Fear));
+        Assert.That(residue.Subtype, Is.EqualTo(MemorySubtype.PowerGrudge));
+        Assert.That(residue.Summary, Does.Contain("县门执行读回"));
+        Assert.That(residue.Summary, Does.Contain("OfficeAndCareer"));
+        Assert.That(residue.Summary, Does.Not.Contain("receipt prose"));
+        Assert.That(socialState.Memories.Any(static memory => memory.SubjectClanId == new ClanId(2)), Is.False);
+        Assert.That(socialState.ClanNarratives.Single(static narrative => narrative.ClanId == new ClanId(1)).FearPressure, Is.GreaterThan(0));
+        Assert.That(context.Diff.Entries.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);
+        Assert.That(context.DomainEvents.Events.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);
+    }
+
+    [Test]
     public void PublishedEvents_ContainsPressureTemperingReceipts()
     {
         SocialMemoryAndRelationsModule socialModule = new();
@@ -1177,6 +1269,36 @@ public sealed class SocialMemoryAndRelationsModuleTests
         public IReadOnlyList<SettlementDisorderSnapshot> GetSettlementDisorder()
         {
             return _settlements;
+        }
+    }
+
+    private sealed class StubOfficeQueries : IOfficeAndCareerQueries
+    {
+        private readonly IReadOnlyList<JurisdictionAuthoritySnapshot> _jurisdictions;
+
+        public StubOfficeQueries(IReadOnlyList<JurisdictionAuthoritySnapshot> jurisdictions)
+        {
+            _jurisdictions = jurisdictions;
+        }
+
+        public OfficeCareerSnapshot GetRequiredCareer(PersonId personId)
+        {
+            throw new AssertionException("Career lookup should not be used in this test.");
+        }
+
+        public IReadOnlyList<OfficeCareerSnapshot> GetCareers()
+        {
+            return [];
+        }
+
+        public JurisdictionAuthoritySnapshot GetRequiredJurisdiction(SettlementId settlementId)
+        {
+            return _jurisdictions.Single(jurisdiction => jurisdiction.SettlementId == settlementId);
+        }
+
+        public IReadOnlyList<JurisdictionAuthoritySnapshot> GetJurisdictions()
+        {
+            return _jurisdictions;
         }
     }
 }

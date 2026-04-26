@@ -147,6 +147,7 @@ public sealed class PublicLifeOrderResidueDecayFrictionRuleDrivenTests
             PublicLifeOrderResponseOutcomeCodes.Escalated,
             PlayerCommandNames.PressCountyYamenDocument);
         Assert.That(escalatedAfterDrift.Weight, Is.GreaterThan(escalatedBeforeDrift.Weight));
+        int memoryCountImmediatelyBeforeRepeatCommand = socialState.Memories.Count;
         Assert.That(escalatedAfterDrift.Summary, Does.Contain("后账转硬"));
 
         PlayerCommandResult repeatResponse = commandService.IssueIntent(
@@ -162,7 +163,9 @@ public sealed class PublicLifeOrderResidueDecayFrictionRuleDrivenTests
         Assert.That(repeatResponse.Summary, Does.Contain("恶化余重"));
         Assert.That(leadCareer.LastRefusalResponseOutcomeCode, Is.EqualTo(PublicLifeOrderResponseOutcomeCodes.Escalated));
         Assert.That(leadCareer.ClerkDependence, Is.GreaterThanOrEqualTo(clerkDependenceBeforeRepeat));
-        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeRepeatCommand),
+        Assert.That(socialState.Memories, Has.Count.GreaterThanOrEqualTo(memoryCountBeforeRepeatCommand),
+            "Monthly SocialMemory drift may add unrelated structured residue before the repeat command.");
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountImmediatelyBeforeRepeatCommand),
             "Office repeat response may read SocialMemory friction, but must not write SocialMemory at command time.");
     }
 

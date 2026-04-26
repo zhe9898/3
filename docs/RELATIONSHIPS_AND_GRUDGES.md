@@ -264,3 +264,11 @@ If household-family burden later becomes durable social residue, `SocialMemoryAn
 `OfficeAndCareer.PolicyImplemented` is an office-owned implementation receipt, not a social memory. It can say whether a policy window moved rapidly, dragged in the yamen docket, was captured by clerks, or stayed at paper compliance, but shame, fear, favor, obligation, and grudge residue still belong to a later `SocialMemoryAndRelations` pass if such a pass is explicitly added.
 
 V37 adds no SocialMemory field, memory namespace, relationship table, residue ledger, schema bump, or migration. `SocialMemoryAndRelations` must not parse `PolicyImplemented` summaries, policy-window prose, diagnostic labels, `DomainEvent.Summary`, `LastInterventionSummary`, or `LastLocalResponseSummary` to create residue.
+
+## Backend office/yamen readback v38-v45 note
+
+V38-V45 adds the explicit later-month SocialMemory side of the v37 office/yamen implementation readback. It is still thin: `SocialMemoryAndRelations` reads structured `JurisdictionAuthoritySnapshot` fields and writes existing memory/narrative/climate records with cause keys such as `office.policy_implementation.<settlement>.<category>`.
+
+This residue is about durable shame/fear/favor/grudge/obligation after county-yamen implementation, paper landing, clerk capture, or document delay. It is not a same-month command result, not an event-pool reaction, not a new relationship table, and not a new memory namespace.
+
+The reader must not parse `DomainEvent.Summary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, `LastInterventionSummary`, `LastLocalResponseSummary`, or projected text such as `县门执行读回` / `外部后账归位`. V38-V45 adds no SocialMemory schema bump or migration; it reuses schema `3` records.

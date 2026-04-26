@@ -343,6 +343,14 @@ Until the general seam exists, any command route not yet moved into its owning m
 - V36 same-month handling remains a scheduler event-drain path, not an event pool or new command system. It must not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, or household local-response prose.
 - V36 adds no command surface, projection authority, persisted state, schema bump, migration, relief ledger, sponsor-lane ledger, household target field, UI/Unity rule path, or SocialMemory write path.
 
+## Backend office/yamen readback v38-v45 integration note
+- V38-V45 is the readback spine after v37 `OfficeAndCareer.PolicyImplemented`, not a new command system, event pool, thick county-yamen formula, or clerk AI.
+- `PublicLifeAndRumor` consumes `OfficeAndCareer.PolicyImplemented` and settlement-scoped `OfficeAndCareer.OfficeDefected` through structured event metadata and updates existing public-life readback fields only.
+- Governance and player-command read models may show `县门执行读回`, `县门/文移后手`, `官员摇摆读回`, route-map guidance, and residue-health guidance from structured snapshots. They must not parse `DomainEvent.Summary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, `LastInterventionSummary`, or `LastLocalResponseSummary` as rule input.
+- `SocialMemoryAndRelations` writes office/yamen residue only in its later monthly pass, reading `JurisdictionAuthoritySnapshot.PetitionOutcomeCategory`, `AdministrativeTaskLoad`, `ClerkDependence`, `PetitionBacklog`, `PetitionPressure`, `JurisdictionLeverage`, and `AuthorityTier`. Same-month response/implementation handling must not mutate SocialMemory.
+- Unity copies projected DTO fields only. It does not query modules, inspect event metadata, compute implementation effectiveness, infer owner lanes, or write SocialMemory.
+- Save/schema result: no persisted state, schema bump, migration, policy ledger, yamen workflow state, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
+
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace
 - `OfficeAndCareer.Lite` now reads `EducationAndExams`, `SocialMemoryAndRelations`, and optional `OrderAndBanditry` projections only

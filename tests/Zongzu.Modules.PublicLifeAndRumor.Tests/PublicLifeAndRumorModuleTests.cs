@@ -313,6 +313,118 @@ public sealed class PublicLifeAndRumorModuleTests
         Assert.That(publicLifeQueries.GetSettlementPublicLife(), Has.Count.EqualTo(1));
     }
 
+    [Test]
+    public void HandleEvents_PolicyImplemented_ProjectsCountyGateReadbackFromMetadata()
+    {
+        PublicLifeAndRumorModule module = new();
+        PublicLifeAndRumorState state = module.CreateInitialState();
+        state.Settlements.Add(new SettlementPublicLifeState
+        {
+            SettlementId = new SettlementId(1),
+            SettlementName = "Lanxi",
+            NodeLabel = "Lanxi county gate",
+            StreetTalkHeat = 20,
+            NoticeVisibility = 10,
+            PrefectureDispatchPressure = 8,
+            RoadReportLag = 4,
+            PublicLegitimacy = 60,
+        });
+        ModuleExecutionContext context = CreateContext(
+            new GameDate(1200, 4),
+            CreatePublicLifeManifest(),
+            CreateSharedQueries(),
+            seed: 37);
+
+        module.HandleEvents(new ModuleEventHandlingScope<PublicLifeAndRumorState>(
+            state,
+            context,
+            [
+                new DomainEventRecord(
+                    KnownModuleKeys.OfficeAndCareer,
+                    OfficeAndCareerEventNames.PolicyImplemented,
+                    "Do not parse this summary.",
+                    "1",
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.SettlementId] = "1",
+                        [DomainEventMetadataKeys.PolicyImplementationOutcome] = DomainEventMetadataValues.PolicyImplementationCaptured,
+                        [DomainEventMetadataKeys.PolicyImplementationScore] = "34",
+                        [DomainEventMetadataKeys.PolicyImplementationWindowPressure] = "76",
+                        [DomainEventMetadataKeys.PolicyImplementationDocketDrag] = "48",
+                        [DomainEventMetadataKeys.PolicyImplementationClerkCapture] = "70",
+                        [DomainEventMetadataKeys.PolicyImplementationPaperCompliance] = "32",
+                    }),
+            ]));
+
+        SettlementPublicLifeState settlement = state.Settlements.Single();
+        Assert.That(settlement.StreetTalkHeat, Is.EqualTo(38));
+        Assert.That(settlement.PublicLegitimacy, Is.EqualTo(52));
+        Assert.That(settlement.OfficialNoticeLine, Does.Contain("县门执行读回"));
+        Assert.That(settlement.OfficialNoticeLine, Does.Contain("胥吏把持"));
+        Assert.That(settlement.ContentionSummary, Does.Contain("OfficeAndCareer"));
+        Assert.That(settlement.ChannelSummary, Does.Contain("本户不能代修"));
+        Assert.That(settlement.LastPublicTrace, Does.Contain("captured"));
+        Assert.That(settlement.LastPublicTrace, Does.Not.Contain("Do not parse"));
+    }
+
+    [Test]
+    public void HandleEvents_OfficeDefected_UsesSettlementMetadataInsteadOfPersonEntityKey()
+    {
+        PublicLifeAndRumorModule module = new();
+        PublicLifeAndRumorState state = module.CreateInitialState();
+        state.Settlements.Add(new SettlementPublicLifeState
+        {
+            SettlementId = new SettlementId(1),
+            SettlementName = "Lanxi",
+            NodeLabel = "Lanxi county gate",
+            StreetTalkHeat = 12,
+            PrefectureDispatchPressure = 7,
+            RoadReportLag = 5,
+            PublicLegitimacy = 55,
+        });
+        state.Settlements.Add(new SettlementPublicLifeState
+        {
+            SettlementId = new SettlementId(99),
+            SettlementName = "Person id should not be settlement",
+            StreetTalkHeat = 3,
+            PrefectureDispatchPressure = 2,
+            RoadReportLag = 1,
+            PublicLegitimacy = 70,
+        });
+        ModuleExecutionContext context = CreateContext(
+            new GameDate(1200, 4),
+            CreatePublicLifeManifest(),
+            CreateSharedQueries(),
+            seed: 41);
+
+        module.HandleEvents(new ModuleEventHandlingScope<PublicLifeAndRumorState>(
+            state,
+            context,
+            [
+                new DomainEventRecord(
+                    KnownModuleKeys.OfficeAndCareer,
+                    OfficeAndCareerEventNames.OfficeDefected,
+                    "Do not parse this defection summary.",
+                    "99",
+                    new Dictionary<string, string>
+                    {
+                        [DomainEventMetadataKeys.SettlementId] = "1",
+                        [DomainEventMetadataKeys.DefectionRisk] = "84",
+                        [DomainEventMetadataKeys.DefectionMandateDeficit] = "16",
+                        [DomainEventMetadataKeys.DefectionClerkPressure] = "18",
+                        [DomainEventMetadataKeys.DefectionPetitionPressure] = "20",
+                    }),
+            ]));
+
+        SettlementPublicLifeState lanxi = state.Settlements.Single(s => s.SettlementId == new SettlementId(1));
+        SettlementPublicLifeState personIdSettlement = state.Settlements.Single(s => s.SettlementId == new SettlementId(99));
+        Assert.That(lanxi.StreetTalkHeat, Is.GreaterThan(12));
+        Assert.That(lanxi.PrefectureDispatchLine, Does.Contain("官员摇摆"));
+        Assert.That(lanxi.LastPublicTrace, Does.Contain("风险84"));
+        Assert.That(lanxi.LastPublicTrace, Does.Not.Contain("Do not parse"));
+        Assert.That(personIdSettlement.StreetTalkHeat, Is.EqualTo(3));
+    }
+
     private static ModuleExecutionContext CreateContext(
         GameDate date,
         FeatureManifest manifest,

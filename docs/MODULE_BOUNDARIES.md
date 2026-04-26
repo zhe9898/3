@@ -822,3 +822,11 @@ Current lite note:
 - The v36 handler mutates only existing family-owned fields: sponsor-clan charity obligation, support reserve, branch tension, relief sanction pressure, and lifecycle trace/outcome readback.
 - `SocialMemoryAndRelations` is not part of the same-month mutation path. Durable shame/fear/favor/grudge/obligation residue remains its own later structured read/write concern.
 - V36 adds no persisted fields, schema bump, migration, relief ledger, sponsor-lane ledger, household target field, manager/controller layer, `PersonRegistry` expansion, Application/UI/Unity authority, or summary parsing.
+
+## 2026-04-26 backend office/yamen readback v38-v45 note
+- `OfficeAndCareer` remains the owner of county-yamen implementation, document landing, clerk drag, petition outcome category, and official defection risk. V38-V45 does not create a county formula, yamen workflow object, policy ledger, or clerk AI.
+- `PublicLifeAndRumor` may consume structured `OfficeAndCareer.PolicyImplemented` and `OfficeAndCareer.OfficeDefected` facts to project county-gate heat, notice, dispatch, street-talk, and legitimacy readback inside its existing namespace. It must not parse `DomainEvent.Summary`, receipt prose, `LastPetitionOutcome`, or `LastExplanation`.
+- `Application` may compose governance/read-model guidance from existing structured snapshots such as `JurisdictionAuthoritySnapshot`, public-life snapshots, trade-route snapshots, disorder snapshots, and SocialMemory snapshots. It may not mutate state or compute command results.
+- `SocialMemoryAndRelations` may write later-month office/yamen residue from structured `JurisdictionAuthoritySnapshot` fields only. Same-month command/event handling still does not write SocialMemory.
+- Unity and shell code may copy `OfficeImplementationReadbackSummary`, `OfficeNextStepReadbackSummary`, `RegimeOfficeReadbackSummary`, `CanalRouteReadbackSummary`, and `ResidueHealthSummary`; they must not query modules, infer owner lanes, or write SocialMemory.
+- V38-V45 adds no persisted fields, schema bump, migration, policy ledger, yamen workflow state, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.

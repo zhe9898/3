@@ -22,7 +22,11 @@ internal static class GovernanceShellAdapter
 			? governanceDocket.PublicMomentumSummary
 			: governanceLane?.PublicMomentumSummary ?? string.Empty;
 
-		return ShellTextAdapter.AppendDistinct(summary, momentum).Trim();
+		return ShellTextAdapter.CombineDistinct(
+			summary,
+			momentum,
+			governanceLane?.OfficeImplementationReadbackSummary ?? string.Empty,
+			governanceLane?.RegimeOfficeReadbackSummary ?? string.Empty).Trim();
 	}
 
 	internal static string BuildSettlementGovernanceSummary(
@@ -38,7 +42,14 @@ internal static class GovernanceShellAdapter
 			? governanceLane.GovernanceSummary
 			: officeFallbackSummary;
 
-		return ShellTextAdapter.AppendDistinct(summary, governanceLane.PublicMomentumSummary).Trim();
+		return ShellTextAdapter.CombineDistinct(
+			summary,
+			governanceLane.PublicMomentumSummary,
+			governanceLane.OfficeImplementationReadbackSummary,
+			governanceLane.OfficeNextStepReadbackSummary,
+			governanceLane.RegimeOfficeReadbackSummary,
+			governanceLane.CanalRouteReadbackSummary,
+			governanceLane.ResidueHealthSummary).Trim();
 	}
 
 	private static SettlementGovernanceLaneSnapshot? SelectLeadGovernanceLane(PresentationReadModelBundle bundle)

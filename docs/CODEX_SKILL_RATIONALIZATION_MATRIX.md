@@ -122,3 +122,11 @@ Use skills as one connected pass rather than isolated summaries:
 ## Current Impact
 
 This document is governance/orchestration only. It has no runtime, save/schema, determinism, or Unity asset impact.
+
+## V38-V45 Office/Yamen Readback Spine - 2026-04-26
+
+- This pass uses the Zongzu skills as one connected pass: game design, architecture boundaries, pressure-chain, content authoring, save/schema, simulation validation, UI shell, Unity shell, and ancient-China grounding.
+- V38-V45 closes after v37 `OfficeAndCareer.PolicyImplemented`: public-life and governance readbacks show county-yamen implementation state; office affordances point to press-document / redirect-report / cool-observe next steps; later monthly SocialMemory can write office/yamen residue from structured jurisdiction snapshots; Unity copies projected fields only.
+- The work remains a rule-driven command / aftermath / social-memory / readback loop. `DomainEvent` is still a deterministic fact propagation tool, not an event-pool design body.
+- Save/schema result: no persisted state, schema bump, migration, policy ledger, yamen workflow state, owner-lane ledger, cooldown ledger, household target field, or `PersonRegistry` expansion. `OfficeAndCareer` stays schema `7`; `PublicLifeAndRumor` stays schema `4`; `SocialMemoryAndRelations` stays schema `3`.
+- Ordinary household response remains a low-power local response surface, not a universal repair line. County-yamen, document drag, and clerk delay return to `OfficeAndCareer`; public heat stays `PublicLifeAndRumor`; durable shame/fear/favor/grudge/obligation remains `SocialMemoryAndRelations`.

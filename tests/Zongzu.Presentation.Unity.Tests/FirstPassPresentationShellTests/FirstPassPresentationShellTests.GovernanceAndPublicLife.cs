@@ -592,4 +592,84 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("county gate momentum is tightening"));
     }
 
+    [Test]
+    public void Compose_CopiesOfficeYamenReadbackSpineWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        const string implementation = "县门执行读回：文移拖在案牍，该回OfficeAndCareer lane催办/递报；本户不能代修。";
+        const string nextStep = "县门/文移后手：轻催文移或改走递报，先看胥吏拖延是否松动。";
+        const string regime = "官员摇摆读回：张元退避风险78，需继续观察OfficeAndCareer lane。";
+        const string route = "运河/脚路读回：只作Trade/Order/PublicLife投影，不新开运河账本。";
+        const string residue = "余味健康读回：旧怨31仍在，后续由SocialMemoryAndRelations月推进沉淀。";
+        bundle.GovernanceSettlements =
+        [
+            new SettlementGovernanceLaneSnapshot
+            {
+                SettlementId = new SettlementId(1),
+                SettlementName = "Lanxi",
+                NodeLabel = "county-gate",
+                LeadOfficialName = "Zhang Yuan",
+                LeadOfficeTitle = "Registrar",
+                CurrentAdministrativeTask = "county document follow-up",
+                AdministrativeTaskLoad = 66,
+                PetitionPressure = 49,
+                PetitionBacklog = 11,
+                PublicLegitimacy = 44,
+                StreetTalkHeat = 61,
+                PublicMomentumSummary = "county gate is tightening around notices and road reports",
+                GovernanceSummary = "registrar is sorting the docket",
+                OfficeImplementationReadbackSummary = implementation,
+                OfficeNextStepReadbackSummary = nextStep,
+                RegimeOfficeReadbackSummary = regime,
+                CanalRouteReadbackSummary = route,
+                ResidueHealthSummary = residue,
+            },
+        ];
+        bundle.GovernanceFocus = new GovernanceFocusSnapshot
+        {
+            SettlementId = new SettlementId(1),
+            SettlementName = "Lanxi",
+            NodeLabel = "county-gate",
+            UrgencyScore = 82,
+            LeadSummary = "county gate docket is hot",
+            PublicMomentumSummary = "county gate is tightening around notices and road reports",
+            OfficeImplementationReadbackSummary = implementation,
+            OfficeNextStepReadbackSummary = nextStep,
+            RegimeOfficeReadbackSummary = regime,
+            CanalRouteReadbackSummary = route,
+            ResidueHealthSummary = residue,
+        };
+        bundle.GovernanceDocket = new GovernanceDocketSnapshot
+        {
+            SettlementId = new SettlementId(1),
+            SettlementName = "Lanxi",
+            NodeLabel = "county-gate",
+            UrgencyScore = 82,
+            Headline = "county gate docket is hot",
+            WhyNowSummary = implementation,
+            PublicMomentumSummary = "county gate is tightening around notices and road reports",
+            OfficeImplementationReadbackSummary = implementation,
+            OfficeNextStepReadbackSummary = nextStep,
+            RegimeOfficeReadbackSummary = regime,
+            CanalRouteReadbackSummary = route,
+            ResidueHealthSummary = residue,
+            GuidanceSummary = nextStep,
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        SettlementNodeViewModel settlement = shell.DeskSandbox.Settlements.Single();
+
+        Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain(implementation));
+        Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain(regime));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(implementation));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(nextStep));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(route));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(residue));
+        Assert.That(settlement.OfficeImplementationReadbackSummary, Is.EqualTo(implementation));
+        Assert.That(settlement.OfficeNextStepReadbackSummary, Is.EqualTo(nextStep));
+        Assert.That(settlement.RegimeOfficeReadbackSummary, Is.EqualTo(regime));
+        Assert.That(settlement.CanalRouteReadbackSummary, Is.EqualTo(route));
+        Assert.That(settlement.ResidueHealthSummary, Is.EqualTo(residue));
+    }
+
 }

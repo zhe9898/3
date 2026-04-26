@@ -67,4 +67,7 @@ public static class SocialMemoryKinds
 
     /// <summary>Public-life home-household response residue: 本户后账被放置后沉下来的羞面与怨尾。</summary>
     public const string PublicOrderHouseholdResponseIgnored = "public_order_household_response_ignored";
+
+    /// <summary>Office/Yamen implementation residue: 县门执行拖延、纸面落地或胥吏把持后的社会余味。</summary>
+    public const string OfficePolicyImplementationResidue = "office_policy_implementation_residue";
 }

@@ -217,6 +217,11 @@ public sealed partial class SocialMemoryAndRelationsModule : ModuleRunner<Social
         }
 
         ApplyHomeHouseholdLocalResponseResidue(scope, clans, households);
+        if (officeQueries is not null)
+        {
+            ApplyOfficePolicyImplementationResidue(scope, clans, officeQueries.GetJurisdictions());
+        }
+
         ApplyPublicLifeOrderResponseResidueDrift(scope, clans);
     }
 

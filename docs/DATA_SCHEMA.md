@@ -1092,6 +1092,12 @@ Current backend household-family burden v36 note:
 - New event metadata keys for household-family burden are runtime `DomainEvent` payload only. They are not saved fields and do not require a migration.
 - The v36 handler reuses existing family-owned fields such as charity obligation, support reserve, branch tension, relief sanction pressure, and lifecycle trace/outcome readback.
 
+Current backend office/yamen readback v38-v45 note:
+- v38-v45 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, policy ledger, yamen workflow state, owner-lane ledger, cooldown ledger, household target field, or projection cache.
+- `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New governance read-model fields such as `OfficeImplementationReadbackSummary`, `OfficeNextStepReadbackSummary`, `RegimeOfficeReadbackSummary`, `CanalRouteReadbackSummary`, and `ResidueHealthSummary` are runtime projections only and are not saved.
+- The later SocialMemory office/yamen residue reuses existing memory/narrative/climate records and cause keys. It does not add a SocialMemory field, memory namespace, relationship table, or migration.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

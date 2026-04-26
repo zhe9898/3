@@ -529,3 +529,11 @@ At integration level, verify:
 - Architecture acceptance must prove the handler uses structured `PolicyWindow*` metadata, `EntityKey` / `SettlementId`, and office-owned state only, not `DomainEvent.Summary`, receipt prose, response summaries, foreign mutable state, Application/UI/Unity authority, forbidden manager names, or `PersonRegistry` expansion.
 - SocialMemory acceptance: v37 same-month handling does not write `SocialMemoryAndRelations`; durable shame/fear/favor/grudge/obligation residue remains a later structured read/write concern if added.
 - Save/schema acceptance: v37 adds no persisted fields, no module envelope, no root/module schema version change, no migration, no policy ledger, no yamen workflow state, no owner-lane ledger, no SocialMemory field, no UI/Unity authority, and no save roundtrip change.
+
+## Backend office/yamen readback spine v38-v45 acceptance - 2026-04-26
+- Public-life acceptance: after `OfficeAndCareer.PolicyImplemented`, `PublicLifeAndRumor` must project county-gate readback such as `县门执行读回`, `OfficeAndCareer lane`, and `本户不能代修` from structured metadata, not from event summaries.
+- Governance/read-model acceptance: governance lanes/docket and office affordances must expose `OfficeImplementationReadbackSummary`, `OfficeNextStepReadbackSummary`, `RegimeOfficeReadbackSummary`, `CanalRouteReadbackSummary`, and `ResidueHealthSummary` as runtime projections.
+- SocialMemory acceptance: same-month implementation handling must not mutate `SocialMemoryAndRelations`; the later monthly SocialMemory pass may write `OfficePolicyImplementationResidue` only from structured `JurisdictionAuthoritySnapshot` fields.
+- UI/Unity acceptance: shell and Unity ViewModels may display projected office/yamen readback fields only. They must not query modules, compute implementation effectiveness, infer owner lanes, parse receipt/event prose, or write SocialMemory.
+- Architecture acceptance: guard no Application/UI/Unity authority drift, no summary parsing, no forbidden manager/god-controller names, no `PersonRegistry` expansion, and no new schema without migration docs/tests.
+- Save/schema acceptance: v38-v45 add no persisted fields, no module envelope, no root/module schema version change, no migration, no policy/yamen/owner-lane/cooldown ledger, no household target field, and no save roundtrip change.

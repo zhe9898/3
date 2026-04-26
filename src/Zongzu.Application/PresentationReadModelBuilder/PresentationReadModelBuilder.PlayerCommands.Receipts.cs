@@ -34,20 +34,22 @@ public sealed partial class PresentationReadModelBuilder
             {
                 yield return BuildPlayerCommandReceiptSnapshot(
                     PlayerCommandNames.PostCountyNotice,
-                    jurisdiction.SettlementId,
-                    jurisdiction.LastAdministrativeTrace,
-                    jurisdiction.LastPetitionOutcome,
-                    targetLabel: jurisdiction.LeadOfficialName);
+                jurisdiction.SettlementId,
+                jurisdiction.LastAdministrativeTrace,
+                jurisdiction.LastPetitionOutcome,
+                readbackSummary: BuildOfficeImplementationAffordanceGuidance(jurisdiction),
+                targetLabel: jurisdiction.LeadOfficialName);
             }
 
             if (string.Equals(jurisdiction.CurrentAdministrativeTask, "遣吏催报", StringComparison.Ordinal))
             {
                 yield return BuildPlayerCommandReceiptSnapshot(
                     PlayerCommandNames.DispatchRoadReport,
-                    jurisdiction.SettlementId,
-                    jurisdiction.LastAdministrativeTrace,
-                    jurisdiction.LastPetitionOutcome,
-                    targetLabel: jurisdiction.LeadOfficialName);
+                jurisdiction.SettlementId,
+                jurisdiction.LastAdministrativeTrace,
+                jurisdiction.LastPetitionOutcome,
+                readbackSummary: BuildOfficeImplementationAffordanceGuidance(jurisdiction),
+                targetLabel: jurisdiction.LeadOfficialName);
             }
 
             if (HasPublicLifeOrderResponseReceipt(jurisdiction))
@@ -405,7 +407,8 @@ public sealed partial class PresentationReadModelBuilder
                 commandName,
                 jurisdiction.SettlementId,
                 jurisdiction.LastAdministrativeTrace,
-                jurisdiction.LastPetitionOutcome));
+                jurisdiction.LastPetitionOutcome,
+                readbackSummary: BuildOfficeImplementationAffordanceGuidance(jurisdiction)));
         }
 
         foreach (CampaignFrontSnapshot campaign in bundle.Campaigns.OrderBy(static entry => entry.CampaignId.Value))
