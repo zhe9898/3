@@ -62,6 +62,10 @@ internal static class DeskSandboxShellAdapter
 						settlementNode.OfficeLaneReceiptClosureSummary = governance.OfficeLaneReceiptClosureSummary;
 						settlementNode.OfficeLaneResidueFollowUpSummary = governance.OfficeLaneResidueFollowUpSummary;
 						settlementNode.OfficeLaneNoLoopGuardSummary = governance.OfficeLaneNoLoopGuardSummary;
+						settlementNode.CourtPolicyEntryReadbackSummary = governance.CourtPolicyEntryReadbackSummary;
+						settlementNode.CourtPolicyDispatchReadbackSummary = governance.CourtPolicyDispatchReadbackSummary;
+						settlementNode.CourtPolicyPublicReadbackSummary = governance.CourtPolicyPublicReadbackSummary;
+						settlementNode.CourtPolicyNoLoopGuardSummary = governance.CourtPolicyNoLoopGuardSummary;
 						settlementNode.FamilyLaneEntryReadbackSummary = governance.FamilyLaneEntryReadbackSummary;
 						settlementNode.FamilyElderExplanationReadbackSummary = governance.FamilyElderExplanationReadbackSummary;
 						settlementNode.FamilyGuaranteeReadbackSummary = governance.FamilyGuaranteeReadbackSummary;

@@ -60,6 +60,14 @@ public sealed record SettlementGovernanceLaneSnapshot
 
     public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
+    public string CourtPolicyEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyDispatchReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyPublicReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyNoLoopGuardSummary { get; init; } = string.Empty;
+
     public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
 
     public string FamilyElderExplanationReadbackSummary { get; init; } = string.Empty;
@@ -124,6 +132,14 @@ public sealed record GovernanceFocusSnapshot
     public string OfficeLaneResidueFollowUpSummary { get; init; } = string.Empty;
 
     public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyDispatchReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyPublicReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
 
@@ -233,6 +249,14 @@ public sealed record GovernanceDocketSnapshot
     public string OfficeLaneResidueFollowUpSummary { get; init; } = string.Empty;
 
     public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyDispatchReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyPublicReadbackSummary { get; init; } = string.Empty;
+
+    public string CourtPolicyNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
 

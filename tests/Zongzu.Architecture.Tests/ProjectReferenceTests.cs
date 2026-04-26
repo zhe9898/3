@@ -408,9 +408,20 @@ public class ProjectReferenceTests
             "Zongzu.Modules.PublicLifeAndRumor",
             "PublicLifeAndRumorModule",
             "PublicLifeAndRumorModule.cs"));
+        string contractsSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "GovernanceReadModels.cs"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
 
         Assert.That(governanceSource, Does.Contain("BuildOfficeImplementationReadbackSummary"));
         Assert.That(governanceSource, Does.Contain("BuildOfficeImplementationNextStepSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyEntryReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyDispatchReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyPublicReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyNoLoopGuardSummary"));
+        Assert.That(governanceSource, Does.Contain("HasCourtPolicyProcessReadback"));
         Assert.That(governanceSource, Does.Contain("BuildRegimeOfficeReadbackSummary"));
         Assert.That(governanceSource, Does.Contain("BuildCanalRouteReadbackSummary"));
         Assert.That(governanceSource, Does.Contain("BuildResidueHealthSummary"));
@@ -422,21 +433,45 @@ public class ProjectReferenceTests
         Assert.That(governanceSource, Does.Contain("OfficeImplementationReadbackSummary"));
         Assert.That(governanceSource, Does.Contain("OfficeLaneEntryReadbackSummary"));
         Assert.That(governanceSource, Does.Contain("OfficeLaneReceiptClosureSummary"));
+        Assert.That(governanceSource, Does.Contain("CourtPolicyEntryReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("CourtPolicyDispatchReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("CourtPolicyPublicReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("CourtPolicyNoLoopGuardSummary"));
         Assert.That(governanceSource, Does.Contain("Office承接入口"));
         Assert.That(governanceSource, Does.Contain("Office后手收口读回"));
         Assert.That(governanceSource, Does.Contain("Office余味续接读回"));
         Assert.That(governanceSource, Does.Contain("Office闭环防回压"));
+        Assert.That(governanceSource, Does.Contain("朝议压力读回"));
+        Assert.That(governanceSource, Does.Contain("政策窗口读回"));
+        Assert.That(governanceSource, Does.Contain("文移到达读回"));
+        Assert.That(governanceSource, Does.Contain("县门执行承接读回"));
+        Assert.That(governanceSource, Does.Contain("公议读法读回"));
+        Assert.That(governanceSource, Does.Contain("Court后手不直写地方"));
+        Assert.That(governanceSource, Does.Contain("Office/PublicLife分读"));
+        Assert.That(governanceSource, Does.Contain("不是本户也不是县门独吞朝廷后账"));
+        Assert.That(governanceSource, Does.Contain("Court-policy防回压"));
         Assert.That(governanceSource, Does.Contain("OfficeAndCareer lane"));
         Assert.That(governanceSource, Does.Contain("本户不能代修"));
         Assert.That(governanceSource, Does.Contain("本户不再代修"));
         Assert.That(governanceSource, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(governanceSource, Does.Not.Contain("OfficialNoticeLine"));
+        Assert.That(governanceSource, Does.Not.Contain("PrefectureDispatchLine"));
+        Assert.That(governanceSource, Does.Not.Contain("LastAdministrativeTrace"));
         Assert.That(governanceSource, Does.Not.Contain("LastExplanation"));
         Assert.That(governanceSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("domainEvent.Summary"));
         Assert.That(governanceSource, Does.Not.Contain("IssueModuleCommand"));
         Assert.That(governanceSource, Does.Not.Contain("GetMutableModuleState"));
         Assert.That(governanceSource, Does.Not.Contain("OwnerLaneLedger"));
         Assert.That(governanceSource, Does.Not.Contain("CooldownLedger"));
         Assert.That(governanceSource, Does.Not.Contain("PolicyImplementationLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("PolicyClosureLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("DispatchLedger"));
+
+        Assert.That(contractsSource, Does.Contain("CourtPolicyEntryReadbackSummary"));
+        Assert.That(contractsSource, Does.Contain("CourtPolicyDispatchReadbackSummary"));
+        Assert.That(contractsSource, Does.Contain("CourtPolicyPublicReadbackSummary"));
+        Assert.That(contractsSource, Does.Contain("CourtPolicyNoLoopGuardSummary"));
 
         Assert.That(playerCommandSource, Does.Contain("BuildOfficeImplementationAffordanceGuidance"));
         Assert.That(playerCommandSource, Does.Not.Contain("DomainEvent.Summary"));
@@ -467,6 +502,7 @@ public class ProjectReferenceTests
         Assert.That(officeModule, Does.Contain("ModuleSchemaVersion => 7"));
         Assert.That(publicLifeModule, Does.Contain("ModuleSchemaVersion => 4"));
         Assert.That(socialModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(schemaRules, Does.Contain("court-policy process readback v93-v100 adds no persisted fields"));
     }
 
     [Test]
@@ -502,6 +538,12 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("Family后手收口读回"));
         Assert.That(source, Does.Not.Contain("Family余味续接读回"));
         Assert.That(source, Does.Not.Contain("Family闭环防回压"));
+        Assert.That(source, Does.Not.Contain("朝议压力读回"));
+        Assert.That(source, Does.Not.Contain("政策窗口读回"));
+        Assert.That(source, Does.Not.Contain("文移到达读回"));
+        Assert.That(source, Does.Not.Contain("县门执行承接读回"));
+        Assert.That(source, Does.Not.Contain("公议读法读回"));
+        Assert.That(source, Does.Not.Contain("Court-policy防回压"));
         Assert.That(source, Does.Not.Contain("不是普通家户再扛"));
         Assert.That(source, Does.Not.Contain("本户不能代修"));
         Assert.That(source, Does.Not.Contain("PlayerCommandService"));
@@ -533,6 +575,10 @@ public class ProjectReferenceTests
         Assert.That(adapterSource, Does.Contain("OfficeLaneReceiptClosureSummary"));
         Assert.That(adapterSource, Does.Contain("OfficeLaneResidueFollowUpSummary"));
         Assert.That(adapterSource, Does.Contain("OfficeLaneNoLoopGuardSummary"));
+        Assert.That(adapterSource, Does.Contain("CourtPolicyEntryReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("CourtPolicyDispatchReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("CourtPolicyPublicReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("CourtPolicyNoLoopGuardSummary"));
         Assert.That(adapterSource, Does.Contain("RegimeOfficeReadbackSummary"));
         Assert.That(adapterSource, Does.Contain("CanalRouteReadbackSummary"));
         Assert.That(adapterSource, Does.Contain("ResidueHealthSummary"));
@@ -549,6 +595,10 @@ public class ProjectReferenceTests
         Assert.That(viewModelSource, Does.Contain("OfficeLaneReceiptClosureSummary"));
         Assert.That(viewModelSource, Does.Contain("OfficeLaneResidueFollowUpSummary"));
         Assert.That(viewModelSource, Does.Contain("OfficeLaneNoLoopGuardSummary"));
+        Assert.That(viewModelSource, Does.Contain("CourtPolicyEntryReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("CourtPolicyDispatchReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("CourtPolicyPublicReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("CourtPolicyNoLoopGuardSummary"));
         Assert.That(viewModelSource, Does.Contain("RegimeOfficeReadbackSummary"));
         Assert.That(viewModelSource, Does.Contain("CanalRouteReadbackSummary"));
         Assert.That(viewModelSource, Does.Contain("ResidueHealthSummary"));
@@ -558,6 +608,10 @@ public class ProjectReferenceTests
         Assert.That(officeSurfaceAdapterSource, Does.Contain("OfficeLaneReceiptClosureSummary"));
         Assert.That(officeSurfaceAdapterSource, Does.Contain("OfficeLaneResidueFollowUpSummary"));
         Assert.That(officeSurfaceAdapterSource, Does.Contain("OfficeLaneNoLoopGuardSummary"));
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("CourtPolicyEntryReadbackSummary"));
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("CourtPolicyDispatchReadbackSummary"));
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("CourtPolicyPublicReadbackSummary"));
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("CourtPolicyNoLoopGuardSummary"));
         Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("Zongzu.Application"));
         Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("Zongzu.Modules."));
         Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("IssueModuleCommand"));

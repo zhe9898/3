@@ -320,3 +320,11 @@ V85-V92 adds `战后案卷读回` for existing WarfareCampaign aftermath dockets
 `SocialMemoryAndRelations` must not parse `战后案卷读回`, docket readback prose, `DocketSummary`, receipt prose, `LastDirectiveTrace`, SocialMemory summary prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`. Later military social residue must still come from structured campaign/force aftermath in its own monthly cadence.
 
 The ordinary home-household line still cannot repair campaign aftermath dockets. V85-V92 adds no memory namespace, relationship table, aftermath ledger, relief ledger, route-repair ledger, military closure ledger, owner-lane ledger, cooldown ledger, schema bump, or migration.
+
+## Backend court-policy process readback v93-v100 note
+
+V93-V100 adds court-policy process readback over existing court pressure, Office policy-window implementation, and PublicLife public interpretation. `朝议压力读回`, `政策窗口读回`, `文移到达读回`, `县门执行承接读回`, `公议读法读回`, and `Court-policy防回压` are projected cues, not durable shame, favor, fear, grudge, or obligation records by themselves.
+
+`SocialMemoryAndRelations` must not parse those court-policy projection strings, `OfficialNoticeLine`, `PrefectureDispatchLine`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, SocialMemory summary prose, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, `LastInterventionSummary`, or `DomainEvent.Summary`. Later residue must still come from structured owner aftermath in its own monthly cadence.
+
+The ordinary home-household line still cannot repair court-policy after-accounting, county-yamen implementation, or public legitimacy residue. V93-V100 adds no memory namespace, relationship table, court/policy/dispatch ledger, owner-lane ledger, cooldown ledger, schema bump, or migration.

@@ -361,6 +361,7 @@ Current routing note:
 - jurisdiction-level clerk dependence and administrative task load
 - clerk-capture edge watermarks for office-owned escalation receipts
 - policy-window implementation drag outcome, including rapid, dragged, captured, or paper-compliance resolution through existing office/yamen fields
+- county/yamen execution side of the court-policy process after a policy window opens
 - official defection risk before office-owned appointment loss
 - office-owned public-life refusal response trace for county-yamen催办, 文移落地, and 胥吏拖延 outcomes
 - official influence projections
@@ -377,6 +378,7 @@ Current routing note:
 - petition outcome category plus latest petition outcome trace
 - promotion / demotion pressure labels and authority-trajectory summary
 - current policy implementation aftermath only after `OfficeAndCareer` has written its own task/backlog/clerk state
+- policy-window and county-execution signals for court-policy process readback
 - current official defection risk when governance-lite exposes regime pressure
 - office-owned public-life refusal response aftermath fields for governance docket readback
 
@@ -565,6 +567,7 @@ Current lite note:
 - venue-channel competition summaries for county gates, market streets, ferries, inns, and road nodes
 - official-notice / street-talk / road-report / prefecture-dispatch wording
 - contention summaries that explain where declared order and lived order pull apart
+- public interpretation side of court-policy process readback, including notice visibility, dispatch pressure, documentary weight, verification cost, courier risk, and public legitimacy
 
 ### Public queries
 - public-life snapshots by settlement
@@ -574,6 +577,7 @@ Current lite note:
 - monthly cadence labels and cadence summaries for hall / desk read models
 - venue-channel summaries and channel-pressure metrics for hall / desk read models
 - explicit channel-line wording for notice, street talk, road report, prefecture pressure, and contention
+- structured public-life channel metrics for court-policy process readback; consumers may read the fields, not parse the channel-line prose
 
 ### Accepts commands
 - none authoritative in the current lite slice
@@ -878,3 +882,12 @@ Current lite note:
 - `Application` may count structured docket lists and compose readback text. It must not parse `DocketSummary`, `LastDirectiveTrace`, receipt prose, `DomainEvent.Summary`, or SocialMemory prose, and must not compute campaign outcomes.
 - `Unity` reads `CampaignAftermathDockets` and projected command/governance fields only. It must not infer merits, blame, relief, or route repair from notifications, event traces, settlement stats, or prose.
 - V85-V92 adds no persisted fields, schema bump, migration, aftermath ledger, relief ledger, route-repair ledger, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.
+
+## 2026-04-26 backend court-policy process readback v93-v100 note
+- `WorldSettlements` remains the owner of court-pressure facts such as `CourtAgendaPressureAccumulated`; `OfficeAndCareer` remains the owner of `PolicyWindowOpened`, `PolicyImplemented`, and county/yamen implementation; `PublicLifeAndRumor` remains the owner of public notice, dispatch, and street interpretation.
+- V93-V100 adds only projected readback fields: `CourtPolicyEntryReadbackSummary`, `CourtPolicyDispatchReadbackSummary`, `CourtPolicyPublicReadbackSummary`, and `CourtPolicyNoLoopGuardSummary`. The player-facing read should include `朝议压力读回`, `政策窗口读回`, `文移到达读回`, `县门执行承接读回`, `公议读法读回`, `Court后手不直写地方`, `Office/PublicLife分读`, `不是本户也不是县门独吞朝廷后账`, and `Court-policy防回压`.
+- `Application` may assemble those fields from structured `JurisdictionAuthoritySnapshot` and `SettlementPublicLifeSnapshot` values only. It must not parse `DomainEvent.Summary`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- `PopulationAndHouseholds` remains ordinary local household response only. A home household may be strained by policy fallout, but it does not carry court-policy after-accounting.
+- `SocialMemoryAndRelations` may later read structured aftermath and cause keys for durable residue; it must not treat court-policy projection prose as an authority source.
+- `Unity` and shell code copy projected court-policy fields only. They must not query simulation modules, compute policy success, infer yamen/public-life ownership from prose, maintain dispatch/policy ledgers, or write SocialMemory.
+- V93-V100 adds no persisted fields, schema bump, migration, court module, dispatch ledger, policy closure ledger, owner-lane ledger, cooldown ledger, household target field, manager/controller layer, `PersonRegistry` expansion, or UI/Unity authority.

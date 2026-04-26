@@ -115,6 +115,10 @@ public sealed partial class PresentationReadModelBuilder
                     jurisdiction,
                     localOfficeCareers,
                     localOfficeSocialMemories);
+                string courtPolicyEntryReadback = BuildCourtPolicyEntryReadbackSummary(jurisdiction, publicLife);
+                string courtPolicyDispatchReadback = BuildCourtPolicyDispatchReadbackSummary(jurisdiction, publicLife);
+                string courtPolicyPublicReadback = BuildCourtPolicyPublicReadbackSummary(jurisdiction, publicLife);
+                string courtPolicyNoLoopGuard = BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife);
                 string canalRouteReadback = BuildCanalRouteReadbackSummary(publicLife, disorder, localRoutes);
                 string residueHealth = BuildResidueHealthSummary(
                     localOrderSocialMemories,
@@ -128,6 +132,10 @@ public sealed partial class PresentationReadModelBuilder
                         jurisdiction,
                         recentOrderCommandLabel,
                         orderAftermathSummary),
+                    courtPolicyEntryReadback,
+                    courtPolicyDispatchReadback,
+                    courtPolicyPublicReadback,
+                    courtPolicyNoLoopGuard,
                     officeImplementationReadback,
                     officeLaneReceiptClosure,
                     familyLaneClosure.ReceiptClosureSummary,
@@ -166,6 +174,10 @@ public sealed partial class PresentationReadModelBuilder
                     OfficeLaneReceiptClosureSummary = officeLaneReceiptClosure,
                     OfficeLaneResidueFollowUpSummary = officeLaneResidueFollowUp,
                     OfficeLaneNoLoopGuardSummary = officeLaneNoLoopGuard,
+                    CourtPolicyEntryReadbackSummary = courtPolicyEntryReadback,
+                    CourtPolicyDispatchReadbackSummary = courtPolicyDispatchReadback,
+                    CourtPolicyPublicReadbackSummary = courtPolicyPublicReadback,
+                    CourtPolicyNoLoopGuardSummary = courtPolicyNoLoopGuard,
                     FamilyLaneEntryReadbackSummary = familyLaneClosure.EntryReadbackSummary,
                     FamilyElderExplanationReadbackSummary = familyLaneClosure.ElderExplanationReadbackSummary,
                     FamilyGuaranteeReadbackSummary = familyLaneClosure.GuaranteeReadbackSummary,
@@ -426,6 +438,76 @@ public sealed partial class PresentationReadModelBuilder
         return $"Office闭环防回压：县门/文移/胥吏后账留在OfficeAndCareer lane；本户不再代修，不把Office后手回压本户。{waveringTail}".Trim();
     }
 
+    private static string BuildCourtPolicyEntryReadbackSummary(
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (!HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        string nodeLabel = publicLife?.NodeLabel ?? $"Settlement {jurisdiction.SettlementId.Value}";
+        return $"朝议压力读回：{nodeLabel}已有政策窗口读回，官阶{jurisdiction.AuthorityTier}、词牍压{jurisdiction.PetitionPressure}、乡面杠力{jurisdiction.JurisdictionLeverage}；Court后手不直写地方，先由OfficeAndCareer开窗承接。";
+    }
+
+    private static string BuildCourtPolicyDispatchReadbackSummary(
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (!HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        int dispatchPressure = publicLife?.PrefectureDispatchPressure ?? 0;
+        int documentaryWeight = publicLife?.DocumentaryWeight ?? 0;
+        int verificationCost = publicLife?.VerificationCost ?? 0;
+        int courierRisk = publicLife?.CourierRisk ?? 0;
+        return $"文移到达读回：州县催牒压{dispatchPressure}，文书重{documentaryWeight}，验看成本{verificationCost}，递送风险{courierRisk}；县门执行承接读回仍归OfficeAndCareer，公议读法另由PublicLifeAndRumor读。";
+    }
+
+    private static string BuildCourtPolicyPublicReadbackSummary(
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (!HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        int noticeVisibility = publicLife?.NoticeVisibility ?? 0;
+        int streetTalkHeat = publicLife?.StreetTalkHeat ?? 0;
+        int publicLegitimacy = publicLife?.PublicLegitimacy ?? 0;
+        return $"公议读法读回：榜示{noticeVisibility}，街谈{streetTalkHeat}，公议{publicLegitimacy}；Office/PublicLife分读：县门是否落地看OfficeAndCareer，街面怎么传看PublicLifeAndRumor。";
+    }
+
+    private static string BuildCourtPolicyNoLoopGuardSummary(
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (!HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        return "Court-policy防回压：不是本户也不是县门独吞朝廷后账；Court后手不直写地方，Office/PublicLife分读，只显示已投影字段。";
+    }
+
+    private static bool HasCourtPolicyProcessReadback(
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        return IsOfficeImplementationCategory(jurisdiction.PetitionOutcomeCategory)
+            || jurisdiction.PetitionPressure >= 45
+            || jurisdiction.AdministrativeTaskLoad >= 55
+            || jurisdiction.PetitionBacklog >= 8
+            || (publicLife?.PrefectureDispatchPressure ?? 0) > 0
+            || (publicLife?.DocumentaryWeight ?? 0) >= 30
+            || (publicLife?.VerificationCost ?? 0) >= 30
+            || (publicLife?.CourierRisk ?? 0) >= 30;
+    }
+
     private static SocialMemoryEntrySnapshot? SelectOfficePolicyResidue(
         IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
         JurisdictionAuthoritySnapshot jurisdiction)
@@ -671,6 +753,10 @@ public sealed partial class PresentationReadModelBuilder
             OfficeLaneReceiptClosureSummary = lead.OfficeLaneReceiptClosureSummary,
             OfficeLaneResidueFollowUpSummary = lead.OfficeLaneResidueFollowUpSummary,
             OfficeLaneNoLoopGuardSummary = lead.OfficeLaneNoLoopGuardSummary,
+            CourtPolicyEntryReadbackSummary = lead.CourtPolicyEntryReadbackSummary,
+            CourtPolicyDispatchReadbackSummary = lead.CourtPolicyDispatchReadbackSummary,
+            CourtPolicyPublicReadbackSummary = lead.CourtPolicyPublicReadbackSummary,
+            CourtPolicyNoLoopGuardSummary = lead.CourtPolicyNoLoopGuardSummary,
             FamilyLaneEntryReadbackSummary = lead.FamilyLaneEntryReadbackSummary,
             FamilyElderExplanationReadbackSummary = lead.FamilyElderExplanationReadbackSummary,
             FamilyGuaranteeReadbackSummary = lead.FamilyGuaranteeReadbackSummary,
@@ -744,6 +830,9 @@ public sealed partial class PresentationReadModelBuilder
             focus.PublicPressureSummary,
             focus.PublicMomentumSummary,
             lane?.OrderAdministrativeAftermathSummary ?? string.Empty,
+            lane?.CourtPolicyEntryReadbackSummary ?? string.Empty,
+            lane?.CourtPolicyDispatchReadbackSummary ?? string.Empty,
+            lane?.CourtPolicyPublicReadbackSummary ?? string.Empty,
             lane?.OfficeImplementationReadbackSummary ?? string.Empty,
             lane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
             lane?.CampaignAftermathReadbackSummary ?? string.Empty,
@@ -770,6 +859,10 @@ public sealed partial class PresentationReadModelBuilder
         string guidanceSummary = CombineGovernanceDocketText(
             handlingSummary,
             ownerLaneReturnGuidance,
+            lane?.CourtPolicyEntryReadbackSummary ?? string.Empty,
+            lane?.CourtPolicyDispatchReadbackSummary ?? string.Empty,
+            lane?.CourtPolicyPublicReadbackSummary ?? string.Empty,
+            lane?.CourtPolicyNoLoopGuardSummary ?? string.Empty,
             lane?.OfficeLaneEntryReadbackSummary ?? string.Empty,
             lane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
             lane?.OfficeNextStepReadbackSummary ?? string.Empty,
@@ -828,6 +921,10 @@ public sealed partial class PresentationReadModelBuilder
             OfficeLaneReceiptClosureSummary = lane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
             OfficeLaneResidueFollowUpSummary = lane?.OfficeLaneResidueFollowUpSummary ?? string.Empty,
             OfficeLaneNoLoopGuardSummary = lane?.OfficeLaneNoLoopGuardSummary ?? string.Empty,
+            CourtPolicyEntryReadbackSummary = lane?.CourtPolicyEntryReadbackSummary ?? string.Empty,
+            CourtPolicyDispatchReadbackSummary = lane?.CourtPolicyDispatchReadbackSummary ?? string.Empty,
+            CourtPolicyPublicReadbackSummary = lane?.CourtPolicyPublicReadbackSummary ?? string.Empty,
+            CourtPolicyNoLoopGuardSummary = lane?.CourtPolicyNoLoopGuardSummary ?? string.Empty,
             FamilyLaneEntryReadbackSummary = lane?.FamilyLaneEntryReadbackSummary ?? string.Empty,
             FamilyElderExplanationReadbackSummary = lane?.FamilyElderExplanationReadbackSummary ?? string.Empty,
             FamilyGuaranteeReadbackSummary = lane?.FamilyGuaranteeReadbackSummary ?? string.Empty,
@@ -1033,6 +1130,16 @@ public sealed partial class PresentationReadModelBuilder
         if (!string.IsNullOrWhiteSpace(settlement.OfficeImplementationReadbackSummary))
         {
             score += 16;
+        }
+
+        if (!string.IsNullOrWhiteSpace(settlement.CourtPolicyEntryReadbackSummary))
+        {
+            score += 10;
+        }
+
+        if (!string.IsNullOrWhiteSpace(settlement.CourtPolicyNoLoopGuardSummary))
+        {
+            score += 4;
         }
 
         if (!string.IsNullOrWhiteSpace(settlement.RegimeOfficeReadbackSummary))

@@ -457,3 +457,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Unity reads projected aftermath docket snapshots/fields only; it must not infer docket contents from notifications, event traces, settlement stats, receipt prose, or `DocketSummary`.
 - Determinism depends on existing campaign state, structured docket lists, fixed ordering, and stable read-model assembly. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, projected military prose, `LastDirectiveTrace`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 - The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for campaign aftermath dockets, merits/blames, relief needs, route repairs, or SocialMemory after-accounts.
+
+## Current backend court-policy process readback v93-v100 note
+
+- V93-V100 keeps the scheduler shape unchanged: no new phase, event pool, court loop, policy formula, dispatch ledger, or same-command SocialMemory write is introduced.
+- The existing same-month drain remains `CourtAgendaPressureAccumulated -> PolicyWindowOpened -> PolicyImplemented`, with `PublicLifeAndRumor` handling structured public readback afterward. Application reads existing `JurisdictionAuthoritySnapshot` and `SettlementPublicLifeSnapshot` values after owning modules resolve their state.
+- Governance, docket, office, and desk surfaces may show `朝议压力读回`, `政策窗口读回`, `文移到达读回`, `县门执行承接读回`, `公议读法读回`, and `Court-policy防回压`, but those strings are runtime guidance only.
+- Determinism depends on structured snapshots, fixed ordering, and stable read-model assembly. It must not use wall-clock time, random UI state, `DomainEvent.Summary`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- The ordinary household line remains a bounded low-power local response surface. It is not a universal repair path for court-policy after-accounting, county-yamen implementation, public legitimacy, or SocialMemory after-accounts.

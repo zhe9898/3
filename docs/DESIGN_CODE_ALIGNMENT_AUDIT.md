@@ -1,5 +1,12 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v93-v100 delta - 2026-04-26
+
+- Court-policy process readback now projects the existing thin court/office/public-life path as `朝议压力读回`, `政策窗口读回`, `文移到达读回`, `县门执行承接读回`, `公议读法读回`, `Court后手不直写地方`, `Office/PublicLife分读`, `不是本户也不是县门独吞朝廷后账`, and `Court-policy防回压`.
+- The implementation reads structured `JurisdictionAuthoritySnapshot` and `SettlementPublicLifeSnapshot` fields only. It does not parse `DomainEvent.Summary`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- Ownership stays split: `WorldSettlements` owns court pressure facts, `OfficeAndCareer` owns policy windows and yamen implementation, `PublicLifeAndRumor` owns public interpretation, `SocialMemoryAndRelations` owns later durable residue, Application assembles read models, and Unity copies projected fields only.
+- Save/schema audit: v93-v100 adds no persisted state, root/module schema bump, migration, save manifest change, court module, dispatch / policy closure / owner-lane / cooldown ledger, household target field, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v85-v92 delta - 2026-04-26
 
 - Warfare aftermath docket readback now uses existing `WarfareCampaign.AftermathDockets` snapshots rather than notification inference or prose parsing. `PresentationReadModelBundle.CampaignAftermathDockets` feeds Application readback and Unity shell copy-only surfaces.
@@ -169,7 +176,7 @@
 
 ## 当前判断
 
-文档和代码总体对齐：模块边界、调度顺序、只读 presentation seam、Unity host shell 定位、PersonRegistry 基线、死亡事件通道、lite 模块接入方式、public-life/order v3-v30 闭环、Order schema `9`、Office schema `7`、Family schema `8`、Population schema `3`、SocialMemory schema `3`，以及 WarfareCampaign directive choice v77-v84 / aftermath docket readback v85-v92 的 projection-only 筋骨，已经和当前代码事实一致。
+文档和代码总体对齐：模块边界、调度顺序、只读 presentation seam、Unity host shell 定位、PersonRegistry 基线、死亡事件通道、lite 模块接入方式、public-life/order v3-v30 闭环、Order schema `9`、Office schema `7`、Family schema `8`、Population schema `3`、SocialMemory schema `3`，以及 WarfareCampaign directive choice v77-v84 / aftermath docket readback v85-v92 与 court-policy process readback v93-v100 的 projection-only 筋骨，已经和当前代码事实一致。
 
 仍应视为真实后续债务：
 - 仁宗 pressure-chain 1-9 当前是 thin topology proof，不等同于完整社会公式或完整历史模拟；完整链条债务以 `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` 和各 chain profile 为准。

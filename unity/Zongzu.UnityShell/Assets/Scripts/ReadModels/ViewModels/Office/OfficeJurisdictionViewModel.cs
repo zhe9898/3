@@ -28,6 +28,14 @@ public sealed class OfficeJurisdictionViewModel
 
 	public string OfficeLaneNoLoopGuardSummary { get; set; } = string.Empty;
 
+	public string CourtPolicyEntryReadbackSummary { get; set; } = string.Empty;
+
+	public string CourtPolicyDispatchReadbackSummary { get; set; } = string.Empty;
+
+	public string CourtPolicyPublicReadbackSummary { get; set; } = string.Empty;
+
+	public string CourtPolicyNoLoopGuardSummary { get; set; } = string.Empty;
+
 	public string WarfareLaneEntryReadbackSummary { get; set; } = string.Empty;
 
 	public string ForceReadinessReadbackSummary { get; set; } = string.Empty;

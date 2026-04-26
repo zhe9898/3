@@ -1134,6 +1134,12 @@ Current backend Warfare aftermath docket readback v85-v92 note:
 - New runtime read-model exposure `PresentationReadModelBundle.CampaignAftermathDockets` and readback text such as `战后案卷读回`, `记功簿读回`, `劾责状读回`, `抚恤簿读回`, `清路札读回`, `WarfareCampaign拥有战后案卷`, `战后案卷不是县门/Order代算`, and `不是普通家户补战后` are projections only and are not saved.
 - Application/Unity read structured docket lists and counts only; they do not parse `DocketSummary`, receipt prose, `LastDirectiveTrace`, `DomainEvent.Summary`, or SocialMemory summary prose.
 
+Current backend court-policy process readback v93-v100 note:
+- v93-v100 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, court module, dispatch ledger, policy closure ledger, owner-lane ledger, cooldown ledger, household target field, or projection cache.
+- `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `WorldSettlements`, `PopulationAndHouseholds`, and `SocialMemoryAndRelations` schema versions remain unchanged.
+- New read-model / Unity fields `CourtPolicyEntryReadbackSummary`, `CourtPolicyDispatchReadbackSummary`, `CourtPolicyPublicReadbackSummary`, and `CourtPolicyNoLoopGuardSummary` are runtime projections only and are not saved.
+- These fields are derived from structured `JurisdictionAuthoritySnapshot` and `SettlementPublicLifeSnapshot` values; they are not derived from `DomainEvent.Summary`, receipt prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

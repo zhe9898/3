@@ -700,6 +700,10 @@ public sealed partial class FirstPassPresentationShellTests
         const string regime = "官员摇摆读回：张元退避风险78，需继续观察OfficeAndCareer lane。";
         const string route = "运河/脚路读回：只作Trade/Order/PublicLife投影，不新开运河账本。";
         const string residue = "余味健康读回：旧怨31仍在，后续由SocialMemoryAndRelations月推进沉淀。";
+        const string courtEntry = "朝议压力读回：已有政策窗口读回，Court后手不直写地方。";
+        const string courtDispatch = "文移到达读回：县门执行承接读回仍归OfficeAndCareer。";
+        const string courtPublic = "公议读法读回：Office/PublicLife分读。";
+        const string courtNoLoop = "Court-policy防回压：不是本户也不是县门独吞朝廷后账。";
         bundle.GovernanceSettlements =
         [
             new SettlementGovernanceLaneSnapshot
@@ -723,6 +727,10 @@ public sealed partial class FirstPassPresentationShellTests
                 OfficeLaneReceiptClosureSummary = closure,
                 OfficeLaneResidueFollowUpSummary = residueFollowUp,
                 OfficeLaneNoLoopGuardSummary = noLoop,
+                CourtPolicyEntryReadbackSummary = courtEntry,
+                CourtPolicyDispatchReadbackSummary = courtDispatch,
+                CourtPolicyPublicReadbackSummary = courtPublic,
+                CourtPolicyNoLoopGuardSummary = courtNoLoop,
                 FamilyLaneEntryReadbackSummary = familyEntry,
                 FamilyElderExplanationReadbackSummary = familyElder,
                 FamilyGuaranteeReadbackSummary = familyGuarantee,
@@ -749,6 +757,10 @@ public sealed partial class FirstPassPresentationShellTests
             OfficeLaneReceiptClosureSummary = closure,
             OfficeLaneResidueFollowUpSummary = residueFollowUp,
             OfficeLaneNoLoopGuardSummary = noLoop,
+            CourtPolicyEntryReadbackSummary = courtEntry,
+            CourtPolicyDispatchReadbackSummary = courtDispatch,
+            CourtPolicyPublicReadbackSummary = courtPublic,
+            CourtPolicyNoLoopGuardSummary = courtNoLoop,
             FamilyLaneEntryReadbackSummary = familyEntry,
             FamilyElderExplanationReadbackSummary = familyElder,
             FamilyGuaranteeReadbackSummary = familyGuarantee,
@@ -775,6 +787,10 @@ public sealed partial class FirstPassPresentationShellTests
             OfficeLaneReceiptClosureSummary = closure,
             OfficeLaneResidueFollowUpSummary = residueFollowUp,
             OfficeLaneNoLoopGuardSummary = noLoop,
+            CourtPolicyEntryReadbackSummary = courtEntry,
+            CourtPolicyDispatchReadbackSummary = courtDispatch,
+            CourtPolicyPublicReadbackSummary = courtPublic,
+            CourtPolicyNoLoopGuardSummary = courtNoLoop,
             FamilyLaneEntryReadbackSummary = familyEntry,
             FamilyElderExplanationReadbackSummary = familyElder,
             FamilyGuaranteeReadbackSummary = familyGuarantee,
@@ -792,6 +808,8 @@ public sealed partial class FirstPassPresentationShellTests
         SettlementNodeViewModel settlement = shell.DeskSandbox.Settlements.Single();
 
         Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain(implementation));
+        Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain(courtEntry));
+        Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain(courtNoLoop));
         Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain(regime));
         Assert.That(settlement.GovernanceSummary, Does.Contain(implementation));
         Assert.That(settlement.GovernanceSummary, Does.Contain(nextStep));
@@ -799,6 +817,10 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlement.GovernanceSummary, Does.Contain(closure));
         Assert.That(settlement.GovernanceSummary, Does.Contain(residueFollowUp));
         Assert.That(settlement.GovernanceSummary, Does.Contain(noLoop));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(courtEntry));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(courtDispatch));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(courtPublic));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(courtNoLoop));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyEntry));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyClosure));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyNoLoop));
@@ -810,6 +832,10 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlement.OfficeLaneReceiptClosureSummary, Is.EqualTo(closure));
         Assert.That(settlement.OfficeLaneResidueFollowUpSummary, Is.EqualTo(residueFollowUp));
         Assert.That(settlement.OfficeLaneNoLoopGuardSummary, Is.EqualTo(noLoop));
+        Assert.That(settlement.CourtPolicyEntryReadbackSummary, Is.EqualTo(courtEntry));
+        Assert.That(settlement.CourtPolicyDispatchReadbackSummary, Is.EqualTo(courtDispatch));
+        Assert.That(settlement.CourtPolicyPublicReadbackSummary, Is.EqualTo(courtPublic));
+        Assert.That(settlement.CourtPolicyNoLoopGuardSummary, Is.EqualTo(courtNoLoop));
         Assert.That(settlement.FamilyLaneEntryReadbackSummary, Is.EqualTo(familyEntry));
         Assert.That(settlement.FamilyElderExplanationReadbackSummary, Is.EqualTo(familyElder));
         Assert.That(settlement.FamilyGuaranteeReadbackSummary, Is.EqualTo(familyGuarantee));
@@ -826,6 +852,10 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(officeJurisdiction.OfficeLaneReceiptClosureSummary, Is.EqualTo(closure));
         Assert.That(officeJurisdiction.OfficeLaneResidueFollowUpSummary, Is.EqualTo(residueFollowUp));
         Assert.That(officeJurisdiction.OfficeLaneNoLoopGuardSummary, Is.EqualTo(noLoop));
+        Assert.That(officeJurisdiction.CourtPolicyEntryReadbackSummary, Is.EqualTo(courtEntry));
+        Assert.That(officeJurisdiction.CourtPolicyDispatchReadbackSummary, Is.EqualTo(courtDispatch));
+        Assert.That(officeJurisdiction.CourtPolicyPublicReadbackSummary, Is.EqualTo(courtPublic));
+        Assert.That(officeJurisdiction.CourtPolicyNoLoopGuardSummary, Is.EqualTo(courtNoLoop));
     }
 
 }
