@@ -143,17 +143,24 @@ Verify against module `ModuleSchemaVersion` before changing migrations.
 |---|---:|
 | PersonRegistry | 1 |
 | WorldSettlements | 8 |
-| FamilyCore | 7 |
-| PopulationAndHouseholds | 2 |
+| FamilyCore | 8 |
+| PopulationAndHouseholds | 3 |
 | SocialMemoryAndRelations | 3 |
 | EducationAndExams | 2 |
 | TradeAndIndustry | 4 |
 | PublicLifeAndRumor | 4 |
-| OfficeAndCareer | 6 |
+| OfficeAndCareer | 7 |
 | NarrativeProjection | 1 |
-| OrderAndBanditry | 7 |
+| OrderAndBanditry | 9 |
 | ConflictAndForce | 4 |
 | WarfareCampaign | 4 |
+
+## Current Zongzu Chain Anchors
+
+- The implemented thin-chain skeleton is closed through v108 as topology/readback/ownership evidence, not full-chain rule-density completion.
+- v35-v100 use existing owner state or runtime projection fields for Trade/Order, Family, Office, Force/Campaign, Warfare, and Court-policy readbacks.
+- v101-v108 is documentation plus architecture-test closeout evidence only: no runtime rule, schema bump, migration, ledger, manager/controller layer, UI/Unity authority, or `PersonRegistry` expansion.
+- For performance work, name hot path, cardinality, allocation risk, deterministic ordering, cache invalidation, save/schema impact, and validation lane before changing algorithms.
 
 ## Migration Rules
 
