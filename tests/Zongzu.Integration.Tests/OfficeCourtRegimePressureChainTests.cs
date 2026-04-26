@@ -208,9 +208,17 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(governance.OfficeImplementationReadbackSummary, Does.Contain("县门执行读回"));
         Assert.That(governance.OfficeImplementationReadbackSummary, Does.Contain("OfficeAndCareer lane"));
         Assert.That(governance.OfficeNextStepReadbackSummary, Does.Contain("县门/文移后手"));
+        Assert.That(governance.OfficeLaneEntryReadbackSummary, Does.Contain("Office承接入口"));
+        Assert.That(governance.OfficeLaneEntryReadbackSummary, Does.Contain("该走县门/文移 lane"));
+        Assert.That(governance.OfficeLaneNoLoopGuardSummary, Does.Contain("Office闭环防回压"));
+        Assert.That(governance.OfficeLaneNoLoopGuardSummary, Does.Contain("本户不再代修"));
         Assert.That(governance.GovernanceSummary, Does.Contain("县门执行读回"));
         Assert.That(afterFirst.GovernanceDocket.OfficeImplementationReadbackSummary, Does.Contain("县门执行读回"));
+        Assert.That(afterFirst.GovernanceDocket.OfficeLaneEntryReadbackSummary, Does.Contain("Office承接入口"));
+        Assert.That(afterFirst.GovernanceDocket.OfficeLaneNoLoopGuardSummary, Does.Contain("Office闭环防回压"));
         Assert.That(afterFirst.GovernanceDocket.GuidanceSummary, Does.Contain("县门/文移后手"));
+        Assert.That(afterFirst.GovernanceDocket.GuidanceSummary, Does.Contain("Office承接入口"));
+        Assert.That(afterFirst.GovernanceDocket.GuidanceSummary, Does.Contain("Office闭环防回压"));
 
         simulation.AdvanceOneMonth();
 
@@ -226,6 +234,13 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(residue.Summary, Does.Contain("OfficeAndCareer"));
         Assert.That(residue.Summary, Does.Not.Contain("LastPetitionOutcome"));
         Assert.That(residue.Summary, Does.Not.Contain("DomainEvent.Summary"));
+
+        PresentationReadModelBundle afterSecond = new PresentationReadModelBuilder().BuildForM2(simulation);
+        SettlementGovernanceLaneSnapshot afterSecondGovernance =
+            afterSecond.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("Office余味续接读回"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("SocialMemoryAndRelations"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("不是本户再修"));
     }
 
     [Test]

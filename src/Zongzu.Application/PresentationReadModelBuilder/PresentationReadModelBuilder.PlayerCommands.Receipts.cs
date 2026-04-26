@@ -68,11 +68,13 @@ public sealed partial class PresentationReadModelBuilder
                     executionSummary: BuildOfficeResponseAftermathSummary(jurisdiction),
                     readbackSummary: CombinePublicLifeResponseText(
                         BuildOfficeResponseAftermathSummary(jurisdiction),
+                        BuildOfficeLaneReceiptClosureSummary(jurisdiction),
                         BuildOwnerLaneFollowUpReceiptClosure(
                             localSocialMemories,
                             OwnerLaneReturnSourceOffice,
                             jurisdiction.LastRefusalResponseCommandCode,
-                            jurisdiction.LastRefusalResponseOutcomeCode)),
+                            jurisdiction.LastRefusalResponseOutcomeCode),
+                        BuildOfficeLaneNoLoopGuardSummary(jurisdiction, [], [])),
                     targetLabel: string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
                         ? jurisdiction.LeadOfficeTitle
                         : jurisdiction.LeadOfficialName,

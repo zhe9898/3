@@ -1098,6 +1098,13 @@ Current backend office/yamen readback v38-v45 note:
 - New governance read-model fields such as `OfficeImplementationReadbackSummary`, `OfficeNextStepReadbackSummary`, `RegimeOfficeReadbackSummary`, `CanalRouteReadbackSummary`, and `ResidueHealthSummary` are runtime projections only and are not saved.
 - The later SocialMemory office/yamen residue reuses existing memory/narrative/climate records and cause keys. It does not add a SocialMemory field, memory namespace, relationship table, or migration.
 
+Current backend office-lane closure v46-v52 note:
+- v46-v52 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, policy ledger, yamen workflow state, owner-lane ledger, receipt-status ledger, outcome ledger, cooldown ledger, follow-up ledger, household target field, or projection cache.
+- `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New governance / Unity read-model fields `OfficeLaneEntryReadbackSummary`, `OfficeLaneReceiptClosureSummary`, `OfficeLaneResidueFollowUpSummary`, and `OfficeLaneNoLoopGuardSummary` are runtime projections only and are not saved.
+- These fields are derived from existing structured `JurisdictionAuthoritySnapshot` fields, office response trace codes, and `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State`; they are not derived from `DomainEvent.Summary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- Ordinary home-household response remains a low-power `PopulationAndHouseholds` lane. It can explain local relief/strain, but it is not a universal repair lane for yamen documents, clerk delay, route pressure, clan guarantee face, or durable social residue.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

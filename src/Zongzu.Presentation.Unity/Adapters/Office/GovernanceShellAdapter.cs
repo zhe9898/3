@@ -26,6 +26,8 @@ internal static class GovernanceShellAdapter
 			summary,
 			momentum,
 			governanceLane?.OfficeImplementationReadbackSummary ?? string.Empty,
+			governanceLane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
+			governanceLane?.OfficeLaneNoLoopGuardSummary ?? string.Empty,
 			governanceLane?.RegimeOfficeReadbackSummary ?? string.Empty).Trim();
 	}
 
@@ -47,6 +49,10 @@ internal static class GovernanceShellAdapter
 			governanceLane.PublicMomentumSummary,
 			governanceLane.OfficeImplementationReadbackSummary,
 			governanceLane.OfficeNextStepReadbackSummary,
+			governanceLane.OfficeLaneEntryReadbackSummary,
+			governanceLane.OfficeLaneReceiptClosureSummary,
+			governanceLane.OfficeLaneResidueFollowUpSummary,
+			governanceLane.OfficeLaneNoLoopGuardSummary,
 			governanceLane.RegimeOfficeReadbackSummary,
 			governanceLane.CanalRouteReadbackSummary,
 			governanceLane.ResidueHealthSummary).Trim();

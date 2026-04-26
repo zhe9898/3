@@ -23,6 +23,9 @@ internal sealed class OfficeProjectionContext
 
 	internal JurisdictionAuthoritySnapshot[] OrderedJurisdictions { get; private init; } = [];
 
+	internal IReadOnlyDictionary<int, SettlementGovernanceLaneSnapshot> GovernanceBySettlement { get; private init; } =
+		new Dictionary<int, SettlementGovernanceLaneSnapshot>();
+
 	internal PlayerCommandAffordanceSnapshot[] OrderedAffordances { get; private init; } = [];
 
 	internal PlayerCommandReceiptSnapshot[] OrderedReceipts { get; private init; } = [];
@@ -47,6 +50,9 @@ internal sealed class OfficeProjectionContext
 			OrderedJurisdictions = bundle.OfficeJurisdictions
 				.OrderBy(jurisdiction => jurisdiction.SettlementId.Value)
 				.ToArray(),
+			GovernanceBySettlement = bundle.GovernanceSettlements
+				.GroupBy(governance => governance.SettlementId.Value)
+				.ToDictionary(group => group.Key, group => group.First()),
 			OrderedAffordances = bundle.PlayerCommands
 				.EnumerateAffordances(PlayerCommandSurfaceKeys.Office)
 				.OrderBy(command => command.SettlementId.Value)

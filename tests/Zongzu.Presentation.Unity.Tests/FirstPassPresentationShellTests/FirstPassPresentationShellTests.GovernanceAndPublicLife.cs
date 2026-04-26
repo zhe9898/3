@@ -7,6 +7,11 @@ namespace Zongzu.Presentation.Unity.Tests;
 
 public sealed partial class FirstPassPresentationShellTests
 {
+    private const string entry = "Office lane entry copy";
+    private const string closure = "Office lane receipt closure copy";
+    private const string residueFollowUp = "Office lane residue follow-up copy";
+    private const string noLoop = "Office lane no-loop copy";
+
     [Test]
     public void Compose_UsesOfficeFallbackWhenGovernanceProjectionIsAbsent()
     {
@@ -620,6 +625,10 @@ public sealed partial class FirstPassPresentationShellTests
                 GovernanceSummary = "registrar is sorting the docket",
                 OfficeImplementationReadbackSummary = implementation,
                 OfficeNextStepReadbackSummary = nextStep,
+                OfficeLaneEntryReadbackSummary = entry,
+                OfficeLaneReceiptClosureSummary = closure,
+                OfficeLaneResidueFollowUpSummary = residueFollowUp,
+                OfficeLaneNoLoopGuardSummary = noLoop,
                 RegimeOfficeReadbackSummary = regime,
                 CanalRouteReadbackSummary = route,
                 ResidueHealthSummary = residue,
@@ -635,6 +644,10 @@ public sealed partial class FirstPassPresentationShellTests
             PublicMomentumSummary = "county gate is tightening around notices and road reports",
             OfficeImplementationReadbackSummary = implementation,
             OfficeNextStepReadbackSummary = nextStep,
+            OfficeLaneEntryReadbackSummary = entry,
+            OfficeLaneReceiptClosureSummary = closure,
+            OfficeLaneResidueFollowUpSummary = residueFollowUp,
+            OfficeLaneNoLoopGuardSummary = noLoop,
             RegimeOfficeReadbackSummary = regime,
             CanalRouteReadbackSummary = route,
             ResidueHealthSummary = residue,
@@ -650,6 +663,10 @@ public sealed partial class FirstPassPresentationShellTests
             PublicMomentumSummary = "county gate is tightening around notices and road reports",
             OfficeImplementationReadbackSummary = implementation,
             OfficeNextStepReadbackSummary = nextStep,
+            OfficeLaneEntryReadbackSummary = entry,
+            OfficeLaneReceiptClosureSummary = closure,
+            OfficeLaneResidueFollowUpSummary = residueFollowUp,
+            OfficeLaneNoLoopGuardSummary = noLoop,
             RegimeOfficeReadbackSummary = regime,
             CanalRouteReadbackSummary = route,
             ResidueHealthSummary = residue,
@@ -663,13 +680,27 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain(regime));
         Assert.That(settlement.GovernanceSummary, Does.Contain(implementation));
         Assert.That(settlement.GovernanceSummary, Does.Contain(nextStep));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(entry));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(closure));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(residueFollowUp));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(noLoop));
         Assert.That(settlement.GovernanceSummary, Does.Contain(route));
         Assert.That(settlement.GovernanceSummary, Does.Contain(residue));
         Assert.That(settlement.OfficeImplementationReadbackSummary, Is.EqualTo(implementation));
         Assert.That(settlement.OfficeNextStepReadbackSummary, Is.EqualTo(nextStep));
+        Assert.That(settlement.OfficeLaneEntryReadbackSummary, Is.EqualTo(entry));
+        Assert.That(settlement.OfficeLaneReceiptClosureSummary, Is.EqualTo(closure));
+        Assert.That(settlement.OfficeLaneResidueFollowUpSummary, Is.EqualTo(residueFollowUp));
+        Assert.That(settlement.OfficeLaneNoLoopGuardSummary, Is.EqualTo(noLoop));
         Assert.That(settlement.RegimeOfficeReadbackSummary, Is.EqualTo(regime));
         Assert.That(settlement.CanalRouteReadbackSummary, Is.EqualTo(route));
         Assert.That(settlement.ResidueHealthSummary, Is.EqualTo(residue));
+
+        OfficeJurisdictionViewModel officeJurisdiction = shell.Office.Jurisdictions.Single();
+        Assert.That(officeJurisdiction.OfficeLaneEntryReadbackSummary, Is.EqualTo(entry));
+        Assert.That(officeJurisdiction.OfficeLaneReceiptClosureSummary, Is.EqualTo(closure));
+        Assert.That(officeJurisdiction.OfficeLaneResidueFollowUpSummary, Is.EqualTo(residueFollowUp));
+        Assert.That(officeJurisdiction.OfficeLaneNoLoopGuardSummary, Is.EqualTo(noLoop));
     }
 
 }

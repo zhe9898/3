@@ -351,6 +351,15 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Unity copies projected DTO fields only. It does not query modules, inspect event metadata, compute implementation effectiveness, infer owner lanes, or write SocialMemory.
 - Save/schema result: no persisted state, schema bump, migration, policy ledger, yamen workflow state, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
 
+## Backend office-lane closure v46-v52 integration note
+- V46-V52 is projection/readback closure over the existing Office lane after v38-v45. It is not a new command system, event pool, thick county-yamen formula, clerk AI, or persisted closure ledger.
+- Governance, docket, office, and receipt read models may show `Office承接入口`, `Office后手收口读回`, `Office余味续接读回`, and `Office闭环防回压` through `OfficeLaneEntryReadbackSummary`, `OfficeLaneReceiptClosureSummary`, `OfficeLaneResidueFollowUpSummary`, and `OfficeLaneNoLoopGuardSummary`.
+- The readback may read structured `JurisdictionAuthoritySnapshot` fields, existing `LastRefusalResponseCommandCode` / `LastRefusalResponseOutcomeCode`, and structured `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State`. It must not parse `DomainEvent.Summary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- `OfficeAndCareer` remains the owner of county-yamen / document / clerk follow-through. Ordinary home-household responses remain local `PopulationAndHouseholds` pressure relief and are not a universal Office repair lane.
+- `SocialMemoryAndRelations` may only write durable Office residue in its later monthly pass from structured aftermath. It must not treat Office closure projection text as a command or residue source.
+- Unity copies projected DTO fields only. It does not query modules, compute closure, infer owner lanes, maintain ledgers, or write SocialMemory.
+- Save/schema result: no persisted state, schema bump, migration, policy ledger, yamen workflow state, owner-lane ledger, receipt-status ledger, outcome ledger, cooldown ledger, follow-up ledger, household target field, or save-manifest change.
+
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace
 - `OfficeAndCareer.Lite` now reads `EducationAndExams`, `SocialMemoryAndRelations`, and optional `OrderAndBanditry` projections only

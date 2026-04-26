@@ -164,6 +164,15 @@ public sealed class PublicLifeOrderActorCountermoveRuleDrivenTests
             && receipt.CommandName == PlayerCommandNames.PressCountyYamenDocument
             && receipt.Label == "胥吏续拖");
         Assert.That(receipt.ReadbackSummary, Does.Contain("后账转成新的积案"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Office后手收口读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("转硬"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Office闭环防回压"));
+
+        SettlementGovernanceLaneSnapshot governance = bundle.GovernanceSettlements.Single(lane => lane.SettlementId == settlementId);
+        Assert.That(governance.OfficeLaneReceiptClosureSummary, Does.Contain("Office后手收口读回"));
+        Assert.That(governance.OfficeLaneReceiptClosureSummary, Does.Contain("转硬"));
+        Assert.That(governance.OfficeLaneNoLoopGuardSummary, Does.Contain("Office闭环防回压"));
+        Assert.That(bundle.GovernanceDocket.GuidanceSummary, Does.Contain("Office后手收口读回"));
     }
 
     [Test]

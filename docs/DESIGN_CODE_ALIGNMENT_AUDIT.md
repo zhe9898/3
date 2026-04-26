@@ -1,5 +1,14 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v46-v52 delta - 2026-04-26
+
+- Office-lane response/residue/no-loop closure v46-v52 closes the Office owner-lane readback loop after v38-v45 without adding a new command system, event pool, county-yamen formula, clerk AI, or household repair lane.
+- `PresentationReadModelBuilder` adds runtime-only Office-lane guidance fields: `OfficeLaneEntryReadbackSummary`, `OfficeLaneReceiptClosureSummary`, `OfficeLaneResidueFollowUpSummary`, and `OfficeLaneNoLoopGuardSummary`.
+- These projections read structured `JurisdictionAuthoritySnapshot` fields, existing owner-response trace codes, and structured `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State` values. They do not parse `DomainEvent.Summary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+- `OfficeAndCareer` still owns county-yamen/document/clerk handling. `PopulationAndHouseholds` remains a low-power home-household response lane, not a universal fix for Office, Order, Family, or SocialMemory aftermath.
+- Unity presentation copies the projected Office-lane fields into ViewModels and summaries only. Unity does not query modules, compute Office closure, infer owner-lane validity, maintain a ledger, or write SocialMemory.
+- Save/schema audit: v46-v52 adds no persisted state, root/module schema bump, migration, save manifest change, policy/yamen/owner-lane/receipt/outcome/cooldown/follow-up ledger, household target field, manager/god-controller path, or `PersonRegistry` expansion.
+
 ## v38-v45 delta - 2026-04-26
 
 - Backend office/yamen readback spine v38-v45 turns v37 `PolicyImplemented` into projected public-life, governance, office-lane, regime/office, route-map, residue-health, and Unity-facing readback without adding a county formula or command system.

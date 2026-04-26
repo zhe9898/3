@@ -407,10 +407,21 @@ public class ProjectReferenceTests
         Assert.That(governanceSource, Does.Contain("BuildRegimeOfficeReadbackSummary"));
         Assert.That(governanceSource, Does.Contain("BuildCanalRouteReadbackSummary"));
         Assert.That(governanceSource, Does.Contain("BuildResidueHealthSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildOfficeLaneEntryReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildOfficeLaneReceiptClosureSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildOfficeLaneResidueFollowUpSummary"));
+        Assert.That(governanceSource, Does.Contain("BuildOfficeLaneNoLoopGuardSummary"));
         Assert.That(governanceSource, Does.Contain("PetitionOutcomeCategory"));
         Assert.That(governanceSource, Does.Contain("OfficeImplementationReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("OfficeLaneEntryReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("OfficeLaneReceiptClosureSummary"));
+        Assert.That(governanceSource, Does.Contain("Office承接入口"));
+        Assert.That(governanceSource, Does.Contain("Office后手收口读回"));
+        Assert.That(governanceSource, Does.Contain("Office余味续接读回"));
+        Assert.That(governanceSource, Does.Contain("Office闭环防回压"));
         Assert.That(governanceSource, Does.Contain("OfficeAndCareer lane"));
         Assert.That(governanceSource, Does.Contain("本户不能代修"));
+        Assert.That(governanceSource, Does.Contain("本户不再代修"));
         Assert.That(governanceSource, Does.Not.Contain("LastPetitionOutcome"));
         Assert.That(governanceSource, Does.Not.Contain("LastExplanation"));
         Assert.That(governanceSource, Does.Not.Contain("DomainEvent.Summary"));
@@ -495,9 +506,18 @@ public class ProjectReferenceTests
             Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "DeskSandbox", "SettlementNodeViewModel.cs"),
             Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Office", "OfficeJurisdictionViewModel.cs"),
         }.Select(File.ReadAllText));
+        string officeSurfaceAdapterSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "ProjectionContexts", "OfficeProjectionContext.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
 
         Assert.That(adapterSource, Does.Contain("OfficeImplementationReadbackSummary"));
         Assert.That(adapterSource, Does.Contain("OfficeNextStepReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("OfficeLaneEntryReadbackSummary"));
+        Assert.That(adapterSource, Does.Contain("OfficeLaneReceiptClosureSummary"));
+        Assert.That(adapterSource, Does.Contain("OfficeLaneResidueFollowUpSummary"));
+        Assert.That(adapterSource, Does.Contain("OfficeLaneNoLoopGuardSummary"));
         Assert.That(adapterSource, Does.Contain("RegimeOfficeReadbackSummary"));
         Assert.That(adapterSource, Does.Contain("CanalRouteReadbackSummary"));
         Assert.That(adapterSource, Does.Contain("ResidueHealthSummary"));
@@ -510,9 +530,24 @@ public class ProjectReferenceTests
 
         Assert.That(viewModelSource, Does.Contain("OfficeImplementationReadbackSummary"));
         Assert.That(viewModelSource, Does.Contain("OfficeNextStepReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("OfficeLaneEntryReadbackSummary"));
+        Assert.That(viewModelSource, Does.Contain("OfficeLaneReceiptClosureSummary"));
+        Assert.That(viewModelSource, Does.Contain("OfficeLaneResidueFollowUpSummary"));
+        Assert.That(viewModelSource, Does.Contain("OfficeLaneNoLoopGuardSummary"));
         Assert.That(viewModelSource, Does.Contain("RegimeOfficeReadbackSummary"));
         Assert.That(viewModelSource, Does.Contain("CanalRouteReadbackSummary"));
         Assert.That(viewModelSource, Does.Contain("ResidueHealthSummary"));
+
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("GovernanceBySettlement"));
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("OfficeLaneEntryReadbackSummary"));
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("OfficeLaneReceiptClosureSummary"));
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("OfficeLaneResidueFollowUpSummary"));
+        Assert.That(officeSurfaceAdapterSource, Does.Contain("OfficeLaneNoLoopGuardSummary"));
+        Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("Zongzu.Application"));
+        Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("Zongzu.Modules."));
+        Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("DomainEventMetadataKeys"));
     }
 
     [Test]

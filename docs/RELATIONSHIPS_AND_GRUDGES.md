@@ -272,3 +272,11 @@ V38-V45 adds the explicit later-month SocialMemory side of the v37 office/yamen 
 This residue is about durable shame/fear/favor/grudge/obligation after county-yamen implementation, paper landing, clerk capture, or document delay. It is not a same-month command result, not an event-pool reaction, not a new relationship table, and not a new memory namespace.
 
 The reader must not parse `DomainEvent.Summary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, `LastInterventionSummary`, `LastLocalResponseSummary`, or projected text such as `县门执行读回` / `外部后账归位`. V38-V45 adds no SocialMemory schema bump or migration; it reuses schema `3` records.
+
+## Backend office-lane closure v46-v52 note
+
+V46-V52 adds Office-lane closure readback over that same structured residue surface. `Office承接入口`, `Office后手收口读回`, `Office余味续接读回`, `Office闭环防回压`, and `本户不再代修` are projected cues, not durable social-memory facts by themselves.
+
+`SocialMemoryAndRelations` still owns only the later durable shame/fear/favor/grudge/obligation residue. It may be read by Application projections through `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, and `OriginDate`; no reader may parse Office-lane projection prose, SocialMemory summary prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, or `DomainEvent.Summary`.
+
+The ordinary home-household line remains a low-power local response surface. It cannot repair county-yamen/document/clerk delay, route pressure, clan guarantee face, or social memory by itself. V46-V52 adds no memory namespace, relationship table, residue ledger, schema bump, or migration.

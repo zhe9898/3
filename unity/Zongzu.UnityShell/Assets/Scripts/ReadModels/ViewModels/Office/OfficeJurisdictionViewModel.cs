@@ -20,6 +20,14 @@ public sealed class OfficeJurisdictionViewModel
 
 	public string OfficeNextStepReadbackSummary { get; set; } = string.Empty;
 
+	public string OfficeLaneEntryReadbackSummary { get; set; } = string.Empty;
+
+	public string OfficeLaneReceiptClosureSummary { get; set; } = string.Empty;
+
+	public string OfficeLaneResidueFollowUpSummary { get; set; } = string.Empty;
+
+	public string OfficeLaneNoLoopGuardSummary { get; set; } = string.Empty;
+
 	public string RegimeOfficeReadbackSummary { get; set; } = string.Empty;
 
 	public string CanalRouteReadbackSummary { get; set; } = string.Empty;

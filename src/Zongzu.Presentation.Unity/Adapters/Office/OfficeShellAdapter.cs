@@ -71,17 +71,32 @@ internal static class OfficeShellAdapter
 				})
 				.ToArray(),
 			Jurisdictions = context.OrderedJurisdictions
-				.Select(jurisdiction => new OfficeJurisdictionViewModel
+				.Select(jurisdiction =>
 				{
-					SettlementLabel = settlementNames.TryGetValue(jurisdiction.SettlementId.Value, out string? settlementName)
-						? settlementName
-						: $"乡里#{jurisdiction.SettlementId.Value}",
-					LeadSummary = OfficeShellTextAdapter.RenderOfficeTitle(jurisdiction.LeadOfficeTitle) + " " + jurisdiction.LeadOfficialName,
-					LeverageSummary = $"秩阶{jurisdiction.AuthorityTier}，乡面杠力{jurisdiction.JurisdictionLeverage}。",
-					PetitionSummary = $"词牍压{jurisdiction.PetitionPressure}，积案{jurisdiction.PetitionBacklog}。",
-					TaskSummary = OfficeShellTextAdapter.RenderAdministrativeTaskTier(jurisdiction.AdministrativeTaskTier) + "差遣：" + OfficeShellTextAdapter.RenderAdministrativeTask(jurisdiction.CurrentAdministrativeTask),
-					PetitionOutcomeCategory = OfficeShellTextAdapter.RenderPetitionOutcomeCategory(jurisdiction.PetitionOutcomeCategory),
-					LastPetitionOutcome = OfficeShellTextAdapter.RenderPetitionOutcome(jurisdiction.LastPetitionOutcome)
+					context.GovernanceBySettlement.TryGetValue(
+						jurisdiction.SettlementId.Value,
+						out SettlementGovernanceLaneSnapshot? governance);
+					return new OfficeJurisdictionViewModel
+					{
+						SettlementLabel = settlementNames.TryGetValue(jurisdiction.SettlementId.Value, out string? settlementName)
+							? settlementName
+							: $"乡里#{jurisdiction.SettlementId.Value}",
+						LeadSummary = OfficeShellTextAdapter.RenderOfficeTitle(jurisdiction.LeadOfficeTitle) + " " + jurisdiction.LeadOfficialName,
+						LeverageSummary = $"秩阶{jurisdiction.AuthorityTier}，乡面杠力{jurisdiction.JurisdictionLeverage}。",
+						PetitionSummary = $"词牍压{jurisdiction.PetitionPressure}，积案{jurisdiction.PetitionBacklog}。",
+						TaskSummary = OfficeShellTextAdapter.RenderAdministrativeTaskTier(jurisdiction.AdministrativeTaskTier) + "差遣：" + OfficeShellTextAdapter.RenderAdministrativeTask(jurisdiction.CurrentAdministrativeTask),
+						PetitionOutcomeCategory = OfficeShellTextAdapter.RenderPetitionOutcomeCategory(jurisdiction.PetitionOutcomeCategory),
+						LastPetitionOutcome = OfficeShellTextAdapter.RenderPetitionOutcome(jurisdiction.LastPetitionOutcome),
+						OfficeImplementationReadbackSummary = governance?.OfficeImplementationReadbackSummary ?? string.Empty,
+						OfficeNextStepReadbackSummary = governance?.OfficeNextStepReadbackSummary ?? string.Empty,
+						OfficeLaneEntryReadbackSummary = governance?.OfficeLaneEntryReadbackSummary ?? string.Empty,
+						OfficeLaneReceiptClosureSummary = governance?.OfficeLaneReceiptClosureSummary ?? string.Empty,
+						OfficeLaneResidueFollowUpSummary = governance?.OfficeLaneResidueFollowUpSummary ?? string.Empty,
+						OfficeLaneNoLoopGuardSummary = governance?.OfficeLaneNoLoopGuardSummary ?? string.Empty,
+						RegimeOfficeReadbackSummary = governance?.RegimeOfficeReadbackSummary ?? string.Empty,
+						CanalRouteReadbackSummary = governance?.CanalRouteReadbackSummary ?? string.Empty,
+						ResidueHealthSummary = governance?.ResidueHealthSummary ?? string.Empty,
+					};
 				})
 				.ToArray()
 		};

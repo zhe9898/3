@@ -52,6 +52,14 @@ public sealed record SettlementGovernanceLaneSnapshot
 
     public string OfficeNextStepReadbackSummary { get; init; } = string.Empty;
 
+    public string OfficeLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 
     public string CanalRouteReadbackSummary { get; init; } = string.Empty;
@@ -82,6 +90,14 @@ public sealed record GovernanceFocusSnapshot
     public string OfficeImplementationReadbackSummary { get; init; } = string.Empty;
 
     public string OfficeNextStepReadbackSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 
@@ -157,6 +173,14 @@ public sealed record GovernanceDocketSnapshot
     public string OfficeImplementationReadbackSummary { get; init; } = string.Empty;
 
     public string OfficeNextStepReadbackSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 

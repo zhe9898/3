@@ -76,6 +76,13 @@ public sealed partial class PresentationReadModelBuilder
                 string officeImplementationReadback = BuildOfficeImplementationReadbackSummary(jurisdiction, publicLife);
                 string officeNextStepReadback = BuildOfficeImplementationNextStepSummary(jurisdiction);
                 string regimeOfficeReadback = BuildRegimeOfficeReadbackSummary(localOfficeCareers, jurisdiction);
+                string officeLaneEntryReadback = BuildOfficeLaneEntryReadbackSummary(jurisdiction);
+                string officeLaneReceiptClosure = BuildOfficeLaneReceiptClosureSummary(jurisdiction);
+                string officeLaneResidueFollowUp = BuildOfficeLaneResidueFollowUpSummary(localOfficeSocialMemories, jurisdiction);
+                string officeLaneNoLoopGuard = BuildOfficeLaneNoLoopGuardSummary(
+                    jurisdiction,
+                    localOfficeCareers,
+                    localOfficeSocialMemories);
                 string canalRouteReadback = BuildCanalRouteReadbackSummary(publicLife, disorder, localRoutes);
                 string residueHealth = BuildResidueHealthSummary(
                     localOrderSocialMemories,
@@ -90,6 +97,7 @@ public sealed partial class PresentationReadModelBuilder
                         recentOrderCommandLabel,
                         orderAftermathSummary),
                     officeImplementationReadback,
+                    officeLaneReceiptClosure,
                     regimeOfficeReadback);
 
                 return new SettlementGovernanceLaneSnapshot
@@ -118,6 +126,10 @@ public sealed partial class PresentationReadModelBuilder
                     OrderAdministrativeAftermathSummary = orderAftermathSummary,
                     OfficeImplementationReadbackSummary = officeImplementationReadback,
                     OfficeNextStepReadbackSummary = officeNextStepReadback,
+                    OfficeLaneEntryReadbackSummary = officeLaneEntryReadback,
+                    OfficeLaneReceiptClosureSummary = officeLaneReceiptClosure,
+                    OfficeLaneResidueFollowUpSummary = officeLaneResidueFollowUp,
+                    OfficeLaneNoLoopGuardSummary = officeLaneNoLoopGuard,
                     RegimeOfficeReadbackSummary = regimeOfficeReadback,
                     CanalRouteReadbackSummary = canalRouteReadback,
                     ResidueHealthSummary = residueHealth,
@@ -254,7 +266,157 @@ public sealed partial class PresentationReadModelBuilder
 
         return CombineGovernanceDocketText(
             BuildOfficeImplementationReadbackSummary(jurisdiction, null),
-            BuildOfficeImplementationNextStepSummary(jurisdiction));
+            BuildOfficeImplementationNextStepSummary(jurisdiction),
+            BuildOfficeLaneEntryReadbackSummary(jurisdiction),
+            BuildOfficeLaneReceiptClosureSummary(jurisdiction),
+            BuildOfficeLaneNoLoopGuardSummary(jurisdiction, [], []));
+    }
+
+    private static string BuildOfficeLaneEntryReadbackSummary(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        string leadLabel = ResolveOfficeLeadLabel(jurisdiction);
+        if (string.Equals(jurisdiction.PetitionOutcomeCategory, "Stalled", StringComparison.Ordinal)
+            || jurisdiction.ClerkDependence >= 65)
+        {
+            return $"Office承接入口：该走县门/文移 lane（OfficeAndCareer）：{leadLabel}眼下先押文催县门；若胥吏续拖，再改走递报。本户不能代修。";
+        }
+
+        if (string.Equals(jurisdiction.PetitionOutcomeCategory, "Delayed", StringComparison.Ordinal)
+            || jurisdiction.AdministrativeTaskLoad >= 60)
+        {
+            return $"Office承接入口：该走县门/文移 lane（OfficeAndCareer）：{leadLabel}可轻催文移或改走递报，先看县门是否真正落地；本户不能代修。";
+        }
+
+        if (string.Equals(jurisdiction.PetitionOutcomeCategory, "Triaged", StringComparison.Ordinal))
+        {
+            return $"Office承接入口：该走县门/文移 lane（OfficeAndCareer）：{leadLabel}纸面已接，先冷却观察一月，看实办读回；本户不能代修。";
+        }
+
+        if (string.Equals(jurisdiction.PetitionOutcomeCategory, "Granted", StringComparison.Ordinal))
+        {
+            return $"Office承接入口：该走县门/文移 lane（OfficeAndCareer）：{leadLabel}官署暂缓，宜冷却观察，不把已缓后账回压本户。";
+        }
+
+        if (jurisdiction.PetitionBacklog > 0 || jurisdiction.PetitionPressure > 0)
+        {
+            return $"Office承接入口：该走县门/文移 lane（OfficeAndCareer）：{leadLabel}仍有积案{jurisdiction.PetitionBacklog}、词牍之压{jurisdiction.PetitionPressure}，先看批阅词状或发签催办；本户不能代修。";
+        }
+
+        return string.Empty;
+    }
+
+    private static string BuildOfficeLaneReceiptClosureSummary(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        if (!HasStructuredOfficeOwnerLaneResponse(jurisdiction))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = RenderOwnerLaneResponseCommandLabel(
+            jurisdiction.LastRefusalResponseCommandLabel,
+            jurisdiction.LastRefusalResponseCommandCode);
+        string leadLabel = ResolveOfficeLeadLabel(jurisdiction);
+        string tail = $"积案{jurisdiction.PetitionBacklog}，胥吏牵制{jurisdiction.ClerkDependence}。";
+
+        return jurisdiction.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired =>
+                $"Office后手收口读回：已收口：{commandLabel}已让{leadLabel}把县门/文移后账接住，先停本户加压；{tail}",
+            PublicLifeOrderResponseOutcomeCodes.Contained =>
+                $"Office后手收口读回：仍拖：{commandLabel}只把后账暂压在Office lane，仍看县门/文移下月读回；{tail}",
+            PublicLifeOrderResponseOutcomeCodes.Escalated =>
+                $"Office后手收口读回：转硬：{commandLabel}被胥吏拖成新积案，先换Office-lane办法，不回压本户；{tail}",
+            PublicLifeOrderResponseOutcomeCodes.Ignored =>
+                $"Office后手收口读回：放置：{commandLabel}未接住县门/文移后账，仍等Office承接口；本户不能代修；{tail}",
+            _ => string.Empty,
+        };
+    }
+
+    private static string BuildOfficeLaneResidueFollowUpSummary(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
+        if (residue is null)
+        {
+            return string.Empty;
+        }
+
+        string category = ReadOfficePolicyResidueCategory(residue.CauseKey);
+        string followUp = category switch
+        {
+            "Stalled" => "换招提示：胥吏把持余味仍硬，先换Office-lane办法或等更强承接口。",
+            "Delayed" => "续接提示：文移拖延余味未平，可轻催文移，但别从本户硬补。",
+            "Triaged" => "冷却提示：纸面已接，先冷却观察，等实办读回。",
+            "Granted" => "冷却提示：官署暂缓，先停重复催压。",
+            _ => "续接提示：仍看Office lane后续月读回。",
+        };
+
+        return $"Office余味续接读回：{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}仍在；{followUp} 仍由SocialMemoryAndRelations后续月沉淀，不是本户再修。";
+    }
+
+    private static string BuildOfficeLaneNoLoopGuardSummary(
+        JurisdictionAuthoritySnapshot jurisdiction,
+        IReadOnlyList<OfficeCareerSnapshot> localOfficeCareers,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories)
+    {
+        bool hasOfficeResponse = HasStructuredOfficeOwnerLaneResponse(jurisdiction);
+        bool hasOfficePolicyResidue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction) is not null;
+        bool hasOfficeImplementation = IsOfficeImplementationCategory(jurisdiction.PetitionOutcomeCategory)
+            || jurisdiction.AdministrativeTaskLoad >= 55
+            || jurisdiction.ClerkDependence >= 55;
+        bool hasOfficialWavering = localOfficeCareers.Any(static career => career.OfficialDefectionRisk >= 55);
+        if (!hasOfficeResponse && !hasOfficePolicyResidue && !hasOfficeImplementation && !hasOfficialWavering)
+        {
+            return string.Empty;
+        }
+
+        string waveringTail = hasOfficialWavering
+            ? " 官员摇摆、县门脸面与胥吏拖延也留在OfficeAndCareer lane。"
+            : string.Empty;
+        return $"Office闭环防回压：县门/文移/胥吏后账留在OfficeAndCareer lane；本户不再代修，不把Office后手回压本户。{waveringTail}".Trim();
+    }
+
+    private static SocialMemoryEntrySnapshot? SelectOfficePolicyResidue(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        if (localOfficeSocialMemories.Count == 0)
+        {
+            return null;
+        }
+
+        string settlementMarker = $".{jurisdiction.SettlementId.Value}.";
+        return localOfficeSocialMemories
+            .Where(static memory => memory.State == MemoryLifecycleState.Active)
+            .Where(memory => memory.CauseKey.StartsWith("office.policy_implementation.", StringComparison.Ordinal)
+                             && memory.CauseKey.Contains(settlementMarker, StringComparison.Ordinal))
+            .OrderByDescending(static memory => memory.OriginDate.Year)
+            .ThenByDescending(static memory => memory.OriginDate.Month)
+            .ThenByDescending(static memory => memory.Weight)
+            .ThenBy(static memory => memory.Id.Value)
+            .FirstOrDefault();
+    }
+
+    private static string ReadOfficePolicyResidueCategory(string causeKey)
+    {
+        string[] parts = causeKey.Split('.');
+        return parts.Length >= 4 ? parts[3] : string.Empty;
+    }
+
+    private static bool IsOfficeImplementationCategory(string category)
+    {
+        return string.Equals(category, "Stalled", StringComparison.Ordinal)
+            || string.Equals(category, "Delayed", StringComparison.Ordinal)
+            || string.Equals(category, "Triaged", StringComparison.Ordinal)
+            || string.Equals(category, "Granted", StringComparison.Ordinal);
+    }
+
+    private static string ResolveOfficeLeadLabel(JurisdictionAuthoritySnapshot jurisdiction)
+    {
+        return string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
+            ? jurisdiction.LeadOfficeTitle
+            : jurisdiction.LeadOfficialName;
     }
 
     private static string BuildRegimeOfficeReadbackSummary(
@@ -437,6 +599,10 @@ public sealed partial class PresentationReadModelBuilder
             PublicMomentumSummary = lead.PublicMomentumSummary,
             OfficeImplementationReadbackSummary = lead.OfficeImplementationReadbackSummary,
             OfficeNextStepReadbackSummary = lead.OfficeNextStepReadbackSummary,
+            OfficeLaneEntryReadbackSummary = lead.OfficeLaneEntryReadbackSummary,
+            OfficeLaneReceiptClosureSummary = lead.OfficeLaneReceiptClosureSummary,
+            OfficeLaneResidueFollowUpSummary = lead.OfficeLaneResidueFollowUpSummary,
+            OfficeLaneNoLoopGuardSummary = lead.OfficeLaneNoLoopGuardSummary,
             RegimeOfficeReadbackSummary = lead.RegimeOfficeReadbackSummary,
             CanalRouteReadbackSummary = lead.CanalRouteReadbackSummary,
             ResidueHealthSummary = lead.ResidueHealthSummary,
@@ -498,6 +664,7 @@ public sealed partial class PresentationReadModelBuilder
             focus.PublicMomentumSummary,
             lane?.OrderAdministrativeAftermathSummary ?? string.Empty,
             lane?.OfficeImplementationReadbackSummary ?? string.Empty,
+            lane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
             lane?.RegimeOfficeReadbackSummary ?? string.Empty,
             lane?.CanalRouteReadbackSummary ?? string.Empty,
             relatedNotification?.WhyItHappened ?? string.Empty);
@@ -520,7 +687,11 @@ public sealed partial class PresentationReadModelBuilder
         string guidanceSummary = CombineGovernanceDocketText(
             handlingSummary,
             ownerLaneReturnGuidance,
+            lane?.OfficeLaneEntryReadbackSummary ?? string.Empty,
+            lane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
             lane?.OfficeNextStepReadbackSummary ?? string.Empty,
+            lane?.OfficeLaneResidueFollowUpSummary ?? string.Empty,
+            lane?.OfficeLaneNoLoopGuardSummary ?? string.Empty,
             lane?.ResidueHealthSummary ?? string.Empty,
             focus.SuggestedCommandPrompt,
             relatedNotification?.WhatNext ?? string.Empty);
@@ -557,6 +728,10 @@ public sealed partial class PresentationReadModelBuilder
             PublicMomentumSummary = focus.PublicMomentumSummary,
             OfficeImplementationReadbackSummary = lane?.OfficeImplementationReadbackSummary ?? string.Empty,
             OfficeNextStepReadbackSummary = lane?.OfficeNextStepReadbackSummary ?? string.Empty,
+            OfficeLaneEntryReadbackSummary = lane?.OfficeLaneEntryReadbackSummary ?? string.Empty,
+            OfficeLaneReceiptClosureSummary = lane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
+            OfficeLaneResidueFollowUpSummary = lane?.OfficeLaneResidueFollowUpSummary ?? string.Empty,
+            OfficeLaneNoLoopGuardSummary = lane?.OfficeLaneNoLoopGuardSummary ?? string.Empty,
             RegimeOfficeReadbackSummary = lane?.RegimeOfficeReadbackSummary ?? string.Empty,
             CanalRouteReadbackSummary = lane?.CanalRouteReadbackSummary ?? string.Empty,
             ResidueHealthSummary = lane?.ResidueHealthSummary ?? string.Empty,
@@ -754,6 +929,16 @@ public sealed partial class PresentationReadModelBuilder
         if (!string.IsNullOrWhiteSpace(settlement.RegimeOfficeReadbackSummary))
         {
             score += 12;
+        }
+
+        if (!string.IsNullOrWhiteSpace(settlement.OfficeLaneReceiptClosureSummary))
+        {
+            score += 10;
+        }
+
+        if (!string.IsNullOrWhiteSpace(settlement.OfficeLaneNoLoopGuardSummary))
+        {
+            score += 6;
         }
 
         if (!string.IsNullOrWhiteSpace(settlement.ResidueHealthSummary))
