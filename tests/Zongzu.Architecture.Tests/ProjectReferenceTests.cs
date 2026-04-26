@@ -285,6 +285,13 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
         Assert.That(source, Does.Not.Contain("LastInterventionSummary"));
         Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(source, Does.Not.Contain("Family承接入口"));
+        Assert.That(source, Does.Not.Contain("族老解释读回"));
+        Assert.That(source, Does.Not.Contain("本户担保读回"));
+        Assert.That(source, Does.Not.Contain("宗房脸面读回"));
+        Assert.That(source, Does.Not.Contain("Family闭环防回压"));
+        Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(source, Does.Not.Contain("receipt prose"));
         Assert.That(source, Does.Contain("LastRefusalResponseOutcomeCode"));
         Assert.That(source, Does.Contain("LastRefusalResponseTraceCode"));
         Assert.That(source, Does.Contain("LastRefusalResponseCommandCode"));
@@ -488,6 +495,14 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain("该走巡丁"));
         Assert.That(source, Does.Not.Contain("该走县门"));
         Assert.That(source, Does.Not.Contain("该走族老"));
+        Assert.That(source, Does.Not.Contain("Family承接入口"));
+        Assert.That(source, Does.Not.Contain("族老解释读回"));
+        Assert.That(source, Does.Not.Contain("本户担保读回"));
+        Assert.That(source, Does.Not.Contain("宗房脸面读回"));
+        Assert.That(source, Does.Not.Contain("Family后手收口读回"));
+        Assert.That(source, Does.Not.Contain("Family余味续接读回"));
+        Assert.That(source, Does.Not.Contain("Family闭环防回压"));
+        Assert.That(source, Does.Not.Contain("不是普通家户再扛"));
         Assert.That(source, Does.Not.Contain("本户不能代修"));
         Assert.That(source, Does.Not.Contain("PlayerCommandService"));
         Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
@@ -548,6 +563,47 @@ public class ProjectReferenceTests
         Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("IssueModuleCommand"));
         Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("GetMutableModuleState"));
         Assert.That(officeSurfaceAdapterSource, Does.Not.Contain("DomainEventMetadataKeys"));
+    }
+
+    [Test]
+    public void Unity_family_lane_closure_readback_must_copy_projected_fields_only()
+    {
+        string adapterSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "DeskSandbox", "DeskSandboxShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Shared", "CommandShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string viewModelSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "DeskSandbox", "SettlementNodeViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Shared", "CommandAffordanceViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Shared", "CommandReceiptViewModel.cs"),
+        }.Select(File.ReadAllText));
+
+        foreach (string field in new[]
+                 {
+                     "FamilyLaneEntryReadbackSummary",
+                     "FamilyElderExplanationReadbackSummary",
+                     "FamilyGuaranteeReadbackSummary",
+                     "FamilyHouseFaceReadbackSummary",
+                     "FamilyLaneReceiptClosureSummary",
+                     "FamilyLaneResidueFollowUpSummary",
+                     "FamilyLaneNoLoopGuardSummary",
+                 })
+        {
+            Assert.That(adapterSource, Does.Contain(field), field);
+            Assert.That(viewModelSource, Does.Contain(field), field);
+        }
+
+        Assert.That(adapterSource, Does.Not.Contain("Zongzu.Application"));
+        Assert.That(adapterSource, Does.Not.Contain("Zongzu.Modules."));
+        Assert.That(adapterSource, Does.Not.Contain("IssueModuleCommand"));
+        Assert.That(adapterSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(adapterSource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(adapterSource, Does.Not.Contain("SponsorClanId"));
+        Assert.That(adapterSource, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(adapterSource, Does.Not.Contain("LastRefusalResponseSummary"));
     }
 
     [Test]
@@ -719,6 +775,7 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Not.Contain(".Memories.Add"));
         Assert.That(source, Does.Not.Contain("memory.Summary"));
         Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+        Assert.That(source, Does.Not.Contain("FamilyClosureLedger"));
         Assert.That(source, Does.Not.Contain("CooldownLedger"));
         Assert.That(source, Does.Not.Contain("FollowUpLedger"));
         Assert.That(source, Does.Not.Contain("ReceiptStatusLedger"));
@@ -744,6 +801,24 @@ public class ProjectReferenceTests
         Assert.That(source, Does.Contain("该走县门/文移 lane"));
         Assert.That(source, Does.Contain("该走族老/担保 lane"));
         Assert.That(source, Does.Contain("本户不能代修"));
+        Assert.That(source, Does.Contain("BuildFamilyLaneClosureReadback"));
+        Assert.That(source, Does.Contain("BuildFamilyLaneEntryReadbackSummary"));
+        Assert.That(source, Does.Contain("BuildFamilyElderExplanationReadbackSummary"));
+        Assert.That(source, Does.Contain("BuildFamilyGuaranteeReadbackSummary"));
+        Assert.That(source, Does.Contain("BuildFamilyHouseFaceReadbackSummary"));
+        Assert.That(source, Does.Contain("BuildFamilyLaneReceiptClosureSummary"));
+        Assert.That(source, Does.Contain("BuildFamilyLaneResidueFollowUpSummary"));
+        Assert.That(source, Does.Contain("BuildFamilyLaneNoLoopGuardSummary"));
+        Assert.That(source, Does.Contain("Family承接入口"));
+        Assert.That(source, Does.Contain("族老解释读回"));
+        Assert.That(source, Does.Contain("本户担保读回"));
+        Assert.That(source, Does.Contain("宗房脸面读回"));
+        Assert.That(source, Does.Contain("Family后手收口读回"));
+        Assert.That(source, Does.Contain("Family余味续接读回"));
+        Assert.That(source, Does.Contain("Family闭环防回压"));
+        Assert.That(source, Does.Contain("不是普通家户再扛"));
+        Assert.That(source, Does.Contain("SponsorClanId"));
+        Assert.That(source, Does.Contain("FamilyCore lane"));
         Assert.That(source, Does.Contain("承接入口"));
         Assert.That(source, Does.Contain("添雇巡丁"));
         Assert.That(source, Does.Contain("押文催县门"));

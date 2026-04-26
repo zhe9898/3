@@ -28,6 +28,8 @@ internal static class GovernanceShellAdapter
 			governanceLane?.OfficeImplementationReadbackSummary ?? string.Empty,
 			governanceLane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
 			governanceLane?.OfficeLaneNoLoopGuardSummary ?? string.Empty,
+			governanceLane?.FamilyLaneReceiptClosureSummary ?? string.Empty,
+			governanceLane?.FamilyLaneNoLoopGuardSummary ?? string.Empty,
 			governanceLane?.RegimeOfficeReadbackSummary ?? string.Empty).Trim();
 	}
 
@@ -53,6 +55,13 @@ internal static class GovernanceShellAdapter
 			governanceLane.OfficeLaneReceiptClosureSummary,
 			governanceLane.OfficeLaneResidueFollowUpSummary,
 			governanceLane.OfficeLaneNoLoopGuardSummary,
+			governanceLane.FamilyLaneEntryReadbackSummary,
+			governanceLane.FamilyElderExplanationReadbackSummary,
+			governanceLane.FamilyGuaranteeReadbackSummary,
+			governanceLane.FamilyHouseFaceReadbackSummary,
+			governanceLane.FamilyLaneReceiptClosureSummary,
+			governanceLane.FamilyLaneResidueFollowUpSummary,
+			governanceLane.FamilyLaneNoLoopGuardSummary,
 			governanceLane.RegimeOfficeReadbackSummary,
 			governanceLane.CanalRouteReadbackSummary,
 			governanceLane.ResidueHealthSummary).Trim();

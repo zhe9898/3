@@ -11,6 +11,13 @@ public sealed partial class FirstPassPresentationShellTests
     private const string closure = "Office lane receipt closure copy";
     private const string residueFollowUp = "Office lane residue follow-up copy";
     private const string noLoop = "Office lane no-loop copy";
+    private const string familyEntry = "Family承接入口 copy";
+    private const string familyElder = "族老解释读回 copy";
+    private const string familyGuarantee = "本户担保读回 copy";
+    private const string familyFace = "宗房脸面读回 copy";
+    private const string familyClosure = "Family后手收口读回 copy";
+    private const string familyResidue = "Family余味续接读回 copy";
+    private const string familyNoLoop = "Family闭环防回压 copy";
 
     [Test]
     public void Compose_UsesOfficeFallbackWhenGovernanceProjectionIsAbsent()
@@ -122,6 +129,13 @@ public sealed partial class FirstPassPresentationShellTests
                     AvailabilitySummary = "族老与房亲都在县城，可即刻议事。",
                     LeverageSummary = familyGuidance,
                     ReadbackSummary = familyGuidance,
+                    FamilyLaneEntryReadbackSummary = familyEntry,
+                    FamilyElderExplanationReadbackSummary = familyElder,
+                    FamilyGuaranteeReadbackSummary = familyGuarantee,
+                    FamilyHouseFaceReadbackSummary = familyFace,
+                    FamilyLaneReceiptClosureSummary = familyClosure,
+                    FamilyLaneResidueFollowUpSummary = familyResidue,
+                    FamilyLaneNoLoopGuardSummary = familyNoLoop,
                     TargetLabel = "清河张氏",
                     IsEnabled = true,
                 },
@@ -179,6 +193,13 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(family.LeverageSummary, Does.Contain("闭环防回压"));
         Assert.That(family.LeverageSummary, Does.Contain("不重复追本户"));
         Assert.That(family.ReadbackSummary, Is.EqualTo(familyGuidance));
+        Assert.That(family.FamilyLaneEntryReadbackSummary, Is.EqualTo(familyEntry));
+        Assert.That(family.FamilyElderExplanationReadbackSummary, Is.EqualTo(familyElder));
+        Assert.That(family.FamilyGuaranteeReadbackSummary, Is.EqualTo(familyGuarantee));
+        Assert.That(family.FamilyHouseFaceReadbackSummary, Is.EqualTo(familyFace));
+        Assert.That(family.FamilyLaneReceiptClosureSummary, Is.EqualTo(familyClosure));
+        Assert.That(family.FamilyLaneResidueFollowUpSummary, Is.EqualTo(familyResidue));
+        Assert.That(family.FamilyLaneNoLoopGuardSummary, Is.EqualTo(familyNoLoop));
     }
 
     [Test]
@@ -400,6 +421,13 @@ public sealed partial class FirstPassPresentationShellTests
                     Summary = "族老私下解释前案。",
                     OutcomeSummary = "后账已修复",
                     ReadbackSummary = "族老自解释：族老解释缓下羞面，本户担保重新站住。",
+                    FamilyLaneEntryReadbackSummary = familyEntry,
+                    FamilyElderExplanationReadbackSummary = familyElder,
+                    FamilyGuaranteeReadbackSummary = familyGuarantee,
+                    FamilyHouseFaceReadbackSummary = familyFace,
+                    FamilyLaneReceiptClosureSummary = familyClosure,
+                    FamilyLaneResidueFollowUpSummary = familyResidue,
+                    FamilyLaneNoLoopGuardSummary = familyNoLoop,
                     TargetLabel = "张宗",
                 },
             ],
@@ -420,6 +448,15 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(
             settlementNode.PublicLifeRecentReceipts.Select(static receipt => receipt.ReadbackSummary),
             Has.Some.Contains("族老解释缓下羞面"));
+        CommandReceiptViewModel familyReceipt = settlementNode.PublicLifeRecentReceipts
+            .Single(static receipt => receipt.CommandName == PlayerCommandNames.AskClanEldersExplain);
+        Assert.That(familyReceipt.FamilyLaneEntryReadbackSummary, Is.EqualTo(familyEntry));
+        Assert.That(familyReceipt.FamilyElderExplanationReadbackSummary, Is.EqualTo(familyElder));
+        Assert.That(familyReceipt.FamilyGuaranteeReadbackSummary, Is.EqualTo(familyGuarantee));
+        Assert.That(familyReceipt.FamilyHouseFaceReadbackSummary, Is.EqualTo(familyFace));
+        Assert.That(familyReceipt.FamilyLaneReceiptClosureSummary, Is.EqualTo(familyClosure));
+        Assert.That(familyReceipt.FamilyLaneResidueFollowUpSummary, Is.EqualTo(familyResidue));
+        Assert.That(familyReceipt.FamilyLaneNoLoopGuardSummary, Is.EqualTo(familyNoLoop));
     }
 
     [Test]
@@ -629,6 +666,13 @@ public sealed partial class FirstPassPresentationShellTests
                 OfficeLaneReceiptClosureSummary = closure,
                 OfficeLaneResidueFollowUpSummary = residueFollowUp,
                 OfficeLaneNoLoopGuardSummary = noLoop,
+                FamilyLaneEntryReadbackSummary = familyEntry,
+                FamilyElderExplanationReadbackSummary = familyElder,
+                FamilyGuaranteeReadbackSummary = familyGuarantee,
+                FamilyHouseFaceReadbackSummary = familyFace,
+                FamilyLaneReceiptClosureSummary = familyClosure,
+                FamilyLaneResidueFollowUpSummary = familyResidue,
+                FamilyLaneNoLoopGuardSummary = familyNoLoop,
                 RegimeOfficeReadbackSummary = regime,
                 CanalRouteReadbackSummary = route,
                 ResidueHealthSummary = residue,
@@ -648,6 +692,13 @@ public sealed partial class FirstPassPresentationShellTests
             OfficeLaneReceiptClosureSummary = closure,
             OfficeLaneResidueFollowUpSummary = residueFollowUp,
             OfficeLaneNoLoopGuardSummary = noLoop,
+            FamilyLaneEntryReadbackSummary = familyEntry,
+            FamilyElderExplanationReadbackSummary = familyElder,
+            FamilyGuaranteeReadbackSummary = familyGuarantee,
+            FamilyHouseFaceReadbackSummary = familyFace,
+            FamilyLaneReceiptClosureSummary = familyClosure,
+            FamilyLaneResidueFollowUpSummary = familyResidue,
+            FamilyLaneNoLoopGuardSummary = familyNoLoop,
             RegimeOfficeReadbackSummary = regime,
             CanalRouteReadbackSummary = route,
             ResidueHealthSummary = residue,
@@ -667,6 +718,13 @@ public sealed partial class FirstPassPresentationShellTests
             OfficeLaneReceiptClosureSummary = closure,
             OfficeLaneResidueFollowUpSummary = residueFollowUp,
             OfficeLaneNoLoopGuardSummary = noLoop,
+            FamilyLaneEntryReadbackSummary = familyEntry,
+            FamilyElderExplanationReadbackSummary = familyElder,
+            FamilyGuaranteeReadbackSummary = familyGuarantee,
+            FamilyHouseFaceReadbackSummary = familyFace,
+            FamilyLaneReceiptClosureSummary = familyClosure,
+            FamilyLaneResidueFollowUpSummary = familyResidue,
+            FamilyLaneNoLoopGuardSummary = familyNoLoop,
             RegimeOfficeReadbackSummary = regime,
             CanalRouteReadbackSummary = route,
             ResidueHealthSummary = residue,
@@ -684,6 +742,9 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlement.GovernanceSummary, Does.Contain(closure));
         Assert.That(settlement.GovernanceSummary, Does.Contain(residueFollowUp));
         Assert.That(settlement.GovernanceSummary, Does.Contain(noLoop));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(familyEntry));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(familyClosure));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(familyNoLoop));
         Assert.That(settlement.GovernanceSummary, Does.Contain(route));
         Assert.That(settlement.GovernanceSummary, Does.Contain(residue));
         Assert.That(settlement.OfficeImplementationReadbackSummary, Is.EqualTo(implementation));
@@ -692,6 +753,13 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlement.OfficeLaneReceiptClosureSummary, Is.EqualTo(closure));
         Assert.That(settlement.OfficeLaneResidueFollowUpSummary, Is.EqualTo(residueFollowUp));
         Assert.That(settlement.OfficeLaneNoLoopGuardSummary, Is.EqualTo(noLoop));
+        Assert.That(settlement.FamilyLaneEntryReadbackSummary, Is.EqualTo(familyEntry));
+        Assert.That(settlement.FamilyElderExplanationReadbackSummary, Is.EqualTo(familyElder));
+        Assert.That(settlement.FamilyGuaranteeReadbackSummary, Is.EqualTo(familyGuarantee));
+        Assert.That(settlement.FamilyHouseFaceReadbackSummary, Is.EqualTo(familyFace));
+        Assert.That(settlement.FamilyLaneReceiptClosureSummary, Is.EqualTo(familyClosure));
+        Assert.That(settlement.FamilyLaneResidueFollowUpSummary, Is.EqualTo(familyResidue));
+        Assert.That(settlement.FamilyLaneNoLoopGuardSummary, Is.EqualTo(familyNoLoop));
         Assert.That(settlement.RegimeOfficeReadbackSummary, Is.EqualTo(regime));
         Assert.That(settlement.CanalRouteReadbackSummary, Is.EqualTo(route));
         Assert.That(settlement.ResidueHealthSummary, Is.EqualTo(residue));

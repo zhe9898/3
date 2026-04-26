@@ -171,6 +171,12 @@ public sealed partial class PresentationReadModelBuilder
                 continue;
             }
 
+            IReadOnlyList<SocialMemoryEntrySnapshot> familySocialMemories =
+                SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, [clan]);
+            FamilyLaneClosureReadback familyLaneClosure = BuildFamilyLaneClosureReadback(
+                SelectRecentLocalResponseHouseholdForClan(bundle.Households, clan),
+                clan,
+                familySocialMemories);
             yield return BuildPlayerCommandReceiptSnapshot(
                 clan.LastConflictCommandCode,
                 clan.HomeSettlementId,
@@ -179,12 +185,20 @@ public sealed partial class PresentationReadModelBuilder
                 readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
                     ? CombinePublicLifeResponseText(
                         BuildFamilyResponseAftermathSummary(clan),
+                        BuildFamilyLaneClosureReadbackText(familyLaneClosure),
                         BuildOwnerLaneFollowUpReceiptClosure(
-                            SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, [clan]),
+                            familySocialMemories,
                             OwnerLaneReturnSourceFamily,
                             clan.LastRefusalResponseCommandCode,
                             clan.LastRefusalResponseOutcomeCode))
-                    : string.Empty,
+                    : BuildFamilyLaneClosureReadbackText(familyLaneClosure),
+                familyLaneEntryReadbackSummary: familyLaneClosure.EntryReadbackSummary,
+                familyElderExplanationReadbackSummary: familyLaneClosure.ElderExplanationReadbackSummary,
+                familyGuaranteeReadbackSummary: familyLaneClosure.GuaranteeReadbackSummary,
+                familyHouseFaceReadbackSummary: familyLaneClosure.HouseFaceReadbackSummary,
+                familyLaneReceiptClosureSummary: familyLaneClosure.ReceiptClosureSummary,
+                familyLaneResidueFollowUpSummary: familyLaneClosure.ResidueFollowUpSummary,
+                familyLaneNoLoopGuardSummary: familyLaneClosure.NoLoopGuardSummary,
                 clanId: clan.Id,
                 targetLabel: clan.ClanName,
                 labelOverride: clan.LastConflictCommandLabel);
@@ -355,23 +369,37 @@ public sealed partial class PresentationReadModelBuilder
                 string commandName = string.IsNullOrWhiteSpace(clan.LastConflictCommandCode)
                     ? PlayerCommandNames.InviteClanEldersMediation
                     : clan.LastConflictCommandCode;
+                IReadOnlyList<SocialMemoryEntrySnapshot> familySocialMemories =
+                    SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, [clan]);
+                FamilyLaneClosureReadback familyLaneClosure = BuildFamilyLaneClosureReadback(
+                    SelectRecentLocalResponseHouseholdForClan(bundle.Households, clan),
+                    clan,
+                    familySocialMemories);
                 receipts.Add(BuildPlayerCommandReceiptSnapshot(
-                commandName,
-                clan.HomeSettlementId,
-                clan.LastConflictTrace,
-                clan.LastConflictOutcome,
-                readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
-                    ? CombinePublicLifeResponseText(
-                        BuildFamilyResponseAftermathSummary(clan),
-                        BuildOwnerLaneFollowUpReceiptClosure(
-                            SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, [clan]),
-                            OwnerLaneReturnSourceFamily,
-                            clan.LastRefusalResponseCommandCode,
-                            clan.LastRefusalResponseOutcomeCode))
-                    : string.Empty,
-                clanId: clan.Id,
-                targetLabel: clan.ClanName,
-                labelOverride: string.IsNullOrWhiteSpace(clan.LastConflictCommandLabel)
+                    commandName,
+                    clan.HomeSettlementId,
+                    clan.LastConflictTrace,
+                    clan.LastConflictOutcome,
+                    readbackSummary: HasPublicLifeOrderResponseReceipt(clan)
+                        ? CombinePublicLifeResponseText(
+                            BuildFamilyResponseAftermathSummary(clan),
+                            BuildFamilyLaneClosureReadbackText(familyLaneClosure),
+                            BuildOwnerLaneFollowUpReceiptClosure(
+                                familySocialMemories,
+                                OwnerLaneReturnSourceFamily,
+                                clan.LastRefusalResponseCommandCode,
+                                clan.LastRefusalResponseOutcomeCode))
+                        : BuildFamilyLaneClosureReadbackText(familyLaneClosure),
+                    familyLaneEntryReadbackSummary: familyLaneClosure.EntryReadbackSummary,
+                    familyElderExplanationReadbackSummary: familyLaneClosure.ElderExplanationReadbackSummary,
+                    familyGuaranteeReadbackSummary: familyLaneClosure.GuaranteeReadbackSummary,
+                    familyHouseFaceReadbackSummary: familyLaneClosure.HouseFaceReadbackSummary,
+                    familyLaneReceiptClosureSummary: familyLaneClosure.ReceiptClosureSummary,
+                    familyLaneResidueFollowUpSummary: familyLaneClosure.ResidueFollowUpSummary,
+                    familyLaneNoLoopGuardSummary: familyLaneClosure.NoLoopGuardSummary,
+                    clanId: clan.Id,
+                    targetLabel: clan.ClanName,
+                    labelOverride: string.IsNullOrWhiteSpace(clan.LastConflictCommandLabel)
                         ? "祠堂议决"
                         : clan.LastConflictCommandLabel));
             }

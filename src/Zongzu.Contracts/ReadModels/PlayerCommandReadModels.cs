@@ -106,6 +106,20 @@ public sealed record PlayerCommandAffordanceSnapshot
 
     public string ReadbackSummary { get; init; } = string.Empty;
 
+    public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyElderExplanationReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyGuaranteeReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyHouseFaceReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
     public string TargetLabel { get; init; } = string.Empty;
 }
 
@@ -134,6 +148,20 @@ public sealed record PlayerCommandReceiptSnapshot
     public string CostSummary { get; init; } = string.Empty;
 
     public string ReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyElderExplanationReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyGuaranteeReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyHouseFaceReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string TargetLabel { get; init; } = string.Empty;
 }

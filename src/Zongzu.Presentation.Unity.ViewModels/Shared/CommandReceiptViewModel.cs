@@ -17,5 +17,19 @@ public sealed class CommandReceiptViewModel
 	public string CostSummary { get; set; } = string.Empty;
 
 	public string ReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyLaneEntryReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyElderExplanationReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyGuaranteeReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyHouseFaceReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyLaneReceiptClosureSummary { get; set; } = string.Empty;
+
+	public string FamilyLaneResidueFollowUpSummary { get; set; } = string.Empty;
+
+	public string FamilyLaneNoLoopGuardSummary { get; set; } = string.Empty;
 }
 }

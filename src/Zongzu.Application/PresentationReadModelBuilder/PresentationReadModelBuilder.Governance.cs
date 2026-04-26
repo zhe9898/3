@@ -43,6 +43,13 @@ public sealed partial class PresentationReadModelBuilder
                     SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
                 IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories =
                     SelectLocalOfficePolicySocialMemories(bundle.SocialMemories, localClans);
+                HouseholdPressureSnapshot? familyLaneHousehold =
+                    SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, jurisdiction.SettlementId);
+                ClanSnapshot? familyLaneClan = SelectFamilyLaneClosureClan(localClans);
+                FamilyLaneClosureReadback familyLaneClosure = BuildFamilyLaneClosureReadback(
+                    familyLaneHousehold,
+                    familyLaneClan,
+                    localOrderSocialMemories);
 
                 string orderAdministrativeAftermathSummary = disorder is null
                     ? string.Empty
@@ -98,6 +105,8 @@ public sealed partial class PresentationReadModelBuilder
                         orderAftermathSummary),
                     officeImplementationReadback,
                     officeLaneReceiptClosure,
+                    familyLaneClosure.ReceiptClosureSummary,
+                    familyLaneClosure.NoLoopGuardSummary,
                     regimeOfficeReadback);
 
                 return new SettlementGovernanceLaneSnapshot
@@ -130,6 +139,13 @@ public sealed partial class PresentationReadModelBuilder
                     OfficeLaneReceiptClosureSummary = officeLaneReceiptClosure,
                     OfficeLaneResidueFollowUpSummary = officeLaneResidueFollowUp,
                     OfficeLaneNoLoopGuardSummary = officeLaneNoLoopGuard,
+                    FamilyLaneEntryReadbackSummary = familyLaneClosure.EntryReadbackSummary,
+                    FamilyElderExplanationReadbackSummary = familyLaneClosure.ElderExplanationReadbackSummary,
+                    FamilyGuaranteeReadbackSummary = familyLaneClosure.GuaranteeReadbackSummary,
+                    FamilyHouseFaceReadbackSummary = familyLaneClosure.HouseFaceReadbackSummary,
+                    FamilyLaneReceiptClosureSummary = familyLaneClosure.ReceiptClosureSummary,
+                    FamilyLaneResidueFollowUpSummary = familyLaneClosure.ResidueFollowUpSummary,
+                    FamilyLaneNoLoopGuardSummary = familyLaneClosure.NoLoopGuardSummary,
                     RegimeOfficeReadbackSummary = regimeOfficeReadback,
                     CanalRouteReadbackSummary = canalRouteReadback,
                     ResidueHealthSummary = residueHealth,
@@ -509,6 +525,25 @@ public sealed partial class PresentationReadModelBuilder
             .ToArray();
     }
 
+    private static ClanSnapshot? SelectFamilyLaneClosureClan(IReadOnlyList<ClanSnapshot> localClans)
+    {
+        if (localClans.Count == 0)
+        {
+            return null;
+        }
+
+        return localClans
+                .Where(HasStructuredFamilyOwnerLaneResponse)
+                .OrderByDescending(static clan => clan.ResponseCarryoverMonths)
+                .ThenByDescending(static clan => clan.Prestige)
+                .ThenBy(static clan => clan.ClanName, StringComparer.Ordinal)
+                .FirstOrDefault()
+            ?? localClans
+                .OrderByDescending(static clan => clan.Prestige)
+                .ThenBy(static clan => clan.ClanName, StringComparer.Ordinal)
+                .First();
+    }
+
     private static string BuildGovernanceLaneSummary(
         string focusLabel,
         string leadLabel,
@@ -603,6 +638,13 @@ public sealed partial class PresentationReadModelBuilder
             OfficeLaneReceiptClosureSummary = lead.OfficeLaneReceiptClosureSummary,
             OfficeLaneResidueFollowUpSummary = lead.OfficeLaneResidueFollowUpSummary,
             OfficeLaneNoLoopGuardSummary = lead.OfficeLaneNoLoopGuardSummary,
+            FamilyLaneEntryReadbackSummary = lead.FamilyLaneEntryReadbackSummary,
+            FamilyElderExplanationReadbackSummary = lead.FamilyElderExplanationReadbackSummary,
+            FamilyGuaranteeReadbackSummary = lead.FamilyGuaranteeReadbackSummary,
+            FamilyHouseFaceReadbackSummary = lead.FamilyHouseFaceReadbackSummary,
+            FamilyLaneReceiptClosureSummary = lead.FamilyLaneReceiptClosureSummary,
+            FamilyLaneResidueFollowUpSummary = lead.FamilyLaneResidueFollowUpSummary,
+            FamilyLaneNoLoopGuardSummary = lead.FamilyLaneNoLoopGuardSummary,
             RegimeOfficeReadbackSummary = lead.RegimeOfficeReadbackSummary,
             CanalRouteReadbackSummary = lead.CanalRouteReadbackSummary,
             ResidueHealthSummary = lead.ResidueHealthSummary,
@@ -692,6 +734,13 @@ public sealed partial class PresentationReadModelBuilder
             lane?.OfficeNextStepReadbackSummary ?? string.Empty,
             lane?.OfficeLaneResidueFollowUpSummary ?? string.Empty,
             lane?.OfficeLaneNoLoopGuardSummary ?? string.Empty,
+            lane?.FamilyLaneEntryReadbackSummary ?? string.Empty,
+            lane?.FamilyElderExplanationReadbackSummary ?? string.Empty,
+            lane?.FamilyGuaranteeReadbackSummary ?? string.Empty,
+            lane?.FamilyHouseFaceReadbackSummary ?? string.Empty,
+            lane?.FamilyLaneReceiptClosureSummary ?? string.Empty,
+            lane?.FamilyLaneResidueFollowUpSummary ?? string.Empty,
+            lane?.FamilyLaneNoLoopGuardSummary ?? string.Empty,
             lane?.ResidueHealthSummary ?? string.Empty,
             focus.SuggestedCommandPrompt,
             relatedNotification?.WhatNext ?? string.Empty);
@@ -732,6 +781,13 @@ public sealed partial class PresentationReadModelBuilder
             OfficeLaneReceiptClosureSummary = lane?.OfficeLaneReceiptClosureSummary ?? string.Empty,
             OfficeLaneResidueFollowUpSummary = lane?.OfficeLaneResidueFollowUpSummary ?? string.Empty,
             OfficeLaneNoLoopGuardSummary = lane?.OfficeLaneNoLoopGuardSummary ?? string.Empty,
+            FamilyLaneEntryReadbackSummary = lane?.FamilyLaneEntryReadbackSummary ?? string.Empty,
+            FamilyElderExplanationReadbackSummary = lane?.FamilyElderExplanationReadbackSummary ?? string.Empty,
+            FamilyGuaranteeReadbackSummary = lane?.FamilyGuaranteeReadbackSummary ?? string.Empty,
+            FamilyHouseFaceReadbackSummary = lane?.FamilyHouseFaceReadbackSummary ?? string.Empty,
+            FamilyLaneReceiptClosureSummary = lane?.FamilyLaneReceiptClosureSummary ?? string.Empty,
+            FamilyLaneResidueFollowUpSummary = lane?.FamilyLaneResidueFollowUpSummary ?? string.Empty,
+            FamilyLaneNoLoopGuardSummary = lane?.FamilyLaneNoLoopGuardSummary ?? string.Empty,
             RegimeOfficeReadbackSummary = lane?.RegimeOfficeReadbackSummary ?? string.Empty,
             CanalRouteReadbackSummary = lane?.CanalRouteReadbackSummary ?? string.Empty,
             ResidueHealthSummary = lane?.ResidueHealthSummary ?? string.Empty,

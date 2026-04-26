@@ -360,6 +360,15 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Unity copies projected DTO fields only. It does not query modules, compute closure, infer owner lanes, maintain ledgers, or write SocialMemory.
 - Save/schema result: no persisted state, schema bump, migration, policy ledger, yamen workflow state, owner-lane ledger, receipt-status ledger, outcome ledger, cooldown ledger, follow-up ledger, household target field, or save-manifest change.
 
+## Backend Family-lane closure v53-v60 integration note
+- V53-V60 is projection/readback closure over the existing Family lane after public-life/order owner-lane guidance has pointed clan elder explanation, household guarantee, lineage-house face, and sponsor-clan pressure back to `FamilyCore`. It is not a new command system, event pool, thick clan economy, elder AI, branch-faction model, guarantee formula, or persisted closure ledger.
+- Public-life, family-facing, governance, docket, and receipt read models may show `Family承接入口`, `族老解释读回`, `本户担保读回`, `宗房脸面读回`, `Family后手收口读回`, `Family余味续接读回`, `Family闭环防回压`, and `不是普通家户再扛` through runtime Family closure fields.
+- The readback may read structured `ClanSnapshot`, `HouseholdPressureSnapshot`, `SponsorClanId`, existing `LastRefusalResponseCommandCode` / `LastRefusalResponseOutcomeCode`, and structured `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State`. It must not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected Family prose.
+- `FamilyCore` remains the owner of clan elder explanation, household guarantee, lineage-house face, and sponsor-clan pressure. Ordinary home-household responses remain local `PopulationAndHouseholds` relief/strain and are not a universal Family repair lane.
+- `SocialMemoryAndRelations` may only write durable shame/favor/grudge/obligation residue in its later monthly pass from structured aftermath. It must not treat Family closure projection text as a command or residue source.
+- Unity copies projected DTO fields only. It does not query modules, compute closure, infer guarantee success, maintain ledgers, or write SocialMemory.
+- Save/schema result: no persisted state, schema bump, migration, Family closure ledger, guarantee ledger, owner-lane ledger, receipt-status ledger, outcome ledger, cooldown ledger, follow-up ledger, household target field, or save-manifest change.
+
 ## Governance-lite notes
 - `OfficeAndCareer.Lite` now owns office appointments, authority tier, candidate waiting pressure, clerk dependence, service progression, administrative tasks, petition backlog/outcomes, jurisdiction leverage, petition pressure, jurisdiction task load, and explanation text inside its own namespace
 - `OfficeAndCareer.Lite` now reads `EducationAndExams`, `SocialMemoryAndRelations`, and optional `OrderAndBanditry` projections only

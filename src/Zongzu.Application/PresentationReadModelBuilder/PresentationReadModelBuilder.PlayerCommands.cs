@@ -28,9 +28,14 @@ public sealed partial class PresentationReadModelBuilder
                 SelectRecentLocalResponseHouseholdForClan(bundle.Households, clan);
             IReadOnlyList<SocialMemoryEntrySnapshot> familyOwnerLaneSocialMemories =
                 SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, [clan]);
+            FamilyLaneClosureReadback familyLaneClosure = BuildFamilyLaneClosureReadback(
+                familyOwnerLaneReturnHousehold,
+                clan,
+                familyOwnerLaneSocialMemories);
             string familyOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
                 BuildFamilyOwnerLaneReturnSurfaceGuidance(familyOwnerLaneReturnHousehold),
-                BuildFamilyOwnerLaneReturnStatusGuidance(familyOwnerLaneReturnHousehold, clan, familyOwnerLaneSocialMemories));
+                BuildFamilyOwnerLaneReturnStatusGuidance(familyOwnerLaneReturnHousehold, clan, familyOwnerLaneSocialMemories),
+                BuildFamilyLaneClosureReadbackText(familyLaneClosure));
 
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.SupportSeniorBranch,
@@ -81,6 +86,13 @@ public sealed partial class PresentationReadModelBuilder
                 clanId: clan.Id,
                 leverageSummary: familyOwnerLaneReturnGuidance,
                 readbackSummary: familyOwnerLaneReturnGuidance,
+                familyLaneEntryReadbackSummary: familyLaneClosure.EntryReadbackSummary,
+                familyElderExplanationReadbackSummary: familyLaneClosure.ElderExplanationReadbackSummary,
+                familyGuaranteeReadbackSummary: familyLaneClosure.GuaranteeReadbackSummary,
+                familyHouseFaceReadbackSummary: familyLaneClosure.HouseFaceReadbackSummary,
+                familyLaneReceiptClosureSummary: familyLaneClosure.ReceiptClosureSummary,
+                familyLaneResidueFollowUpSummary: familyLaneClosure.ResidueFollowUpSummary,
+                familyLaneNoLoopGuardSummary: familyLaneClosure.NoLoopGuardSummary,
                 targetLabel: clan.ClanName));
             affordances.Add(BuildPlayerCommandAffordanceSnapshot(
                 PlayerCommandNames.ArrangeMarriage,
@@ -260,9 +272,14 @@ public sealed partial class PresentationReadModelBuilder
                 BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
                 BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction, localSocialMemories));
             string officeImplementationGuidance = BuildOfficeImplementationAffordanceGuidance(jurisdiction);
+            FamilyLaneClosureReadback familyLaneClosure = BuildFamilyLaneClosureReadback(
+                ownerLaneReturnHousehold,
+                leadClan,
+                localSocialMemories);
             string familyOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
                 BuildFamilyOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
-                BuildFamilyOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, leadClan, localSocialMemories));
+                BuildFamilyOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, leadClan, localSocialMemories),
+                BuildFamilyLaneClosureReadbackText(familyLaneClosure));
 
             if (jurisdiction is not null)
             {
@@ -312,7 +329,8 @@ public sealed partial class PresentationReadModelBuilder
                     localSocialMemories,
                     orderOwnerLaneReturnGuidance,
                     JoinOwnerLaneReturnSurfaceText(officeOwnerLaneReturnGuidance, officeImplementationGuidance),
-                    familyOwnerLaneReturnGuidance))
+                    familyOwnerLaneReturnGuidance,
+                    familyLaneClosure))
                 {
                     yield return affordance;
                 }
@@ -350,6 +368,13 @@ public sealed partial class PresentationReadModelBuilder
                     $"街谈{publicLife.StreetTalkHeat}，市语流势{publicLife.MarketRumorFlow}。",
                     clanId: leadClan.Id,
                     readbackSummary: familyOwnerLaneReturnGuidance,
+                    familyLaneEntryReadbackSummary: familyLaneClosure.EntryReadbackSummary,
+                    familyElderExplanationReadbackSummary: familyLaneClosure.ElderExplanationReadbackSummary,
+                    familyGuaranteeReadbackSummary: familyLaneClosure.GuaranteeReadbackSummary,
+                    familyHouseFaceReadbackSummary: familyLaneClosure.HouseFaceReadbackSummary,
+                    familyLaneReceiptClosureSummary: familyLaneClosure.ReceiptClosureSummary,
+                    familyLaneResidueFollowUpSummary: familyLaneClosure.ResidueFollowUpSummary,
+                    familyLaneNoLoopGuardSummary: familyLaneClosure.NoLoopGuardSummary,
                     targetLabel: leadClan.ClanName);
             }
         }
@@ -363,7 +388,8 @@ public sealed partial class PresentationReadModelBuilder
         IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
         string orderOwnerLaneReturnGuidance,
         string officeOwnerLaneReturnGuidance,
-        string familyOwnerLaneReturnGuidance)
+        string familyOwnerLaneReturnGuidance,
+        FamilyLaneClosureReadback familyLaneClosure)
     {
         if (!HasPublicLifeOrderRefusalOrPartialResidue(disorder))
         {
@@ -465,6 +491,13 @@ public sealed partial class PresentationReadModelBuilder
                 leverageSummary: "族老只处理公开解释与本户担保，不替治安或县门落命令。",
                 costSummary: "解释能缓羞面，也可能留下人情欠账。",
                 readbackSummary: JoinOwnerLaneReturnSurfaceText(responseReadback, familyOwnerLaneReturnGuidance),
+                familyLaneEntryReadbackSummary: familyLaneClosure.EntryReadbackSummary,
+                familyElderExplanationReadbackSummary: familyLaneClosure.ElderExplanationReadbackSummary,
+                familyGuaranteeReadbackSummary: familyLaneClosure.GuaranteeReadbackSummary,
+                familyHouseFaceReadbackSummary: familyLaneClosure.HouseFaceReadbackSummary,
+                familyLaneReceiptClosureSummary: familyLaneClosure.ReceiptClosureSummary,
+                familyLaneResidueFollowUpSummary: familyLaneClosure.ResidueFollowUpSummary,
+                familyLaneNoLoopGuardSummary: familyLaneClosure.NoLoopGuardSummary,
                 clanId: leadClan.Id,
                 targetLabel: leadClan.ClanName);
         }

@@ -1,5 +1,14 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v53-v60 delta - 2026-04-26
+
+- Family owner-lane closure v53-v60 closes the Family readback after public-life/order external after-accounts are already pointed back to `FamilyCore`. It is projection/readback guidance, not a new command system, event pool, thick clan economy, clan elder AI, branch-faction model, complete guarantee formula, or household repair lane.
+- `PresentationReadModelBuilder` adds runtime-only Family closure guidance fields: `FamilyLaneEntryReadbackSummary`, `FamilyElderExplanationReadbackSummary`, `FamilyGuaranteeReadbackSummary`, `FamilyHouseFaceReadbackSummary`, `FamilyLaneReceiptClosureSummary`, `FamilyLaneResidueFollowUpSummary`, and `FamilyLaneNoLoopGuardSummary`.
+- These projections read structured `ClanSnapshot`, `HouseholdPressureSnapshot`, `SponsorClanId`, existing Family owner-response trace codes, and structured `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State` values. They do not parse `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or Family projection prose.
+- `FamilyCore` still owns clan elder explanation, household guarantee, lineage-house face, and sponsor-clan pressure. `PopulationAndHouseholds` remains the low-power ordinary home-household local response lane; it can ease or strain the household, but it is not a universal fix for Family, Office, Order, or SocialMemory aftermath.
+- Unity presentation copies the projected Family closure fields into ViewModels and summaries only. Unity does not query modules, compute Family closure, infer guarantee success, maintain a ledger, or write SocialMemory.
+- Save/schema audit: v53-v60 adds no persisted state, root/module schema bump, migration, save manifest change, Family closure / owner-lane / receipt / outcome / cooldown / follow-up ledger, household target field, manager/god-controller path, or `PersonRegistry` expansion.
+
 ## v46-v52 delta - 2026-04-26
 
 - Office-lane response/residue/no-loop closure v46-v52 closes the Office owner-lane readback loop after v38-v45 without adding a new command system, event pool, county-yamen formula, clerk AI, or household repair lane.

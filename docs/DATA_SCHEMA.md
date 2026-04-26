@@ -1105,6 +1105,13 @@ Current backend office-lane closure v46-v52 note:
 - These fields are derived from existing structured `JurisdictionAuthoritySnapshot` fields, office response trace codes, and `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State`; they are not derived from `DomainEvent.Summary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, `LastInterventionSummary`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 - Ordinary home-household response remains a low-power `PopulationAndHouseholds` lane. It can explain local relief/strain, but it is not a universal repair lane for yamen documents, clerk delay, route pressure, clan guarantee face, or durable social residue.
 
+Current backend Family-lane closure v53-v60 note:
+- v53-v60 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Family closure ledger, guarantee ledger, owner-lane ledger, receipt-status ledger, outcome ledger, cooldown ledger, follow-up ledger, household target field, or projection cache.
+- `FamilyCore` remains schema `8`; `PopulationAndHouseholds` remains schema `3`; `SocialMemoryAndRelations` remains schema `3`.
+- New read-model / Unity fields `FamilyLaneEntryReadbackSummary`, `FamilyElderExplanationReadbackSummary`, `FamilyGuaranteeReadbackSummary`, `FamilyHouseFaceReadbackSummary`, `FamilyLaneReceiptClosureSummary`, `FamilyLaneResidueFollowUpSummary`, and `FamilyLaneNoLoopGuardSummary` are runtime projections only and are not saved.
+- These fields are derived from existing structured `ClanSnapshot`, `HouseholdPressureSnapshot`, `SponsorClanId`, Family response trace codes, and `SocialMemoryEntrySnapshot.CauseKey` / `Weight` / `State`; they are not derived from `DomainEvent.Summary`, receipt prose, `LastInterventionSummary`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected Family prose.
+- Ordinary home-household response remains a low-power `PopulationAndHouseholds` lane. It can explain local relief/strain, but it is not a universal repair lane for clan elder explanation, household guarantee, lineage-house face, sponsor-clan pressure, or durable social residue.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

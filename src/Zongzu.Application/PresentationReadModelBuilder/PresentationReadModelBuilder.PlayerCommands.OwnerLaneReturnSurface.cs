@@ -131,7 +131,7 @@ public sealed partial class PresentationReadModelBuilder
             return string.Empty;
         }
 
-        return $"外部后账归位：该走族老/担保 lane（FamilyCore）：{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}，族老解释、本户担保和宗房脸面仍回族中公开说法；本户不能代修。承接入口：回到本 lane 先看请族老解释、请族老出面；宗房内面仍看请族老调停。";
+        return $"外部后账归位：该走族老/担保 lane（FamilyCore）：{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}，族老解释、本户担保和宗房脸面仍回族中公开说法；本户不能代修。Family承接入口：回到本 lane 先看请族老解释、请族老出面；宗房内面仍看请族老调停。";
     }
 
     private static string BuildFamilyOwnerLaneReturnStatusGuidance(
@@ -156,6 +156,195 @@ public sealed partial class PresentationReadModelBuilder
                 OwnerLaneReturnSourceFamily,
                 clan.LastRefusalResponseCommandCode,
                 clan.LastRefusalResponseOutcomeCode));
+    }
+
+    private static FamilyLaneClosureReadback BuildFamilyLaneClosureReadback(
+        HouseholdPressureSnapshot? household,
+        ClanSnapshot? clan,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
+    {
+        string entry = BuildFamilyLaneEntryReadbackSummary(household, clan);
+        string elder = BuildFamilyElderExplanationReadbackSummary(clan);
+        string guarantee = BuildFamilyGuaranteeReadbackSummary(clan);
+        string face = BuildFamilyHouseFaceReadbackSummary(clan);
+        string closure = BuildFamilyLaneReceiptClosureSummary(clan);
+        string residue = BuildFamilyLaneResidueFollowUpSummary(localSocialMemories, clan);
+        string noLoop = BuildFamilyLaneNoLoopGuardSummary(household, clan, localSocialMemories);
+
+        return new FamilyLaneClosureReadback(
+            entry,
+            elder,
+            guarantee,
+            face,
+            closure,
+            residue,
+            noLoop);
+    }
+
+    private static string BuildFamilyLaneClosureReadbackText(FamilyLaneClosureReadback readback)
+    {
+        return JoinOwnerLaneReturnSurfaceText(
+            readback.EntryReadbackSummary,
+            readback.ElderExplanationReadbackSummary,
+            readback.GuaranteeReadbackSummary,
+            readback.HouseFaceReadbackSummary,
+            readback.ReceiptClosureSummary,
+            readback.ResidueFollowUpSummary,
+            readback.NoLoopGuardSummary);
+    }
+
+    private static string BuildFamilyLaneEntryReadbackSummary(HouseholdPressureSnapshot? household, ClanSnapshot? clan)
+    {
+        if (household is null && clan is null)
+        {
+            return string.Empty;
+        }
+
+        string householdLabel = household is null
+            ? "本户后账"
+            : $"{household.HouseholdName}本户这头{RenderOwnerLaneReturnResponseState(household)}";
+        string clanLabel = clan?.ClanName ?? "宗房";
+        string sponsorTail = household?.SponsorClanId == clan?.Id
+            ? "SponsorClanId 已指向此宗房，承接口在 FamilyCore。"
+            : "承接口仍按 sponsor-clan / 本地宗房结构读，不改成普通家户线。";
+
+        return $"Family承接入口：该回FamilyCore读族老解释、本户担保、宗房脸面；{householdLabel}，{clanLabel}只显示承接入口，不新增担保公式。{sponsorTail} 不是普通家户再扛。";
+    }
+
+    private static string BuildFamilyElderExplanationReadbackSummary(ClanSnapshot? clan)
+    {
+        if (clan is null || !HasStructuredFamilyOwnerLaneResponse(clan))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = RenderOwnerLaneResponseCommandLabel(
+            clan.LastRefusalResponseCommandLabel,
+            clan.LastRefusalResponseCommandCode);
+        string elderState = clan.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "族老解释已给前案留出台阶，羞面先缓。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "族老解释只把街口议论暂压住，仍看下月余味。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "族老解释反被街口误读，余味转硬。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "族老没有接住前案，解释入口仍空着。",
+            _ => "族老解释读法未明。",
+        };
+
+        return $"族老解释读回：{commandLabel}留有FamilyCore结构化 owner trace；{elderState} 调停势{clan.MediationMomentum}。";
+    }
+
+    private static string BuildFamilyGuaranteeReadbackSummary(ClanSnapshot? clan)
+    {
+        if (clan is null || !HasStructuredFamilyOwnerLaneResponse(clan))
+        {
+            return string.Empty;
+        }
+
+        string guaranteeState = clan.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "本户担保重新站住，可先停本户加压。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "本户担保只是暂压留账，轻续仍走Family lane。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "本户担保被议论转硬，先换Family-lane办法。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "本户担保欠账仍在，等Family承接口或换招。",
+            _ => "本户担保读法未明。",
+        };
+
+        return $"本户担保读回：{guaranteeState} 宗房余力{clan.SupportReserve}，救济责{clan.CharityObligation}。";
+    }
+
+    private static string BuildFamilyHouseFaceReadbackSummary(ClanSnapshot? clan)
+    {
+        if (clan is null || !HasStructuredFamilyOwnerLaneResponse(clan))
+        {
+            return string.Empty;
+        }
+
+        string faceState = clan.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "宗房脸面已略补，旧账只作读回。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "宗房脸面暂压未平，仍看族中公开说法。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "宗房脸面被顶起，房支争力需要Family lane收束。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "宗房脸面没有补回，别让普通家户硬扛。",
+            _ => "宗房脸面读法未明。",
+        };
+
+        return $"宗房脸面读回：{faceState} 门望{clan.Prestige}，房支争力{clan.BranchTension}。";
+    }
+
+    private static string BuildFamilyLaneReceiptClosureSummary(ClanSnapshot? clan)
+    {
+        if (clan is null || !HasStructuredFamilyOwnerLaneResponse(clan))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = RenderOwnerLaneResponseCommandLabel(
+            clan.LastRefusalResponseCommandLabel,
+            clan.LastRefusalResponseCommandCode);
+        string closure = clan.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "已收口：族老解释与担保读回已接住，先停本户加压。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "仍留账：族老先压住议论，仍看Family lane下月。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "转硬待换招：宗房脸面转硬，先换Family-lane办法。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "未接待承口：族老未接住，仍等Family承接口。",
+            _ => string.Empty,
+        };
+
+        return string.IsNullOrWhiteSpace(closure)
+            ? string.Empty
+            : $"Family后手收口读回：{closure} {commandLabel}只读FamilyCore结构化结果，不回压本户。";
+    }
+
+    private static string BuildFamilyLaneResidueFollowUpSummary(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories,
+        ClanSnapshot? clan)
+    {
+        if (clan is null || !HasStructuredFamilyOwnerLaneResponse(clan))
+        {
+            return string.Empty;
+        }
+
+        SocialMemoryEntrySnapshot? residue = SelectOwnerLaneSocialResidue(
+            localSocialMemories,
+            OwnerLaneReturnSourceFamily,
+            clan.LastRefusalResponseCommandCode,
+            clan.LastRefusalResponseOutcomeCode);
+        if (residue is null)
+        {
+            return string.Empty;
+        }
+
+        string followUp = clan.LastRefusalResponseOutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "冷却：后账渐平，保留读回，不再追本户。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "轻续：暂压留账，仍走Family lane，不让本户代扛。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "换招：转硬余味仍在，先换Family-lane办法。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "等承口：放置发酸，等Family承接口或换招。",
+            _ => "仍看Family lane后续月读回。",
+        };
+
+        return $"Family余味续接读回：{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}仍在；{followUp} durable residue仍由SocialMemoryAndRelations后续月沉淀。";
+    }
+
+    private static string BuildFamilyLaneNoLoopGuardSummary(
+        HouseholdPressureSnapshot? household,
+        ClanSnapshot? clan,
+        IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories)
+    {
+        bool hasEntry = household is not null;
+        bool hasFamilyResponse = clan is not null && HasStructuredFamilyOwnerLaneResponse(clan);
+        bool hasFamilyResidue = clan is not null
+            && SelectOwnerLaneSocialResidue(
+                localSocialMemories,
+                OwnerLaneReturnSourceFamily,
+                clan.LastRefusalResponseCommandCode,
+                clan.LastRefusalResponseOutcomeCode) is not null;
+        if (!hasEntry && !hasFamilyResponse && !hasFamilyResidue)
+        {
+            return string.Empty;
+        }
+
+        return "Family闭环防回压：族老解释、本户担保、宗房脸面和SponsorClanId pressure留在FamilyCore lane；不是普通家户再扛，不把Family后手回压PopulationAndHouseholds。";
     }
 
     private static string BuildOwnerLaneOutcomeReading(string outcomeCode)
@@ -427,4 +616,13 @@ public sealed partial class PresentationReadModelBuilder
         string SourceModuleKey,
         string CommandCode,
         string OutcomeCode);
+
+    private readonly record struct FamilyLaneClosureReadback(
+        string EntryReadbackSummary,
+        string ElderExplanationReadbackSummary,
+        string GuaranteeReadbackSummary,
+        string HouseFaceReadbackSummary,
+        string ReceiptClosureSummary,
+        string ResidueFollowUpSummary,
+        string NoLoopGuardSummary);
 }

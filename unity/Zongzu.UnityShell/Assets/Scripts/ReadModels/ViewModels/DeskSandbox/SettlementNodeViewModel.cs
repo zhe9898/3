@@ -31,6 +31,20 @@ public sealed class SettlementNodeViewModel
 
 	public string OfficeLaneNoLoopGuardSummary { get; set; } = string.Empty;
 
+	public string FamilyLaneEntryReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyElderExplanationReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyGuaranteeReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyHouseFaceReadbackSummary { get; set; } = string.Empty;
+
+	public string FamilyLaneReceiptClosureSummary { get; set; } = string.Empty;
+
+	public string FamilyLaneResidueFollowUpSummary { get; set; } = string.Empty;
+
+	public string FamilyLaneNoLoopGuardSummary { get; set; } = string.Empty;
+
 	public string RegimeOfficeReadbackSummary { get; set; } = string.Empty;
 
 	public string CanalRouteReadbackSummary { get; set; } = string.Empty;

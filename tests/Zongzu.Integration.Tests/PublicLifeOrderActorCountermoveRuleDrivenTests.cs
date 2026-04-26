@@ -410,6 +410,22 @@ public sealed class PublicLifeOrderActorCountermoveRuleDrivenTests
             && receipt.CommandName == PlayerCommandNames.AskClanEldersExplain
             && receipt.Label == "族老自解释");
         Assert.That(receipt.ReadbackSummary, Does.Contain("族老解释"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Family承接入口"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("族老解释读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("本户担保读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("宗房脸面读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Family后手收口读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Family闭环防回压"));
+        Assert.That(receipt.FamilyLaneEntryReadbackSummary, Does.Contain("Family承接入口"));
+        Assert.That(receipt.FamilyElderExplanationReadbackSummary, Does.Contain("族老解释读回"));
+        Assert.That(receipt.FamilyGuaranteeReadbackSummary, Does.Contain("本户担保读回"));
+        Assert.That(receipt.FamilyHouseFaceReadbackSummary, Does.Contain("宗房脸面读回"));
+        Assert.That(receipt.FamilyLaneReceiptClosureSummary, Does.Contain("Family后手收口读回"));
+        Assert.That(receipt.FamilyLaneNoLoopGuardSummary, Does.Contain("不是普通家户再扛"));
+
+        SettlementGovernanceLaneSnapshot governance = bundle.GovernanceSettlements.Single(lane => lane.SettlementId == settlementId);
+        Assert.That(governance.FamilyLaneEntryReadbackSummary, Does.Contain("Family承接入口"));
+        Assert.That(governance.FamilyLaneNoLoopGuardSummary, Does.Contain("Family闭环防回压"));
 
     }
 
@@ -494,6 +510,20 @@ public sealed class PublicLifeOrderActorCountermoveRuleDrivenTests
             && receipt.CommandName == PlayerCommandNames.AskClanEldersExplain
             && receipt.Label == "族老避羞");
         Assert.That(receipt.ReadbackSummary, Does.Contain("担保欠账仍在"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Family承接入口"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("本户担保读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("宗房脸面读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Family后手收口读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Family闭环防回压"));
+        Assert.That(receipt.FamilyLaneEntryReadbackSummary, Does.Contain("Family承接入口"));
+        Assert.That(receipt.FamilyGuaranteeReadbackSummary, Does.Contain("本户担保读回"));
+        Assert.That(receipt.FamilyHouseFaceReadbackSummary, Does.Contain("宗房脸面读回"));
+        Assert.That(receipt.FamilyLaneReceiptClosureSummary, Does.Contain("未接待承口"));
+        Assert.That(receipt.FamilyLaneNoLoopGuardSummary, Does.Contain("不是普通家户再扛"));
+
+        SettlementGovernanceLaneSnapshot governance = bundle.GovernanceSettlements.Single(lane => lane.SettlementId == settlementId);
+        Assert.That(governance.FamilyLaneEntryReadbackSummary, Does.Contain("Family承接入口"));
+        Assert.That(governance.FamilyLaneNoLoopGuardSummary, Does.Contain("Family闭环防回压"));
 
     }
 

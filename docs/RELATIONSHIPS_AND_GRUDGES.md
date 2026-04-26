@@ -280,3 +280,11 @@ V46-V52 adds Office-lane closure readback over that same structured residue surf
 `SocialMemoryAndRelations` still owns only the later durable shame/fear/favor/grudge/obligation residue. It may be read by Application projections through `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, and `OriginDate`; no reader may parse Office-lane projection prose, SocialMemory summary prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, receipt prose, `LastPetitionOutcome`, `LastExplanation`, or `DomainEvent.Summary`.
 
 The ordinary home-household line remains a low-power local response surface. It cannot repair county-yamen/document/clerk delay, route pressure, clan guarantee face, or social memory by itself. V46-V52 adds no memory namespace, relationship table, residue ledger, schema bump, or migration.
+
+## Backend Family-lane closure v53-v60 note
+
+V53-V60 adds Family-lane closure readback over the same structured residue surface. `Family承接入口`, `族老解释读回`, `本户担保读回`, `宗房脸面读回`, `Family后手收口读回`, `Family余味续接读回`, `Family闭环防回压`, and `不是普通家户再扛` are projected cues, not durable social-memory facts by themselves.
+
+`SocialMemoryAndRelations` still owns only later durable shame/favor/grudge/obligation residue. Application projections may read `SocialMemoryEntrySnapshot.CauseKey`, `Weight`, `State`, and `OriginDate` alongside structured Family snapshots, but no SocialMemory reader may parse Family-lane projection prose, SocialMemory summary prose, `LastRefusalResponseSummary`, `LastLocalResponseSummary`, `LastInterventionSummary`, receipt prose, or `DomainEvent.Summary`.
+
+`FamilyCore` owns clan elder explanation, household guarantee, lineage-house face, and sponsor-clan pressure. The ordinary home-household line remains a low-power local response surface; it cannot repair Family guarantee face or durable social memory by itself. V53-V60 adds no memory namespace, relationship table, Family closure ledger, guarantee ledger, schema bump, or migration.

@@ -17,6 +17,13 @@ public sealed partial class PresentationReadModelBuilder
         string leverageSummary = "",
         string costSummary = "",
         string readbackSummary = "",
+        string familyLaneEntryReadbackSummary = "",
+        string familyElderExplanationReadbackSummary = "",
+        string familyGuaranteeReadbackSummary = "",
+        string familyHouseFaceReadbackSummary = "",
+        string familyLaneReceiptClosureSummary = "",
+        string familyLaneResidueFollowUpSummary = "",
+        string familyLaneNoLoopGuardSummary = "",
         string targetLabel = "",
         string? labelOverride = null)
     {
@@ -37,6 +44,13 @@ public sealed partial class PresentationReadModelBuilder
             LeverageSummary = leverageSummary,
             CostSummary = costSummary,
             ReadbackSummary = readbackSummary,
+            FamilyLaneEntryReadbackSummary = familyLaneEntryReadbackSummary,
+            FamilyElderExplanationReadbackSummary = familyElderExplanationReadbackSummary,
+            FamilyGuaranteeReadbackSummary = familyGuaranteeReadbackSummary,
+            FamilyHouseFaceReadbackSummary = familyHouseFaceReadbackSummary,
+            FamilyLaneReceiptClosureSummary = familyLaneReceiptClosureSummary,
+            FamilyLaneResidueFollowUpSummary = familyLaneResidueFollowUpSummary,
+            FamilyLaneNoLoopGuardSummary = familyLaneNoLoopGuardSummary,
             TargetLabel = targetLabel,
         };
     }
@@ -51,6 +65,13 @@ public sealed partial class PresentationReadModelBuilder
         string leverageSummary = "",
         string costSummary = "",
         string readbackSummary = "",
+        string familyLaneEntryReadbackSummary = "",
+        string familyElderExplanationReadbackSummary = "",
+        string familyGuaranteeReadbackSummary = "",
+        string familyHouseFaceReadbackSummary = "",
+        string familyLaneReceiptClosureSummary = "",
+        string familyLaneResidueFollowUpSummary = "",
+        string familyLaneNoLoopGuardSummary = "",
         string targetLabel = "",
         string? labelOverride = null)
     {
@@ -70,6 +91,13 @@ public sealed partial class PresentationReadModelBuilder
             LeverageSummary = leverageSummary,
             CostSummary = costSummary,
             ReadbackSummary = readbackSummary,
+            FamilyLaneEntryReadbackSummary = familyLaneEntryReadbackSummary,
+            FamilyElderExplanationReadbackSummary = familyElderExplanationReadbackSummary,
+            FamilyGuaranteeReadbackSummary = familyGuaranteeReadbackSummary,
+            FamilyHouseFaceReadbackSummary = familyHouseFaceReadbackSummary,
+            FamilyLaneReceiptClosureSummary = familyLaneReceiptClosureSummary,
+            FamilyLaneResidueFollowUpSummary = familyLaneResidueFollowUpSummary,
+            FamilyLaneNoLoopGuardSummary = familyLaneNoLoopGuardSummary,
             TargetLabel = targetLabel,
         };
     }

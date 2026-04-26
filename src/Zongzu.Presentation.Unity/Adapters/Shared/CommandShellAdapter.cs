@@ -19,6 +19,13 @@ internal static class CommandShellAdapter
 				LeverageSummary = command.LeverageSummary,
 				CostSummary = command.CostSummary,
 				ReadbackSummary = command.ReadbackSummary,
+				FamilyLaneEntryReadbackSummary = command.FamilyLaneEntryReadbackSummary,
+				FamilyElderExplanationReadbackSummary = command.FamilyElderExplanationReadbackSummary,
+				FamilyGuaranteeReadbackSummary = command.FamilyGuaranteeReadbackSummary,
+				FamilyHouseFaceReadbackSummary = command.FamilyHouseFaceReadbackSummary,
+				FamilyLaneReceiptClosureSummary = command.FamilyLaneReceiptClosureSummary,
+				FamilyLaneResidueFollowUpSummary = command.FamilyLaneResidueFollowUpSummary,
+				FamilyLaneNoLoopGuardSummary = command.FamilyLaneNoLoopGuardSummary,
 				IsEnabled = command.IsEnabled
 			})
 			.ToArray();
@@ -36,7 +43,14 @@ internal static class CommandShellAdapter
 				OutcomeSummary = receipt.OutcomeSummary,
 				LeverageSummary = receipt.LeverageSummary,
 				CostSummary = receipt.CostSummary,
-				ReadbackSummary = receipt.ReadbackSummary
+				ReadbackSummary = receipt.ReadbackSummary,
+				FamilyLaneEntryReadbackSummary = receipt.FamilyLaneEntryReadbackSummary,
+				FamilyElderExplanationReadbackSummary = receipt.FamilyElderExplanationReadbackSummary,
+				FamilyGuaranteeReadbackSummary = receipt.FamilyGuaranteeReadbackSummary,
+				FamilyHouseFaceReadbackSummary = receipt.FamilyHouseFaceReadbackSummary,
+				FamilyLaneReceiptClosureSummary = receipt.FamilyLaneReceiptClosureSummary,
+				FamilyLaneResidueFollowUpSummary = receipt.FamilyLaneResidueFollowUpSummary,
+				FamilyLaneNoLoopGuardSummary = receipt.FamilyLaneNoLoopGuardSummary
 			})
 			.ToArray();
 	}

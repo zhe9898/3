@@ -60,6 +60,20 @@ public sealed record SettlementGovernanceLaneSnapshot
 
     public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
+    public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyElderExplanationReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyGuaranteeReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyHouseFaceReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 
     public string CanalRouteReadbackSummary { get; init; } = string.Empty;
@@ -98,6 +112,20 @@ public sealed record GovernanceFocusSnapshot
     public string OfficeLaneResidueFollowUpSummary { get; init; } = string.Empty;
 
     public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyElderExplanationReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyGuaranteeReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyHouseFaceReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 
@@ -181,6 +209,20 @@ public sealed record GovernanceDocketSnapshot
     public string OfficeLaneResidueFollowUpSummary { get; init; } = string.Empty;
 
     public string OfficeLaneNoLoopGuardSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyElderExplanationReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyGuaranteeReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyHouseFaceReadbackSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneReceiptClosureSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneResidueFollowUpSummary { get; init; } = string.Empty;
+
+    public string FamilyLaneNoLoopGuardSummary { get; init; } = string.Empty;
 
     public string RegimeOfficeReadbackSummary { get; init; } = string.Empty;
 
