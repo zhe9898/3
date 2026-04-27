@@ -64,6 +64,19 @@ When changing one of those chains:
 - document whether a same-month follow-on uses the bounded scheduler drain or deliberately carries pressure into the next month
 - preserve the distinction between a thin topology proof and the full social chain
 
+### Chain 8 v173-v180 suggested receipt guard integration note
+
+Court-policy suggested receipt guard is projection-only integration over existing local-response/public-follow-up inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause key and current public-life scalars to show `建议回执防误读`, `只回收已投影的政策公议后手`, and `回执不是新政策结果` in command receipt `ReadbackSummary`.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` -> Application command receipt readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, affordance prose, or `DomainEvent.Summary`
+- changing command routing, command availability, policy success, cooldown, receipt state, or owner-lane state
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the receipt guard as a durable cooldown account, an Order after-account, Office success/failure, or home-household debt
+
 ### Chain 8 v165-v172 suggested action guard integration note
 
 Court-policy suggested action guard is projection-only integration over the existing follow-up docket guard. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read structured guard eligibility and the already-selected projected affordance to show `建议动作防误读` and `只承接已投影的政策公议后手` in `SuggestedCommandPrompt` / docket `GuidanceSummary`.

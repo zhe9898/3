@@ -453,6 +453,32 @@ public sealed class OfficeCourtRegimePressureChainTests
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
         Assert.That(offScopeNoticeAffordance.LeverageSummary, Does.Not.Contain("政策公议旧读回"));
         Assert.That(offScopeNoticeAffordance.LeverageSummary, Does.Not.Contain("政策公议后手提示"));
+
+        Assert.That(afterSecondGovernance.SuggestedCommandName, Is.Not.Empty);
+        int memoryCountBeforeSuggestedReceiptCommand = socialState.Memories.Count;
+        PlayerCommandResult suggestedReceiptResponse = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = new SettlementId(10),
+                CommandName = afterSecondGovernance.SuggestedCommandName,
+            });
+
+        Assert.That(suggestedReceiptResponse.Accepted, Is.True);
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeSuggestedReceiptCommand),
+            "Suggested receipt readback may reuse projected court-policy residue, but same-month command handling must not write durable residue.");
+        PresentationReadModelBundle afterSuggestedReceipt = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot suggestedReceipt = afterSuggestedReceipt.PlayerCommands.Receipts
+            .First(receipt => receipt.SettlementId == new SettlementId(10)
+                              && receipt.CommandName == afterSecondGovernance.SuggestedCommandName);
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("建议回执防误读"));
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("只回收已投影的政策公议后手"));
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("回执不是新政策结果"));
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("不是Order后账"));
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        Assert.That(afterSuggestedReceipt.PlayerCommands.Receipts
+            .Where(static receipt => receipt.SettlementId == new SettlementId(20))
+            .Any(static receipt => receipt.ReadbackSummary.Contains("建议回执防误读", StringComparison.Ordinal)), Is.False);
     }
 
     [Test]

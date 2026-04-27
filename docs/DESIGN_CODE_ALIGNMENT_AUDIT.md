@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v173-v180 court-policy suggested receipt guard - 2026-04-27
+
+- Chain 8 now lets projected command receipts carry `建议回执防误读`, `只回收已投影的政策公议后手`, and `回执不是新政策结果` when existing structured court-policy public follow-up residue is already visible.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles receipt readback from structured cause-key data and current public-life scalars; Unity copies receipt `ReadbackSummary`.
+- The pass does not change command resolution, policy success, command ranking, cooldown, docket state, or any owner-lane rule. The receipt guard is readback text, not a Court command, not a new receipt state, and not a ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v173-v180 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action / suggested-receipt ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v165-v172 court-policy suggested action guard - 2026-04-27
 
 - Chain 8 now lets the governance docket suggested-action prompt copy the existing court-policy anti-misread guard as `建议动作防误读` and `只承接已投影的政策公议后手`.

@@ -32,6 +32,16 @@ public sealed partial class PresentationReadModelBuilder
         {
             publicLifeBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out SettlementPublicLifeSnapshot? publicLife);
             string courtPolicyLocalResponseGuidance = BuildCourtPolicyLocalResponseGuidance(jurisdiction, publicLife);
+            ClanSnapshot[] localCourtPolicyClans = clansBySettlement[jurisdiction.SettlementId.Value]
+                .OrderByDescending(static entry => entry.Prestige)
+                .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
+                .ToArray();
+            IReadOnlyList<SocialMemoryEntrySnapshot> localOfficePolicySocialMemories =
+                SelectLocalOfficePolicySocialMemories(bundle.SocialMemories, localCourtPolicyClans);
+            string courtPolicySuggestedReceiptGuard = BuildCourtPolicySuggestedReceiptGuard(
+                localOfficePolicySocialMemories,
+                jurisdiction,
+                publicLife);
 
             if (string.Equals(jurisdiction.CurrentAdministrativeTask, "张榜晓谕", StringComparison.Ordinal))
             {
@@ -42,7 +52,8 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.LastPetitionOutcome,
                 readbackSummary: JoinOwnerLaneReturnSurfaceText(
                     BuildOfficeImplementationAffordanceGuidance(jurisdiction),
-                    courtPolicyLocalResponseGuidance),
+                    courtPolicyLocalResponseGuidance,
+                    courtPolicySuggestedReceiptGuard),
                 targetLabel: jurisdiction.LeadOfficialName);
             }
 
@@ -55,18 +66,15 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction.LastPetitionOutcome,
                 readbackSummary: JoinOwnerLaneReturnSurfaceText(
                     BuildOfficeImplementationAffordanceGuidance(jurisdiction),
-                    courtPolicyLocalResponseGuidance),
+                    courtPolicyLocalResponseGuidance,
+                    courtPolicySuggestedReceiptGuard),
                 targetLabel: jurisdiction.LeadOfficialName);
             }
 
             if (HasPublicLifeOrderResponseReceipt(jurisdiction))
             {
-                ClanSnapshot[] localClans = clansBySettlement[jurisdiction.SettlementId.Value]
-                    .OrderByDescending(static entry => entry.Prestige)
-                    .ThenBy(static entry => entry.ClanName, StringComparer.Ordinal)
-                    .ToArray();
                 IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
-                    SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
+                    SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localCourtPolicyClans);
                 yield return BuildPlayerCommandReceiptSnapshot(
                     jurisdiction.LastRefusalResponseCommandCode,
                     jurisdiction.SettlementId,
@@ -82,6 +90,7 @@ public sealed partial class PresentationReadModelBuilder
                             jurisdiction.LastRefusalResponseCommandCode,
                             jurisdiction.LastRefusalResponseOutcomeCode),
                         courtPolicyLocalResponseGuidance,
+                        courtPolicySuggestedReceiptGuard,
                         BuildOfficeLaneNoLoopGuardSummary(jurisdiction, [], [])),
                     targetLabel: string.IsNullOrWhiteSpace(jurisdiction.LeadOfficialName)
                         ? jurisdiction.LeadOfficeTitle
@@ -262,6 +271,27 @@ public sealed partial class PresentationReadModelBuilder
             _ => jurisdiction.LastRefusalResponseOutcomeCode,
         };
         return $"{commandLabel}：{yamenTail}积案{jurisdiction.PetitionBacklog}，胥吏牵制{jurisdiction.ClerkDependence}。";
+    }
+
+    private static string BuildCourtPolicySuggestedReceiptGuard(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (publicLife is null || !HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
+        if (residue is null
+            || !TryReadOfficePolicyLocalResponseResidueCause(residue.CauseKey, out OfficePolicyLocalResponseResidueCause localResponseCause))
+        {
+            return string.Empty;
+        }
+
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        return $"建议回执防误读：{publicLife.NodeLabel}只回收已投影的政策公议后手（{outcomeLabel}，榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}）；回执不是新政策结果，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
     }
 
     private static string BuildFamilyResponseAftermathSummary(ClanSnapshot clan)

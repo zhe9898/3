@@ -1108,6 +1108,81 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Court_policy_suggested_receipt_guard_v173_v180_must_remain_projection_only_and_schema_neutral()
+    {
+        string receiptSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.Receipts.cs"));
+        string unitySource = File.ReadAllText(Path.Combine(
+            TestsDir,
+            "Zongzu.Presentation.Unity.Tests",
+            "FirstPassPresentationShellTests",
+            "FirstPassPresentationShellTests.GovernanceAndPublicLife.cs"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-suggested-receipt-guard-v173-v180.md"));
+        Match helperMatch = Regex.Match(
+            receiptSource,
+            @"private static string BuildCourtPolicySuggestedReceiptGuard\((?<body>.*?)\r?\n    private static",
+            RegexOptions.Singleline);
+
+        Assert.That(helperMatch.Success, Is.True);
+        string helperSource = helperMatch.Value;
+        Assert.That(receiptSource, Does.Contain("BuildCourtPolicySuggestedReceiptGuard"));
+        Assert.That(receiptSource, Does.Contain("建议回执防误读"));
+        Assert.That(receiptSource, Does.Contain("只回收已投影的政策公议后手"));
+        Assert.That(receiptSource, Does.Contain("回执不是新政策结果"));
+        Assert.That(receiptSource, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        Assert.That(unitySource, Does.Contain("建议回执防误读"));
+        Assert.That(unitySource, Does.Contain("ReadbackSummary"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "DomainEvent.Summary",
+                     ".Summary.Contains",
+                     "LeverageSummary.Contains",
+                     "ReadbackSummary.Contains",
+                     "SuggestedCommandPrompt.Contains",
+                     "OfficialNoticeLine",
+                     "PrefectureDispatchLine",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "ReceiptLedger",
+                     "SuggestedReceiptLedger",
+                     "PolicyLedger",
+                     "CourtProcessLedger",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "DocketLedger",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(helperSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(schemaRules, Does.Contain("court-policy suggested receipt guard v173-v180 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy suggested receipt guard v173-v180 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy suggested receipt guard v173-v180 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No new suggested receipt ledger"));
+    }
+
+    [Test]
     public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
     {
         string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));

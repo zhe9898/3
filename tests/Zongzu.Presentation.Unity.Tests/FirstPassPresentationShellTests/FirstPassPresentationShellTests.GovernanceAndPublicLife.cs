@@ -296,7 +296,7 @@ public sealed partial class FirstPassPresentationShellTests
                     OutcomeSummary = "街谈略收，榜示可见。",
                     LeverageSummary = "本户已动用榜下熟人。",
                     CostSummary = "代价留在人情与担保里。",
-                    ReadbackSummary = "下月读回看榜下街谈。",
+                    ReadbackSummary = "下月读回看榜下街谈。建议回执防误读：只回收已投影的政策公议后手；回执不是新政策结果。",
                     TargetLabel = "县门榜下",
                 },
             ],
@@ -352,6 +352,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(receipt.LeverageSummary, Does.Contain("本户"));
         Assert.That(receipt.CostSummary, Does.Contain("代价"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("下月读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("建议回执防误读"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("回执不是新政策结果"));
         Assert.That(settlementNode.PublicLifeSummary, Does.Contain("榜示"));
         Assert.That(settlementNode.PublicLifeSummary, Does.Contain("街谈").Or.Contain("观望").Or.Contain("路报"));
     }

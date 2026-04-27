@@ -87,6 +87,12 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current court-policy suggested receipt guard v173-v180 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, receipt ledger, suggested-receipt ledger, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `建议回执防误读` / `只回收已投影的政策公议后手` / `回执不是新政策结果` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a suggested receipt guard cache, cooldown marker, repeat-pressure field, command-ranking override, or court-policy ledger
+
 Current court-policy suggested action guard v165-v172 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger

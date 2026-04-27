@@ -75,6 +75,12 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Court-policy suggested receipt guard v173-v180 UI note
+
+Governance, office, docket, desk, great-hall, and public-life receipt surfaces may show `建议回执防误读` only when it is already present in projected `PlayerCommandReceiptSnapshot.ReadbackSummary` or copied receipt ViewModels. The wording should make clear that `只回收已投影的政策公议后手` and `回执不是新政策结果` are receipt readback over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, affordance prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, command ranking, receipt guard status, cooldown status, public-reading weight, docket guard status, or next-window outcomes.
+
 ### Court-policy suggested action guard v165-v172 UI note
 
 Governance, office, docket, desk, and great-hall surfaces may show `建议动作防误读` only when it is already present in projected `SuggestedCommandPrompt`, docket `GuidanceSummary`, or court-policy guard fields. The wording should make clear that `只承接已投影的政策公议后手` is prompt guard text over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.
