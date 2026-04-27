@@ -22,6 +22,7 @@ Imperial sovereignty is not only administration. It also shapes:
 - reign change versus ordinary policy adjustment
 - ritual authority versus raw coercion
 - dynastic continuity versus hollowed-out court theater
+- amnesty or mercy wave versus mourning interruption, succession alarm, frontier urgency, reform signal, or routine appointment tone
 
 ## Good Zongzu Abstractions
 
@@ -48,6 +49,8 @@ Imperial sovereignty is not only administration. It also shapes:
 - Succession should affect more than court flavor; it should change backlog, rumor, tax obedience, and side-taking.
 - A strong imperial layer should let the player feel the difference between a dynasty that still commands belief and one that only issues paper.
 - Mandate rhetoric, reign naming, mercy, and ritual repair are useful because they connect symbolic center to local compliance without pretending symbols work automatically.
+- A generic imperial-rhythm carrier should not directly imply a county effect. First identify which axis changed, then route it through the institution that would carry it locally: yamen docket, appointment procedure, public notice, prison release, ritual mourning, border requisition, or reform quota.
+- When an amnesty is modeled as a legal/administrative release, guard against reapplying the same wave merely because another imperial axis changed later. Use cause metadata, prior-band comparison, or a persisted processed-watermark in the simulation layer.
 
 ## Suggested Module Mapping
 

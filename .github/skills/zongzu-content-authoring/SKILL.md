@@ -20,7 +20,7 @@ Current content-bearing surfaces include:
 - authored/generated content under `content/`
 - player-facing module summaries, event summaries, projection copy, and ViewModel labels in `src/`
 - Unity shell labels/assets under `unity/Zongzu.UnityShell` only when presentation assets are actually touched
-- current public-life/order and global thin-chain readback wording is downstream projection text; examples include `社会记忆读回`, `县门未落地`, `地方拖延`, `后账仍在`, `续接提示`, `外部后账归位`, `承接入口`, `归口后读法`, `社会余味读回`, `后手收口读回`, `闭环防回压`, `Office承接入口`, `Family救济选择读回`, `不是普通家户再扛`, `军令选择读回`, `战后案卷读回`, `朝议压力读回`, `政策局面读回`, `政策回应选择读回`, `政策回应余味续接读回`, `政策旧账回压读回`, `政策公议旧读回`, `PublicLife只读街面解释`, `县门承接仍归OfficeAndCareer`, `Court-policy防回压`, and `本户不再代修`
+- current public-life/order and global thin-chain readback wording is downstream projection text; examples include `社会记忆读回`, `县门未落地`, `地方拖延`, `后账仍在`, `续接提示`, `外部后账归位`, `承接入口`, `归口后读法`, `社会余味读回`, `后手收口读回`, `闭环防回压`, `Office承接入口`, `Family救济选择读回`, `不是普通家户再扛`, `军令选择读回`, `战后案卷读回`, `朝议压力读回`, `政策局面读回`, `政策回应选择读回`, `政策回应余味续接读回`, `政策旧账回压读回`, `政策公议旧读回`, `政策公议后手提示`, `政策后手案牍防误读`, `建议动作防误读`, `建议回执防误读`, `回执案牍一致防误读`, `公议回执回声防误读`, `PublicLife只读街面解释`, `县门承接仍归OfficeAndCareer`, `Court-policy防回压`, and `本户不再代修`
 - current canal/route/order wording such as `漕渠窗口`, `商路读数`, `巡丁`, `私路`, `护路`, and `路面压力` should remain projection or diagnostic wording unless a module-owned rule explicitly reads structured data for it
 - generated Unity art/content under `unity/Zongzu.UnityShell/Assets/Art/Generated` needs source/provenance manifests and `.meta` discipline, but it must not become simulation authority
 - authored content and generated assets need cardinality discipline: large tables, descriptor banks, image sets, or localization surfaces should declare stable IDs, provenance, validation path, and whether the runtime reads them as rules-data or presentation-only content
@@ -34,6 +34,18 @@ Use external material to improve content operations, not to make prose authorita
 - WCAG/Xbox accessibility guidance calibrates player-facing copy and labels: important meaning needs contrast, non-color cues, semantic labels, and narration-friendly summaries.
 - Historical source calibration should record period, region, source confidence, and abstraction level when a descriptor becomes a pressure carrier or player-facing label.
 - Performance guidance applies to content scale: large descriptor banks should parse once, validate deterministically, expose stable IDs, and avoid becoming an unbounded runtime event pool.
+
+## Use This Skill When
+
+- authoring or reviewing projection copy, Chinese labels, descriptors, notices, glossary text, or localization-facing strings
+- changing authored config/data, content packs, generated text inventories, generated art manifests, or Unity-facing labels/assets
+- deciding whether a content table is presentation-only or rules-data read by code
+- preserving UTF-8 Chinese text, provenance, stable IDs, validation paths, and load/cardinality expectations
+- content wording describes implemented pressure chains, court-policy readbacks, public-life rumors, offices, settlements, clans, campaigns, or routes
+
+## Fast Lane
+
+For copy-only edits, check UTF-8 preservation, authority boundary, historical tone, and surface fit without inventing runtime tests. Use a full content pass when code reads the artifact, content affects rules-data, generated assets/manifests change, or descriptor banks can grow large.
 
 ## Workflow
 
