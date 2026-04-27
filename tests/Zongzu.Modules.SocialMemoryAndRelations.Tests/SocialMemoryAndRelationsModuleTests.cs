@@ -1176,6 +1176,122 @@ public sealed class SocialMemoryAndRelationsModuleTests
     }
 
     [Test]
+    public void RunMonth_CourtPolicyLocalResponseResidue_ReadsStructuredOfficeResponseWithoutOrderMislabel()
+    {
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Zhang",
+            HomeSettlementId = new SettlementId(7),
+            Prestige = 55,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(1),
+        });
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(2),
+            ClanName = "Li",
+            HomeSettlementId = new SettlementId(8),
+            Prestige = 80,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(2),
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+
+        SocialMemoryAndRelationsModule socialModule = new();
+        SocialMemoryAndRelationsState socialState = socialModule.CreateInitialState();
+
+        QueryRegistry queries = new();
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+        queries.Register<IOrderAndBanditryQueries>(new StubOrderQueries([]));
+        queries.Register<IOfficeAndCareerQueries>(new StubOfficeQueries(
+            [
+                new JurisdictionAuthoritySnapshot
+                {
+                    SettlementId = new SettlementId(7),
+                    LeadOfficialName = "Zhang Yuan",
+                    LeadOfficeTitle = "Registrar",
+                    AuthorityTier = 3,
+                    JurisdictionLeverage = 32,
+                    ClerkDependence = 42,
+                    PetitionPressure = 52,
+                    PetitionBacklog = 10,
+                    AdministrativeTaskLoad = 58,
+                    PetitionOutcomeCategory = "Triaged",
+                    LastPetitionOutcome = "projection prose must not drive residue",
+                    LastAdministrativeTrace = "政策回应入口 文移续接选择 公议降温只读回",
+                    LastRefusalResponseCommandCode = PlayerCommandNames.PressCountyYamenDocument,
+                    LastRefusalResponseCommandLabel = "押文催县门",
+                    LastRefusalResponseSummary = "receipt prose must not drive residue",
+                    LastRefusalResponseOutcomeCode = PublicLifeOrderResponseOutcomeCodes.Contained,
+                    LastRefusalResponseTraceCode = PublicLifeOrderResponseTraceCodes.OfficeYamenLanded,
+                    ResponseCarryoverMonths = 1,
+                },
+                new JurisdictionAuthoritySnapshot
+                {
+                    SettlementId = new SettlementId(8),
+                    LeadOfficialName = "Li Wen",
+                    LeadOfficeTitle = "Registrar",
+                    AuthorityTier = 1,
+                    JurisdictionLeverage = 80,
+                    ClerkDependence = 4,
+                    PetitionPressure = 4,
+                    PetitionBacklog = 2,
+                    AdministrativeTaskLoad = 6,
+                    PetitionOutcomeCategory = "Queued",
+                },
+            ]));
+        socialModule.RegisterQueries(socialState, queries);
+
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.OfficeAndCareer, FeatureMode.Lite);
+        manifest.Set(KnownModuleKeys.OrderAndBanditry, FeatureMode.Lite);
+        KernelState kernelState = KernelState.Create(1413);
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 11),
+            manifest,
+            new DeterministicRandom(kernelState),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff(),
+            kernelState);
+
+        socialModule.RunMonth(new ModuleExecutionScope<SocialMemoryAndRelationsState>(socialState, context));
+
+        const string expectedCauseKey = "office.policy_local_response.7.PressCountyYamenDocument.Contained.office.yamen_landed";
+        Assert.That(
+            socialState.Memories.Select(static memory => memory.CauseKey),
+            Does.Contain(expectedCauseKey),
+            string.Join(" | ", socialState.Memories.Select(static memory => memory.CauseKey)));
+        MemoryRecordState residue = socialState.Memories.Single(memory => memory.CauseKey == expectedCauseKey);
+        Assert.That(residue.SubjectClanId, Is.EqualTo(new ClanId(1)));
+        Assert.That(residue.Kind, Is.EqualTo(SocialMemoryKinds.OfficePolicyLocalResponseResidue));
+        Assert.That(residue.Type, Is.EqualTo(MemoryType.Debt));
+        Assert.That(residue.Subtype, Is.EqualTo(MemorySubtype.ProtectionFavor));
+        Assert.That(residue.Summary, Does.Contain("政策回应读回"));
+        Assert.That(residue.Summary, Does.Contain("县门轻催"));
+        Assert.That(residue.Summary, Does.Contain("OfficeAndCareer/PublicLifeAndRumor"));
+        Assert.That(residue.Summary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(residue.Summary, Does.Not.Contain("receipt prose must not drive residue"));
+        Assert.That(residue.Summary, Does.Not.Contain("projection prose must not drive residue"));
+        Assert.That(residue.Summary, Does.Not.Contain("政策回应入口"));
+        Assert.That(residue.Summary, Does.Not.Contain("文移续接选择"));
+        Assert.That(residue.Summary, Does.Not.Contain("公议降温只读回"));
+        Assert.That(socialState.Memories.Any(static memory =>
+            memory.CauseKey.StartsWith("order.public_life.response.OfficeAndCareer", StringComparison.Ordinal)), Is.False);
+        Assert.That(socialState.Memories.Any(static memory =>
+            memory.CauseKey.StartsWith("office.policy_local_response.8.", StringComparison.Ordinal)), Is.False);
+        Assert.That(socialState.ClanNarratives.Single(static narrative => narrative.ClanId == new ClanId(1)).PublicNarrative, Does.Contain("政策回应余味"));
+        Assert.That(context.Diff.Entries.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);
+        Assert.That(context.DomainEvents.Events.All(static entry => entry.ModuleKey == KnownModuleKeys.SocialMemoryAndRelations), Is.True);
+    }
+
+    [Test]
     public void PublishedEvents_ContainsPressureTemperingReceipts()
     {
         SocialMemoryAndRelationsModule socialModule = new();

@@ -200,6 +200,7 @@ public static class OfficeAndCareerCommandResolver
         PublicLifeResponseResidueFriction responseFriction)
     {
         bool hasResidue = HasRefusalOrPartialResidue(orderResidue);
+        bool hasPolicyPressure = HasCourtPolicyLocalResponsePressure(leadCareer);
         string outcomeCode = PublicLifeOrderResponseOutcomeCodes.Ignored;
         string traceCode = PublicLifeOrderResponseTraceCodes.OfficeResponseIgnored;
         string summary = "押文未接上前案，县门后账仍未补落。";
@@ -218,6 +219,18 @@ public static class OfficeAndCareerCommandResolver
             outcomeCode = PublicLifeOrderResponseOutcomeCodes.Escalated;
             traceCode = PublicLifeOrderResponseTraceCodes.OfficeClerkDelayEscalated;
             summary = "押文反被胥吏拖成新积案，县门后账恶化。";
+        }
+        else if (hasPolicyPressure && effectiveLeverage >= 18 && effectiveClerkDependence <= 68)
+        {
+            outcomeCode = PublicLifeOrderResponseOutcomeCodes.Contained;
+            traceCode = PublicLifeOrderResponseTraceCodes.OfficeYamenLanded;
+            summary = "政策文移续接：已把朝议压力压回县门案牍；县门承接仍看OfficeAndCareer下月读回，不是本户硬扛朝廷后账。";
+        }
+        else if (hasPolicyPressure)
+        {
+            outcomeCode = PublicLifeOrderResponseOutcomeCodes.Escalated;
+            traceCode = PublicLifeOrderResponseTraceCodes.OfficeClerkDelayEscalated;
+            summary = "政策文移续拖：胥吏牵制太重，朝廷后手仍压在县门案牍；不回写本户。";
         }
 
         summary = AppendResponseFrictionSummary(summary, responseFriction);
@@ -250,15 +263,22 @@ public static class OfficeAndCareerCommandResolver
         PublicLifeResponseResidueFriction responseFriction)
     {
         bool hasResidue = HasRefusalOrPartialResidue(orderResidue);
+        bool hasPolicyPressure = HasCourtPolicyLocalResponsePressure(leadCareer);
         string outcomeCode = hasResidue
             ? PublicLifeOrderResponseOutcomeCodes.Contained
-            : PublicLifeOrderResponseOutcomeCodes.Ignored;
+            : hasPolicyPressure
+                ? PublicLifeOrderResponseOutcomeCodes.Contained
+                : PublicLifeOrderResponseOutcomeCodes.Ignored;
         string traceCode = hasResidue
             ? PublicLifeOrderResponseTraceCodes.OfficeReportRerouted
-            : PublicLifeOrderResponseTraceCodes.OfficeResponseIgnored;
+            : hasPolicyPressure
+                ? PublicLifeOrderResponseTraceCodes.OfficeReportRerouted
+                : PublicLifeOrderResponseTraceCodes.OfficeResponseIgnored;
         string summary = hasResidue
             ? "已改走递报，县门正道未通，先把路报从旁路递入。"
-            : "改走递报未接上前案，只作寻常递报。";
+            : hasPolicyPressure
+                ? "政策递报改道：已绕开县门拥滞，把执行读法送回文移口；不计算政策成败。"
+                : "改走递报未接上前案，只作寻常递报。";
         int leverageSpend = Math.Clamp(Math.Max(leadCareer.JurisdictionLeverage / 18, 1), 1, 5);
         summary = AppendResponseFrictionSummary(summary, responseFriction);
 
@@ -374,6 +394,14 @@ public static class OfficeAndCareerCommandResolver
         return orderResidue is not null
             && (string.Equals(orderResidue.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Refused, StringComparison.Ordinal)
                 || string.Equals(orderResidue.LastInterventionOutcomeCode, OrderInterventionOutcomeCodes.Partial, StringComparison.Ordinal));
+    }
+
+    private static bool HasCourtPolicyLocalResponsePressure(OfficeCareerState leadCareer)
+    {
+        return leadCareer.PetitionPressure >= 45
+            || leadCareer.AdministrativeTaskLoad >= 55
+            || leadCareer.PetitionBacklog >= 8
+            || leadCareer.ClerkDependence >= 55;
     }
 
     private static void ApplyRefusalResponseReceipt(

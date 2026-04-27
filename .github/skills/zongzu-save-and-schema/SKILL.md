@@ -35,8 +35,8 @@ Current public-life/order schema anchors:
 - `OfficeAndCareer` schema `7` and `FamilyCore` schema `8` own their response trace fields when their lanes resolve public-life/order pressure
 - `PopulationAndHouseholds` schema `3` owns home-household local response command/aftermath fields
 - `SocialMemoryAndRelations` schema `3` owns durable social residue; later readback paths use existing memory/narrative/climate state unless a new persisted SocialMemory field is added
-- current v19-v108 follow-up, owner-lane return/status/outcome/residue/no-loop, Office/Family/Force/Warfare/Court readback, directive/aftermath docket readback, and thin-chain closeout audit fields are runtime projections or docs/tests unless explicitly backed by an owner module field; they remain no-save/no-schema unless a future cooldown ledger, owner-lane ledger, command queue, repeat counter, target field, persisted projection cache, or other new persisted field is introduced
-- current v35-v108 thin handoffs/readbacks/audits are no-save/no-schema unless persisted authority is explicitly added: canal-window metadata is runtime-only, v36 family sponsor pressure and v61-v68 relief reuse `FamilyCore` schema `8`, v37-v52 Office/yamen implementation/readback and Office-lane closure reuse `OfficeAndCareer` schema `7`, v69-v92 force/warfare readbacks reuse existing `ConflictAndForce` schema `4` and `WarfareCampaign` schema `4`, v93-v100 court-policy readback reuses `OfficeAndCareer` schema `7` and `PublicLifeAndRumor` schema `4`, and v101-v108 is docs/test governance only
+- current v19-v196 follow-up, owner-lane return/status/outcome/residue/no-loop, Office/Family/Force/Warfare/Court readback, directive/aftermath docket readback, court-policy local-response/SocialMemory/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket/public-life-receipt echo guard, and thin-chain closeout audit fields are runtime projections or docs/tests unless explicitly backed by an owner module field; they remain no-save/no-schema unless a future cooldown ledger, owner-lane ledger, policy ledger, command queue, receipt ledger, docket ledger, repeat counter, target field, persisted projection cache, or other new persisted field is introduced
+- current v35-v196 handoffs/readbacks/audits are no-save/no-schema unless persisted authority is explicitly added: canal-window metadata is runtime-only, v36 family sponsor pressure and v61-v68 relief reuse `FamilyCore` schema `8`, v37-v52 Office/yamen implementation/readback and Office-lane closure reuse `OfficeAndCareer` schema `7`, v69-v92 force/warfare readbacks reuse existing `ConflictAndForce` schema `4` and `WarfareCampaign` schema `4`, v93-v196 court-policy readbacks reuse `OfficeAndCareer` schema `7`, `PublicLifeAndRumor` schema `4`, and `SocialMemoryAndRelations` schema `3`, and v101-v108 is docs/test governance only
 - performance caches, projection indexes, Unity pooled objects, debug counters, and read-model traversal helpers are no-save/no-schema unless their data is persisted as module-owned authority
 - migration/load cost is a real schema concern: large new histories, denormalized readback ledgers, or content inventories need bounded payload shape, deterministic defaults, and migration tests
 
@@ -47,6 +47,19 @@ Use outside engineering guidance to sharpen persistence discipline:
 - High-performance logging can help hot migration diagnostics, but logs do not become save facts, player receipts, or migration authority.
 - Unity pooling and asset caches are presentation concerns unless data is serialized into a module-owned namespace; pooled objects are never save state.
 - Accessibility/ViewModel labels are runtime presentation fields unless explicitly persisted by an owning module with schema, migration, and round-trip tests.
+
+## Use This Skill When
+
+- a diff adds, removes, renames, or retypes persisted module state
+- schema versions, root save envelopes, migrations, manifests, or feature-pack save membership change
+- authored config becomes rules-data read by code
+- a performance cache, projection index, or content inventory might be persisted
+- load, migration, replay hash, or save round-trip compatibility is at risk
+- a task needs an explicit "no save/schema impact" call
+
+## Fast Lane
+
+For read-only projection, docs, UI copy, adapter, or skill edits, record "no save/schema impact" and do not expand into migration work. Use a full schema pass only when persisted shape, manifest membership, defaults/backfill, or load/migration behavior changes.
 
 ## Workflow
 

@@ -38,6 +38,66 @@ This keeps the design aligned with:
 - bounded player intervention
 - ordinary people, debt, illness, labor, and rumor feeling alive instead of being crushed into one large monthly jump
 
+## Current court-policy first rule-density closeout audit v197-v204 note
+
+The v109-v196 first rule-density closeout audit v197-v204 uses no new simulation cadence. It records that Chain 8 has a closed first-layer branch across policy process texture, local Office/PublicLife response, later SocialMemory residue, next-window memory readback, public-reading echo, public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency, and public-life receipt echo.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, court process state, appointment slate, dispatch arrival, downstream household/market/public consequence rule, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, treat court-policy readback as Order/Office authority, or parse memory summary prose, receipt prose, public-life prose, affordance prose, docket prose, or `DomainEvent.Summary`.
+
+## Current court-policy public-life receipt echo v189-v196 note
+
+The v189-v196 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if public-life notice/report commands are visible for the same settlement, the projection layer may show `公议回执回声防误读` from structured SocialMemory cause outcome data plus current PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, public-life receipt echo ledger, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, treat public-life command readback or receipt readback as Order/Office authority, or parse memory summary prose, receipt prose, public-life prose, affordance prose, docket prose, or `DomainEvent.Summary`.
+
+## Current court-policy receipt-docket consistency guard v181-v188 note
+
+The v181-v188 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if governance/docket surfaces are visible for the same settlement, the projection layer may show `回执案牍一致防误读` from structured SocialMemory cause outcome data plus current PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, receipt-docket ledger, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, treat the docket or receipt as Order/Office authority, or parse memory summary prose, receipt prose, public-life prose, affordance prose, docket prose, or `DomainEvent.Summary`.
+
+## Current court-policy suggested receipt guard v173-v180 note
+
+The v173-v180 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if a command receipt is already visible for the same settlement, the projection layer may show `建议回执防误读` from structured SocialMemory cause outcome data plus current PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, suggested receipt ledger, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, treat the receipt as Order/Office authority, or parse memory summary prose, receipt prose, public-life prose, affordance prose, or `DomainEvent.Summary`.
+
+## Current court-policy suggested action guard v165-v172 note
+
+The v165-v172 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if the governance docket already selects a projected affordance, the projection layer may show `建议动作防误读` from structured SocialMemory cause outcome data plus current PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, suggested-action ranking rule, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, treat the prompt as Order/Office authority, or parse memory summary prose, receipt prose, public-life prose, affordance prose, or `DomainEvent.Summary`.
+
+## Current court-policy follow-up docket guard v157-v164 note
+
+The v157-v164 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if governance/docket surfaces are visible, the projection layer may show `政策后手案牍防误读` from structured SocialMemory cause outcome data plus current PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, treat the guard as Order/Office authority, or parse memory summary prose, receipt prose, public-life prose, or `DomainEvent.Summary`.
+
+## Current court-policy public follow-up cue v149-v156 note
+
+The v149-v156 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if public-life notice/report command surfaces are visible, the projection layer may show `政策公议后手提示` from structured SocialMemory cause outcome data plus current PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, or parse memory summary prose, receipt prose, public-life prose, or `DomainEvent.Summary`.
+
+## Current court-policy public-reading echo v141-v148 note
+
+The v141-v148 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if public-life notice/report command surfaces are visible, the projection layer may show `政策公议旧读回` from structured SocialMemory cause/type/weight plus current Office/PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, or UI/Unity authority. It must not mutate SocialMemory during projection, reopen policy state, calculate public-reading success, or parse memory summary prose, receipt prose, public-life prose, or `DomainEvent.Summary`.
+
+## Current court-policy memory-pressure readback v133-v140 note
+
+The v133-v140 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if a new policy window is visible, the projection layer may show `政策旧账回压读回` from structured SocialMemory cause/type/weight plus current Office/PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, or UI/Unity authority. It must not mutate SocialMemory during projection, reopen policy state, or parse memory summary prose, receipt prose, public-life prose, or `DomainEvent.Summary`.
+
+## Current court-policy social-memory echo v125-v132 note
+
+The v125-v132 Chain 8 echo uses the existing monthly cadence. Month N player command handling may write `OfficeAndCareer` structured local-response aftermath, but it must not write durable SocialMemory residue in the same command step. A later `SocialMemoryAndRelations.RunMonth` pass may read structured `JurisdictionAuthoritySnapshot` response fields and write existing memory/narrative/climate records under `office.policy_local_response...`.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, or UI/Unity authority. The simulation proof should cover same-month neutrality, later-month residue, deterministic ordering by settlement/clan, and no prose parsing from receipts, public-life lines, or `DomainEvent.Summary`.
+
 ## Time layers
 
 ### Day authority step
@@ -478,3 +538,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - `OfficeAndCareer` resolves policy tone, document direction, and county-gate implementation posture from existing structured policy-window / implementation metadata and office state. `PublicLifeAndRumor` resolves public interpretation from structured `PolicyImplemented` metadata and public-life scalar state.
 - Application may project `政策语气读回`, `文移指向读回`, `县门承接姿态`, `公议承压读法`, `朝廷后手仍不直写地方`, and `不是本户硬扛朝廷后账` only after owner modules have resolved. UI/Unity copy these fields only.
 - SocialMemory durable residue remains later-month only and must read structured aftermath. The same-month court-policy process must not write SocialMemory, parse projection prose, or treat a household as carrying the court after-account.
+
+## Current backend court-policy local response v117-v124 note
+
+- V117-V124 keeps the same scheduler shape and adds no new phase, event pool, court loop, policy ledger, or same-command SocialMemory write.
+- When existing office scalar pressure shows policy-process strain, `OfficeAndCareer` may resolve the reused `PressCountyYamenDocument` / `RedirectRoadReport` commands as local document/report continuations. This remains deterministic owner-lane command handling, not Application policy success calculation.
+- Application may project `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账` only from structured snapshots and existing command affordance/receipt fields. UI/Unity copy these fields only.
+- Same-month handling must not write durable SocialMemory residue. Future residue readers must use structured aftermath and must not parse court-policy projection prose or public-life notice/dispatch wording.

@@ -70,4 +70,7 @@ public static class SocialMemoryKinds
 
     /// <summary>Office/Yamen implementation residue: 县门执行拖延、纸面落地或胥吏把持后的社会余味。</summary>
     public const string OfficePolicyImplementationResidue = "office_policy_implementation_residue";
+
+    /// <summary>Office/Yamen court-policy local-response residue: 政策文移轻催、递报改道后的社会余味。</summary>
+    public const string OfficePolicyLocalResponseResidue = "office_policy_local_response_residue";
 }

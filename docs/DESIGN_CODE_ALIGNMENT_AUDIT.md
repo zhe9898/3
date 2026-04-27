@@ -1,5 +1,93 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v197-v204 court-policy first rule-density closeout audit - 2026-04-27
+
+- The v109-v196 first rule-density closeout audit v197-v204 treats Chain 8 as closed only for the first-layer rule-density branch: policy process texture, Office/PublicLife local response, delayed SocialMemory residue, memory-pressure next-window readback, public-reading echo, public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency, and public-life receipt echo.
+- Code alignment: no production rule changes are introduced. The already-implemented owner split remains `WorldSettlements` as court agenda / mandate pressure source, `OfficeAndCareer` as policy window and county document/report posture, `PublicLifeAndRumor` as street/public interpretation, `SocialMemoryAndRelations` as later durable `office.policy_local_response...` residue, Application as route/assemble/project, and Unity as copy-only presentation.
+- This is not the full court engine and not a court-agenda / policy-dispatch completion claim. Court process state, appointment slate, dispatch arrival, and downstream household/market/public consequences remain explicit future debt.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, affordance prose, docket prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v197-v204 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action / suggested-receipt / receipt-docket / public-life receipt echo ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v189-v196 court-policy public-life receipt echo - 2026-04-27
+
+- Chain 8 now lets public-life command/readback surfaces carry `公议回执回声防误读`, `街面只读已投影的政策公议后手`, and `公议不把回执读成新政令` when the same structured court-policy local-response residue already powers the public-reading echo.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns street interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles command readback from structured cause-key data and current public-life scalars; Unity copies command `LeverageSummary` / `ReadbackSummary`.
+- The pass does not change command resolution, policy success, command ranking, cooldown, docket state, receipt state, or any owner-lane rule. The public-life echo is readback text, not a Court command, not a new policy result, and not a ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, affordance prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v189-v196 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action / suggested-receipt / receipt-docket / public-life receipt echo ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v181-v188 court-policy receipt-docket consistency guard - 2026-04-27
+
+- Chain 8 now lets governance/docket readback carry `回执案牍一致防误读`, `回执只回收已投影的政策公议后手`, and `案牍不把回执读成新政策结果` when the same structured court-policy public follow-up residue already powers the suggested receipt guard.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles governance/docket readback from structured cause-key data and current public-life scalars; Unity copies governance/docket fields.
+- The pass does not change command resolution, policy success, command ranking, cooldown, docket state, receipt state, or any owner-lane rule. The consistency guard is readback text, not a Court command, not a new receipt result, and not a ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v181-v188 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action / suggested-receipt / receipt-docket ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v173-v180 court-policy suggested receipt guard - 2026-04-27
+
+- Chain 8 now lets projected command receipts carry `建议回执防误读`, `只回收已投影的政策公议后手`, and `回执不是新政策结果` when existing structured court-policy public follow-up residue is already visible.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles receipt readback from structured cause-key data and current public-life scalars; Unity copies receipt `ReadbackSummary`.
+- The pass does not change command resolution, policy success, command ranking, cooldown, docket state, or any owner-lane rule. The receipt guard is readback text, not a Court command, not a new receipt state, and not a ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v173-v180 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action / suggested-receipt ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v165-v172 court-policy suggested action guard - 2026-04-27
+
+- Chain 8 now lets the governance docket suggested-action prompt copy the existing court-policy anti-misread guard as `建议动作防误读` and `只承接已投影的政策公议后手`.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles a projected prompt from structured guard eligibility and existing affordance data; Unity copies governance/docket text.
+- The pass does not change `SelectPrimaryGovernanceAffordance` priority, command availability, policy success, cooldown, docket state, or any owner-lane rule. The suggested action is still a projected prompt, not a Court command or a new ranking rule.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v165-v172 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v157-v164 court-policy follow-up docket guard - 2026-04-27
+
+- Chain 8 now projects a docket/no-loop guard over the public follow-up cue as `政策后手案牍防误读`. The guard is built from structured SocialMemory cause outcome data plus current `SettlementPublicLifeSnapshot` scalars.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles a projected guard; Unity copies existing governance/docket fields.
+- The new readback names `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读`, but does not calculate policy success, create a cooldown account, reopen policy state, or write a docket/follow-up ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v157-v164 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v149-v156 court-policy public follow-up cue - 2026-04-27
+
+- Chain 8 now projects a first public follow-up cue over old court-policy local-response residue as `政策公议后手提示`. The cue is built from structured outcome code data already carried in the SocialMemory cause plus current `SettlementPublicLifeSnapshot` scalars.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles a projected cue; Unity copies existing command/readback fields.
+- The new readback names `公议冷却提示`, `公议轻续提示`, `公议换招提示`, and `下一步仍看榜示/递报承口`, but does not calculate policy success, create a cooldown account, reopen policy state, or write a public-follow-up ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v149-v156 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v141-v148 court-policy public-reading echo - 2026-04-27
+
+- Chain 8 now projects old court-policy local-response residue into public-life command readbacks as `政策公议旧读回`. The echo is built from structured `SocialMemory` cause/type/weight plus current `JurisdictionAuthoritySnapshot` / `SettlementPublicLifeSnapshot` values.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and execution posture; `PublicLifeAndRumor` reads public interpretation and notice/report texture; `SocialMemoryAndRelations` owns durable residue; Application only assembles a projected public-reading echo; Unity copies existing command/readback fields.
+- The new readback names `公议旧账回声` and `下一次榜示/递报旧读法`, but does not calculate policy success, reopen policy state, or write a public-reading ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v141-v148 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v133-v140 court-policy memory-pressure readback - 2026-04-27
+
+- Chain 8 now projects old court-policy local-response residue into a later visible policy window as `政策旧账回压读回`. The readback is built from structured `SocialMemory` cause/type/weight plus current `JurisdictionAuthoritySnapshot` / `SettlementPublicLifeSnapshot` values.
+- Code alignment: `OfficeAndCareer` still owns policy window and county document/report aftermath; `PublicLifeAndRumor` still owns public interpretation; `SocialMemoryAndRelations` still owns durable residue; Application only assembles a projected old-residue pressure readback; Unity copies existing governance/office fields.
+- The new readback names `旧文移余味`, `下一次政策窗口读法`, and `公议旧读法续压`, but does not calculate success, reopen policy state, or write a repeat-pressure ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v133-v140 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v125-v132 court-policy social-memory echo - 2026-04-27
+
+- Chain 8 now has a delayed SocialMemory echo after the v117-v124 county document/report response. `SocialMemoryAndRelations` writes durable `office.policy_local_response...` residue only during a later monthly pass and only from structured `JurisdictionAuthoritySnapshot` response fields.
+- Code alignment: `OfficeAndCareer` still owns the command aftermath (`LastRefusalResponseCommandCode`, outcome, trace, carryover); `PublicLifeAndRumor` still owns street/public interpretation; `SocialMemoryAndRelations` owns durable fear/shame/favor/debt/grudge residue; Application only projects structured memory cause/type/weight; Unity copies projected governance fields.
+- The residue is explicitly not `order.public_life.response...`, not home-household debt, and not this household hard-carrying court after-accounts. Same-month command handling remains SocialMemory-neutral.
+- No reader may parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v125-v132 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / social-memory ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
+## v117-v124 court-policy local response affordance - 2026-04-27
+
+- Chain 8 now exposes a first bounded local-response affordance layer after the v109-v116 process readback. `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, and `公议降温只读回` describe what the player can try locally without becoming court authority.
+- Code alignment: `PressCountyYamenDocument` and `RedirectRoadReport` remain existing `OfficeAndCareer` command resolution paths; `PostCountyNotice` and `DispatchRoadReport` remain public-life/player-facing surfaces. `OfficeAndCareer` reads existing office scalar pressure and structured response fields, while `PublicLifeAndRumor` keeps public interpretation.
+- Application only routes, assembles, and projects from structured snapshots. Unity copies command/readback fields only. Neither layer calculates policy success or turns the court-policy aftermath into a home-household, Order, or standalone Office after-account.
+- No reader may parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v117-v124 adds no persisted state, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v109-v116 court-policy process thickening - 2026-04-27
 
 - Chain 8 now has its first rule-density readback layer over the existing `WorldSettlements.CourtAgendaPressureAccumulated -> OfficeAndCareer.PolicyWindowOpened -> OfficeAndCareer.PolicyImplemented -> PublicLifeAndRumor` path.

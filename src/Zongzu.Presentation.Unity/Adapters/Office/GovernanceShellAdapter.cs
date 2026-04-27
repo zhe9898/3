@@ -21,10 +21,12 @@ internal static class GovernanceShellAdapter
 		string momentum = !string.IsNullOrWhiteSpace(governanceDocket?.PublicMomentumSummary)
 			? governanceDocket.PublicMomentumSummary
 			: governanceLane?.PublicMomentumSummary ?? string.Empty;
+		string docketGuidance = governanceDocket?.GuidanceSummary ?? string.Empty;
 
 		return ShellTextAdapter.CombineDistinct(
 			summary,
 			momentum,
+			docketGuidance,
 			governanceLane?.CourtPolicyEntryReadbackSummary ?? string.Empty,
 			governanceLane?.CourtPolicyDispatchReadbackSummary ?? string.Empty,
 			governanceLane?.CourtPolicyPublicReadbackSummary ?? string.Empty,

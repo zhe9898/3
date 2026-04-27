@@ -23,8 +23,8 @@ Use history to sharpen:
 For Renzong work, distinguish historical/design plausibility from current implementation:
 - `RENZONG_PRESSURE_CHAIN_SPEC.md` is the fuller design target; `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` is the live topology ledger
 - historical pressure becomes code only through module-owned state, structured events, metadata, tests, and projection/read-model surfaces
-- current public-life/order and global thin-chain readback phrases such as `县门未落地`, `地方拖延`, `后账仍在`, `社会记忆读回`, `外部后账归位`, `承接入口`, `归口后读法`, `闭环防回压`, `Office承接入口`, `Family救济选择读回`, `军令选择读回`, `战后案卷读回`, `朝议压力读回`, and `Court-policy防回压` are projection carriers for local yamen friction, route/order repair, clan elder explanation, household cost, military/campaign aftermath, court-policy process, owner-lane return, remembered residue, and anti-loop interpretation; they must not become fixed historical event triggers
-- current v35-v108 language should be treated as historically plausible pressure-carrier wording, not universal formula proof: canal-window friction can carry trade/order pressure, household burden can carry sponsor-clan pressure, Office/yamen后手 can carry document/clerk delay readback, force/campaign wording can carry mobilization and aftermath pressure, and court-policy wording can carry court-to-local process without making every Song county identical
+- current public-life/order and global thin-chain readback phrases such as `县门未落地`, `地方拖延`, `后账仍在`, `社会记忆读回`, `外部后账归位`, `承接入口`, `归口后读法`, `闭环防回压`, `Office承接入口`, `Family救济选择读回`, `军令选择读回`, `战后案卷读回`, `朝议压力读回`, `政策回应余味续接读回`, `政策旧账回压读回`, `政策公议旧读回`, and `Court-policy防回压` are projection carriers for local yamen friction, route/order repair, clan elder explanation, household cost, military/campaign aftermath, court-policy process, public interpretation, owner-lane return, remembered residue, and anti-loop interpretation; they must not become fixed historical event triggers
+- current v35-v196 language should be treated as historically plausible pressure-carrier wording, not universal formula proof: canal-window friction can carry trade/order pressure, household burden can carry sponsor-clan pressure, Office/yamen后手 can carry document/clerk delay readback, force/campaign wording can carry mobilization and aftermath pressure, and court-policy wording can carry court-to-local process, old public reading, docket/receipt anti-misread, and remembered county-document residue without making every Song county identical
 - current shell and Unity surfaces may show court, frontier, disaster, office, public-life, and campaign pressure as objects/notices/boards, but they must not resolve historical authority in UI code
 - historical fidelity must stay scale-aware: use dense named actors only where pressure, player reach, or source confidence justifies it; use county/route/office pressure summaries elsewhere
 - if a historical correction changes a label or descriptor only, use `zongzu-content-authoring`; if it changes a chain, use `zongzu-pressure-chain`; if it changes persistence, use `zongzu-save-and-schema`
@@ -48,6 +48,10 @@ Use outside history and implementation material as calibration with confidence b
 - mapping historical practices into module boundaries, save schemas, acceptance tests, product docs, or Unity shell surfaces
 - choosing between historical framings and needing assumptions, confidence, period, region, and gameplay abstraction stated clearly
 - checking a historical claim, map node, named person, reform timing, title, office, or institution against external sources before it becomes a rule or player-facing label
+
+## Fast Lane
+
+For quick historical checks, state period, region, confidence, gameplay abstraction, and what the source can or cannot prove. Use a full historical pass when the claim changes mechanics, topology, named carriers, map nodes, pressure chains, player-facing labels at scale, or future scenario direction.
 
 ## Workflow
 
@@ -86,6 +90,7 @@ Use outside history and implementation material as calibration with confidence b
 
    Use this chain:
    - repo docs and local skill references
+   - [references/northern-song-source-calibration.md](references/northern-song-source-calibration.md) for Northern Song/Renzong, Qingli, Wang Anshi-style reform pressure, Song society, and source-family routing
    - [references/source-ladder.md](references/source-ladder.md)
    - [references/search-source-routing.md](references/search-source-routing.md)
    - [references/simulation-calibration.md](references/simulation-calibration.md) when timing, travel, message delay, or scale bands matter
@@ -157,6 +162,7 @@ For prompts like `北宋仁宗`, `庆历`, `王安石`, `皇权`, `改史`, `谋
 ## Reference Catalog
 
 Source and orchestration:
+- [references/northern-song-source-calibration.md](references/northern-song-source-calibration.md)
 - [references/source-ladder.md](references/source-ladder.md)
 - [references/search-source-routing.md](references/search-source-routing.md)
 - [references/full-skill-orchestration.md](references/full-skill-orchestration.md)

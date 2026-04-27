@@ -599,6 +599,818 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Court_policy_local_response_v117_v124_must_reuse_office_lane_and_remain_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string playerCommandSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.cs"),
+            Path.Combine(SrcDir, "Zongzu.Application", "PresentationReadModelBuilder", "PresentationReadModelBuilder.PlayerCommands.Receipts.cs"),
+        }.Select(File.ReadAllText));
+        string officeCommandSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.OfficeAndCareer",
+            "OfficeAndCareerCommandResolver.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "PublicLife", "PublicLifeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-local-response-v117-v124.md"));
+
+        Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyLocalResponseGuidance"));
+        Assert.That(playerCommandSource, Does.Contain("政策回应入口"));
+        Assert.That(playerCommandSource, Does.Contain("文移续接选择"));
+        Assert.That(playerCommandSource, Does.Contain("公议降温只读回"));
+        Assert.That(playerCommandSource, Does.Contain("PressCountyYamenDocument"));
+        Assert.That(playerCommandSource, Does.Contain("RedirectRoadReport"));
+        Assert.That(governanceSource, Does.Contain("hasCourtPolicyProcess"));
+        Assert.That(governanceSource, Does.Contain("GetGovernanceAffordancePriority"));
+
+        Assert.That(officeCommandSource, Does.Contain("HasCourtPolicyLocalResponsePressure"));
+        Assert.That(officeCommandSource, Does.Contain("政策文移续接"));
+        Assert.That(officeCommandSource, Does.Contain("政策递报改道"));
+        Assert.That(officeCommandSource, Does.Contain("PetitionPressure"));
+        Assert.That(officeCommandSource, Does.Contain("AdministrativeTaskLoad"));
+        Assert.That(officeCommandSource, Does.Contain("PetitionBacklog"));
+        Assert.That(officeCommandSource, Does.Contain("ClerkDependence"));
+
+        foreach (string source in new[] { governanceSource, officeCommandSource })
+        {
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("OfficialNoticeLine"));
+            Assert.That(source, Does.Not.Contain("PrefectureDispatchLine"));
+            Assert.That(source, Does.Not.Contain("LastAdministrativeTrace"));
+            Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("WorldManager"));
+            Assert.That(source, Does.Not.Contain("PersonManager"));
+            Assert.That(source, Does.Not.Contain("CharacterManager"));
+            Assert.That(source, Does.Not.Contain("GodController"));
+            Assert.That(source, Does.Not.Contain("PolicyLedger"));
+            Assert.That(source, Does.Not.Contain("CourtProcessLedger"));
+            Assert.That(source, Does.Not.Contain("DispatchLedger"));
+            Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+            Assert.That(source, Does.Not.Contain("CooldownLedger"));
+        }
+
+        foreach (string source in new[] { governanceSource, officeCommandSource, playerCommandSource, unitySource })
+        {
+            Assert.That(source, Does.Not.Contain("WorldManager"));
+            Assert.That(source, Does.Not.Contain("PersonManager"));
+            Assert.That(source, Does.Not.Contain("CharacterManager"));
+            Assert.That(source, Does.Not.Contain("GodController"));
+            Assert.That(source, Does.Not.Contain("PolicyLedger"));
+            Assert.That(source, Does.Not.Contain("CourtProcessLedger"));
+            Assert.That(source, Does.Not.Contain("DispatchLedger"));
+            Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+            Assert.That(source, Does.Not.Contain("CooldownLedger"));
+        }
+
+        Assert.That(playerCommandSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(playerCommandSource, Does.Not.Contain("OfficialNoticeLine"));
+        Assert.That(playerCommandSource, Does.Not.Contain("PrefectureDispatchLine"));
+        Assert.That(playerCommandSource, Does.Not.Contain("LastLocalResponseSummary"));
+
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("PolicyImplementationOutcome"));
+        Assert.That(unitySource, Does.Not.Contain("BuildCourtPolicyLocalResponseGuidance"));
+        Assert.That(schemaRules, Does.Contain("court-policy local response v117-v124 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy local response v117-v124 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No full court engine"));
+    }
+
+    [Test]
+    public void Court_policy_social_memory_echo_v125_v132_must_remain_structured_and_schema_neutral()
+    {
+        string socialSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.CourtPolicyLocalResponseResidue.cs"));
+        string publicLifeOrderSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.SocialMemoryAndRelations",
+            "SocialMemoryAndRelationsModule.PublicLifeOrderResponseResidue.cs"));
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string socialMemoryKinds = File.ReadAllText(Path.Combine(SrcDir, "Zongzu.Contracts", "SocialMemoryKinds.cs"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-social-memory-echo-v125-v132.md"));
+
+        Assert.That(socialSource, Does.Contain("ApplyCourtPolicyLocalResponseResidue"));
+        Assert.That(socialSource, Does.Contain("office.policy_local_response"));
+        Assert.That(socialSource, Does.Contain("SocialMemoryKinds.OfficePolicyLocalResponseResidue"));
+        Assert.That(socialSource, Does.Contain("IsCourtPolicyLocalResponseCarryover"));
+        Assert.That(socialSource, Does.Contain("JurisdictionAuthoritySnapshot"));
+        Assert.That(socialSource, Does.Contain("LastRefusalResponseCommandCode"));
+        Assert.That(socialSource, Does.Contain("LastRefusalResponseOutcomeCode"));
+        Assert.That(socialSource, Does.Contain("LastRefusalResponseTraceCode"));
+        Assert.That(publicLifeOrderSource, Does.Contain("!IsCourtPolicyLocalResponseCarryover(jurisdiction)"));
+        Assert.That(governanceSource, Does.Contain("政策回应余味续接读回"));
+        Assert.That(governanceSource, Does.Contain("office.policy_local_response"));
+        Assert.That(governanceSource, Does.Contain("TryReadOfficePolicyLocalResponseResidueCause"));
+        Assert.That(socialMemoryKinds, Does.Contain("OfficePolicyLocalResponseResidue"));
+
+        foreach (string source in new[] { socialSource, publicLifeOrderSource, governanceSource })
+        {
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("OfficialNoticeLine"));
+            Assert.That(source, Does.Not.Contain("PrefectureDispatchLine"));
+            Assert.That(source, Does.Not.Contain("LastAdministrativeTrace"));
+            Assert.That(source, Does.Not.Contain("LastPetitionOutcome"));
+            Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("WorldManager"));
+            Assert.That(source, Does.Not.Contain("PersonManager"));
+            Assert.That(source, Does.Not.Contain("CharacterManager"));
+            Assert.That(source, Does.Not.Contain("GodController"));
+            Assert.That(source, Does.Not.Contain("PolicyLedger"));
+            Assert.That(source, Does.Not.Contain("CourtProcessLedger"));
+            Assert.That(source, Does.Not.Contain("DispatchLedger"));
+            Assert.That(source, Does.Not.Contain("OwnerLaneLedger"));
+            Assert.That(source, Does.Not.Contain("CooldownLedger"));
+            Assert.That(source, Does.Not.Contain("SocialMemoryLedger"));
+            Assert.That(source, Does.Not.Contain("PersonRegistry"));
+        }
+
+        Assert.That(schemaRules, Does.Contain("court-policy social-memory echo v125-v132 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy social-memory echo v125-v132 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No full court engine"));
+        Assert.That(execPlan, Does.Contain("No social-memory ledger"));
+    }
+
+    [Test]
+    public void Court_policy_memory_pressure_readback_v133_v140_must_remain_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-memory-pressure-readback-v133-v140.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyMemoryPressureReadbackSummary"));
+        Assert.That(governanceSource, Does.Contain("政策旧账回压读回"));
+        Assert.That(governanceSource, Does.Contain("旧文移余味"));
+        Assert.That(governanceSource, Does.Contain("下一次政策窗口读法"));
+        Assert.That(governanceSource, Does.Contain("SocialMemoryEntrySnapshot"));
+        Assert.That(governanceSource, Does.Contain("OfficePolicyLocalResponseResidueCause"));
+        Assert.That(governanceSource, Does.Contain("HasCourtPolicyProcessReadback"));
+        Assert.That(governanceSource, Does.Contain("RenderCourtPolicyLocalResponseTraceLabel"));
+
+        Assert.That(governanceSource, Does.Not.Contain("residue.Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("memory.Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(governanceSource, Does.Not.Contain("OfficialNoticeLine"));
+        Assert.That(governanceSource, Does.Not.Contain("PrefectureDispatchLine"));
+        Assert.That(governanceSource, Does.Not.Contain("LastAdministrativeTrace"));
+        Assert.That(governanceSource, Does.Not.Contain("LastPetitionOutcome"));
+        Assert.That(governanceSource, Does.Not.Contain("LastLocalResponseSummary"));
+        Assert.That(governanceSource, Does.Not.Contain("LastRefusalResponseSummary"));
+        Assert.That(governanceSource, Does.Not.Contain("CourtProcessLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("PolicyLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("MemoryPressureLedger"));
+        Assert.That(governanceSource, Does.Not.Contain("WorldManager"));
+        Assert.That(governanceSource, Does.Not.Contain("PersonManager"));
+        Assert.That(governanceSource, Does.Not.Contain("CharacterManager"));
+
+        Assert.That(schemaRules, Does.Contain("court-policy memory-pressure readback v133-v140 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy memory-pressure readback v133-v140 note"));
+        Assert.That(moduleBoundaries, Does.Contain("Court-policy memory-pressure readback v133-v140 boundary note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No full court engine"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No dispatch ledger"));
+        Assert.That(execPlan, Does.Contain("memory-pressure ledger"));
+    }
+
+    [Test]
+    public void Court_policy_public_reading_echo_v141_v148_must_remain_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string playerCommandSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "PublicLife", "PublicLifeShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Shared", "CommandShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-public-reading-echo-v141-v148.md"));
+
+        Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyPublicReadingEchoGuidance"));
+        Assert.That(playerCommandSource, Does.Contain("政策公议旧读回"));
+        Assert.That(playerCommandSource, Does.Contain("公议旧账回声"));
+        Assert.That(playerCommandSource, Does.Contain("下一次榜示/递报旧读法"));
+        Assert.That(playerCommandSource, Does.Contain("SelectLocalOfficePolicySocialMemories"));
+        Assert.That(playerCommandSource, Does.Contain("SelectOfficePolicyResidue"));
+        Assert.That(playerCommandSource, Does.Contain("TryReadOfficePolicyLocalResponseResidueCause"));
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyPublicReadingEchoGuidance"));
+        Assert.That(governanceSource, Does.Contain("CourtPolicyPublicReadbackSummary"));
+        Assert.That(unitySource, Does.Contain("LeverageSummary = command.LeverageSummary"));
+        Assert.That(unitySource, Does.Contain("ReadbackSummary = command.ReadbackSummary"));
+
+        foreach (string source in new[] { governanceSource, playerCommandSource })
+        {
+            Assert.That(source, Does.Not.Contain("residue.Summary"));
+            Assert.That(source, Does.Not.Contain("memory.Summary"));
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("OfficialNoticeLine"));
+            Assert.That(source, Does.Not.Contain("PrefectureDispatchLine"));
+            Assert.That(source, Does.Not.Contain("LastAdministrativeTrace"));
+            Assert.That(source, Does.Not.Contain("LastPetitionOutcome"));
+            Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("CourtProcessLedger"));
+            Assert.That(source, Does.Not.Contain("PolicyLedger"));
+            Assert.That(source, Does.Not.Contain("PublicReadingLedger"));
+            Assert.That(source, Does.Not.Contain("MemoryPressureLedger"));
+            Assert.That(source, Does.Not.Contain("WorldManager"));
+            Assert.That(source, Does.Not.Contain("PersonManager"));
+            Assert.That(source, Does.Not.Contain("CharacterManager"));
+            Assert.That(source, Does.Not.Contain("GodController"));
+        }
+
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("PolicyImplementationOutcome"));
+        Assert.That(schemaRules, Does.Contain("court-policy public-reading echo v141-v148 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy public-reading echo v141-v148 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy public-reading echo v141-v148 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No full court engine"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("public-reading ledger"));
+    }
+
+    [Test]
+    public void Court_policy_public_follow_up_cue_v149_v156_must_remain_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string playerCommandSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "PublicLife", "PublicLifeShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Shared", "CommandShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-public-follow-up-cue-v149-v156.md"));
+
+        Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyPublicFollowUpCue"));
+        Assert.That(playerCommandSource, Does.Contain("政策公议后手提示"));
+        Assert.That(playerCommandSource, Does.Contain("公议轻续提示"));
+        Assert.That(playerCommandSource, Does.Contain("下一步仍看榜示/递报承口"));
+        Assert.That(playerCommandSource, Does.Contain("不是冷却账本"));
+        Assert.That(playerCommandSource, Does.Contain("PublicLifeOrderResponseOutcomeCodes"));
+        Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyPublicReadingEchoGuidance"));
+        Assert.That(governanceSource, Does.Contain("CourtPolicyPublicReadbackSummary"));
+        Assert.That(unitySource, Does.Contain("LeverageSummary = command.LeverageSummary"));
+        Assert.That(unitySource, Does.Contain("ReadbackSummary = command.ReadbackSummary"));
+
+        foreach (string source in new[] { governanceSource, playerCommandSource })
+        {
+            Assert.That(source, Does.Not.Contain("residue.Summary"));
+            Assert.That(source, Does.Not.Contain("memory.Summary"));
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("OfficialNoticeLine"));
+            Assert.That(source, Does.Not.Contain("PrefectureDispatchLine"));
+            Assert.That(source, Does.Not.Contain("LastAdministrativeTrace"));
+            Assert.That(source, Does.Not.Contain("LastPetitionOutcome"));
+            Assert.That(source, Does.Not.Contain("LastLocalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("LastRefusalResponseSummary"));
+            Assert.That(source, Does.Not.Contain("CourtProcessLedger"));
+            Assert.That(source, Does.Not.Contain("PolicyLedger"));
+            Assert.That(source, Does.Not.Contain("PublicFollowUpLedger"));
+            Assert.That(source, Does.Not.Contain("CooldownLedger"));
+            Assert.That(source, Does.Not.Contain("WorldManager"));
+            Assert.That(source, Does.Not.Contain("PersonManager"));
+            Assert.That(source, Does.Not.Contain("CharacterManager"));
+            Assert.That(source, Does.Not.Contain("GodController"));
+        }
+
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("PolicyImplementationOutcome"));
+        Assert.That(schemaRules, Does.Contain("court-policy public follow-up cue v149-v156 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy public follow-up cue v149-v156 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy public follow-up cue v149-v156 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No cooldown ledger"));
+    }
+
+    [Test]
+    public void Court_policy_follow_up_docket_guard_v157_v164_must_remain_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-follow-up-docket-guard-v157-v164.md"));
+
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyPublicFollowUpDocketGuard"));
+        Assert.That(governanceSource, Does.Contain("政策后手案牍防误读"));
+        Assert.That(governanceSource, Does.Contain("公议后手只作案牍提示"));
+        Assert.That(governanceSource, Does.Contain("不是Order后账"));
+        Assert.That(governanceSource, Does.Contain("不是Office成败"));
+        Assert.That(governanceSource, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        Assert.That(governanceSource, Does.Contain("SelectOfficePolicyResidue"));
+        Assert.That(governanceSource, Does.Contain("TryReadOfficePolicyLocalResponseResidueCause"));
+        Assert.That(governanceSource, Does.Contain("CourtPolicyNoLoopGuardSummary"));
+        Assert.That(unitySource, Does.Contain("CourtPolicyNoLoopGuardSummary = governance?.CourtPolicyNoLoopGuardSummary"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "residue.Summary",
+                     "memory.Summary",
+                     "DomainEvent.Summary",
+                     "OfficialNoticeLine",
+                     "PrefectureDispatchLine",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "CourtProcessLedger",
+                     "PolicyLedger",
+                     "PublicFollowUpLedger",
+                     "CooldownLedger",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(governanceSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("Zongzu.Application"));
+        Assert.That(unitySource, Does.Not.Contain("Zongzu.Modules."));
+        Assert.That(schemaRules, Does.Contain("court-policy follow-up docket guard v157-v164 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy follow-up docket guard v157-v164 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy follow-up docket guard v157-v164 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No cooldown ledger"));
+    }
+
+    [Test]
+    public void Court_policy_suggested_action_guard_v165_v172_must_remain_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-suggested-action-guard-v165-v172.md"));
+
+        Assert.That(governanceSource, Does.Contain("BuildGovernanceSuggestedActionGuard"));
+        Assert.That(governanceSource, Does.Contain("HasCourtPolicyPublicFollowUpGuard"));
+        Assert.That(governanceSource, Does.Contain("建议动作防误读"));
+        Assert.That(governanceSource, Does.Contain("只承接已投影的政策公议后手"));
+        Assert.That(governanceSource, Does.Contain("SelectPrimaryGovernanceAffordance"));
+        Assert.That(governanceSource, Does.Contain("GetGovernanceAffordancePriority"));
+        Assert.That(governanceSource, Does.Contain("BuildGovernanceSuggestedCommandPrompt("));
+        Assert.That(unitySource, Does.Contain("governanceDocket?.GuidanceSummary"));
+        Assert.That(unitySource, Does.Contain("ShellTextAdapter.CombineDistinct"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "LeverageSummary.Contains",
+                     "ReadbackSummary.Contains",
+                     "SuggestedCommandPrompt.Contains",
+                     "residue.Summary",
+                     "memory.Summary",
+                     "DomainEvent.Summary",
+                     "OfficialNoticeLine",
+                     "PrefectureDispatchLine",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "CourtProcessLedger",
+                     "PolicyLedger",
+                     "PublicFollowUpLedger",
+                     "CooldownLedger",
+                     "DocketLedger",
+                     "SuggestedActionLedger",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(governanceSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("Zongzu.Application"));
+        Assert.That(unitySource, Does.Not.Contain("Zongzu.Modules."));
+        Assert.That(schemaRules, Does.Contain("court-policy suggested action guard v165-v172 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy suggested action guard v165-v172 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy suggested action guard v165-v172 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No new suggested-action ranking rule"));
+    }
+
+    [Test]
+    public void Court_policy_suggested_receipt_guard_v173_v180_must_remain_projection_only_and_schema_neutral()
+    {
+        string receiptSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.Receipts.cs"));
+        string unitySource = File.ReadAllText(Path.Combine(
+            TestsDir,
+            "Zongzu.Presentation.Unity.Tests",
+            "FirstPassPresentationShellTests",
+            "FirstPassPresentationShellTests.GovernanceAndPublicLife.cs"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-suggested-receipt-guard-v173-v180.md"));
+        Match helperMatch = Regex.Match(
+            receiptSource,
+            @"private static string BuildCourtPolicySuggestedReceiptGuard\((?<body>.*?)\r?\n    private static",
+            RegexOptions.Singleline);
+
+        Assert.That(helperMatch.Success, Is.True);
+        string helperSource = helperMatch.Value;
+        Assert.That(receiptSource, Does.Contain("BuildCourtPolicySuggestedReceiptGuard"));
+        Assert.That(receiptSource, Does.Contain("建议回执防误读"));
+        Assert.That(receiptSource, Does.Contain("只回收已投影的政策公议后手"));
+        Assert.That(receiptSource, Does.Contain("回执不是新政策结果"));
+        Assert.That(receiptSource, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        Assert.That(unitySource, Does.Contain("建议回执防误读"));
+        Assert.That(unitySource, Does.Contain("ReadbackSummary"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "DomainEvent.Summary",
+                     ".Summary.Contains",
+                     "LeverageSummary.Contains",
+                     "ReadbackSummary.Contains",
+                     "SuggestedCommandPrompt.Contains",
+                     "OfficialNoticeLine",
+                     "PrefectureDispatchLine",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "ReceiptLedger",
+                     "SuggestedReceiptLedger",
+                     "PolicyLedger",
+                     "CourtProcessLedger",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "DocketLedger",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(helperSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(schemaRules, Does.Contain("court-policy suggested receipt guard v173-v180 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy suggested receipt guard v173-v180 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy suggested receipt guard v173-v180 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No new suggested receipt ledger"));
+    }
+
+    [Test]
+    public void Court_policy_receipt_docket_consistency_v181_v188_must_remain_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-receipt-docket-consistency-v181-v188.md"));
+        Match helperMatch = Regex.Match(
+            governanceSource,
+            @"private static string BuildCourtPolicyReceiptDocketConsistencyGuard\((?<body>.*?)\r?\n    private static",
+            RegexOptions.Singleline);
+
+        Assert.That(helperMatch.Success, Is.True);
+        string helperSource = helperMatch.Value;
+        Assert.That(governanceSource, Does.Contain("BuildCourtPolicyReceiptDocketConsistencyGuard"));
+        Assert.That(governanceSource, Does.Contain("回执案牍一致防误读"));
+        Assert.That(governanceSource, Does.Contain("回执只回收已投影的政策公议后手"));
+        Assert.That(governanceSource, Does.Contain("案牍不把回执读成新政策结果"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "DomainEvent.Summary",
+                     ".Summary.Contains",
+                     "LeverageSummary.Contains",
+                     "ReadbackSummary.Contains",
+                     "SuggestedCommandPrompt.Contains",
+                     "OfficialNoticeLine",
+                     "PrefectureDispatchLine",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "ReceiptLedger",
+                     "DocketConsistencyLedger",
+                     "PolicyLedger",
+                     "CourtProcessLedger",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "DocketLedger",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(helperSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(schemaRules, Does.Contain("court-policy receipt-docket consistency guard v181-v188 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy receipt-docket consistency guard v181-v188 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy receipt-docket consistency guard v181-v188 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No new receipt-docket ledger"));
+    }
+
+    [Test]
+    public void Court_policy_public_life_receipt_echo_v189_v196_must_remain_projection_only_and_schema_neutral()
+    {
+        string playerCommandSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.cs"));
+        string unityAdapterSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Shared", "CommandShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "PublicLife", "PublicLifeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-public-life-receipt-echo-v189-v196.md"));
+        Match helperMatch = Regex.Match(
+            playerCommandSource,
+            @"private static string BuildCourtPolicyPublicLifeReceiptEchoGuard\((?<body>.*?)\r?\n    private static",
+            RegexOptions.Singleline);
+
+        Assert.That(helperMatch.Success, Is.True);
+        string helperSource = helperMatch.Value;
+        Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyPublicLifeReceiptEchoGuard"));
+        Assert.That(playerCommandSource, Does.Contain("公议回执回声防误读"));
+        Assert.That(playerCommandSource, Does.Contain("街面只读已投影的政策公议后手"));
+        Assert.That(playerCommandSource, Does.Contain("公议不把回执读成新政令"));
+        Assert.That(playerCommandSource, Does.Contain("TryReadOfficePolicyLocalResponseResidueCause"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "DomainEvent.Summary",
+                     ".Summary.Contains",
+                     "LeverageSummary.Contains",
+                     "ReadbackSummary.Contains",
+                     "SuggestedCommandPrompt.Contains",
+                     "OfficialNoticeLine",
+                     "PrefectureDispatchLine",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "ReceiptLedger",
+                     "PublicLifeReceiptEchoLedger",
+                     "PolicyLedger",
+                     "CourtProcessLedger",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "DocketLedger",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(helperSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(unityAdapterSource, Does.Contain("ReadbackSummary"));
+        Assert.That(unityAdapterSource, Does.Contain("LeverageSummary"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("BuildCourtPolicyPublicLifeReceiptEchoGuard"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("TryReadOfficePolicyLocalResponseResidueCause"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(schemaRules, Does.Contain("court-policy public-life receipt echo v189-v196 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy public-life receipt echo v189-v196 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy public-life receipt echo v189-v196 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No new public-life receipt echo ledger"));
+    }
+
+    [Test]
+    public void Court_policy_first_rule_density_closeout_v197_v204_must_document_v109_v196_without_claiming_full_court_engine()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string ui = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string audit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-first-rule-density-closeout-audit-v197-v204.md"));
+
+        Assert.That(topologyIndex, Does.Contain("Chain 8 First Rule-Density Closeout Audit - v197-v204"));
+        Assert.That(topologyIndex, Does.Contain("v109-v196 first rule-density closeout audit v197-v204"));
+        Assert.That(topologyIndex, Does.Contain("not the full court engine"));
+        Assert.That(topologyIndex, Does.Contain("Court process state, appointment slate, dispatch arrival, and downstream household/market/public consequences remain explicit full-chain debt"));
+
+        foreach (string subpass in new[]
+                 {
+                     "v109-v116",
+                     "v117-v124",
+                     "v125-v132",
+                     "v133-v140",
+                     "v141-v148",
+                     "v149-v156",
+                     "v157-v164",
+                     "v165-v172",
+                     "v173-v180",
+                     "v181-v188",
+                     "v189-v196",
+                 })
+        {
+            Assert.That(topologyIndex, Does.Contain(subpass), subpass);
+            Assert.That(acceptance, Does.Contain(subpass), subpass);
+        }
+
+        Assert.That(integrationRules, Does.Contain("Chain 8 v197-v204 first rule-density closeout audit integration note"));
+        Assert.That(moduleBoundaries, Does.Contain("Court-policy first rule-density closeout audit v197-v204 boundary note"));
+        Assert.That(schemaRules, Does.Contain("court-policy first rule-density closeout audit v197-v204 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy first rule-density closeout audit v197-v204 note"));
+        Assert.That(simulation, Does.Contain("Current court-policy first rule-density closeout audit v197-v204 note"));
+        Assert.That(ui, Does.Contain("Court-policy first rule-density closeout audit v197-v204 UI note"));
+        Assert.That(acceptance, Does.Contain("Backend Chain 8 first rule-density closeout audit v197-v204 acceptance"));
+        Assert.That(audit, Does.Contain("v197-v204 court-policy first rule-density closeout audit"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V204"));
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+
+        Assert.That(Directory.Exists(Path.Combine(SrcDir, "Zongzu.Modules.Court")), Is.False);
+
+        foreach (string text in new[]
+                 {
+                     topologyIndex,
+                     integrationRules,
+                     moduleBoundaries,
+                     schemaRules,
+                     dataSchema,
+                     simulation,
+                     ui,
+                     acceptance,
+                     audit,
+                     skillMatrix,
+                     execPlan,
+                 })
+        {
+            Assert.That(text, Does.Not.Contain("full court engine is complete"));
+            Assert.That(text, Does.Not.Contain("v197-v204 completes court-agenda / policy-dispatch"));
+            Assert.That(text, Does.Not.Contain("UI may compute court-policy results"));
+            Assert.That(text, Does.Not.Contain("Application calculates policy success"));
+        }
+    }
+
+    [Test]
     public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
     {
         string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));

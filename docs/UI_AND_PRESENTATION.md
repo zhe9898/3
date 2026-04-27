@@ -75,6 +75,66 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Court-policy first rule-density closeout audit v197-v204 UI note
+
+The v109-v196 first rule-density closeout audit v197-v204 is a presentation boundary statement, not a new shell feature. Governance, office, docket, desk, great-hall, and public-life surfaces may show the already-projected Chain 8 process / local response / public echo / receipt guard fields, but the audit does not add a new UI state, cooldown account, policy result, or Court command.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, affordance prose, docket prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, command ranking, receipt echo status, cooldown status, public-reading weight, docket guard status, next-window outcomes, court process state, appointment slate, dispatch arrival, or downstream household/market/public consequences.
+
+### Court-policy public-life receipt echo v189-v196 UI note
+
+Public-life command surfaces may show `公议回执回声防误读` only when it is already present in projected command `LeverageSummary` / `ReadbackSummary`. The wording should make clear that `街面只读已投影的政策公议后手` and `公议不把回执读成新政令` are street/public interpretation over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, affordance prose, docket prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, command ranking, receipt echo status, cooldown status, public-reading weight, docket guard status, or next-window outcomes.
+
+### Court-policy receipt-docket consistency guard v181-v188 UI note
+
+Governance, office, docket, desk, and great-hall surfaces may show `回执案牍一致防误读` only when it is already present in projected `CourtPolicyNoLoopGuardSummary`, docket `GuidanceSummary`, or copied governance ViewModels. The wording should make clear that `回执只回收已投影的政策公议后手` and `案牍不把回执读成新政策结果` are docket/readback alignment over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, affordance prose, docket prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, command ranking, receipt guard status, cooldown status, public-reading weight, docket guard status, or next-window outcomes.
+
+### Court-policy suggested receipt guard v173-v180 UI note
+
+Governance, office, docket, desk, great-hall, and public-life receipt surfaces may show `建议回执防误读` only when it is already present in projected `PlayerCommandReceiptSnapshot.ReadbackSummary` or copied receipt ViewModels. The wording should make clear that `只回收已投影的政策公议后手` and `回执不是新政策结果` are receipt readback over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, affordance prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, command ranking, receipt guard status, cooldown status, public-reading weight, docket guard status, or next-window outcomes.
+
+### Court-policy suggested action guard v165-v172 UI note
+
+Governance, office, docket, desk, and great-hall surfaces may show `建议动作防误读` only when it is already present in projected `SuggestedCommandPrompt`, docket `GuidanceSummary`, or court-policy guard fields. The wording should make clear that `只承接已投影的政策公议后手` is prompt guard text over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, affordance prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, command ranking, cooldown status, public-reading weight, docket guard status, or next-window outcomes.
+
+### Court-policy follow-up docket guard v157-v164 UI note
+
+Governance, office, docket, desk, and great-hall surfaces may show `政策后手案牍防误读` only when it is already present in projected `CourtPolicyNoLoopGuardSummary` or docket `GuidanceSummary` fields. The wording should make clear that `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读` are anti-misread guard text over old SocialMemory residue, not a durable cooldown ledger, not a new Court command, not an Order after-account, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, cooldown status, public-reading weight, docket guard status, or next-window outcomes.
+
+### Court-policy public follow-up cue v149-v156 UI note
+
+Governance, office, docket, desk, and public-life command surfaces may show `政策公议后手提示` only when it is already present in projected governance or `PlayerCommandAffordanceSnapshot` readback fields. The wording should make clear that `公议冷却提示`, `公议轻续提示`, `公议换招提示`, and `下一步仍看榜示/递报承口` are public-facing follow-up guidance over old SocialMemory residue, not a durable cooldown ledger, not a new Court command, not an Order after-account, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, cooldown status, public-reading weight, or next-window outcomes.
+
+### Court-policy public-reading echo v141-v148 UI note
+
+Governance, office, docket, desk, and public-life command surfaces may show `政策公议旧读回` only when it is already present in projected governance or `PlayerCommandAffordanceSnapshot` readback fields. The wording should make clear that `公议旧账回声` and `下一次榜示/递报旧读法` are public interpretation of old SocialMemory residue, not a new Court command, not an Order after-account, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, public-reading weight, or next-window outcomes.
+
+### Court-policy memory-pressure readback v133-v140 presentation note
+
+Governance, office, docket, desk, and public-life surfaces may show `政策旧账回压读回` only when it is already present in projected governance/readback fields. The wording should make clear that `旧文移余味` and `公议旧读法续压` are old SocialMemory pressure context entering the next policy-window readback, not a new Court command, not an Order after-account, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, memory-pressure weight, or next-window outcomes.
+
+### Court-policy social-memory echo v125-v132 presentation note
+
+Governance, office, docket, desk, and public-life surfaces may show delayed `政策回应余味续接读回` only when it is already present in projected governance/readback fields. The wording should make clear that durable residue came from `OfficeAndCareer/PublicLifeAndRumor` structured aftermath and later `SocialMemoryAndRelations` monthly sediment, not from an Order after-account, a home-household repair path, or a UI-computed policy result.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success or social-memory weight.
+
 ## Wording lanes
 - detailed lane rules, ownership, and authoring workflow live in `WRITING_AND_COPY_GUIDELINES.md`
 - player-facing in-world surfaces should use theme-appropriate wording for the setting rather than modern product-dashboard language
@@ -225,4 +285,5 @@ Current repository note:
 - v93-v100 court-policy process readback remains projection/display only outside `OfficeAndCareer` and `PublicLifeAndRumor`. UI/Unity may display `CourtPolicyEntryReadbackSummary`, `CourtPolicyDispatchReadbackSummary`, `CourtPolicyPublicReadbackSummary`, and `CourtPolicyNoLoopGuardSummary` after Application exposes them, but must not compute policy-window success, yamen execution, public legitimacy, SocialMemory residue, household repair, or any court/policy/dispatch/owner-lane ledger.
 - v101-v108 thin-chain closeout is not a new UI feature. UI/Unity receives no new authority and no new required fields; the closeout only tells shell authors how to read the existing v3-v100 projected fields without mistaking thin topology for full rule density.
 - v109-v116 court-policy process thickening remains projection/display only outside `OfficeAndCareer` and `PublicLifeAndRumor`. Governance lanes, office/docket surfaces, desk/great hall summaries, and public-life surfaces may display `政策语气读回`, `文移指向读回`, `县门承接姿态`, `公议承压读法`, `朝廷后手仍不直写地方`, and `不是本户硬扛朝廷后账` after Application exposes them, but UI/Unity must not compute policy outcome, infer ownership from notice/dispatch prose, parse summaries, maintain ledgers, or turn court-policy after-accounting into a home-household burden.
+- v117-v124 court-policy local response affordances remain projection/display only outside `OfficeAndCareer` and `PublicLifeAndRumor`. Governance, office, docket, desk, great hall, and public-life surfaces may display `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账` in existing command/readback fields, but UI/Unity must not compute policy success, parse notice/dispatch or receipt prose, maintain ledgers, or recast the result as home-household, Order, or standalone Office after-accounting.
 - a minimal Unity host shell now also lives at `/unity/Zongzu.UnityShell`; treat it as the scene/asset workspace for hand-built UI, while authoritative simulation and read-model composition remain in `src/`

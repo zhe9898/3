@@ -25,9 +25,9 @@ Use live code facts before accepting docs as current:
 - performance/complexity proof is part of chain proof: every broad-to-local chain should name fanout, affected locus, no-touch boundary, scheduler drain cap, and whether the path is edge-triggered or recurring demand
 - current public-life/order closure is intentionally rule-driven rather than event-pool driven: commands mutate only their owning module's structured aftermath, later modules read through query seams when in scope, SocialMemory writes durable residue inside its own state, and projections/Unity copy the resulting readback
 - v3-v11 leverage/cost/readback/response fields are projection or owner-module traces; v12 adds `PopulationAndHouseholds` schema `3` home-household local response state; v13-v18 reuse existing schema seams for SocialMemory echo, repeat friction, capacity, tradeoff, and short-term receipt readback
-- current v19-v108 adds projection-only follow-up affordance hints, owner-lane return/status/outcome/residue/no-loop readback, Office/Family/Force/Warfare/Court readbacks, directive-choice and aftermath-docket readbacks, and thin-chain closeout audit language. Keep the proof framed as projected owner-state readback with architecture, integration, Unity/presentation, and no-summary-parsing evidence
-- current v35-v100 thin-chain examples graduate one owner lane at a time: canal-window pressure returns to Trade/Order, household burden and relief return to Family, Office/yamen后手 remains in Office, force/campaign后账 remains in Force/Campaign, Warfare directives/aftermath remain in `WarfareCampaign`, and court-policy process remains Office/PublicLife readback. Each uses structured metadata/query snapshots, existing owner state or projection-only readback, off-scope/no-touch tests, and no schema/ledger/UI authority expansion
-- current v101-v108 closeout is an audit, not a new pressure chain: it records the thin skeleton and preserves full-chain rule-density debt
+- current v19-v196 adds projection-only follow-up affordance hints, owner-lane return/status/outcome/residue/no-loop readback, Office/Family/Force/Warfare/Court readbacks, directive-choice and aftermath-docket readbacks, court-policy local-response/SocialMemory/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket/public-life-receipt echo guard readbacks, and thin-chain closeout audit language. Keep the proof framed as projected owner-state readback with architecture, integration, Unity/presentation, and no-summary-parsing evidence
+- current v35-v196 examples graduate one owner lane at a time: canal-window pressure returns to Trade/Order, household burden and relief return to Family, Office/yamen后手 remains in Office, force/campaign后账 remains in Force/Campaign, Warfare directives/aftermath remain in `WarfareCampaign`, and court-policy process/local response/public reading/docket/receipt echo remains split across Office/PublicLife/SocialMemory. Each uses structured metadata/query snapshots, existing owner state or projection-only readback, off-scope/no-touch tests, and no schema/ledger/UI authority expansion
+- current v101-v108 closeout is an audit, not a new pressure chain; v109-v196 is a narrow Chain 8 court-policy rule-density branch, not a full court engine
 
 ## External Calibration Anchors
 
@@ -36,6 +36,19 @@ Use outside material to harden proof quality:
 - .NET diagnostics and `dotnet-counters` are useful when chain fanout, scheduler drain, allocation rate, exception rate, or long-run health is the real risk; they are not needed for projection-only wording changes.
 - Performance guidance should translate into cardinality and complexity notes: affected settlements, households, offices, routes, events, notices, and projection rows touched per month.
 - Unity and accessibility guidance apply after the read model exists: shell surfaces may visualize chain readback, but may not calculate pressure propagation or owner-lane status.
+
+## Use This Skill When
+
+- a task explicitly moves pressure across two or more modules
+- Renzong thin/full chains, court/frontier/disaster/office/order/trade/public-life causality, or owner-lane readback are in scope
+- event metadata, `PublishedEvents`, `ConsumedEvents`, scheduler drain, or off-scope no-touch proof matters
+- a design needs to distinguish thin topology from full rule density
+- a projection or receipt claims chain completion or player response guidance
+- broad pressure needs fanout, locus, cap, watermark, deterministic ordering, or recurring-demand rules
+
+## Fast Lane
+
+For projection-only or audit-only chain work, check source -> owner -> structured metadata/query -> readback -> no-touch proof and stop. Use a full chain pass only when formulas, recovery/decay, scheduler cadence, durable residue, player consequences, or long-run pressure health are changing.
 
 ## Workflow
 
@@ -116,7 +129,7 @@ Use outside material to harden proof quality:
 - Do not call a chain complete when only one module emits an event.
 - Do not turn court, frontier, disaster, or regime pressure into a fixed scripted timeline.
 - Do not describe the public-life/order refusal/response/owner-lane readback loop as an event-chain unless the implementation actually moves through emitted command-time events; the current path is owner-command aftermath -> query/readback seam -> SocialMemory, household-owned residue/projection, or owner-lane return projection.
-- Do not call event-contract diagnostic classification itself a pressure chain; v32-v34 are graph evidence, v35-v100 are actual thin handoff/readback passes only where owner modules consume/mutate their own state or projections expose existing owner-state aftermath, and v101-v108 is a closeout audit rather than runtime propagation.
+- Do not call event-contract diagnostic classification itself a pressure chain; v32-v34 are graph evidence, v35-v100 are actual thin handoff/readback passes only where owner modules consume/mutate their own state or projections expose existing owner-state aftermath, v101-v108 is a closeout audit, and v109-v196 is a narrow court-policy branch rather than a full court engine.
 - Prefer source pressure -> owned state -> structured event -> read model -> bounded response.
 - Prefer edge events, watermarks, and recurring-demand state over repeating the same high-band shock every month.
 - Prefer explicit no-touch tests for unaffected settlements/modules.

@@ -296,7 +296,7 @@ public sealed partial class FirstPassPresentationShellTests
                     OutcomeSummary = "街谈略收，榜示可见。",
                     LeverageSummary = "本户已动用榜下熟人。",
                     CostSummary = "代价留在人情与担保里。",
-                    ReadbackSummary = "下月读回看榜下街谈。",
+                    ReadbackSummary = "下月读回看榜下街谈。建议回执防误读：只回收已投影的政策公议后手；回执不是新政策结果。",
                     TargetLabel = "县门榜下",
                 },
             ],
@@ -352,8 +352,124 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(receipt.LeverageSummary, Does.Contain("本户"));
         Assert.That(receipt.CostSummary, Does.Contain("代价"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("下月读回"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("建议回执防误读"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("回执不是新政策结果"));
         Assert.That(settlementNode.PublicLifeSummary, Does.Contain("榜示"));
         Assert.That(settlementNode.PublicLifeSummary, Does.Contain("街谈").Or.Contain("观望").Or.Contain("路报"));
+    }
+
+    [Test]
+    public void Compose_CopiesCourtPolicyLocalResponseAffordancesWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        const string officeGuidance = "政策回应入口：押文催县门，让OfficeAndCareer读县门承接姿态；不是本户硬扛朝廷后账。 文移续接选择：改走递报，仍由OfficeAndCareer处理文移承接；不计算政策成败。";
+        const string publicGuidance = "公议降温只读回：PublicLifeAndRumor读街面怎么传；Application/UI/Unity不计算政策成败。 朝廷后手仍不直写地方。";
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
+                    SurfaceKey = PlayerCommandSurfaceKeys.Office,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PressCountyYamenDocument,
+                    Label = "押文催县门",
+                    Summary = "轻押政策文移，让县门先接回案牍。",
+                    AvailabilitySummary = "政策文移压力已到县门，但尚无本户后账。",
+                    LeverageSummary = officeGuidance,
+                    ReadbackSummary = officeGuidance,
+                    TargetLabel = "兰溪县门",
+                    IsEnabled = true,
+                },
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.OfficeAndCareer,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PostCountyNotice,
+                    Label = "张榜晓谕",
+                    Summary = "只把县门榜下的公议读法压稳。",
+                    AvailabilitySummary = "榜示和街谈正在解释政策文移。",
+                    LeverageSummary = publicGuidance,
+                    ReadbackSummary = publicGuidance,
+                    TargetLabel = "县门榜下",
+                    IsEnabled = true,
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        CommandAffordanceViewModel officeCommand = shell.Office.CommandAffordances
+            .Single(command => command.CommandName == PlayerCommandNames.PressCountyYamenDocument);
+        SettlementNodeViewModel settlementNode = shell.DeskSandbox.Settlements.Single();
+        CommandAffordanceViewModel publicCommand = settlementNode.PublicLifeCommandAffordances
+            .Single(command => command.CommandName == PlayerCommandNames.PostCountyNotice);
+
+        Assert.That(officeCommand.LeverageSummary, Is.EqualTo(officeGuidance));
+        Assert.That(officeCommand.ReadbackSummary, Is.EqualTo(officeGuidance));
+        Assert.That(officeCommand.Summary, Does.Contain("政策文移"));
+        Assert.That(officeCommand.AvailabilitySummary, Does.Contain("尚无本户后账"));
+        Assert.That(officeCommand.LeverageSummary, Does.Contain("OfficeAndCareer读县门承接姿态"));
+        Assert.That(officeCommand.LeverageSummary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(publicCommand.LeverageSummary, Is.EqualTo(publicGuidance));
+        Assert.That(publicCommand.ReadbackSummary, Is.EqualTo(publicGuidance));
+        Assert.That(publicCommand.LeverageSummary, Does.Contain("PublicLifeAndRumor读街面怎么传"));
+        Assert.That(publicCommand.LeverageSummary, Does.Contain("Application/UI/Unity不计算政策成败"));
+    }
+
+    [Test]
+    public void Compose_CopiesCourtPolicySocialMemoryEchoWithoutShellAuthority()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        const string policyEcho = "政策回应余味续接读回：县门轻催留下人情27；政策旧账回压读回：旧文移余味进入下一次政策窗口读法；公议旧读法续压；仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷旧账。";
+        const string publicPolicyEcho = "政策公议旧读回：县门榜下把县门轻催旧痕读成旧政策回应；公议旧账回声；下一次榜示/递报旧读法只显示压力；政策公议后手提示：公议轻续提示；下一步仍看榜示/递报承口；不是冷却账本，不从本户硬补；PublicLife只读街面解释，县门承接仍归OfficeAndCareer；不是本户硬扛朝廷旧账。";
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PostCountyNotice,
+                    Label = "张榜晓谕",
+                    Summary = "县门榜下先读公议旧账。",
+                    IsEnabled = true,
+                    LeverageSummary = publicPolicyEcho,
+                    ReadbackSummary = publicPolicyEcho,
+                    TargetLabel = "县门榜下",
+                },
+            ],
+        };
+        bundle.GovernanceSettlements =
+        [
+            new SettlementGovernanceLaneSnapshot
+            {
+                SettlementId = new SettlementId(1),
+                OfficeLaneResidueFollowUpSummary = policyEcho,
+                GovernanceSummary = "县门仍在读政策回应。",
+            },
+        ];
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        SettlementNodeViewModel settlement = shell.DeskSandbox.Settlements.Single();
+        OfficeJurisdictionViewModel jurisdiction = shell.Office.Jurisdictions.Single();
+        CommandAffordanceViewModel publicAffordance = settlement.PublicLifeCommandAffordances.Single();
+
+        Assert.That(settlement.OfficeLaneResidueFollowUpSummary, Is.EqualTo(policyEcho));
+        Assert.That(settlement.GovernanceSummary, Does.Contain(policyEcho));
+        Assert.That(settlement.OfficeLaneResidueFollowUpSummary, Does.Contain("政策旧账回压读回"));
+        Assert.That(publicAffordance.LeverageSummary, Is.EqualTo(publicPolicyEcho));
+        Assert.That(publicAffordance.ReadbackSummary, Is.EqualTo(publicPolicyEcho));
+        Assert.That(publicAffordance.LeverageSummary, Does.Contain("政策公议旧读回"));
+        Assert.That(publicAffordance.LeverageSummary, Does.Contain("政策公议后手提示"));
+        Assert.That(publicAffordance.LeverageSummary, Does.Contain("不是冷却账本"));
+        Assert.That(publicAffordance.ReadbackSummary, Does.Contain("公议旧账回声"));
+        Assert.That(publicAffordance.ReadbackSummary, Does.Contain("公议轻续提示"));
+        Assert.That(jurisdiction.OfficeLaneResidueFollowUpSummary, Is.EqualTo(policyEcho));
+        Assert.That(jurisdiction.OfficeLaneResidueFollowUpSummary, Does.Contain("旧文移余味"));
     }
 
     [Test]
@@ -433,6 +549,46 @@ public sealed partial class FirstPassPresentationShellTests
 
         Assert.That(settlementNode.PublicLifeCommandAffordances.Single().ReadbackSummary, Does.Contain("后账已修复"));
         Assert.That(settlementNode.PublicLifeRecentReceipts.Single().ReadbackSummary, Does.Contain("社会记忆读回"));
+    }
+
+    [Test]
+    public void Compose_CopiesCourtPolicyPublicLifeReceiptEchoAffordanceWithoutShellAuthority()
+    {
+        const string receiptEcho =
+            "公议回执回声防误读：县门街面只读已投影的政策公议后手；公议不把回执读成新政令，不是Order后账，不是Office成败，不从本户硬补。";
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PostCountyNotice,
+                    Label = "榜示公议",
+                    Summary = "只复制投影好的公议回执回声。",
+                    IsEnabled = true,
+                    AvailabilitySummary = "投影已给出政策公议后手。",
+                    LeverageSummary = receiptEcho,
+                    ReadbackSummary = receiptEcho,
+                    TargetLabel = "县门",
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        CommandAffordanceViewModel command = shell.DeskSandbox.Settlements
+            .Single()
+            .PublicLifeCommandAffordances
+            .Single();
+
+        Assert.That(command.CommandName, Is.EqualTo(PlayerCommandNames.PostCountyNotice));
+        Assert.That(command.LeverageSummary, Is.EqualTo(receiptEcho));
+        Assert.That(command.ReadbackSummary, Is.EqualTo(receiptEcho));
+        Assert.That(command.ReadbackSummary, Does.Contain("公议回执回声防误读"));
+        Assert.That(command.ReadbackSummary, Does.Contain("公议不把回执读成新政令"));
     }
 
     [Test]
@@ -654,6 +810,7 @@ public sealed partial class FirstPassPresentationShellTests
                 PublicPressureSummary = "county gate pressure is not yet cleared",
                 PublicMomentumSummary = "county gate momentum is tightening",
                 GovernanceSummary = "registrar is still triaging petitions",
+                CourtPolicyNoLoopGuardSummary = "建议动作防误读：post notice只承接已投影的政策公议后手；不是Order后账，不是Office成败。回执案牍一致防误读：回执只回收已投影的政策公议后手；案牍不把回执读成新政策结果。",
             },
         ];
         bundle.GovernanceFocus = new GovernanceFocusSnapshot
@@ -681,14 +838,21 @@ public sealed partial class FirstPassPresentationShellTests
             PhaseLabel = "needs response",
             PhaseSummary = "stabilize the gate before the queue worsens",
             HandlingSummary = "registrar is still triaging petitions",
-            GuidanceSummary = "stabilize the county gate surface first",
+            GuidanceSummary = "stabilize the county gate surface first。建议动作防误读：post notice只承接已投影的政策公议后手；不是Order后账，不是Office成败。回执案牍一致防误读：回执只回收已投影的政策公议后手；案牍不把回执读成新政策结果。",
         };
 
         PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
 
         Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain("county gate momentum is tightening"));
+        Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain("建议动作防误读"));
+        Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain("回执案牍一致防误读"));
         Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
         Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("county gate momentum is tightening"));
+        Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("建议动作防误读"));
+        Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("不是Office成败"));
+        Assert.That(shell.DeskSandbox.Settlements[0].CourtPolicyNoLoopGuardSummary, Does.Contain("只承接已投影的政策公议后手"));
+        Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("案牍不把回执读成新政策结果"));
+        Assert.That(shell.DeskSandbox.Settlements[0].CourtPolicyNoLoopGuardSummary, Does.Contain("回执只回收已投影的政策公议后手"));
     }
 
     [Test]
@@ -703,7 +867,7 @@ public sealed partial class FirstPassPresentationShellTests
         const string courtEntry = "朝议压力读回：政策语气读回，朝廷后手仍不直写地方。";
         const string courtDispatch = "文移到达读回：文移指向读回，县门承接姿态仍归OfficeAndCareer。";
         const string courtPublic = "公议读法读回：公议承压读法，Office/PublicLife分读。";
-        const string courtNoLoop = "Court-policy防回压：不是本户硬扛朝廷后账，朝廷后手仍不直写地方。";
+        const string courtNoLoop = "Court-policy防回压：不是本户硬扛朝廷后账，朝廷后手仍不直写地方。 政策后手案牍防误读：公议后手只作案牍提示；不是冷却账本，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
         bundle.GovernanceSettlements =
         [
             new SettlementGovernanceLaneSnapshot
@@ -821,6 +985,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlement.GovernanceSummary, Does.Contain(courtDispatch));
         Assert.That(settlement.GovernanceSummary, Does.Contain(courtPublic));
         Assert.That(settlement.GovernanceSummary, Does.Contain(courtNoLoop));
+        Assert.That(settlement.GovernanceSummary, Does.Contain("政策后手案牍防误读"));
+        Assert.That(settlement.GovernanceSummary, Does.Contain("不是Order后账"));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyEntry));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyClosure));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyNoLoop));
@@ -836,6 +1002,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlement.CourtPolicyDispatchReadbackSummary, Is.EqualTo(courtDispatch));
         Assert.That(settlement.CourtPolicyPublicReadbackSummary, Is.EqualTo(courtPublic));
         Assert.That(settlement.CourtPolicyNoLoopGuardSummary, Is.EqualTo(courtNoLoop));
+        Assert.That(settlement.CourtPolicyNoLoopGuardSummary, Does.Contain("公议后手只作案牍提示"));
+        Assert.That(settlement.CourtPolicyNoLoopGuardSummary, Does.Contain("不是Office成败"));
         Assert.That(settlement.FamilyLaneEntryReadbackSummary, Is.EqualTo(familyEntry));
         Assert.That(settlement.FamilyElderExplanationReadbackSummary, Is.EqualTo(familyElder));
         Assert.That(settlement.FamilyGuaranteeReadbackSummary, Is.EqualTo(familyGuarantee));
@@ -856,6 +1024,7 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(officeJurisdiction.CourtPolicyDispatchReadbackSummary, Is.EqualTo(courtDispatch));
         Assert.That(officeJurisdiction.CourtPolicyPublicReadbackSummary, Is.EqualTo(courtPublic));
         Assert.That(officeJurisdiction.CourtPolicyNoLoopGuardSummary, Is.EqualTo(courtNoLoop));
+        Assert.That(officeJurisdiction.CourtPolicyNoLoopGuardSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
     }
 
 }

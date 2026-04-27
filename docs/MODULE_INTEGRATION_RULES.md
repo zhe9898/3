@@ -64,6 +64,132 @@ When changing one of those chains:
 - document whether a same-month follow-on uses the bounded scheduler drain or deliberately carries pressure into the next month
 - preserve the distinction between a thin topology proof and the full social chain
 
+### Chain 8 v197-v204 first rule-density closeout audit integration note
+
+The v109-v196 first rule-density closeout audit v197-v204 is integration governance only. It documents that Chain 8 has a closed first-layer readback branch, but it adds no new integration channel and no production rule.
+
+Allowed data path:
+- already-implemented `WorldSettlements` court agenda facts -> `OfficeAndCareer` policy/local-response owner lane -> `PublicLifeAndRumor` public interpretation -> later `SocialMemoryAndRelations` `office.policy_local_response...` residue -> Application projection/readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, affordance prose, docket prose, or `DomainEvent.Summary`
+- treating the audit as a new scheduler phase, court process state, appointment slate, dispatch arrival, downstream household/market/public consequence rule, or policy-dispatch completion claim
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket/public-life-receipt-echo/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating court-policy receipt/docket/public-life readback as durable cooldown, an Order after-account, Office success/failure, or home-household debt
+
+### Chain 8 v189-v196 public-life receipt echo integration note
+
+Court-policy public-life receipt echo is projection-only integration over existing local-response/public-reading inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause key and current public-life scalars to show `公议回执回声防误读`, `街面只读已投影的政策公议后手`, and `公议不把回执读成新政令` in public-life command `LeverageSummary` / `ReadbackSummary`.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` -> Application public-life command readback -> Unity copy-only command ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, affordance prose, docket prose, or `DomainEvent.Summary`
+- changing command routing, command availability, policy success, cooldown, receipt state, docket state, or owner-lane state
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket/public-life-receipt-echo/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the public-life echo or receipt guard as a durable cooldown account, an Order after-account, Office success/failure, or home-household debt
+
+### Chain 8 v181-v188 receipt-docket consistency guard integration note
+
+Court-policy receipt-docket consistency guard is projection-only integration over existing local-response/public-follow-up inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause key and current public-life scalars to show `回执案牍一致防误读`, `回执只回收已投影的政策公议后手`, and `案牍不把回执读成新政策结果` in governance no-loop / docket guidance readbacks.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` -> Application governance/docket readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, affordance prose, docket prose, or `DomainEvent.Summary`
+- changing command routing, command availability, policy success, cooldown, receipt state, docket state, or owner-lane state
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the docket guard or receipt guard as a durable cooldown account, an Order after-account, Office success/failure, or home-household debt
+
+### Chain 8 v173-v180 suggested receipt guard integration note
+
+Court-policy suggested receipt guard is projection-only integration over existing local-response/public-follow-up inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause key and current public-life scalars to show `建议回执防误读`, `只回收已投影的政策公议后手`, and `回执不是新政策结果` in command receipt `ReadbackSummary`.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` -> Application command receipt readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, affordance prose, or `DomainEvent.Summary`
+- changing command routing, command availability, policy success, cooldown, receipt state, or owner-lane state
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the receipt guard as a durable cooldown account, an Order after-account, Office success/failure, or home-household debt
+
+### Chain 8 v165-v172 suggested action guard integration note
+
+Court-policy suggested action guard is projection-only integration over the existing follow-up docket guard. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read structured guard eligibility and the already-selected projected affordance to show `建议动作防误读` and `只承接已投影的政策公议后手` in `SuggestedCommandPrompt` / docket `GuidanceSummary`.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` + already-selected `PlayerCommandAffordanceSnapshot` -> Application read model / governance docket prompt -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, affordance prose, or `DomainEvent.Summary`
+- changing `SelectPrimaryGovernanceAffordance` priority, command availability, policy success, cooldown, or owner-lane state
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/suggested-action/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the prompt as a durable cooldown account, an Order after-account, Office success/failure, or home-household debt
+
+### Chain 8 v157-v164 follow-up docket guard integration note
+
+Court-policy follow-up docket guard is projection-only integration over existing public follow-up cue inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured outcome code and current public-life scalars to show `政策后手案牍防误读`, `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读` on governance/docket no-loop guard readbacks.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` -> Application read model / governance docket guard -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, or `DomainEvent.Summary`
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the guard as a durable cooldown account, an Order after-account, Office success/failure, or home-household debt
+
+### Chain 8 v149-v156 public follow-up cue integration note
+
+Court-policy public follow-up cue is projection-only integration over existing public-reading echo inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured outcome code and current public-life scalars to show `政策公议后手提示`, `公议冷却提示`, `公议轻续提示`, `公议换招提示`, and `下一步仍看榜示/递报承口` on governance and public-life command readbacks.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` -> Application read model / command readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, or `DomainEvent.Summary`
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the cue as a durable cooldown account, an Order after-account, Office-only success, or home-household debt
+
+### Chain 8 v141-v148 public-reading echo integration note
+
+Court-policy public-reading echo is projection-only integration over existing SocialMemory and current Office/PublicLife snapshots. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause/type/weight and current public-life scalars to show `政策公议旧读回`, `公议旧账回声`, and `下一次榜示/递报旧读法` on governance and public-life command readbacks.
+
+Allowed data path:
+- existing SocialMemory projection + `JurisdictionAuthoritySnapshot` + `SettlementPublicLifeSnapshot` -> Application read model / command readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, or `DomainEvent.Summary`
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating public-reading echo as Order debt, Office-only success, or home-household debt
+
+### Chain 8 v133-v140 memory-pressure readback integration note
+
+Court-policy memory-pressure readback is projection-only integration over existing SocialMemory and current Office/PublicLife snapshots. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause/type/weight and current policy-window/public-life scalars to show `政策旧账回压读回`, `旧文移余味`, `下一次政策窗口读法`, and `公议旧读法续压`.
+
+Allowed data path:
+- existing SocialMemory projection + `JurisdictionAuthoritySnapshot` + `SettlementPublicLifeSnapshot` -> Application read model -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, or `DomainEvent.Summary`
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating old residue as Order debt or home-household debt
+
+### Chain 8 v125-v132 social-memory echo integration note
+
+Court-policy local response residue is a later-month SocialMemory integration, not a new event-pool path or ledger. `OfficeAndCareer` writes structured command aftermath; `SocialMemoryAndRelations` later reads `JurisdictionAuthoritySnapshot` response fields and may write an `office.policy_local_response...` memory. The same structured aftermath must not also be recorded as `order.public_life.response...`, and it must not be read as home-household debt.
+
+Allowed data path:
+- `OfficeAndCareer` query snapshot -> `SocialMemoryAndRelations` monthly pass -> existing SocialMemory memory/narrative/climate records
+- existing SocialMemory projection -> Application read model -> Unity copy-only ViewModels
+
+Forbidden data path:
+- parsing `DomainEvent.Summary`, command receipt prose, public-life notice/dispatch prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`
+- Application, UI, or Unity calculating whether the policy response succeeded
+- adding a Court module, dispatch/policy/court-process/owner-lane/cooldown/social-memory ledger, or global manager/controller to coordinate the echo
+
 ## Projection rules
 - projections are read models
 - projections may be cached
@@ -453,3 +579,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Application projections may show `政策语气读回`, `文移指向读回`, `县门承接姿态`, `公议承压读法`, `朝廷后手仍不直写地方`, and `不是本户硬扛朝廷后账` from structured `JurisdictionAuthoritySnapshot` and `SettlementPublicLifeSnapshot` fields only.
 - The integration must not parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected court-policy prose.
 - Unity copies projected court-policy thickening fields only. Save/schema result: no persisted state, schema bump, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
+
+## Backend court-policy local response v117-v124 integration note
+- V117-V124 adds bounded local response affordances to Chain 8 without changing the owner lanes. The same path remains `CourtAgendaPressureAccumulated -> PolicyWindowOpened -> PolicyImplemented -> PublicLifeAndRumor`.
+- `PressCountyYamenDocument` and `RedirectRoadReport` are reused as `OfficeAndCareer` document/report continuations when structured office scalar pressure shows policy-process strain. `PostCountyNotice` and `DispatchRoadReport` remain public-life surfaces for public interpretation and notice/report visibility.
+- Application projections may show `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账`, but must not compute policy success or choose outcomes from prose.
+- The integration must not parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected court-policy prose.
+- Unity copies projected command/readback fields only. Save/schema result: no persisted state, schema bump, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.

@@ -28,6 +28,126 @@ Until a dedicated historical-process pack exists:
 
 A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
+## Court-policy first rule-density closeout audit v197-v204 boundary note
+
+The v109-v196 first rule-density closeout audit v197-v204 is documentation/test governance over the existing Chain 8 branch. It does not add runtime authority:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` remains the owner of policy windows, county execution, document/report aftermath, and implementation posture.
+- `PublicLifeAndRumor` remains the owner of public interpretation, notice visibility, road-report texture, and street reading.
+- `SocialMemoryAndRelations` remains the owner of later durable `office.policy_local_response...` residue.
+- Application remains a route / assemble / project layer over structured owner-lane facts.
+- Unity remains a projected-field copy layer.
+
+This closeout says v109-v196 is closed as a first rule-density branch only. It is not the full court engine, not a court-agenda / policy-dispatch completion claim, and not new court process state, appointment slate, dispatch arrival, or downstream household/market/public consequence rules. It adds no Court module, event pool, dispatch/policy/court-process/owner-lane/cooldown/docket/receipt/public-life-receipt-echo ledger, schema field, migration, Application rule authority, UI/Unity authority, `PersonRegistry` expansion, or manager/god-controller path.
+
+## Court-policy public-life receipt echo v189-v196 boundary note
+
+Chain 8 v189-v196 keeps v181-v188 receipt/docket ownership and adds only a projected public-life command echo:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the policy window, county execution, document/report aftermath, and implementation posture.
+- `PublicLifeAndRumor` owns notice/report public interpretation, street reading, and public-life command surface texture.
+- `SocialMemoryAndRelations` owns the durable `office.policy_local_response...` records that make the old reading visible.
+- Application may assemble `公议回执回声防误读` from structured SocialMemory cause data and current PublicLife scalars, but it does not calculate policy success or turn a receipt into a new command.
+- Unity copies projected `LeverageSummary` / `ReadbackSummary` only.
+
+No Court module, court engine, event pool, dispatch/policy/court-process/owner-lane/cooldown/docket/receipt/public-life-receipt-echo ledger, schema field, migration, Application rule authority, UI/Unity authority, `PersonRegistry` expansion, or manager/god-controller path is added.
+
+## Court-policy receipt-docket consistency guard v181-v188 boundary note
+
+Chain 8 v181-v188 keeps v173-v180 suggested-receipt ownership and adds only a projected governance/docket consistency guard:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window, county execution, document/report aftermath, and implementation posture.
+- `PublicLifeAndRumor` owns notice/report public interpretation and street-reading texture.
+- `SocialMemoryAndRelations` owns the durable `office.policy_local_response...` records that make the old reading visible.
+- Application may assemble `回执案牍一致防误读` from structured SocialMemory cause-key data plus current PublicLife scalars only; it must not calculate a fresh policy result, receipt result, or docket authority.
+- Unity may copy governance, office, docket, desk, and great-hall projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
+## Court-policy suggested receipt guard v173-v180 boundary note
+
+Chain 8 v173-v180 keeps v165-v172 suggested-action ownership and adds only a projected command-receipt guard:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window, county execution, document/report aftermath, and implementation posture.
+- `PublicLifeAndRumor` owns notice/report public interpretation and street-reading texture.
+- `SocialMemoryAndRelations` owns the durable `office.policy_local_response...` records that make the old reading visible.
+- Application may assemble `建议回执防误读` from structured SocialMemory cause-key data plus current PublicLife scalars only; it must not calculate a fresh policy result or create receipt authority.
+- Unity may copy receipt, governance, office, docket, desk, and great-hall projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure/public-reading/public-follow-up/docket/suggested-action/suggested-receipt ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
+## Court-policy suggested action guard v165-v172 boundary note
+
+Chain 8 v165-v172 keeps v157-v164 docket guard ownership and adds only a projected suggested-action prompt guard:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window, county execution, document/report aftermath, and implementation posture.
+- `PublicLifeAndRumor` owns notice/report public interpretation and street-reading texture.
+- `SocialMemoryAndRelations` owns the durable `office.policy_local_response...` records that make the old reading visible.
+- Application may assemble `建议动作防误读` from structured guard eligibility plus existing projected affordance/no-loop text only; it must not change command ranking or calculate policy success.
+- Unity may copy governance, office, docket, desk, and great-hall projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure/public-reading/public-follow-up/docket/suggested-action ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
+## Court-policy follow-up docket guard v157-v164 boundary note
+
+Chain 8 v157-v164 keeps v149-v156 public follow-up ownership and adds only a projected docket/no-loop guard:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window, county execution, and document/report aftermath.
+- `PublicLifeAndRumor` owns notice/report public interpretation and street-reading texture.
+- `SocialMemoryAndRelations` owns the durable `office.policy_local_response...` records that make the old reading visible.
+- Application may assemble `政策后手案牍防误读` from existing structured snapshots only.
+- Unity may copy governance, office, docket, and desk projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure/public-reading/public-follow-up/docket ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
+## Court-policy public follow-up cue v149-v156 boundary note
+
+Chain 8 v149-v156 keeps v141-v148 public-reading ownership and adds only a projected follow-up cue:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window, county execution, and document/report aftermath.
+- `PublicLifeAndRumor` owns notice/report public interpretation, street-reading texture, and the public meaning of whether to cool, lightly continue, change method, or wait for an opening.
+- `SocialMemoryAndRelations` owns the durable `office.policy_local_response...` records that make the old reading visible.
+- Application may assemble `政策公议后手提示` from existing structured snapshots only.
+- Unity may copy public-life command and governance projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure/public-reading/public-follow-up ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
+## Court-policy public-reading echo v141-v148 boundary note
+
+Chain 8 v141-v148 keeps v133-v140 memory-pressure ownership and adds only a projected public-reading echo:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window and county document/report aftermath.
+- `PublicLifeAndRumor` owns notice/report public interpretation and street-reading texture.
+- `SocialMemoryAndRelations` owns the existing durable `office.policy_local_response...` records.
+- Application may assemble `政策公议旧读回` from structured memory cause/type/weight and current Office/PublicLife snapshots; it must not calculate policy success or write state.
+- Unity may copy public-life command and governance projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure/public-reading ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
+## Court-policy memory-pressure readback v133-v140 boundary note
+
+Chain 8 v133-v140 keeps v125-v132 durable residue ownership and adds only a projected old-residue pressure readback:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window and county document/report aftermath.
+- `PublicLifeAndRumor` owns public interpretation, notice visibility, and street reading.
+- `SocialMemoryAndRelations` owns the existing durable `office.policy_local_response...` records.
+- Application may assemble `政策旧账回压读回` from structured memory cause/type/weight and current Office/PublicLife snapshots; it must not calculate policy success or write state.
+- Unity may copy projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
+## Court-policy social-memory echo v125-v132 boundary note
+
+Chain 8 v125-v132 keeps the same owner lanes while adding a delayed SocialMemory echo for court-policy local response:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns policy windows, county document/report command aftermath, and structured response fields such as `LastRefusalResponseCommandCode`, outcome, trace, and carryover.
+- `PublicLifeAndRumor` owns public interpretation, notice visibility, and street reading.
+- `SocialMemoryAndRelations` may write later durable residue from structured Office aftermath into existing memory/narrative/climate records.
+- Application may route, assemble, and project structured memory cause/type/weight; it must not calculate policy success.
+- Unity may copy projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/social-memory ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, receipt prose, public-life prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
 ## 0. PersonRegistry (Kernel layer, identity-only)
 ### Owns
 - person identity anchors: PersonId, display name, birth date, gender
@@ -904,3 +1024,10 @@ Current lite note:
 - `PublicLifeAndRumor` owns public interpretation, notice visibility, street reading, dispatch pressure, documentary weight, verification cost, courier risk, and public legitimacy. It may expose `公议承压读法` and `朝廷后手仍不直写地方` from structured `PolicyImplemented` metadata and public-life scalar state, not from prose parsing.
 - `SocialMemoryAndRelations` remains a later-month durable residue owner only. Same-month court-policy handling must not write memory, and future residue readers must use structured aftermath rather than court-policy projection text.
 - `Application` may route, assemble, and project from structured `JurisdictionAuthoritySnapshot` / `SettlementPublicLifeSnapshot` fields only. `Unity` copies projected fields only. V109-V116 adds no Court module, court engine, event pool, policy ledger, dispatch ledger, court-process ledger, owner-lane ledger, cooldown ledger, schema bump, migration, `PersonRegistry` expansion, or UI/Unity authority.
+
+## 2026-04-27 court-policy local response v117-v124 note
+- `WorldSettlements` remains only the court agenda / mandate pressure source. It does not own local response, policy implementation success, public interpretation, or durable memory.
+- `OfficeAndCareer` owns the bounded local document/report continuation. `PressCountyYamenDocument` and `RedirectRoadReport` may resolve policy-process pressure through existing office scalar state and structured response fields, without requiring order aftermath and without creating a court ledger.
+- `PublicLifeAndRumor` owns the public reading surface for `PostCountyNotice` / `DispatchRoadReport`; it does not calculate policy success and does not parse notice or dispatch prose as authority.
+- `SocialMemoryAndRelations` remains a later-month durable residue reader from structured aftermath only. Same-month v117-v124 handling must not write durable residue, and future readers must not parse projection prose.
+- `Application` may surface `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账` as projected guidance from structured snapshots only. `Unity` copies command/readback fields only. V117-V124 adds no Court module, full court engine, event pool, dispatch/policy/court-process/owner-lane/cooldown ledger, schema bump, migration, `PersonRegistry` expansion, or UI/Unity authority.

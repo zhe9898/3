@@ -271,6 +271,241 @@ public sealed class OfficeCourtRegimePressureChainTests
     }
 
     [Test]
+    public void Chain8_CourtPolicyLocalResponseAffordanceResolvesThroughOfficeLaneWithoutOrderResidue()
+    {
+        FeatureManifest manifest = BuildManifest(includePublicLife: true);
+        IReadOnlyList<IModuleRunner> modules = BuildModules(includePublicLife: true);
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1022, 6),
+            KernelState.Create(894),
+            manifest,
+            modules);
+
+        SeedWorld(simulation.GetModuleStateForTesting<WorldSettlementsState>(KnownModuleKeys.WorldSettlements));
+        simulation.GetModuleStateForTesting<WorldSettlementsState>(KnownModuleKeys.WorldSettlements)
+            .CurrentSeason.Imperial.MandateConfidence = 30;
+
+        FamilyCoreState familyState = simulation.GetModuleStateForTesting<FamilyCoreState>(KnownModuleKeys.FamilyCore);
+        familyState.Clans.Add(new ClanStateData
+        {
+            Id = new ClanId(1),
+            ClanName = "Qinghe Zhang",
+            HomeSettlementId = new SettlementId(10),
+            Prestige = 55,
+            SupportReserve = 44,
+            HeirPersonId = new PersonId(1),
+        });
+
+        OfficeAndCareerState officeState = simulation.GetModuleStateForTesting<OfficeAndCareerState>(KnownModuleKeys.OfficeAndCareer);
+        officeState.People.Add(MakeOfficial(
+            1,
+            10,
+            authorityTier: 3,
+            clerk: 35,
+            backlog: 40,
+            leverage: 20,
+            petition: 30,
+            reputation: 50));
+        officeState.People.Single(static career => career.PersonId == new PersonId(1)).AdministrativeTaskLoad = 50;
+        officeState.People.Add(MakeOfficial(2, 20, authorityTier: 3, leverage: 10));
+
+        PublicLifeAndRumorState publicLifeState =
+            simulation.GetModuleStateForTesting<PublicLifeAndRumorState>(KnownModuleKeys.PublicLifeAndRumor);
+        publicLifeState.Settlements.Add(MakePublicLife(10));
+        publicLifeState.Settlements.Add(MakePublicLife(20));
+
+        simulation.AdvanceOneMonth();
+
+        PresentationReadModelBuilder builder = new();
+        PresentationReadModelBundle afterFirst = builder.BuildForM2(simulation);
+        PlayerCommandAffordanceSnapshot pressAffordance = afterFirst.PlayerCommands.Affordances
+            .Single(affordance => affordance.SettlementId == new SettlementId(10)
+                                  && affordance.CommandName == PlayerCommandNames.PressCountyYamenDocument);
+        Assert.That(pressAffordance.IsEnabled, Is.True);
+        Assert.That(pressAffordance.LeverageSummary, Does.Contain("政策回应入口"));
+        Assert.That(pressAffordance.LeverageSummary, Does.Contain("文移续接选择"));
+        Assert.That(pressAffordance.LeverageSummary, Does.Contain("公议降温只读回"));
+        Assert.That(pressAffordance.LeverageSummary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(pressAffordance.ExecutionSummary, Does.Contain("OfficeAndCareer"));
+        Assert.That(pressAffordance.ExecutionSummary, Does.Contain("不计算政策成败"));
+
+        PlayerCommandAffordanceSnapshot redirectAffordance = afterFirst.PlayerCommands.Affordances
+            .Single(affordance => affordance.SettlementId == new SettlementId(10)
+                                  && affordance.CommandName == PlayerCommandNames.RedirectRoadReport);
+        Assert.That(redirectAffordance.LeverageSummary, Does.Contain("政策回应入口"));
+        Assert.That(redirectAffordance.ExecutionSummary, Does.Contain("projected fields"));
+
+        SettlementGovernanceLaneSnapshot governance =
+            afterFirst.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(governance.SuggestedCommandName, Is.EqualTo(PlayerCommandNames.PressCountyYamenDocument));
+        Assert.That(governance.SuggestedCommandPrompt, Does.Contain("政策回应入口"));
+        Assert.That(governance.SuggestedCommandPrompt, Does.Contain("文移续接选择"));
+
+        SocialMemoryAndRelationsState socialState =
+            simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(KnownModuleKeys.SocialMemoryAndRelations);
+        int memoryCountBeforeCommand = socialState.Memories.Count;
+        PlayerCommandResult response = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = new SettlementId(10),
+                CommandName = PlayerCommandNames.PressCountyYamenDocument,
+            });
+
+        Assert.That(response.Accepted, Is.True);
+        Assert.That(response.Summary, Does.Contain("政策文移续接"));
+        OfficeCareerState affectedOfficial = officeState.People.Single(static career => career.PersonId == new PersonId(1));
+        OfficeCareerState offScopeOfficial = officeState.People.Single(static career => career.PersonId == new PersonId(2));
+        Assert.That(affectedOfficial.LastRefusalResponseCommandCode, Is.EqualTo(PlayerCommandNames.PressCountyYamenDocument));
+        Assert.That(affectedOfficial.LastRefusalResponseOutcomeCode, Is.EqualTo(PublicLifeOrderResponseOutcomeCodes.Contained));
+        Assert.That(affectedOfficial.LastRefusalResponseSummary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(offScopeOfficial.LastRefusalResponseCommandCode, Is.Empty);
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeCommand),
+            "Same-month policy local response may write Office structured aftermath, but must not write durable SocialMemory residue.");
+
+        PresentationReadModelBundle afterCommand = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot receipt = afterCommand.PlayerCommands.Receipts
+            .First(receipt => receipt.SettlementId == new SettlementId(10)
+                              && receipt.CommandName == PlayerCommandNames.PressCountyYamenDocument);
+        Assert.That(receipt.ReadbackSummary, Does.Contain("政策回应入口"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("Court-policy"));
+        Assert.That(receipt.ReadbackSummary, Does.Contain("OfficeAndCareer"));
+
+        simulation.AdvanceOneMonth();
+
+        Assert.That(
+            socialState.Memories,
+            Has.Some.Matches<MemoryRecordState>(
+                memory => memory.CauseKey.StartsWith("office.policy_local_response.10.", StringComparison.Ordinal)
+                          && memory.Kind == SocialMemoryKinds.OfficePolicyLocalResponseResidue),
+            "The later SocialMemory pass may read Office's structured local-response aftermath and write durable residue.");
+        Assert.That(
+            socialState.Memories,
+            Has.None.Matches<MemoryRecordState>(
+                memory => memory.CauseKey.StartsWith("order.public_life.response.OfficeAndCareer", StringComparison.Ordinal)),
+            "Court-policy local response residue must not be mislabeled as an Order/PublicLife response debt.");
+
+        MemoryRecordState localResponseResidue = socialState.Memories.Single(
+            memory => memory.CauseKey.StartsWith("office.policy_local_response.10.", StringComparison.Ordinal));
+        Assert.That(localResponseResidue.Summary, Does.Contain("政策回应读回"));
+        Assert.That(localResponseResidue.Summary, Does.Contain("OfficeAndCareer/PublicLifeAndRumor"));
+        Assert.That(localResponseResidue.Summary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(localResponseResidue.Summary, Does.Not.Contain("政策文移续接"));
+
+        PresentationReadModelBundle afterSecond = builder.BuildForM2(simulation);
+        SettlementGovernanceLaneSnapshot afterSecondGovernance =
+            afterSecond.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("政策回应余味续接读回"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("SocialMemoryAndRelations"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("不是本户硬扛朝廷后账"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("政策旧账回压读回"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("旧文移余味"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("下一次政策窗口读法"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("公议旧读法续压"));
+        Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("不是本户硬扛朝廷旧账"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("政策公议旧读回"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("公议旧账回声"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("政策公议后手提示"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("公议轻续提示"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("下一步仍看榜示/递报承口"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("不是冷却账本"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("PublicLife只读街面解释"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("县门承接仍归OfficeAndCareer"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("政策后手案牍防误读"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("公议后手只作案牍提示"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("不是Order后账"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("不是Office成败"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        Assert.That(afterSecond.GovernanceDocket.CourtPolicyNoLoopGuardSummary, Does.Contain("政策后手案牍防误读"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是冷却账本"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是Order后账"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是Office成败"));
+        Assert.That(afterSecondGovernance.SuggestedCommandPrompt, Does.Contain("建议动作防误读"));
+        Assert.That(afterSecondGovernance.SuggestedCommandPrompt, Does.Contain("只承接已投影的政策公议后手"));
+        Assert.That(afterSecondGovernance.SuggestedCommandPrompt, Does.Contain("不是Order后账"));
+        Assert.That(afterSecond.GovernanceDocket.SuggestedCommandPrompt, Does.Contain("建议动作防误读"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("只承接已投影的政策公议后手"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("回执案牍一致防误读"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("回执只回收已投影的政策公议后手"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("案牍不把回执读成新政策结果"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        Assert.That(afterSecond.GovernanceDocket.CourtPolicyNoLoopGuardSummary, Does.Contain("回执案牍一致防误读"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("回执只回收已投影的政策公议后手"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("案牍不把回执读成新政策结果"));
+        PlayerCommandAffordanceSnapshot noticeAffordance = afterSecond.PlayerCommands.Affordances
+            .Single(affordance => affordance.SettlementId == new SettlementId(10)
+                                  && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
+        Assert.That(noticeAffordance.LeverageSummary, Does.Contain("政策公议旧读回"));
+        Assert.That(noticeAffordance.LeverageSummary, Does.Contain("下一次榜示/递报旧读法"));
+        Assert.That(noticeAffordance.LeverageSummary, Does.Contain("政策公议后手提示"));
+        Assert.That(noticeAffordance.LeverageSummary, Does.Contain("公议轻续提示"));
+        Assert.That(noticeAffordance.LeverageSummary, Does.Contain("不是冷却账本"));
+        Assert.That(noticeAffordance.ReadbackSummary, Does.Contain("公议旧账回声"));
+        Assert.That(noticeAffordance.ReadbackSummary, Does.Contain("下一步仍看榜示/递报承口"));
+        Assert.That(noticeAffordance.ReadbackSummary, Does.Contain("公议回执回声防误读"));
+        Assert.That(noticeAffordance.ReadbackSummary, Does.Contain("街面只读已投影的政策公议后手"));
+        Assert.That(noticeAffordance.ReadbackSummary, Does.Contain("公议不把回执读成新政令"));
+        PlayerCommandAffordanceSnapshot roadReportAffordance = afterSecond.PlayerCommands.Affordances
+            .Single(affordance => affordance.SettlementId == new SettlementId(10)
+                                  && affordance.CommandName == PlayerCommandNames.DispatchRoadReport);
+        Assert.That(roadReportAffordance.LeverageSummary, Does.Contain("政策公议旧读回"));
+        Assert.That(roadReportAffordance.LeverageSummary, Does.Contain("政策公议后手提示"));
+        Assert.That(roadReportAffordance.ReadbackSummary, Does.Contain("不是本户硬扛朝廷旧账"));
+        Assert.That(roadReportAffordance.ReadbackSummary, Does.Contain("公议回执回声防误读"));
+        Assert.That(roadReportAffordance.ReadbackSummary, Does.Contain("公议不把回执读成新政令"));
+        SettlementGovernanceLaneSnapshot offScopeGovernance =
+            afterSecond.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(20));
+        Assert.That(offScopeGovernance.OfficeLaneResidueFollowUpSummary, Does.Not.Contain("政策旧账回压读回"));
+        Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议旧读回"));
+        Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议后手提示"));
+        Assert.That(offScopeGovernance.CourtPolicyNoLoopGuardSummary, Does.Not.Contain("政策后手案牍防误读"));
+        Assert.That(offScopeGovernance.SuggestedCommandPrompt, Does.Not.Contain("建议动作防误读"));
+        Assert.That(offScopeGovernance.CourtPolicyNoLoopGuardSummary, Does.Not.Contain("回执案牍一致防误读"));
+        PlayerCommandAffordanceSnapshot offScopeNoticeAffordance = afterSecond.PlayerCommands.Affordances
+            .Single(affordance => affordance.SettlementId == new SettlementId(20)
+                                  && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
+        Assert.That(offScopeNoticeAffordance.LeverageSummary, Does.Not.Contain("政策公议旧读回"));
+        Assert.That(offScopeNoticeAffordance.LeverageSummary, Does.Not.Contain("政策公议后手提示"));
+        Assert.That(offScopeNoticeAffordance.ReadbackSummary, Does.Not.Contain("公议回执回声防误读"));
+
+        Assert.That(afterSecondGovernance.SuggestedCommandName, Is.Not.Empty);
+        int memoryCountBeforeSuggestedReceiptCommand = socialState.Memories.Count;
+        PlayerCommandResult suggestedReceiptResponse = new PlayerCommandService().IssueIntent(
+            simulation,
+            new PlayerCommandRequest
+            {
+                SettlementId = new SettlementId(10),
+                CommandName = afterSecondGovernance.SuggestedCommandName,
+            });
+
+        Assert.That(suggestedReceiptResponse.Accepted, Is.True);
+        Assert.That(socialState.Memories, Has.Count.EqualTo(memoryCountBeforeSuggestedReceiptCommand),
+            "Suggested receipt readback may reuse projected court-policy residue, but same-month command handling must not write durable residue.");
+        PresentationReadModelBundle afterSuggestedReceipt = builder.BuildForM2(simulation);
+        PlayerCommandReceiptSnapshot suggestedReceipt = afterSuggestedReceipt.PlayerCommands.Receipts
+            .First(receipt => receipt.SettlementId == new SettlementId(10)
+                              && receipt.CommandName == afterSecondGovernance.SuggestedCommandName);
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("建议回执防误读"));
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("只回收已投影的政策公议后手"));
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("回执不是新政策结果"));
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("不是Order后账"));
+        Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        SettlementGovernanceLaneSnapshot afterSuggestedReceiptGovernance =
+            afterSuggestedReceipt.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(afterSuggestedReceiptGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("回执案牍一致防误读"));
+        Assert.That(afterSuggestedReceiptGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("案牍不把回执读成新政策结果"));
+        Assert.That(afterSuggestedReceipt.GovernanceDocket.GuidanceSummary, Does.Contain("回执只回收已投影的政策公议后手"));
+        PlayerCommandAffordanceSnapshot afterReceiptNoticeAffordance = afterSuggestedReceipt.PlayerCommands.Affordances
+            .Single(affordance => affordance.SettlementId == new SettlementId(10)
+                                  && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
+        Assert.That(afterReceiptNoticeAffordance.ReadbackSummary, Does.Contain("公议回执回声防误读"));
+        Assert.That(afterReceiptNoticeAffordance.ReadbackSummary, Does.Contain("公议不把回执读成新政令"));
+        Assert.That(afterSuggestedReceipt.PlayerCommands.Receipts
+            .Where(static receipt => receipt.SettlementId == new SettlementId(20))
+            .Any(static receipt => receipt.ReadbackSummary.Contains("建议回执防误读", StringComparison.Ordinal)), Is.False);
+    }
+
+    [Test]
     public void Chain9_RealScheduler_RegimePressureDefectsOnlyOneHighRiskOfficial()
     {
         FeatureManifest manifest = BuildManifest(includePublicLife: false);

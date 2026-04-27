@@ -101,24 +101,34 @@ public sealed partial class PresentationReadModelBuilder
                 string recentOrderCommandName = disorder?.LastInterventionCommandCode ?? string.Empty;
                 string recentOrderCommandLabel = disorder?.LastInterventionCommandLabel ?? string.Empty;
                 bool hasOrderAftermath = !string.IsNullOrWhiteSpace(orderAftermathSummary);
-                PlayerCommandAffordanceSnapshot? suggestedAffordance = SelectPrimaryGovernanceAffordance(
-                    bundle.PlayerCommands.Affordances,
-                    jurisdiction.SettlementId,
-                    hasOrderAftermath);
                 string officeImplementationReadback = BuildOfficeImplementationReadbackSummary(jurisdiction, publicLife);
                 string officeNextStepReadback = BuildOfficeImplementationNextStepSummary(jurisdiction);
                 string regimeOfficeReadback = BuildRegimeOfficeReadbackSummary(localOfficeCareers, jurisdiction);
                 string officeLaneEntryReadback = BuildOfficeLaneEntryReadbackSummary(jurisdiction);
                 string officeLaneReceiptClosure = BuildOfficeLaneReceiptClosureSummary(jurisdiction);
-                string officeLaneResidueFollowUp = BuildOfficeLaneResidueFollowUpSummary(localOfficeSocialMemories, jurisdiction);
+                string officeLaneResidueFollowUp =
+                    BuildOfficeLaneResidueFollowUpSummary(localOfficeSocialMemories, jurisdiction, publicLife);
                 string officeLaneNoLoopGuard = BuildOfficeLaneNoLoopGuardSummary(
                     jurisdiction,
                     localOfficeCareers,
                     localOfficeSocialMemories);
                 string courtPolicyEntryReadback = BuildCourtPolicyEntryReadbackSummary(jurisdiction, publicLife);
                 string courtPolicyDispatchReadback = BuildCourtPolicyDispatchReadbackSummary(jurisdiction, publicLife);
-                string courtPolicyPublicReadback = BuildCourtPolicyPublicReadbackSummary(jurisdiction, publicLife);
-                string courtPolicyNoLoopGuard = BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife);
+                string courtPolicyPublicReadback = CombineGovernanceDocketText(
+                    BuildCourtPolicyPublicReadbackSummary(jurisdiction, publicLife),
+                    BuildCourtPolicyPublicReadingEchoGuidance(localOfficeSocialMemories, jurisdiction, publicLife));
+                string courtPolicyNoLoopGuard = CombineGovernanceDocketText(
+                    BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife),
+                    BuildCourtPolicyPublicFollowUpDocketGuard(localOfficeSocialMemories, jurisdiction, publicLife),
+                    BuildCourtPolicyReceiptDocketConsistencyGuard(localOfficeSocialMemories, jurisdiction, publicLife));
+                bool hasCourtPolicyPublicFollowUpGuard =
+                    HasCourtPolicyPublicFollowUpGuard(localOfficeSocialMemories, jurisdiction, publicLife);
+                bool hasCourtPolicyProcess = !string.IsNullOrWhiteSpace(courtPolicyEntryReadback);
+                PlayerCommandAffordanceSnapshot? suggestedAffordance = SelectPrimaryGovernanceAffordance(
+                    bundle.PlayerCommands.Affordances,
+                    jurisdiction.SettlementId,
+                    hasOrderAftermath,
+                    hasCourtPolicyProcess);
                 string canalRouteReadback = BuildCanalRouteReadbackSummary(publicLife, disorder, localRoutes);
                 string residueHealth = BuildResidueHealthSummary(
                     localOrderSocialMemories,
@@ -164,7 +174,10 @@ public sealed partial class PresentationReadModelBuilder
                     HasOrderAdministrativeAftermath = hasOrderAftermath,
                     SuggestedCommandName = suggestedAffordance?.CommandName ?? string.Empty,
                     SuggestedCommandLabel = suggestedAffordance?.Label ?? string.Empty,
-                    SuggestedCommandPrompt = BuildGovernanceSuggestedCommandPrompt(suggestedAffordance),
+                    SuggestedCommandPrompt = BuildGovernanceSuggestedCommandPrompt(
+                        suggestedAffordance,
+                        courtPolicyNoLoopGuard,
+                        hasCourtPolicyPublicFollowUpGuard),
                     PublicPressureSummary = BuildGovernancePublicPressureSummary(publicLife, disorder),
                     PublicMomentumSummary = BuildGovernancePublicMomentumSummary(publicLife, jurisdiction, disorder),
                     OrderAdministrativeAftermathSummary = orderAftermathSummary,
@@ -395,12 +408,40 @@ public sealed partial class PresentationReadModelBuilder
 
     private static string BuildOfficeLaneResidueFollowUpSummary(
         IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
-        JurisdictionAuthoritySnapshot jurisdiction)
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
     {
         SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
         if (residue is null)
         {
             return string.Empty;
+        }
+
+        if (TryReadOfficePolicyLocalResponseResidueCause(residue.CauseKey, out OfficePolicyLocalResponseResidueCause localResponseCause))
+        {
+            string commandLabel = localResponseCause.CommandCode switch
+            {
+                PlayerCommandNames.PressCountyYamenDocument => "县门轻催",
+                PlayerCommandNames.RedirectRoadReport => "递报改道",
+                _ => localResponseCause.CommandCode,
+            };
+            string responseFollowUp = localResponseCause.OutcomeCode switch
+            {
+                PublicLifeOrderResponseOutcomeCodes.Contained => "续接提示：政策回应余味已暂压，仍看Office/PublicLife下月是否接稳。",
+                PublicLifeOrderResponseOutcomeCodes.Escalated => "换招提示：政策回应余味转硬，先换Office-lane办法，不从本户硬补。",
+                PublicLifeOrderResponseOutcomeCodes.Ignored => "冷却提示：政策回应余味被放置，先停重复催压。",
+                PublicLifeOrderResponseOutcomeCodes.Repaired => "冷却提示：政策回应转稳，先等公议和县门读回。",
+                _ => "续接提示：政策回应余味仍看Office/PublicLife后续月读回。",
+            };
+
+            string memoryPressureReadback = BuildCourtPolicyMemoryPressureReadbackSummary(
+                residue,
+                localResponseCause,
+                jurisdiction,
+                publicLife);
+            return CombineGovernanceDocketText(
+                $"政策回应余味续接读回：{commandLabel}留下{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}；{responseFollowUp} 仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷后账。",
+                memoryPressureReadback);
         }
 
         string category = ReadOfficePolicyResidueCategory(residue.CauseKey);
@@ -414,6 +455,109 @@ public sealed partial class PresentationReadModelBuilder
         };
 
         return $"Office余味续接读回：{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}仍在；{followUp} 仍由SocialMemoryAndRelations后续月沉淀，不是本户再修。";
+    }
+
+    private static string BuildCourtPolicyMemoryPressureReadbackSummary(
+        SocialMemoryEntrySnapshot residue,
+        OfficePolicyLocalResponseResidueCause localResponseCause,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (!HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        string traceLabel = RenderCourtPolicyLocalResponseTraceLabel(localResponseCause.TraceCode);
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        int noticeVisibility = publicLife?.NoticeVisibility ?? 0;
+        int streetTalkHeat = publicLife?.StreetTalkHeat ?? 0;
+        int publicLegitimacy = publicLife?.PublicLegitimacy ?? 0;
+        return $"政策旧账回压读回：旧文移余味（{traceLabel}、{outcomeLabel}、{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}）进入下一次政策窗口读法；公议旧读法续压：榜示{noticeVisibility}、街谈{streetTalkHeat}、公议{publicLegitimacy}；仍由Office/PublicLife/SocialMemory分读，不是本户硬扛朝廷旧账。";
+    }
+
+    private static string RenderCourtPolicyLocalResponseTraceLabel(string traceCode)
+    {
+        return traceCode switch
+        {
+            PublicLifeOrderResponseTraceCodes.OfficeYamenLanded => "县门承接旧痕",
+            PublicLifeOrderResponseTraceCodes.OfficeReportRerouted => "递报改道旧痕",
+            _ => "文移旧痕",
+        };
+    }
+
+    private static string RenderCourtPolicyLocalResponseOutcomeLabel(string outcomeCode)
+    {
+        return outcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "已转稳",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "暂压",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "转硬",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "放置",
+            _ => "未定",
+        };
+    }
+
+    private static string BuildCourtPolicyPublicFollowUpDocketGuard(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (publicLife is null || !HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
+        if (residue is null
+            || !TryReadOfficePolicyLocalResponseResidueCause(residue.CauseKey, out OfficePolicyLocalResponseResidueCause localResponseCause))
+        {
+            return string.Empty;
+        }
+
+        string docketCue = localResponseCause.OutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "冷却只作公议承口，先让榜示/递报保留旧读法。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "轻续只作公议承口，可看榜示/递报是否接住旧读法。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "换招只作公议承口，先等县门/递报另开接法。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "等承口只作公议承口，先停把旧账推回本户。",
+            _ => "后手只作公议承口，仍等县门/递报接法。",
+        };
+
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        return $"政策后手案牍防误读：{publicLife.NodeLabel}的公议后手只作案牍提示（{outcomeLabel}，榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}）；{docketCue} 不是冷却账本，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
+    }
+
+    private static string BuildCourtPolicyReceiptDocketConsistencyGuard(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (publicLife is null || !HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
+        if (residue is null
+            || !TryReadOfficePolicyLocalResponseResidueCause(residue.CauseKey, out OfficePolicyLocalResponseResidueCause localResponseCause))
+        {
+            return string.Empty;
+        }
+
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        return $"回执案牍一致防误读：{publicLife.NodeLabel}的案牍只承接同一批已投影政策公议后手（{outcomeLabel}，榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}）；回执只回收已投影的政策公议后手，案牍不把回执读成新政策结果，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
+    }
+
+    private static bool HasCourtPolicyPublicFollowUpGuard(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        return publicLife is not null
+            && HasCourtPolicyProcessReadback(jurisdiction, publicLife)
+            && SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction) is { CauseKey: var causeKey }
+            && TryReadOfficePolicyLocalResponseResidueCause(causeKey, out _);
     }
 
     private static string BuildOfficeLaneNoLoopGuardSummary(
@@ -595,11 +739,17 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         string settlementMarker = $".{jurisdiction.SettlementId.Value}.";
+        bool preferLocalResponseResidue = HasStructuredOfficeOwnerLaneResponse(jurisdiction);
         return localOfficeSocialMemories
             .Where(static memory => memory.State == MemoryLifecycleState.Active)
-            .Where(memory => memory.CauseKey.StartsWith("office.policy_implementation.", StringComparison.Ordinal)
-                             && memory.CauseKey.Contains(settlementMarker, StringComparison.Ordinal))
-            .OrderByDescending(static memory => memory.OriginDate.Year)
+            .Where(memory =>
+                (memory.CauseKey.StartsWith("office.policy_implementation.", StringComparison.Ordinal)
+                 || memory.CauseKey.StartsWith("office.policy_local_response.", StringComparison.Ordinal))
+                && memory.CauseKey.Contains(settlementMarker, StringComparison.Ordinal))
+            .OrderByDescending(memory =>
+                preferLocalResponseResidue
+                && memory.CauseKey.StartsWith("office.policy_local_response.", StringComparison.Ordinal))
+            .ThenByDescending(static memory => memory.OriginDate.Year)
             .ThenByDescending(static memory => memory.OriginDate.Month)
             .ThenByDescending(static memory => memory.Weight)
             .ThenBy(static memory => memory.Id.Value)
@@ -610,6 +760,30 @@ public sealed partial class PresentationReadModelBuilder
     {
         string[] parts = causeKey.Split('.');
         return parts.Length >= 4 ? parts[3] : string.Empty;
+    }
+
+    private static bool TryReadOfficePolicyLocalResponseResidueCause(
+        string causeKey,
+        out OfficePolicyLocalResponseResidueCause cause)
+    {
+        cause = default;
+        if (!causeKey.StartsWith("office.policy_local_response.", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        string[] parts = causeKey.Split('.');
+        if (parts.Length < 6)
+        {
+            return false;
+        }
+
+        cause = new OfficePolicyLocalResponseResidueCause(
+            SettlementId: parts[2],
+            CommandCode: parts[3],
+            OutcomeCode: parts[4],
+            TraceCode: string.Join(".", parts.Skip(5)));
+        return true;
     }
 
     private static bool IsOfficeImplementationCategory(string category)
@@ -707,7 +881,8 @@ public sealed partial class PresentationReadModelBuilder
         return socialMemories
             .Where(memory =>
                 memory.State == MemoryLifecycleState.Active
-                && memory.CauseKey.StartsWith("office.policy_implementation", StringComparison.Ordinal)
+                && (memory.CauseKey.StartsWith("office.policy_implementation", StringComparison.Ordinal)
+                    || memory.CauseKey.StartsWith("office.policy_local_response", StringComparison.Ordinal))
                 && memory.SourceClanId.HasValue
                 && localClanIds.Contains(memory.SourceClanId.Value))
             .OrderByDescending(static memory => memory.OriginDate.Year)
@@ -716,6 +891,12 @@ public sealed partial class PresentationReadModelBuilder
             .ThenBy(static memory => memory.Id.Value)
             .ToArray();
     }
+
+    private readonly record struct OfficePolicyLocalResponseResidueCause(
+        string SettlementId,
+        string CommandCode,
+        string OutcomeCode,
+        string TraceCode);
 
     private static ClanSnapshot? SelectFamilyLaneClosureClan(IReadOnlyList<ClanSnapshot> localClans)
     {
@@ -756,26 +937,30 @@ public sealed partial class PresentationReadModelBuilder
     private static PlayerCommandAffordanceSnapshot? SelectPrimaryGovernanceAffordance(
         IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
         SettlementId settlementId,
-        bool hasOrderAftermath)
+        bool hasOrderAftermath,
+        bool hasCourtPolicyProcess)
     {
         return EnumerateAffordancesForSurface(affordances, PlayerCommandSurfaceKeys.PublicLife, settlementId)
-            .OrderBy(command => GetGovernanceAffordancePriority(command.CommandName, hasOrderAftermath))
+            .OrderBy(command => GetGovernanceAffordancePriority(command.CommandName, hasOrderAftermath, hasCourtPolicyProcess))
             .ThenBy(command => command.CommandName, StringComparer.Ordinal)
             .FirstOrDefault();
     }
 
-    private static int GetGovernanceAffordancePriority(string commandName, bool hasOrderAftermath)
+    private static int GetGovernanceAffordancePriority(
+        string commandName,
+        bool hasOrderAftermath,
+        bool hasCourtPolicyProcess)
     {
         return commandName switch
         {
-            PlayerCommandNames.PressCountyYamenDocument => hasOrderAftermath ? 0 : 2,
-            PlayerCommandNames.RedirectRoadReport => hasOrderAftermath ? 1 : 2,
+            PlayerCommandNames.PressCountyYamenDocument => hasOrderAftermath || hasCourtPolicyProcess ? 0 : 2,
+            PlayerCommandNames.RedirectRoadReport => hasOrderAftermath ? 1 : hasCourtPolicyProcess ? 1 : 2,
             PlayerCommandNames.RepairLocalWatchGuarantee => hasOrderAftermath ? 2 : 5,
             PlayerCommandNames.CompensateRunnerMisread => hasOrderAftermath ? 2 : 5,
             PlayerCommandNames.DeferHardPressure => hasOrderAftermath ? 2 : 5,
             PlayerCommandNames.AskClanEldersExplain => hasOrderAftermath ? 3 : 6,
-            PlayerCommandNames.PostCountyNotice => hasOrderAftermath ? 0 : 1,
-            PlayerCommandNames.DispatchRoadReport => 0,
+            PlayerCommandNames.PostCountyNotice => hasOrderAftermath ? 0 : hasCourtPolicyProcess ? 2 : 1,
+            PlayerCommandNames.DispatchRoadReport => hasCourtPolicyProcess && !hasOrderAftermath ? 3 : 0,
             PlayerCommandNames.EscortRoadReport => 4,
             PlayerCommandNames.FundLocalWatch => 5,
             PlayerCommandNames.InviteClanEldersPubliclyBroker => 6,
@@ -786,7 +971,10 @@ public sealed partial class PresentationReadModelBuilder
         };
     }
 
-    private static string BuildGovernanceSuggestedCommandPrompt(PlayerCommandAffordanceSnapshot? affordance)
+    private static string BuildGovernanceSuggestedCommandPrompt(
+        PlayerCommandAffordanceSnapshot? affordance,
+        string courtPolicyNoLoopGuard,
+        bool hasCourtPolicyPublicFollowUpGuard)
     {
         if (affordance is null)
         {
@@ -797,7 +985,21 @@ public sealed partial class PresentationReadModelBuilder
             $"眼下可先以{affordance.Label}应对{affordance.TargetLabel}；{affordance.AvailabilitySummary}",
             affordance.LeverageSummary,
             affordance.CostSummary,
-            affordance.ExecutionSummary);
+            affordance.ExecutionSummary,
+            BuildGovernanceSuggestedActionGuard(affordance, courtPolicyNoLoopGuard, hasCourtPolicyPublicFollowUpGuard));
+    }
+
+    private static string BuildGovernanceSuggestedActionGuard(
+        PlayerCommandAffordanceSnapshot affordance,
+        string courtPolicyNoLoopGuard,
+        bool hasCourtPolicyPublicFollowUpGuard)
+    {
+        if (!hasCourtPolicyPublicFollowUpGuard || string.IsNullOrWhiteSpace(courtPolicyNoLoopGuard))
+        {
+            return string.Empty;
+        }
+
+        return $"建议动作防误读：{affordance.Label}只承接已投影的政策公议后手；{courtPolicyNoLoopGuard}";
     }
 
     private static GovernanceFocusSnapshot BuildGovernanceFocus(

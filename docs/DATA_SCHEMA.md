@@ -87,6 +87,67 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current court-policy first rule-density closeout audit v197-v204 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, docket ledger, receipt ledger, receipt-docket ledger, public-life receipt echo ledger, or Court module
+- the v109-v196 first rule-density closeout audit v197-v204 is documentation/test governance only; it does not persist court process state, appointment slate, dispatch arrival, or downstream household/market/public consequence state
+- existing owner namespaces remain unchanged: `WorldSettlements` for court agenda pressure source, `OfficeAndCareer` for policy/local-response posture, `PublicLifeAndRumor` for public interpretation, and `SocialMemoryAndRelations` for durable `office.policy_local_response...` residue
+
+Current court-policy public-life receipt echo v189-v196 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-life receipt echo ledger, receipt-docket ledger, docket-consistency ledger, receipt ledger, suggested-receipt ledger, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `公议回执回声防误读` / `街面只读已投影的政策公议后手` / `公议不把回执读成新政令` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a public-life receipt echo cache, cooldown marker, repeat-pressure field, command-ranking override, or court-policy ledger
+
+Current court-policy receipt-docket consistency guard v181-v188 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, receipt-docket ledger, docket-consistency ledger, receipt ledger, suggested-receipt ledger, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `回执案牍一致防误读` / `回执只回收已投影的政策公议后手` / `案牍不把回执读成新政策结果` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a receipt-docket guard cache, cooldown marker, repeat-pressure field, command-ranking override, or court-policy ledger
+
+Current court-policy suggested receipt guard v173-v180 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, receipt ledger, suggested-receipt ledger, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `建议回执防误读` / `只回收已投影的政策公议后手` / `回执不是新政策结果` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a suggested receipt guard cache, cooldown marker, repeat-pressure field, command-ranking override, or court-policy ledger
+
+Current court-policy suggested action guard v165-v172 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `建议动作防误读` / `只承接已投影的政策公议后手` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data, `SettlementPublicLifeSnapshot` values, and the already-selected `PlayerCommandAffordanceSnapshot`
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a suggested-action guard cache, cooldown marker, repeat-pressure field, command-ranking override, or court-policy ledger
+
+Current court-policy public follow-up cue v149-v156 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `政策公议后手提示` / `公议轻续提示` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a public follow-up cache, cooldown marker, repeat-pressure field, or court-policy ledger
+
+Current court-policy follow-up docket guard v157-v164 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `政策后手案牍防误读` / `公议后手只作案牍提示` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a docket guard cache, cooldown marker, repeat-pressure field, or court-policy ledger
+
+Current court-policy public-reading echo v141-v148 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-reading ledger, or memory-pressure ledger
+- the new `政策公议旧读回` / `公议旧账回声` text is runtime projection over existing `SocialMemoryEntrySnapshot`, `JurisdictionAuthoritySnapshot`, and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a public-reading cache, repeat-pressure field, or court-policy ledger
+
+Current court-policy memory-pressure readback v133-v140 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, or ledger
+- the new `政策旧账回压读回` text is runtime projection over existing `SocialMemoryEntrySnapshot`, `JurisdictionAuthoritySnapshot`, and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a memory-pressure cache or repeat-pressure field
+
+Current court-policy social-memory echo v125-v132 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, or ledger
+- `SocialMemoryKinds.OfficePolicyLocalResponseResidue` is a code constant only; durable records use existing `MemoryRecordState` fields (`Kind`, `CauseKey`, `Type`, `Subtype`, `Weight`, dates, summary, lifecycle)
+- the structured cause prefix is `office.policy_local_response...`; it distinguishes delayed court-policy local-response residue from `order.public_life.response...` without adding schema
+- if future work needs a new persisted discriminator beyond existing memory fields, it must stop and add schema/migration documentation and tests first
+
 ### Save root
 ```csharp
 public sealed record SaveRoot {
@@ -1149,6 +1210,31 @@ Current court-policy process thickening v109-v116 note:
 - v109-v116 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, household target field, or projection cache.
 - `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
 - New court-policy thickening text such as `政策语气读回`, `文移指向读回`, `县门承接姿态`, `公议承压读法`, `朝廷后手仍不直写地方`, and `不是本户硬扛朝廷后账` is runtime projection / owner-lane prose over existing structured metadata and snapshots. It is not saved and does not require migration.
+
+Current court-policy local response v117-v124 note:
+- v117-v124 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, household target field, or projection cache.
+- `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New local-response guidance such as `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账` is runtime command/readback projection over existing Office/PublicLife fields and existing Office response traces. It is not saved and does not require migration.
+
+Current court-policy memory-pressure readback v133-v140 note:
+- v133-v140 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, household target field, or projection cache.
+- `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New memory-pressure guidance such as `政策旧账回压读回`, `旧文移余味`, `下一次政策窗口读法`, `公议旧读法续压`, and `不是本户硬扛朝廷旧账` is runtime projection over existing SocialMemory and Office/PublicLife snapshots. It is not saved and does not require migration.
+
+Current court-policy public-reading echo v141-v148 note:
+- v141-v148 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, public-reading ledger, household target field, or projection cache.
+- `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New public-reading guidance such as `政策公议旧读回`, `公议旧账回声`, `下一次榜示/递报旧读法`, `PublicLife只读街面解释`, and `县门承接仍归OfficeAndCareer` is runtime projection over existing SocialMemory and Office/PublicLife snapshots. It is not saved and does not require migration.
+
+Current court-policy public follow-up cue v149-v156 note:
+- v149-v156 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, public-reading ledger, public-follow-up ledger, household target field, or projection cache.
+- `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New public follow-up guidance such as `政策公议后手提示`, `公议冷却提示`, `公议轻续提示`, `公议换招提示`, `下一步仍看榜示/递报承口`, and `不是冷却账本` is runtime projection over existing SocialMemory cause data and PublicLife snapshots. It is not saved and does not require migration.
+
+Current court-policy follow-up docket guard v157-v164 note:
+- v157-v164 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, public-reading ledger, public-follow-up ledger, docket ledger, household target field, or projection cache.
+- `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New docket guard guidance such as `政策后手案牍防误读`, `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读` is runtime projection over existing SocialMemory cause data and PublicLife snapshots. It is not saved and does not require migration.
 
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
