@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v197-v204 court-policy first rule-density closeout audit - 2026-04-27
+
+- The v109-v196 first rule-density closeout audit v197-v204 treats Chain 8 as closed only for the first-layer rule-density branch: policy process texture, Office/PublicLife local response, delayed SocialMemory residue, memory-pressure next-window readback, public-reading echo, public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency, and public-life receipt echo.
+- Code alignment: no production rule changes are introduced. The already-implemented owner split remains `WorldSettlements` as court agenda / mandate pressure source, `OfficeAndCareer` as policy window and county document/report posture, `PublicLifeAndRumor` as street/public interpretation, `SocialMemoryAndRelations` as later durable `office.policy_local_response...` residue, Application as route/assemble/project, and Unity as copy-only presentation.
+- This is not the full court engine and not a court-agenda / policy-dispatch completion claim. Court process state, appointment slate, dispatch arrival, and downstream household/market/public consequences remain explicit future debt.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, affordance prose, docket prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v197-v204 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action / suggested-receipt / receipt-docket / public-life receipt echo ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v189-v196 court-policy public-life receipt echo - 2026-04-27
 
 - Chain 8 now lets public-life command/readback surfaces carry `公议回执回声防误读`, `街面只读已投影的政策公议后手`, and `公议不把回执读成新政令` when the same structured court-policy local-response residue already powers the public-reading echo.
