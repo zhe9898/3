@@ -12,6 +12,7 @@ It should be a structured county or prefecture slice where:
 - yamen and clerks apply pressure
 - routes carry grain, rumor, petition, escort work, and force
 - temples, markets, schools, halls, and ferries make public life visible
+- terrain, routes, and settlement nodes can visibly change when flood, drought, waterworks, warfare, migration, trade, or administrative pressure changes the place
 
 ## Recommended Structural Layers
 
@@ -41,6 +42,7 @@ Shows:
 - storage condition
 - debt or contract pressure
 - subsistence strain
+- damaged fields, dry wells, silted canals, broken bridges, repaired embankments, abandoned hamlets, new markets, and refugee clusters when state justifies them
 
 ### 4. Public-Life Layer
 
@@ -100,6 +102,8 @@ Use routes that matter socially:
 - conflict heat
 - public attention
 - flood or drought exposure
+- route damage and repair state
+- settlement growth, decline, abandonment, fortification, or recovery
 
 ## Good Desk Read Order
 
@@ -116,6 +120,8 @@ The player should usually be able to read the sandbox in this order:
 - A node earns its place by owning a pressure, a report, a queue, a conflict, or a public signal.
 - Public life matters because it makes hidden systems legible.
 - Local conflict should appear on the same desk surface before it escalates into a larger board.
+- The sandbox is allowed to change shape. A flood scar, washed-out road, silted ferry, burned market, new refugee camp, repaired embankment, or growing market town is a gameplay state when it changes movement, survival, tax reach, trade, disease, public legitimacy, or military response.
+- Use visible map-state changes as receipts for monthly simulation, not as decorative weather effects.
 
 ## Suggested Module Mapping
 

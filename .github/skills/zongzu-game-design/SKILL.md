@@ -33,12 +33,12 @@ Use current code and `RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md` to distinguish imple
 - a chain is only "current" when real `PublishedEvents`, `ConsumedEvents`, scheduler drain behavior, metadata, off-scope tests, and projection/receipt behavior line up
 - long-run pressure saturation can be intended stress, missing recovery, missing allocation, or diagnostic debt; do not flatten it into a simple tuning problem
 - Unity shell presence does not change product authority: shell surfaces show read models and bounded command affordances, never direct court/world control
-- the current court-policy branch is committed through v148: v3-v108 build and audit the thin skeleton; v109-v116 adds first-layer court-policy process texture; v117-v124 gives that pressure a narrow Office-owned local response; v125-v132 creates delayed SocialMemory residue; v133-v140 lets old residue press on the next policy window; v141-v148 lets public-life command surfaces read that old residue as public interpretation
-- current v19-v148 follow-up and owner-lane readback are playable guidance, not new household omnipotence: they advise repeat, switch, cool down, return to the proper owner lane, use a narrow owner command when available, or stop re-pressuring the home household from existing structured aftermath
-- treat public-life/order/court-policy v18-v148 as a rule-driven command / aftermath / SocialMemory / home-household / owner-lane readback loop, not an event-chain or event-pool design
+- the current court-policy branch is committed through v196: v3-v108 build and audit the thin skeleton; v109-v116 adds first-layer court-policy process texture; v117-v124 gives that pressure a narrow Office-owned local response; v125-v132 creates delayed SocialMemory residue; v133-v140 lets old residue press on the next policy window; v141-v148 lets public-life command surfaces read that old residue as public interpretation; v149-v196 add public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency guard, and public-life receipt echo guard without making a full court engine
+- current v19-v196 follow-up and owner-lane readback are playable guidance, not new household omnipotence: they advise repeat, switch, cool down, return to the proper owner lane, use a narrow owner command when available, explain docket/receipt anti-misread, or stop re-pressuring the home household from existing structured aftermath
+- treat public-life/order/court-policy v18-v196 as a rule-driven command / aftermath / SocialMemory / home-household / owner-lane / docket / receipt readback loop, not an event-chain or event-pool design
 - v32-v34 are evidence-quality passes for the backend event-contract graph, not new playable loops; they classify debt, gate unclassified debt, and show owner/evidence backlinks without adding runtime authority
 - v35-v100 are thin playable-world handoffs/readbacks, not thick new systems: canal-window pressure returns to Trade/Order, household burden and relief stay in Family, Office/yamen后手 remains in Office, force/campaign后账 stays in force/campaign lanes, Warfare directives and aftermath stay in `WarfareCampaign`, and court-policy process remains Office/PublicLife readback through structured metadata, query snapshots, projection fields, no-touch tests, and no schema/ledger/UI authority expansion
-- v101-v108 is an audit boundary: "thin-chain complete" means topology/readback/ownership evidence; v109-v148 is the first court-policy rule-density branch, but it still stays narrow and schema-neutral. Taxes, famine, disaster relief, office factions, thick court process, campaign logistics, regime recognition, canal politics, deeper durable residue, and recovery/decay remain future work
+- v101-v108 is an audit boundary: "thin-chain complete" means topology/readback/ownership evidence; v109-v196 is the first court-policy rule-density branch, but it still stays narrow, projection-heavy, and schema-neutral. Taxes, famine, disaster relief, office factions, thick court process, campaign logistics, regime recognition, canal politics, deeper durable residue, and recovery/decay remain future work
 - not every future contract should become immediate gameplay; first classify the debt, then graduate one owner lane only when the player-facing or simulation readback can stay bounded and testable
 - scale budget is part of design: use `SIMULATION_FIDELITY_MODEL.md` focus rings so full fidelity stays near the player or active pressure, while distant society remains alive through summarized pressure and promotion/demotion rules
 - a mechanic is not ready to implement until it names owner, cadence, state, projection, bounded command, resistance/refusal, test proof, and rough cardinality/fanout risk
@@ -64,6 +64,10 @@ Use outside engineering and accessibility material as design calibration, not as
 - deciding how a mechanic becomes visible in the great hall, lineage surface, desk sandbox, notice tray, conflict vignette, campaign board, or debug surface
 - comparing outside games or sources without importing their genre assumptions
 - checking whether a proposal drifts into event-pool design, detached tactics design, rigid route trees, spreadsheet-with-flavor design, or player-as-god design
+
+## Fast Lane
+
+For short design checks, answer only the core loop, owner, player leverage, projection surface, and obvious drift risk. Use a full pass when the topic changes cadence, fidelity rings, pressure propagation, command resolution, long-run balance, feature-pack scope, or future roadmap shape.
 
 ## Workflow
 
@@ -123,6 +127,7 @@ Use outside engineering and accessibility material as design calibration, not as
    - Read [references/pressure-chains-and-causality.md](references/pressure-chains-and-causality.md) for how pressure starts, travels, and becomes visible.
    - Read [references/command-resolution-and-bounded-leverage.md](references/command-resolution-and-bounded-leverage.md) for player influence, command windows, and anti-god rules.
    - Read [references/vertical-slice-and-mvp-shaping.md](references/vertical-slice-and-mvp-shaping.md) for slice design, cut discipline, and MVP shaping.
+   - Read [references/similar-game-system-calibration.md](references/similar-game-system-calibration.md) only when outside-game comparison should calibrate system structure without importing genre assumptions.
 
 5. Convert design talk into playable structure.
 

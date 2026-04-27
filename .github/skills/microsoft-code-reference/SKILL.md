@@ -20,6 +20,10 @@ Use it for quick lookup of project-specific patterns without re-reading the full
 - verifying save/schema compatibility
 - touching Unity-facing adapters or shared ViewModel DTOs
 
+## Fast Lane
+
+For small C# fixes, use this skill as a quick guard: check dependency direction, deterministic iteration, schema impact, and the smallest relevant test. Use a full pass only when the change touches scheduler cadence, command resolution, save/migration, cross-module events, projection builders, or Unity-facing adapters.
+
 ## Locked Stack
 
 | Layer | Technology |
@@ -67,6 +71,7 @@ Presentation and Unity code may format, adapt, and display projections. They may
 - Keep authoritative iteration order stable; prefer sorted `List<T>` patterns over unordered collection side effects.
 - Avoid floating-point drift in authoritative economy and pressure rules; use integer or fixed-point style values.
 - No file, network, process, or Unity API calls inside xun, month, seasonal, event-handling, or diff-generation paths.
+- Choose collections by access pattern and cardinality: prefer simple arrays/lists for stable ordered passes, dictionaries for keyed lookup, queues for FIFO drains, and avoid unordered iteration when authority ordering matters.
 
 ## State Ownership
 
@@ -158,9 +163,9 @@ Verify against module `ModuleSchemaVersion` before changing migrations.
 ## Current Zongzu Chain Anchors
 
 - The implemented thin-chain skeleton is closed through v108 as topology/readback/ownership evidence, not full-chain rule-density completion.
-- The current court-policy branch is through v148: v109-v116 process thickening, v117-v124 local Office response, v125-v132 delayed SocialMemory echo, v133-v140 memory-pressure next-window readback, and v141-v148 public-reading echo.
-- v35-v148 use existing owner state or runtime projection fields for Trade/Order, Family, Office, PublicLife, SocialMemory, Force/Campaign, Warfare, and Court-policy readbacks.
-- v101-v108 is documentation plus architecture-test closeout evidence only; v109-v148 is narrow Chain 8 rule-density. Both add no schema bump, migration, ledger, manager/controller layer, UI/Unity authority, or `PersonRegistry` expansion.
+- The current court-policy branch is through v196: v109-v116 process thickening, v117-v124 local Office response, v125-v132 delayed SocialMemory echo, v133-v140 memory-pressure next-window readback, v141-v148 public-reading echo, v149-v156 public follow-up cue, v157-v164 docket guard, v165-v172 suggested-action guard, v173-v180 suggested-receipt guard, v181-v188 receipt-docket consistency guard, and v189-v196 public-life receipt echo guard.
+- v35-v196 use existing owner state or runtime projection fields for Trade/Order, Family, Office, PublicLife, SocialMemory, Force/Campaign, Warfare, and Court-policy readbacks.
+- v101-v108 is documentation plus architecture-test closeout evidence only; v109-v196 is narrow Chain 8 rule-density. Both add no schema bump, migration, ledger, manager/controller layer, UI/Unity authority, or `PersonRegistry` expansion.
 - For performance work, name hot path, cardinality, allocation risk, deterministic ordering, cache invalidation, save/schema impact, and validation lane before changing algorithms.
 
 ## Migration Rules
