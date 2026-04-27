@@ -542,7 +542,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-process-thickening-v109-v116.md"));
 
         foreach (string token in new[]
@@ -627,7 +627,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-local-response-v117-v124.md"));
 
         Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyLocalResponseGuidance"));
@@ -716,7 +716,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-social-memory-echo-v125-v132.md"));
 
         Assert.That(socialSource, Does.Contain("ApplyCourtPolicyLocalResponseResidue"));
@@ -775,7 +775,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-memory-pressure-readback-v133-v140.md"));
         string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
         string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
@@ -843,7 +843,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-public-reading-echo-v141-v148.md"));
 
         Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyPublicReadingEchoGuidance"));
@@ -917,7 +917,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-public-follow-up-cue-v149-v156.md"));
 
         Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyPublicFollowUpCue"));
@@ -983,7 +983,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-follow-up-docket-guard-v157-v164.md"));
 
         Assert.That(governanceSource, Does.Contain("BuildCourtPolicyPublicFollowUpDocketGuard"));
@@ -1053,7 +1053,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-suggested-action-guard-v165-v172.md"));
 
         Assert.That(governanceSource, Does.Contain("BuildGovernanceSuggestedActionGuard"));
@@ -1127,7 +1127,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-suggested-receipt-guard-v173-v180.md"));
         Match helperMatch = Regex.Match(
             receiptSource,
@@ -1197,7 +1197,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-receipt-docket-consistency-v181-v188.md"));
         Match helperMatch = Regex.Match(
             governanceSource,
@@ -1269,7 +1269,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-public-life-receipt-echo-v189-v196.md"));
         Match helperMatch = Regex.Match(
             playerCommandSource,
@@ -1345,7 +1345,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-27_court-policy-first-rule-density-closeout-audit-v197-v204.md"));
 
         Assert.That(topologyIndex, Does.Contain("Chain 8 First Rule-Density Closeout Audit - v197-v204"));
@@ -1428,7 +1428,7 @@ public class ProjectReferenceTests
             RepoRoot,
             "docs",
             "exec-plans",
-            "active",
+            "archive",
             "2026-04-26_thin-chain-closeout-audit-v101-v108.md"));
 
         Assert.That(topologyIndex, Does.Contain("Thin-Chain Closeout Status - v101-v108"));
