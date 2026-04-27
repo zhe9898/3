@@ -117,7 +117,9 @@ public sealed partial class PresentationReadModelBuilder
                 string courtPolicyPublicReadback = CombineGovernanceDocketText(
                     BuildCourtPolicyPublicReadbackSummary(jurisdiction, publicLife),
                     BuildCourtPolicyPublicReadingEchoGuidance(localOfficeSocialMemories, jurisdiction, publicLife));
-                string courtPolicyNoLoopGuard = BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife);
+                string courtPolicyNoLoopGuard = CombineGovernanceDocketText(
+                    BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife),
+                    BuildCourtPolicyPublicFollowUpDocketGuard(localOfficeSocialMemories, jurisdiction, publicLife));
                 bool hasCourtPolicyProcess = !string.IsNullOrWhiteSpace(courtPolicyEntryReadback);
                 PlayerCommandAffordanceSnapshot? suggestedAffordance = SelectPrimaryGovernanceAffordance(
                     bundle.PlayerCommands.Affordances,
@@ -488,6 +490,36 @@ public sealed partial class PresentationReadModelBuilder
             PublicLifeOrderResponseOutcomeCodes.Ignored => "放置",
             _ => "未定",
         };
+    }
+
+    private static string BuildCourtPolicyPublicFollowUpDocketGuard(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (publicLife is null || !HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
+        if (residue is null
+            || !TryReadOfficePolicyLocalResponseResidueCause(residue.CauseKey, out OfficePolicyLocalResponseResidueCause localResponseCause))
+        {
+            return string.Empty;
+        }
+
+        string docketCue = localResponseCause.OutcomeCode switch
+        {
+            PublicLifeOrderResponseOutcomeCodes.Repaired => "冷却只作公议承口，先让榜示/递报保留旧读法。",
+            PublicLifeOrderResponseOutcomeCodes.Contained => "轻续只作公议承口，可看榜示/递报是否接住旧读法。",
+            PublicLifeOrderResponseOutcomeCodes.Escalated => "换招只作公议承口，先等县门/递报另开接法。",
+            PublicLifeOrderResponseOutcomeCodes.Ignored => "等承口只作公议承口，先停把旧账推回本户。",
+            _ => "后手只作公议承口，仍等县门/递报接法。",
+        };
+
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        return $"政策后手案牍防误读：{publicLife.NodeLabel}的公议后手只作案牍提示（{outcomeLabel}，榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}）；{docketCue} 不是冷却账本，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
     }
 
     private static string BuildOfficeLaneNoLoopGuardSummary(

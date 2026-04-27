@@ -411,6 +411,15 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("不是冷却账本"));
         Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("PublicLife只读街面解释"));
         Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("县门承接仍归OfficeAndCareer"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("政策后手案牍防误读"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("公议后手只作案牍提示"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("不是Order后账"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("不是Office成败"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        Assert.That(afterSecond.GovernanceDocket.CourtPolicyNoLoopGuardSummary, Does.Contain("政策后手案牍防误读"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是冷却账本"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是Order后账"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是Office成败"));
         PlayerCommandAffordanceSnapshot noticeAffordance = afterSecond.PlayerCommands.Affordances
             .Single(affordance => affordance.SettlementId == new SettlementId(10)
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
@@ -432,6 +441,7 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(offScopeGovernance.OfficeLaneResidueFollowUpSummary, Does.Not.Contain("政策旧账回压读回"));
         Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议旧读回"));
         Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议后手提示"));
+        Assert.That(offScopeGovernance.CourtPolicyNoLoopGuardSummary, Does.Not.Contain("政策后手案牍防误读"));
         PlayerCommandAffordanceSnapshot offScopeNoticeAffordance = afterSecond.PlayerCommands.Affordances
             .Single(affordance => affordance.SettlementId == new SettlementId(20)
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);

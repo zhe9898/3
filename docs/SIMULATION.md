@@ -38,6 +38,12 @@ This keeps the design aligned with:
 - bounded player intervention
 - ordinary people, debt, illness, labor, and rumor feeling alive instead of being crushed into one large monthly jump
 
+## Current court-policy follow-up docket guard v157-v164 note
+
+The v157-v164 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if governance/docket surfaces are visible, the projection layer may show `政策后手案牍防误读` from structured SocialMemory cause outcome data plus current PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, treat the guard as Order/Office authority, or parse memory summary prose, receipt prose, public-life prose, or `DomainEvent.Summary`.
+
 ## Current court-policy public follow-up cue v149-v156 note
 
 The v149-v156 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if public-life notice/report command surfaces are visible, the projection layer may show `政策公议后手提示` from structured SocialMemory cause outcome data plus current PublicLife snapshots.

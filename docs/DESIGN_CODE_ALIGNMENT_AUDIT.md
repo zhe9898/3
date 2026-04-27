@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v157-v164 court-policy follow-up docket guard - 2026-04-27
+
+- Chain 8 now projects a docket/no-loop guard over the public follow-up cue as `政策后手案牍防误读`. The guard is built from structured SocialMemory cause outcome data plus current `SettlementPublicLifeSnapshot` scalars.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles a projected guard; Unity copies existing governance/docket fields.
+- The new readback names `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读`, but does not calculate policy success, create a cooldown account, reopen policy state, or write a docket/follow-up ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v157-v164 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v149-v156 court-policy public follow-up cue - 2026-04-27
 
 - Chain 8 now projects a first public follow-up cue over old court-policy local-response residue as `政策公议后手提示`. The cue is built from structured outcome code data already carried in the SocialMemory cause plus current `SettlementPublicLifeSnapshot` scalars.

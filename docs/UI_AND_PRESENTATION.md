@@ -75,6 +75,12 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Court-policy follow-up docket guard v157-v164 UI note
+
+Governance, office, docket, desk, and great-hall surfaces may show `政策后手案牍防误读` only when it is already present in projected `CourtPolicyNoLoopGuardSummary` or docket `GuidanceSummary` fields. The wording should make clear that `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读` are anti-misread guard text over old SocialMemory residue, not a durable cooldown ledger, not a new Court command, not an Order after-account, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, cooldown status, public-reading weight, docket guard status, or next-window outcomes.
+
 ### Court-policy public follow-up cue v149-v156 UI note
 
 Governance, office, docket, desk, and public-life command surfaces may show `政策公议后手提示` only when it is already present in projected governance or `PlayerCommandAffordanceSnapshot` readback fields. The wording should make clear that `公议冷却提示`, `公议轻续提示`, `公议换招提示`, and `下一步仍看榜示/递报承口` are public-facing follow-up guidance over old SocialMemory residue, not a durable cooldown ledger, not a new Court command, not an Order after-account, and not a home-household debt.

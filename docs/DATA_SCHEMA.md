@@ -93,6 +93,12 @@ Current court-policy public follow-up cue v149-v156 note:
 - the new `政策公议后手提示` / `公议轻续提示` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
 - existing `MemoryRecordState` records remain the only durable source; Application does not persist a public follow-up cache, cooldown marker, repeat-pressure field, or court-policy ledger
 
+Current court-policy follow-up docket guard v157-v164 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `政策后手案牍防误读` / `公议后手只作案牍提示` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a docket guard cache, cooldown marker, repeat-pressure field, or court-policy ledger
+
 Current court-policy public-reading echo v141-v148 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-reading ledger, or memory-pressure ledger
@@ -1194,6 +1200,11 @@ Current court-policy public follow-up cue v149-v156 note:
 - v149-v156 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, public-reading ledger, public-follow-up ledger, household target field, or projection cache.
 - `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
 - New public follow-up guidance such as `政策公议后手提示`, `公议冷却提示`, `公议轻续提示`, `公议换招提示`, `下一步仍看榜示/递报承口`, and `不是冷却账本` is runtime projection over existing SocialMemory cause data and PublicLife snapshots. It is not saved and does not require migration.
+
+Current court-policy follow-up docket guard v157-v164 note:
+- v157-v164 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, public-reading ledger, public-follow-up ledger, docket ledger, household target field, or projection cache.
+- `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New docket guard guidance such as `政策后手案牍防误读`, `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读` is runtime projection over existing SocialMemory cause data and PublicLife snapshots. It is not saved and does not require migration.
 
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment

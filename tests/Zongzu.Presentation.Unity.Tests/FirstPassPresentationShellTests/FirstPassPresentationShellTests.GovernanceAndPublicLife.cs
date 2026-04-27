@@ -817,7 +817,7 @@ public sealed partial class FirstPassPresentationShellTests
         const string courtEntry = "朝议压力读回：政策语气读回，朝廷后手仍不直写地方。";
         const string courtDispatch = "文移到达读回：文移指向读回，县门承接姿态仍归OfficeAndCareer。";
         const string courtPublic = "公议读法读回：公议承压读法，Office/PublicLife分读。";
-        const string courtNoLoop = "Court-policy防回压：不是本户硬扛朝廷后账，朝廷后手仍不直写地方。";
+        const string courtNoLoop = "Court-policy防回压：不是本户硬扛朝廷后账，朝廷后手仍不直写地方。 政策后手案牍防误读：公议后手只作案牍提示；不是冷却账本，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
         bundle.GovernanceSettlements =
         [
             new SettlementGovernanceLaneSnapshot
@@ -935,6 +935,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlement.GovernanceSummary, Does.Contain(courtDispatch));
         Assert.That(settlement.GovernanceSummary, Does.Contain(courtPublic));
         Assert.That(settlement.GovernanceSummary, Does.Contain(courtNoLoop));
+        Assert.That(settlement.GovernanceSummary, Does.Contain("政策后手案牍防误读"));
+        Assert.That(settlement.GovernanceSummary, Does.Contain("不是Order后账"));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyEntry));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyClosure));
         Assert.That(settlement.GovernanceSummary, Does.Contain(familyNoLoop));
@@ -950,6 +952,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(settlement.CourtPolicyDispatchReadbackSummary, Is.EqualTo(courtDispatch));
         Assert.That(settlement.CourtPolicyPublicReadbackSummary, Is.EqualTo(courtPublic));
         Assert.That(settlement.CourtPolicyNoLoopGuardSummary, Is.EqualTo(courtNoLoop));
+        Assert.That(settlement.CourtPolicyNoLoopGuardSummary, Does.Contain("公议后手只作案牍提示"));
+        Assert.That(settlement.CourtPolicyNoLoopGuardSummary, Does.Contain("不是Office成败"));
         Assert.That(settlement.FamilyLaneEntryReadbackSummary, Is.EqualTo(familyEntry));
         Assert.That(settlement.FamilyElderExplanationReadbackSummary, Is.EqualTo(familyElder));
         Assert.That(settlement.FamilyGuaranteeReadbackSummary, Is.EqualTo(familyGuarantee));
@@ -970,6 +974,7 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(officeJurisdiction.CourtPolicyDispatchReadbackSummary, Is.EqualTo(courtDispatch));
         Assert.That(officeJurisdiction.CourtPolicyPublicReadbackSummary, Is.EqualTo(courtPublic));
         Assert.That(officeJurisdiction.CourtPolicyNoLoopGuardSummary, Is.EqualTo(courtNoLoop));
+        Assert.That(officeJurisdiction.CourtPolicyNoLoopGuardSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
     }
 
 }
