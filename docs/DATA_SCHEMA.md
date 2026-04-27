@@ -87,6 +87,12 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current court-policy first rule-density closeout audit v197-v204 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, docket ledger, receipt ledger, receipt-docket ledger, public-life receipt echo ledger, or Court module
+- the v109-v196 first rule-density closeout audit v197-v204 is documentation/test governance only; it does not persist court process state, appointment slate, dispatch arrival, or downstream household/market/public consequence state
+- existing owner namespaces remain unchanged: `WorldSettlements` for court agenda pressure source, `OfficeAndCareer` for policy/local-response posture, `PublicLifeAndRumor` for public interpretation, and `SocialMemoryAndRelations` for durable `office.policy_local_response...` residue
+
 Current court-policy public-life receipt echo v189-v196 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-life receipt echo ledger, receipt-docket ledger, docket-consistency ledger, receipt ledger, suggested-receipt ledger, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
