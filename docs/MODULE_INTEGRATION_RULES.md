@@ -64,6 +64,18 @@ When changing one of those chains:
 - document whether a same-month follow-on uses the bounded scheduler drain or deliberately carries pressure into the next month
 - preserve the distinction between a thin topology proof and the full social chain
 
+### Chain 8 v149-v156 public follow-up cue integration note
+
+Court-policy public follow-up cue is projection-only integration over existing public-reading echo inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured outcome code and current public-life scalars to show `政策公议后手提示`, `公议冷却提示`, `公议轻续提示`, `公议换招提示`, and `下一步仍看榜示/递报承口` on governance and public-life command readbacks.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` -> Application read model / command readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, or `DomainEvent.Summary`
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the cue as a durable cooldown account, an Order after-account, Office-only success, or home-household debt
+
 ### Chain 8 v141-v148 public-reading echo integration note
 
 Court-policy public-reading echo is projection-only integration over existing SocialMemory and current Office/PublicLife snapshots. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause/type/weight and current public-life scalars to show `政策公议旧读回`, `公议旧账回声`, and `下一次榜示/递报旧读法` on governance and public-life command readbacks.

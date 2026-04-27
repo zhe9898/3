@@ -421,7 +421,7 @@ public sealed partial class FirstPassPresentationShellTests
     {
         PresentationReadModelBundle bundle = CreateBundle();
         const string policyEcho = "政策回应余味续接读回：县门轻催留下人情27；政策旧账回压读回：旧文移余味进入下一次政策窗口读法；公议旧读法续压；仍由SocialMemoryAndRelations后续月沉淀，不是本户硬扛朝廷旧账。";
-        const string publicPolicyEcho = "政策公议旧读回：县门榜下把县门轻催旧痕读成旧政策回应；公议旧账回声；下一次榜示/递报旧读法只显示压力；PublicLife只读街面解释，县门承接仍归OfficeAndCareer；不是本户硬扛朝廷旧账。";
+        const string publicPolicyEcho = "政策公议旧读回：县门榜下把县门轻催旧痕读成旧政策回应；公议旧账回声；下一次榜示/递报旧读法只显示压力；政策公议后手提示：公议轻续提示；下一步仍看榜示/递报承口；不是冷却账本，不从本户硬补；PublicLife只读街面解释，县门承接仍归OfficeAndCareer；不是本户硬扛朝廷旧账。";
         bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
         {
             Affordances =
@@ -462,7 +462,10 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(publicAffordance.LeverageSummary, Is.EqualTo(publicPolicyEcho));
         Assert.That(publicAffordance.ReadbackSummary, Is.EqualTo(publicPolicyEcho));
         Assert.That(publicAffordance.LeverageSummary, Does.Contain("政策公议旧读回"));
+        Assert.That(publicAffordance.LeverageSummary, Does.Contain("政策公议后手提示"));
+        Assert.That(publicAffordance.LeverageSummary, Does.Contain("不是冷却账本"));
         Assert.That(publicAffordance.ReadbackSummary, Does.Contain("公议旧账回声"));
+        Assert.That(publicAffordance.ReadbackSummary, Does.Contain("公议轻续提示"));
         Assert.That(jurisdiction.OfficeLaneResidueFollowUpSummary, Is.EqualTo(policyEcho));
         Assert.That(jurisdiction.OfficeLaneResidueFollowUpSummary, Does.Contain("旧文移余味"));
     }

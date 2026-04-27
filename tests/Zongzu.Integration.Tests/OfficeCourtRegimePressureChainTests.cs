@@ -405,6 +405,10 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(afterSecondGovernance.OfficeLaneResidueFollowUpSummary, Does.Contain("不是本户硬扛朝廷旧账"));
         Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("政策公议旧读回"));
         Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("公议旧账回声"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("政策公议后手提示"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("公议轻续提示"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("下一步仍看榜示/递报承口"));
+        Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("不是冷却账本"));
         Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("PublicLife只读街面解释"));
         Assert.That(afterSecondGovernance.CourtPolicyPublicReadbackSummary, Does.Contain("县门承接仍归OfficeAndCareer"));
         PlayerCommandAffordanceSnapshot noticeAffordance = afterSecond.PlayerCommands.Affordances
@@ -412,20 +416,27 @@ public sealed class OfficeCourtRegimePressureChainTests
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
         Assert.That(noticeAffordance.LeverageSummary, Does.Contain("政策公议旧读回"));
         Assert.That(noticeAffordance.LeverageSummary, Does.Contain("下一次榜示/递报旧读法"));
+        Assert.That(noticeAffordance.LeverageSummary, Does.Contain("政策公议后手提示"));
+        Assert.That(noticeAffordance.LeverageSummary, Does.Contain("公议轻续提示"));
+        Assert.That(noticeAffordance.LeverageSummary, Does.Contain("不是冷却账本"));
         Assert.That(noticeAffordance.ReadbackSummary, Does.Contain("公议旧账回声"));
+        Assert.That(noticeAffordance.ReadbackSummary, Does.Contain("下一步仍看榜示/递报承口"));
         PlayerCommandAffordanceSnapshot roadReportAffordance = afterSecond.PlayerCommands.Affordances
             .Single(affordance => affordance.SettlementId == new SettlementId(10)
                                   && affordance.CommandName == PlayerCommandNames.DispatchRoadReport);
         Assert.That(roadReportAffordance.LeverageSummary, Does.Contain("政策公议旧读回"));
+        Assert.That(roadReportAffordance.LeverageSummary, Does.Contain("政策公议后手提示"));
         Assert.That(roadReportAffordance.ReadbackSummary, Does.Contain("不是本户硬扛朝廷旧账"));
         SettlementGovernanceLaneSnapshot offScopeGovernance =
             afterSecond.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(20));
         Assert.That(offScopeGovernance.OfficeLaneResidueFollowUpSummary, Does.Not.Contain("政策旧账回压读回"));
         Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议旧读回"));
+        Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议后手提示"));
         PlayerCommandAffordanceSnapshot offScopeNoticeAffordance = afterSecond.PlayerCommands.Affordances
             .Single(affordance => affordance.SettlementId == new SettlementId(20)
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
         Assert.That(offScopeNoticeAffordance.LeverageSummary, Does.Not.Contain("政策公议旧读回"));
+        Assert.That(offScopeNoticeAffordance.LeverageSummary, Does.Not.Contain("政策公议后手提示"));
     }
 
     [Test]

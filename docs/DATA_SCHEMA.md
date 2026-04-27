@@ -87,6 +87,12 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current court-policy public follow-up cue v149-v156 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `政策公议后手提示` / `公议轻续提示` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a public follow-up cache, cooldown marker, repeat-pressure field, or court-policy ledger
+
 Current court-policy public-reading echo v141-v148 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-reading ledger, or memory-pressure ledger
@@ -1183,6 +1189,11 @@ Current court-policy public-reading echo v141-v148 note:
 - v141-v148 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, public-reading ledger, household target field, or projection cache.
 - `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
 - New public-reading guidance such as `政策公议旧读回`, `公议旧账回声`, `下一次榜示/递报旧读法`, `PublicLife只读街面解释`, and `县门承接仍归OfficeAndCareer` is runtime projection over existing SocialMemory and Office/PublicLife snapshots. It is not saved and does not require migration.
+
+Current court-policy public follow-up cue v149-v156 note:
+- v149-v156 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, public-reading ledger, public-follow-up ledger, household target field, or projection cache.
+- `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
+- New public follow-up guidance such as `政策公议后手提示`, `公议冷却提示`, `公议轻续提示`, `公议换招提示`, `下一步仍看榜示/递报承口`, and `不是冷却账本` is runtime projection over existing SocialMemory cause data and PublicLife snapshots. It is not saved and does not require migration.
 
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment

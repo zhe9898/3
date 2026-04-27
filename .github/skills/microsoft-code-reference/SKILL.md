@@ -158,8 +158,9 @@ Verify against module `ModuleSchemaVersion` before changing migrations.
 ## Current Zongzu Chain Anchors
 
 - The implemented thin-chain skeleton is closed through v108 as topology/readback/ownership evidence, not full-chain rule-density completion.
-- v35-v100 use existing owner state or runtime projection fields for Trade/Order, Family, Office, Force/Campaign, Warfare, and Court-policy readbacks.
-- v101-v108 is documentation plus architecture-test closeout evidence only: no runtime rule, schema bump, migration, ledger, manager/controller layer, UI/Unity authority, or `PersonRegistry` expansion.
+- The current court-policy branch is through v148: v109-v116 process thickening, v117-v124 local Office response, v125-v132 delayed SocialMemory echo, v133-v140 memory-pressure next-window readback, and v141-v148 public-reading echo.
+- v35-v148 use existing owner state or runtime projection fields for Trade/Order, Family, Office, PublicLife, SocialMemory, Force/Campaign, Warfare, and Court-policy readbacks.
+- v101-v108 is documentation plus architecture-test closeout evidence only; v109-v148 is narrow Chain 8 rule-density. Both add no schema bump, migration, ledger, manager/controller layer, UI/Unity authority, or `PersonRegistry` expansion.
 - For performance work, name hot path, cardinality, allocation risk, deterministic ordering, cache invalidation, save/schema impact, and validation lane before changing algorithms.
 
 ## Migration Rules
