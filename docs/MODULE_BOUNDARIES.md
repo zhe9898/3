@@ -28,6 +28,18 @@ Until a dedicated historical-process pack exists:
 
 A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
+## Court-policy first rule-density closeout audit v197-v204 boundary note
+
+The v109-v196 first rule-density closeout audit v197-v204 is documentation/test governance over the existing Chain 8 branch. It does not add runtime authority:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` remains the owner of policy windows, county execution, document/report aftermath, and implementation posture.
+- `PublicLifeAndRumor` remains the owner of public interpretation, notice visibility, road-report texture, and street reading.
+- `SocialMemoryAndRelations` remains the owner of later durable `office.policy_local_response...` residue.
+- Application remains a route / assemble / project layer over structured owner-lane facts.
+- Unity remains a projected-field copy layer.
+
+This closeout says v109-v196 is closed as a first rule-density branch only. It is not the full court engine, not a court-agenda / policy-dispatch completion claim, and not new court process state, appointment slate, dispatch arrival, or downstream household/market/public consequence rules. It adds no Court module, event pool, dispatch/policy/court-process/owner-lane/cooldown/docket/receipt/public-life-receipt-echo ledger, schema field, migration, Application rule authority, UI/Unity authority, `PersonRegistry` expansion, or manager/god-controller path.
+
 ## Court-policy public-life receipt echo v189-v196 boundary note
 
 Chain 8 v189-v196 keeps v181-v188 receipt/docket ownership and adds only a projected public-life command echo:

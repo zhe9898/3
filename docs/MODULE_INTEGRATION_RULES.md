@@ -64,6 +64,19 @@ When changing one of those chains:
 - document whether a same-month follow-on uses the bounded scheduler drain or deliberately carries pressure into the next month
 - preserve the distinction between a thin topology proof and the full social chain
 
+### Chain 8 v197-v204 first rule-density closeout audit integration note
+
+The v109-v196 first rule-density closeout audit v197-v204 is integration governance only. It documents that Chain 8 has a closed first-layer readback branch, but it adds no new integration channel and no production rule.
+
+Allowed data path:
+- already-implemented `WorldSettlements` court agenda facts -> `OfficeAndCareer` policy/local-response owner lane -> `PublicLifeAndRumor` public interpretation -> later `SocialMemoryAndRelations` `office.policy_local_response...` residue -> Application projection/readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, affordance prose, docket prose, or `DomainEvent.Summary`
+- treating the audit as a new scheduler phase, court process state, appointment slate, dispatch arrival, downstream household/market/public consequence rule, or policy-dispatch completion claim
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket/public-life-receipt-echo/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating court-policy receipt/docket/public-life readback as durable cooldown, an Order after-account, Office success/failure, or home-household debt
+
 ### Chain 8 v189-v196 public-life receipt echo integration note
 
 Court-policy public-life receipt echo is projection-only integration over existing local-response/public-reading inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause key and current public-life scalars to show `公议回执回声防误读`, `街面只读已投影的政策公议后手`, and `公议不把回执读成新政令` in public-life command `LeverageSummary` / `ReadbackSummary`.

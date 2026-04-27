@@ -75,6 +75,12 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Court-policy first rule-density closeout audit v197-v204 UI note
+
+The v109-v196 first rule-density closeout audit v197-v204 is a presentation boundary statement, not a new shell feature. Governance, office, docket, desk, great-hall, and public-life surfaces may show the already-projected Chain 8 process / local response / public echo / receipt guard fields, but the audit does not add a new UI state, cooldown account, policy result, or Court command.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, affordance prose, docket prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, command ranking, receipt echo status, cooldown status, public-reading weight, docket guard status, next-window outcomes, court process state, appointment slate, dispatch arrival, or downstream household/market/public consequences.
+
 ### Court-policy public-life receipt echo v189-v196 UI note
 
 Public-life command surfaces may show `公议回执回声防误读` only when it is already present in projected command `LeverageSummary` / `ReadbackSummary`. The wording should make clear that `街面只读已投影的政策公议后手` and `公议不把回执读成新政令` are street/public interpretation over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.

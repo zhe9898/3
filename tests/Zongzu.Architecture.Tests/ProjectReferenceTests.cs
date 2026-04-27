@@ -1329,6 +1329,88 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Court_policy_first_rule_density_closeout_v197_v204_must_document_v109_v196_without_claiming_full_court_engine()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string ui = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string audit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-first-rule-density-closeout-audit-v197-v204.md"));
+
+        Assert.That(topologyIndex, Does.Contain("Chain 8 First Rule-Density Closeout Audit - v197-v204"));
+        Assert.That(topologyIndex, Does.Contain("v109-v196 first rule-density closeout audit v197-v204"));
+        Assert.That(topologyIndex, Does.Contain("not the full court engine"));
+        Assert.That(topologyIndex, Does.Contain("Court process state, appointment slate, dispatch arrival, and downstream household/market/public consequences remain explicit full-chain debt"));
+
+        foreach (string subpass in new[]
+                 {
+                     "v109-v116",
+                     "v117-v124",
+                     "v125-v132",
+                     "v133-v140",
+                     "v141-v148",
+                     "v149-v156",
+                     "v157-v164",
+                     "v165-v172",
+                     "v173-v180",
+                     "v181-v188",
+                     "v189-v196",
+                 })
+        {
+            Assert.That(topologyIndex, Does.Contain(subpass), subpass);
+            Assert.That(acceptance, Does.Contain(subpass), subpass);
+        }
+
+        Assert.That(integrationRules, Does.Contain("Chain 8 v197-v204 first rule-density closeout audit integration note"));
+        Assert.That(moduleBoundaries, Does.Contain("Court-policy first rule-density closeout audit v197-v204 boundary note"));
+        Assert.That(schemaRules, Does.Contain("court-policy first rule-density closeout audit v197-v204 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy first rule-density closeout audit v197-v204 note"));
+        Assert.That(simulation, Does.Contain("Current court-policy first rule-density closeout audit v197-v204 note"));
+        Assert.That(ui, Does.Contain("Court-policy first rule-density closeout audit v197-v204 UI note"));
+        Assert.That(acceptance, Does.Contain("Backend Chain 8 first rule-density closeout audit v197-v204 acceptance"));
+        Assert.That(audit, Does.Contain("v197-v204 court-policy first rule-density closeout audit"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V204"));
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+
+        Assert.That(Directory.Exists(Path.Combine(SrcDir, "Zongzu.Modules.Court")), Is.False);
+
+        foreach (string text in new[]
+                 {
+                     topologyIndex,
+                     integrationRules,
+                     moduleBoundaries,
+                     schemaRules,
+                     dataSchema,
+                     simulation,
+                     ui,
+                     acceptance,
+                     audit,
+                     skillMatrix,
+                     execPlan,
+                 })
+        {
+            Assert.That(text, Does.Not.Contain("full court engine is complete"));
+            Assert.That(text, Does.Not.Contain("v197-v204 completes court-agenda / policy-dispatch"));
+            Assert.That(text, Does.Not.Contain("UI may compute court-policy results"));
+            Assert.That(text, Does.Not.Contain("Application calculates policy success"));
+        }
+    }
+
+    [Test]
     public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
     {
         string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
