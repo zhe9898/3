@@ -48,6 +48,12 @@ V157-V164 adds a projection-only docket/no-loop guard on top of v149-v156. When 
 
 This guard belongs to existing `CourtPolicyNoLoopGuardSummary` and docket guidance only. It is not a new ledger, not a cooldown account, not a policy outcome, not Order debt, and not a home-household bill. It adds no Court module, court engine, event pool, docket ledger, public-follow-up ledger, cooldown ledger, schema field, migration, Application success calculation, UI/Unity authority, `PersonRegistry` expansion, or manager/god-controller path. It must not parse memory summaries, receipt prose, public-life prose, `DomainEvent.Summary`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 
+## Chain 8 Suggested Action Guard - v165-v172
+
+V165-V172 adds a projection-only suggested-action guard on top of v157-v164. When the governance docket already selects an existing affordance for a settlement that has the court-policy public follow-up guard, Application may append `建议动作防误读` and `只承接已投影的政策公议后手` to the existing `SuggestedCommandPrompt` / docket `GuidanceSummary`.
+
+This does not change `SelectPrimaryGovernanceAffordance` priority, command availability, or policy outcome calculation. The suggested action remains an already-projected Office/PublicLife affordance, not a Court command, not a new ranking rule, not a cooldown account, not Order debt, not Office success/failure, and not a home-household bill. V165-V172 adds no Court module, court engine, event pool, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, schema field, migration, Application success calculation, UI/Unity authority, `PersonRegistry` expansion, or manager/god-controller path. It must not parse memory summaries, receipt prose, public-life prose, `DomainEvent.Summary`, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
 ## Chain 8 Public-Reading Echo - v141-v148
 
 V141-V148 adds a projection-only public-reading echo on top of v133-v140. When a later public-life notice/report choice is visible, Application may project existing `office.policy_local_response...` SocialMemory cause/type/weight together with current `JurisdictionAuthoritySnapshot` and `SettlementPublicLifeSnapshot` values as `政策公议旧读回`, `公议旧账回声`, and `下一次榜示/递报旧读法`.
@@ -144,6 +150,8 @@ flowchart LR
 ## Full-Chain Debt
 
 The thin topology leaves these fuller branches intentionally unimplemented:
+
+Chain 8 v165-v172 note: the suggested-action guard only copies the existing court-policy anti-misread guidance into the docket prompt. It does not close court process state, add an appointment slate, add dispatch arrival, or create downstream household/market/public consequence rules.
 
 - Chain 1: precise zhuhu / kehu household grade, tax kind, tenant/client rent cascade, cash squeeze into markets, long memory, precise settlement tax events, and richer jurisdiction capacity formulas. The current handler already uses a multi-dimensional proxy profile from existing household state (`Livelihood`, `LandHolding`, `GrainStore`, `LaborCapacity`, `DependentCount`, `DebtPressure`, `Distress`) and carries settlement scope into the yamen/public-life receipt; v36 also lets sponsor clans absorb household debt pressure through existing `FamilyCore` support/charity/tension fields, but it is not yet a full tax/corvee society or relief economy formula.
 - Chain 2: formal yield ratio, granary security, route risk, disaster relief, migration, death pressure, famine narrative residue. The current handler already uses a first household-owned subsistence profile from grain price/current supply-demand metadata plus existing household dimensions (`Livelihood`, `GrainStore`, `LaborCapacity`, `DependentCount`, `DebtPressure`, `Distress`, `MigrationRisk`); v36 can press sponsor-clan charity/support/tension from that structured household snapshot, but it is not yet a full grain/famine society formula.

@@ -1034,6 +1034,80 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Court_policy_suggested_action_guard_v165_v172_must_remain_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-suggested-action-guard-v165-v172.md"));
+
+        Assert.That(governanceSource, Does.Contain("BuildGovernanceSuggestedActionGuard"));
+        Assert.That(governanceSource, Does.Contain("HasCourtPolicyPublicFollowUpGuard"));
+        Assert.That(governanceSource, Does.Contain("建议动作防误读"));
+        Assert.That(governanceSource, Does.Contain("只承接已投影的政策公议后手"));
+        Assert.That(governanceSource, Does.Contain("SelectPrimaryGovernanceAffordance"));
+        Assert.That(governanceSource, Does.Contain("GetGovernanceAffordancePriority"));
+        Assert.That(governanceSource, Does.Contain("BuildGovernanceSuggestedCommandPrompt("));
+        Assert.That(unitySource, Does.Contain("governanceDocket?.GuidanceSummary"));
+        Assert.That(unitySource, Does.Contain("ShellTextAdapter.CombineDistinct"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "LeverageSummary.Contains",
+                     "ReadbackSummary.Contains",
+                     "SuggestedCommandPrompt.Contains",
+                     "residue.Summary",
+                     "memory.Summary",
+                     "DomainEvent.Summary",
+                     "OfficialNoticeLine",
+                     "PrefectureDispatchLine",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "CourtProcessLedger",
+                     "PolicyLedger",
+                     "PublicFollowUpLedger",
+                     "CooldownLedger",
+                     "DocketLedger",
+                     "SuggestedActionLedger",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(governanceSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("Zongzu.Application"));
+        Assert.That(unitySource, Does.Not.Contain("Zongzu.Modules."));
+        Assert.That(schemaRules, Does.Contain("court-policy suggested action guard v165-v172 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy suggested action guard v165-v172 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy suggested action guard v165-v172 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No new suggested-action ranking rule"));
+    }
+
+    [Test]
     public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
     {
         string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));

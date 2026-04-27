@@ -28,6 +28,18 @@ Until a dedicated historical-process pack exists:
 
 A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
+## Court-policy suggested action guard v165-v172 boundary note
+
+Chain 8 v165-v172 keeps v157-v164 docket guard ownership and adds only a projected suggested-action prompt guard:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window, county execution, document/report aftermath, and implementation posture.
+- `PublicLifeAndRumor` owns notice/report public interpretation and street-reading texture.
+- `SocialMemoryAndRelations` owns the durable `office.policy_local_response...` records that make the old reading visible.
+- Application may assemble `建议动作防误读` from structured guard eligibility plus existing projected affordance/no-loop text only; it must not change command ranking or calculate policy success.
+- Unity may copy governance, office, docket, desk, and great-hall projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure/public-reading/public-follow-up/docket/suggested-action ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
 ## Court-policy follow-up docket guard v157-v164 boundary note
 
 Chain 8 v157-v164 keeps v149-v156 public follow-up ownership and adds only a projected docket/no-loop guard:

@@ -420,6 +420,11 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是冷却账本"));
         Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是Order后账"));
         Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("不是Office成败"));
+        Assert.That(afterSecondGovernance.SuggestedCommandPrompt, Does.Contain("建议动作防误读"));
+        Assert.That(afterSecondGovernance.SuggestedCommandPrompt, Does.Contain("只承接已投影的政策公议后手"));
+        Assert.That(afterSecondGovernance.SuggestedCommandPrompt, Does.Contain("不是Order后账"));
+        Assert.That(afterSecond.GovernanceDocket.SuggestedCommandPrompt, Does.Contain("建议动作防误读"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("只承接已投影的政策公议后手"));
         PlayerCommandAffordanceSnapshot noticeAffordance = afterSecond.PlayerCommands.Affordances
             .Single(affordance => affordance.SettlementId == new SettlementId(10)
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
@@ -442,6 +447,7 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议旧读回"));
         Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议后手提示"));
         Assert.That(offScopeGovernance.CourtPolicyNoLoopGuardSummary, Does.Not.Contain("政策后手案牍防误读"));
+        Assert.That(offScopeGovernance.SuggestedCommandPrompt, Does.Not.Contain("建议动作防误读"));
         PlayerCommandAffordanceSnapshot offScopeNoticeAffordance = afterSecond.PlayerCommands.Affordances
             .Single(affordance => affordance.SettlementId == new SettlementId(20)
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);

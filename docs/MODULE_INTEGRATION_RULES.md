@@ -64,6 +64,19 @@ When changing one of those chains:
 - document whether a same-month follow-on uses the bounded scheduler drain or deliberately carries pressure into the next month
 - preserve the distinction between a thin topology proof and the full social chain
 
+### Chain 8 v165-v172 suggested action guard integration note
+
+Court-policy suggested action guard is projection-only integration over the existing follow-up docket guard. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read structured guard eligibility and the already-selected projected affordance to show `建议动作防误读` and `只承接已投影的政策公议后手` in `SuggestedCommandPrompt` / docket `GuidanceSummary`.
+
+Allowed data path:
+- existing SocialMemory projection + `OfficePolicyLocalResponseResidueCause.OutcomeCode` + `SettlementPublicLifeSnapshot` + already-selected `PlayerCommandAffordanceSnapshot` -> Application read model / governance docket prompt -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, affordance prose, or `DomainEvent.Summary`
+- changing `SelectPrimaryGovernanceAffordance` priority, command availability, policy success, cooldown, or owner-lane state
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading/public-follow-up/docket/suggested-action/cooldown ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating the prompt as a durable cooldown account, an Order after-account, Office success/failure, or home-household debt
+
 ### Chain 8 v157-v164 follow-up docket guard integration note
 
 Court-policy follow-up docket guard is projection-only integration over existing public follow-up cue inputs. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured outcome code and current public-life scalars to show `政策后手案牍防误读`, `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读` on governance/docket no-loop guard readbacks.

@@ -87,6 +87,12 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current court-policy suggested action guard v165-v172 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `建议动作防误读` / `只承接已投影的政策公议后手` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data, `SettlementPublicLifeSnapshot` values, and the already-selected `PlayerCommandAffordanceSnapshot`
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a suggested-action guard cache, cooldown marker, repeat-pressure field, command-ranking override, or court-policy ledger
+
 Current court-policy public follow-up cue v149-v156 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger

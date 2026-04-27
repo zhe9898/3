@@ -120,6 +120,8 @@ public sealed partial class PresentationReadModelBuilder
                 string courtPolicyNoLoopGuard = CombineGovernanceDocketText(
                     BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife),
                     BuildCourtPolicyPublicFollowUpDocketGuard(localOfficeSocialMemories, jurisdiction, publicLife));
+                bool hasCourtPolicyPublicFollowUpGuard =
+                    HasCourtPolicyPublicFollowUpGuard(localOfficeSocialMemories, jurisdiction, publicLife);
                 bool hasCourtPolicyProcess = !string.IsNullOrWhiteSpace(courtPolicyEntryReadback);
                 PlayerCommandAffordanceSnapshot? suggestedAffordance = SelectPrimaryGovernanceAffordance(
                     bundle.PlayerCommands.Affordances,
@@ -171,7 +173,10 @@ public sealed partial class PresentationReadModelBuilder
                     HasOrderAdministrativeAftermath = hasOrderAftermath,
                     SuggestedCommandName = suggestedAffordance?.CommandName ?? string.Empty,
                     SuggestedCommandLabel = suggestedAffordance?.Label ?? string.Empty,
-                    SuggestedCommandPrompt = BuildGovernanceSuggestedCommandPrompt(suggestedAffordance),
+                    SuggestedCommandPrompt = BuildGovernanceSuggestedCommandPrompt(
+                        suggestedAffordance,
+                        courtPolicyNoLoopGuard,
+                        hasCourtPolicyPublicFollowUpGuard),
                     PublicPressureSummary = BuildGovernancePublicPressureSummary(publicLife, disorder),
                     PublicMomentumSummary = BuildGovernancePublicMomentumSummary(publicLife, jurisdiction, disorder),
                     OrderAdministrativeAftermathSummary = orderAftermathSummary,
@@ -520,6 +525,17 @@ public sealed partial class PresentationReadModelBuilder
 
         string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
         return $"政策后手案牍防误读：{publicLife.NodeLabel}的公议后手只作案牍提示（{outcomeLabel}，榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}）；{docketCue} 不是冷却账本，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
+    }
+
+    private static bool HasCourtPolicyPublicFollowUpGuard(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        return publicLife is not null
+            && HasCourtPolicyProcessReadback(jurisdiction, publicLife)
+            && SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction) is { CauseKey: var causeKey }
+            && TryReadOfficePolicyLocalResponseResidueCause(causeKey, out _);
     }
 
     private static string BuildOfficeLaneNoLoopGuardSummary(
@@ -933,7 +949,10 @@ public sealed partial class PresentationReadModelBuilder
         };
     }
 
-    private static string BuildGovernanceSuggestedCommandPrompt(PlayerCommandAffordanceSnapshot? affordance)
+    private static string BuildGovernanceSuggestedCommandPrompt(
+        PlayerCommandAffordanceSnapshot? affordance,
+        string courtPolicyNoLoopGuard,
+        bool hasCourtPolicyPublicFollowUpGuard)
     {
         if (affordance is null)
         {
@@ -944,7 +963,21 @@ public sealed partial class PresentationReadModelBuilder
             $"眼下可先以{affordance.Label}应对{affordance.TargetLabel}；{affordance.AvailabilitySummary}",
             affordance.LeverageSummary,
             affordance.CostSummary,
-            affordance.ExecutionSummary);
+            affordance.ExecutionSummary,
+            BuildGovernanceSuggestedActionGuard(affordance, courtPolicyNoLoopGuard, hasCourtPolicyPublicFollowUpGuard));
+    }
+
+    private static string BuildGovernanceSuggestedActionGuard(
+        PlayerCommandAffordanceSnapshot affordance,
+        string courtPolicyNoLoopGuard,
+        bool hasCourtPolicyPublicFollowUpGuard)
+    {
+        if (!hasCourtPolicyPublicFollowUpGuard || string.IsNullOrWhiteSpace(courtPolicyNoLoopGuard))
+        {
+            return string.Empty;
+        }
+
+        return $"建议动作防误读：{affordance.Label}只承接已投影的政策公议后手；{courtPolicyNoLoopGuard}";
     }
 
     private static GovernanceFocusSnapshot BuildGovernanceFocus(

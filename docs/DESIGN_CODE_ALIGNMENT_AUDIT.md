@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v165-v172 court-policy suggested action guard - 2026-04-27
+
+- Chain 8 now lets the governance docket suggested-action prompt copy the existing court-policy anti-misread guard as `建议动作防误读` and `只承接已投影的政策公议后手`.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles a projected prompt from structured guard eligibility and existing affordance data; Unity copies governance/docket text.
+- The pass does not change `SelectPrimaryGovernanceAffordance` priority, command availability, policy success, cooldown, docket state, or any owner-lane rule. The suggested action is still a projected prompt, not a Court command or a new ranking rule.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v165-v172 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v157-v164 court-policy follow-up docket guard - 2026-04-27
 
 - Chain 8 now projects a docket/no-loop guard over the public follow-up cue as `政策后手案牍防误读`. The guard is built from structured SocialMemory cause outcome data plus current `SettlementPublicLifeSnapshot` scalars.
