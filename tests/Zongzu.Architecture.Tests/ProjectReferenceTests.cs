@@ -2524,6 +2524,81 @@ public class ProjectReferenceTests
             "PersonRegistry must remain an identity anchor, not a clan/household/office relationship table.");
     }
 
+    [Test]
+    public void Social_mobility_fidelity_ring_must_stay_owner_laned_projection_only_and_schema_neutral()
+    {
+        string populationModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string personRegistryModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PersonRegistry",
+            "PersonRegistryModule.cs"));
+        string personRegistryCommands = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PersonRegistry",
+            "PersonRegistryCommands.cs"));
+        string mobilityProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Mobility.cs"));
+        string personDossierProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PersonDossiers.cs"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(personRegistryModule, Does.Contain("ModuleSchemaVersion => 1"));
+        Assert.That(personRegistryCommands, Does.Contain("ChangeFidelityRing"));
+        Assert.That(personRegistryCommands, Does.Not.Contain("HouseholdId"));
+        Assert.That(personRegistryCommands, Does.Not.Contain("LivelihoodType"));
+        Assert.That(personRegistryCommands, Does.Not.Contain("PersonMovementLedger"));
+        Assert.That(personRegistryCommands, Does.Not.Contain("SocialMobilityLedger"));
+
+        Assert.That(populationModule, Does.Contain("TryApplyMonthlyLivelihoodDrift"));
+        Assert.That(populationModule, Does.Contain("RebuildSettlementSummaries"));
+        Assert.That(populationModule, Does.Contain("PromoteHotHouseholdMembers"));
+        Assert.That(populationModule, Does.Contain("IPersonRegistryCommands"));
+        Assert.That(populationModule, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(populationModule, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(populationModule, Does.Not.Contain("GetMutableModuleState"));
+
+        Assert.That(mobilityProjection, Does.Contain("GetLaborPools"));
+        Assert.That(mobilityProjection, Does.Contain("GetMarriagePools"));
+        Assert.That(mobilityProjection, Does.Contain("GetMigrationPools"));
+        Assert.That(mobilityProjection, Does.Contain("FidelityScaleSnapshot"));
+        Assert.That(mobilityProjection, Does.Contain("SettlementMobilitySnapshot"));
+        Assert.That(mobilityProjection, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(mobilityProjection, Does.Not.Contain("PlayerCommandService"));
+        Assert.That(mobilityProjection, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(personDossierProjection, Does.Contain("MovementReadbackSummary"));
+        Assert.That(personDossierProjection, Does.Contain("FidelityRingReadbackSummary"));
+        Assert.That(personDossierProjection, Does.Not.Contain("DomainEvent.Summary"));
+
+        string[] presentationSources =
+        [
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "GreatHall", "GreatHallShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "DeskSandbox", "DeskSandboxShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Family", "LineageShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Debug", "DebugShellAdapter.cs"),
+        ];
+        foreach (string sourcePath in presentationSources)
+        {
+            string source = File.ReadAllText(sourcePath);
+            Assert.That(source, Does.Not.Contain("Zongzu.Modules."), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Not.Contain("PlayerCommandService"), Path.GetFileName(sourcePath));
+            Assert.That(source, Does.Not.Contain("GetMutableModuleState"), Path.GetFileName(sourcePath));
+        }
+
+        Assert.That(schemaRules, Does.Contain("v213-v244").Or.Contain("social mobility fidelity ring"));
+        Assert.That(dataSchema, Does.Contain("v213-v244").Or.Contain("social mobility fidelity ring"));
+    }
+
     private static string[] GetProjectReferences(string projectName)
     {
         var csproj = FindCsproj(projectName);

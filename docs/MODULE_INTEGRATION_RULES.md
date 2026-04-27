@@ -586,3 +586,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Application projections may show `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账`, but must not compute policy success or choose outcomes from prose.
 - The integration must not parse `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, `LastRefusalResponseSummary`, or projected court-policy prose.
 - Unity copies projected command/readback fields only. Save/schema result: no persisted state, schema bump, migration, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, household target field, or save-manifest change.
+## Backend social mobility fidelity ring v213-v244 integration note
+- V213-V244 is a rule-driven social/person movement readback loop, not an event-pool body and not a full society engine.
+- `PopulationAndHouseholds` mutates only its own household livelihood, membership activity, and existing labor/marriage/migration pools. It may use `IPersonRegistryCommands.ChangeFidelityRing` to request a bounded focus-ring change for hot household members.
+- `PersonRegistry` changes only `FidelityRing` and emits structured `FidelityRingChanged` metadata; it does not store population, household, livelihood, office, clan, memory, or relationship state.
+- Application projections may assemble `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, and person dossier readbacks from structured queries only. They must not parse `DomainEvent.Summary`, receipt prose, movement readback text, or population summaries as authority.
+- Unity copies projected fields only. Save/schema result: no persisted state, schema bump, migration, social-mobility ledger, movement ledger, focus ledger, projection cache, or save-manifest change.

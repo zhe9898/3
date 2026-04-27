@@ -10,6 +10,7 @@ internal sealed class DeskSandboxProjectionContext
 {
 	private readonly Dictionary<int, PopulationSettlementSnapshot> _populationBySettlement;
 	private readonly ILookup<int, HouseholdSocialPressureSnapshot> _householdPressuresBySettlement;
+	private readonly Dictionary<int, SettlementMobilitySnapshot> _mobilitiesBySettlement;
 	private readonly ILookup<int, AcademySnapshot> _academiesBySettlement;
 	private readonly Dictionary<int, MarketSnapshot> _marketsBySettlement;
 	private readonly ILookup<int, ClanTradeRouteSnapshot> _tradeRoutesBySettlement;
@@ -24,6 +25,7 @@ internal sealed class DeskSandboxProjectionContext
 		SettlementSnapshot[] orderedSettlements,
 		Dictionary<int, PopulationSettlementSnapshot> populationBySettlement,
 		ILookup<int, HouseholdSocialPressureSnapshot> householdPressuresBySettlement,
+		Dictionary<int, SettlementMobilitySnapshot> mobilitiesBySettlement,
 		ILookup<int, AcademySnapshot> academiesBySettlement,
 		Dictionary<int, MarketSnapshot> marketsBySettlement,
 		ILookup<int, ClanTradeRouteSnapshot> clanTradeRoutesBySettlement,
@@ -37,6 +39,7 @@ internal sealed class DeskSandboxProjectionContext
 		OrderedSettlements = orderedSettlements;
 		_populationBySettlement = populationBySettlement;
 		_householdPressuresBySettlement = householdPressuresBySettlement;
+		_mobilitiesBySettlement = mobilitiesBySettlement;
 		_academiesBySettlement = academiesBySettlement;
 		_marketsBySettlement = marketsBySettlement;
 		_tradeRoutesBySettlement = clanTradeRoutesBySettlement;
@@ -58,6 +61,7 @@ internal sealed class DeskSandboxProjectionContext
 				.ToArray(),
 			bundle.PopulationSettlements.ToDictionary(settlement => settlement.SettlementId.Value, settlement => settlement),
 			bundle.HouseholdSocialPressures.ToLookup(pressure => pressure.SettlementId.Value),
+			bundle.SettlementMobilities.ToDictionary(mobility => mobility.SettlementId.Value, mobility => mobility),
 			bundle.Academies.ToLookup(academy => academy.SettlementId.Value),
 			bundle.Markets.ToDictionary(market => market.SettlementId.Value, market => market),
 			bundle.ClanTradeRoutes.ToLookup(route => route.SettlementId.Value),
@@ -85,6 +89,12 @@ internal sealed class DeskSandboxProjectionContext
 			.ThenByDescending(static pressure => pressure.PressureScore)
 			.ThenBy(static pressure => pressure.HouseholdName, StringComparer.Ordinal)
 			.ToArray();
+	}
+
+	internal SettlementMobilitySnapshot? GetMobility(SettlementId settlementId)
+	{
+		_mobilitiesBySettlement.TryGetValue(settlementId.Value, out SettlementMobilitySnapshot? mobility);
+		return mobility;
 	}
 
 	internal AcademySnapshot[] GetAcademies(SettlementId settlementId)

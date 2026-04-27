@@ -37,6 +37,10 @@ public sealed class PersonDossierViewModel
 
 	public string ActivitySummary { get; set; } = string.Empty;
 
+	public string MovementReadbackSummary { get; set; } = string.Empty;
+
+	public string FidelityRingReadbackSummary { get; set; } = string.Empty;
+
 	public string EducationSummary { get; set; } = string.Empty;
 
 	public string TradeSummary { get; set; } = string.Empty;

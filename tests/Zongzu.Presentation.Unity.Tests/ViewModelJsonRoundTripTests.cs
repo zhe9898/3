@@ -23,6 +23,7 @@ public class ViewModelJsonRoundTripTests
             {
                 CurrentDateLabel = "正月上旬",
                 FamilySummary = "宗族安泰",
+                MobilitySummary = "Near detail: Core 1, Local 2. PopulationAndHouseholds movement copied.",
             },
             Lineage = new LineageSurfaceViewModel
             {
@@ -55,6 +56,8 @@ public class ViewModelJsonRoundTripTests
                         LivelihoodSummary = "Zhang household; livelihood PettyTrader",
                         HealthSummary = "health Healthy; resilience 64",
                         ActivitySummary = "activity Studying",
+                        MovementReadbackSummary = "PopulationAndHouseholds keeps activity visible.",
+                        FidelityRingReadbackSummary = "PersonRegistry owns the Core ring.",
                         EducationSummary = "local exam passed; tier CountyExam",
                         TradeSummary = "clan trade cash 92, grain 71",
                         OfficeSummary = "appointed 主簿; authority 2",
@@ -86,6 +89,8 @@ public class ViewModelJsonRoundTripTests
                         LivelihoodSummary = "Zhang household; livelihood PettyTrader",
                         HealthSummary = "health Healthy; resilience 64",
                         ActivitySummary = "activity Studying",
+                        MovementReadbackSummary = "PopulationAndHouseholds keeps activity visible.",
+                        FidelityRingReadbackSummary = "PersonRegistry owns the Core ring.",
                         EducationSummary = "local exam passed; tier CountyExam",
                         TradeSummary = "clan trade cash 92, grain 71",
                         OfficeSummary = "appointed 主簿; authority 2",
@@ -105,6 +110,7 @@ public class ViewModelJsonRoundTripTests
                     {
                         SettlementName = "兰溪县",
                         Security = 80,
+                        MobilitySummary = "Pool readback copied from projection.",
                     },
                 },
             },
@@ -134,12 +140,15 @@ public class ViewModelJsonRoundTripTests
         Assert.That(roundTripped, Is.Not.Null);
         Assert.That(roundTripped.GreatHall.CurrentDateLabel, Is.EqualTo(original.GreatHall.CurrentDateLabel));
         Assert.That(roundTripped.GreatHall.FamilySummary, Is.EqualTo(original.GreatHall.FamilySummary));
+        Assert.That(roundTripped.GreatHall.MobilitySummary, Does.Contain("PopulationAndHouseholds"));
         Assert.That(roundTripped.Lineage.PersonDossiers, Is.Not.Null);
         Assert.That(roundTripped.Lineage.PersonDossiers.Count, Is.EqualTo(1));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].DisplayName, Is.EqualTo("Zhang Yuan"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].ClanId, Is.EqualTo(1));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].HouseholdId, Is.EqualTo(1));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].LivelihoodSummary, Does.Contain("PettyTrader"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].FidelityRingReadbackSummary, Does.Contain("PersonRegistry"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].EducationSummary, Does.Contain("local exam passed"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].OfficeSummary, Does.Contain("appointed"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("SocialMemoryAndRelations"));
@@ -153,6 +162,7 @@ public class ViewModelJsonRoundTripTests
         Assert.That(roundTripped.Lineage.FocusedPerson.SourceModuleKeys, Does.Contain("FamilyCore"));
         Assert.That(roundTripped.DeskSandbox.Settlements, Is.Not.Null);
         Assert.That(roundTripped.DeskSandbox.Settlements.Count, Is.EqualTo(1));
+        Assert.That(roundTripped.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("Pool readback"));
         Assert.That(roundTripped.DeskSandbox.Settlements[0].SettlementName, Is.EqualTo("兰溪县"));
         Assert.That(roundTripped.NotificationCenter.Items, Is.Not.Null);
         Assert.That(roundTripped.NotificationCenter.Items.Count, Is.EqualTo(1));

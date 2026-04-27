@@ -43,6 +43,10 @@ public sealed record PersonDossierSnapshot
 
     public string ActivitySummary { get; init; } = string.Empty;
 
+    public string MovementReadbackSummary { get; init; } = string.Empty;
+
+    public string FidelityRingReadbackSummary { get; init; } = string.Empty;
+
     public string EducationSummary { get; init; } = string.Empty;
 
     public string TradeSummary { get; init; } = string.Empty;

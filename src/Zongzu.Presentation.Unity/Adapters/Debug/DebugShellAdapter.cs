@@ -35,6 +35,9 @@ internal static class DebugShellAdapter
 			CurrentScale = new DebugScaleSummaryViewModel
 			{
 				EntitySummary = $"{debug.CurrentScale.SettlementCount} settlements, {debug.CurrentScale.ClanCount} clans, {debug.CurrentScale.HouseholdCount} households.",
+				FidelityRingSummary = $"Core {debug.CurrentScale.CorePersonCount}, Local {debug.CurrentScale.LocalPersonCount}, Regional {debug.CurrentScale.RegionalPersonCount}.",
+				MobilityPoolSummary = $"{debug.CurrentScale.LaborPoolCount} labor pools, {debug.CurrentScale.MarriagePoolCount} marriage pools, {debug.CurrentScale.MigrationPoolCount} migration pools.",
+				MovementFocusSummary = $"{debug.CurrentScale.ActiveMigratingHouseholdCount} migrating households, {debug.CurrentScale.ActiveMigratingPersonCount} named migrating persons.",
 				InstitutionSummary = $"{debug.CurrentScale.AcademyCount} academies, {debug.CurrentScale.RouteCount} trade routes.",
 				ModuleSummary = $"{debug.CurrentScale.EnabledModuleCount} enabled modules mirrored in {debug.CurrentScale.SavedModuleCount} saved envelopes.",
 				NotificationUtilizationLabel = $"{debug.CurrentScale.NotificationCount} notices ({debug.CurrentScale.NotificationUtilizationPercent}% of retention).",

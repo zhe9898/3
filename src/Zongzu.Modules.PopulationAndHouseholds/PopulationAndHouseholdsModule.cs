@@ -82,6 +82,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
     {
         IWorldSettlementsQueries settlementQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
         IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
+        IPersonRegistryQueries? personQueries = scope.TryGetQuery<IPersonRegistryQueries>();
 
         foreach (PopulationHouseholdState household in scope.State.Households.OrderBy(static household => household.Id.Value))
         {
@@ -90,13 +91,16 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             ApplyXunPulseAdjustments(scope.Context.CurrentXun, settlement, clanSupport, household);
         }
 
-        RebuildSettlementSummaries(scope.State);
+        SynchronizeMembershipLivelihoodsAndActivities(scope.State);
+        RebuildSettlementSummaries(scope.State, personQueries);
     }
 
     public override void RunMonth(ModuleExecutionScope<PopulationAndHouseholdsState> scope)
     {
         IWorldSettlementsQueries settlementQueries = scope.GetRequiredQuery<IWorldSettlementsQueries>();
         IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
+        IPersonRegistryQueries? personQueries = scope.TryGetQuery<IPersonRegistryQueries>();
+        IPersonRegistryCommands? personCommands = scope.TryGetQuery<IPersonRegistryCommands>();
 
         foreach (PopulationHouseholdState household in scope.State.Households.OrderBy(static household => household.Id.Value))
         {
@@ -107,6 +111,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             int oldLaborCapacity = household.LaborCapacity;
             int oldMigrationRisk = household.MigrationRisk;
             bool wasMigrating = household.IsMigrating;
+            bool livelihoodCollapseEmitted = false;
 
             int prosperityPressure = settlement.Prosperity < 50 ? 1 : settlement.Prosperity >= 60 ? -1 : 0;
             int securityPressure = settlement.Security < 45 ? 1 : settlement.Security >= 55 ? -1 : 0;
@@ -119,6 +124,29 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             household.LaborCapacity = Math.Clamp(household.LaborCapacity + ComputeLaborDelta(settlement.Prosperity, household.Distress), 0, 100);
             household.MigrationRisk = Math.Clamp(household.MigrationRisk + ComputeMigrationDelta(settlement.Security, household.Distress), 0, 100);
             household.IsMigrating = household.IsMigrating || household.MigrationRisk >= 80;
+
+            if (TryApplyMonthlyLivelihoodDrift(household, settlement, out LivelihoodDriftResult livelihoodDrift))
+            {
+                scope.RecordDiff(
+                    $"{household.HouseholdName}生计从{RenderLivelihoodForDiff(livelihoodDrift.Previous)}漂向{RenderLivelihoodForDiff(livelihoodDrift.Current)}；{livelihoodDrift.Reason}。",
+                    household.Id.Value.ToString());
+
+                if (IsLivelihoodCollapseDrift(livelihoodDrift))
+                {
+                    scope.Emit(
+                        PopulationEventNames.LivelihoodCollapsed,
+                        $"{household.HouseholdName}生计从{RenderLivelihoodForDiff(livelihoodDrift.Previous)}坠作{RenderLivelihoodForDiff(livelihoodDrift.Current)}。",
+                        household.Id.Value.ToString(),
+                        new Dictionary<string, string>
+                        {
+                            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseSocialPressure,
+                            [DomainEventMetadataKeys.SettlementId] = household.SettlementId.Value.ToString(),
+                            [DomainEventMetadataKeys.HouseholdId] = household.Id.Value.ToString(),
+                            [DomainEventMetadataKeys.Livelihood] = household.Livelihood.ToString(),
+                        });
+                    livelihoodCollapseEmitted = true;
+                }
+            }
 
             scope.RecordDiff(
                 $"{household.HouseholdName}本月民困{household.Distress}，债压{household.DebtPressure}，丁力{household.LaborCapacity}，迁徙之念{household.MigrationRisk}。",
@@ -139,7 +167,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                 scope.Emit(PopulationEventNames.MigrationStarted, $"{household.HouseholdName}已起迁徙之念。");
             }
 
-            if (oldDebtPressure < 85 && household.DebtPressure >= 85 && household.Distress >= 80)
+            if (!livelihoodCollapseEmitted && oldDebtPressure < 85 && household.DebtPressure >= 85 && household.Distress >= 80)
             {
                 scope.Emit(PopulationEventNames.LivelihoodCollapsed, $"{household.HouseholdName}生计顿敝。");
             }
@@ -150,9 +178,11 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             }
         }
 
+        SynchronizeMembershipLivelihoodsAndActivities(scope.State);
+        PromoteHotHouseholdMembers(scope.Context, scope.State, personQueries, personCommands);
         AdvanceIllnessAndAdjudicateDeaths(scope);
 
-        RebuildSettlementSummaries(scope.State);
+        RebuildSettlementSummaries(scope.State, personQueries);
     }
 
     private static void ApplyXunPulseAdjustments(
@@ -288,7 +318,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
         if (anyHouseholdChanged)
         {
-            RebuildSettlementSummaries(scope.State);
+            SynchronizeMembershipLivelihoodsAndActivities(scope.State);
+            RebuildSettlementSummaries(scope.State, scope.TryGetQuery<IPersonRegistryQueries>());
         }
     }
 
@@ -367,7 +398,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
         if (anyHouseholdChanged)
         {
-            RebuildSettlementSummaries(scope.State);
+            SynchronizeMembershipLivelihoodsAndActivities(scope.State);
+            RebuildSettlementSummaries(scope.State, scope.TryGetQuery<IPersonRegistryQueries>());
         }
     }
 
@@ -905,7 +937,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
             if (anyHouseholdChanged)
             {
-                RebuildSettlementSummaries(scope.State);
+                SynchronizeMembershipLivelihoodsAndActivities(scope.State);
+                RebuildSettlementSummaries(scope.State, scope.TryGetQuery<IPersonRegistryQueries>());
             }
         }
     }
@@ -1151,6 +1184,11 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             8);
     }
 
+    private readonly record struct LivelihoodDriftResult(
+        LivelihoodType Previous,
+        LivelihoodType Current,
+        string Reason);
+
     private static int GetClanSupportReserve(IFamilyCoreQueries familyQueries, ClanId? sponsorClanId)
     {
         return sponsorClanId is null ? 0 : familyQueries.GetRequiredClan(sponsorClanId.Value).SupportReserve;
@@ -1234,7 +1272,252 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         return Math.Max(1, drop);
     }
 
-    private static void RebuildSettlementSummaries(PopulationAndHouseholdsState state)
+    private static bool TryApplyMonthlyLivelihoodDrift(
+        PopulationHouseholdState household,
+        SettlementSnapshot settlement,
+        out LivelihoodDriftResult result)
+    {
+        LivelihoodType previous = household.Livelihood;
+        LivelihoodType current = ResolveMonthlyLivelihood(household, settlement);
+        if (current == previous)
+        {
+            result = default;
+            return false;
+        }
+
+        household.Livelihood = current;
+        result = new LivelihoodDriftResult(previous, current, BuildLivelihoodDriftReason(household, settlement, current));
+        return true;
+    }
+
+    private static LivelihoodType ResolveMonthlyLivelihood(PopulationHouseholdState household, SettlementSnapshot settlement)
+    {
+        if (household.Distress >= 85 && household.DebtPressure >= 80 && household.LaborCapacity < 35)
+        {
+            return LivelihoodType.Vagrant;
+        }
+
+        if (household.IsMigrating || household.MigrationRisk >= 80)
+        {
+            return household.Livelihood == LivelihoodType.Vagrant
+                ? LivelihoodType.Vagrant
+                : LivelihoodType.SeasonalMigrant;
+        }
+
+        if (household.Livelihood == LivelihoodType.Smallholder
+            && household.LandHolding is > 0 and < 20
+            && household.DebtPressure >= 65)
+        {
+            return LivelihoodType.Tenant;
+        }
+
+        if (household.Livelihood == LivelihoodType.Tenant
+            && household.Distress >= 70
+            && household.LaborCapacity < 45)
+        {
+            return LivelihoodType.HiredLabor;
+        }
+
+        if (household.Livelihood is LivelihoodType.PettyTrader or LivelihoodType.Artisan or LivelihoodType.Boatman
+            && household.DebtPressure >= 80
+            && household.Distress >= 70)
+        {
+            return LivelihoodType.HiredLabor;
+        }
+
+        if (household.Livelihood is LivelihoodType.HiredLabor or LivelihoodType.SeasonalMigrant
+            && settlement.Prosperity >= 58
+            && settlement.Security >= 55
+            && household.Distress <= 40
+            && household.DebtPressure <= 40
+            && household.LandHolding >= 25
+            && household.GrainStore >= 45)
+        {
+            return LivelihoodType.Smallholder;
+        }
+
+        if (household.Livelihood == LivelihoodType.Vagrant
+            && household.Distress <= 45
+            && household.DebtPressure <= 50
+            && household.LaborCapacity >= 45
+            && settlement.Security >= 50)
+        {
+            return LivelihoodType.HiredLabor;
+        }
+
+        return household.Livelihood;
+    }
+
+    private static string BuildLivelihoodDriftReason(
+        PopulationHouseholdState household,
+        SettlementSnapshot settlement,
+        LivelihoodType current)
+    {
+        return current switch
+        {
+            LivelihoodType.Vagrant => "债压、民困和丁力一齐断裂，先从家计滑成游食",
+            LivelihoodType.SeasonalMigrant => "迁徙风险已过阈值，远路成为压力出口",
+            LivelihoodType.Tenant => "地少债重，先从自耕滑向佃作",
+            LivelihoodType.HiredLabor => "家计不稳，只能把劳力先卖到短工、脚役或佣作处",
+            LivelihoodType.Smallholder => $"{settlement.Name}市况和治安稍稳，存粮与薄地足以把家户拉回小农轨道",
+            _ => $"在{settlement.Name}的压力面中改换生计",
+        };
+    }
+
+    private static bool IsLivelihoodCollapseDrift(LivelihoodDriftResult result)
+    {
+        return result.Current == LivelihoodType.Vagrant
+            || (result.Previous is LivelihoodType.Smallholder or LivelihoodType.Tenant
+                && result.Current == LivelihoodType.HiredLabor);
+    }
+
+    private static string RenderLivelihoodForDiff(LivelihoodType livelihood)
+    {
+        return livelihood switch
+        {
+            LivelihoodType.Smallholder => "小农",
+            LivelihoodType.Tenant => "佃作",
+            LivelihoodType.HiredLabor => "雇工",
+            LivelihoodType.Artisan => "手艺",
+            LivelihoodType.PettyTrader => "小贩",
+            LivelihoodType.Boatman => "船脚",
+            LivelihoodType.DomesticServant => "仆役",
+            LivelihoodType.YamenRunner => "衙前差使",
+            LivelihoodType.SeasonalMigrant => "季节外出",
+            LivelihoodType.Vagrant => "游食",
+            _ => "生计未明",
+        };
+    }
+
+    private static void SynchronizeMembershipLivelihoodsAndActivities(PopulationAndHouseholdsState state)
+    {
+        if (state.Memberships.Count == 0 || state.Households.Count == 0)
+        {
+            return;
+        }
+
+        Dictionary<HouseholdId, PopulationHouseholdState> householdsById = state.Households
+            .ToDictionary(static household => household.Id, static household => household);
+
+        foreach (HouseholdMembershipState membership in state.Memberships.OrderBy(static member => member.PersonId.Value))
+        {
+            if (!householdsById.TryGetValue(membership.HouseholdId, out PopulationHouseholdState? household))
+            {
+                continue;
+            }
+
+            membership.Livelihood = household.Livelihood;
+            if (membership.Health >= HealthStatus.Ill)
+            {
+                membership.Activity = PersonActivity.Convalescing;
+                continue;
+            }
+
+            if (membership.Activity == PersonActivity.Studying
+                && !household.IsMigrating
+                && household.MigrationRisk < 80)
+            {
+                continue;
+            }
+
+            membership.Activity = ResolveHouseholdActivity(household);
+        }
+    }
+
+    private static PersonActivity ResolveHouseholdActivity(PopulationHouseholdState household)
+    {
+        if (household.IsMigrating || household.MigrationRisk >= 80)
+        {
+            return PersonActivity.Migrating;
+        }
+
+        return household.Livelihood switch
+        {
+            LivelihoodType.Smallholder => PersonActivity.Farming,
+            LivelihoodType.Tenant => PersonActivity.Farming,
+            LivelihoodType.HiredLabor => PersonActivity.Laboring,
+            LivelihoodType.Artisan => PersonActivity.Laboring,
+            LivelihoodType.PettyTrader => PersonActivity.Trading,
+            LivelihoodType.Boatman => PersonActivity.Laboring,
+            LivelihoodType.DomesticServant => PersonActivity.Serving,
+            LivelihoodType.YamenRunner => PersonActivity.Serving,
+            LivelihoodType.SeasonalMigrant => PersonActivity.Laboring,
+            _ => PersonActivity.Idle,
+        };
+    }
+
+    private static void PromoteHotHouseholdMembers(
+        ModuleExecutionContext context,
+        PopulationAndHouseholdsState state,
+        IPersonRegistryQueries? personQueries,
+        IPersonRegistryCommands? personCommands)
+    {
+        if (personQueries is null || personCommands is null || state.Memberships.Count == 0)
+        {
+            return;
+        }
+
+        Dictionary<HouseholdId, PopulationHouseholdState> householdsById = state.Households
+            .ToDictionary(static household => household.Id, static household => household);
+
+        foreach (IGrouping<HouseholdId, HouseholdMembershipState> group in state.Memberships
+            .GroupBy(static membership => membership.HouseholdId)
+            .OrderBy(static group => group.Key.Value))
+        {
+            if (!householdsById.TryGetValue(group.Key, out PopulationHouseholdState? household))
+            {
+                continue;
+            }
+
+            string focusReason = ResolveFocusPromotionReason(household);
+            if (string.IsNullOrWhiteSpace(focusReason))
+            {
+                continue;
+            }
+
+            foreach (HouseholdMembershipState membership in group
+                .OrderBy(static member => member.PersonId.Value)
+                .Take(2))
+            {
+                if (!personQueries.TryGetPerson(membership.PersonId, out PersonRecord person)
+                    || !person.IsAlive
+                    || person.FidelityRing != FidelityRing.Regional)
+                {
+                    continue;
+                }
+
+                personCommands.ChangeFidelityRing(
+                    context,
+                    membership.PersonId,
+                    FidelityRing.Local,
+                    focusReason);
+            }
+        }
+    }
+
+    private static string ResolveFocusPromotionReason(PopulationHouseholdState household)
+    {
+        if (household.IsMigrating || household.MigrationRisk >= 80)
+        {
+            return "迁徙压力触发近处读回";
+        }
+
+        if (household.Distress >= 80 && household.DebtPressure >= 85)
+        {
+            return "生计崩口触发近处读回";
+        }
+
+        if (household.LaborCapacity < 25 && household.Distress >= 75)
+        {
+            return "丁力危面触发近处读回";
+        }
+
+        return string.Empty;
+    }
+
+    private static void RebuildSettlementSummaries(
+        PopulationAndHouseholdsState state,
+        IPersonRegistryQueries? personQueries)
     {
         List<PopulationSettlementState> summaries = state.Households
             .GroupBy(static household => household.SettlementId)
@@ -1254,6 +1537,162 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .ToList();
 
         state.Settlements = summaries;
+        RebuildLaborPools(state);
+        RebuildMarriagePools(state, personQueries);
+        RebuildMigrationPools(state);
+    }
+
+    private static void RebuildLaborPools(PopulationAndHouseholdsState state)
+    {
+        state.LaborPools = state.Households
+            .GroupBy(static household => household.SettlementId)
+            .OrderBy(static group => group.Key.Value)
+            .Select(static group =>
+            {
+                PopulationHouseholdState[] households = group.OrderBy(static household => household.Id.Value).ToArray();
+                int availableLabor = households.Sum(static household => household.LaborCapacity);
+                int laborDemand = households.Sum(ComputeHouseholdLaborDemand);
+                int averageMigration = households.Sum(static household => household.MigrationRisk) / households.Length;
+
+                return new LaborPoolEntryState
+                {
+                    SettlementId = group.Key,
+                    AvailableLabor = availableLabor,
+                    LaborDemand = laborDemand,
+                    SeasonalSurplus = Math.Clamp(availableLabor - laborDemand, -200, 400),
+                    WageLevel = Math.Clamp(50 + ((laborDemand - availableLabor) / households.Length) + (averageMigration / 4), 20, 120),
+                };
+            })
+            .ToList();
+    }
+
+    private static int ComputeHouseholdLaborDemand(PopulationHouseholdState household)
+    {
+        int livelihoodDemand = household.Livelihood switch
+        {
+            LivelihoodType.Smallholder => 55 + household.LandHolding / 2,
+            LivelihoodType.Tenant => 45 + household.LandHolding / 3,
+            LivelihoodType.HiredLabor => 35,
+            LivelihoodType.Artisan => 40,
+            LivelihoodType.PettyTrader => 32,
+            LivelihoodType.Boatman => 44,
+            LivelihoodType.DomesticServant => 28,
+            LivelihoodType.YamenRunner => 30,
+            LivelihoodType.SeasonalMigrant => 24,
+            LivelihoodType.Vagrant => 12,
+            _ => 30,
+        };
+
+        return Math.Clamp(
+            livelihoodDemand
+            + (household.DependentCount * 4)
+            + Math.Max(0, household.Distress - 55) / 2,
+            0,
+            140);
+    }
+
+    private static void RebuildMarriagePools(
+        PopulationAndHouseholdsState state,
+        IPersonRegistryQueries? personQueries)
+    {
+        state.MarriagePools = state.Households
+            .GroupBy(static household => household.SettlementId)
+            .OrderBy(static group => group.Key.Value)
+            .Select(group =>
+            {
+                HashSet<HouseholdId> householdIds = group.Select(static household => household.Id).ToHashSet();
+                HouseholdMembershipState[] memberships = state.Memberships
+                    .Where(membership => householdIds.Contains(membership.HouseholdId))
+                    .OrderBy(static membership => membership.PersonId.Value)
+                    .ToArray();
+                int eligibleMales = 0;
+                int eligibleFemales = 0;
+
+                foreach (HouseholdMembershipState membership in memberships)
+                {
+                    if (!IsMarriagePoolEligible(personQueries, membership, out PersonGender gender))
+                    {
+                        continue;
+                    }
+
+                    if (gender == PersonGender.Female)
+                    {
+                        eligibleFemales += 1;
+                    }
+                    else
+                    {
+                        eligibleMales += 1;
+                    }
+                }
+
+                PopulationHouseholdState[] households = group.ToArray();
+                int averageDistress = households.Sum(static household => household.Distress) / households.Length;
+                int averageMigration = households.Sum(static household => household.MigrationRisk) / households.Length;
+                int mismatch = Math.Abs(eligibleMales - eligibleFemales);
+
+                return new MarriagePoolEntryState
+                {
+                    SettlementId = group.Key,
+                    EligibleMales = eligibleMales,
+                    EligibleFemales = eligibleFemales,
+                    MatchDifficulty = Math.Clamp((mismatch * 12) + averageDistress / 3 + averageMigration / 4, 0, 100),
+                };
+            })
+            .ToList();
+    }
+
+    private static bool IsMarriagePoolEligible(
+        IPersonRegistryQueries? personQueries,
+        HouseholdMembershipState membership,
+        out PersonGender gender)
+    {
+        gender = membership.PersonId.Value % 2 == 0
+            ? PersonGender.Female
+            : PersonGender.Male;
+
+        if (personQueries is null)
+        {
+            return true;
+        }
+
+        if (!personQueries.TryGetPerson(membership.PersonId, out PersonRecord person)
+            || !person.IsAlive
+            || person.LifeStage is not (LifeStage.Youth or LifeStage.Adult))
+        {
+            return false;
+        }
+
+        gender = person.Gender == PersonGender.Unspecified ? gender : person.Gender;
+        return true;
+    }
+
+    private static void RebuildMigrationPools(PopulationAndHouseholdsState state)
+    {
+        state.MigrationPools = state.Households
+            .GroupBy(static household => household.SettlementId)
+            .OrderBy(static group => group.Key.Value)
+            .Select(group =>
+            {
+                PopulationHouseholdState[] households = group.OrderBy(static household => household.Id.Value).ToArray();
+                int averageMigration = households.Sum(static household => household.MigrationRisk) / households.Length;
+                int averageDistress = households.Sum(static household => household.Distress) / households.Length;
+                int averageLabor = households.Sum(static household => household.LaborCapacity) / households.Length;
+                int migratingHouseholds = households.Count(static household => household.IsMigrating);
+                HashSet<HouseholdId> householdIds = households.Select(static household => household.Id).ToHashSet();
+                int migratingMembers = state.Memberships.Count(membership =>
+                    householdIds.Contains(membership.HouseholdId)
+                    && membership.Activity == PersonActivity.Migrating);
+                int seasonalHouseholds = households.Count(static household => household.Livelihood == LivelihoodType.SeasonalMigrant);
+
+                return new MigrationPoolEntryState
+                {
+                    SettlementId = group.Key,
+                    OutflowPressure = Math.Clamp(averageMigration + migratingHouseholds * 8 + migratingMembers * 2, 0, 100),
+                    InflowPressure = Math.Clamp(70 - averageDistress + averageLabor / 3, 0, 100),
+                    FloatingPopulation = Math.Clamp(migratingHouseholds * 5 + migratingMembers * 2 + seasonalHouseholds * 3, 0, 200),
+                };
+            })
+            .ToList();
     }
 
     private static int ComputeLivelihoodDistressBaseline(LivelihoodType livelihood)

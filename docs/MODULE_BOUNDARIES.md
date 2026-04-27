@@ -1031,3 +1031,9 @@ Current lite note:
 - `PublicLifeAndRumor` owns the public reading surface for `PostCountyNotice` / `DispatchRoadReport`; it does not calculate policy success and does not parse notice or dispatch prose as authority.
 - `SocialMemoryAndRelations` remains a later-month durable residue reader from structured aftermath only. Same-month v117-v124 handling must not write durable residue, and future readers must not parse projection prose.
 - `Application` may surface `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账` as projected guidance from structured snapshots only. `Unity` copies command/readback fields only. V117-V124 adds no Court module, full court engine, event pool, dispatch/policy/court-process/owner-lane/cooldown ledger, schema bump, migration, `PersonRegistry` expansion, or UI/Unity authority.
+## 2026-04-28 social mobility fidelity ring v213-v244 note
+- `PopulationAndHouseholds` owns household livelihood drift, household-member activity synchronization, and settlement labor/marriage/migration pool rebuilding. These are first-layer social/person movement rules, not Application or UI calculations.
+- `PersonRegistry` owns identity and the existing `FidelityRing` only. Its `ChangeFidelityRing` command may move a hot person between precision rings, but it may not store household, livelihood, movement, clan, office, memory, or capability facts.
+- `SocialMemoryAndRelations` writes no same-month durable movement residue in this pass. Later residue must read structured aftermath from owner modules, never movement/readback prose.
+- `Application` builds `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, and person dossier readbacks from queries. `Zongzu.Presentation.Unity`, shared ViewModels, and the Unity shell copy projected fields only.
+- V213-V244 adds no persisted fields, schema bump, migration, social-mobility ledger, movement ledger, focus ledger, manager/controller layer, or `PersonRegistry` expansion.

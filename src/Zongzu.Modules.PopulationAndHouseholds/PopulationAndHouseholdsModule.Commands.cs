@@ -15,7 +15,8 @@ public sealed partial class PopulationAndHouseholdsModule
 
         if (result.Accepted)
         {
-            RebuildSettlementSummaries(scope.State);
+            SynchronizeMembershipLivelihoodsAndActivities(scope.State);
+            RebuildSettlementSummaries(scope.State, scope.TryGetQuery<IPersonRegistryQueries>());
         }
 
         return result;

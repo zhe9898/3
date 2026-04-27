@@ -25,6 +25,10 @@ public sealed class PresentationReadModelBundle
 
     public IReadOnlyList<HouseholdSocialPressureSnapshot> HouseholdSocialPressures { get; set; } = [];
 
+    public FidelityScaleSnapshot FidelityScale { get; set; } = new();
+
+    public IReadOnlyList<SettlementMobilitySnapshot> SettlementMobilities { get; set; } = [];
+
     public IReadOnlyList<EducationCandidateSnapshot> EducationCandidates { get; set; } = [];
 
     public IReadOnlyList<AcademySnapshot> Academies { get; set; } = [];

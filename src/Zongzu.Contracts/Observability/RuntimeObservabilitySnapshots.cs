@@ -76,6 +76,22 @@ public sealed record RuntimeScaleMetricsSnapshot
 
     public int HouseholdCount { get; init; }
 
+    public int CorePersonCount { get; init; }
+
+    public int LocalPersonCount { get; init; }
+
+    public int RegionalPersonCount { get; init; }
+
+    public int LaborPoolCount { get; init; }
+
+    public int MarriagePoolCount { get; init; }
+
+    public int MigrationPoolCount { get; init; }
+
+    public int ActiveMigratingHouseholdCount { get; init; }
+
+    public int ActiveMigratingPersonCount { get; init; }
+
     public int AcademyCount { get; init; }
 
     public int RouteCount { get; init; }

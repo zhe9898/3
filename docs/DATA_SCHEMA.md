@@ -1236,6 +1236,12 @@ Current court-policy follow-up docket guard v157-v164 note:
 - `WorldSettlements` remains schema `8`; `OfficeAndCareer` remains schema `7`; `PublicLifeAndRumor` remains schema `4`; `SocialMemoryAndRelations` remains schema `3`.
 - New docket guard guidance such as `政策后手案牍防误读`, `公议后手只作案牍提示`, `不是Order后账`, `不是Office成败`, and `仍等Office/PublicLife/SocialMemory分读` is runtime projection over existing SocialMemory cause data and PublicLife snapshots. It is not saved and does not require migration.
 
+Current social mobility fidelity ring v213-v244 note:
+- v213-v244 adds no new persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, social-mobility ledger, movement ledger, focus ledger, projection cache, or `PersonRegistry` domain expansion.
+- `PopulationAndHouseholds` remains schema `3`; it now actively rebuilds already-persisted household livelihood, membership activity, labor-pool, marriage-pool, and migration-pool carriers during deterministic monthly/xun passes.
+- `PersonRegistry` remains schema `1`; `ChangeFidelityRing` mutates only existing identity/fidelity-ring state and emits a structured receipt event. Household, livelihood, activity, relation, office, and memory facts stay outside `PersonRegistry`.
+- New `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, person dossier movement/fidelity readbacks, runtime observability counters, and Unity shell mobility strings are runtime read models or diagnostics only and are not saved.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

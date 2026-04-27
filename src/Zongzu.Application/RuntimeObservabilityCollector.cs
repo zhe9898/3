@@ -9,6 +9,7 @@ using Zongzu.Modules.ConflictAndForce;
 using Zongzu.Modules.NarrativeProjection;
 using Zongzu.Modules.OfficeAndCareer;
 using Zongzu.Modules.OrderAndBanditry;
+using Zongzu.Modules.PersonRegistry;
 using Zongzu.Modules.PopulationAndHouseholds;
 using Zongzu.Modules.TradeAndIndustry;
 using Zongzu.Modules.WorldSettlements;
@@ -25,6 +26,14 @@ internal static class RuntimeObservabilityCollector
         int settlementCount = 0;
         int clanCount = 0;
         int householdCount = 0;
+        int corePersonCount = 0;
+        int localPersonCount = 0;
+        int regionalPersonCount = 0;
+        int laborPoolCount = 0;
+        int marriagePoolCount = 0;
+        int migrationPoolCount = 0;
+        int activeMigratingHouseholdCount = 0;
+        int activeMigratingPersonCount = 0;
         int academyCount = 0;
         int routeCount = 0;
 
@@ -44,6 +53,19 @@ internal static class RuntimeObservabilityCollector
             populationStateObject is PopulationAndHouseholdsState populationState)
         {
             householdCount = populationState.Households.Count;
+            laborPoolCount = populationState.LaborPools.Count;
+            marriagePoolCount = populationState.MarriagePools.Count;
+            migrationPoolCount = populationState.MigrationPools.Count;
+            activeMigratingHouseholdCount = populationState.Households.Count(static household => household.IsMigrating);
+            activeMigratingPersonCount = populationState.Memberships.Count(static membership => membership.Activity == PersonActivity.Migrating);
+        }
+
+        if (simulation.TryGetModuleState(KnownModuleKeys.PersonRegistry, out object? personStateObject) &&
+            personStateObject is PersonRegistryState personState)
+        {
+            corePersonCount = personState.Persons.Count(static person => person.FidelityRing == FidelityRing.Core);
+            localPersonCount = personState.Persons.Count(static person => person.FidelityRing == FidelityRing.Local);
+            regionalPersonCount = personState.Persons.Count(static person => person.FidelityRing == FidelityRing.Regional);
         }
 
         if (simulation.TryGetModuleState(KnownModuleKeys.EducationAndExams, out object? educationStateObject) &&
@@ -69,6 +91,14 @@ internal static class RuntimeObservabilityCollector
             SettlementCount = settlementCount,
             ClanCount = clanCount,
             HouseholdCount = householdCount,
+            CorePersonCount = corePersonCount,
+            LocalPersonCount = localPersonCount,
+            RegionalPersonCount = regionalPersonCount,
+            LaborPoolCount = laborPoolCount,
+            MarriagePoolCount = marriagePoolCount,
+            MigrationPoolCount = migrationPoolCount,
+            ActiveMigratingHouseholdCount = activeMigratingHouseholdCount,
+            ActiveMigratingPersonCount = activeMigratingPersonCount,
             AcademyCount = academyCount,
             RouteCount = routeCount,
             NotificationCount = notificationCount,

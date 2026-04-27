@@ -545,3 +545,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - When existing office scalar pressure shows policy-process strain, `OfficeAndCareer` may resolve the reused `PressCountyYamenDocument` / `RedirectRoadReport` commands as local document/report continuations. This remains deterministic owner-lane command handling, not Application policy success calculation.
 - Application may project `政策回应入口`, `文移续接选择`, `县门轻催`, `递报改道`, `公议降温只读回`, and `不是本户硬扛朝廷后账` only from structured snapshots and existing command affordance/receipt fields. UI/Unity copy these fields only.
 - Same-month handling must not write durable SocialMemory residue. Future residue readers must use structured aftermath and must not parse court-policy projection prose or public-life notice/dispatch wording.
+## Current backend social mobility fidelity ring v213-v244 note
+
+- V213-V244 keeps the existing monthly/xun cadence. `PopulationAndHouseholds` updates household pressure, applies first-layer livelihood drift, synchronizes member activity, and rebuilds settlement labor/marriage/migration pools in deterministic order.
+- Pressure-triggered near readback is bounded: a hot household can ask `PersonRegistry` to move a small number of regional members into `Local` fidelity, but the wider world remains summarized through pools.
+- Application and Unity see only projections after owner modules resolve: `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, person dossier movement/fidelity readbacks, and debug scale counters.
+- Determinism depends on stable `SettlementId`, `HouseholdId`, and `PersonId` ordering. No wall-clock state, UI state, summary parsing, ledger, or new scheduler phase is introduced.

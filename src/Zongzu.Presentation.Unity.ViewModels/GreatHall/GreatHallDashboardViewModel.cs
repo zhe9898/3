@@ -21,6 +21,8 @@ public sealed class GreatHallDashboardViewModel
 
 	public string TradeSummary { get; set; } = string.Empty;
 
+	public string MobilitySummary { get; set; } = string.Empty;
+
 	public string PublicLifeSummary { get; set; } = string.Empty;
 
 	public string GovernanceSummary { get; set; } = string.Empty;
