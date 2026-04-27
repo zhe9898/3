@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v141-v148 court-policy public-reading echo - 2026-04-27
+
+- Chain 8 now projects old court-policy local-response residue into public-life command readbacks as `政策公议旧读回`. The echo is built from structured `SocialMemory` cause/type/weight plus current `JurisdictionAuthoritySnapshot` / `SettlementPublicLifeSnapshot` values.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and execution posture; `PublicLifeAndRumor` reads public interpretation and notice/report texture; `SocialMemoryAndRelations` owns durable residue; Application only assembles a projected public-reading echo; Unity copies existing command/readback fields.
+- The new readback names `公议旧账回声` and `下一次榜示/递报旧读法`, but does not calculate policy success, reopen policy state, or write a public-reading ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v141-v148 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v133-v140 court-policy memory-pressure readback - 2026-04-27
 
 - Chain 8 now projects old court-policy local-response residue into a later visible policy window as `政策旧账回压读回`. The readback is built from structured `SocialMemory` cause/type/weight plus current `JurisdictionAuthoritySnapshot` / `SettlementPublicLifeSnapshot` values.

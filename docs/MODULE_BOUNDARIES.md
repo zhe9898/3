@@ -28,6 +28,18 @@ Until a dedicated historical-process pack exists:
 
 A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
+## Court-policy public-reading echo v141-v148 boundary note
+
+Chain 8 v141-v148 keeps v133-v140 memory-pressure ownership and adds only a projected public-reading echo:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the current policy window and county document/report aftermath.
+- `PublicLifeAndRumor` owns notice/report public interpretation and street-reading texture.
+- `SocialMemoryAndRelations` owns the existing durable `office.policy_local_response...` records.
+- Application may assemble `政策公议旧读回` from structured memory cause/type/weight and current Office/PublicLife snapshots; it must not calculate policy success or write state.
+- Unity may copy public-life command and governance projected fields only.
+
+This pass adds no Court module, full court engine, dispatch/policy/court-process/owner-lane/cooldown/memory-pressure/public-reading ledger, schema field, migration, manager/god-controller path, or `PersonRegistry` expansion. It must not parse `DomainEvent.Summary`, memory summary prose, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
+
 ## Court-policy memory-pressure readback v133-v140 boundary note
 
 Chain 8 v133-v140 keeps v125-v132 durable residue ownership and adds only a projected old-residue pressure readback:

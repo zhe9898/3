@@ -181,12 +181,16 @@ public sealed partial class PresentationReadModelBuilder
                 .ToArray();
             IReadOnlyList<SocialMemoryEntrySnapshot> officeOwnerLaneSocialMemories =
                 SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, officeOwnerLaneLocalClans);
+            IReadOnlyList<SocialMemoryEntrySnapshot> officePolicySocialMemories =
+                SelectLocalOfficePolicySocialMemories(bundle.SocialMemories, officeOwnerLaneLocalClans);
             string officeOwnerLaneReturnGuidance = JoinOwnerLaneReturnSurfaceText(
                 BuildOfficeOwnerLaneReturnSurfaceGuidance(officeOwnerLaneReturnHousehold),
                 BuildOfficeOwnerLaneReturnStatusGuidance(officeOwnerLaneReturnHousehold, jurisdiction, officeOwnerLaneSocialMemories));
             string officeImplementationGuidance = BuildOfficeImplementationAffordanceGuidance(jurisdiction);
             publicLifeBySettlement.TryGetValue(jurisdiction.SettlementId.Value, out SettlementPublicLifeSnapshot? publicLife);
-            string courtPolicyLocalResponseGuidance = BuildCourtPolicyLocalResponseGuidance(jurisdiction, publicLife);
+            string courtPolicyLocalResponseGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildCourtPolicyLocalResponseGuidance(jurisdiction, publicLife),
+                BuildCourtPolicyPublicReadingEchoGuidance(officePolicySocialMemories, jurisdiction, publicLife));
             string officeReadbackGuidance = JoinOwnerLaneReturnSurfaceText(
                 officeOwnerLaneReturnGuidance,
                 officeImplementationGuidance,
@@ -352,6 +356,39 @@ public sealed partial class PresentationReadModelBuilder
             BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife));
     }
 
+    private static string BuildCourtPolicyPublicReadingEchoGuidance(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot? jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (jurisdiction is null
+            || publicLife is null
+            || !HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
+        if (residue is null
+            || !TryReadOfficePolicyLocalResponseResidueCause(residue.CauseKey, out OfficePolicyLocalResponseResidueCause localResponseCause))
+        {
+            return string.Empty;
+        }
+
+        string commandLabel = localResponseCause.CommandCode switch
+        {
+            PlayerCommandNames.PressCountyYamenDocument => "县门轻催",
+            PlayerCommandNames.RedirectRoadReport => "递报改道",
+            _ => localResponseCause.CommandCode,
+        };
+        string traceLabel = RenderCourtPolicyLocalResponseTraceLabel(localResponseCause.TraceCode);
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        return JoinOwnerLaneReturnSurfaceText(
+            $"政策公议旧读回：{publicLife.NodeLabel}把{commandLabel}的{traceLabel}/{outcomeLabel}读成{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}的旧政策回应；PublicLife只读街面解释，不计算政策成败。",
+            $"公议旧账回声：榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}，市语{publicLife.MarketRumorFlow}，公议{publicLife.PublicLegitimacy}；下一次榜示/递报旧读法只显示压力，不改政策结果。",
+            "公议后手防误读：县门承接仍归OfficeAndCareer，durable residue仍归SocialMemoryAndRelations；不是本户硬扛朝廷旧账。");
+    }
+
     private static IEnumerable<PlayerCommandAffordanceSnapshot> BuildPublicLifeAffordances(PresentationReadModelBundle bundle)
     {
         Dictionary<int, JurisdictionAuthoritySnapshot> jurisdictionsBySettlement = IndexFirstBySettlement(
@@ -384,6 +421,8 @@ public sealed partial class PresentationReadModelBuilder
             ClanTradeRouteSnapshot[] localRoutes = routesBySettlement[publicLife.SettlementId.Value].ToArray();
             IReadOnlyList<SocialMemoryEntrySnapshot> localSocialMemories =
                 SelectLocalPublicLifeOrderSocialMemories(bundle.SocialMemories, localClans);
+            IReadOnlyList<SocialMemoryEntrySnapshot> localOfficePolicySocialMemories =
+                SelectLocalOfficePolicySocialMemories(bundle.SocialMemories, localClans);
             disorderBySettlement.TryGetValue(publicLife.SettlementId.Value, out SettlementDisorderSnapshot? disorder);
             HouseholdPressureSnapshot? ownerLaneReturnHousehold =
                 SelectRecentLocalResponseHouseholdForSettlement(bundle.Households, publicLife.SettlementId);
@@ -394,7 +433,9 @@ public sealed partial class PresentationReadModelBuilder
                 BuildOfficeOwnerLaneReturnSurfaceGuidance(ownerLaneReturnHousehold),
                 BuildOfficeOwnerLaneReturnStatusGuidance(ownerLaneReturnHousehold, jurisdiction, localSocialMemories));
             string officeImplementationGuidance = BuildOfficeImplementationAffordanceGuidance(jurisdiction);
-            string courtPolicyLocalResponseGuidance = BuildCourtPolicyLocalResponseGuidance(jurisdiction, publicLife);
+            string courtPolicyLocalResponseGuidance = JoinOwnerLaneReturnSurfaceText(
+                BuildCourtPolicyLocalResponseGuidance(jurisdiction, publicLife),
+                BuildCourtPolicyPublicReadingEchoGuidance(localOfficePolicySocialMemories, jurisdiction, publicLife));
             string officePolicyGuidance = JoinOwnerLaneReturnSurfaceText(
                 officeOwnerLaneReturnGuidance,
                 officeImplementationGuidance,

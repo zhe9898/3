@@ -38,6 +38,12 @@ This keeps the design aligned with:
 - bounded player intervention
 - ordinary people, debt, illness, labor, and rumor feeling alive instead of being crushed into one large monthly jump
 
+## Current court-policy public-reading echo v141-v148 note
+
+The v141-v148 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if public-life notice/report command surfaces are visible, the projection layer may show `政策公议旧读回` from structured SocialMemory cause/type/weight plus current Office/PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, or UI/Unity authority. It must not mutate SocialMemory during projection, reopen policy state, calculate public-reading success, or parse memory summary prose, receipt prose, public-life prose, or `DomainEvent.Summary`.
+
 ## Current court-policy memory-pressure readback v133-v140 note
 
 The v133-v140 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if a new policy window is visible, the projection layer may show `政策旧账回压读回` from structured SocialMemory cause/type/weight plus current Office/PublicLife snapshots.

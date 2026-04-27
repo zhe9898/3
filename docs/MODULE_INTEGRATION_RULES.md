@@ -64,6 +64,18 @@ When changing one of those chains:
 - document whether a same-month follow-on uses the bounded scheduler drain or deliberately carries pressure into the next month
 - preserve the distinction between a thin topology proof and the full social chain
 
+### Chain 8 v141-v148 public-reading echo integration note
+
+Court-policy public-reading echo is projection-only integration over existing SocialMemory and current Office/PublicLife snapshots. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause/type/weight and current public-life scalars to show `政策公议旧读回`, `公议旧账回声`, and `下一次榜示/递报旧读法` on governance and public-life command readbacks.
+
+Allowed data path:
+- existing SocialMemory projection + `JurisdictionAuthoritySnapshot` + `SettlementPublicLifeSnapshot` -> Application read model / command readback -> Unity copy-only ViewModels
+
+Forbidden:
+- parsing memory summaries, receipt prose, public-life prose, or `DomainEvent.Summary`
+- adding a Court module, event pool, dispatch/policy/court-process/memory-pressure/public-reading ledger, schema field, migration, Application rule layer, UI rule layer, Unity authority, or `PersonRegistry` expansion
+- treating public-reading echo as Order debt, Office-only success, or home-household debt
+
 ### Chain 8 v133-v140 memory-pressure readback integration note
 
 Court-policy memory-pressure readback is projection-only integration over existing SocialMemory and current Office/PublicLife snapshots. `SocialMemoryAndRelations` has already written `office.policy_local_response...` residue in a later monthly pass; Application may read the structured cause/type/weight and current policy-window/public-life scalars to show `政策旧账回压读回`, `旧文移余味`, `下一次政策窗口读法`, and `公议旧读法续压`.

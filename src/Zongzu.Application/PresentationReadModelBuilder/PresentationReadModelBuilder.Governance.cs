@@ -114,7 +114,9 @@ public sealed partial class PresentationReadModelBuilder
                     localOfficeSocialMemories);
                 string courtPolicyEntryReadback = BuildCourtPolicyEntryReadbackSummary(jurisdiction, publicLife);
                 string courtPolicyDispatchReadback = BuildCourtPolicyDispatchReadbackSummary(jurisdiction, publicLife);
-                string courtPolicyPublicReadback = BuildCourtPolicyPublicReadbackSummary(jurisdiction, publicLife);
+                string courtPolicyPublicReadback = CombineGovernanceDocketText(
+                    BuildCourtPolicyPublicReadbackSummary(jurisdiction, publicLife),
+                    BuildCourtPolicyPublicReadingEchoGuidance(localOfficeSocialMemories, jurisdiction, publicLife));
                 string courtPolicyNoLoopGuard = BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife);
                 bool hasCourtPolicyProcess = !string.IsNullOrWhiteSpace(courtPolicyEntryReadback);
                 PlayerCommandAffordanceSnapshot? suggestedAffordance = SelectPrimaryGovernanceAffordance(

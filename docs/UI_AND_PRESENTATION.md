@@ -75,6 +75,12 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Court-policy public-reading echo v141-v148 UI note
+
+Governance, office, docket, desk, and public-life command surfaces may show `政策公议旧读回` only when it is already present in projected governance or `PlayerCommandAffordanceSnapshot` readback fields. The wording should make clear that `公议旧账回声` and `下一次榜示/递报旧读法` are public interpretation of old SocialMemory residue, not a new Court command, not an Order after-account, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, public-reading weight, or next-window outcomes.
+
 ### Court-policy memory-pressure readback v133-v140 presentation note
 
 Governance, office, docket, desk, and public-life surfaces may show `政策旧账回压读回` only when it is already present in projected governance/readback fields. The wording should make clear that `旧文移余味` and `公议旧读法续压` are old SocialMemory pressure context entering the next policy-window readback, not a new Court command, not an Order after-account, and not a home-household debt.
