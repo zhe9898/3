@@ -36,8 +36,8 @@ The current repository has both a pure C# presentation adapter layer and a minim
 - presentation tests: `tests/Zongzu.Presentation.Unity.Tests`
 - player-command affordance and receipt surfaces now include projected `LeverageSummary`, `CostSummary`, and `ReadbackSummary`
 - public-life/order v18 readback may include `PresentationReadModelBundle.SocialMemories`, `HouseholdSocialPressure`, governance recent-receipt summaries, and home-household local response receipt text
-- current v19-v148 adds projection-only follow-up hints, owner-lane return/status/outcome/residue/no-loop readback, Office/Family/Force/Warfare/Court process fields, directive-choice readbacks, aftermath docket readbacks, court-policy local-response/SocialMemory/public-reading echo readbacks, and closeout audit wording; shell surfaces may show those hints only from projected affordance/readback fields
-- current v35-v148 Trade/Order, Family, Office/yamen, Force/Campaign, Warfare, and Court-policy results are module/projection state; shell surfaces may display projected route, market, canal, family, office, force, campaign, aftermath, or court-policy readback, but may not compute route exposure, sponsor targeting, relief success, Office closure, campaign aftermath, court-policy outcomes, SocialMemory residue meaning, public-reading echo, event-consumer status, or owner-lane outcomes
+- current v19-v196 adds projection-only follow-up hints, owner-lane return/status/outcome/residue/no-loop readback, Office/Family/Force/Warfare/Court process fields, directive-choice readbacks, aftermath docket readbacks, court-policy local-response/SocialMemory/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket/public-life-receipt echo guard readbacks, and closeout audit wording; shell surfaces may show those hints only from projected affordance/readback fields
+- current v35-v196 Trade/Order, Family, Office/yamen, Force/Campaign, Warfare, and Court-policy results are module/projection state; shell surfaces may display projected route, market, canal, family, office, force, campaign, aftermath, or court-policy readback, but may not compute route exposure, sponsor targeting, relief success, Office closure, campaign aftermath, court-policy outcomes, SocialMemory residue meaning, public-reading echo, public follow-up cue, docket guard, suggested-action priority, suggested receipt meaning, receipt-docket consistency, public-life receipt echo, event-consumer status, or owner-lane outcomes
 - WCAG 2.2 and Xbox Accessibility Guidelines calibrate contrast, focus/read order, semantic labels, status announcements, and narration parity for shell surfaces; they do not turn the shell into a generic dashboard
 - Unity UI performance guidance calibrates shell implementation only: split static/dynamic canvas work when needed, avoid per-frame layout/raycast churn, use precomputed ViewModels/projection contexts, and never scan long simulation histories from a visible surface
 
@@ -58,6 +58,10 @@ Use outside shell guidance only after preserving Zongzu's object-anchored surfac
 - translating system state into hall objects, desk objects, notices, ledgers, seals, visitors, route markers, settlement nodes, receipts, and bounded commands
 - touching `Zongzu.Presentation.Unity`, `Zongzu.Presentation.Unity.ViewModels`, Unity shell files, projection contexts, or presentation adapters
 - aligning UI work with `docs/VISUAL_FORM_AND_INTERACTION.md`, `docs/UI_AND_PRESENTATION.md`, `docs/SPATIAL_SKELETON_SPEC.md`, `docs/WRITING_AND_COPY_GUIDELINES.md`, and `docs/ART_AND_AUDIO_ASSET_SOURCING.md`
+
+## Fast Lane
+
+For small presentation/readback edits, check source read-model, copy-only adapter behavior, authority boundary, density/read order, and the smallest presentation test. Use a full shell pass when a new surface, workflow, object grammar, ViewModel shape, long list, Unity implementation, accessibility claim, or performance risk is involved.
 
 ## Workflow
 
@@ -93,6 +97,7 @@ Use outside shell guidance only after preserving Zongzu's object-anchored surfac
    - Read [references/shell-principles.md](references/shell-principles.md) for the core shell thesis and anti-poster baseline.
    - Read [references/surface-grammar.md](references/surface-grammar.md) for per-surface layout and object grammar.
    - Read [references/density-and-focus.md](references/density-and-focus.md) for information hierarchy, focal action, and text-density correction.
+   - Read [references/similar-game-map-ui-calibration.md](references/similar-game-map-ui-calibration.md) only when outside UI/game comparisons should calibrate map, shell, or spatial interaction structure.
 
 4. Convert style talk into operational structure.
 
@@ -149,7 +154,7 @@ For prompts like `great hall`, `desk sandbox`, `hall surface`, `notice tray`, `2
 - Desk sandbox is a local-world board with topology, routes, pressure, visibility, and reach, not a giant minimap or static infographic.
 - Notice tray separates urgent, consequential, and background pressure cleanly.
 - Public-life surfaces show reputation, rumor, visibility, and public pressure without becoming free-form prose.
-- Public-life/order/court-policy shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, v19-v148 follow-up/owner-lane/Office/Family/Force/Warfare/Court readback, policy local response, memory-pressure, and public-reading echo, but only by displaying projected read-model fields.
+- Public-life/order/court-policy shell surfaces may explain household leverage, command cost, partial/refused landing, SocialMemory residue, household local response, v19-v196 follow-up/owner-lane/Office/Family/Force/Warfare/Court readback, policy local response, memory-pressure, public-reading echo, public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency guard, and public-life receipt echo guard, but only by displaying projected read-model fields.
 - Conflict vignette should feel like aftermath and consequence.
 - Campaign-lite board is route, front, posture, supply, and aftermath pressure; it is later and scale-gated.
 - Debug panels may expose internals, but player-facing surfaces should turn state into readable consequence and bounded action.

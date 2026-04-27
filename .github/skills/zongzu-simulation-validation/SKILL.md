@@ -22,11 +22,11 @@ Useful current validation surfaces include:
 - `ModuleRunner<TState>` metadata for event, cadence, command, schema, and namespace contracts
 - `tests/Zongzu.Presentation.Unity.Tests` for presentation adapter/ViewModel work
 - public-life/order validation on the current branch should cover Order accepted/partial/refused command tests, response-lane owner tests, SocialMemory next-month residue tests, PopulationAndHouseholds local-response tests, schema/migration lanes for `OrderAndBanditry` schema `9`, `OfficeAndCareer` schema `7`, `FamilyCore` schema `8`, and `PopulationAndHouseholds` schema `3`, architecture guards for module-owned command seams, and Unity projection-copy tests
-- current v19-v148 follow-up, owner-lane, Office/Family/Force/Warfare/Court readback, directive/aftermath docket readback, court-policy local-response/SocialMemory/public-reading echo, and thin-chain closeout validation should prove projection-only derivation where claimed, owner-module mutation where claimed, no SocialMemory prose parsing, no receipt or `DomainEvent.Summary` parsing, no schema bump, no command outcome calculation in Application/UI/Unity, no follow-up/owner-lane/Office/Family/Force/Warfare/Court/policy ledger, and focused integration/presentation assertions before any full-solution test
+- current v19-v196 follow-up, owner-lane, Office/Family/Force/Warfare/Court readback, directive/aftermath docket readback, court-policy local-response/SocialMemory/public-reading/public-follow-up/docket/suggested-action/suggested-receipt/receipt-docket/public-life-receipt echo guard, and thin-chain closeout validation should prove projection-only derivation where claimed, owner-module mutation where claimed, no SocialMemory prose parsing, no receipt or `DomainEvent.Summary` parsing, no schema bump, no command outcome calculation in Application/UI/Unity, no follow-up/owner-lane/Office/Family/Force/Warfare/Court/policy/cooldown/docket/suggested-action/receipt/receipt-docket/public-life-receipt ledger, and focused integration/presentation assertions before any full-solution test
 - current v32-v34 event-contract validation should prove classification coverage, no `Unclassified` debt in the ten-year diagnostic, structured `owner=<module>` / `evidence=<doc-or-test>` readback, and no use of diagnostic output as runtime authority
 - current v35-v100 validation should prove each owner lane separately: canal-window has Trade/Order authority consumers, household burden reaches only sponsor `FamilyCore` pressure, Family relief mutates only `FamilyCore`, Office implementation/readback stays Office-owned, Office/Family/Force/Warfare/Court lane closure is projection-only unless a named owner command says otherwise, structured metadata/query snapshots beat prose, off-scope entities stay untouched, and no schema/migration changed
 - current v101-v108 validation is audit evidence: it must distinguish thin-chain skeleton completion from future full-chain rule-density debt and must not be used as runtime performance or gameplay completion proof
-- current v109-v148 validation is narrow Chain 8 rule-density proof: policy process texture, local Office response, delayed SocialMemory residue, memory-pressure next-window readback, and public-reading echo must all use structured Office/PublicLife/SocialMemory snapshots, off-scope non-inheritance, schema neutrality, and Unity copy-only tests
+- current v109-v196 validation is narrow Chain 8 rule-density proof: policy process texture, local Office response, delayed SocialMemory residue, memory-pressure next-window readback, public-reading echo, public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency guard, and public-life receipt echo guard must all use structured Office/PublicLife/SocialMemory snapshots, off-scope non-inheritance, same-month SocialMemory neutrality where receipt handling is involved, schema neutrality, and Unity copy-only tests
 - performance validation is evidence-driven: use focused tests for behavior, long-run diagnostics for pressure health, replay/hash checks for determinism, and `dotnet-counters` or profiler output only when CPU, allocation, GC, memory, exception rate, or frame cost is the actual risk
 
 ## External Calibration Anchors
@@ -38,6 +38,19 @@ Useful current validation surfaces include:
 - Accessibility validation should check whether projected meaning survives contrast, focus/read order, semantic labels, and narration, not whether the shell looks like a generic app.
 
 When health diagnostics report events with no authority consumer or declared events that never appear, classify them before changing code: projection-only receipt, dormant/future contract, seeded-path gap, acceptance-test gap, or alignment bug.
+
+## Use This Skill When
+
+- runtime rules, scheduler cadence, command resolution, or cross-module pressure behavior changed
+- save/migration compatibility or replay determinism changed
+- a task claims long-run pressure health, performance improvement, or algorithmic scalability
+- event-contract diagnostics, no-touch proof, or off-scope entities are part of done
+- Unity shell performance is claimed with actual Unity implementation changes
+- a docs/skill-only pass needs an explicit "no runtime/performance validation required" note
+
+## Fast Lane
+
+For docs, skills, copy, comments, or projection wording with no runtime behavior change, use `git diff --check` plus targeted text/encoding checks and record no runtime validation. Use focused tests before full solution tests; use counters/profilers only when runtime or frame cost is the real risk.
 
 ## Workflow
 
