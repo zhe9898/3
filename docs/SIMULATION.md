@@ -38,6 +38,12 @@ This keeps the design aligned with:
 - bounded player intervention
 - ordinary people, debt, illness, labor, and rumor feeling alive instead of being crushed into one large monthly jump
 
+## Current court-policy public-life receipt echo v189-v196 note
+
+The v189-v196 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if public-life notice/report commands are visible for the same settlement, the projection layer may show `公议回执回声防误读` from structured SocialMemory cause outcome data plus current PublicLife snapshots.
+
+This adds no scheduler phase, event pool, Court module, ledger, schema field, migration, public-life receipt echo ledger, or UI/Unity authority. It must not mutate SocialMemory during projection, create a cooldown account, reopen policy state, calculate policy success, treat public-life command readback or receipt readback as Order/Office authority, or parse memory summary prose, receipt prose, public-life prose, affordance prose, docket prose, or `DomainEvent.Summary`.
+
 ## Current court-policy receipt-docket consistency guard v181-v188 note
 
 The v181-v188 Chain 8 readback uses no new simulation cadence. A later month may already have produced `office.policy_local_response...` residue; if governance/docket surfaces are visible for the same settlement, the projection layer may show `回执案牍一致防误读` from structured SocialMemory cause outcome data plus current PublicLife snapshots.

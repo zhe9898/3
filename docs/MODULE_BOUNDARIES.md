@@ -28,6 +28,18 @@ Until a dedicated historical-process pack exists:
 
 A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
+## Court-policy public-life receipt echo v189-v196 boundary note
+
+Chain 8 v189-v196 keeps v181-v188 receipt/docket ownership and adds only a projected public-life command echo:
+- `WorldSettlements` remains only the court agenda / mandate pressure source.
+- `OfficeAndCareer` owns the policy window, county execution, document/report aftermath, and implementation posture.
+- `PublicLifeAndRumor` owns notice/report public interpretation, street reading, and public-life command surface texture.
+- `SocialMemoryAndRelations` owns the durable `office.policy_local_response...` records that make the old reading visible.
+- Application may assemble `公议回执回声防误读` from structured SocialMemory cause data and current PublicLife scalars, but it does not calculate policy success or turn a receipt into a new command.
+- Unity copies projected `LeverageSummary` / `ReadbackSummary` only.
+
+No Court module, court engine, event pool, dispatch/policy/court-process/owner-lane/cooldown/docket/receipt/public-life-receipt-echo ledger, schema field, migration, Application rule authority, UI/Unity authority, `PersonRegistry` expansion, or manager/god-controller path is added.
+
 ## Court-policy receipt-docket consistency guard v181-v188 boundary note
 
 Chain 8 v181-v188 keeps v173-v180 suggested-receipt ownership and adds only a projected governance/docket consistency guard:

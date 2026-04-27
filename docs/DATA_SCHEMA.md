@@ -87,6 +87,12 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current court-policy public-life receipt echo v189-v196 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, public-life receipt echo ledger, receipt-docket ledger, docket-consistency ledger, receipt ledger, suggested-receipt ledger, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger
+- the new `公议回执回声防误读` / `街面只读已投影的政策公议后手` / `公议不把回执读成新政令` text is runtime projection over existing `SocialMemoryEntrySnapshot` cause data and `SettlementPublicLifeSnapshot` values
+- existing `MemoryRecordState` records remain the only durable source; Application does not persist a public-life receipt echo cache, cooldown marker, repeat-pressure field, command-ranking override, or court-policy ledger
+
 Current court-policy receipt-docket consistency guard v181-v188 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, receipt-docket ledger, docket-consistency ledger, receipt ledger, suggested-receipt ledger, suggested-action ledger, docket ledger, public-follow-up ledger, cooldown ledger, public-reading ledger, or memory-pressure ledger

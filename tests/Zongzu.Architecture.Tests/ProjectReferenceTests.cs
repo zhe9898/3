@@ -1250,6 +1250,85 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Court_policy_public_life_receipt_echo_v189_v196_must_remain_projection_only_and_schema_neutral()
+    {
+        string playerCommandSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.cs"));
+        string unityAdapterSource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Shared", "CommandShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "PublicLife", "PublicLifeShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiDocs = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-27_court-policy-public-life-receipt-echo-v189-v196.md"));
+        Match helperMatch = Regex.Match(
+            playerCommandSource,
+            @"private static string BuildCourtPolicyPublicLifeReceiptEchoGuard\((?<body>.*?)\r?\n    private static",
+            RegexOptions.Singleline);
+
+        Assert.That(helperMatch.Success, Is.True);
+        string helperSource = helperMatch.Value;
+        Assert.That(playerCommandSource, Does.Contain("BuildCourtPolicyPublicLifeReceiptEchoGuard"));
+        Assert.That(playerCommandSource, Does.Contain("公议回执回声防误读"));
+        Assert.That(playerCommandSource, Does.Contain("街面只读已投影的政策公议后手"));
+        Assert.That(playerCommandSource, Does.Contain("公议不把回执读成新政令"));
+        Assert.That(playerCommandSource, Does.Contain("TryReadOfficePolicyLocalResponseResidueCause"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "DomainEvent.Summary",
+                     ".Summary.Contains",
+                     "LeverageSummary.Contains",
+                     "ReadbackSummary.Contains",
+                     "SuggestedCommandPrompt.Contains",
+                     "OfficialNoticeLine",
+                     "PrefectureDispatchLine",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "ReceiptLedger",
+                     "PublicLifeReceiptEchoLedger",
+                     "PolicyLedger",
+                     "CourtProcessLedger",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "DocketLedger",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(helperSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(unityAdapterSource, Does.Contain("ReadbackSummary"));
+        Assert.That(unityAdapterSource, Does.Contain("LeverageSummary"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("BuildCourtPolicyPublicLifeReceiptEchoGuard"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("TryReadOfficePolicyLocalResponseResidueCause"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(unityAdapterSource, Does.Not.Contain("GetMutableModuleState"));
+        Assert.That(schemaRules, Does.Contain("court-policy public-life receipt echo v189-v196 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current court-policy public-life receipt echo v189-v196 note"));
+        Assert.That(uiDocs, Does.Contain("Court-policy public-life receipt echo v189-v196 UI note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No Court module"));
+        Assert.That(execPlan, Does.Contain("No new persisted field"));
+        Assert.That(execPlan, Does.Contain("No new public-life receipt echo ledger"));
+    }
+
+    [Test]
     public void Thin_chain_closeout_audit_must_document_v100_without_claiming_full_chain_completion()
     {
         string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));

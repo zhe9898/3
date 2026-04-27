@@ -552,6 +552,46 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_CopiesCourtPolicyPublicLifeReceiptEchoAffordanceWithoutShellAuthority()
+    {
+        const string receiptEcho =
+            "公议回执回声防误读：县门街面只读已投影的政策公议后手；公议不把回执读成新政令，不是Order后账，不是Office成败，不从本户硬补。";
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.PlayerCommands = new PlayerCommandSurfaceSnapshot
+        {
+            Affordances =
+            [
+                new PlayerCommandAffordanceSnapshot
+                {
+                    ModuleKey = KnownModuleKeys.PublicLifeAndRumor,
+                    SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                    SettlementId = new SettlementId(1),
+                    CommandName = PlayerCommandNames.PostCountyNotice,
+                    Label = "榜示公议",
+                    Summary = "只复制投影好的公议回执回声。",
+                    IsEnabled = true,
+                    AvailabilitySummary = "投影已给出政策公议后手。",
+                    LeverageSummary = receiptEcho,
+                    ReadbackSummary = receiptEcho,
+                    TargetLabel = "县门",
+                },
+            ],
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+        CommandAffordanceViewModel command = shell.DeskSandbox.Settlements
+            .Single()
+            .PublicLifeCommandAffordances
+            .Single();
+
+        Assert.That(command.CommandName, Is.EqualTo(PlayerCommandNames.PostCountyNotice));
+        Assert.That(command.LeverageSummary, Is.EqualTo(receiptEcho));
+        Assert.That(command.ReadbackSummary, Is.EqualTo(receiptEcho));
+        Assert.That(command.ReadbackSummary, Does.Contain("公议回执回声防误读"));
+        Assert.That(command.ReadbackSummary, Does.Contain("公议不把回执读成新政令"));
+    }
+
+    [Test]
     public void Compose_ProjectsActorCountermoveReadbackWithoutShellAuthority()
     {
         PresentationReadModelBundle bundle = CreateBundle();

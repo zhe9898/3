@@ -75,6 +75,12 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Court-policy public-life receipt echo v189-v196 UI note
+
+Public-life command surfaces may show `公议回执回声防误读` only when it is already present in projected command `LeverageSummary` / `ReadbackSummary`. The wording should make clear that `街面只读已投影的政策公议后手` and `公议不把回执读成新政令` are street/public interpretation over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.
+
+Unity shell and presentation adapters must copy projected fields only. They may not parse memory summaries, `DomainEvent.Summary`, receipt prose, affordance prose, docket prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate policy success, command ranking, receipt echo status, cooldown status, public-reading weight, docket guard status, or next-window outcomes.
+
 ### Court-policy receipt-docket consistency guard v181-v188 UI note
 
 Governance, office, docket, desk, and great-hall surfaces may show `回执案牍一致防误读` only when it is already present in projected `CourtPolicyNoLoopGuardSummary`, docket `GuidanceSummary`, or copied governance ViewModels. The wording should make clear that `回执只回收已投影的政策公议后手` and `案牍不把回执读成新政策结果` are docket/readback alignment over old SocialMemory residue and current PublicLife scalars, not a durable cooldown ledger, not a new Court command, not an Order after-account, not Office success/failure, and not a home-household debt.

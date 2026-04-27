@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v189-v196 court-policy public-life receipt echo - 2026-04-27
+
+- Chain 8 now lets public-life command/readback surfaces carry `公议回执回声防误读`, `街面只读已投影的政策公议后手`, and `公议不把回执读成新政令` when the same structured court-policy local-response residue already powers the public-reading echo.
+- Code alignment: `OfficeAndCareer` still owns county document/report aftermath and implementation posture; `PublicLifeAndRumor` owns street interpretation; `SocialMemoryAndRelations` owns durable residue; Application only assembles command readback from structured cause-key data and current public-life scalars; Unity copies command `LeverageSummary` / `ReadbackSummary`.
+- The pass does not change command resolution, policy success, command ranking, cooldown, docket state, receipt state, or any owner-lane rule. The public-life echo is readback text, not a Court command, not a new policy result, and not a ledger.
+- No reader may parse `DomainEvent.Summary`, memory summary prose, receipt prose, affordance prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v189-v196 adds no persisted field, root/module schema bump, migration, save manifest change, Court module, dispatch / policy / court-process / owner-lane / cooldown / memory-pressure / public-reading / public-follow-up / docket / suggested-action / suggested-receipt / receipt-docket / public-life receipt echo ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v181-v188 court-policy receipt-docket consistency guard - 2026-04-27
 
 - Chain 8 now lets governance/docket readback carry `回执案牍一致防误读`, `回执只回收已投影的政策公议后手`, and `案牍不把回执读成新政策结果` when the same structured court-policy public follow-up residue already powers the suggested receipt guard.

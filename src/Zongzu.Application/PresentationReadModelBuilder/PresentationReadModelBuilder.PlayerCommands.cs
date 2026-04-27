@@ -387,7 +387,17 @@ public sealed partial class PresentationReadModelBuilder
             $"政策公议旧读回：{publicLife.NodeLabel}把{commandLabel}的{traceLabel}/{outcomeLabel}读成{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}的旧政策回应；PublicLife只读街面解释，不计算政策成败。",
             $"公议旧账回声：榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}，市语{publicLife.MarketRumorFlow}，公议{publicLife.PublicLegitimacy}；下一次榜示/递报旧读法只显示压力，不改政策结果。",
             BuildCourtPolicyPublicFollowUpCue(localResponseCause, publicLife),
+            BuildCourtPolicyPublicLifeReceiptEchoGuard(residue, localResponseCause, publicLife),
             "公议后手防误读：县门承接仍归OfficeAndCareer，durable residue仍归SocialMemoryAndRelations；不是本户硬扛朝廷旧账。");
+    }
+
+    private static string BuildCourtPolicyPublicLifeReceiptEchoGuard(
+        SocialMemoryEntrySnapshot residue,
+        OfficePolicyLocalResponseResidueCause localResponseCause,
+        SettlementPublicLifeSnapshot publicLife)
+    {
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        return $"公议回执回声防误读：{publicLife.NodeLabel}街面只读已投影的政策公议后手（{outcomeLabel}，{RenderSocialMemoryTypeLabel(residue.Type)}{residue.Weight}，榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}）；公议不把回执读成新政令，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
     }
 
     private static string BuildCourtPolicyPublicFollowUpCue(
