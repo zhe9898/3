@@ -425,6 +425,13 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(afterSecondGovernance.SuggestedCommandPrompt, Does.Contain("不是Order后账"));
         Assert.That(afterSecond.GovernanceDocket.SuggestedCommandPrompt, Does.Contain("建议动作防误读"));
         Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("只承接已投影的政策公议后手"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("回执案牍一致防误读"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("回执只回收已投影的政策公议后手"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("案牍不把回执读成新政策结果"));
+        Assert.That(afterSecondGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        Assert.That(afterSecond.GovernanceDocket.CourtPolicyNoLoopGuardSummary, Does.Contain("回执案牍一致防误读"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("回执只回收已投影的政策公议后手"));
+        Assert.That(afterSecond.GovernanceDocket.GuidanceSummary, Does.Contain("案牍不把回执读成新政策结果"));
         PlayerCommandAffordanceSnapshot noticeAffordance = afterSecond.PlayerCommands.Affordances
             .Single(affordance => affordance.SettlementId == new SettlementId(10)
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
@@ -448,6 +455,7 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(offScopeGovernance.CourtPolicyPublicReadbackSummary, Does.Not.Contain("政策公议后手提示"));
         Assert.That(offScopeGovernance.CourtPolicyNoLoopGuardSummary, Does.Not.Contain("政策后手案牍防误读"));
         Assert.That(offScopeGovernance.SuggestedCommandPrompt, Does.Not.Contain("建议动作防误读"));
+        Assert.That(offScopeGovernance.CourtPolicyNoLoopGuardSummary, Does.Not.Contain("回执案牍一致防误读"));
         PlayerCommandAffordanceSnapshot offScopeNoticeAffordance = afterSecond.PlayerCommands.Affordances
             .Single(affordance => affordance.SettlementId == new SettlementId(20)
                                   && affordance.CommandName == PlayerCommandNames.PostCountyNotice);
@@ -476,6 +484,11 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("回执不是新政策结果"));
         Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("不是Order后账"));
         Assert.That(suggestedReceipt.ReadbackSummary, Does.Contain("仍等Office/PublicLife/SocialMemory分读"));
+        SettlementGovernanceLaneSnapshot afterSuggestedReceiptGovernance =
+            afterSuggestedReceipt.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(afterSuggestedReceiptGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("回执案牍一致防误读"));
+        Assert.That(afterSuggestedReceiptGovernance.CourtPolicyNoLoopGuardSummary, Does.Contain("案牍不把回执读成新政策结果"));
+        Assert.That(afterSuggestedReceipt.GovernanceDocket.GuidanceSummary, Does.Contain("回执只回收已投影的政策公议后手"));
         Assert.That(afterSuggestedReceipt.PlayerCommands.Receipts
             .Where(static receipt => receipt.SettlementId == new SettlementId(20))
             .Any(static receipt => receipt.ReadbackSummary.Contains("建议回执防误读", StringComparison.Ordinal)), Is.False);

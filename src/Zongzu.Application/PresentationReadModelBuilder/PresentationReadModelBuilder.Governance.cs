@@ -119,7 +119,8 @@ public sealed partial class PresentationReadModelBuilder
                     BuildCourtPolicyPublicReadingEchoGuidance(localOfficeSocialMemories, jurisdiction, publicLife));
                 string courtPolicyNoLoopGuard = CombineGovernanceDocketText(
                     BuildCourtPolicyNoLoopGuardSummary(jurisdiction, publicLife),
-                    BuildCourtPolicyPublicFollowUpDocketGuard(localOfficeSocialMemories, jurisdiction, publicLife));
+                    BuildCourtPolicyPublicFollowUpDocketGuard(localOfficeSocialMemories, jurisdiction, publicLife),
+                    BuildCourtPolicyReceiptDocketConsistencyGuard(localOfficeSocialMemories, jurisdiction, publicLife));
                 bool hasCourtPolicyPublicFollowUpGuard =
                     HasCourtPolicyPublicFollowUpGuard(localOfficeSocialMemories, jurisdiction, publicLife);
                 bool hasCourtPolicyProcess = !string.IsNullOrWhiteSpace(courtPolicyEntryReadback);
@@ -525,6 +526,27 @@ public sealed partial class PresentationReadModelBuilder
 
         string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
         return $"政策后手案牍防误读：{publicLife.NodeLabel}的公议后手只作案牍提示（{outcomeLabel}，榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}）；{docketCue} 不是冷却账本，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
+    }
+
+    private static string BuildCourtPolicyReceiptDocketConsistencyGuard(
+        IReadOnlyList<SocialMemoryEntrySnapshot> localOfficeSocialMemories,
+        JurisdictionAuthoritySnapshot jurisdiction,
+        SettlementPublicLifeSnapshot? publicLife)
+    {
+        if (publicLife is null || !HasCourtPolicyProcessReadback(jurisdiction, publicLife))
+        {
+            return string.Empty;
+        }
+
+        SocialMemoryEntrySnapshot? residue = SelectOfficePolicyResidue(localOfficeSocialMemories, jurisdiction);
+        if (residue is null
+            || !TryReadOfficePolicyLocalResponseResidueCause(residue.CauseKey, out OfficePolicyLocalResponseResidueCause localResponseCause))
+        {
+            return string.Empty;
+        }
+
+        string outcomeLabel = RenderCourtPolicyLocalResponseOutcomeLabel(localResponseCause.OutcomeCode);
+        return $"回执案牍一致防误读：{publicLife.NodeLabel}的案牍只承接同一批已投影政策公议后手（{outcomeLabel}，榜示{publicLife.NoticeVisibility}，街谈{publicLife.StreetTalkHeat}）；回执只回收已投影的政策公议后手，案牍不把回执读成新政策结果，不是Order后账，不是Office成败，不从本户硬补；仍等Office/PublicLife/SocialMemory分读。";
     }
 
     private static bool HasCourtPolicyPublicFollowUpGuard(

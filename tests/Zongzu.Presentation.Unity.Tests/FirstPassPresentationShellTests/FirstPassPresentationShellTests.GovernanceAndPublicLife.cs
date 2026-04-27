@@ -770,7 +770,7 @@ public sealed partial class FirstPassPresentationShellTests
                 PublicPressureSummary = "county gate pressure is not yet cleared",
                 PublicMomentumSummary = "county gate momentum is tightening",
                 GovernanceSummary = "registrar is still triaging petitions",
-                CourtPolicyNoLoopGuardSummary = "建议动作防误读：post notice只承接已投影的政策公议后手；不是Order后账，不是Office成败。",
+                CourtPolicyNoLoopGuardSummary = "建议动作防误读：post notice只承接已投影的政策公议后手；不是Order后账，不是Office成败。回执案牍一致防误读：回执只回收已投影的政策公议后手；案牍不把回执读成新政策结果。",
             },
         ];
         bundle.GovernanceFocus = new GovernanceFocusSnapshot
@@ -798,18 +798,21 @@ public sealed partial class FirstPassPresentationShellTests
             PhaseLabel = "needs response",
             PhaseSummary = "stabilize the gate before the queue worsens",
             HandlingSummary = "registrar is still triaging petitions",
-            GuidanceSummary = "stabilize the county gate surface first。建议动作防误读：post notice只承接已投影的政策公议后手；不是Order后账，不是Office成败。",
+            GuidanceSummary = "stabilize the county gate surface first。建议动作防误读：post notice只承接已投影的政策公议后手；不是Order后账，不是Office成败。回执案牍一致防误读：回执只回收已投影的政策公议后手；案牍不把回执读成新政策结果。",
         };
 
         PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
 
         Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain("county gate momentum is tightening"));
         Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain("建议动作防误读"));
+        Assert.That(shell.GreatHall.GovernanceSummary, Does.Contain("回执案牍一致防误读"));
         Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
         Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("county gate momentum is tightening"));
         Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("建议动作防误读"));
         Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("不是Office成败"));
         Assert.That(shell.DeskSandbox.Settlements[0].CourtPolicyNoLoopGuardSummary, Does.Contain("只承接已投影的政策公议后手"));
+        Assert.That(shell.DeskSandbox.Settlements[0].GovernanceSummary, Does.Contain("案牍不把回执读成新政策结果"));
+        Assert.That(shell.DeskSandbox.Settlements[0].CourtPolicyNoLoopGuardSummary, Does.Contain("回执只回收已投影的政策公议后手"));
     }
 
     [Test]
