@@ -50,6 +50,17 @@ V277-V284 adds runtime readback fields but no new authority boundary:
 
 Future readers must not parse these new readback strings as authority. The pass adds no schema, migration, command surface, movement/social/focus/scheduler ledger, manager/controller path, `PersonRegistry` domain expansion, or UI rule path.
 
+## Social mobility boundary closeout v285-v292 boundary note
+
+V285-V292 adds no new runtime boundary. It closes v213-v284 as a first-layer substrate and keeps the current split:
+- `PopulationAndHouseholds` owns household livelihood, member activity, and labor/marriage/migration pools.
+- `PersonRegistry` owns identity, life-stage/death anchors, and existing `FidelityRing` assignment only.
+- `SocialMemoryAndRelations` may become the durable movement-residue owner only in a future planned pass with structured input and schema analysis.
+- Application assembles projections, diagnostics, and closeout evidence only.
+- UI and Unity copy projected mobility/fidelity/readback fields only.
+
+The closeout is not a complete society engine, migration economy, personnel command layer, dormant-stub model, or whole-world person simulation. It adds no schema, migration, command/social/movement/focus/scheduler/personnel ledger, projection cache, manager/controller path, `PersonRegistry` domain expansion, or prose parser.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

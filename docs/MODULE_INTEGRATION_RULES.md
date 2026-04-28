@@ -636,3 +636,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Application may compose these strings from `PersonDossierSnapshot`, `HouseholdPressureSnapshot`, population pool snapshots, and existing `FidelityRing` values after owner modules resolve. It must not parse person dossier text, settlement mobility text, notification text, receipt prose, or `DomainEvent.Summary`.
 - Unity may copy these fields into great hall, desk, and lineage surfaces only. It must not query simulation modules, compute promotion/demotion, rank movement targets, maintain ledgers, or write SocialMemory.
 - Save/schema result: no persisted state, schema bump, migration, movement/social/focus/scheduler ledger, projection cache, or save-manifest change.
+
+## Social mobility boundary closeout v285-v292 integration note
+- V285-V292 adds no integration channel. It audits v213-v284 as a bounded mobility/personnel-flow substrate, not a complete social engine.
+- Later modules may read structured population pools, fidelity-ring facts, settlement mobility snapshots, and person dossier snapshots as inputs only when their own owner lane, cadence, fanout, no-touch boundary, schema impact, and tests are declared.
+- No downstream reader may parse `InfluenceFootprintReadbackSummary`, `ScaleBudgetReadbackSummary`, movement prose, notification prose, receipt prose, or `DomainEvent.Summary` to drive rules.
+- Future personnel-flow commands must resolve in an owner module and must not be calculated by Application, UI, Unity, or a global manager.
+- Save/schema result: no persisted state, schema bump, migration, movement/social/focus/scheduler/command/personnel ledger, projection cache, or save-manifest change.

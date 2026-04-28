@@ -330,3 +330,10 @@
 - Application composes these fields from already-built person, household, and mobility snapshots; it does not resolve movement, promote/demote people, or decide command outcomes.
 - Unity and shell adapters copy the projected fields into great hall, desk, and lineage/person dossier surfaces only.
 - v277-v284 adds no persisted state, schema bump, migration, command, movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.
+
+## v285-v292 social mobility boundary closeout audit - 2026-04-28
+
+- v285-v292 closes v213-v284 as first-layer social mobility / personnel-flow substrate only: near detail, pressure-selected local detail, active-region pools, distant pressure summary.
+- The closeout explicitly preserves future debt for full migration economy, class mobility, direct personnel commands, dormant stubs, durable movement residue, and broader cross-region flow.
+- Ownership remains unchanged: `PopulationAndHouseholds` owns livelihood/activity/pools, `PersonRegistry` owns identity/fidelity only, `SocialMemoryAndRelations` owns later durable residue only when planned, Application assembles projections, and UI/Unity copy projected fields.
+- v285-v292 adds no production rule, persisted state, schema bump, migration, command, movement/social/focus/scheduler/personnel ledger, projection cache, global person simulation manager, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.

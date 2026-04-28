@@ -1269,6 +1269,11 @@ Current social mobility influence readback v277-v284 note:
 - These fields are not module state and are not saved. They require no module schema version, root save version, migration, manifest change, projection cache, or serialized module payload change.
 - The pass does not authorize a movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, dormant-stub store, SocialMemory movement residue, or `PersonRegistry` domain expansion.
 
+Current social mobility boundary closeout v285-v292 note:
+- v285-v292 is docs/tests governance only. It adds no persisted fields, module envelope, root save version, module schema version, migration, manifest membership, projection cache, or serialized module payload change.
+- The closeout does not authorize a movement ledger, social-mobility ledger, focus ledger, scheduler ledger, command ledger, personnel ledger, global person simulation manager, dormant-stub store, SocialMemory movement residue, or `PersonRegistry` domain expansion.
+- Any future durable movement residue, dormant-stub state, migration economy, personnel command state, or cross-region flow cache must open a schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

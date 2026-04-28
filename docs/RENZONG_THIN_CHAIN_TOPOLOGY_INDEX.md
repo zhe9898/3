@@ -217,6 +217,14 @@ V277-V284 adds a second readback layer over the existing social mobility/fidelit
 
 This pass does not change the underlying owner rules. `PopulationAndHouseholds` still owns livelihood/activity/pools, `PersonRegistry` still owns identity/fidelity only, and Application/Unity only project or copy the new readback. It adds no command, schema, migration, movement/social/focus/scheduler ledger, global person simulation, durable SocialMemory movement residue, or UI-owned mobility rule.
 
+## V285-V292 Social Mobility Boundary Closeout Audit
+
+V285-V292 closes v213-v284 as a first-layer social mobility / personnel-flow substrate only: near detail, pressure-selected local detail, active-region pools, distant pressure summary. Closed here means the current code and docs prove a bounded path for household pressure -> livelihood/activity/pool synchronization -> fidelity-ring readback -> scale-budget/influence readback -> Unity copy-only presentation.
+
+It does not mean Zongzu has a complete society engine, full migration economy, full class-mobility formula, direct player command over people, all-world per-person monthly simulation, dormant-stub demotion loop, or durable SocialMemory movement residue. Future depth must open a new ExecPlan and name owner state, cadence, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane.
+
+The closeout preserves the owner split: `PopulationAndHouseholds` owns livelihood/activity/pools; `PersonRegistry` owns identity and existing `FidelityRing` assignment only; `SocialMemoryAndRelations` remains a future durable-residue owner; Application assembles projections and diagnostics; UI/Unity copy projected fields only. V285-V292 adds no production rule, schema, migration, movement/social/focus/scheduler/command/personnel ledger, projection cache, manager/controller, `PersonRegistry` domain expansion, or prose parser.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

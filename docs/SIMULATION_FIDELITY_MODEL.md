@@ -481,3 +481,11 @@ It should ask:
 - The first additional readback fields are runtime projections only: `FidelityScaleSnapshot.InfluenceFootprintReadbackSummary`, `SettlementMobilitySnapshot.ScaleBudgetReadbackSummary`, and `PersonDossierSnapshot.InfluenceFootprintReadbackSummary`.
 - These fields explain the scale budget already chosen by owner modules. They do not choose promotion/demotion, resolve migration, write SocialMemory residue, or authorize a player command.
 - Great hall, desk, lineage, and person inspector surfaces may display the fields so the player can read why a person is close detail or why a settlement remains pooled.
+
+## V285-V292 Boundary Closeout
+
+- The v213-v284 branch is closed as a first-layer mobility/personnel-flow substrate, not as a complete society engine.
+- The stable performance rule remains: close orbit can be named, active pressure can select bounded local detail, active regions should use structured pools, and distant society remains summarized pressure.
+- Future deeper mobility work must decide whether it is a `PopulationAndHouseholds` rule, `PersonRegistry` fidelity command, `SocialMemoryAndRelations` durable residue, or a new planned owner before adding state.
+- Any future command, dormant-stub model, migration economy, durable residue, or cross-region personnel flow must declare hot path, expected cardinality, deterministic cap/order, schema impact, no-touch boundary, and validation lane.
+- UI and Unity may show the v277-v284 projected readbacks, but must not parse them, infer hidden movement targets, or suggest the whole world is ticking person-by-person.
