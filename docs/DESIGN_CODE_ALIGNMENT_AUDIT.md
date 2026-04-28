@@ -463,3 +463,10 @@
 - The closeout does not graduate the layer into class mobility, zhuhu/kehu conversion, office-service work, trade attachment, clerk/artisan/merchant routes, durable social-position residue, or global per-person career simulation.
 - Shell alignment: lineage/person-inspector surfaces may read projected fields, but they must not become class ladders, promote/demote boards, regional person selectors, or global person browsers.
 - v429-v436 adds no production rule, persisted state, schema, migration, ledger, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v437-v444 commoner status owner-lane preflight audit - 2026-04-28
+
+- v437-v444 records the recommended first runtime owner lane for later commoner status depth: `PopulationAndHouseholds`.
+- Code alignment: current code already places livelihood/activity/pools, distress, debt, migration pressure, labor, land, grain, and settlement household pressure in `PopulationAndHouseholds`; `PersonRegistry` remains identity / `FidelityRing` only.
+- Boundary alignment: this pass does not add the rule. It only blocks future drift into Application, UI, Unity, `PersonRegistry`, or a standalone `SocialClass` style module before a real owner-lane plan exists.
+- v437-v444 adds no production rule, command, persisted state, schema, migration, owner-lane ledger, class engine, new module, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

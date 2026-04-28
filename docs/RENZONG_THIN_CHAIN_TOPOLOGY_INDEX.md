@@ -337,6 +337,14 @@ Closed here does not mean full class mobility is implemented. It is not a class 
 
 Future commoner status depth must still open a new owner-lane ExecPlan with state, cadence, target scope, hot path, expected cardinality, deterministic cap/order, schema impact, projection fields, and validation before adding rules.
 
+## V437-V444 Commoner Status Owner-Lane Preflight
+
+V437-V444 prepares the next possible depth step after the social-position visibility closeout. It records `PopulationAndHouseholds` as the recommended first owner lane for future commoner status drift because existing code already owns household livelihood, activity, migration pressure, labor pools, distress, debt, land, grain, and settlement pressure carriers.
+
+This is not an implementation. It adds no command, monthly rule, resolver, event path, class engine, zhuhu/kehu conversion, schema field, migration, new module, ledger, Application authority, UI authority, Unity authority, or `PersonRegistry` expansion.
+
+Future implementation still needs a separate ExecPlan with owner state, cadence, target scope, no-touch boundary, hot path, expected cardinality, deterministic cap/order, schema impact, projection fields, and validation.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

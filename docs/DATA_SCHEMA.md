@@ -1364,6 +1364,11 @@ Current social position scale closeout v429-v436 note:
 - The closeout does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, promote/demote state, zhuhu/kehu conversion state, precision-band state, class ledger, social-position ledger, personnel ledger, movement ledger, source-key ledger, scale-budget ledger, closeout ledger, durable social-position residue, or serialized module payload.
 - Any future persisted commoner status drift, conversion state, route history, precision state, source provenance, durable residue, or projection cache still requires a separate owner-module schema/migration plan before implementation.
 
+Current commoner status owner-lane preflight v437-v444 note:
+- V437-V444 is docs/tests preflight only and adds no persisted fields.
+- The preflight does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, promote/demote state, zhuhu/kehu conversion state, precision-band state, class ledger, social-position ledger, commoner-status ledger, personnel ledger, movement ledger, owner-lane ledger, preflight ledger, durable social-position residue, or serialized module payload.
+- Any future persisted commoner status drift in `PopulationAndHouseholds` still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

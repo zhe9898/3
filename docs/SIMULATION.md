@@ -710,3 +710,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It closes v381-v428 as first-layer visibility evidence: future-lane contract, readback, source keys, scale budget, regional guard, and Unity copy-only evidence.
 - The closeout does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, choose regional people, or change `PersonRegistry`.
 - Future status depth still needs one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
+
+## Current commoner status owner-lane preflight v437-v444 note
+
+- V437-V444 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, precision mutation, selection rule, or persistence change.
+- It recommends `PopulationAndHouseholds` as the first future runtime owner lane for commoner status depth because that module already owns household livelihood/activity/pools and pressure carriers.
+- The preflight does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, choose regional people, or change `PersonRegistry`.
+- Future implementation still needs `PopulationAndHouseholds` state/cadence/target-scope/no-touch/hot-path/cardinality/cap-order/schema/projection/validation before code lands.

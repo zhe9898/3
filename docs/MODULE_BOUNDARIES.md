@@ -1241,3 +1241,10 @@ Current lite note:
 - `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` remain separate owner lanes. Future status depth must choose one owner lane before changing state, route, residue, precision, or target cardinality.
 - `Application` remains projection/assembly only. `Zongzu.Presentation.Unity` and the Unity shell mirror remain copy-only.
 - V429-V436 adds no persisted state, schema bump, migration, class/social-position/scale-budget/closeout ledger, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Commoner status owner-lane preflight v437-v444 boundary note
+- V437-V444 adds no production boundary. It recommends `PopulationAndHouseholds` as the first future owner lane for commoner status drift because that module already owns household livelihood/activity/pools and pressure carriers.
+- `PersonRegistry` remains identity / `FidelityRing` only and must not store commoner status drift, zhuhu/kehu conversion, office-service status, trade attachment, or durable residue.
+- `Application` may only route/assemble future projections once an owner lane exists; it must not become a status resolver.
+- `Zongzu.Presentation.Unity` and the Unity shell must not infer status movement, pick regional people, or present a class browser from current readbacks.
+- V437-V444 adds no persisted state, schema bump, migration, owner-lane ledger, class/social-position/commoner-status module, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
