@@ -435,3 +435,10 @@
 - Code alignment: `PresentationReadModelBuilder.PersonDossiers` builds the list from the same structured owner snapshots used by the readback. `PersonRegistry` remains only the identity / `FidelityRing` anchor.
 - Unity alignment: `PersonDossierViewModel`, the Unity shell mirror, and `LineageShellAdapter` copy the projected list. Unity does not infer source modules, class movement, promotion/demotion, or zhuhu/kehu conversion.
 - v397-v404 adds no persisted state, schema, migration, social-position ledger, class engine, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v405-v412 social position readback closeout audit - 2026-04-28
+
+- v405-v412 closes v381-v404 as a first readback layer: future-lane guard, runtime readback, structured source keys, Unity copy-only path, and architecture evidence are aligned.
+- The closeout is deliberately not a runtime rule. It does not add class promotion/demotion, zhuhu/kehu conversion, office-service status, trade attachment, clerk/artisan/merchant route, durable residue, or global per-person career simulation.
+- Future commoner status depth must open a new owner-lane ExecPlan and name owner module, state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, no-touch boundary, and validation.
+- v405-v412 adds no production rule, persisted state, schema, migration, social-position closeout ledger, class engine, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

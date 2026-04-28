@@ -1213,3 +1213,10 @@ Current lite note:
 - `Application` may assemble the runtime source-key list from already-loaded snapshots. It must not parse social-position prose, rank people, promote/demote people, resolve zhuhu/kehu conversion, or create a second class-rule layer.
 - `Zongzu.Presentation.Unity` and the Unity shell mirror copy the projected list only.
 - V397-V404 adds no persisted state, schema bump, migration, social-position ledger, class engine, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Social position readback closeout v405-v412 boundary note
+- V405-V412 adds no new production boundary. It closes v381-v404 as evidence that commoner / social-position readback is legible without becoming a class engine.
+- `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` remain separate owner lanes. A future rule pass must choose one owner lane before changing status, route, residue, or fidelity.
+- `Application` remains projection/assembly only. `Zongzu.Presentation.Unity` remains copy-only. `PersonRegistry` remains identity/FidelityRing only.
+- Later commoner status depth must not reuse this closeout as authority to promote, demote, convert zhuhu/kehu status, assign office service, attach trade work, or write durable social-position residue.
+- V405-V412 adds no persisted state, schema bump, migration, class/social-position closeout ledger, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

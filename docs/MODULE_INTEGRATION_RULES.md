@@ -733,3 +733,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Future surfaces may use the key list to show provenance or filter display, but no module may consume it as command authority, class movement, promotion/demotion, zhuhu/kehu conversion, durable residue, or route eligibility.
 - Future commoner status drift still requires a separate owner-lane plan; no reader may parse the key list's sibling prose fields, mobility text, public-life lines, receipt prose, notification prose, docs text, or `DomainEvent.Summary` as authority.
 - Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/source-key ledger, projection cache, or save-manifest change.
+
+## Social position readback closeout v405-v412 integration note
+- V405-V412 adds no integration channel. It closes the preflight/readback/source-key layer as evidence only.
+- The closed layer is `future owner-lane contract` -> `SocialPositionReadbackSummary` -> `SocialPositionSourceModuleKeys` -> Unity copy-only display. It is not a command route, resolver, event consumer, ledger, or movement/class permission.
+- Future commoner status integration must open a separate owner-lane plan and cannot consume this closeout, social-position prose, source-key display, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
+- Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/closeout ledger, projection cache, or save-manifest change.

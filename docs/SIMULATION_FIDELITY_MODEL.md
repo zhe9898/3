@@ -572,3 +572,9 @@ It should ask:
 - `SocialPositionSourceModuleKeys` exposes structured provenance for the close-orbit social-position readback without raising fidelity or scanning the world person-by-person.
 - The key list may help the lineage/person inspector show which owner lanes made a named dossier legible, but it does not select new named actors, promote/demote people, or open a movement lane.
 - Distant commoner society still remains summarized by pools and pressure carriers. Future owner-lane depth must still declare precision band, deterministic selection, cap, cadence, schema impact, and projection readback separately.
+
+## V405-V412 Social Position Readback Closeout
+
+- V381-V404 is closed as a first close-orbit readback layer only: nearby dossiers can explain social-position provenance, but fidelity rings, target cardinality, and movement lanes do not change.
+- The closeout does not promote distant commoners into named simulation. Distant society still remains summarized by household pools, settlement pressure carriers, and module-owned drift.
+- Future owner-lane depth must still declare precision band, deterministic selection, cap, cadence, schema impact, and projection readback before adding commoner status rules.
