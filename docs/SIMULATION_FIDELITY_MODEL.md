@@ -459,3 +459,10 @@ It should ask:
 - `PersonRegistry` remains identity-only. It may execute `ChangeFidelityRing` against the existing `FidelityRing` field when a hot household needs local readback, but it does not gain household, livelihood, relation, office, memory, or capability state.
 - Player-facing readback follows the intended scale rule: nearby/high-pressure people can become named local detail, while regional people remain pooled through `SettlementMobilitySnapshot` rather than being simulated one by one.
 - Save/schema impact remains none: this pass reuses `PopulationAndHouseholds` schema `3` and `PersonRegistry` schema `1`.
+
+## V245-V252 Closeout
+
+- The v213-v244 branch is closed as first-layer fidelity substrate only. It proves the model can show near detail and far summary without simulating every person as an always-on agent.
+- The closeout does not implement full demotion, dormant stubs, durable SocialMemory movement residue, class-mobility formulas, complete migration economics, or world-scale per-person simulation.
+- Future fidelity work must name the owner module, expected cardinality, deterministic cap/order, schema impact, and validation lane before adding caches, ledgers, or new persisted state.
+- UI and Unity may display projected fidelity/mobility readbacks, but must not infer precision, promote/demote people, parse prose, or calculate movement outcomes.

@@ -2599,6 +2599,75 @@ public class ProjectReferenceTests
         Assert.That(dataSchema, Does.Contain("v213-v244").Or.Contain("social mobility fidelity ring"));
     }
 
+    [Test]
+    public void Social_mobility_fidelity_ring_closeout_v245_v252_must_document_first_layer_only_without_schema_or_authority_drift()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_social-mobility-fidelity-closeout-v245-v252.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_social-mobility-fidelity-closeout-v245-v252.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V245-V252 Social Mobility Fidelity Ring Closeout Audit"));
+        Assert.That(topologyIndex, Does.Contain("first-layer substrate"));
+        Assert.That(topologyIndex, Does.Contain("does not mean Zongzu has a full society engine"));
+        Assert.That(designAudit, Does.Contain("v245-v252 social mobility fidelity-ring closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("social mobility fidelity ring closeout v245-v252 note"));
+        Assert.That(integrationRules, Does.Contain("Social mobility fidelity ring closeout v245-v252 integration note"));
+        Assert.That(acceptance, Does.Contain("Social mobility fidelity ring closeout v245-v252 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V252"));
+        Assert.That(fidelityModel, Does.Contain("V245-V252 Closeout"));
+
+        Assert.That(schemaRules, Does.Contain("social mobility fidelity ring closeout v245-v252 remains docs/tests only"));
+        Assert.That(dataSchema, Does.Contain("Current social mobility fidelity ring closeout v245-v252 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("This pass must remain docs/tests only"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "MovementLedger",
+                     "PersonMovementLedger",
+                     "SocialMobilityLedger",
+                     "FocusLedger",
+                     "OwnerLaneLedger",
+                     "SchedulerLedger",
+                     "ProjectionCache",
+                     "DormantStubStore",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Migration*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+    }
+
     private static string[] GetProjectReferences(string projectName)
     {
         var csproj = FindCsproj(projectName);

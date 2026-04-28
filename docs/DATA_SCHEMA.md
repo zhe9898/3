@@ -1242,6 +1242,11 @@ Current social mobility fidelity ring v213-v244 note:
 - `PersonRegistry` remains schema `1`; `ChangeFidelityRing` mutates only existing identity/fidelity-ring state and emits a structured receipt event. Household, livelihood, activity, relation, office, and memory facts stay outside `PersonRegistry`.
 - New `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, person dossier movement/fidelity readbacks, runtime observability counters, and Unity shell mobility strings are runtime read models or diagnostics only and are not saved.
 
+Current social mobility fidelity ring closeout v245-v252 note:
+- v245-v252 is docs/test governance only and adds no persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, projection cache, or serialized payload change.
+- The closeout does not authorize a movement ledger, social-mobility ledger, focus ledger, owner-lane ledger, scheduler ledger, dormant-stub store, or `PersonRegistry` domain expansion.
+- Future durable movement residue, demotion/dormant-state, or richer migration/class mobility state must arrive with an explicit schema/migration plan before any field is added.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

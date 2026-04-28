@@ -1037,3 +1037,9 @@ Current lite note:
 - `SocialMemoryAndRelations` writes no same-month durable movement residue in this pass. Later residue must read structured aftermath from owner modules, never movement/readback prose.
 - `Application` builds `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, and person dossier readbacks from queries. `Zongzu.Presentation.Unity`, shared ViewModels, and the Unity shell copy projected fields only.
 - V213-V244 adds no persisted fields, schema bump, migration, social-mobility ledger, movement ledger, focus ledger, manager/controller layer, or `PersonRegistry` expansion.
+
+## 2026-04-28 social mobility fidelity ring closeout v245-v252 note
+- V245-V252 is a closeout audit over the v213-v244 substrate. It adds no new production boundary and does not widen the `PersonRegistry` command surface beyond identity/fidelity-ring assignment.
+- The branch is closed only as first-layer rule density: `PopulationAndHouseholds` can keep livelihood/activity/pools coherent, `PersonRegistry` can move an existing fidelity ring, and projection surfaces can explain why near/hot people are readable while regional people remain pooled.
+- Future demotion, dormant stubs, durable movement residue, richer migration economics, and class-mobility formulas must still name their owning module and schema impact before implementation.
+- UI, Unity, and Application must not turn this closeout into a complete society engine, per-person world simulation, saved projection cache, movement/social/focus ledger, or prose-parsing rule path.

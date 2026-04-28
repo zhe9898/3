@@ -651,3 +651,10 @@ At integration level, verify:
 - Architecture acceptance: guard no Application/UI/Unity authority drift, no summary/prose parsing, no forbidden manager/god-controller names, no `PersonRegistry` domain expansion, no movement/social-mobility/focus ledger, and no schema drift.
 - Save/schema acceptance: v213-v244 adds no persisted fields, no module envelope, no root/module schema version change, no migration, no save manifest change, and no projection cache.
 - Focused proof: `PopulationAndHouseholdsModuleTests`, `SocialMobilityFidelityRingIntegrationTests`, `Social_mobility_fidelity_ring_must_stay_owner_laned_projection_only_and_schema_neutral`, `FirstPassPresentationShellTests`, and `ViewModelJsonRoundTripTests` cover owner rules, cross-module readback, architecture guardrails, and Unity copy-only DTO stability.
+
+## Social mobility fidelity ring closeout v245-v252 acceptance - 2026-04-28
+- Audit acceptance: v213-v244 is documented as closed only for first-layer fidelity/mobility substrate, not as a complete society engine, full migration economy, full class-mobility model, per-person world simulation, dormant-stub demotion loop, or durable SocialMemory movement-residue claim.
+- Ownership acceptance: the audit preserves `PopulationAndHouseholds` for livelihood/activity/pools, `PersonRegistry` for identity/fidelity only, `SocialMemoryAndRelations` for later structured durable residue, Application for projection assembly, and Unity for copy-only display.
+- Architecture acceptance: guard no schema/migration drift, no movement/social/focus/owner-lane/scheduler ledger, no `PersonRegistry` domain expansion, no Application/UI/Unity authority, and no prose parsing.
+- Save/schema acceptance: v245-v252 is docs/tests only and adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, or serialized payload change.
+- Focused proof: `Social_mobility_fidelity_ring_closeout_v245_v252_must_document_first_layer_only_without_schema_or_authority_drift` plus `git diff --check`, build, and full solution tests close the audit.

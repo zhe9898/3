@@ -425,3 +425,10 @@ lineage surface / person inspector.
 - `PopulationAndHouseholds` may request a `Regional -> Local` focus change when an already-modeled household reaches hot migration, livelihood, or labor pressure; the household livelihood and membership activity facts still remain population-owned.
 - `PersonDossiers` may show `MovementReadbackSummary` and `FidelityRingReadbackSummary`, but these are runtime projections. Future readers must not parse this prose as authority.
 - No `PersonRegistry` state expansion or schema change is part of v213-v244.
+
+## V245-V252 Fidelity-Ring Closeout Boundary
+
+- V245-V252 closes the first implementation branch without giving `PersonRegistry` any new domain responsibility.
+- `FidelityRingChanged` remains an identity/fidelity receipt. It is not a movement ledger, social-mobility ledger, relationship event, career event, household event, or SocialMemory residue.
+- Future promotion/demotion, dormant-stub, or durable movement-memory work must keep the same rule: the module that owns the social fact owns the state; `PersonRegistry` only anchors identity and ring assignment.
+- Application, UI, Unity, and later readers must not parse person dossier movement/fidelity prose to decide authority.
