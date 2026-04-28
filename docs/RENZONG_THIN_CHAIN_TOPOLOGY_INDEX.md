@@ -205,6 +205,12 @@ Closed means the current code now has a bounded loop for household pressure -> l
 
 The closeout preserves the owner split: `PopulationAndHouseholds` owns livelihood/activity/pools, `PersonRegistry` owns identity and existing fidelity-ring assignment only, `SocialMemoryAndRelations` remains a later structured-residue owner, Application assembles projections, and UI/Unity copy fields. V245-V252 adds no module, ledger, schema, migration, persisted cache, manager/controller, or prose-parsing authority.
 
+## V269-V276 Social Mobility Scale Budget Guard
+
+V269-V276 is a guard over the v213-v252 mobility/fidelity substrate, not a new pressure chain and not a new runtime feature. It records the scale rule that future personnel or social-mobility work must follow: near people can become detailed, active pressure can select a bounded local focus, active chain regions stay readable through structured pools and settlement summaries, and distant society remains alive as pressure summaries rather than all-world per-person hard simulation.
+
+The guard preserves the owner split: `PopulationAndHouseholds` owns household livelihood, membership activity, and labor/marriage/migration pools; `PersonRegistry` owns identity and existing `FidelityRing` assignment only; `SocialMemoryAndRelations` remains the later durable-residue owner; Application assembles projections and diagnostics; Unity copies projected fields. V269-V276 adds no production rule, schema, migration, movement/social/focus/scheduler ledger, world-person simulation manager, Application/UI/Unity authority, `PersonRegistry` domain expansion, or prose parser.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

@@ -2678,6 +2678,92 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Social_mobility_scale_budget_guard_v269_v276_must_prevent_whole_world_person_simulation_drift()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_social-mobility-scale-budget-guard-v269-v276.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_social-mobility-scale-budget-guard-v269-v276.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V269-V276 Social Mobility Scale Budget Guard"));
+        Assert.That(designAudit, Does.Contain("v269-v276 social mobility scale-budget guard"));
+        Assert.That(moduleBoundaries, Does.Contain("Social mobility scale-budget guard v269-v276 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Social mobility scale-budget guard v269-v276 integration note"));
+        Assert.That(simulation, Does.Contain("Current social mobility scale-budget guard v269-v276 note"));
+        Assert.That(fidelityModel, Does.Contain("V269-V276 Scale Budget Guard"));
+        Assert.That(uiPresentation, Does.Contain("v269-v276 scale-budget guard"));
+        Assert.That(acceptance, Does.Contain("Social mobility scale budget guard v269-v276 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V276"));
+
+        foreach (string band in new[]
+                 {
+                     "close-orbit named detail",
+                     "influence/pressure selective detail",
+                     "active-region structured pools",
+                     "distant-world pressure summaries",
+                 })
+        {
+            Assert.That(acceptance, Does.Contain(band), band);
+        }
+
+        Assert.That(schemaRules, Does.Contain("social mobility scale budget guard v269-v276 remains docs/tests only"));
+        Assert.That(dataSchema, Does.Contain("Current social mobility scale budget guard v269-v276 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("This pass is docs/tests only"));
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "WholeWorldPersonSimulation",
+                     "GlobalPersonSimulation",
+                     "AllWorldPersonSimulation",
+                     "PerPersonWorldSimulation",
+                     "EveryPersonEveryMonth",
+                     "GlobalPersonTick",
+                     "WorldPersonTick",
+                     "WorldPopulationManager",
+                     "PersonSimulationManager",
+                     "MobilityManager",
+                     "MovementLedger",
+                     "PersonMovementLedger",
+                     "SocialMobilityLedger",
+                     "FocusLedger",
+                     "SchedulerLedger",
+                     "v269-v276",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Migration*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

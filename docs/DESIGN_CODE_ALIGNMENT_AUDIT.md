@@ -316,3 +316,10 @@
 - `PersonRegistry` remains identity-only: the new command surface changes only the existing `FidelityRing` and emits structured metadata. It is not a person manager, household table, career table, or social-state authority.
 - Application read models expose `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, and person dossier movement/fidelity readbacks; Unity-facing adapters and mirrored shell ViewModels copy those fields only.
 - v213-v244 adds no persisted state, schema bump, migration, social-mobility ledger, movement ledger, focus ledger, manager/controller layer, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.
+
+## v269-v276 social mobility scale-budget guard - 2026-04-28
+
+- v269-v276 is docs/test governance over the existing v213-v252 substrate. It does not change production simulation rules.
+- The guard makes the scale rule explicit: player household / close orbit can be named detail; player influence footprint and active pressure can select bounded detail; active chain regions use structured pools and settlement summaries; distant society stays alive through pressure summaries, not per-person world simulation.
+- Future personnel-flow work must name owner module, hot path, cardinality, deterministic cap/order, schema impact, and validation lane before expanding fidelity, adding caches, or writing durable movement residue.
+- v269-v276 adds no persisted state, schema bump, migration, movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.

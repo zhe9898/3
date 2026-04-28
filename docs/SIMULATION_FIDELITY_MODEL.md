@@ -466,3 +466,12 @@ It should ask:
 - The closeout does not implement full demotion, dormant stubs, durable SocialMemory movement residue, class-mobility formulas, complete migration economics, or world-scale per-person simulation.
 - Future fidelity work must name the owner module, expected cardinality, deterministic cap/order, schema impact, and validation lane before adding caches, ledgers, or new persisted state.
 - UI and Unity may display projected fidelity/mobility readbacks, but must not infer precision, promote/demote people, parse prose, or calculate movement outcomes.
+
+## V269-V276 Scale Budget Guard
+
+- The stable rule is now explicit: **near detail, pressure-selected local detail, active-region pools, distant pressure summary**.
+- Player household / close orbit can be named and person-dense because the player reads and acts there.
+- Player influence footprint and active pressure can selectively promote detail, but only through owner-module rules and deterministic caps.
+- Active chain regions should stay readable through `SettlementMobilitySnapshot`, labor/marriage/migration pools, and owner snapshots rather than permanent full populations.
+- Distant society remains alive through pressure summaries, opportunity climate, route heat, legitimacy climate, and pool thickness. It must not become an all-world per-person monthly tick.
+- Future personnel-flow work must record hot path, expected cardinality, deterministic order/cap, schema impact, and validation lane before deepening fidelity.

@@ -660,3 +660,10 @@ At integration level, verify:
 - Architecture acceptance: guard no schema/migration drift, no movement/social/focus/owner-lane/scheduler ledger, no `PersonRegistry` domain expansion, no Application/UI/Unity authority, and no prose parsing.
 - Save/schema acceptance: v245-v252 is docs/tests only and adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, or serialized payload change.
 - Focused proof: `Social_mobility_fidelity_ring_closeout_v245_v252_must_document_first_layer_only_without_schema_or_authority_drift` plus `git diff --check`, build, and full solution tests close the audit.
+
+## Social mobility scale budget guard v269-v276 acceptance - 2026-04-28
+- Audit acceptance: v269-v276 documents four precision bands: close-orbit named detail, influence/pressure selective detail, active-region structured pools, and distant-world pressure summaries.
+- Ownership acceptance: the guard preserves `PopulationAndHouseholds` for livelihood/activity/pools, `PersonRegistry` for identity/fidelity only, `SocialMemoryAndRelations` for future structured durable residue, Application for projection/diagnostics assembly, and Unity for copy-only display.
+- Architecture acceptance: guard no production whole-world person simulation manager, no movement/social/focus/scheduler ledger, no `PersonRegistry` domain expansion, no Application/UI/Unity authority, no prose parsing, and no schema/migration drift.
+- Save/schema acceptance: v269-v276 is docs/tests only and adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, or serialized payload change.
+- Focused proof: `Social_mobility_scale_budget_guard_v269_v276_must_prevent_whole_world_person_simulation_drift` plus build, `git diff --check`, and full solution tests close the audit.

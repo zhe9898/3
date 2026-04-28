@@ -569,3 +569,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - V245-V252 adds no scheduler step, cadence change, event-drain rule, runtime cache, or simulation formula. It is a closeout audit for the v213-v244 first-layer fidelity substrate.
 - The closed branch proves a bounded monthly/xun path over existing population and registry state; it does not prove full per-person world simulation, full migration economy, demotion/dormant-stub handling, or durable movement residue.
 - Future performance work must name touched counts, deterministic ordering, caps, cache invalidation, save/schema impact, and a validation lane before changing the fidelity loop.
+
+## Current social mobility scale-budget guard v269-v276 note
+
+- V269-V276 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, or projection field.
+- It makes the simulation budget rule explicit for future work: close orbit can run as named detail, player influence or active pressure can promote bounded selective detail, active regions should usually use structured pools and settlement summaries, and the distant world should remain pressure-summary simulation rather than per-person hard ticks.
+- Future mobility/personnel-flow branches must name hot path, expected cardinality, deterministic order, cap strategy, owner module, schema impact, and validation lane before increasing fidelity.

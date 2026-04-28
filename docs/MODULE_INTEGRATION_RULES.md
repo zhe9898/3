@@ -624,3 +624,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - No downstream module may treat `FidelityRingChanged`, `SettlementMobilitySnapshot`, `FidelityScaleSnapshot`, person dossier movement text, or population pool summaries as a ledger or as permission to parse prose.
 - Later SocialMemory movement residue, dormant-stub demotion, migration economy, relief/class mobility, or force/office mobility hooks must consume structured owner snapshots or events and declare their own owner lane, schema impact, tests, and no-touch boundaries.
 - Application and Unity remain read/projection/copy surfaces only. Save/schema result: no persisted state, schema bump, migration, movement ledger, social-mobility ledger, focus ledger, owner-lane ledger, scheduler ledger, projection cache, or save-manifest change.
+
+## Social mobility scale-budget guard v269-v276 integration note
+- V269-V276 adds no integration channel. It records that the v213-v252 fidelity substrate must scale by ring and pressure rather than by all-world person ticks.
+- Future mobility consumers must choose one of four surfaces before mutating or projecting: named detail for the player household / close orbit, selective detail for the player influence footprint or active pressure, structured pools for active chain regions, and pressure summaries for distant society.
+- `FidelityRingChanged`, population pools, settlement mobility summaries, and person dossier movement/fidelity readbacks are not ledgers. Later readers must not parse their prose or use them as hidden scheduler state.
+- Any future expansion beyond this guard must declare owner module, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane. Save/schema result for v269-v276: no persisted state, schema bump, migration, movement/social/focus/scheduler ledger, projection cache, or save-manifest change.
