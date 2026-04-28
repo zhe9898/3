@@ -733,3 +733,10 @@ At integration level, verify:
 - Boundary acceptance: the proof uses structured command-surface enumeration by settlement, not hidden module queries, prose parsing, global-state inference, or UI-calculated movement rules.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
 - Save/schema acceptance: v341-v348 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/desk-gate-containment ledger, durable residue, or serialized module payload change.
+
+## Personnel flow gate closeout v349-v356 acceptance - 2026-04-28
+- Closeout acceptance: v325-v348 is documented as closed only for first-layer owner-lane gate readback, Great Hall display, Desk Sandbox local echo, and containment against quiet/distant node leakage.
+- Scope acceptance: the layer does not claim a direct personnel command system, migration economy, assignment system, office-service lane, campaign-manpower lane, durable movement residue, or full social mobility engine.
+- Boundary acceptance: future depth must choose an owner lane and declare target scope, hot path, cardinality, deterministic cap/order, schema impact, no-touch boundary, and validation lane before implementation.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
+- Save/schema acceptance: v349-v356 adds no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/owner-lane-gate ledger, durable residue, or serialized module payload change.

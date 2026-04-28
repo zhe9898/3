@@ -1309,6 +1309,11 @@ Current personnel flow desk gate containment v341-v348 note:
 - The negative desk echo proof does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, desk-gate containment ledger, durable residue, or serialized module payload.
 - Any future persisted settlement-local owner-lane gate history, movement receipt, assignment state, migration state, or durable social residue still requires a separate schema/migration plan before implementation.
 
+Current personnel flow gate closeout v349-v356 note:
+- V349-V356 is docs/tests closeout only. It adds no persisted fields.
+- The closeout does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, owner-lane-gate ledger, durable residue, or serialized module payload.
+- Any future persisted personnel-flow command history, owner-lane selection, movement receipt, assignment state, migration state, or durable social residue still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

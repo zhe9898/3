@@ -269,6 +269,12 @@ V341-V348 closes a leak path around the desk echo: a global `PersonnelFlowOwnerL
 
 This keeps personnel-flow readback in the "near detail, far summary" rule. Active local surfaces may show the owner-lane gate; quiet or distant nodes keep their mobility pool summaries. It adds no schema, migration, direct personnel command, movement/personnel/desk-gate ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
 
+## V349-V356 Personnel Flow Gate Closeout Audit
+
+V349-V356 closes v325-v348 as the first personnel-flow owner-lane gate layer: command-surface gate, Great Hall readback, Desk Sandbox local echo, and containment against quiet/distant node leakage.
+
+Closed here still means first-layer readback only. It is not a migration economy, direct person movement system, office-service lane, campaign-manpower lane, assignment system, or full social mobility engine. Future depth must open a new owner-lane ExecPlan with state, cadence, cardinality, schema impact, and validation before adding rules.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

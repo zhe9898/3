@@ -636,3 +636,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - V341-V348 adds a negative containment proof around the desk echo. A global owner-lane gate summary does not make every settlement locally active.
 - The simulation remains unchanged: only settlements with structured local public-life personnel-flow readiness affordances or receipts may show the desk gate echo.
 - Quiet or distant settlements remain pool summaries. No monthly rule, movement resolver, person assignment path, migration economy, SocialMemory residue, schema, migration, ledger, or prose parser is added.
+
+## Current personnel flow gate closeout v349-v356 note
+
+- V349-V356 closes v325-v348 as a projection/readback layer only.
+- The simulation still has no new scheduler step, cadence rule, event-drain rule, movement resolver, person assignment path, office-service lane, campaign-manpower lane, migration economy, SocialMemory residue, schema, migration, ledger, or prose parser.
+- Future personnel-flow simulation depth must choose an owner lane and document state, cadence, cardinality, deterministic cap/order, schema impact, and validation before implementation.

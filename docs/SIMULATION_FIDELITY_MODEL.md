@@ -529,3 +529,9 @@ It should ask:
 - Desk Sandbox may echo the owner-lane gate only when local projected readiness commands/receipts exist for that settlement.
 - This keeps local detail pressure-selected rather than global: the desk does not smear a global personnel-flow label across every settlement node.
 - It adds no per-person scan, movement resolver, direct assignment, hidden target inference, or persisted cache.
+
+## V349-V356 Personnel Flow Gate Closeout
+
+- V325-V348 is closed as a first personnel-flow gate/readback/display/containment layer, not a high-fidelity movement system.
+- Fidelity remains bounded: current local household response can be read, Desk Sandbox can localize the readback, and distant settlements remain pooled summaries.
+- Future movement, migration, office-service, assignment, or campaign-manpower fidelity must open a separate owner-lane plan with cardinality, deterministic cap/order, and schema impact before implementation.
