@@ -675,3 +675,11 @@ At integration level, verify:
 - Architecture acceptance: guard no Application command authority, no UI/Unity authority, no prose parsing, no movement/social/focus/scheduler ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
 - Save/schema acceptance: v277-v284 adds runtime read-model/ViewModel fields only and no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, or serialized module payload change.
 - Focused proof: `SocialMobilityFidelityRingIntegrationTests`, `ViewModelJsonRoundTripTests`, `Social_mobility_influence_readback_v277_v284_must_stay_projection_only_and_schema_neutral`, build, `git diff --check`, and full solution tests close the pass.
+
+## Social mobility boundary closeout v285-v292 acceptance - 2026-04-28
+- Audit acceptance: v213-v284 is documented as closed only for first-layer mobility/personnel-flow substrate: near detail, pressure-selected local detail, active-region pools, and distant pressure summary.
+- Non-overclaim acceptance: the closeout must preserve future debt for full migration economy, full class mobility, direct personnel commands, dormant stubs, durable movement residue, and cross-region personnel flow.
+- Ownership acceptance: `PopulationAndHouseholds` remains owner of livelihood/activity/pools, `PersonRegistry` remains identity/fidelity only, `SocialMemoryAndRelations` remains future durable-residue owner only, Application assembles projections/diagnostics, and UI/Unity copy projected fields.
+- Architecture acceptance: guard no production rule change, no Application/UI/Unity authority, no prose parsing, no movement/social/focus/scheduler/command/personnel ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
+- Save/schema acceptance: v285-v292 is docs/tests only and adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, or serialized module payload change.
+- Focused proof: `Social_mobility_boundary_closeout_v285_v292_must_document_first_layer_only_without_schema_or_authority_drift` plus build, `git diff --check`, and full solution tests close the audit.

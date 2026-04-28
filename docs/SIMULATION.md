@@ -581,3 +581,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - V277-V284 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, or persistence change.
 - The new readbacks explain existing simulation scale: `InfluenceFootprintReadbackSummary` says why close/local/distant people are readable at that precision, and `ScaleBudgetReadbackSummary` says whether a settlement is named local detail, pressure-selected detail, active-region pool, or distant summary.
 - Determinism depends only on already-built snapshots and stable projection ordering. Future readers must not parse these strings as input to scheduler, commands, SocialMemory, or UI decisions.
+
+## Current social mobility boundary closeout v285-v292 note
+
+- V285-V292 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, or persistence change.
+- The closeout states that v213-v284 is bounded by four precision bands: close-orbit named detail, pressure-selected local detail, active-region structured pools, and distant pressure summary.
+- Future mobility/personnel-flow work must name hot path, expected cardinality, deterministic order/cap, owner module, schema impact, no-touch boundary, and validation lane before adding rule density.
+- Future readers must not parse readback strings, person dossier prose, settlement mobility text, notification prose, receipt prose, or `DomainEvent.Summary` as scheduler or command input.

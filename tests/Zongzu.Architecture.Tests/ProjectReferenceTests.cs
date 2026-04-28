@@ -2871,6 +2871,140 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Social_mobility_boundary_closeout_v285_v292_must_document_first_layer_only_without_schema_or_authority_drift()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_social-mobility-boundary-closeout-v285-v292.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_social-mobility-boundary-closeout-v285-v292.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+        string mobilityProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Mobility.cs"));
+        string personDossierProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PersonDossiers.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "GreatHall", "GreatHallShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "DeskSandbox", "DeskSandboxShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Family", "LineageShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Family", "PersonDossierViewModel.cs"),
+        }.Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V285-V292 Social Mobility Boundary Closeout Audit"));
+        Assert.That(designAudit, Does.Contain("v285-v292 social mobility boundary closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Social mobility boundary closeout v285-v292 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Social mobility boundary closeout v285-v292 integration note"));
+        Assert.That(simulation, Does.Contain("Current social mobility boundary closeout v285-v292 note"));
+        Assert.That(fidelityModel, Does.Contain("V285-V292 Boundary Closeout"));
+        Assert.That(uiPresentation, Does.Contain("v285-v292 boundary closeout"));
+        Assert.That(acceptance, Does.Contain("Social mobility boundary closeout v285-v292 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V292"));
+        Assert.That(schemaRules, Does.Contain("social mobility boundary closeout v285-v292 remains docs/tests only"));
+        Assert.That(dataSchema, Does.Contain("Current social mobility boundary closeout v285-v292 note"));
+
+        foreach (string expectedDebt in new[]
+                 {
+                     "full migration economy",
+                     "direct personnel commands",
+                     "dormant stubs",
+                     "durable movement residue",
+                     "cross-region personnel flow",
+                 })
+        {
+            Assert.That(acceptance, Does.Contain(expectedDebt), expectedDebt);
+            Assert.That(execPlan, Does.Contain(expectedDebt), expectedDebt);
+        }
+
+        foreach (string expectedBand in new[]
+                 {
+                     "near detail",
+                     "pressure-selected local detail",
+                     "active-region pools",
+                     "distant pressure summary",
+                 })
+        {
+            Assert.That(topologyIndex, Does.Contain(expectedBand), expectedBand);
+            Assert.That(execPlan, Does.Contain(expectedBand), expectedBand);
+        }
+
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+        Assert.That(execPlan, Does.Contain("This pass is docs/tests only"));
+        Assert.That(execPlan, Does.Contain("No direct player command for moving people"));
+
+        foreach (string source in new[] { mobilityProjection, personDossierProjection, unitySource })
+        {
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("domainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("IssueModuleCommand"));
+            Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "WholeWorldPersonSimulation",
+                     "GlobalPersonSimulation",
+                     "AllWorldPersonSimulation",
+                     "PerPersonWorldSimulation",
+                     "EveryPersonEveryMonth",
+                     "GlobalPersonTick",
+                     "WorldPersonTick",
+                     "WorldPopulationManager",
+                     "PersonSimulationManager",
+                     "MobilityManager",
+                     "MovementLedger",
+                     "PersonMovementLedger",
+                     "SocialMobilityLedger",
+                     "FocusLedger",
+                     "SchedulerLedger",
+                     "PersonnelLedger",
+                     "PersonCommandLedger",
+                     "ProjectionCache",
+                     "DormantStubStore",
+                     "DirectPersonnelCommand",
+                     "MovePersonCommand",
+                     "TransferPersonCommand",
+                     "v285-v292",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Migration*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PersonnelFlow*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
