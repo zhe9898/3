@@ -3427,6 +3427,114 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Personnel_flow_readiness_closeout_v317_v324_must_stay_docs_tests_only_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string playerScope = File.ReadAllText(Path.Combine(RepoRoot, "docs", "PLAYER_SCOPE.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_personnel-flow-readiness-closeout-v317-v324.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_personnel-flow-readiness-closeout-v317-v324.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string readModelContracts = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "PlayerCommandReadModels.cs"));
+        string playerCommandCatalog = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PlayerCommandService",
+            "PlayerCommandCatalog.cs"));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V317-V324 Personnel Flow Readiness Closeout Audit"));
+        Assert.That(playerScope, Does.Contain("v317-v324 closes that branch as first-layer readiness only"));
+        Assert.That(designAudit, Does.Contain("v317-v324 personnel flow readiness closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Personnel flow readiness closeout v317-v324 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Personnel flow readiness closeout v317-v324 integration note"));
+        Assert.That(simulation, Does.Contain("Current personnel flow readiness closeout v317-v324 note"));
+        Assert.That(fidelityModel, Does.Contain("V317-V324 Personnel Flow Readiness Closeout"));
+        Assert.That(uiPresentation, Does.Contain("v317-v324 personnel flow readiness closeout"));
+        Assert.That(acceptance, Does.Contain("Personnel flow readiness closeout v317-v324 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V324"));
+        Assert.That(schemaRules, Does.Contain("personnel flow readiness closeout v317-v324 is docs/tests only"));
+        Assert.That(dataSchema, Does.Contain("Current personnel flow readiness closeout v317-v324 note"));
+        Assert.That(execPlan, Does.Contain("Close v293-v316 as a first personnel-flow command-readiness layer"));
+        Assert.That(execPlan, Does.Contain("No runtime rule change"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+
+        Assert.That(readModelContracts, Does.Contain("PersonnelFlowReadinessSummary"));
+        Assert.That(readModelContracts, Does.Contain("PlayerCommandSurfaceSnapshot"));
+        Assert.That(playerCommandCatalog, Does.Contain("RestrictNightTravel"));
+        Assert.That(playerCommandCatalog, Does.Contain("PoolRunnerCompensation"));
+        Assert.That(playerCommandCatalog, Does.Contain("SendHouseholdRoadMessage"));
+
+        foreach (string closeoutToken in new[]
+                 {
+                     "first personnel-flow command-readiness layer",
+                     "不是完整迁徙系统",
+                     "不是完整社会流动引擎",
+                     "不是直接调人、迁人、召人命令",
+                     "PopulationAndHouseholds owns household response",
+                     "PersonRegistry owns identity/FidelityRing only",
+                     "Application/Unity display projected fields only",
+                     "schema/migration impact: none",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(closeoutToken), closeoutToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "MovePerson",
+                     "TransferPerson",
+                     "SummonPerson",
+                     "AssignPerson",
+                     "RelocatePerson",
+                     "DirectPersonnelCommand",
+                     "PersonnelCommandResolver",
+                     "PersonCommandLedger",
+                     "PersonnelLedger",
+                     "AssignmentLedger",
+                     "PersonAssignmentLedger",
+                     "MovementLedger",
+                     "PersonMovementLedger",
+                     "SurfaceEchoLedger",
+                     "CloseoutLedger",
+                     "v317-v324",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PersonnelFlow*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Migration*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

@@ -706,3 +706,9 @@ At integration level, verify:
 - Boundary acceptance: Application does not choose people, rank movement candidates, or calculate migration success; UI/Unity append/display the projected echo only.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, or public-life lines to derive personnel-flow authority.
 - Save/schema acceptance: v309-v316 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/surface-echo ledger, durable residue, or serialized module payload change.
+
+## Personnel flow readiness closeout v317-v324 acceptance - 2026-04-28
+- Closeout acceptance: v293-v316 is documented as a first personnel-flow command-readiness layer only.
+- Scope acceptance: the layer includes preflight gates, structured local-response readiness, command-surface echo, and Great Hall display; it does not claim a full migration system, social-mobility engine, office-service lane, campaign-manpower lane, or direct personnel control.
+- Architecture acceptance: guard no direct move/transfer/summon/assign-person route, no Application/UI/Unity movement authority, no prose parsing, no command/movement/personnel/assignment/focus/scheduler/closeout ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
+- Save/schema acceptance: v317-v324 adds no production code and no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, ledger, durable residue, or serialized module payload change.

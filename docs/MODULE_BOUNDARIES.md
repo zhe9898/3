@@ -91,6 +91,12 @@ V309-V316 adds a runtime command-surface echo field, `PlayerCommandSurfaceSnapsh
 
 The echo adds no module boundary, schema, migration, direct personnel command, movement/personnel/surface-echo ledger, projection cache, manager/controller path, `PersonRegistry` domain expansion, or prose parser.
 
+## Personnel flow readiness closeout v317-v324 boundary note
+
+V317-V324 is docs/tests only. It closes v293-v316 as a first command-readiness layer and does not add a boundary, command route, owner lane, schema, migration, or runtime state.
+
+Future deeper personnel-flow work still requires a fresh owner-lane plan before adding movement state, assignment state, office-service rules, campaign-manpower rules, durable SocialMemory residue, or a new persisted schema.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

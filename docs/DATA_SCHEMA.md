@@ -1289,6 +1289,11 @@ Current personnel flow surface echo v309-v316 note:
 - It adds no module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, durable residue, or serialized module payload.
 - Any future persisted personnel-flow command history, movement receipt, surface echo cache, or durable social residue must open a separate schema/migration plan before implementation.
 
+Current personnel flow readiness closeout v317-v324 note:
+- V317-V324 is docs/tests only and adds no runtime save shape.
+- The v293-v316 layer remains runtime read-model/ViewModel/projection work only. It adds no module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, closeout ledger, durable residue, or serialized module payload.
+- Any future persisted personnel-flow command history, migration state, movement receipt, or durable social residue still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

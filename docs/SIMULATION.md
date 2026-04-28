@@ -609,3 +609,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - `PlayerCommandSurfaceSnapshot.PersonnelFlowReadinessSummary` is projection-time echo over already projected command readiness fields.
 - It may explain that personnel-flow command readiness exists on the current surface, but it does not promote/demote people, move people, choose personnel targets, write SocialMemory residue, or change `PersonRegistry`.
 - UI/Unity must display the projected echo only and must not parse it to compute movement success.
+
+## Current personnel flow readiness closeout v317-v324 note
+
+- V317-V324 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, command route, or persistence change.
+- It closes v293-v316 only as a first personnel-flow command-readiness layer.
+- It does not complete migration, social mobility, office service, campaign manpower, or household relocation systems.
+- Future personnel-flow work must still open a new owner-lane plan before adding state, schema, or rule density.

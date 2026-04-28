@@ -358,3 +358,10 @@
 - Great Hall mobility readback may append `人员流动命令预备汇总`, but it reads only the already projected command-surface field; it does not inspect household state, choose people, parse `ReadbackSummary`, or calculate migration success.
 - The echo preserves the near/far scale budget: player-near household command readiness is readable, distant personnel flow remains summarized through pools and fidelity rings.
 - v309-v316 adds no schema, migration, direct personnel command, movement/personnel/surface-echo ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
+
+## v317-v324 personnel flow readiness closeout audit - 2026-04-28
+
+- v317-v324 is a docs/tests closeout for v293-v316 as a first personnel-flow command-readiness layer.
+- Closed here means the code and docs prove preflight gates, structured local-response readiness, command-surface echo, and Great Hall display without claiming a full migration economy or social-mobility engine.
+- The closeout records that future deeper work still must name owner lane, target scope, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane before implementation.
+- v317-v324 adds no runtime rule, schema, migration, direct personnel command, movement/personnel/closeout ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
