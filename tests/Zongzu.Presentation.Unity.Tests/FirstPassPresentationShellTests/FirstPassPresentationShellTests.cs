@@ -276,6 +276,9 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("PersonRegistry只保身份/FidelityRing"));
         Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("不是升降阶级或zhuhu/kehu转换"));
         Assert.That(dossier.CurrentStatusSummary, Does.Contain("Living Adult"));
+        Assert.That(dossier.SocialPositionSourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
+        Assert.That(dossier.SocialPositionSourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
+        Assert.That(dossier.SocialPositionSourceModuleKeys, Does.Contain(KnownModuleKeys.OfficeAndCareer));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.SocialMemoryAndRelations));
@@ -324,6 +327,7 @@ public sealed partial class FirstPassPresentationShellTests
                 SocialPositionLabel = "Branch member",
                 SocialPositionReadbackSummary = "社会位置读回：FamilyCore亲族位置；PersonRegistry只保身份/FidelityRing；不是升降阶级或zhuhu/kehu转换。",
                 CurrentStatusSummary = "Living Adult; Local ring; clan Qinghe Zhang; Branch member; pressure 12.",
+                SocialPositionSourceModuleKeys = [KnownModuleKeys.PersonRegistry, KnownModuleKeys.FamilyCore],
                 SourceModuleKeys = [KnownModuleKeys.PersonRegistry, KnownModuleKeys.FamilyCore],
             },
         ];

@@ -566,3 +566,9 @@ It should ask:
 - Distant commoner society still remains summarized by pools and pressure carriers until a later owner lane chooses state, cadence, cap/order, and schema impact.
 - Distant society remains summarized; active settlements still need structured local readiness before desk-local gate text appears.
 - Future owner-lane depth must still declare precision band, deterministic selection, cap, cadence, schema impact, and projection readback separately.
+
+## V397-V404 Social Position Owner-Lane Keys
+
+- `SocialPositionSourceModuleKeys` exposes structured provenance for the close-orbit social-position readback without raising fidelity or scanning the world person-by-person.
+- The key list may help the lineage/person inspector show which owner lanes made a named dossier legible, but it does not select new named actors, promote/demote people, or open a movement lane.
+- Distant commoner society still remains summarized by pools and pressure carriers. Future owner-lane depth must still declare precision band, deterministic selection, cap, cadence, schema impact, and projection readback separately.

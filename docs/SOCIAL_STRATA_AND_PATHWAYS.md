@@ -393,3 +393,9 @@ Design principle:
 - Social position now has a first executable drift layer in `PopulationAndHouseholds`: severe household pressure can push tenant or smallholder households toward seasonal migration, hired labor, or vagrancy, while recovery can move hired labor back toward smallholding when land, grain, labor, and settlement conditions support it.
 - Person movement is still bounded by fidelity budget. A few hot household members can be pulled into `Local` readback through `PersonRegistry.ChangeFidelityRing`, but regional society remains represented through labor, marriage, and migration pools.
 - This is not a full social-class engine, faction AI, or per-person world simulation. It is the first readable loop for "near detail, far summary" over existing population and registry fields.
+
+### Current implementation source keys: v397-v404
+
+- `SocialPositionSourceModuleKeys` now exposes which owner-lane snapshots support a person dossier's social-position readback.
+- `PersonRegistry` appears only as the identity / `FidelityRing` anchor. Household livelihood, study/exam, trade attachment, office posture, family placement, and social-memory pressure remain in their owner modules.
+- This list is the future-safe reader path. Do not parse `SocialPositionLabel`, `SocialPositionReadbackSummary`, receipt prose, notification prose, or docs text to decide which lane contributed.

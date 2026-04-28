@@ -428,3 +428,10 @@
 - Code alignment: `PresentationReadModelBuilder.PersonDossiers` builds the readback from structured family, household, education, trade, office, and social-memory snapshots; `PersonRegistry` still contributes only identity/FidelityRing.
 - Unity alignment: `PersonDossierViewModel`, the Unity shell mirror, and `LineageShellAdapter` copy the projected field, and the focused person status ledger may display it. Unity does not infer class movement, promotion, demotion, zhuhu/kehu conversion, or route eligibility.
 - v389-v396 adds no persisted state, schema, migration, class/social-position ledger, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v397-v404 social position owner-lane keys audit - 2026-04-28
+
+- v397-v404 adds `SocialPositionSourceModuleKeys` beside `SocialPositionReadbackSummary` so shell/readback code can use structured module keys rather than parsing the readback sentence.
+- Code alignment: `PresentationReadModelBuilder.PersonDossiers` builds the list from the same structured owner snapshots used by the readback. `PersonRegistry` remains only the identity / `FidelityRing` anchor.
+- Unity alignment: `PersonDossierViewModel`, the Unity shell mirror, and `LineageShellAdapter` copy the projected list. Unity does not infer source modules, class movement, promotion/demotion, or zhuhu/kehu conversion.
+- v397-v404 adds no persisted state, schema, migration, social-position ledger, class engine, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

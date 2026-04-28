@@ -726,3 +726,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The readback may name `FamilyCore`, `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, `SocialMemoryAndRelations`, and `PersonRegistry` ownership, but it is display guidance only.
 - Future commoner status drift still requires a separate owner-lane plan; no reader may parse the readback, `SocialPositionLabel`, mobility text, public-life lines, receipt prose, notification prose, docs text, or `DomainEvent.Summary` as authority.
 - Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/focus/scheduler/readback ledger, projection cache, or save-manifest change.
+
+## Social position owner-lane keys v397-v404 integration note
+- V397-V404 adds a runtime projection field, not a new integration channel.
+- `SocialPositionSourceModuleKeys` is assembled from existing structured person-dossier owner snapshots and copied to Unity-facing ViewModels. It is the structured reader path for the v389-v396 readback.
+- Future surfaces may use the key list to show provenance or filter display, but no module may consume it as command authority, class movement, promotion/demotion, zhuhu/kehu conversion, durable residue, or route eligibility.
+- Future commoner status drift still requires a separate owner-lane plan; no reader may parse the key list's sibling prose fields, mobility text, public-life lines, receipt prose, notification prose, docs text, or `DomainEvent.Summary` as authority.
+- Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/source-key ledger, projection cache, or save-manifest change.
