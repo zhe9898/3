@@ -566,6 +566,111 @@ public sealed class OfficeCourtRegimePressureChainTests
         Assert.That(officeState.People.Single(static p => p.PersonId == new PersonId(2)).HasAppointment, Is.True);
     }
 
+    [Test]
+    public void Chain9_RegimeLegitimacyDefectionProjectsPublicAndGovernanceReadback()
+    {
+        FeatureManifest manifest = BuildManifest(includePublicLife: true);
+        IReadOnlyList<IModuleRunner> modules = BuildModules(includePublicLife: true);
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1022, 6),
+            KernelState.Create(993),
+            manifest,
+            modules);
+
+        WorldSettlementsState worldState =
+            simulation.GetModuleStateForTesting<WorldSettlementsState>(KnownModuleKeys.WorldSettlements);
+        SeedWorld(worldState);
+        worldState.CurrentSeason.Imperial.MandateConfidence = 20;
+        worldState.LastCourtAgendaPressureDeclared = true;
+
+        OfficeAndCareerState officeState =
+            simulation.GetModuleStateForTesting<OfficeAndCareerState>(KnownModuleKeys.OfficeAndCareer);
+        officeState.People.Add(MakeOfficial(
+            1,
+            10,
+            authorityTier: 2,
+            demotion: 90,
+            clerk: 60,
+            petition: 70,
+            reputation: 0));
+        officeState.People.Add(MakeOfficial(
+            3,
+            10,
+            authorityTier: 4,
+            clerk: 8,
+            petition: 5,
+            reputation: 70));
+        officeState.People.Add(MakeOfficial(
+            2,
+            20,
+            authorityTier: 4,
+            demotion: 10,
+            clerk: 5,
+            petition: 10,
+            reputation: 70));
+
+        PublicLifeAndRumorState publicLifeState =
+            simulation.GetModuleStateForTesting<PublicLifeAndRumorState>(KnownModuleKeys.PublicLifeAndRumor);
+        publicLifeState.Settlements.Add(MakePublicLife(10));
+        publicLifeState.Settlements.Add(MakePublicLife(20));
+
+        SimulationMonthResult result = simulation.AdvanceOneMonth();
+
+        IDomainEvent[] events = result.DomainEvents.ToArray();
+        Assert.That(
+            events,
+            Has.Some.Matches<IDomainEvent>(
+                e => e.EventType == WorldSettlementsEventNames.RegimeLegitimacyShifted
+                     && e.EntityKey == "regime"));
+        IDomainEvent[] defections = events
+            .Where(static e => e.EventType == OfficeAndCareerEventNames.OfficeDefected)
+            .ToArray();
+        Assert.That(defections.Length, Is.EqualTo(1),
+            "Regime legitimacy pressure must still allocate to exactly one highest-risk official.");
+        Assert.That(defections[0].EntityKey, Is.EqualTo("1"));
+        Assert.That(defections[0].Metadata[DomainEventMetadataKeys.SettlementId], Is.EqualTo("10"));
+        Assert.That(officeState.People.Single(static p => p.PersonId == new PersonId(1)).HasAppointment, Is.False);
+        Assert.That(officeState.People.Single(static p => p.PersonId == new PersonId(3)).HasAppointment, Is.True);
+
+        SettlementPublicLifeState affectedPublicLife =
+            publicLifeState.Settlements.Single(static settlement => settlement.SettlementId == new SettlementId(10));
+        SettlementPublicLifeState offScopePublicLife =
+            publicLifeState.Settlements.Single(static settlement => settlement.SettlementId == new SettlementId(20));
+        Assert.That(affectedPublicLife.ContentionSummary, Does.Contain("天命摇动读回"));
+        Assert.That(affectedPublicLife.ContentionSummary, Does.Contain("去就风险读回"));
+        Assert.That(affectedPublicLife.ContentionSummary, Does.Contain("公议向背读法"));
+        Assert.That(affectedPublicLife.ContentionSummary, Does.Contain("仍由Office/PublicLife分读"));
+        Assert.That(affectedPublicLife.ChannelSummary, Does.Contain("不是本户替朝廷修合法性"));
+        Assert.That(offScopePublicLife.ContentionSummary, Does.Not.Contain("天命摇动读回"));
+
+        SocialMemoryAndRelationsState socialState =
+            simulation.GetModuleStateForTesting<SocialMemoryAndRelationsState>(KnownModuleKeys.SocialMemoryAndRelations);
+        Assert.That(
+            socialState.Memories,
+            Has.None.Matches<MemoryRecordState>(
+                memory => memory.Summary.Contains("天命摇动读回", StringComparison.Ordinal)
+                          || memory.CauseKey.Contains("regime", StringComparison.Ordinal)),
+            "Chain 9 first readback must not write same-month durable SocialMemory residue.");
+
+        PresentationReadModelBundle afterFirst = new PresentationReadModelBuilder().BuildForM2(simulation);
+        SettlementGovernanceLaneSnapshot governance =
+            afterFirst.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(10));
+        Assert.That(governance.RegimeOfficeReadbackSummary, Does.Contain("天命摇动读回"));
+        Assert.That(governance.RegimeOfficeReadbackSummary, Does.Contain("去就风险读回100"));
+        Assert.That(governance.RegimeOfficeReadbackSummary, Does.Contain("官身承压姿态"));
+        Assert.That(governance.RegimeOfficeReadbackSummary, Does.Contain("公议向背读法"));
+        Assert.That(governance.RegimeOfficeReadbackSummary, Does.Contain("仍由Office/PublicLife分读"));
+        Assert.That(governance.RegimeOfficeReadbackSummary, Does.Contain("不是本户替朝廷修合法性"));
+        Assert.That(governance.RegimeOfficeReadbackSummary, Does.Contain("不是UI判定归附成败"));
+        Assert.That(governance.GovernanceSummary, Does.Contain("天命摇动读回"));
+        Assert.That(afterFirst.GovernanceDocket.RegimeOfficeReadbackSummary, Does.Contain("天命摇动读回"));
+        Assert.That(afterFirst.GovernanceDocket.WhyNowSummary, Does.Contain("仍由Office/PublicLife分读"));
+
+        SettlementGovernanceLaneSnapshot offScopeGovernance =
+            afterFirst.GovernanceSettlements.Single(static lane => lane.SettlementId == new SettlementId(20));
+        Assert.That(offScopeGovernance.RegimeOfficeReadbackSummary, Does.Not.Contain("天命摇动读回"));
+    }
+
     private static FeatureManifest BuildManifest(bool includePublicLife)
     {
         FeatureManifest manifest = new();

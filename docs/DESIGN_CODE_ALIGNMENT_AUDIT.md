@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v253-v260 regime legitimacy readback - 2026-04-28
+
+- Chain 9 now has a first readback-thickening layer over the existing `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor` path. This is still regime/office/public readback, not a full regime-recognition engine.
+- Code alignment: `WorldSettlements` remains mandate/regime pressure source, `OfficeAndCareer` owns defection risk and appointment mutation, `PublicLifeAndRumor` owns public interpretation, `SocialMemoryAndRelations` writes no same-month durable residue in this pass, Application assembles `RegimeOfficeReadbackSummary` from structured snapshots, and Unity copies projected fields.
+- Player-facing governance, office, docket, desk, great-hall, and public-life surfaces may read `天命摇动读回`, `去就风险读回`, `官身承压姿态`, `公议向背读法`, `仍由Office/PublicLife分读`, `不是本户替朝廷修合法性`, and `不是UI判定归附成败`.
+- No reader may parse `DomainEvent.Summary`, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v253-v260 adds no persisted field, root/module schema bump, migration, save manifest change, full regime engine, Court module, faction AI, event pool, legitimacy/defection/owner-lane/cooldown ledger, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v245-v252 social mobility fidelity-ring closeout audit - 2026-04-28
 
 - The v213-v244 social mobility fidelity-ring branch is now treated as closed only for a first-layer substrate: household pressure can drive `PopulationAndHouseholds` livelihood/activity/pool synchronization, a hot person may move through the existing `PersonRegistry.FidelityRing`, and player-facing surfaces may read structured fidelity/mobility projections.

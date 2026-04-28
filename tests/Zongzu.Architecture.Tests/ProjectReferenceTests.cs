@@ -2668,6 +2668,149 @@ public class ProjectReferenceTests
         Assert.That(execPlan, Does.Contain("Target impact: none"));
     }
 
+    [Test]
+    public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
+    {
+        string governanceSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Governance.cs"));
+        string publicLifeSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PublicLifeAndRumor",
+            "PublicLifeAndRumorModule",
+            "PublicLifeAndRumorModule.cs"));
+        string officeSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.OfficeAndCareer",
+            "OfficeAndCareerModule",
+            "OfficeAndCareerModule.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "DeskSandbox", "DeskSandboxShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "GovernanceShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Office", "OfficeShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "DeskSandbox", "SettlementNodeViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Office", "OfficeJurisdictionViewModel.cs"),
+        }.Select(File.ReadAllText));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_regime-legitimacy-readback-v253-v260.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_regime-legitimacy-readback-v253-v260.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+
+        int projectionStart = governanceSource.IndexOf("private static string BuildRegimeOfficeReadbackSummary", StringComparison.Ordinal);
+        int projectionEnd = governanceSource.IndexOf("private static string BuildCanalRouteReadbackSummary", projectionStart, StringComparison.Ordinal);
+        Assert.That(projectionStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(projectionEnd, Is.GreaterThan(projectionStart));
+        string regimeProjectionMethod = governanceSource[projectionStart..projectionEnd];
+        int publicLifeStart = publicLifeSource.IndexOf("private static void ApplyOfficeDefectionHeat", StringComparison.Ordinal);
+        int publicLifeEnd = publicLifeSource.IndexOf("private static bool TryResolveEventSettlementId", publicLifeStart, StringComparison.Ordinal);
+        Assert.That(publicLifeStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(publicLifeEnd, Is.GreaterThan(publicLifeStart));
+        string officeDefectionPublicLifeMethod = publicLifeSource[publicLifeStart..publicLifeEnd];
+
+        foreach (string token in new[]
+                 {
+                     "天命摇动读回",
+                     "去就风险读回",
+                     "官身承压姿态",
+                     "公议向背读法",
+                     "仍由Office/PublicLife分读",
+                     "不是本户替朝廷修合法性",
+                     "不是UI判定归附成败",
+                 })
+        {
+            Assert.That(regimeProjectionMethod, Does.Contain(token));
+            Assert.That(officeDefectionPublicLifeMethod, Does.Contain(token));
+        }
+
+        Assert.That(officeSource, Does.Contain("OfficeAndCareerEventNames.OfficeDefected"));
+        Assert.That(officeSource, Does.Contain("DefectionProfile"));
+        Assert.That(officeSource, Does.Contain("DomainEventMetadataKeys.DefectionRisk"));
+        Assert.That(publicLifeSource, Does.Contain("ApplyOfficeDefectionHeat"));
+        Assert.That(officeDefectionPublicLifeMethod, Does.Contain("ReadMetadataInt(domainEvent"));
+        Assert.That(officeDefectionPublicLifeMethod, Does.Contain("DomainEventMetadataKeys.DefectionRisk"));
+        Assert.That(regimeProjectionMethod, Does.Contain("OfficialDefectionRisk"));
+        Assert.That(regimeProjectionMethod, Does.Contain("JurisdictionAuthoritySnapshot"));
+        Assert.That(unitySource, Does.Contain("RegimeOfficeReadbackSummary"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "DomainEvent.Summary",
+                     "domainEvent.Summary",
+                     "LastAdministrativeTrace",
+                     "LastPetitionOutcome",
+                     "LastLocalResponseSummary",
+                     "LastRefusalResponseSummary",
+                     "WorldSettlementsState",
+                     "GetMutableModuleState",
+                     "PlayerCommandService",
+                     "IssueModuleCommand",
+                 })
+        {
+            Assert.That(regimeProjectionMethod, Does.Not.Contain(forbidden), forbidden);
+            Assert.That(officeDefectionPublicLifeMethod, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(regimeProjectionMethod, Does.Not.Contain("OfficialNoticeLine"));
+        Assert.That(regimeProjectionMethod, Does.Not.Contain("PrefectureDispatchLine"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "RegimeLedger",
+                     "LegitimacyLedger",
+                     "DefectionLedger",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "FactionAI",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                 })
+        {
+            Assert.That(governanceSource, Does.Not.Contain(forbidden), forbidden);
+            Assert.That(publicLifeSource, Does.Not.Contain(forbidden), forbidden);
+            Assert.That(officeSource, Does.Not.Contain(forbidden), forbidden);
+            Assert.That(unitySource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(unitySource, Does.Not.Contain("DomainEventMetadataKeys"));
+        Assert.That(unitySource, Does.Not.Contain("OfficeDefected"));
+        Assert.That(unitySource, Does.Not.Contain("DefectionRisk"));
+        Assert.That(personRegistrySource, Does.Not.Contain("RegimeLegitimacy"));
+        Assert.That(personRegistrySource, Does.Not.Contain("OfficeDefected"));
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Court*", SearchOption.TopDirectoryOnly), Is.Empty);
+
+        Assert.That(topologyIndex, Does.Contain("Chain 9 Regime Legitimacy Readback - v253-v260"));
+        Assert.That(acceptance, Does.Contain("Chain 9 regime legitimacy readback v253-v260 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V260"));
+        Assert.That(schemaRules, Does.Contain("regime legitimacy readback v253-v260 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current regime legitimacy readback v253-v260 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No full regime engine"));
+    }
+
     private static string[] GetProjectReferences(string projectName)
     {
         var csproj = FindCsproj(projectName);

@@ -816,11 +816,24 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         string name = string.IsNullOrWhiteSpace(riskCareer?.DisplayName)
-            ? jurisdiction.LeadOfficialName
+            ? ResolveOfficeLeadLabel(jurisdiction)
             : riskCareer.DisplayName;
-        return risk >= 80
-            ? $"官员摇摆读回：{name}退避风险{risk}，天命与胥吏压力已压到OfficeAndCareer lane；这不是公共家户可修的后账。"
-            : $"官员摇摆读回：{name}退避风险{risk}，需继续观察OfficeAndCareer lane。";
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            name = $"Settlement {jurisdiction.SettlementId.Value}";
+        }
+
+        string posture = risk >= 80
+            ? "官身承压姿态已近退避"
+            : "官身承压姿态仍在观望";
+        int documentDrag = Math.Clamp(
+            jurisdiction.ClerkDependence + jurisdiction.PetitionPressure + (jurisdiction.PetitionBacklog / 2),
+            0,
+            100);
+
+        return
+            $"天命摇动读回：{name}去就风险读回{risk}；{posture}，胥吏/词牍牵制{documentDrag}。" +
+            "公议向背读法仍由Office/PublicLife分读；不是本户替朝廷修合法性，不是UI判定归附成败。";
     }
 
     private static string BuildCanalRouteReadbackSummary(
