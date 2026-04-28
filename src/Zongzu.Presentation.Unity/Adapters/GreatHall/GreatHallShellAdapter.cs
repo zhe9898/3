@@ -64,18 +64,21 @@ internal static class GreatHallShellAdapter
 			.FirstOrDefault();
 		string personnelFlowReadiness = bundle.PlayerCommands.PersonnelFlowReadinessSummary;
 		string personnelFlowOwnerLaneGate = bundle.PlayerCommands.PersonnelFlowOwnerLaneGateSummary;
+		string personnelFlowFutureOwnerLanePreflight = bundle.PlayerCommands.PersonnelFlowFutureOwnerLanePreflightSummary;
 		if (leadMobility is null)
 		{
 			return AppendPersonnelFlowReadbacks(
 				$"{bundle.FidelityScale.Summary} {bundle.FidelityScale.InfluenceFootprintReadbackSummary}",
 				personnelFlowReadiness,
-				personnelFlowOwnerLaneGate);
+				personnelFlowOwnerLaneGate,
+				personnelFlowFutureOwnerLanePreflight);
 		}
 
 		return AppendPersonnelFlowReadbacks(
 			$"{bundle.FidelityScale.Summary} {bundle.FidelityScale.InfluenceFootprintReadbackSummary} {leadMobility.MovementReadbackSummary}",
 			personnelFlowReadiness,
-			personnelFlowOwnerLaneGate);
+			personnelFlowOwnerLaneGate,
+			personnelFlowFutureOwnerLanePreflight);
 	}
 
 	private static string AppendPersonnelFlowReadbacks(string summary, params string[] personnelFlowReadbacks)

@@ -400,3 +400,10 @@
 - The preflight requires any future lane to declare owner module, accepted command, target scope, no-touch boundary, hot path, cardinality, deterministic order/cap, schema impact, cadence, projection fields, and validation lane.
 - The current gate remains guidance only. It does not authorize office-service assignment, kin transfer, campaign manpower allocation, direct movement, durable movement residue, or a full migration economy.
 - v357-v364 adds no production rule, schema, migration, direct personnel command, movement/personnel/future-owner-lane ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
+
+## v365-v372 personnel flow future lane surface audit - 2026-04-28
+
+- v365-v372 adds a runtime readback field, `PersonnelFlowFutureOwnerLanePreflightSummary`, so the command surface can show future-lane requirements without opening the lanes.
+- Application builds the summary from structured personnel-flow readiness affordance/receipt presence only; it does not inspect people, rank targets, calculate movement success, or parse `ReadbackSummary`, receipts, notification text, mobility prose, docs prose, or `DomainEvent.Summary`.
+- Great Hall may display the projected preflight. Desk Sandbox does not spread it onto settlement nodes; local desk gate behavior remains tied to structured settlement-local readiness from v333-v348.
+- v365-v372 adds no schema, migration, command, movement resolver, direct move/transfer/summon/assign route, future-lane-surface ledger, `PersonRegistry` expansion, Application rule layer, UI authority, Unity authority, or prose parser.

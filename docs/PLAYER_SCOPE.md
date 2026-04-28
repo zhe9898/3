@@ -276,6 +276,7 @@ Rules:
 - v341-v348 keeps the desk echo local: quiet or distant settlements do not inherit a global personnel-flow owner-lane gate without structured local readiness
 - v349-v356 closes the personnel-flow gate layer as readback only; it is still not a direct move, migration, assignment, office-service, or campaign-manpower command path
 - v357-v364 blocks future owner-lane expansion until a separate owner module, command, scope, cadence, schema impact, and validation plan are declared
+- v365-v372 surfaces future owner-lane preflight in Great Hall mobility readback only; it does not add a button, direct movement, office-service assignment, kin transfer, or campaign-manpower command
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

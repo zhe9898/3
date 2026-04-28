@@ -1174,3 +1174,10 @@ Current lite note:
 - The branch is closed only as first-layer rule density: `PopulationAndHouseholds` can keep livelihood/activity/pools coherent, `PersonRegistry` can move an existing fidelity ring, and projection surfaces can explain why near/hot people are readable while regional people remain pooled.
 - Future demotion, dormant stubs, durable movement residue, richer migration economics, and class-mobility formulas must still name their owning module and schema impact before implementation.
 - UI, Unity, and Application must not turn this closeout into a complete society engine, per-person world simulation, saved projection cache, movement/social/focus ledger, or prose-parsing rule path.
+
+## Personnel flow future lane surface v365-v372 boundary note
+- `PopulationAndHouseholds` remains the current owner of local household response and personnel-flow readiness readback. The new surface field does not move authority into `FamilyCore`, `OfficeAndCareer`, or `WarfareCampaign`.
+- `PlayerCommandSurfaceSnapshot.PersonnelFlowFutureOwnerLanePreflightSummary` is runtime read-model text only. It records that future Family/Office/Warfare personnel-flow lanes still need separate owner-module command/rule/state/schema/validation plans.
+- `Application` may assemble the preflight from structured affordance/receipt readiness fields; it may not calculate movement success, choose people, or parse prose.
+- `Zongzu.Presentation.Unity` may copy the projected field into Great Hall mobility readback only. Desk Sandbox locality remains governed by existing settlement-local readiness checks.
+- V365-V372 adds no persisted state, schema bump, migration, direct personnel command, movement resolver, future-lane-surface ledger, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
