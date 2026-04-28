@@ -759,3 +759,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The closed layer is display and validation substrate, not a command route, event consumer, resolver, ledger, selection rule, or movement/class permission.
 - Future commoner status integration must open a separate owner-lane plan and cannot consume closeout prose, social-position text, source-key display, scale-budget text, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
 - Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/source-key/scale-budget/closeout ledger, projection cache, or save-manifest change.
+
+## Commoner status owner-lane preflight v437-v444 integration note
+- V437-V444 adds no integration channel, command, event, resolver, or consumer.
+- Future commoner status integration should start in `PopulationAndHouseholds` unless a later ExecPlan explicitly proves another owner lane. The future lane must declare state, cadence, target scope, no-touch boundary, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation.
+- `PersonRegistry`, Application, UI, Unity, docs text, and projection prose must not be consumed as status authority.
+- Save/schema result: no persisted state, schema bump, migration, class/social-position/commoner-status/personnel/movement/owner-lane/preflight ledger, projection cache, or save-manifest change.

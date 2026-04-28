@@ -596,3 +596,9 @@ It should ask:
 - V381-V428 is closed as a first social-position visibility layer, not as a fidelity or class authority layer.
 - The closeout covers readable near-person status context, structured provenance, scale-budget explanation, and regional summary guard.
 - Future work that changes social status, pulls more regional people into detail, or writes durable residue still needs owner pressure, deterministic selection, cap/order, cadence, schema impact, projection readback, and validation.
+
+## V437-V444 Commoner Status Owner-Lane Preflight
+
+- Future commoner status depth should begin from `PopulationAndHouseholds` household pressure and pool ownership, not from `PersonRegistry` or UI selection.
+- Any future status rule that raises precision or names more people must state target scope, deterministic cap/order, cadence, schema impact, projection readback, and no-touch boundary first.
+- This preflight changes no fidelity rings and adds no new selector.
