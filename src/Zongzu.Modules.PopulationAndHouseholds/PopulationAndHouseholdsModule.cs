@@ -123,7 +123,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             household.DebtPressure = Math.Clamp(household.DebtPressure + ComputeDebtDelta(household.Distress), 0, 100);
             household.LaborCapacity = Math.Clamp(household.LaborCapacity + ComputeLaborDelta(settlement.Prosperity, household.Distress), 0, 100);
             household.MigrationRisk = Math.Clamp(household.MigrationRisk + ComputeMigrationDelta(settlement.Security, household.Distress), 0, 100);
-            household.IsMigrating = household.IsMigrating || household.MigrationRisk >= 80;
+            household.IsMigrating = ResolveMigrationStatus(household);
 
             if (TryApplyMonthlyLivelihoodDrift(household, settlement, out LivelihoodDriftResult livelihoodDrift))
             {
@@ -237,7 +237,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                 }
 
                 household.MigrationRisk = Math.Clamp(household.MigrationRisk + migrationDelta, 0, 100);
-                household.IsMigrating = household.IsMigrating || household.MigrationRisk >= 80;
+                household.IsMigrating = ResolveMigrationStatus(household);
                 break;
             }
         }
@@ -289,7 +289,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                 household.DebtPressure = Math.Clamp(household.DebtPressure + debtDelta, 0, 100);
                 household.MigrationRisk = Math.Clamp(household.MigrationRisk + migrationDelta, 0, 100);
                 household.LaborCapacity = Math.Clamp(household.LaborCapacity - laborDrop, 0, 100);
-                household.IsMigrating = household.IsMigrating || household.MigrationRisk >= 80;
+                household.IsMigrating = ResolveMigrationStatus(household);
                 anyHouseholdChanged = true;
             }
 
@@ -892,7 +892,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                 household.DebtPressure = Math.Clamp(household.DebtPressure + burdenProfile.DebtDelta, 0, 100);
                 household.LaborCapacity = Math.Clamp(household.LaborCapacity - burdenProfile.LaborDrop, 0, 100);
                 household.MigrationRisk = Math.Clamp(household.MigrationRisk + burdenProfile.MigrationDelta, 0, 100);
-                household.IsMigrating = household.IsMigrating || household.MigrationRisk >= 80;
+                household.IsMigrating = ResolveMigrationStatus(household);
                 anyHouseholdChanged = anyHouseholdChanged
                     || oldDistress != household.Distress
                     || oldDebt != household.DebtPressure
@@ -1272,6 +1272,11 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         return Math.Max(1, drop);
     }
 
+    private static bool ResolveMigrationStatus(PopulationHouseholdState household)
+    {
+        return household.MigrationRisk >= 80;
+    }
+
     private static bool TryApplyMonthlyLivelihoodDrift(
         PopulationHouseholdState household,
         SettlementSnapshot settlement,
@@ -1477,15 +1482,12 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
             foreach (HouseholdMembershipState membership in group
                 .OrderBy(static member => member.PersonId.Value)
+                .Where(membership =>
+                    personQueries.TryGetPerson(membership.PersonId, out PersonRecord person)
+                    && person.IsAlive
+                    && person.FidelityRing == FidelityRing.Regional)
                 .Take(2))
             {
-                if (!personQueries.TryGetPerson(membership.PersonId, out PersonRecord person)
-                    || !person.IsAlive
-                    || person.FidelityRing != FidelityRing.Regional)
-                {
-                    continue;
-                }
-
                 personCommands.ChangeFidelityRing(
                     context,
                     membership.PersonId,
