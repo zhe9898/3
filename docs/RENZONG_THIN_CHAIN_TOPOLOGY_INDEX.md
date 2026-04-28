@@ -6,6 +6,12 @@ It does not replace `RENZONG_PRESSURE_CHAIN_SPEC.md`. The spec remains the fulle
 
 Use this file before adding rule density. If a future change deepens a chain, update this index in the same PR.
 
+## V453-V460 Household Mobility Dynamics Explanation
+
+V453-V460 adds a runtime explanation layer over the existing multi-dimensional household mobility dynamics. It reads already-projected household social-pressure signals, household livelihood carriers, and settlement pool snapshots so the player can see which dimensions are shaping a household's mobility posture.
+
+This is not a new mobility algorithm, class engine, commoner status rule, selector, or fidelity-ring mutation. `PopulationAndHouseholds` still owns household livelihood, labor, debt, grain, land, migration, and pool dynamics; `PersonRegistry` still owns identity / `FidelityRing` only; Application assembles the read model; Unity copies the projected field. The pass adds no schema, migration, ledger, manager, prose parser, or UI/Unity authority.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

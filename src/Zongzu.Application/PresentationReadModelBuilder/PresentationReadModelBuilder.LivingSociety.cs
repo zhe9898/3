@@ -110,6 +110,7 @@ public sealed partial class PresentationReadModelBuilder
         int pressureScore = ComputeHouseholdPressureScore(household, leadSignal);
         string livelihoodLabel = RenderLivelihoodLabel(household.Livelihood);
         string settlementName = settlement?.Name ?? $"Settlement {household.SettlementId.Value}";
+        IReadOnlyList<string> mobilityDimensionKeys = BuildHouseholdMobilityDynamicsDimensionKeys(signals);
 
         return new HouseholdSocialPressureSnapshot
         {
@@ -136,6 +137,13 @@ public sealed partial class PresentationReadModelBuilder
                 leadSignal,
                 sponsorClan,
                 market),
+            MobilityDynamicsExplanationSummary = BuildHouseholdMobilityDynamicsExplanationSummary(
+                household,
+                leadSignal,
+                mobilityDimensionKeys,
+                settlement,
+                population),
+            MobilityDynamicsDimensionKeys = mobilityDimensionKeys,
             Signals = signals,
             SourceModuleKeys = DistinctNonEmpty(
                 KnownModuleKeys.PopulationAndHouseholds,
@@ -146,6 +154,48 @@ public sealed partial class PresentationReadModelBuilder
                 jurisdiction is null ? string.Empty : KnownModuleKeys.OfficeAndCareer,
                 disorder is null ? string.Empty : KnownModuleKeys.OrderAndBanditry),
         };
+    }
+
+    private static IReadOnlyList<string> BuildHouseholdMobilityDynamicsDimensionKeys(
+        IReadOnlyList<HouseholdSocialPressureSignalSnapshot> signals)
+    {
+        return signals
+            .Where(static signal => signal.Score > 0)
+            .OrderByDescending(static signal => signal.Score)
+            .ThenBy(static signal => signal.SignalKey, StringComparer.Ordinal)
+            .Take(4)
+            .Select(static signal => signal.SignalKey)
+            .ToArray();
+    }
+
+    private static string BuildHouseholdMobilityDynamicsExplanationSummary(
+        HouseholdPressureSnapshot household,
+        HouseholdSocialPressureSignalSnapshot leadSignal,
+        IReadOnlyList<string> dimensionKeys,
+        SettlementSnapshot? settlement,
+        PopulationSettlementSnapshot? population)
+    {
+        string dimensions = dimensionKeys.Count == 0
+            ? "none"
+            : string.Join("/", dimensionKeys);
+        string detailBand = household.IsMigrating
+            || household.MigrationRisk >= 70
+            || leadSignal.Score >= 65
+                ? "near detail candidate"
+                : "local summary";
+        string settlementReadback = population is null
+            ? "no settlement pool snapshot"
+            : $"pool outflow {population.MigrationPressure}, labor {population.LaborSupply}";
+        string settlementPressure = settlement is null
+            ? "no settlement pressure snapshot"
+            : $"settlement security {settlement.Security}, prosperity {settlement.Prosperity}";
+
+        return
+            $"Household mobility dynamics: {household.HouseholdName} reads dimensions={dimensions}; " +
+            $"lead={leadSignal.SignalKey}:{leadSignal.Score}; " +
+            $"distress={household.Distress}, debt={household.DebtPressure}, labor={household.LaborCapacity}, migration={household.MigrationRisk}; " +
+            $"{detailBand}; {settlementReadback}; {settlementPressure}; " +
+            "PopulationAndHouseholds owns household dynamics, far summary stays pooled, no PersonRegistry status authority.";
     }
 
     private static HouseholdSocialPressureSignalSnapshot BuildDebtSignal(HouseholdPressureSnapshot household, SettlementSnapshot? settlement)

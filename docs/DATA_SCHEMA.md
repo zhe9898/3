@@ -1374,6 +1374,11 @@ Current fidelity scale budget preflight v445-v452 note:
 - The preflight does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, precision-band state, selector state, target-cardinality state, class ledger, social-position ledger, commoner-status ledger, personnel ledger, movement ledger, scale-budget ledger, fidelity-budget ledger, durable residue, or serialized module payload.
 - Any future persisted precision band, selector watermark, commoner status drift, movement route, durable residue, or projection cache still requires a separate schema/migration plan before implementation.
 
+Current household mobility dynamics explanation v453-v460 note:
+- `HouseholdSocialPressureSnapshot.MobilityDynamicsExplanationSummary`, `HouseholdSocialPressureSnapshot.MobilityDynamicsDimensionKeys`, and `SettlementNodeViewModel.HouseholdMobilityDynamicsSummary` are runtime read-model/ViewModel fields only.
+- The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, selector state, target-cardinality state, class ledger, commoner-status ledger, household-mobility ledger, movement ledger, durable residue, or serialized module payload.
+- Any future persisted mobility explanation history, route history, selector watermark, commoner status drift, durable residue, or projection cache still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

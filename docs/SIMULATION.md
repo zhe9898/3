@@ -724,3 +724,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It documents the scale budget: close/pressure-hit actors may become readable through owner-laned projection; distant society stays summarized through pools and pressure carriers.
 - The preflight does not promote/demote people, mutate fidelity rings, run a global person scan, choose regional people, resolve zhuhu/kehu conversion, or change `PersonRegistry`.
 - Future implementation still needs target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, validation, and no-touch boundary before code lands.
+
+## Current household mobility dynamics explanation v453-v460 note
+
+- V453-V460 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, fidelity mutation, selection rule, or persistence change.
+- It projects a structured explanation from existing household social-pressure signals and `PopulationAndHouseholds` carriers so the player can read the current multi-dimensional mobility posture.
+- The explanation does not promote/demote people, resolve zhuhu/kehu conversion, select office service, attach trade work, write durable social-position residue, choose regional people, or change `PersonRegistry`.
+- Future mobility/status depth still needs owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, schema impact, projection fields, validation, and no-touch boundary before code lands.

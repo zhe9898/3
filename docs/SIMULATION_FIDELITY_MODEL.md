@@ -609,3 +609,9 @@ It should ask:
 - Player-near and pressure-hit actors may become readable only through owner-laned, deterministic, capped projection paths. Distant society remains pool/pressure summary until a later owner lane explicitly promotes bounded detail.
 - Future work must declare target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, and validation before changing fidelity, target cardinality, or selection behavior.
 - This preflight changes no fidelity rings, adds no selector, and adds no global per-person simulation.
+
+## V453-V460 Household Mobility Dynamics Explanation
+
+- Existing household pressure signals can now explain which dimensions shape a local household's mobility posture, but they do not raise fidelity or select new people.
+- The explanation preserves the current scale rule: close/local household pressure may be readable in detail; distant society still remains pooled by settlement and pressure carriers.
+- Future work that changes status, promotes more people into detail, stores route history, or writes durable residue still needs owner pressure, deterministic selection, cap/order, cadence, schema impact, projection readback, and validation.
