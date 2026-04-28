@@ -504,3 +504,10 @@ It should ask:
 - It appears only on existing `PopulationAndHouseholds` household-response affordances and receipts, where the target is already a concrete home household.
 - The readback may explain near detail, distant pool summary, and why the command only affects livelihood/labor/migration pressure. It does not move a person, rank a person, promote fidelity, or write durable movement residue.
 - Save/schema impact remains none.
+
+## V309-V316 Personnel Flow Surface Echo
+
+- `PlayerCommandSurfaceSnapshot.PersonnelFlowReadinessSummary` echoes the existing command readiness layer at the command-surface level.
+- Great Hall mobility readback may show `人员流动命令预备汇总`, but the echo is still derived from projected command readiness fields, not from per-person scanning or movement simulation.
+- It preserves the same fidelity rule: player-near household leverage is readable, while distant people remain represented through pools and ring budgets.
+- It adds no new person iteration budget, movement ledger, or persisted cache.

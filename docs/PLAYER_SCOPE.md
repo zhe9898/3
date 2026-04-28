@@ -269,6 +269,7 @@ Rules:
 - the v3 public-life/order leverage readback is explanatory projection only; durable social-memory residue requires `SocialMemoryAndRelations` owner-state work rather than a hidden Application or UI ledger
 - v293-v300 adds no personnel command; it only records the preflight gates for future movement / assignment / return commands
 - v301-v308 adds only `PersonnelFlowReadinessSummary` on existing public-life local response affordances/receipts; it tells the player that this household can be influenced through livelihood, labor, and migration pressure, not directly moved
+- v309-v316 adds only a command-surface echo of those readiness fields for Great Hall mobility readback; it does not let the player pick, summon, assign, or move people directly
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

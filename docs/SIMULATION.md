@@ -602,3 +602,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - The new `PersonnelFlowReadinessSummary` is projection-time readback over existing `PopulationAndHouseholds` household fields and local response command identity.
 - It may explain near detail and far summary, but it does not promote/demote people, move people, choose personnel targets, write SocialMemory residue, or change `PersonRegistry`.
 - UI/Unity must copy the field only and must not parse it to compute movement success.
+
+## Current personnel flow surface echo v309-v316 note
+
+- V309-V316 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, command route, or persistence change.
+- `PlayerCommandSurfaceSnapshot.PersonnelFlowReadinessSummary` is projection-time echo over already projected command readiness fields.
+- It may explain that personnel-flow command readiness exists on the current surface, but it does not promote/demote people, move people, choose personnel targets, write SocialMemory residue, or change `PersonRegistry`.
+- UI/Unity must display the projected echo only and must not parse it to compute movement success.

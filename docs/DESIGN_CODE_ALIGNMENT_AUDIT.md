@@ -351,3 +351,10 @@
 - The readback names `人员流动预备读回`, `近处细读`, and `远处汇总` so the player can see that these commands influence this household's livelihood, labor, distress, and migration pressure without becoming direct personnel control.
 - Current code remains bounded: `RestrictNightTravel`, `PoolRunnerCompensation`, and `SendHouseholdRoadMessage` still resolve in `PopulationAndHouseholds`; `PersonRegistry` remains identity/fidelity only; Application assembles projections; UI/Unity copy the new field.
 - v301-v308 adds no new player command, persisted state, schema bump, migration, direct move/transfer/summon/assign-person path, command/movement/personnel/assignment/focus/scheduler ledger, manager path, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.
+
+## v309-v316 personnel flow surface echo audit - 2026-04-28
+
+- v309-v316 adds `PlayerCommandSurfaceSnapshot.PersonnelFlowReadinessSummary` as a runtime command-surface echo over existing affordance/receipt `PersonnelFlowReadinessSummary` fields.
+- Great Hall mobility readback may append `人员流动命令预备汇总`, but it reads only the already projected command-surface field; it does not inspect household state, choose people, parse `ReadbackSummary`, or calculate migration success.
+- The echo preserves the near/far scale budget: player-near household command readiness is readable, distant personnel flow remains summarized through pools and fidelity rings.
+- v309-v316 adds no schema, migration, direct personnel command, movement/personnel/surface-echo ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.

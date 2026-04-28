@@ -83,6 +83,14 @@ V301-V308 adds one runtime read-model/ViewModel field, `PersonnelFlowReadinessSu
 
 The field may say `人员流动预备读回`, `近处细读`, and `远处汇总`, but those are readback words only. V301-V308 adds no schema, migration, direct move/transfer/summon/assign-person command, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, manager/controller path, `PersonRegistry` domain expansion, or prose parser.
 
+## Personnel flow surface echo v309-v316 boundary note
+
+V309-V316 adds a runtime command-surface echo field, `PlayerCommandSurfaceSnapshot.PersonnelFlowReadinessSummary`. It is assembled from structured affordance/receipt personnel-flow readiness fields after the owning command surfaces have been projected.
+
+`Application` may count/read non-empty structured readiness fields and produce `人员流动命令预备汇总`; it must not choose people, rank movement candidates, inspect `PersonRegistry` for movement decisions, parse `ReadbackSummary`, or calculate migration success. `Zongzu.Presentation.Unity` may append the projected echo to Great Hall mobility readback; Unity shell code remains display-only.
+
+The echo adds no module boundary, schema, migration, direct personnel command, movement/personnel/surface-echo ledger, projection cache, manager/controller path, `PersonRegistry` domain expansion, or prose parser.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

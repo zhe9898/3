@@ -3322,6 +3322,111 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Personnel_flow_surface_echo_v309_v316_must_stay_structured_projection_only_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_personnel-flow-surface-echo-v309-v316.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_personnel-flow-surface-echo-v309-v316.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string readModelContracts = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "PlayerCommandReadModels.cs"));
+        string builder = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.cs"));
+        string greatHallAdapter = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Presentation.Unity",
+            "Adapters",
+            "GreatHall",
+            "GreatHallShellAdapter.cs"));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V309-V316 Personnel Flow Surface Echo"));
+        Assert.That(designAudit, Does.Contain("v309-v316 personnel flow surface echo audit"));
+        Assert.That(integrationRules, Does.Contain("Personnel flow surface echo v309-v316 integration note"));
+        Assert.That(uiPresentation, Does.Contain("v309-v316 personnel flow surface echo"));
+        Assert.That(acceptance, Does.Contain("Personnel flow surface echo v309-v316 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V316"));
+        Assert.That(schemaRules, Does.Contain("personnel flow surface echo v309-v316 remains read-model/ViewModel only"));
+        Assert.That(dataSchema, Does.Contain("Current personnel flow surface echo v309-v316 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+
+        Assert.That(readModelContracts, Does.Contain("PlayerCommandSurfaceSnapshot"));
+        Assert.That(readModelContracts, Does.Contain("public string PersonnelFlowReadinessSummary { get; init; } = string.Empty;"));
+        Assert.That(builder, Does.Contain("BuildPlayerCommandSurfacePersonnelFlowReadinessSummary"));
+        Assert.That(builder, Does.Contain("affordance.PersonnelFlowReadinessSummary"));
+        Assert.That(builder, Does.Contain("receipt.PersonnelFlowReadinessSummary"));
+        Assert.That(builder, Does.Contain("人员流动命令预备汇总"));
+        Assert.That(builder, Does.Contain("只汇总已投影的人员流动预备读回"));
+        Assert.That(builder, Does.Contain("不解析ReadbackSummary"));
+        Assert.That(greatHallAdapter, Does.Contain("bundle.PlayerCommands.PersonnelFlowReadinessSummary"));
+        Assert.That(greatHallAdapter, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(greatHallAdapter, Does.Not.Contain(".ReadbackSummary.Contains"));
+
+        foreach (string forbiddenParser in new[]
+                 {
+                     "DomainEvent.Summary",
+                     ".ReadbackSummary.Contains",
+                     ".Summary.Contains",
+                     "LastLocalResponseSummary",
+                 })
+        {
+            Assert.That(builder, Does.Not.Contain(forbiddenParser), forbiddenParser);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "MovePerson",
+                     "TransferPerson",
+                     "SummonPerson",
+                     "AssignPerson",
+                     "RelocatePerson",
+                     "DirectPersonnelCommand",
+                     "PersonnelCommandResolver",
+                     "PersonCommandLedger",
+                     "PersonnelLedger",
+                     "AssignmentLedger",
+                     "PersonAssignmentLedger",
+                     "MovementLedger",
+                     "PersonMovementLedger",
+                     "SurfaceEchoLedger",
+                     "v309-v316",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PersonnelFlow*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Migration*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

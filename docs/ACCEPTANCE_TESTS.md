@@ -699,3 +699,10 @@ At integration level, verify:
 - Architecture acceptance: guard no direct move/transfer/summon/assign-person path, no Application/UI/Unity authority, no prose parsing, no command/movement/personnel/assignment/focus/scheduler ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
 - Unity acceptance: shared command ViewModels copy `PersonnelFlowReadinessSummary` from projected command fields only.
 - Save/schema acceptance: v301-v308 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel ledger, or serialized module payload change.
+
+## Personnel flow surface echo v309-v316 acceptance - 2026-04-28
+- Projection acceptance: `PlayerCommandSurfaceSnapshot.PersonnelFlowReadinessSummary` is assembled from existing affordance/receipt `PersonnelFlowReadinessSummary` fields.
+- Content acceptance: the command surface and Great Hall mobility readback can show `人员流动命令预备汇总`, `只汇总已投影`, `不解析ReadbackSummary`, and `不是直接调人、迁人、召人命令`.
+- Boundary acceptance: Application does not choose people, rank movement candidates, or calculate migration success; UI/Unity append/display the projected echo only.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, or public-life lines to derive personnel-flow authority.
+- Save/schema acceptance: v309-v316 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/surface-echo ledger, durable residue, or serialized module payload change.
