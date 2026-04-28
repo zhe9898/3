@@ -693,3 +693,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The closed layer is `PersonnelFlowReadinessSummary` -> `PersonnelFlowOwnerLaneGateSummary` -> Great Hall readback -> Desk Sandbox local echo -> containment against quiet/distant node leakage.
 - Future integration for Family, Office, Warfare, or broader migration/personnel movement must open a separate owner-lane plan and cannot reuse this closeout as authority.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/owner-lane-gate ledger, projection cache, or save-manifest change.
+
+## Personnel flow future owner-lane preflight v357-v364 integration note
+- V357-V364 adds no integration channel. It is a gate for future integration work only.
+- Future Family/Office/Warfare personnel-flow paths must arrive as module-owned command/rule contracts with declared target scope, no-touch boundary, hot path, cardinality, deterministic ordering/cap, cadence, schema impact, and validation.
+- Application may later route a declared command, but it may not infer personnel movement from the current gate, command prose, receipt prose, notification text, mobility text, public-life lines, or `DomainEvent.Summary`.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/future-owner-lane ledger, projection cache, or save-manifest change.

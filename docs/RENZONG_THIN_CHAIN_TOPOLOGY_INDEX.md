@@ -275,6 +275,12 @@ V349-V356 closes v325-v348 as the first personnel-flow owner-lane gate layer: co
 
 Closed here still means first-layer readback only. It is not a migration economy, direct person movement system, office-service lane, campaign-manpower lane, assignment system, or full social mobility engine. Future depth must open a new owner-lane ExecPlan with state, cadence, cardinality, schema impact, and validation before adding rules.
 
+## V357-V364 Personnel Flow Future Owner-Lane Preflight
+
+V357-V364 is a preflight guard for future personnel-flow lanes. It records that `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` personnel-flow paths remain planned owner lanes, not authority unlocked by the current gate.
+
+Any later lane must name its owner command, target scope, no-touch boundary, hot path, expected cardinality, deterministic order/cap, schema impact, cadence, projection fields, and validation before implementation. V357-V364 adds no schema, migration, command, movement resolver, future-owner-lane ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

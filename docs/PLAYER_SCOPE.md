@@ -275,6 +275,7 @@ Rules:
 - v333-v340 adds only a Desk Sandbox local echo of that gate when the settlement already has projected personnel-flow readiness commands or receipts
 - v341-v348 keeps the desk echo local: quiet or distant settlements do not inherit a global personnel-flow owner-lane gate without structured local readiness
 - v349-v356 closes the personnel-flow gate layer as readback only; it is still not a direct move, migration, assignment, office-service, or campaign-manpower command path
+- v357-v364 blocks future owner-lane expansion until a separate owner module, command, scope, cadence, schema impact, and validation plan are declared
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

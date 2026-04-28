@@ -127,6 +127,14 @@ V349-V356 adds no boundary and closes no future owner lane. It closes only the c
 
 Application, UI, and Unity remain projection/copy surfaces. V349-V356 adds no command route, movement resolver, owner-lane-gate ledger, schema, migration, prose parser, or `PersonRegistry` expansion.
 
+## Personnel flow future owner-lane preflight v357-v364 boundary note
+
+V357-V364 adds no boundary. It documents the boundary that a future personnel-flow lane must cross before implementation.
+
+`FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` may later own their own personnel-flow effects only through separately planned module-owned commands and state/rule contracts. They may not borrow the v325-v356 gate as movement authority.
+
+Any future lane must name owner state, accepted command, target scope, no-touch boundary, cardinality, deterministic cap/order, schema impact, cadence, projection/readback, and tests before code opens the path.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

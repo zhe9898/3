@@ -535,3 +535,9 @@ It should ask:
 - V325-V348 is closed as a first personnel-flow gate/readback/display/containment layer, not a high-fidelity movement system.
 - Fidelity remains bounded: current local household response can be read, Desk Sandbox can localize the readback, and distant settlements remain pooled summaries.
 - Future movement, migration, office-service, assignment, or campaign-manpower fidelity must open a separate owner-lane plan with cardinality, deterministic cap/order, and schema impact before implementation.
+
+## V357-V364 Personnel Flow Future Owner-Lane Preflight
+
+- Future personnel-flow lanes cannot raise fidelity simply because a gate exists. They need owner-module rules, target scope, and cardinality limits first.
+- `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` personnel-flow work must declare whether it affects named close-orbit actors, local pooled households, active-region pools, or distant summaries before code lands.
+- Any lane that promotes more people into detail must declare deterministic selection, cap, cadence, schema impact, and projection readback separately.

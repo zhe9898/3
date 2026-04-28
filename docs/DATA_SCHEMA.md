@@ -1314,6 +1314,11 @@ Current personnel flow gate closeout v349-v356 note:
 - The closeout does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, owner-lane-gate ledger, durable residue, or serialized module payload.
 - Any future persisted personnel-flow command history, owner-lane selection, movement receipt, assignment state, migration state, or durable social residue still requires a separate schema/migration plan before implementation.
 
+Current personnel flow future owner-lane preflight v357-v364 note:
+- V357-V364 is docs/tests preflight only. It adds no persisted fields.
+- The preflight does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, future-owner-lane ledger, durable residue, or serialized module payload.
+- Any future Family/Office/Warfare personnel-flow owner lane with persisted state, command history, movement receipt, assignment state, migration state, or durable social residue still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

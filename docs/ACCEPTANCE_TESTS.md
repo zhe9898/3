@@ -740,3 +740,10 @@ At integration level, verify:
 - Boundary acceptance: future depth must choose an owner lane and declare target scope, hot path, cardinality, deterministic cap/order, schema impact, no-touch boundary, and validation lane before implementation.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
 - Save/schema acceptance: v349-v356 adds no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/owner-lane-gate ledger, durable residue, or serialized module payload change.
+
+## Personnel flow future owner-lane preflight v357-v364 acceptance - 2026-04-28
+- Preflight acceptance: future Family, Office, Warfare, or broader migration/personnel lanes must declare owner module, accepted command, target scope, no-touch boundary, hot path, cardinality, deterministic order/cap, schema impact, cadence, projection fields, and validation before implementation.
+- Scope acceptance: v357-v364 adds no command, office-service rule, kin-transfer rule, campaign-manpower rule, movement resolver, assignment path, durable movement residue, migration economy, or full social mobility engine.
+- Boundary acceptance: Application/UI/Unity must not infer personnel movement from the current gate or from prose; future controls must arrive as projected owner-module affordances.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
+- Save/schema acceptance: v357-v364 adds no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/future-owner-lane ledger, durable residue, or serialized module payload change.
