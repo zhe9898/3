@@ -616,3 +616,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It closes v293-v316 only as a first personnel-flow command-readiness layer.
 - It does not complete migration, social mobility, office service, campaign manpower, or household relocation systems.
 - Future personnel-flow work must still open a new owner-lane plan before adding state, schema, or rule density.
+
+## Current personnel flow owner-lane gate v325-v332 note
+
+- V325-V332 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, command route, or persistence change.
+- `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` is projection-time readback over structured command affordance/receipt metadata.
+- It names current and future owner lanes, but it does not promote/demote people, move people, choose personnel targets, write SocialMemory residue, or change `PersonRegistry`.
+- UI/Unity must display the projected gate only and must not parse it to compute movement success.

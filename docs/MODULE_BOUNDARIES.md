@@ -97,6 +97,14 @@ V317-V324 is docs/tests only. It closes v293-v316 as a first command-readiness l
 
 Future deeper personnel-flow work still requires a fresh owner-lane plan before adding movement state, assignment state, office-service rules, campaign-manpower rules, durable SocialMemory residue, or a new persisted schema.
 
+## Personnel flow owner-lane gate v325-v332 boundary note
+
+V325-V332 adds a runtime projection field, `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary`. It names the current and future owner lanes without opening a new command boundary.
+
+The current readable lane remains `PopulationAndHouseholds` home-household response. `FamilyCore` kin mediation, `OfficeAndCareer` document/service pressure, and `WarfareCampaign` manpower posture are named only as future owner-lane plans. `PersonRegistry` remains identity/FidelityRing only.
+
+Application may assemble the gate from structured command affordance/receipt fields; UI/Unity may display it. No module may treat the gate as movement permission, assignment authority, ledger membership, or durable SocialMemory residue.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

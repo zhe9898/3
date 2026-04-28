@@ -203,6 +203,8 @@ public sealed record PlayerCommandSurfaceSnapshot
 
     public string PersonnelFlowReadinessSummary { get; init; } = string.Empty;
 
+    public string PersonnelFlowOwnerLaneGateSummary { get; init; } = string.Empty;
+
     public IEnumerable<PlayerCommandAffordanceSnapshot> EnumerateAffordances(
         string surfaceKey,
         SettlementId? settlementId = null,

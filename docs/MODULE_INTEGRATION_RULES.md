@@ -669,3 +669,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The closed layer consists of preflight gates, existing `PopulationAndHouseholds` local-response readiness readback, a command-surface echo, and Great Hall display of projected fields.
 - Future personnel-flow command work still must enter through a named owner module and must not use the v293-v316 readbacks as authority, ledger membership, movement permission, or durable SocialMemory residue.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/closeout ledger, projection cache, or save-manifest change.
+
+## Personnel flow owner-lane gate v325-v332 integration note
+- V325-V332 adds `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` as a runtime projected gate, not an integration channel.
+- The gate is assembled only from structured command affordance/receipt metadata and the presence of projected personnel-flow readiness fields. It must not parse `ReadbackSummary`, receipt prose, notification text, mobility text, or `DomainEvent.Summary`.
+- The current readable lane is `PopulationAndHouseholds`; `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` are named as future owner-lane plans only.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/owner-lane-gate ledger, projection cache, or save-manifest change.

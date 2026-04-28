@@ -29,6 +29,7 @@ public sealed partial class FirstPassPresentationShellTests
         bundle.PlayerCommands = bundle.PlayerCommands with
         {
             PersonnelFlowReadinessSummary = "人员流动命令预备汇总：只汇总已投影的人员流动预备读回；不是直接调人、迁人、召人命令。",
+            PersonnelFlowOwnerLaneGateSummary = "人员流动归口门槛：当前可读归口为PopulationAndHouseholds本户回应；FamilyCore亲族调处、OfficeAndCareer文书役使、WarfareCampaign军务人力仍需另开owner-lane计划。",
         };
 
         PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
@@ -37,6 +38,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("PopulationAndHouseholds owns movement"));
         Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("人员流动命令预备汇总"));
         Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("不是直接调人、迁人、召人命令"));
+        Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("人员流动归口门槛"));
+        Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("另开owner-lane计划"));
         Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("Pool readback"));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("not every regional traveler"));

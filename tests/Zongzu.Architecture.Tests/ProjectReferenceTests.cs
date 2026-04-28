@@ -3535,6 +3535,126 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Personnel_flow_owner_lane_gate_v325_v332_must_stay_projection_only_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string playerScope = File.ReadAllText(Path.Combine(RepoRoot, "docs", "PLAYER_SCOPE.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_personnel-flow-owner-lane-gate-v325-v332.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_personnel-flow-owner-lane-gate-v325-v332.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string readModelContracts = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "PlayerCommandReadModels.cs"));
+        string builder = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.cs"));
+        string greatHallAdapter = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Presentation.Unity",
+            "Adapters",
+            "GreatHall",
+            "GreatHallShellAdapter.cs"));
+        string playerCommandCatalog = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PlayerCommandService",
+            "PlayerCommandCatalog.cs"));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V325-V332 Personnel Flow Owner-Lane Gate"));
+        Assert.That(playerScope, Does.Contain("v325-v332 adds only an owner-lane gate readback"));
+        Assert.That(designAudit, Does.Contain("v325-v332 personnel flow owner-lane gate audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Personnel flow owner-lane gate v325-v332 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Personnel flow owner-lane gate v325-v332 integration note"));
+        Assert.That(simulation, Does.Contain("Current personnel flow owner-lane gate v325-v332 note"));
+        Assert.That(uiPresentation, Does.Contain("v325-v332 personnel flow owner-lane gate"));
+        Assert.That(acceptance, Does.Contain("Personnel flow owner-lane gate v325-v332 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V332"));
+        Assert.That(schemaRules, Does.Contain("personnel flow owner-lane gate v325-v332 remains read-model/ViewModel only"));
+        Assert.That(dataSchema, Does.Contain("Current personnel flow owner-lane gate v325-v332 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+
+        Assert.That(readModelContracts, Does.Contain("PersonnelFlowOwnerLaneGateSummary"));
+        Assert.That(builder, Does.Contain("BuildPlayerCommandSurfacePersonnelFlowOwnerLaneGateSummary"));
+        Assert.That(builder, Does.Contain("affordance.PersonnelFlowReadinessSummary"));
+        Assert.That(builder, Does.Contain("receipt.PersonnelFlowReadinessSummary"));
+        Assert.That(builder, Does.Contain("人员流动归口门槛"));
+        Assert.That(builder, Does.Contain("当前可读归口为PopulationAndHouseholds本户回应"));
+        Assert.That(builder, Does.Contain("FamilyCore亲族调处"));
+        Assert.That(builder, Does.Contain("OfficeAndCareer文书役使"));
+        Assert.That(builder, Does.Contain("WarfareCampaign军务人力"));
+        Assert.That(builder, Does.Contain("另开owner-lane计划"));
+        Assert.That(greatHallAdapter, Does.Contain("bundle.PlayerCommands.PersonnelFlowOwnerLaneGateSummary"));
+        Assert.That(greatHallAdapter, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(playerCommandCatalog, Does.Contain("RestrictNightTravel"));
+        Assert.That(playerCommandCatalog, Does.Contain("PoolRunnerCompensation"));
+        Assert.That(playerCommandCatalog, Does.Contain("SendHouseholdRoadMessage"));
+
+        foreach (string forbiddenParser in new[]
+                 {
+                     "DomainEvent.Summary",
+                     ".ReadbackSummary.Contains",
+                     ".Summary.Contains",
+                     "LastLocalResponseSummary",
+                 })
+        {
+            Assert.That(builder, Does.Not.Contain(forbiddenParser), forbiddenParser);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "MovePerson",
+                     "TransferPerson",
+                     "SummonPerson",
+                     "AssignPerson",
+                     "RelocatePerson",
+                     "DirectPersonnelCommand",
+                     "PersonnelCommandResolver",
+                     "PersonCommandLedger",
+                     "PersonnelLedger",
+                     "AssignmentLedger",
+                     "PersonAssignmentLedger",
+                     "MovementLedger",
+                     "PersonMovementLedger",
+                     "OwnerLaneGateLedger",
+                     "v325-v332",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PersonnelFlow*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Migration*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

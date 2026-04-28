@@ -517,3 +517,9 @@ It should ask:
 - The v293-v316 branch is closed as a first personnel-flow command-readiness layer, not as a full movement simulation.
 - Fidelity remains scale-budgeted: player-near household readiness can be read in command surfaces, while distant movement remains pooled and summarized.
 - The closeout adds no person iteration budget, direct personnel command, movement ledger, persisted cache, or schema change.
+
+## V325-V332 Personnel Flow Owner-Lane Gate
+
+- `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` names which owner lane currently makes personnel-flow pressure readable.
+- The current readable lane is `PopulationAndHouseholds` home-household response; other possible lanes remain future plans, not hidden high-fidelity simulation.
+- It preserves the same scale budget: no new per-person scan, no movement resolver, no direct assignment, and no persisted cache.

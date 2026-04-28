@@ -365,3 +365,10 @@
 - Closed here means the code and docs prove preflight gates, structured local-response readiness, command-surface echo, and Great Hall display without claiming a full migration economy or social-mobility engine.
 - The closeout records that future deeper work still must name owner lane, target scope, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane before implementation.
 - v317-v324 adds no runtime rule, schema, migration, direct personnel command, movement/personnel/closeout ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
+
+## v325-v332 personnel flow owner-lane gate audit - 2026-04-28
+
+- v325-v332 adds `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` as runtime projection/readback only.
+- The readback says the current readable lane is `PopulationAndHouseholds` home-household response, while `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` personnel-flow lanes require separate owner-lane plans.
+- Application assembles the gate from structured affordance/receipt fields; Great Hall displays it through mobility readback. Neither layer chooses people, ranks candidates, parses prose, or calculates movement success.
+- v325-v332 adds no schema, migration, direct personnel command, movement/personnel/owner-lane-gate ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
