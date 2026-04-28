@@ -323,6 +323,12 @@ V413-V420 adds `PersonDossierSnapshot.SocialPositionScaleBudgetReadbackSummary` 
 
 The field is built from existing `FidelityRing` and structured social-position source keys. It does not change fidelity rings, select new people, promote/demote status, resolve zhuhu/kehu conversion, add a ledger, parse prose, change schema, or expand `PersonRegistry`.
 
+## V421-V428 Social Position Regional Scale Guard
+
+V421-V428 guards the far-summary half of the same scale budget. A registry-only `FidelityRing.Regional` person dossier must read as `regional summary` with registry-only source, while still saying distant society remains pooled summary and not all-world per-person class simulation.
+
+This is tests/docs evidence only: no new production rule, fidelity-ring mutation, target selection, class route, ledger, schema, migration, Application authority, UI authority, Unity authority, or `PersonRegistry` expansion.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

@@ -1354,6 +1354,11 @@ Current social position scale budget v413-v420 note:
 - The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, promote/demote state, zhuhu/kehu conversion state, precision-band state, class ledger, social-position ledger, personnel ledger, movement ledger, scale-budget ledger, durable social-position residue, or serialized module payload.
 - Any future persisted precision-band state, commoner status drift, conversion state, route history, durable residue, source provenance, or projection cache still requires a separate owner-module schema/migration plan before implementation.
 
+Current social position regional scale guard v421-v428 note:
+- V421-V428 is tests/docs guard only and adds no persisted fields.
+- The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, promote/demote state, zhuhu/kehu conversion state, precision-band state, class ledger, social-position ledger, personnel ledger, movement ledger, scale-budget ledger, durable social-position residue, or serialized module payload.
+- Any future persisted regional precision, selection state, commoner status drift, conversion state, route history, durable residue, source provenance, or projection cache still requires a separate owner-module schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

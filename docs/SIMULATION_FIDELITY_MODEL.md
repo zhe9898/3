@@ -584,3 +584,9 @@ It should ask:
 - `SocialPositionScaleBudgetReadbackSummary` makes the fidelity budget visible on the person dossier itself: close/local dossiers can carry structured social-position detail; regional or distant society remains summary-first.
 - The field reads the current `FidelityRing`; it does not change rings, promote new named actors, or add a hidden selection pass.
 - Future owner-lane depth that raises fidelity or changes target cardinality must still declare deterministic selection, cap, cadence, schema impact, and projection readback before implementation.
+
+## V421-V428 Regional Scale Guard
+
+- Regional dossiers are explicitly guarded as far-summary readback. A registry-only `FidelityRing.Regional` person reports `regional summary` and registry-only source.
+- This does not lower or raise fidelity; it proves the existing scale budget keeps distant society summarized by pools and pressure carriers.
+- Future work that pulls regional people into local detail still needs owner pressure, deterministic selection, cap/order, cadence, schema impact, and projection readback.

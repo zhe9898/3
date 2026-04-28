@@ -746,3 +746,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - No module may consume the field as command authority, class movement, promotion/demotion, zhuhu/kehu conversion, precision-band mutation, durable residue, or route eligibility.
 - Future commoner status integration still requires a separate owner-lane plan; no reader may parse the scale-budget text, social-position prose, source-key display, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
 - Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/scale-budget ledger, projection cache, or save-manifest change.
+
+## Social position regional scale guard v421-v428 integration note
+- V421-V428 adds no integration channel and no production event or command path.
+- The guard proves a registry-only `FidelityRing.Regional` dossier reads as regional summary from existing projection logic.
+- No module may consume regional scale-budget text as command authority, class movement, precision mutation, durable residue, route eligibility, or target selection.
+- Future commoner status integration still requires a separate owner-lane plan; no reader may parse the scale-budget text, social-position prose, source-key display, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
+- Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/scale-budget ledger, projection cache, or save-manifest change.
