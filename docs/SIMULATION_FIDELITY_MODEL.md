@@ -558,5 +558,11 @@ It should ask:
 - Existing person dossier labels can explain household, education, trade, office, family, and memory context, but they do not promote/demote people or resolve class movement.
 - Future status drift must state whether it affects named close-orbit actors, local pooled households, active-region pools, or distant summaries before implementation.
 - Any future lane needs owner module, pressure carrier, hot path, expected cardinality, deterministic order/cap, schema impact, no-touch boundary, and validation before changing fidelity or state.
+
+## V389-V396 Commoner Social Position Readback
+
+- `SocialPositionReadbackSummary` makes near/person-inspector status labels explain which owner snapshots made them visible.
+- The field may thicken a close-orbit named dossier, but it does not raise a fidelity ring, open a movement lane, change target cardinality, or promote/demote people.
+- Distant commoner society still remains summarized by pools and pressure carriers until a later owner lane chooses state, cadence, cap/order, and schema impact.
 - Distant society remains summarized; active settlements still need structured local readiness before desk-local gate text appears.
 - Future owner-lane depth must still declare precision band, deterministic selection, cap, cadence, schema impact, and projection readback separately.

@@ -128,6 +128,13 @@ public sealed class PersonRegistryIntegrationTests
         Assert.That(dossier.OfficeSummary, Does.Contain("County clerk"));
         Assert.That(dossier.SocialPositionLabel, Does.Contain("County clerk"));
         Assert.That(dossier.SocialPositionLabel, Does.Contain("local-exam passer"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("社会位置读回"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("PopulationAndHouseholds生计活动"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("EducationAndExams读书考试"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("TradeAndIndustry商贸附着"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("OfficeAndCareer文书官身"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("PersonRegistry只保身份/FidelityRing"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("不是升降阶级或zhuhu/kehu转换"));
         Assert.That(dossier.CurrentStatusSummary, Does.Contain("household"));
         Assert.That(dossier.CurrentStatusSummary, Does.Contain("office County clerk"));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
@@ -173,6 +180,8 @@ public sealed class PersonRegistryIntegrationTests
         Assert.That(dossier.MemoryPressureSummary, Is.EqualTo("No social-memory pressure projection."));
         Assert.That(dossier.DormantMemorySummary, Is.EqualTo("No dormant social-memory stub."));
         Assert.That(dossier.SocialPositionLabel, Is.EqualTo("Registry-only person."));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("当前只有PersonRegistry身份/FidelityRing"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("不是升降阶级或zhuhu/kehu转换"));
         Assert.That(dossier.SourceModuleKeys, Is.EqualTo(new[] { KnownModuleKeys.PersonRegistry }));
     }
 

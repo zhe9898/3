@@ -769,3 +769,10 @@ At integration level, verify:
 - Ownership acceptance: current code remains unchanged: `PopulationAndHouseholds` owns livelihood/activity/pools, `PersonRegistry` owns identity/FidelityRing only, adjacent modules expose projected pressure carriers, Application assembles projections, and UI/Unity copy projected fields.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, person dossier labels, mobility text, public-life lines, receipt prose, notification prose, or docs prose to derive social-position authority.
 - Save/schema acceptance: v381-v388 adds no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, class/social-position/personnel/movement/focus/scheduler ledger, durable residue, or serialized module payload change.
+
+## Commoner social position readback v389-v396 acceptance - 2026-04-28
+- Read-model acceptance: person dossiers expose `SocialPositionReadbackSummary` assembled from structured family, household, education, trade, office, and social-memory snapshots, while `PersonRegistry` remains identity/FidelityRing only.
+- Projection acceptance: lineage/person-inspector ViewModels copy the field and may display it in the focused status ledger only as owner-lane explanation.
+- Scope acceptance: the field does not implement a full class engine, promote/demote command, zhuhu/kehu conversion state, office-service route, trade-attachment route, clerk route, artisan/merchant route, durable social-position residue, or global per-person career simulation.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, `SocialPositionLabel`, readback prose, mobility text, public-life lines, receipt prose, notification prose, or docs prose to derive social-position authority.
+- Save/schema acceptance: v389-v396 adds runtime read-model/ViewModel fields only and no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, class/social-position/personnel/movement/focus/scheduler/readback ledger, durable residue, or serialized module payload change.

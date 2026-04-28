@@ -100,6 +100,14 @@ Current code already has commoner pressure carriers: `PopulationAndHouseholds` o
 
 Future class/status drift must pick one owner lane and state its hot path, cardinality, deterministic cap/order, target scope, no-touch boundary, schema impact, cadence, projection fields, and validation. It must not become a UI promotion button, an Application resolver, a `PersonRegistry` social-class table, or a prose parser.
 
+### Current implementation readback: v389-v396
+
+V389-V396 adds `SocialPositionReadbackSummary` to person dossiers as a projection-only explanation of why a visible person reads socially situated.
+
+The field may name owner carriers such as FamilyCore kin position, PopulationAndHouseholds livelihood/activity, EducationAndExams study/exam status, TradeAndIndustry trade attachment, OfficeAndCareer document/office posture, and SocialMemoryAndRelations memory pressure. `PersonRegistry` still contributes only identity and `FidelityRing`.
+
+This readback does not promote/demote people, resolve zhuhu/kehu conversion, create office-service or trade-attachment routes, write durable residue, or make UI/Unity a class authority.
+
 ---
 
 ## 3. Exams

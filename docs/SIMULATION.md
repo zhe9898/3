@@ -668,3 +668,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It records that commoner / class-position mobility must remain scale-budgeted: near households can be read through existing household/person dossier projections, while distant society remains summarized by pools and pressure carriers.
 - Future commoner status drift must choose one owner lane and document pressure carrier, state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
 - It does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
+
+## Current commoner social position readback v389-v396 note
+
+- V389-V396 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, or persistence change.
+- It projects `SocialPositionReadbackSummary` on person dossiers from existing owner snapshots so nearby people read as socially situated without turning the world into a global per-person career simulation.
+- The readback does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
+- Future status drift still needs one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.

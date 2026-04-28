@@ -76,6 +76,7 @@ public sealed partial class FirstPassPresentationShellTests
                     OfficeSummary = "appointed 主簿; authority 2; petitions 24/7; task 勾理词状",
                     MemoryPressureSummary = "pressure 38; fear 22, obligation 16",
                     DormantMemorySummary = "No dormant social-memory stub.",
+                    SocialPositionReadbackSummary = "社会位置读回：FamilyCore亲族位置、PopulationAndHouseholds生计活动、EducationAndExams读书考试、TradeAndIndustry商贸附着、OfficeAndCareer文书官身、SocialMemoryAndRelations旧忆压力；PersonRegistry只保身份/FidelityRing；不是升降阶级或zhuhu/kehu转换。",
                     SocialPositionLabel = "Main-line heir, 主簿, local-exam passer, PettyTrader, clan shops 1",
                     CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
                     SourceModuleKeys =

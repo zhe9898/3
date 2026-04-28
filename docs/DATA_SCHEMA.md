@@ -1334,6 +1334,11 @@ Current commoner social position preflight v381-v388 note:
 - The preflight does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, promote/demote state, zhuhu/kehu conversion state, class ledger, social-position ledger, personnel ledger, movement ledger, focus ledger, scheduler ledger, durable social-position residue, or serialized module payload.
 - Any future commoner status drift, tenant/landholding conversion, office-service status, trade attachment, clerk path, artisan/merchant route, or durable social-position residue still requires a separate owner-module schema/migration plan before implementation.
 
+Current commoner social position readback v389-v396 note:
+- `PersonDossierSnapshot.SocialPositionReadbackSummary` and `PersonDossierViewModel.SocialPositionReadbackSummary` are runtime read-model/ViewModel fields only and are not persisted.
+- The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, promote/demote state, zhuhu/kehu conversion state, class ledger, social-position ledger, personnel ledger, movement ledger, focus ledger, scheduler ledger, readback ledger, durable social-position residue, or serialized module payload.
+- Any future persisted status drift, conversion state, route history, durable residue, or projection cache still requires a separate owner-module schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

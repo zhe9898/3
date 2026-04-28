@@ -55,6 +55,8 @@ public sealed class PersonDossierViewModel
 
 	public string SocialPositionLabel { get; set; } = string.Empty;
 
+	public string SocialPositionReadbackSummary { get; set; } = string.Empty;
+
 	public string CurrentStatusSummary { get; set; } = string.Empty;
 
 	public IReadOnlyList<string> SourceModuleKeys { get; set; } = Array.Empty<string>();
