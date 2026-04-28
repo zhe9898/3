@@ -73,6 +73,16 @@ V293-V300 adds no new command boundary. It records the gate a future personnel-f
 
 No future personnel command may begin as an Application rule, UI action, Unity drag/drop, global manager, or `PersonRegistry` domain expansion. V293-V300 adds no schema, migration, direct move/transfer/summon/assign-person command, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, manager/controller path, or prose parser.
 
+## Personnel flow command readiness v301-v308 boundary note
+
+V301-V308 adds one runtime read-model/ViewModel field, `PersonnelFlowReadinessSummary`, to existing player-command affordances and receipts. It does not add a command boundary:
+- `PopulationAndHouseholds` remains the owner of local household response and migration pressure.
+- `PersonRegistry` remains identity plus existing `FidelityRing` only.
+- Application fills the field from already-projected household snapshots and existing command names; it does not select people or resolve movement.
+- Unity copies the field through command ViewModels only.
+
+The field may say `人员流动预备读回`, `近处细读`, and `远处汇总`, but those are readback words only. V301-V308 adds no schema, migration, direct move/transfer/summon/assign-person command, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, manager/controller path, `PersonRegistry` domain expansion, or prose parser.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

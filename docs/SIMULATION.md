@@ -595,3 +595,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Future personnel-flow commands must be bounded intents resolved by an owner module after it declares target scope, hot path, expected cardinality, deterministic order/cap, no-touch boundary, schema impact, and validation lane.
 - Application must route only. UI/Unity must not compute movement success, target ranking, assignment outcome, or precision changes.
 - Future readers must not parse command labels, readback strings, person dossier prose, settlement mobility text, notification prose, receipt prose, or `DomainEvent.Summary` as scheduler or command input.
+
+## Current personnel flow command readiness v301-v308 note
+
+- V301-V308 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, command route, or persistence change.
+- The new `PersonnelFlowReadinessSummary` is projection-time readback over existing `PopulationAndHouseholds` household fields and local response command identity.
+- It may explain near detail and far summary, but it does not promote/demote people, move people, choose personnel targets, write SocialMemory residue, or change `PersonRegistry`.
+- UI/Unity must copy the field only and must not parse it to compute movement success.

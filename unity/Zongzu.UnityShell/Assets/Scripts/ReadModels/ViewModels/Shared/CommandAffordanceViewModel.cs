@@ -18,6 +18,8 @@ public sealed class CommandAffordanceViewModel
 
 	public string ReadbackSummary { get; set; } = string.Empty;
 
+	public string PersonnelFlowReadinessSummary { get; set; } = string.Empty;
+
 	public string FamilyLaneEntryReadbackSummary { get; set; } = string.Empty;
 
 	public string FamilyElderExplanationReadbackSummary { get; set; } = string.Empty;

@@ -11,6 +11,7 @@ public sealed partial class FirstPassPresentationShellTests
     public void Compose_ProjectsHomeHouseholdLocalResponsePublicLifeFieldsWithoutShellAuthority()
     {
         SettlementId settlementId = new(1);
+        const string personnelFlowReadiness = "人员流动预备读回：只影响本户生计/丁力/迁徙之念，不是直接调人、迁人、召人命令。近处细读。远处汇总。PopulationAndHouseholds拥有本户回应；PersonRegistry只保身份/FidelityRing；UI/Unity只复制投影字段。";
         PresentationReadModelBundle bundle = new()
         {
             CurrentDate = new GameDate(2026, 4),
@@ -40,6 +41,7 @@ public sealed partial class FirstPassPresentationShellTests
                         LeverageSummary = "本户只动自家夜行、脚程与临时避险。 取舍预判：预期收益：先压夜路、渡口与迁徙险。 外部后账：不补巡丁、不催县门。 外部后账归位：该走巡丁/路匪 lane；该走县门/文移 lane；该走族老/担保 lane；本户不能代修。 换招提示：从遣少丁递信转到暂缩夜行只是换一种本户小动作，外部后账仍要原 owning module。",
                         CostSummary = "代价：丁力会被收紧。 承受线代价：会吃丁力，若旧账再硬，容易转成吃紧后账。 反噬尾巴：会挤丁力。 冷却提示：当前民困58，债压49，丁力37，迁徙之念62；换招前先避开继续叠债或叠丁力。",
                         ReadbackSummary = "下月看迁徙之念、丁力和后账。 承受线读回：看夜路是否缓住迁徙之念，以及丁力是否被压过线。 取舍读回：看迁徙之念是否下降。 外部后账：不补巡丁、不催县门。 外部后账归位：该走巡丁/路匪 lane；该走县门/文移 lane；该走族老/担保 lane；本户不能代修。 续接读回：看换招是否把余波转缓，还是留下新的债压、丁力或迁徙尾巴。 社会记忆读回：人情23，本户后账已缓。",
+                        PersonnelFlowReadinessSummary = personnelFlowReadiness,
                         TargetLabel = "张家户",
                         IsEnabled = true,
                     },
@@ -58,6 +60,7 @@ public sealed partial class FirstPassPresentationShellTests
                         LeverageSummary = "本户回应只结算自家劳力、债压、民困与迁徙险。 取舍预判：预期收益：先压夜路、渡口与迁徙险。 外部后账：不补巡丁、不催县门。 外部后账归位：该走巡丁/路匪 lane；该走县门/文移 lane；该走族老/担保 lane；本户不能代修。 短期后果：缓住项：夜路、渡口和自家脚程先缓住，当前迁徙之念62。 短期后果：仍欠外部后账：巡丁、县门、族老解释和社会记忆仍归各自 owning module。",
                         CostSummary = "本户余账：民困58，债压49，丁力37，迁徙之念62。 本户底色：迁徙之念仍在。 承受线代价：会吃丁力，若旧账再硬，容易转成吃紧后账。 反噬尾巴：会挤丁力。 短期后果：挤压项：丁力小耗，当前丁力37，债压49。",
                         ReadbackSummary = "张家户：后账已从本户脚程上缓下。 承受线读回：看夜路是否缓住迁徙之念，以及丁力是否被压过线。 取舍读回：看迁徙之念是否下降。 外部后账：不补巡丁、不催县门。 外部后账归位：该走巡丁/路匪 lane；该走县门/文移 lane；该走族老/担保 lane；本户不能代修。 短期后果：缓住项：夜路、渡口和自家脚程先缓住，当前迁徙之念62。 短期后果：挤压项：丁力小耗，当前丁力37，债压49。 短期后果：仍欠外部后账：巡丁、县门、族老解释和社会记忆仍归各自 owning module。 社会记忆读回：人情23，本户后账已缓。",
+                        PersonnelFlowReadinessSummary = personnelFlowReadiness,
                         TargetLabel = "张家户",
                     },
                 ],
@@ -94,6 +97,9 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(affordance.ReadbackSummary, Does.Contain("外部后账归位"));
         Assert.That(affordance.ReadbackSummary, Does.Contain("续接读回"));
         Assert.That(affordance.ReadbackSummary, Does.Contain("社会记忆读回"));
+        Assert.That(affordance.PersonnelFlowReadinessSummary, Is.EqualTo(personnelFlowReadiness));
+        Assert.That(affordance.PersonnelFlowReadinessSummary, Does.Contain("人员流动预备读回"));
+        Assert.That(affordance.PersonnelFlowReadinessSummary, Does.Contain("UI/Unity只复制投影字段"));
         Assert.That(affordance.IsEnabled, Is.True);
 
         CommandReceiptViewModel receipt = node.PublicLifeRecentReceipts.Single();
@@ -118,5 +124,7 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(receipt.ReadbackSummary, Does.Contain("外部后账归位"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("本户不能代修"));
         Assert.That(receipt.ReadbackSummary, Does.Contain("社会记忆读回"));
+        Assert.That(receipt.PersonnelFlowReadinessSummary, Is.EqualTo(personnelFlowReadiness));
+        Assert.That(receipt.PersonnelFlowReadinessSummary, Does.Contain("不是直接调人、迁人、召人命令"));
     }
 }

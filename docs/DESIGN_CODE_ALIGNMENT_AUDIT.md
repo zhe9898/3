@@ -344,3 +344,10 @@
 - Future movement, migration, return, assignment, placement, office-service, or campaign-manpower commands must name owner module, target scope, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane.
 - Current code remains bounded: `PopulationAndHouseholds` owns household migration pressure and local household response commands; `PersonRegistry` owns identity/fidelity only; Application routes commands; UI/Unity copy projected affordances and receipts.
 - v293-v300 adds no production rule, persisted state, schema bump, migration, direct move/transfer/summon/assign-person command, command/movement/personnel/assignment ledger, manager path, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.
+
+## v301-v308 personnel flow command readiness audit - 2026-04-28
+
+- v301-v308 adds player-facing readback density to existing `PopulationAndHouseholds` local response command surfaces through `PersonnelFlowReadinessSummary`.
+- The readback names `人员流动预备读回`, `近处细读`, and `远处汇总` so the player can see that these commands influence this household's livelihood, labor, distress, and migration pressure without becoming direct personnel control.
+- Current code remains bounded: `RestrictNightTravel`, `PoolRunnerCompensation`, and `SendHouseholdRoadMessage` still resolve in `PopulationAndHouseholds`; `PersonRegistry` remains identity/fidelity only; Application assembles projections; UI/Unity copy the new field.
+- v301-v308 adds no new player command, persisted state, schema bump, migration, direct move/transfer/summon/assign-person path, command/movement/personnel/assignment/focus/scheduler ledger, manager path, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.

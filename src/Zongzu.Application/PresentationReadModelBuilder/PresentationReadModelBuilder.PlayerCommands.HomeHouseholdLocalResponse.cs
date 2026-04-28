@@ -55,6 +55,18 @@ public sealed partial class PresentationReadModelBuilder
             BuildHomeHouseholdExternalOwnerLaneReturnGuidance(PlayerCommandNames.PoolRunnerCompensation, household);
         HouseholdExternalOwnerLaneReturnGuidance roadMessageOwnerLane =
             BuildHomeHouseholdExternalOwnerLaneReturnGuidance(PlayerCommandNames.SendHouseholdRoadMessage, household);
+        string nightTravelPersonnelFlowReadiness = BuildHomeHouseholdPersonnelFlowReadinessSummary(
+            PlayerCommandNames.RestrictNightTravel,
+            household,
+            residue.Score);
+        string compensationPersonnelFlowReadiness = BuildHomeHouseholdPersonnelFlowReadinessSummary(
+            PlayerCommandNames.PoolRunnerCompensation,
+            household,
+            residue.Score);
+        string roadMessagePersonnelFlowReadiness = BuildHomeHouseholdPersonnelFlowReadinessSummary(
+            PlayerCommandNames.SendHouseholdRoadMessage,
+            household,
+            residue.Score);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
             PlayerCommandNames.RestrictNightTravel,
@@ -88,7 +100,9 @@ public sealed partial class PresentationReadModelBuilder
                 nightTravelTradeoff.BoundarySummary,
                 nightTravelOwnerLane.ReadbackSummary,
                 nightTravelFollowUp.ReadbackSummary,
-                socialMemoryReadback),
+                socialMemoryReadback,
+                nightTravelPersonnelFlowReadiness),
+            personnelFlowReadinessSummary: nightTravelPersonnelFlowReadiness,
             targetLabel: householdName);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
@@ -123,7 +137,9 @@ public sealed partial class PresentationReadModelBuilder
                 compensationTradeoff.BoundarySummary,
                 compensationOwnerLane.ReadbackSummary,
                 compensationFollowUp.ReadbackSummary,
-                socialMemoryReadback),
+                socialMemoryReadback,
+                compensationPersonnelFlowReadiness),
+            personnelFlowReadinessSummary: compensationPersonnelFlowReadiness,
             targetLabel: householdName);
 
         yield return BuildPlayerCommandAffordanceSnapshot(
@@ -158,7 +174,9 @@ public sealed partial class PresentationReadModelBuilder
                 roadMessageTradeoff.BoundarySummary,
                 roadMessageOwnerLane.ReadbackSummary,
                 roadMessageFollowUp.ReadbackSummary,
-                socialMemoryReadback),
+                socialMemoryReadback,
+                roadMessagePersonnelFlowReadiness),
+            personnelFlowReadinessSummary: roadMessagePersonnelFlowReadiness,
             targetLabel: householdName);
     }
 
@@ -180,6 +198,10 @@ public sealed partial class PresentationReadModelBuilder
                 BuildHomeHouseholdLocalResponseShortTermConsequenceReadback(household);
             HouseholdExternalOwnerLaneReturnGuidance ownerLane =
                 BuildHomeHouseholdExternalOwnerLaneReturnGuidance(household.LastLocalResponseCommandCode, household);
+            string personnelFlowReadiness = BuildHomeHouseholdPersonnelFlowReadinessSummary(
+                household.LastLocalResponseCommandCode,
+                household,
+                0);
 
             yield return BuildPlayerCommandReceiptSnapshot(
                 household.LastLocalResponseCommandCode,
@@ -208,7 +230,9 @@ public sealed partial class PresentationReadModelBuilder
                     ownerLane.ReadbackSummary,
                     responseShortTerm.ReliefSummary,
                     responseShortTerm.SqueezeSummary,
-                    responseShortTerm.ExternalAfterAccountSummary),
+                    responseShortTerm.ExternalAfterAccountSummary,
+                    personnelFlowReadiness),
+                personnelFlowReadinessSummary: personnelFlowReadiness,
                 targetLabel: household.HouseholdName,
                 labelOverride: household.LastLocalResponseCommandLabel);
         }
@@ -276,6 +300,42 @@ public sealed partial class PresentationReadModelBuilder
         return notes.Count == 0
             ? string.Empty
             : $"本户底色：{string.Join("；", notes)}。";
+    }
+
+    private static string BuildHomeHouseholdPersonnelFlowReadinessSummary(
+        string commandName,
+        HouseholdPressureSnapshot? household,
+        int residueScore)
+    {
+        if (household is null)
+        {
+            return string.Empty;
+        }
+
+        string commandReadback = commandName switch
+        {
+            PlayerCommandNames.RestrictNightTravel => "夜行/渡口读法：先压脚程与迁徙之念，不迁人。",
+            PlayerCommandNames.PoolRunnerCompensation => "赔脚户读法：先用本户钱债和人情压误读，不调人。",
+            PlayerCommandNames.SendHouseholdRoadMessage => "递路信读法：先问路情和脚户说法，不召人。",
+            _ => string.Empty,
+        };
+        if (string.IsNullOrWhiteSpace(commandReadback))
+        {
+            return string.Empty;
+        }
+
+        string nearReadback = household.MigrationRisk >= 60 || residueScore >= 40
+            ? "近处细读：本户已被压力选中，只读本户生计、丁力、民困和迁徙之念。"
+            : "近处细读：当前只显示本户可承受的小动作，不把县外人逐个拉进来。";
+
+        return JoinHomeHouseholdLocalResponseText(
+            "人员流动预备读回：只影响本户生计/丁力/迁徙之念，不是直接调人、迁人、召人命令。",
+            commandReadback,
+            nearReadback,
+            $"PopulationAndHouseholds拥有本户回应；迁徙之念{household.MigrationRisk}，丁力{household.LaborCapacity}，民困{household.Distress}。",
+            "PersonRegistry只保身份/FidelityRing；不写 household、office、campaign 或 capability state。",
+            "远处汇总：其他人仍留在迁徙池、劳力池和街面压力摘要里，不逐人硬算天下。",
+            "UI/Unity只复制投影字段，不计算谁移动或是否调成。");
     }
 
     private static HouseholdLocalResponseAffordanceCapacity BuildHomeHouseholdLocalResponseAffordanceCapacity(

@@ -497,3 +497,10 @@ It should ask:
 - `PersonRegistry.ChangeFidelityRing` stays a readability/fidelity seam. It must not become assignment, migration, household membership, office service, or campaign manpower state.
 - Application, UI, and Unity must not rank personnel targets, compute movement success, or parse readback prose to decide who moves.
 - Any future persisted command receipt, assignment state, durable residue, or migration cache must first open a schema/migration plan.
+
+## V301-V308 Personnel Flow Command Readiness
+
+- `PersonnelFlowReadinessSummary` is the first command-surface readback over the existing near-detail / far-summary substrate.
+- It appears only on existing `PopulationAndHouseholds` household-response affordances and receipts, where the target is already a concrete home household.
+- The readback may explain near detail, distant pool summary, and why the command only affects livelihood/labor/migration pressure. It does not move a person, rank a person, promote fidelity, or write durable movement residue.
+- Save/schema impact remains none.

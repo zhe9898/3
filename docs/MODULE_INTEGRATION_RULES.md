@@ -650,3 +650,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - `PopulationAndHouseholds` can own household migration-pressure responses; `FamilyCore` can own kin/lineage mediation; `OfficeAndCareer` can own office/document personnel channels; `WarfareCampaign` can own campaign manpower posture; `PersonRegistry` remains identity/fidelity only.
 - No downstream reader may parse command labels, readback strings, person dossier prose, settlement mobility text, notification prose, receipt prose, or `DomainEvent.Summary` to drive a personnel rule.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, or save-manifest change.
+
+## Personnel flow command readiness v301-v308 integration note
+- V301-V308 adds `PersonnelFlowReadinessSummary` to existing player-command affordance and receipt projections. It is a readback field, not an integration channel.
+- The field is populated only for existing `PopulationAndHouseholds` local response command surfaces: `RestrictNightTravel`, `PoolRunnerCompensation`, and `SendHouseholdRoadMessage`.
+- Application may assemble the readback from structured household snapshots and command identity. It must not parse readback prose, choose a person target, rank movement candidates, or calculate movement success.
+- Unity receives the field only through the shared command ViewModel copy path.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, or save-manifest change.
