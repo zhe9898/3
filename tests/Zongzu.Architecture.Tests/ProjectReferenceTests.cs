@@ -3743,6 +3743,64 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Personnel_flow_desk_gate_containment_v341_v348_must_stay_local_projection_only_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_personnel-flow-desk-gate-containment-v341-v348.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_personnel-flow-desk-gate-containment-v341-v348.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string deskAdapter = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Presentation.Unity",
+            "Adapters",
+            "DeskSandbox",
+            "DeskSandboxShellAdapter.cs"));
+        string presentationTests = File.ReadAllText(Path.Combine(
+            TestsDir,
+            "Zongzu.Presentation.Unity.Tests",
+            "FirstPassPresentationShellTests",
+            "FirstPassPresentationShellTests.cs"));
+
+        Assert.That(topologyIndex, Does.Contain("V341-V348 Personnel Flow Desk Gate Containment"));
+        Assert.That(designAudit, Does.Contain("v341-v348 personnel flow desk gate containment audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Personnel flow desk gate containment v341-v348 boundary note"));
+        Assert.That(uiPresentation, Does.Contain("v341-v348 personnel flow desk gate containment"));
+        Assert.That(acceptance, Does.Contain("Personnel flow desk gate containment v341-v348 acceptance"));
+        Assert.That(schemaRules, Does.Contain("personnel flow desk gate containment v341-v348 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current personnel flow desk gate containment v341-v348 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+
+        Assert.That(deskAdapter, Does.Contain("BuildSettlementPersonnelFlowOwnerLaneGateEcho"));
+        Assert.That(deskAdapter, Does.Contain("EnumerateAffordances(PlayerCommandSurfaceKeys.PublicLife, settlementId)"));
+        Assert.That(deskAdapter, Does.Contain("EnumerateReceipts(PlayerCommandSurfaceKeys.PublicLife, settlementId)"));
+        Assert.That(deskAdapter, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(deskAdapter, Does.Not.Contain(".ReadbackSummary.Contains"));
+        Assert.That(deskAdapter, Does.Not.Contain(".Summary.Contains"));
+
+        Assert.That(presentationTests, Does.Contain("Compose_DoesNotEchoPersonnelFlowGateToDeskSettlementWithoutLocalReadiness"));
+        Assert.That(presentationTests, Does.Contain("Does.Not.Contain(\"personnel gate local marker\")"));
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

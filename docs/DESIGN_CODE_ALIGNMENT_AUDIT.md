@@ -379,3 +379,10 @@
 - Desk Sandbox uses `PlayerCommandSurfaceSnapshot.EnumerateAffordances` / `EnumerateReceipts`; it does not parse command prose, mobility text, notifications, receipts, or event summaries.
 - The desk echo keeps `人员流动归口门槛` local to the relevant settlement surface and does not infer hidden Family/Office/Warfare targets.
 - v333-v340 adds no schema, migration, direct personnel command, movement/personnel/desk-gate ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
+
+## v341-v348 personnel flow desk gate containment audit - 2026-04-28
+
+- v341-v348 adds a negative presentation proof for the v333-v340 desk echo: a settlement without local public-life `PersonnelFlowReadinessSummary` affordances or receipts does not display the owner-lane gate even when the command surface has a global gate summary.
+- The containment rule keeps active local personnel-flow readiness readable while quiet or distant settlements remain mobility pool summaries.
+- Desk Sandbox still uses structured command-surface enumeration by settlement. It does not parse command summaries, receipt prose, notification prose, mobility text, public-life lines, docs prose, or `DomainEvent.Summary`.
+- v341-v348 adds no schema, migration, direct personnel command, movement/personnel/desk-gate containment ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.

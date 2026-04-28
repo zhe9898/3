@@ -630,3 +630,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Desk Sandbox displays the projected owner-lane gate only when the settlement has local structured personnel-flow readiness command affordances or receipts.
 - It does not promote/demote people, move people, choose personnel targets, write SocialMemory residue, or change `PersonRegistry`.
 - UI/Unity must display the projected local echo only and must not parse it to compute movement success.
+
+## Current personnel flow desk gate containment v341-v348 note
+
+- V341-V348 adds a negative containment proof around the desk echo. A global owner-lane gate summary does not make every settlement locally active.
+- The simulation remains unchanged: only settlements with structured local public-life personnel-flow readiness affordances or receipts may show the desk gate echo.
+- Quiet or distant settlements remain pool summaries. No monthly rule, movement resolver, person assignment path, migration economy, SocialMemory residue, schema, migration, ledger, or prose parser is added.

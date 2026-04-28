@@ -681,3 +681,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The desk echo must use command-surface enumeration and must not parse `ReadbackSummary`, receipt prose, notification text, mobility text, public-life lines, or `DomainEvent.Summary`.
 - The echo is presentation-only and must not be consumed as authority, ledger membership, movement permission, or durable SocialMemory residue.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/desk-gate ledger, projection cache, or save-manifest change.
+
+## Personnel flow desk gate containment v341-v348 integration note
+- V341-V348 adds no integration channel. A global `PersonnelFlowOwnerLaneGateSummary` is not settlement-local authority by itself.
+- Desk Sandbox must keep the gate tied to structured local public-life `PersonnelFlowReadinessSummary` affordances or receipts for the same settlement.
+- Quiet or distant settlements keep mobility summaries and do not inherit another settlement's local gate echo.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/desk-gate-containment ledger, projection cache, or save-manifest change.

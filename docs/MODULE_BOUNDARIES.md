@@ -111,6 +111,14 @@ V333-V340 adds no module boundary. It lets `Zongzu.Presentation.Unity` append th
 
 The desk echo may enumerate structured command surfaces by settlement. It must not parse prose, infer hidden targets, query simulation modules directly, mutate state, or create a desk-local ledger.
 
+## Personnel flow desk gate containment v341-v348 boundary note
+
+V341-V348 adds no module boundary. It proves that a global `PersonnelFlowOwnerLaneGateSummary` is not a settlement-wide rule by itself.
+
+Desk Sandbox must keep the gate local to settlements that have structured public-life `PersonnelFlowReadinessSummary` affordances or receipts. Quiet or distant settlements remain mobility pool summaries and do not inherit personnel-flow owner-lane text from another node.
+
+Application still assembles projected command fields only. V341-V348 adds no schema, migration, command route, movement/personnel/desk-gate containment ledger, prose parser, UI authority, Unity authority, or `PersonRegistry` expansion.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

@@ -263,6 +263,12 @@ V333-V340 copies the projected owner-lane gate into Desk Sandbox settlement mobi
 
 This keeps the desk local: `人员流动归口门槛` appears near the settlement with a real projected readiness surface, not on every node by inference. It adds no schema, migration, command route, movement resolver, desk-gate ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
 
+## V341-V348 Personnel Flow Desk Gate Containment
+
+V341-V348 closes a leak path around the desk echo: a global `PersonnelFlowOwnerLaneGateSummary` is not enough to make every settlement display the gate. Desk Sandbox must find structured local public-life affordances or receipts with `PersonnelFlowReadinessSummary` for that settlement before appending the owner-lane gate.
+
+This keeps personnel-flow readback in the "near detail, far summary" rule. Active local surfaces may show the owner-lane gate; quiet or distant nodes keep their mobility pool summaries. It adds no schema, migration, direct personnel command, movement/personnel/desk-gate ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

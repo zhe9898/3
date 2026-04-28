@@ -64,6 +64,75 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_DoesNotEchoPersonnelFlowGateToDeskSettlementWithoutLocalReadiness()
+    {
+        PresentationReadModelBundle bundle = CreateBundle();
+        SettlementId activeSettlementId = new(1);
+        SettlementId quietSettlementId = new(2);
+        bundle.Settlements = bundle.Settlements
+            .Concat(new[]
+            {
+                new SettlementSnapshot
+                {
+                    Id = quietSettlementId,
+                    Name = "Remote County",
+                    Tier = SettlementTier.CountySeat,
+                    Security = 51,
+                    Prosperity = 43,
+                },
+            })
+            .ToArray();
+        bundle.SettlementMobilities = bundle.SettlementMobilities
+            .Concat(new[]
+            {
+                new SettlementMobilitySnapshot
+                {
+                    SettlementId = quietSettlementId,
+                    SettlementName = "Remote County",
+                    AvailableLabor = 41,
+                    LaborDemand = 52,
+                    SeasonalSurplus = -11,
+                    WageLevel = 55,
+                    OutflowPressure = 31,
+                    InflowPressure = 12,
+                    FloatingPopulation = 8,
+                    PoolThicknessSummary = "Remote pool readback stays pooled.",
+                    FocusReadbackSummary = "Remote focus remains summarized.",
+                    ScaleBudgetReadbackSummary = "Remote scale stays far-summary.",
+                    SourceModuleKeys = [KnownModuleKeys.PopulationAndHouseholds],
+                },
+            })
+            .ToArray();
+        bundle.PlayerCommands = bundle.PlayerCommands with
+        {
+            Affordances = bundle.PlayerCommands.Affordances
+                .Concat(new[]
+                {
+                    new PlayerCommandAffordanceSnapshot
+                    {
+                        ModuleKey = KnownModuleKeys.PopulationAndHouseholds,
+                        SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                        SettlementId = activeSettlementId,
+                        CommandName = PlayerCommandNames.RestrictNightTravel,
+                        PersonnelFlowReadinessSummary = "local readiness exists only here",
+                        IsEnabled = true,
+                    },
+                })
+                .ToArray(),
+            PersonnelFlowOwnerLaneGateSummary = "personnel gate local marker: owner lanes remain separate.",
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
+
+        SettlementNodeViewModel activeSettlement = shell.DeskSandbox.Settlements
+            .Single(settlement => settlement.MobilitySummary.Contains("Pool readback"));
+        SettlementNodeViewModel quietSettlement = shell.DeskSandbox.Settlements.Single(settlement => settlement.SettlementName == "Remote County");
+        Assert.That(activeSettlement.MobilitySummary, Does.Contain("personnel gate local marker"));
+        Assert.That(quietSettlement.MobilitySummary, Does.Contain("Remote pool readback stays pooled."));
+        Assert.That(quietSettlement.MobilitySummary, Does.Not.Contain("personnel gate local marker"));
+    }
+
+    [Test]
     public void Compose_ProjectsGreatHallCountsDateHashAndCoreSummaries()
     {
         PresentationReadModelBundle bundle = CreateBundle();
