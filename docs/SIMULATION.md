@@ -642,3 +642,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - V349-V356 closes v325-v348 as a projection/readback layer only.
 - The simulation still has no new scheduler step, cadence rule, event-drain rule, movement resolver, person assignment path, office-service lane, campaign-manpower lane, migration economy, SocialMemory residue, schema, migration, ledger, or prose parser.
 - Future personnel-flow simulation depth must choose an owner lane and document state, cadence, cardinality, deterministic cap/order, schema impact, and validation before implementation.
+
+## Current personnel flow future owner-lane preflight v357-v364 note
+
+- V357-V364 adds no simulation behavior. It is a guard for future personnel-flow owner lanes.
+- Future Family, Office, or Warfare personnel-flow rules must choose owner module state, accepted command, cadence, target scope, no-touch boundary, hot path, expected cardinality, deterministic cap/order, schema impact, projection/readback, and validation before implementation.
+- The current simulation still has no office-service personnel movement, kin transfer, campaign-manpower allocation, direct assignment, movement resolver, migration economy, future-owner-lane ledger, or prose parser.

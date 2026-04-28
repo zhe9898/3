@@ -393,3 +393,10 @@
 - The closeout deliberately does not claim a personnel command system, migration economy, assignment system, office-service lane, campaign-manpower lane, durable movement residue, or full social mobility engine.
 - Future depth must select one owner lane and declare target scope, hot path, expected cardinality, deterministic order/cap, schema impact, no-touch boundary, and validation lane before implementation.
 - v349-v356 adds no production rule, schema, migration, direct personnel command, movement/personnel/owner-lane-gate ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
+
+## v357-v364 personnel flow future owner-lane preflight audit - 2026-04-28
+
+- v357-v364 blocks unplanned expansion from the current gate layer into real Family, Office, or Warfare personnel-flow rules.
+- The preflight requires any future lane to declare owner module, accepted command, target scope, no-touch boundary, hot path, cardinality, deterministic order/cap, schema impact, cadence, projection fields, and validation lane.
+- The current gate remains guidance only. It does not authorize office-service assignment, kin transfer, campaign manpower allocation, direct movement, durable movement residue, or a full migration economy.
+- v357-v364 adds no production rule, schema, migration, direct personnel command, movement/personnel/future-owner-lane ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
