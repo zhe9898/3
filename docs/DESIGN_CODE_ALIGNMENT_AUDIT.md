@@ -407,3 +407,10 @@
 - Application builds the summary from structured personnel-flow readiness affordance/receipt presence only; it does not inspect people, rank targets, calculate movement success, or parse `ReadbackSummary`, receipts, notification text, mobility prose, docs prose, or `DomainEvent.Summary`.
 - Great Hall may display the projected preflight. Desk Sandbox does not spread it onto settlement nodes; local desk gate behavior remains tied to structured settlement-local readiness from v333-v348.
 - v365-v372 adds no schema, migration, command, movement resolver, direct move/transfer/summon/assign route, future-lane-surface ledger, `PersonRegistry` expansion, Application rule layer, UI authority, Unity authority, or prose parser.
+
+## v373-v380 personnel flow future lane closeout audit - 2026-04-28
+
+- v373-v380 closes v357-v372 as a preflight visibility layer only: future owner-lane contract plus Great Hall surface readback.
+- The closeout does not claim FamilyCore kin transfer, OfficeAndCareer office-service assignment, WarfareCampaign manpower allocation, direct movement, durable movement residue, or a full migration/social-mobility economy.
+- Future work must choose one owner lane and declare accepted command, target scope, hot path, cardinality, deterministic cap/order, schema impact, cadence, projection fields, no-touch boundary, and validation before implementation.
+- v373-v380 adds no production rule, schema, migration, command, movement resolver, future-lane-closeout ledger, `PersonRegistry` expansion, Application rule layer, UI authority, Unity authority, or prose parser.

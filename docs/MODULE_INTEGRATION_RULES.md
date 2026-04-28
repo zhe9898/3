@@ -706,3 +706,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Great Hall may display this preflight so the player can see that Family/Office/Warfare personnel-flow lanes still require owner-module plans; no module may consume it as authority, ledger membership, movement permission, command eligibility, or durable SocialMemory residue.
 - Application, UI, and Unity must not infer personnel movement from the preflight, command prose, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary`.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/future-lane-surface ledger, projection cache, or save-manifest change.
+
+## Personnel flow future lane closeout v373-v380 integration note
+- V373-V380 adds no integration channel. It closes the future-lane preflight/surface layer as evidence only.
+- The closed layer is `future owner-lane contract` -> `PersonnelFlowFutureOwnerLanePreflightSummary` -> Great Hall display. It is not a command route, resolver, event consumer, ledger, or movement permission.
+- Future Family/Office/Warfare personnel-flow integration must open a separate owner-lane plan and cannot consume this closeout, the surface text, command prose, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/future-lane-closeout ledger, projection cache, or save-manifest change.

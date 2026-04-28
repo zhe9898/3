@@ -547,3 +547,9 @@ It should ask:
 - The future-lane preflight is now visible as a projected Great Hall mobility readback, but it still does not raise fidelity or open a movement lane.
 - The surface says future Family/Office/Warfare personnel-flow work must choose owner module, accepted command, target scope, hot path, cardinality, deterministic cap/order, schema impact, and validation before implementation.
 - Desk Sandbox remains local: the new preflight is not spread onto every settlement node and does not turn distant summaries into named personnel detail.
+
+## V373-V380 Personnel Flow Future Lane Closeout
+
+- V357-V372 is closed only as preflight visibility: future-lane requirements are documented and visible in Great Hall, but no fidelity band, movement lane, or target cardinality changes.
+- Distant society remains summarized; active settlements still need structured local readiness before desk-local gate text appears.
+- Future owner-lane depth must still declare precision band, deterministic selection, cap, cadence, schema impact, and projection readback separately.

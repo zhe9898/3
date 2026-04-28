@@ -755,3 +755,10 @@ At integration level, verify:
 - Boundary acceptance: Application/UI/Unity must not infer personnel movement, direct assignment, office service, kin transfer, or campaign manpower from the preflight or prose.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
 - Save/schema acceptance: v365-v372 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/future-lane-surface ledger, durable residue, or serialized module payload change.
+
+## Personnel flow future lane closeout v373-v380 acceptance - 2026-04-28
+- Closeout acceptance: v357-v372 is documented as closed only for future-lane preflight plus Great Hall visibility.
+- Scope acceptance: the layer does not claim direct movement, migration economy, assignment path, office-service lane, kin-transfer lane, campaign-manpower lane, durable movement residue, or full social mobility engine.
+- Boundary acceptance: future depth must choose one owner lane and declare owner module, accepted command, target scope, no-touch boundary, hot path, cardinality, deterministic order/cap, schema impact, cadence, projection fields, and validation before implementation.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, surface text, or docs prose to derive personnel-flow authority.
+- Save/schema acceptance: v373-v380 adds no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/future-lane-closeout ledger, durable residue, or serialized module payload change.

@@ -4081,6 +4081,97 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Personnel_flow_future_lane_closeout_v373_v380_must_document_surface_only_without_schema_or_authority_drift()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string playerScope = File.ReadAllText(Path.Combine(RepoRoot, "docs", "PLAYER_SCOPE.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_personnel-flow-future-lane-closeout-v373-v380.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_personnel-flow-future-lane-closeout-v373-v380.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V373-V380 Personnel Flow Future Lane Closeout Audit"));
+        Assert.That(playerScope, Does.Contain("v373-v380 closes that preflight/display layer as guidance only"));
+        Assert.That(designAudit, Does.Contain("v373-v380 personnel flow future lane closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Personnel flow future lane closeout v373-v380 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Personnel flow future lane closeout v373-v380 integration note"));
+        Assert.That(simulation, Does.Contain("Current personnel flow future lane closeout v373-v380 note"));
+        Assert.That(uiPresentation, Does.Contain("v373-v380 personnel flow future lane closeout"));
+        Assert.That(acceptance, Does.Contain("Personnel flow future lane closeout v373-v380 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V373-V380 Personnel Flow Future Lane Closeout"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V380"));
+        Assert.That(schemaRules, Does.Contain("personnel flow future lane closeout v373-v380 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current personnel flow future lane closeout v373-v380 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+        Assert.That(execPlan, Does.Contain("v357-v364: documents the future owner-lane contract"));
+        Assert.That(execPlan, Does.Contain("v365-v372: surfaces that contract as Great Hall readback"));
+
+        foreach (string futureDebt in new[]
+                 {
+                     "direct movement",
+                     "office-service lane",
+                     "kin-transfer lane",
+                     "campaign-manpower lane",
+                     "durable movement residue",
+                     "full social mobility engine",
+                 })
+        {
+            Assert.That(topologyIndex, Does.Contain(futureDebt), futureDebt);
+            Assert.That(acceptance, Does.Contain(futureDebt), futureDebt);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "MovePerson",
+                     "TransferPerson",
+                     "SummonPerson",
+                     "AssignPerson",
+                     "RelocatePerson",
+                     "DirectPersonnelCommand",
+                     "OfficeServicePersonnelCommand",
+                     "FamilyPersonnelCommand",
+                     "CampaignManpowerCommand",
+                     "PersonnelCommandResolver",
+                     "PersonnelFutureOwnerLaneLedger",
+                     "FutureOwnerLaneLedger",
+                     "FutureLaneSurfaceLedger",
+                     "FutureLaneCloseoutLedger",
+                     "MovementResolver",
+                     "v373-v380",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PersonnelFlow*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Migration*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
