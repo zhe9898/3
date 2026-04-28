@@ -4747,6 +4747,102 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Social_position_scale_closeout_v429_v436_must_not_become_class_or_person_browser_authority()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-28_social-position-scale-closeout-v429-v436.md"));
+        string personDossierProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PersonDossiers.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Family", "PersonDossierViewModel.cs"),
+            Path.Combine(RepoRoot, "unity", "Zongzu.UnityShell", "Assets", "Scripts", "ReadModels", "ViewModels", "Family", "PersonDossierViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Family", "LineageShellAdapter.cs"),
+        }.Select(File.ReadAllText));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V429-V436 Social Position Scale Closeout"));
+        Assert.That(socialStrata, Does.Contain("Current closeout: v429-v436"));
+        Assert.That(designAudit, Does.Contain("v429-v436 social position scale closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Social position scale closeout v429-v436 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Social position scale closeout v429-v436 integration note"));
+        Assert.That(simulation, Does.Contain("Current social position scale closeout v429-v436 note"));
+        Assert.That(uiPresentation, Does.Contain("v429-v436 social position scale closeout"));
+        Assert.That(acceptance, Does.Contain("Social position scale closeout v429-v436 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V429-V436 Social Position Scale Closeout"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V436"));
+        Assert.That(schemaRules, Does.Contain("social position scale closeout v429-v436 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current social position scale closeout v429-v436 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+        Assert.That(execPlan, Does.Contain("No global person browser"));
+        Assert.That(execPlan, Does.Contain("No `PersonRegistry` expansion"));
+        Assert.That(execPlan, Does.Contain("No parsing of `DomainEvent.Summary`"));
+
+        Assert.That(personDossierProjection, Does.Contain("BuildSocialPositionReadbackSummary"));
+        Assert.That(personDossierProjection, Does.Contain("BuildSocialPositionSourceModuleKeys"));
+        Assert.That(personDossierProjection, Does.Contain("BuildSocialPositionScaleBudgetReadbackSummary"));
+        Assert.That(personDossierProjection, Does.Not.Contain("SocialPositionReadbackSummary.Split"));
+        Assert.That(personDossierProjection, Does.Not.Contain("SocialPositionSourceModuleKeys.Split"));
+        Assert.That(personDossierProjection, Does.Not.Contain("SocialPositionScaleBudgetReadbackSummary.Split"));
+        Assert.That(personDossierProjection, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(unitySource, Does.Not.Contain("BuildSocialPositionReadbackSummary"));
+        Assert.That(unitySource, Does.Not.Contain("BuildSocialPositionSourceModuleKeys"));
+        Assert.That(unitySource, Does.Not.Contain("BuildSocialPositionScaleBudgetReadbackSummary"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialPositionReadbackSummary"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialPositionSourceModuleKeys"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialPositionScaleBudgetReadbackSummary"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "PromoteCommoner",
+                     "DemoteCommoner",
+                     "ConvertZhuhuKehu",
+                     "ZhuhuKehuConversion",
+                     "CommonerMobilityLedger",
+                     "SocialPositionLedger",
+                     "ClassPositionLedger",
+                     "SocialClassLedger",
+                     "SocialPositionCloseoutLedger",
+                     "RegionalPersonSelectionManager",
+                     "GlobalPersonBrowser",
+                     "CommonerCareerEngine",
+                     "SocialClassEngine",
+                     "ClassLadderController",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialPosition*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Strata*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PersonnelFlow*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

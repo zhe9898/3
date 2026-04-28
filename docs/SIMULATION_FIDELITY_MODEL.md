@@ -590,3 +590,9 @@ It should ask:
 - Regional dossiers are explicitly guarded as far-summary readback. A registry-only `FidelityRing.Regional` person reports `regional summary` and registry-only source.
 - This does not lower or raise fidelity; it proves the existing scale budget keeps distant society summarized by pools and pressure carriers.
 - Future work that pulls regional people into local detail still needs owner pressure, deterministic selection, cap/order, cadence, schema impact, and projection readback.
+
+## V429-V436 Social Position Scale Closeout
+
+- V381-V428 is closed as a first social-position visibility layer, not as a fidelity or class authority layer.
+- The closeout covers readable near-person status context, structured provenance, scale-budget explanation, and regional summary guard.
+- Future work that changes social status, pulls more regional people into detail, or writes durable residue still needs owner pressure, deterministic selection, cap/order, cadence, schema impact, projection readback, and validation.

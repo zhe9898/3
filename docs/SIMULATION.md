@@ -703,3 +703,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It verifies the existing regional readback: a registry-only `FidelityRing.Regional` dossier remains `regional summary` and registry-only source.
 - The guard does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
 - Future regional precision changes still need one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
+
+## Current social position scale closeout v429-v436 note
+
+- V429-V436 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, precision mutation, selection rule, or persistence change.
+- It closes v381-v428 as first-layer visibility evidence: future-lane contract, readback, source keys, scale budget, regional guard, and Unity copy-only evidence.
+- The closeout does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, choose regional people, or change `PersonRegistry`.
+- Future status depth still needs one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
