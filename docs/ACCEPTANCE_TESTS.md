@@ -797,3 +797,10 @@ At integration level, verify:
 - Scope acceptance: the field does not change fidelity rings, implement a class engine, promote/demote command, zhuhu/kehu conversion state, office-service route, trade-attachment route, clerk route, artisan/merchant route, durable social-position residue, or global per-person career simulation.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, `SocialPositionLabel`, `SocialPositionReadbackSummary`, `SocialPositionSourceModuleKeys`, mobility text, public-life lines, receipt prose, notification prose, or docs prose to derive scale-budget or social-position authority.
 - Save/schema acceptance: v413-v420 adds runtime read-model/ViewModel fields only and no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, class/social-position/personnel/movement/scale-budget ledger, durable residue, or serialized module payload change.
+
+## Social position regional scale guard v421-v428 acceptance - 2026-04-28
+- Regional acceptance: a registry-only `FidelityRing.Regional` person dossier reads as `regional summary`, not close/local detail.
+- Scale-budget acceptance: the far side of "near detail, far summary" remains pooled summary and does not imply all-world per-person class simulation.
+- Scope acceptance: v421-v428 does not change production rules, fidelity rings, target cardinality, selection policy, class/status routes, commoner mobility, or UI/Unity behavior.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, person dossier prose, social-position text, source-key display, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive regional scale authority.
+- Save/schema acceptance: v421-v428 is tests/docs guard only and adds no persisted fields, schema version, migration, save manifest change, projection cache, class/social-position/personnel/movement/scale-budget ledger, durable residue, or serialized module payload change.

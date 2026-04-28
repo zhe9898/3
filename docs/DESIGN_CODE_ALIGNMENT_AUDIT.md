@@ -449,3 +449,10 @@
 - Code alignment: `PresentationReadModelBuilder.PersonDossiers` builds the field from `FidelityRing` and structured source keys only. It does not mutate rings, choose people, or parse social-position prose.
 - Unity alignment: `PersonDossierViewModel`, the Unity shell mirror, and `LineageShellAdapter` copy/display the projected field. Unity does not infer scale bands, source lanes, class movement, promotion/demotion, or zhuhu/kehu conversion.
 - v413-v420 adds no persisted state, schema, migration, scale-budget ledger, social-position ledger, class engine, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v421-v428 social position regional scale guard - 2026-04-28
+
+- v421-v428 closes the far-summary evidence gap after v413-v420: a registry-only `FidelityRing.Regional` dossier must read as `regional summary`.
+- Code alignment: production scale-budget wording already maps Regional to summary; this pass adds focused test and docs evidence without changing production rule code.
+- Boundary alignment: regional / distant society stays pooled and summary-first. The guard does not select new named actors, raise fidelity, create class routes, or add a global per-person career simulation.
+- v421-v428 adds no persisted state, schema, migration, scale-budget ledger, social-position ledger, class engine, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

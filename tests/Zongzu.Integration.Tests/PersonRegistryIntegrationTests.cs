@@ -206,6 +206,39 @@ public sealed class PersonRegistryIntegrationTests
     }
 
     [Test]
+    public void RegistryOnlyBootstrap_BuildsRegionalScaleBudget_ForDistantPerson()
+    {
+        FeatureManifest manifest = new();
+        manifest.Set(KnownModuleKeys.PersonRegistry, FeatureMode.Full);
+        GameSimulation simulation = GameSimulation.CreateNew(
+            new GameDate(1200, 1),
+            KernelState.Create(20260428),
+            manifest,
+            [new PersonRegistryModule()]);
+        PersonRegistryState registryState = GetModuleState<PersonRegistryState>(simulation, KnownModuleKeys.PersonRegistry);
+        registryState.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(199),
+            DisplayName = "Distant Registry",
+            BirthDate = new GameDate(1180, 1),
+            Gender = PersonGender.Unspecified,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Regional,
+        });
+
+        PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(simulation);
+        PersonDossierSnapshot dossier = bundle.PersonDossiers.Single();
+
+        Assert.That(dossier.FidelityRing, Is.EqualTo(FidelityRing.Regional));
+        Assert.That(dossier.SocialPositionSourceModuleKeys, Is.EqualTo(new[] { KnownModuleKeys.PersonRegistry }));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("regional summary"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("registry-only source"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("distant society remains pooled summary"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("no all-world per-person class simulation"));
+    }
+
+    [Test]
     public void ClanMemberDied_IsConsolidated_Into_PersonDeceased_ByPersonRegistry()
     {
         GameSimulation simulation = SimulationBootstrapper.CreateM0M1Bootstrap(20260513);

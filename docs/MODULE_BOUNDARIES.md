@@ -1227,3 +1227,10 @@ Current lite note:
 - `Zongzu.Presentation.Unity` and the Unity shell mirror copy/display the projected field only.
 - Future status depth that changes precision, source cardinality, or durable residue must open a new owner-lane schema/rule plan.
 - V413-V420 adds no persisted state, schema bump, migration, class/social-position/scale-budget ledger, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Social position regional scale guard v421-v428 boundary note
+- V421-V428 adds no new production boundary. It verifies that `FidelityRing.Regional` reads as regional summary through the existing person dossier projection.
+- `PersonRegistry` still owns identity / `FidelityRing` only and gains no status, class, route, or regional-detail authority.
+- `Application` remains projection/assembly only; the guard must not become a hidden selection pass or precision policy.
+- `Zongzu.Presentation.Unity` remains copy-only and gains no rule for choosing regional people.
+- V421-V428 adds no persisted state, schema bump, migration, class/social-position/scale-budget ledger, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

@@ -696,3 +696,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It projects `SocialPositionScaleBudgetReadbackSummary` on person dossiers from existing `FidelityRing` and structured source keys, so the player can read "near detail, far summary" without assuming all-world per-person class simulation.
 - The readback does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
 - Future status drift still needs one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
+
+## Current social position regional scale guard v421-v428 note
+
+- V421-V428 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, precision mutation, or persistence change.
+- It verifies the existing regional readback: a registry-only `FidelityRing.Regional` dossier remains `regional summary` and registry-only source.
+- The guard does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
+- Future regional precision changes still need one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
