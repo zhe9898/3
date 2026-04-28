@@ -257,6 +257,12 @@ V325-V332 adds a runtime owner-lane gate readback on the player-command surface.
 
 `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` is assembled from structured command affordance/receipt fields and displayed through Great Hall mobility readback. It adds no schema, migration, direct personnel command, owner-lane-gate ledger, movement resolver, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
 
+## V333-V340 Personnel Flow Desk Gate Echo
+
+V333-V340 copies the projected owner-lane gate into Desk Sandbox settlement mobility readback only when that settlement already has public-life command affordances or receipts carrying `PersonnelFlowReadinessSummary`.
+
+This keeps the desk local: `人员流动归口门槛` appears near the settlement with a real projected readiness surface, not on every node by inference. It adds no schema, migration, command route, movement resolver, desk-gate ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

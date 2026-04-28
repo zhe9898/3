@@ -372,3 +372,10 @@
 - The readback says the current readable lane is `PopulationAndHouseholds` home-household response, while `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` personnel-flow lanes require separate owner-lane plans.
 - Application assembles the gate from structured affordance/receipt fields; Great Hall displays it through mobility readback. Neither layer chooses people, ranks candidates, parses prose, or calculates movement success.
 - v325-v332 adds no schema, migration, direct personnel command, movement/personnel/owner-lane-gate ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
+
+## v333-v340 personnel flow desk gate echo audit - 2026-04-28
+
+- v333-v340 appends the projected `PersonnelFlowOwnerLaneGateSummary` to Desk Sandbox settlement mobility readback only when the same settlement has structured public-life personnel-flow readiness affordances or receipts.
+- Desk Sandbox uses `PlayerCommandSurfaceSnapshot.EnumerateAffordances` / `EnumerateReceipts`; it does not parse command prose, mobility text, notifications, receipts, or event summaries.
+- The desk echo keeps `人员流动归口门槛` local to the relevant settlement surface and does not infer hidden Family/Office/Warfare targets.
+- v333-v340 adds no schema, migration, direct personnel command, movement/personnel/desk-gate ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.

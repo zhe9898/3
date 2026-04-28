@@ -719,3 +719,10 @@ At integration level, verify:
 - Boundary acceptance: Application does not choose people, rank movement candidates, or calculate migration success; UI/Unity append/display the projected gate only.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
 - Save/schema acceptance: v325-v332 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/owner-lane-gate ledger, durable residue, or serialized module payload change.
+
+## Personnel flow desk gate echo v333-v340 acceptance - 2026-04-28
+- Projection acceptance: Desk Sandbox settlement mobility text includes `PersonnelFlowOwnerLaneGateSummary` only when that settlement has structured public-life command affordances or receipts carrying `PersonnelFlowReadinessSummary`.
+- Content acceptance: the local desk node can show `人员流动归口门槛` and `当前可读归口为PopulationAndHouseholds本户回应` alongside mobility readback.
+- Boundary acceptance: Desk Sandbox uses command-surface enumeration, not prose parsing or hidden state inference; UI/Unity append/display the projected local echo only.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
+- Save/schema acceptance: v333-v340 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/desk-gate ledger, durable residue, or serialized module payload change.

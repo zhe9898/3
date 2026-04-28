@@ -523,3 +523,9 @@ It should ask:
 - `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` names which owner lane currently makes personnel-flow pressure readable.
 - The current readable lane is `PopulationAndHouseholds` home-household response; other possible lanes remain future plans, not hidden high-fidelity simulation.
 - It preserves the same scale budget: no new per-person scan, no movement resolver, no direct assignment, and no persisted cache.
+
+## V333-V340 Personnel Flow Desk Gate Echo
+
+- Desk Sandbox may echo the owner-lane gate only when local projected readiness commands/receipts exist for that settlement.
+- This keeps local detail pressure-selected rather than global: the desk does not smear a global personnel-flow label across every settlement node.
+- It adds no per-person scan, movement resolver, direct assignment, hidden target inference, or persisted cache.
