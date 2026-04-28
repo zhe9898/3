@@ -197,6 +197,14 @@ This pass is not a new Renzong pressure chain. It thickens the shared "near deta
 - Chains that later touch households, migration, relief, disorder, office, or warfare may read these structured population/fidelity projections; they must not treat them as a ledger or parse readback prose.
 - Save/schema impact is none.
 
+## V245-V252 Social Mobility Fidelity Ring Closeout Audit
+
+V245-V252 closes the v213-v244 social mobility fidelity-ring branch as first-layer substrate only. It is documentation and architecture-test governance, not a new runtime rule layer.
+
+Closed means the current code now has a bounded loop for household pressure -> livelihood/member activity/pool synchronization -> structured mobility/fidelity readback -> Unity copy-only presentation. It does not mean Zongzu has a full society engine, complete migration economy, full class mobility model, per-person world simulation, dormant-stub demotion loop, or SocialMemory durable movement residue.
+
+The closeout preserves the owner split: `PopulationAndHouseholds` owns livelihood/activity/pools, `PersonRegistry` owns identity and existing fidelity-ring assignment only, `SocialMemoryAndRelations` remains a later structured-residue owner, Application assembles projections, and UI/Unity copy fields. V245-V252 adds no module, ledger, schema, migration, persisted cache, manager/controller, or prose-parsing authority.
+
 ## Next Thickening Priority
 
 After v38-v60 made office/yamen and Family owner-lane readback visible, and v61-v68 added the first bounded FamilyCore relief choice, deepen rule density in this order unless an explicit ExecPlan says otherwise:

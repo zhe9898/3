@@ -551,3 +551,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Pressure-triggered near readback is bounded: a hot household can ask `PersonRegistry` to move a small number of regional members into `Local` fidelity, but the wider world remains summarized through pools.
 - Application and Unity see only projections after owner modules resolve: `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, person dossier movement/fidelity readbacks, and debug scale counters.
 - Determinism depends on stable `SettlementId`, `HouseholdId`, and `PersonId` ordering. No wall-clock state, UI state, summary parsing, ledger, or new scheduler phase is introduced.
+
+## Current backend social mobility fidelity ring closeout v245-v252 note
+
+- V245-V252 adds no scheduler step, cadence change, event-drain rule, runtime cache, or simulation formula. It is a closeout audit for the v213-v244 first-layer fidelity substrate.
+- The closed branch proves a bounded monthly/xun path over existing population and registry state; it does not prove full per-person world simulation, full migration economy, demotion/dormant-stub handling, or durable movement residue.
+- Future performance work must name touched counts, deterministic ordering, caps, cache invalidation, save/schema impact, and a validation lane before changing the fidelity loop.

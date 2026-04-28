@@ -592,3 +592,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - `PersonRegistry` changes only `FidelityRing` and emits structured `FidelityRingChanged` metadata; it does not store population, household, livelihood, office, clan, memory, or relationship state.
 - Application projections may assemble `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, and person dossier readbacks from structured queries only. They must not parse `DomainEvent.Summary`, receipt prose, movement readback text, or population summaries as authority.
 - Unity copies projected fields only. Save/schema result: no persisted state, schema bump, migration, social-mobility ledger, movement ledger, focus ledger, projection cache, or save-manifest change.
+
+## Social mobility fidelity ring closeout v245-v252 integration note
+- V245-V252 adds no new integration channel. It audits the existing v213-v244 Query / Command / DomainEvent / projection path and records that the branch is closed as first-layer substrate, not as a complete society engine.
+- No downstream module may treat `FidelityRingChanged`, `SettlementMobilitySnapshot`, `FidelityScaleSnapshot`, person dossier movement text, or population pool summaries as a ledger or as permission to parse prose.
+- Later SocialMemory movement residue, dormant-stub demotion, migration economy, relief/class mobility, or force/office mobility hooks must consume structured owner snapshots or events and declare their own owner lane, schema impact, tests, and no-touch boundaries.
+- Application and Unity remain read/projection/copy surfaces only. Save/schema result: no persisted state, schema bump, migration, movement ledger, social-mobility ledger, focus ledger, owner-lane ledger, scheduler ledger, projection cache, or save-manifest change.

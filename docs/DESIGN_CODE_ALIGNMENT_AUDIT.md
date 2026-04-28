@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v245-v252 social mobility fidelity-ring closeout audit - 2026-04-28
+
+- The v213-v244 social mobility fidelity-ring branch is now treated as closed only for a first-layer substrate: household pressure can drive `PopulationAndHouseholds` livelihood/activity/pool synchronization, a hot person may move through the existing `PersonRegistry.FidelityRing`, and player-facing surfaces may read structured fidelity/mobility projections.
+- Code alignment: no production rule changes are introduced by v245-v252. The already-implemented owner split remains `PopulationAndHouseholds` for household livelihood, membership activity, and pool summaries; `PersonRegistry` for identity and existing fidelity-ring assignment only; `SocialMemoryAndRelations` for later durable structured residue; Application for projection assembly; and Unity for copy-only presentation.
+- This is not a complete society engine, complete migration economy, full class mobility model, per-person world simulation, dormant-stub demotion loop, or SocialMemory movement-residue completion claim. Those remain future debts.
+- No reader may parse `DomainEvent.Summary`, event receipt prose, readback prose, notice lines, population summaries, person dossier prose, `LastAdministrativeTrace`, `LastPetitionOutcome`, or local-response prose as authority.
+- Save/schema audit: v245-v252 adds no persisted field, root/module schema bump, migration, save manifest change, module envelope, movement ledger, social-mobility ledger, focus ledger, owner-lane ledger, scheduler ledger, projection cache, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` domain expansion.
+
 ## v197-v204 court-policy first rule-density closeout audit - 2026-04-27
 
 - The v109-v196 first rule-density closeout audit v197-v204 treats Chain 8 as closed only for the first-layer rule-density branch: policy process texture, Office/PublicLife local response, delayed SocialMemory residue, memory-pressure next-window readback, public-reading echo, public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency, and public-life receipt echo.
