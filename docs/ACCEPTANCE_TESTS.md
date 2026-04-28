@@ -726,3 +726,10 @@ At integration level, verify:
 - Boundary acceptance: Desk Sandbox uses command-surface enumeration, not prose parsing or hidden state inference; UI/Unity append/display the projected local echo only.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
 - Save/schema acceptance: v333-v340 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/desk-gate ledger, durable residue, or serialized module payload change.
+
+## Personnel flow desk gate containment v341-v348 acceptance - 2026-04-28
+- Containment acceptance: Desk Sandbox does not show the projected personnel-flow owner-lane gate on a settlement without local public-life `PersonnelFlowReadinessSummary` affordances or receipts.
+- Locality acceptance: a settlement with structured local readiness can still show the gate; quiet/distant settlements remain mobility pool summaries.
+- Boundary acceptance: the proof uses structured command-surface enumeration by settlement, not hidden module queries, prose parsing, global-state inference, or UI-calculated movement rules.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
+- Save/schema acceptance: v341-v348 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/desk-gate-containment ledger, durable residue, or serialized module payload change.
