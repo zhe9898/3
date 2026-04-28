@@ -683,3 +683,11 @@ At integration level, verify:
 - Architecture acceptance: guard no production rule change, no Application/UI/Unity authority, no prose parsing, no movement/social/focus/scheduler/command/personnel ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
 - Save/schema acceptance: v285-v292 is docs/tests only and adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, or serialized module payload change.
 - Focused proof: `Social_mobility_boundary_closeout_v285_v292_must_document_first_layer_only_without_schema_or_authority_drift` plus build, `git diff --check`, and full solution tests close the audit.
+
+## Personnel command preflight v293-v300 acceptance - 2026-04-28
+- Audit acceptance: future personnel-flow commands must be documented as bounded owner-lane intents before implementation, not direct UI/Application movement edits.
+- Gate acceptance: future movement, migration, return, assignment, placement, office-service, or campaign-manpower commands must name owner module, target scope, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane.
+- Ownership acceptance: current code remains unchanged: `PopulationAndHouseholds` owns household migration pressure and local household response commands, `PersonRegistry` remains identity/fidelity only, Application routes commands, and UI/Unity copy projected affordances/receipts.
+- Architecture acceptance: guard no production command, no direct move/transfer/summon/assign-person route, no Application/UI/Unity authority, no prose parsing, no command/movement/personnel/assignment/focus/scheduler ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
+- Save/schema acceptance: v293-v300 is docs/tests only and adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, command receipt shape, or serialized module payload change.
+- Focused proof: `Personnel_command_preflight_v293_v300_must_block_direct_personnel_command_drift` plus build, `git diff --check`, and full solution tests close the audit.

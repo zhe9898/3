@@ -61,6 +61,18 @@ V285-V292 adds no new runtime boundary. It closes v213-v284 as a first-layer sub
 
 The closeout is not a complete society engine, migration economy, personnel command layer, dormant-stub model, or whole-world person simulation. It adds no schema, migration, command/social/movement/focus/scheduler/personnel ledger, projection cache, manager/controller path, `PersonRegistry` domain expansion, or prose parser.
 
+## Personnel command preflight v293-v300 boundary note
+
+V293-V300 adds no new command boundary. It records the gate a future personnel-flow command must pass:
+- `PopulationAndHouseholds` may own household livelihood, migration risk, household activity, and local household response.
+- `PersonRegistry` may only own identity, life-stage/death anchors, and existing `FidelityRing` assignment; `ChangeFidelityRing` is a readability/fidelity command, not a movement command.
+- `FamilyCore` may own kin/lineage intent when a future command concerns family authority or household support.
+- `OfficeAndCareer` may own office-service, appointment, clerk, or document-mediated personnel pressure when a future command concerns yamen/office reach.
+- `WarfareCampaign` may own campaign manpower posture when a future command concerns mobilization or return through campaign lanes.
+- Application routes commands only; UI/Unity copy affordances and receipts only.
+
+No future personnel command may begin as an Application rule, UI action, Unity drag/drop, global manager, or `PersonRegistry` domain expansion. V293-V300 adds no schema, migration, direct move/transfer/summon/assign-person command, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, manager/controller path, or prose parser.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

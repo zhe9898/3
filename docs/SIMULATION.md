@@ -588,3 +588,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - The closeout states that v213-v284 is bounded by four precision bands: close-orbit named detail, pressure-selected local detail, active-region structured pools, and distant pressure summary.
 - Future mobility/personnel-flow work must name hot path, expected cardinality, deterministic order/cap, owner module, schema impact, no-touch boundary, and validation lane before adding rule density.
 - Future readers must not parse readback strings, person dossier prose, settlement mobility text, notification prose, receipt prose, or `DomainEvent.Summary` as scheduler or command input.
+
+## Current personnel command preflight v293-v300 note
+
+- V293-V300 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, command route, or persistence change.
+- Future personnel-flow commands must be bounded intents resolved by an owner module after it declares target scope, hot path, expected cardinality, deterministic order/cap, no-touch boundary, schema impact, and validation lane.
+- Application must route only. UI/Unity must not compute movement success, target ranking, assignment outcome, or precision changes.
+- Future readers must not parse command labels, readback strings, person dossier prose, settlement mobility text, notification prose, receipt prose, or `DomainEvent.Summary` as scheduler or command input.

@@ -1274,6 +1274,11 @@ Current social mobility boundary closeout v285-v292 note:
 - The closeout does not authorize a movement ledger, social-mobility ledger, focus ledger, scheduler ledger, command ledger, personnel ledger, global person simulation manager, dormant-stub store, SocialMemory movement residue, or `PersonRegistry` domain expansion.
 - Any future durable movement residue, dormant-stub state, migration economy, personnel command state, or cross-region flow cache must open a schema/migration plan before implementation.
 
+Current personnel command preflight v293-v300 note:
+- v293-v300 is docs/tests governance only. It adds no persisted fields, module envelope, root save version, module schema version, migration, manifest membership, projection cache, command receipt shape, or serialized module payload change.
+- The preflight does not authorize direct move/transfer/summon/assign-person state, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, global person simulation manager, dormant-stub store, durable movement residue, or `PersonRegistry` domain expansion.
+- Any future persisted personnel-command receipt, assignment state, durable movement residue, dormant-stub store, migration economy, or cross-region flow cache must open a schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric
