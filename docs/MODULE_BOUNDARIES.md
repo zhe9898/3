@@ -40,6 +40,18 @@ Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside curr
 
 The readback tokens `天命摇动读回`, `去就风险读回`, `官身承压姿态`, `公议向背读法`, `仍由Office/PublicLife分读`, `不是本户替朝廷修合法性`, and `不是UI判定归附成败` are first-layer projection/readback wording over existing owner facts. V253-V260 is not a full regime engine, not a Court module, not faction AI, not an event pool, and not a legitimacy/defection/owner-lane/cooldown ledger. It adds no schema field, migration, `PersonRegistry` expansion, Application rule authority, UI/Unity authority, or manager/god-controller path.
 
+## Regime legitimacy readback closeout v261-v268 boundary note
+
+V261-V268 adds no new runtime boundary. It documents that the v253-v260 Chain 9 readback branch is closed only as a first-layer owner-lane readback:
+- `WorldSettlements` remains the mandate/regime pressure source.
+- `OfficeAndCareer` remains the owner of official risk, appointment mutation, and county/yamen posture.
+- `PublicLifeAndRumor` remains the owner of public interpretation and street reading.
+- `SocialMemoryAndRelations` remains out of same-month durable residue for this branch.
+- Application remains projection assembly only.
+- Unity remains copy-only presentation.
+
+Future regime-recognition, public allegiance, ritual legitimacy, force backing, rebellion-to-polity, dynasty-cycle, or durable regime-memory work must declare a new owner/state/schema plan. The closeout adds no full regime engine, faction AI, Court module, ledger, schema, migration, `PersonRegistry` expansion, Application rule authority, UI/Unity authority, or manager/god-controller path.
+
 ## Court-policy first rule-density closeout audit v197-v204 boundary note
 
 The v109-v196 first rule-density closeout audit v197-v204 is documentation/test governance over the existing Chain 8 branch. It does not add runtime authority:

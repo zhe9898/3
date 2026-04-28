@@ -213,6 +213,14 @@ Ownership remains unchanged: `WorldSettlements` owns the mandate/regime pressure
 
 V253-V260 adds no full regime engine, Court module, faction AI, event pool, regime-recognition / legitimacy / defection / owner-lane / cooldown ledger, schema field, migration, Application rule layer, UI/Unity authority, `PersonRegistry` expansion, or manager/god-controller path. It must not parse `DomainEvent.Summary`, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`.
 
+## Regime Legitimacy Readback Closeout Audit - v261-v268
+
+V261-V268 closes v253-v260 as a Chain 9 first readback branch only. Closed here means the current code and docs prove a bounded loop from mandate/regime pressure to one office-owned defection mutation, then to matching public-life and governance readback. It does not mean Zongzu has a full regime engine, regime-recognition economy, public allegiance simulation, rebellion-to-polity track, ritual legitimacy formula, or dynasty-cycle model.
+
+The closeout preserves the owner split from v253-v260: `WorldSettlements` owns the mandate/regime pressure source; `OfficeAndCareer` owns official risk, appointment mutation, and county/yamen posture; `PublicLifeAndRumor` owns public interpretation; `SocialMemoryAndRelations` writes no same-month durable residue for this branch; Application projects structured read models; Unity copies projected fields.
+
+V261-V268 adds no production rule, persisted state, schema field, migration, Court module, faction AI, event pool, regime-recognition / legitimacy / defection / owner-lane / cooldown / scheduler / public-allegiance ledger, Application rule layer, UI/Unity authority, `PersonRegistry` expansion, or manager/god-controller path. Future regime depth must open a new ExecPlan and name owner state, cadence, fanout, schema impact, and validation separately.
+
 ## Next Thickening Priority
 
 After v38-v60 made office/yamen and Family owner-lane readback visible, and v61-v68 added the first bounded FamilyCore relief choice, deepen rule density in this order unless an explicit ExecPlan says otherwise:

@@ -93,6 +93,12 @@ Current regime legitimacy readback v253-v260 note:
 - `WorldSettlements.RegimeLegitimacyShifted` metadata, `OfficeAndCareer.OfficeDefected` metadata, `JurisdictionAuthoritySnapshot`, and `SettlementPublicLifeSnapshot` are runtime/query/projection carriers only
 - `天命摇动读回`, `去就风险读回`, `官身承压姿态`, `公议向背读法`, `仍由Office/PublicLife分读`, `不是本户替朝廷修合法性`, and `不是UI判定归附成败` are projected readback text, not persisted authority
 
+Current regime legitimacy readback closeout v261-v268 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, full regime engine, faction AI, Court module, regime-recognition ledger, legitimacy ledger, defection ledger, public-allegiance ledger, owner-lane ledger, cooldown ledger, scheduler ledger, or same-month SocialMemory residue
+- the v253-v260 Chain 9 first readback branch is closed only as docs/test evidence; it does not persist regime process state, public allegiance state, dynasty-cycle state, ritual legitimacy state, force-backing state, or durable regime memory state
+- any future regime-recognition or durable-regime-memory work must declare an owning module namespace, schema impact, migration plan, and tests before adding state
+
 Current court-policy first rule-density closeout audit v197-v204 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, docket ledger, receipt ledger, receipt-docket ledger, public-life receipt echo ledger, or Court module

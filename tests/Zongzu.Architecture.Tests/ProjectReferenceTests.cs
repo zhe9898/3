@@ -2820,6 +2820,91 @@ public class ProjectReferenceTests
         Assert.That(execPlan, Does.Contain("No full regime engine"));
     }
 
+    [Test]
+    public void Regime_legitimacy_readback_closeout_v261_v268_must_remain_audit_only_without_schema_or_authority_drift()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_regime-legitimacy-readback-closeout-v261-v268.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_regime-legitimacy-readback-closeout-v261-v268.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("Regime Legitimacy Readback Closeout Audit - v261-v268"));
+        Assert.That(topologyIndex, Does.Contain("Chain 9 first readback branch only"));
+        Assert.That(designAudit, Does.Contain("v261-v268 regime legitimacy readback closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Regime legitimacy readback closeout v261-v268 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Chain 9 v261-v268 regime legitimacy readback closeout integration note"));
+        Assert.That(simulation, Does.Contain("Current regime legitimacy readback closeout v261-v268 note"));
+        Assert.That(uiPresentation, Does.Contain("Regime legitimacy readback closeout v261-v268 UI note"));
+        Assert.That(acceptance, Does.Contain("Chain 9 regime legitimacy readback closeout v261-v268 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V268"));
+
+        Assert.That(schemaRules, Does.Contain("regime legitimacy readback closeout v261-v268 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current regime legitimacy readback closeout v261-v268 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("This pass must remain docs/tests only"));
+        Assert.That(execPlan, Does.Contain("No production rule changes"));
+
+        foreach (string token in new[]
+                 {
+                     "full regime engine",
+                     "dynasty-cycle model",
+                 })
+        {
+            Assert.That(topologyIndex, Does.Contain(token), token);
+            Assert.That(designAudit, Does.Contain(token), token);
+        }
+        Assert.That(topologyIndex, Does.Contain("public allegiance simulation"));
+        Assert.That(designAudit, Does.Contain("public-allegiance simulation"));
+        Assert.That(designAudit, Does.Contain("durable regime SocialMemory residue"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "RegimeCloseoutLedger",
+                     "RegimeRecognitionLedger",
+                     "LegitimacyLedger",
+                     "DefectionLedger",
+                     "PublicAllegianceLedger",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "SchedulerLedger",
+                     "RegimeEngine",
+                     "FactionAI",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "GodController",
+                     "v261-v268",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Court*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
     private static string[] GetProjectReferences(string projectName)
     {
         var csproj = FindCsproj(projectName);
