@@ -68,6 +68,7 @@ public class ViewModelJsonRoundTripTests
                         SocialPositionLabel = "Main-line heir, 主簿, local-exam passer",
                         CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
                         SocialPositionSourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
+                        SocialPositionScaleBudgetReadbackSummary = "Social position scale budget copied from projection.",
                         SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
                     },
                     SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
@@ -104,6 +105,7 @@ public class ViewModelJsonRoundTripTests
                         SocialPositionLabel = "Main-line heir, 主簿, local-exam passer",
                         CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
                         SocialPositionSourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
+                        SocialPositionScaleBudgetReadbackSummary = "Social position scale budget copied from projection.",
                         SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
                     },
                 },
@@ -161,6 +163,7 @@ public class ViewModelJsonRoundTripTests
         Assert.That(roundTripped.Lineage.PersonDossiers[0].OfficeSummary, Does.Contain("appointed"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SocialPositionSourceModuleKeys, Does.Contain("PopulationAndHouseholds"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SocialPositionSourceModuleKeys, Does.Contain("OfficeAndCareer"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].SocialPositionScaleBudgetReadbackSummary, Does.Contain("Social position scale budget"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("SocialMemoryAndRelations"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("OfficeAndCareer"));
         Assert.That(roundTripped.Lineage.FocusedPerson, Is.Not.Null);

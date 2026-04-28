@@ -1220,3 +1220,10 @@ Current lite note:
 - `Application` remains projection/assembly only. `Zongzu.Presentation.Unity` remains copy-only. `PersonRegistry` remains identity/FidelityRing only.
 - Later commoner status depth must not reuse this closeout as authority to promote, demote, convert zhuhu/kehu status, assign office service, attach trade work, or write durable social-position residue.
 - V405-V412 adds no persisted state, schema bump, migration, class/social-position closeout ledger, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Social position scale budget v413-v420 boundary note
+- `PersonRegistry` still owns identity / `FidelityRing` only. `SocialPositionScaleBudgetReadbackSummary` reads an existing ring; it does not change precision, select people, or store class/status facts.
+- `Application` may assemble this runtime readback from existing `FidelityRing` and structured source keys. It must not parse social-position prose or calculate status movement.
+- `Zongzu.Presentation.Unity` and the Unity shell mirror copy/display the projected field only.
+- Future status depth that changes precision, source cardinality, or durable residue must open a new owner-lane schema/rule plan.
+- V413-V420 adds no persisted state, schema bump, migration, class/social-position/scale-budget ledger, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

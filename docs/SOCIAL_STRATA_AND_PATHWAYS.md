@@ -405,3 +405,9 @@ Design principle:
 - V381-V404 is closed only as a first readback layer for commoner / social-position legibility.
 - Current code can show what made a nearby person's social position readable; it cannot promote, demote, convert zhuhu/kehu status, assign office service, attach a trade route, or simulate every commoner as an individual career actor.
 - Future status drift still needs a single owner lane, target scope, cadence, deterministic cap/order, schema impact, and validation before implementation.
+
+### Current scale-budget readback: v413-v420
+
+- `SocialPositionScaleBudgetReadbackSummary` states the detail rule directly on person dossiers: near people can read owner-lane detail, distant society remains pooled summary.
+- The readback is built from `FidelityRing` and structured social-position source keys. It does not move anyone between rings or add a hidden class/status route.
+- Future commoner status depth still needs an owner lane before it changes state, precision, or durable residue.

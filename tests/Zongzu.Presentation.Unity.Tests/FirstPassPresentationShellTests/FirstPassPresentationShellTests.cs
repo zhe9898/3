@@ -279,6 +279,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(dossier.SocialPositionSourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
         Assert.That(dossier.SocialPositionSourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
         Assert.That(dossier.SocialPositionSourceModuleKeys, Does.Contain(KnownModuleKeys.OfficeAndCareer));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("near people can read owner-lane detail"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("distant society remains pooled summary"));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.SocialMemoryAndRelations));
@@ -296,6 +298,7 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(shell.Lineage.FocusedPerson.OfficeThreadLine, Is.EqualTo(dossier.OfficeSummary));
         Assert.That(shell.Lineage.FocusedPerson.MemoryThreadLine, Is.EqualTo(dossier.MemoryPressureSummary));
         Assert.That(shell.Lineage.FocusedPerson.StatusLedgerLine, Does.Contain(dossier.SocialPositionReadbackSummary));
+        Assert.That(shell.Lineage.FocusedPerson.StatusLedgerLine, Does.Contain(dossier.SocialPositionScaleBudgetReadbackSummary));
         Assert.That(shell.Lineage.FocusedPerson.Dossier.PersonId, Is.EqualTo(dossier.PersonId));
     }
 
@@ -328,6 +331,7 @@ public sealed partial class FirstPassPresentationShellTests
                 SocialPositionReadbackSummary = "社会位置读回：FamilyCore亲族位置；PersonRegistry只保身份/FidelityRing；不是升降阶级或zhuhu/kehu转换。",
                 CurrentStatusSummary = "Living Adult; Local ring; clan Qinghe Zhang; Branch member; pressure 12.",
                 SocialPositionSourceModuleKeys = [KnownModuleKeys.PersonRegistry, KnownModuleKeys.FamilyCore],
+                SocialPositionScaleBudgetReadbackSummary = "Social position scale budget: local detail; 2 structured owner sources; near people can read owner-lane detail, distant society remains pooled summary; no all-world per-person class simulation.",
                 SourceModuleKeys = [KnownModuleKeys.PersonRegistry, KnownModuleKeys.FamilyCore],
             },
         ];

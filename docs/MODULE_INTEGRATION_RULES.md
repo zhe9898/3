@@ -739,3 +739,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The closed layer is `future owner-lane contract` -> `SocialPositionReadbackSummary` -> `SocialPositionSourceModuleKeys` -> Unity copy-only display. It is not a command route, resolver, event consumer, ledger, or movement/class permission.
 - Future commoner status integration must open a separate owner-lane plan and cannot consume this closeout, social-position prose, source-key display, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
 - Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/closeout ledger, projection cache, or save-manifest change.
+
+## Social position scale budget v413-v420 integration note
+- V413-V420 adds a runtime projection field, not a new integration channel.
+- `SocialPositionScaleBudgetReadbackSummary` is assembled from existing `FidelityRing` and structured source keys and copied to Unity-facing ViewModels.
+- No module may consume the field as command authority, class movement, promotion/demotion, zhuhu/kehu conversion, precision-band mutation, durable residue, or route eligibility.
+- Future commoner status integration still requires a separate owner-lane plan; no reader may parse the scale-budget text, social-position prose, source-key display, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
+- Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/scale-budget ledger, projection cache, or save-manifest change.

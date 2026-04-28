@@ -578,3 +578,9 @@ It should ask:
 - V381-V404 is closed as a first close-orbit readback layer only: nearby dossiers can explain social-position provenance, but fidelity rings, target cardinality, and movement lanes do not change.
 - The closeout does not promote distant commoners into named simulation. Distant society still remains summarized by household pools, settlement pressure carriers, and module-owned drift.
 - Future owner-lane depth must still declare precision band, deterministic selection, cap, cadence, schema impact, and projection readback before adding commoner status rules.
+
+## V413-V420 Social Position Scale Budget
+
+- `SocialPositionScaleBudgetReadbackSummary` makes the fidelity budget visible on the person dossier itself: close/local dossiers can carry structured social-position detail; regional or distant society remains summary-first.
+- The field reads the current `FidelityRing`; it does not change rings, promote new named actors, or add a hidden selection pass.
+- Future owner-lane depth that raises fidelity or changes target cardinality must still declare deterministic selection, cap, cadence, schema impact, and projection readback before implementation.

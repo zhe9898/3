@@ -148,6 +148,11 @@ public sealed class PersonRegistryIntegrationTests
                 KnownModuleKeys.TradeAndIndustry,
                 KnownModuleKeys.OfficeAndCareer,
             }));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("Social position scale budget"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("close detail"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("structured owner sources"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("distant society remains pooled summary"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("no all-world per-person class simulation"));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
@@ -194,6 +199,9 @@ public sealed class PersonRegistryIntegrationTests
         Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("当前只有PersonRegistry身份/FidelityRing"));
         Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("不是升降阶级或zhuhu/kehu转换"));
         Assert.That(dossier.SocialPositionSourceModuleKeys, Is.EqualTo(new[] { KnownModuleKeys.PersonRegistry }));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("local detail"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("registry-only source"));
+        Assert.That(dossier.SocialPositionScaleBudgetReadbackSummary, Does.Contain("distant society remains pooled summary"));
         Assert.That(dossier.SourceModuleKeys, Is.EqualTo(new[] { KnownModuleKeys.PersonRegistry }));
     }
 

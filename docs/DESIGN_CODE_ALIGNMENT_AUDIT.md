@@ -442,3 +442,10 @@
 - The closeout is deliberately not a runtime rule. It does not add class promotion/demotion, zhuhu/kehu conversion, office-service status, trade attachment, clerk/artisan/merchant route, durable residue, or global per-person career simulation.
 - Future commoner status depth must open a new owner-lane ExecPlan and name owner module, state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, no-touch boundary, and validation.
 - v405-v412 adds no production rule, persisted state, schema, migration, social-position closeout ledger, class engine, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v413-v420 social position scale budget audit - 2026-04-28
+
+- v413-v420 adds `SocialPositionScaleBudgetReadbackSummary` to person dossiers so the readback explicitly distinguishes close/local detail from distant pooled summary.
+- Code alignment: `PresentationReadModelBuilder.PersonDossiers` builds the field from `FidelityRing` and structured source keys only. It does not mutate rings, choose people, or parse social-position prose.
+- Unity alignment: `PersonDossierViewModel`, the Unity shell mirror, and `LineageShellAdapter` copy/display the projected field. Unity does not infer scale bands, source lanes, class movement, promotion/demotion, or zhuhu/kehu conversion.
+- v413-v420 adds no persisted state, schema, migration, scale-budget ledger, social-position ledger, class engine, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
