@@ -28,6 +28,20 @@ public sealed partial class FirstPassPresentationShellTests
         PresentationReadModelBundle bundle = CreateBundle();
         bundle.PlayerCommands = bundle.PlayerCommands with
         {
+            Affordances = bundle.PlayerCommands.Affordances
+                .Concat(new[]
+                {
+                    new PlayerCommandAffordanceSnapshot
+                    {
+                        ModuleKey = KnownModuleKeys.PopulationAndHouseholds,
+                        SurfaceKey = PlayerCommandSurfaceKeys.PublicLife,
+                        SettlementId = new SettlementId(1),
+                        CommandName = PlayerCommandNames.RestrictNightTravel,
+                        PersonnelFlowReadinessSummary = "人员流动预备读回：近处细读，远处汇总。",
+                        IsEnabled = true,
+                    },
+                })
+                .ToArray(),
             PersonnelFlowReadinessSummary = "人员流动命令预备汇总：只汇总已投影的人员流动预备读回；不是直接调人、迁人、召人命令。",
             PersonnelFlowOwnerLaneGateSummary = "人员流动归口门槛：当前可读归口为PopulationAndHouseholds本户回应；FamilyCore亲族调处、OfficeAndCareer文书役使、WarfareCampaign军务人力仍需另开owner-lane计划。",
         };
@@ -43,6 +57,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("Pool readback"));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("not every regional traveler"));
+        Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("人员流动归口门槛"));
+        Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("当前可读归口为PopulationAndHouseholds本户回应"));
         Assert.That(shell.Lineage.PersonDossiers[0].MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
         Assert.That(shell.Lineage.PersonDossiers[0].FidelityRingReadbackSummary, Does.Contain("PersonRegistry"));
     }

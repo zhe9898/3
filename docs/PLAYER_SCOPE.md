@@ -272,6 +272,7 @@ Rules:
 - v309-v316 adds only a command-surface echo of those readiness fields for Great Hall mobility readback; it does not let the player pick, summon, assign, or move people directly
 - v317-v324 closes that branch as first-layer readiness only; it is not a complete migration, social-mobility, office-service, or campaign-manpower command system
 - v325-v332 adds only an owner-lane gate readback; it tells the player which module can currently read personnel-flow pressure and which possible lanes still require future owner-lane plans
+- v333-v340 adds only a Desk Sandbox local echo of that gate when the settlement already has projected personnel-flow readiness commands or receipts
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

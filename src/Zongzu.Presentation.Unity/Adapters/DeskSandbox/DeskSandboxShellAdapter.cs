@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
+using Zongzu.Kernel;
 
 namespace Zongzu.Presentation.Unity;
 
@@ -46,7 +47,7 @@ internal static class DeskSandboxShellAdapter
 						CampaignSummary = WarfareCampaignShellAdapter.BuildSettlementCampaignSummary(campaign, mobilizationSignal, settlement, clanTradeRoutes),
 						AftermathSummary = WarfareAftermathShellAdapter.BuildSettlementAftermathSummary(settlement, populationSettlement, jurisdiction, campaign, aftermathDocket, notifications),
 						PressureSummary = BuildSettlementHouseholdPressureSummary(populationSettlement, householdPressures),
-						MobilitySummary = BuildSettlementMobilitySummary(mobility),
+						MobilitySummary = BuildSettlementMobilitySummary(mobility, bundle.PlayerCommands, settlement.Id),
 						HallAgendaSummary = hallAgenda.Summary,
 						HallAgendaItems = hallAgenda.Items,
 						HallAgendaCount = hallAgenda.Count,
@@ -121,13 +122,39 @@ internal static class DeskSandboxShellAdapter
 			: $"{populationSummary} {householdSummary}";
 	}
 
-	private static string BuildSettlementMobilitySummary(SettlementMobilitySnapshot? mobility)
+	private static string BuildSettlementMobilitySummary(
+		SettlementMobilitySnapshot? mobility,
+		PlayerCommandSurfaceSnapshot playerCommands,
+		SettlementId settlementId)
 	{
-		if (mobility is null)
+		string summary = mobility is null
+			? "人员流动暂未投出。"
+			: $"{mobility.PoolThicknessSummary} {mobility.FocusReadbackSummary} {mobility.ScaleBudgetReadbackSummary}";
+
+		string ownerLaneGate = BuildSettlementPersonnelFlowOwnerLaneGateEcho(playerCommands, settlementId);
+		return string.IsNullOrWhiteSpace(ownerLaneGate)
+			? summary
+			: $"{summary} {ownerLaneGate}";
+	}
+
+	private static string BuildSettlementPersonnelFlowOwnerLaneGateEcho(
+		PlayerCommandSurfaceSnapshot playerCommands,
+		SettlementId settlementId)
+	{
+		if (string.IsNullOrWhiteSpace(playerCommands.PersonnelFlowOwnerLaneGateSummary))
 		{
-			return "人员流动暂未投出。";
+			return string.Empty;
 		}
 
-		return $"{mobility.PoolThicknessSummary} {mobility.FocusReadbackSummary} {mobility.ScaleBudgetReadbackSummary}";
+		bool hasLocalPersonnelFlowCommand = playerCommands
+			.EnumerateAffordances(PlayerCommandSurfaceKeys.PublicLife, settlementId)
+			.Any(static affordance => !string.IsNullOrWhiteSpace(affordance.PersonnelFlowReadinessSummary))
+			|| playerCommands
+				.EnumerateReceipts(PlayerCommandSurfaceKeys.PublicLife, settlementId)
+				.Any(static receipt => !string.IsNullOrWhiteSpace(receipt.PersonnelFlowReadinessSummary));
+
+		return hasLocalPersonnelFlowCommand
+			? playerCommands.PersonnelFlowOwnerLaneGateSummary
+			: string.Empty;
 	}
 }

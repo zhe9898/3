@@ -623,3 +623,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` is projection-time readback over structured command affordance/receipt metadata.
 - It names current and future owner lanes, but it does not promote/demote people, move people, choose personnel targets, write SocialMemory residue, or change `PersonRegistry`.
 - UI/Unity must display the projected gate only and must not parse it to compute movement success.
+
+## Current personnel flow desk gate echo v333-v340 note
+
+- V333-V340 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, command route, or persistence change.
+- Desk Sandbox displays the projected owner-lane gate only when the settlement has local structured personnel-flow readiness command affordances or receipts.
+- It does not promote/demote people, move people, choose personnel targets, write SocialMemory residue, or change `PersonRegistry`.
+- UI/Unity must display the projected local echo only and must not parse it to compute movement success.

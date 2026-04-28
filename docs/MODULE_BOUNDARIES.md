@@ -105,6 +105,12 @@ The current readable lane remains `PopulationAndHouseholds` home-household respo
 
 Application may assemble the gate from structured command affordance/receipt fields; UI/Unity may display it. No module may treat the gate as movement permission, assignment authority, ledger membership, or durable SocialMemory residue.
 
+## Personnel flow desk gate echo v333-v340 boundary note
+
+V333-V340 adds no module boundary. It lets `Zongzu.Presentation.Unity` append the projected owner-lane gate to a Desk Sandbox settlement node only when the command surface already has local public-life personnel-flow readiness affordances or receipts.
+
+The desk echo may enumerate structured command surfaces by settlement. It must not parse prose, infer hidden targets, query simulation modules directly, mutate state, or create a desk-local ledger.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

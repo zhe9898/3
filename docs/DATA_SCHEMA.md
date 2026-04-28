@@ -1299,6 +1299,11 @@ Current personnel flow owner-lane gate v325-v332 note:
 - It adds no module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, owner-lane-gate ledger, durable residue, or serialized module payload.
 - Any future persisted owner-lane selection, personnel-flow command history, migration state, movement receipt, assignment state, or durable social residue still requires a separate schema/migration plan before implementation.
 
+Current personnel flow desk gate echo v333-v340 note:
+- Desk Sandbox use of `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` is runtime presentation only. It is not persisted.
+- It adds no module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, desk-gate ledger, durable residue, or serialized module payload.
+- Any future persisted local gate history, owner-lane selection, personnel-flow command history, migration state, movement receipt, assignment state, or durable social residue still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric
