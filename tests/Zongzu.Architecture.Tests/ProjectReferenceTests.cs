@@ -2764,6 +2764,113 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Social_mobility_influence_readback_v277_v284_must_stay_projection_only_and_schema_neutral()
+    {
+        string readModelContracts = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "LivingSocietyReadModels.cs")) + Environment.NewLine + File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "PersonDossierReadModels.cs"));
+        string mobilityProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.Mobility.cs"));
+        string personDossierProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PersonDossiers.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "GreatHall", "GreatHallShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "DeskSandbox", "DeskSandboxShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Family", "LineageShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Family", "PersonDossierViewModel.cs"),
+        }.Select(File.ReadAllText));
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_social-mobility-influence-readback-v277-v284.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_social-mobility-influence-readback-v277-v284.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(readModelContracts, Does.Contain("InfluenceFootprintReadbackSummary"));
+        Assert.That(readModelContracts, Does.Contain("ScaleBudgetReadbackSummary"));
+        Assert.That(mobilityProjection, Does.Contain("BuildFidelityInfluenceFootprintReadback"));
+        Assert.That(mobilityProjection, Does.Contain("BuildScaleBudgetReadbackSummary"));
+        Assert.That(personDossierProjection, Does.Contain("BuildPersonInfluenceFootprintReadbackSummary"));
+        Assert.That(unitySource, Does.Contain("InfluenceFootprintReadbackSummary"));
+        Assert.That(unitySource, Does.Contain("ScaleBudgetReadbackSummary"));
+
+        foreach (string source in new[] { mobilityProjection, personDossierProjection, unitySource })
+        {
+            Assert.That(source, Does.Not.Contain("DomainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("domainEvent.Summary"));
+            Assert.That(source, Does.Not.Contain("PlayerCommandService"));
+            Assert.That(source, Does.Not.Contain("IssueModuleCommand"));
+            Assert.That(source, Does.Not.Contain("GetMutableModuleState"));
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "MovementLedger",
+                     "PersonMovementLedger",
+                     "SocialMobilityLedger",
+                     "FocusLedger",
+                     "SchedulerLedger",
+                     "GlobalPersonSimulation",
+                     "EveryPersonEveryMonth",
+                     "WorldPersonTick",
+                     "WorldPopulationManager",
+                     "PersonSimulationManager",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(topologyIndex, Does.Contain("V277-V284 Social Mobility Influence Readback"));
+        Assert.That(designAudit, Does.Contain("v277-v284 social mobility influence readback"));
+        Assert.That(moduleBoundaries, Does.Contain("Social mobility influence readback v277-v284 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Social mobility influence readback v277-v284 integration note"));
+        Assert.That(simulation, Does.Contain("Current social mobility influence readback v277-v284 note"));
+        Assert.That(fidelityModel, Does.Contain("V277-V284 Influence Readback"));
+        Assert.That(uiPresentation, Does.Contain("v277-v284 influence readback"));
+        Assert.That(acceptance, Does.Contain("Social mobility influence readback v277-v284 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V284"));
+        Assert.That(schemaRules, Does.Contain("social mobility influence readback v277-v284 remains read-model/ViewModel only"));
+        Assert.That(dataSchema, Does.Contain("Current social mobility influence readback v277-v284 note"));
+        Assert.That(execPlan, Does.Contain("Target impact: none"));
+        Assert.That(execPlan, Does.Contain("No new player command"));
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

@@ -68,14 +68,17 @@ public sealed class SocialMobilityFidelityRingIntegrationTests
         Assert.That(simulation.LastMonthResult!.DomainEvents.Any(evt =>
             evt.EventType == PersonRegistryEventNames.FidelityRingChanged), Is.True);
         Assert.That(bundle.FidelityScale.LocalPersonCount, Is.GreaterThanOrEqualTo(1));
+        Assert.That(bundle.FidelityScale.InfluenceFootprintReadbackSummary, Does.Contain("Influence footprint readback"));
         Assert.That(mobility.OutflowPressure, Is.GreaterThanOrEqualTo(60));
         Assert.That(mobility.SourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
         Assert.That(mobility.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
         Assert.That(mobility.PoolThicknessSummary, Does.Contain("PopulationAndHouseholds").Or.Contain("池").Or.Contain("姹"));
         Assert.That(mobility.MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
+        Assert.That(mobility.ScaleBudgetReadbackSummary, Does.Contain("Scale budget readback"));
         Assert.That(mobility.FocusReadbackSummary, Does.Contain("不是").Or.Contain("涓嶆槸").Or.Contain("区域池"));
         Assert.That(dossier.MovementReadbackSummary, Does.Contain("流徙池").Or.Contain(KnownModuleKeys.PopulationAndHouseholds));
         Assert.That(dossier.FidelityRingReadbackSummary, Does.Contain("近处").Or.Contain(KnownModuleKeys.PersonRegistry));
+        Assert.That(dossier.InfluenceFootprintReadbackSummary, Does.Contain("Influence footprint readback"));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
     }
 }

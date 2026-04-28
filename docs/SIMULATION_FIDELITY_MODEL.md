@@ -475,3 +475,9 @@ It should ask:
 - Active chain regions should stay readable through `SettlementMobilitySnapshot`, labor/marriage/migration pools, and owner snapshots rather than permanent full populations.
 - Distant society remains alive through pressure summaries, opportunity climate, route heat, legitimacy climate, and pool thickness. It must not become an all-world per-person monthly tick.
 - Future personnel-flow work must record hot path, expected cardinality, deterministic order/cap, schema impact, and validation lane before deepening fidelity.
+
+## V277-V284 Influence Readback
+
+- The first additional readback fields are runtime projections only: `FidelityScaleSnapshot.InfluenceFootprintReadbackSummary`, `SettlementMobilitySnapshot.ScaleBudgetReadbackSummary`, and `PersonDossierSnapshot.InfluenceFootprintReadbackSummary`.
+- These fields explain the scale budget already chosen by owner modules. They do not choose promotion/demotion, resolve migration, write SocialMemory residue, or authorize a player command.
+- Great hall, desk, lineage, and person inspector surfaces may display the fields so the player can read why a person is close detail or why a settlement remains pooled.

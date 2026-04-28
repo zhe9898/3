@@ -211,6 +211,12 @@ V269-V276 is a guard over the v213-v252 mobility/fidelity substrate, not a new p
 
 The guard preserves the owner split: `PopulationAndHouseholds` owns household livelihood, membership activity, and labor/marriage/migration pools; `PersonRegistry` owns identity and existing `FidelityRing` assignment only; `SocialMemoryAndRelations` remains the later durable-residue owner; Application assembles projections and diagnostics; Unity copies projected fields. V269-V276 adds no production rule, schema, migration, movement/social/focus/scheduler ledger, world-person simulation manager, Application/UI/Unity authority, `PersonRegistry` domain expansion, or prose parser.
 
+## V277-V284 Social Mobility Influence Readback
+
+V277-V284 adds a second readback layer over the existing social mobility/fidelity substrate. It exposes why a surface is showing close detail, pressure-selected local detail, active-region pools, or distant summary through runtime fields on `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, and `PersonDossierSnapshot`.
+
+This pass does not change the underlying owner rules. `PopulationAndHouseholds` still owns livelihood/activity/pools, `PersonRegistry` still owns identity/fidelity only, and Application/Unity only project or copy the new readback. It adds no command, schema, migration, movement/social/focus/scheduler ledger, global person simulation, durable SocialMemory movement residue, or UI-owned mobility rule.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

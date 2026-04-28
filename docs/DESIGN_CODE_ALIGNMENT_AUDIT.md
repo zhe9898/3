@@ -323,3 +323,10 @@
 - The guard makes the scale rule explicit: player household / close orbit can be named detail; player influence footprint and active pressure can select bounded detail; active chain regions use structured pools and settlement summaries; distant society stays alive through pressure summaries, not per-person world simulation.
 - Future personnel-flow work must name owner module, hot path, cardinality, deterministic cap/order, schema impact, and validation lane before expanding fidelity, adding caches, or writing durable movement residue.
 - v269-v276 adds no persisted state, schema bump, migration, movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.
+
+## v277-v284 social mobility influence readback - 2026-04-28
+
+- v277-v284 adds runtime readback fields only: `InfluenceFootprintReadbackSummary` on `FidelityScaleSnapshot` and `PersonDossierSnapshot`, plus `ScaleBudgetReadbackSummary` on `SettlementMobilitySnapshot`.
+- Application composes these fields from already-built person, household, and mobility snapshots; it does not resolve movement, promote/demote people, or decide command outcomes.
+- Unity and shell adapters copy the projected fields into great hall, desk, and lineage/person dossier surfaces only.
+- v277-v284 adds no persisted state, schema bump, migration, command, movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.

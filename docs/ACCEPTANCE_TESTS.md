@@ -667,3 +667,11 @@ At integration level, verify:
 - Architecture acceptance: guard no production whole-world person simulation manager, no movement/social/focus/scheduler ledger, no `PersonRegistry` domain expansion, no Application/UI/Unity authority, no prose parsing, and no schema/migration drift.
 - Save/schema acceptance: v269-v276 is docs/tests only and adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, or serialized payload change.
 - Focused proof: `Social_mobility_scale_budget_guard_v269_v276_must_prevent_whole_world_person_simulation_drift` plus build, `git diff --check`, and full solution tests close the audit.
+
+## Social mobility influence readback v277-v284 acceptance - 2026-04-28
+- Read-model acceptance: `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, and `PersonDossierSnapshot` expose influence/scale-budget readback fields from structured owner snapshots.
+- Projection acceptance: great hall, desk, lineage, and person inspector surfaces copy the projected fields only; they must not compute movement outcomes, promotion/demotion, or precision bands.
+- Ownership acceptance: `PopulationAndHouseholds` remains owner of livelihood/activity/pools, `PersonRegistry` remains identity/fidelity only, and `SocialMemoryAndRelations` writes no durable movement residue in this pass.
+- Architecture acceptance: guard no Application command authority, no UI/Unity authority, no prose parsing, no movement/social/focus/scheduler ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
+- Save/schema acceptance: v277-v284 adds runtime read-model/ViewModel fields only and no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, or serialized module payload change.
+- Focused proof: `SocialMobilityFidelityRingIntegrationTests`, `ViewModelJsonRoundTripTests`, `Social_mobility_influence_readback_v277_v284_must_stay_projection_only_and_schema_neutral`, build, `git diff --check`, and full solution tests close the pass.

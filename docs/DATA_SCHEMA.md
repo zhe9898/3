@@ -1264,6 +1264,11 @@ Current social mobility scale budget guard v269-v276 note:
 - The four precision bands are runtime design/architecture guidance over existing state: close-orbit named detail, influence/pressure selective detail, active-region structured pools, and distant-world pressure summaries.
 - The guard does not authorize a movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, dormant-stub store, or `PersonRegistry` domain expansion.
 
+Current social mobility influence readback v277-v284 note:
+- v277-v284 adds runtime read-model / Unity ViewModel fields only: `InfluenceFootprintReadbackSummary` and `ScaleBudgetReadbackSummary`.
+- These fields are not module state and are not saved. They require no module schema version, root save version, migration, manifest change, projection cache, or serialized module payload change.
+- The pass does not authorize a movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, dormant-stub store, SocialMemory movement residue, or `PersonRegistry` domain expansion.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric
