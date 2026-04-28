@@ -155,6 +155,7 @@ public sealed partial class PresentationReadModelBuilder
             Affordances = affordances,
             Receipts = receipts,
             PersonnelFlowReadinessSummary = BuildPlayerCommandSurfacePersonnelFlowReadinessSummary(affordances, receipts),
+            PersonnelFlowOwnerLaneGateSummary = BuildPlayerCommandSurfacePersonnelFlowOwnerLaneGateSummary(affordances, receipts),
         };
     }
 
@@ -187,6 +188,31 @@ public sealed partial class PresentationReadModelBuilder
             $"人员流动命令预备汇总：{settlementCount}处地方有本户回应读法，{enabledAffordances}/{readableAffordances}道命令可承接，{readableReceipts}条回执保留读法；" +
             "只汇总已投影的人员流动预备读回，不解析ReadbackSummary、回执文案或事件Summary；" +
             "PopulationAndHouseholds拥有本户回应，PersonRegistry只保身份/FidelityRing，UI/Unity只复制投影字段；不是直接调人、迁人、召人命令。";
+    }
+
+    private static string BuildPlayerCommandSurfacePersonnelFlowOwnerLaneGateSummary(
+        IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
+        IReadOnlyList<PlayerCommandReceiptSnapshot> receipts)
+    {
+        int populationAffordances = affordances
+            .Where(static affordance => !string.IsNullOrWhiteSpace(affordance.PersonnelFlowReadinessSummary))
+            .Where(static affordance => string.Equals(affordance.ModuleKey, KnownModuleKeys.PopulationAndHouseholds, StringComparison.Ordinal))
+            .Select(static affordance => affordance.CommandName)
+            .Distinct(StringComparer.Ordinal)
+            .Count();
+        int populationReceipts = receipts.Count(static receipt =>
+            !string.IsNullOrWhiteSpace(receipt.PersonnelFlowReadinessSummary)
+            && string.Equals(receipt.ModuleKey, KnownModuleKeys.PopulationAndHouseholds, StringComparison.Ordinal));
+
+        if (populationAffordances == 0 && populationReceipts == 0)
+        {
+            return string.Empty;
+        }
+
+        return
+            $"人员流动归口门槛：当前可读归口为PopulationAndHouseholds本户回应，{populationAffordances}道预备命令、{populationReceipts}条回执；" +
+            "FamilyCore亲族调处、OfficeAndCareer文书役使、WarfareCampaign军务人力仍需另开owner-lane计划；" +
+            "Application只汇总结构化命令字段，UI/Unity只显示投影字段；PersonRegistry只保身份/FidelityRing；不是直接调人、迁人、召人命令。";
     }
 
 }

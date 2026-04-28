@@ -473,6 +473,12 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("只汇总已投影"));
         Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("不解析ReadbackSummary"));
         Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("不是直接调人、迁人、召人命令"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowOwnerLaneGateSummary, Does.Contain("人员流动归口门槛"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowOwnerLaneGateSummary, Does.Contain("当前可读归口为PopulationAndHouseholds本户回应"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowOwnerLaneGateSummary, Does.Contain("FamilyCore亲族调处"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowOwnerLaneGateSummary, Does.Contain("OfficeAndCareer文书役使"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowOwnerLaneGateSummary, Does.Contain("WarfareCampaign军务人力"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowOwnerLaneGateSummary, Does.Contain("不是直接调人、迁人、召人命令"));
 
         int memoryCountBefore = socialState.Memories.Count;
         int orderRouteBefore = settlement.RoutePressure;
@@ -512,6 +518,7 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(relievedReceipt.PersonnelFlowReadinessSummary, Does.Contain("不是直接调人、迁人、召人命令"));
         Assert.That(relievedReceipt.ReadbackSummary, Does.Contain(relievedReceipt.PersonnelFlowReadinessSummary));
         Assert.That(afterRelief.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("1条回执保留读法"));
+        Assert.That(afterRelief.PlayerCommands.PersonnelFlowOwnerLaneGateSummary, Does.Contain("1条回执"));
         Assert.That(afterRelief.InfluenceFootprint.Reaches
             .Single(reach => reach.ReachKey == InfluenceReachKeys.OwnHousehold)
             .CommandSummary, Does.Contain("低权能回应面"));

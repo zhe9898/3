@@ -251,6 +251,12 @@ V317-V324 closes v293-v316 as the first personnel-flow command-readiness layer: 
 
 This is not a complete migration system, not a complete social-mobility engine, and not a direct move/transfer/summon/assign-person command lane. `PopulationAndHouseholds` owns household response, `PersonRegistry` owns identity/FidelityRing only, and Application/Unity display projected fields only. Schema/migration impact remains none.
 
+## V325-V332 Personnel Flow Owner-Lane Gate
+
+V325-V332 adds a runtime owner-lane gate readback on the player-command surface. It makes the current personnel-flow boundary explicit: `PopulationAndHouseholds` is the only readable lane for current home-household response, while `FamilyCore` kin mediation, `OfficeAndCareer` document/service pressure, and `WarfareCampaign` manpower posture remain future owner-lane plans.
+
+`PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` is assembled from structured command affordance/receipt fields and displayed through Great Hall mobility readback. It adds no schema, migration, direct personnel command, owner-lane-gate ledger, movement resolver, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

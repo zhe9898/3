@@ -63,22 +63,29 @@ internal static class GreatHallShellAdapter
 			.ThenBy(static mobility => mobility.SettlementId.Value)
 			.FirstOrDefault();
 		string personnelFlowReadiness = bundle.PlayerCommands.PersonnelFlowReadinessSummary;
+		string personnelFlowOwnerLaneGate = bundle.PlayerCommands.PersonnelFlowOwnerLaneGateSummary;
 		if (leadMobility is null)
 		{
-			return AppendPersonnelFlowReadiness(
+			return AppendPersonnelFlowReadbacks(
 				$"{bundle.FidelityScale.Summary} {bundle.FidelityScale.InfluenceFootprintReadbackSummary}",
-				personnelFlowReadiness);
+				personnelFlowReadiness,
+				personnelFlowOwnerLaneGate);
 		}
 
-		return AppendPersonnelFlowReadiness(
+		return AppendPersonnelFlowReadbacks(
 			$"{bundle.FidelityScale.Summary} {bundle.FidelityScale.InfluenceFootprintReadbackSummary} {leadMobility.MovementReadbackSummary}",
-			personnelFlowReadiness);
+			personnelFlowReadiness,
+			personnelFlowOwnerLaneGate);
 	}
 
-	private static string AppendPersonnelFlowReadiness(string summary, string personnelFlowReadiness)
+	private static string AppendPersonnelFlowReadbacks(string summary, params string[] personnelFlowReadbacks)
 	{
-		return string.IsNullOrWhiteSpace(personnelFlowReadiness)
+		string[] visibleReadbacks = personnelFlowReadbacks
+			.Where(static readback => !string.IsNullOrWhiteSpace(readback))
+			.ToArray();
+
+		return visibleReadbacks.Length == 0
 			? summary
-			: $"{summary} {personnelFlowReadiness}";
+			: $"{summary} {string.Join(' ', visibleReadbacks)}";
 	}
 }

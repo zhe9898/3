@@ -1294,6 +1294,11 @@ Current personnel flow readiness closeout v317-v324 note:
 - The v293-v316 layer remains runtime read-model/ViewModel/projection work only. It adds no module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, closeout ledger, durable residue, or serialized module payload.
 - Any future persisted personnel-flow command history, migration state, movement receipt, or durable social residue still requires a separate schema/migration plan before implementation.
 
+Current personnel flow owner-lane gate v325-v332 note:
+- `PlayerCommandSurfaceSnapshot.PersonnelFlowOwnerLaneGateSummary` is runtime read-model text only. It is assembled from existing runtime command affordance/receipt metadata and is not persisted.
+- It adds no module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, owner-lane-gate ledger, durable residue, or serialized module payload.
+- Any future persisted owner-lane selection, personnel-flow command history, migration state, movement receipt, assignment state, or durable social residue still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric
