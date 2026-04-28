@@ -163,9 +163,9 @@ Verify against module `ModuleSchemaVersion` before changing migrations.
 ## Current Zongzu Chain Anchors
 
 - The implemented thin-chain skeleton is closed through v108 as topology/readback/ownership evidence, not full-chain rule-density completion.
-- The current court-policy branch is through v196: v109-v116 process thickening, v117-v124 local Office response, v125-v132 delayed SocialMemory echo, v133-v140 memory-pressure next-window readback, v141-v148 public-reading echo, v149-v156 public follow-up cue, v157-v164 docket guard, v165-v172 suggested-action guard, v173-v180 suggested-receipt guard, v181-v188 receipt-docket consistency guard, and v189-v196 public-life receipt echo guard.
-- v35-v196 use existing owner state or runtime projection fields for Trade/Order, Family, Office, PublicLife, SocialMemory, Force/Campaign, Warfare, and Court-policy readbacks.
-- v101-v108 is documentation plus architecture-test closeout evidence only; v109-v196 is narrow Chain 8 rule-density. Both add no schema bump, migration, ledger, manager/controller layer, UI/Unity authority, or `PersonRegistry` expansion.
+- The current mainline is through v300: v109-v204 closes the first Chain 8 court-policy rule-density branch; v213-v292 implements and closes the first social mobility / fidelity-ring substrate and readback layer; v253-v268 closes Chain 9 regime-legitimacy first readback; v293-v300 is a personnel-command preflight guard, not a command implementation.
+- v35-v300 use existing owner state or runtime projection fields for Trade/Order, Family, Office, PublicLife, SocialMemory, Force/Campaign, Warfare, Court-policy, social mobility, regime readback, and personnel-command preflight evidence.
+- v101-v108, v197-v204, v245-v252, v261-v268, v285-v292, and v293-v300 are documentation plus architecture-test closeout/preflight evidence. v213-v244 uses existing `PopulationAndHouseholds` and `PersonRegistry.FidelityRing` state only; v277-v284 adds runtime read-model/ViewModel fields only. These passes add no schema bump, migration, ledger, manager/controller layer, UI/Unity authority, or `PersonRegistry` domain expansion.
 - For performance work, name hot path, cardinality, allocation risk, deterministic ordering, cache invalidation, save/schema impact, and validation lane before changing algorithms.
 
 ## Migration Rules
