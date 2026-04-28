@@ -225,6 +225,14 @@ It does not mean Zongzu has a complete society engine, full migration economy, f
 
 The closeout preserves the owner split: `PopulationAndHouseholds` owns livelihood/activity/pools; `PersonRegistry` owns identity and existing `FidelityRing` assignment only; `SocialMemoryAndRelations` remains a future durable-residue owner; Application assembles projections and diagnostics; UI/Unity copy projected fields only. V285-V292 adds no production rule, schema, migration, movement/social/focus/scheduler/command/personnel ledger, projection cache, manager/controller, `PersonRegistry` domain expansion, or prose parser.
 
+## V293-V300 Personnel Command Preflight
+
+V293-V300 is a preflight audit for future player-facing personnel-flow commands. It does not add a command. It records that any later command affecting movement, migration, assignment, return, settlement placement, office service, or campaign manpower must name its owner module, target scope, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane before implementation.
+
+Current seams remain bounded: `PopulationAndHouseholds` owns household livelihood/activity/migration pressure and local household response commands; `PersonRegistry` owns identity and existing `FidelityRing` assignment only; `FamilyCore`, `OfficeAndCareer`, `WarfareCampaign`, or later owner lanes may request personnel effects only through their own module-owned rule contracts. Application routes commands, and UI/Unity copy affordances and receipts only.
+
+The preflight adds no production rule, player command, schema, migration, direct move/transfer/summon/assign-person path, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, manager/controller, `PersonRegistry` domain expansion, Application rule layer, UI/Unity authority, or prose parser.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

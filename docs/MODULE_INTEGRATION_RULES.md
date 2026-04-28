@@ -643,3 +643,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - No downstream reader may parse `InfluenceFootprintReadbackSummary`, `ScaleBudgetReadbackSummary`, movement prose, notification prose, receipt prose, or `DomainEvent.Summary` to drive rules.
 - Future personnel-flow commands must resolve in an owner module and must not be calculated by Application, UI, Unity, or a global manager.
 - Save/schema result: no persisted state, schema bump, migration, movement/social/focus/scheduler/command/personnel ledger, projection cache, or save-manifest change.
+
+## Personnel command preflight v293-v300 integration note
+- V293-V300 adds no integration channel and no command route. It is a preflight gate for future personnel-flow commands.
+- A future movement / migration / return / assignment / placement command must enter through `PlayerCommandCatalog` only after an owning module resolver exists. Application may route the command but must not compute outcome, target ranking, or movement success.
+- `PopulationAndHouseholds` can own household migration-pressure responses; `FamilyCore` can own kin/lineage mediation; `OfficeAndCareer` can own office/document personnel channels; `WarfareCampaign` can own campaign manpower posture; `PersonRegistry` remains identity/fidelity only.
+- No downstream reader may parse command labels, readback strings, person dossier prose, settlement mobility text, notification prose, receipt prose, or `DomainEvent.Summary` to drive a personnel rule.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, or save-manifest change.

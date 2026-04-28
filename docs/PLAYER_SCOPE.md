@@ -189,6 +189,20 @@ The player's anchor household has local agency: labor allocation, rationing, bor
 
 Other households remain observed pressure unless a concrete social touchpoint exists. Direct household stat edits should not exist; intervention should pass through lineage, resources, public-life mediation, office leverage, market ties, employment, debt, protection, or force pressure when those layers are actually available.
 
+### Personnel flow preflight
+
+Future commands that influence personnel movement are allowed only as bounded owner-lane intents.
+They may say "send a messenger", "seek a household member's return", "sponsor a worker", "recommend someone for service", or "request manpower through campaign/office channels" only when the owning module and target scope are explicit.
+
+They must not become:
+- drag this person to another settlement
+- transfer any person because the UI selected them
+- assign every person in a pool one by one
+- make `PersonRegistry` store household, office, memory, livelihood, or capability state
+- let Application, UI, or Unity calculate movement success
+
+Before implementation, a personnel-flow command must name owner module, target scope, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane. `PopulationAndHouseholds` may own household migration pressure; `FamilyCore` may own kin/lineage intent; `OfficeAndCareer` may own office service or document-mediated personnel pressure; `WarfareCampaign` may own campaign manpower posture; `PersonRegistry` remains identity/fidelity only.
+
 ### Education
 - fund study
 - hire tutor
@@ -253,6 +267,7 @@ Rules:
 - `SocialMemoryAndRelations` pressure tempering may be read as deterministic command friction, but it is never a player-facing emotion button and is not mutated by the command itself
 - office, order, and warfare commands may write only their owning module's command receipt / directive / pressure state; any wider consequences must move through normal module cadence, queries, events, or projections
 - the v3 public-life/order leverage readback is explanatory projection only; durable social-memory residue requires `SocialMemoryAndRelations` owner-state work rather than a hidden Application or UI ledger
+- v293-v300 adds no personnel command; it only records the preflight gates for future movement / assignment / return commands
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

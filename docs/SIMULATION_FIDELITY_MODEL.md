@@ -489,3 +489,11 @@ It should ask:
 - Future deeper mobility work must decide whether it is a `PopulationAndHouseholds` rule, `PersonRegistry` fidelity command, `SocialMemoryAndRelations` durable residue, or a new planned owner before adding state.
 - Any future command, dormant-stub model, migration economy, durable residue, or cross-region personnel flow must declare hot path, expected cardinality, deterministic cap/order, schema impact, no-touch boundary, and validation lane.
 - UI and Unity may show the v277-v284 projected readbacks, but must not parse them, infer hidden movement targets, or suggest the whole world is ticking person-by-person.
+
+## V293-V300 Personnel Command Preflight
+
+- Future personnel-flow commands must be scale-budgeted before they exist. They are bounded influence intents, not direct movement edits.
+- A future command may deepen a close household, kin channel, office service channel, or campaign manpower channel only through its owning module and deterministic caps.
+- `PersonRegistry.ChangeFidelityRing` stays a readability/fidelity seam. It must not become assignment, migration, household membership, office service, or campaign manpower state.
+- Application, UI, and Unity must not rank personnel targets, compute movement success, or parse readback prose to decide who moves.
+- Any future persisted command receipt, assignment state, durable residue, or migration cache must first open a schema/migration plan.

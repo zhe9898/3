@@ -337,3 +337,10 @@
 - The closeout explicitly preserves future debt for full migration economy, class mobility, direct personnel commands, dormant stubs, durable movement residue, and broader cross-region flow.
 - Ownership remains unchanged: `PopulationAndHouseholds` owns livelihood/activity/pools, `PersonRegistry` owns identity/fidelity only, `SocialMemoryAndRelations` owns later durable residue only when planned, Application assembles projections, and UI/Unity copy projected fields.
 - v285-v292 adds no production rule, persisted state, schema bump, migration, command, movement/social/focus/scheduler/personnel ledger, projection cache, global person simulation manager, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.
+
+## v293-v300 personnel command preflight audit - 2026-04-28
+
+- v293-v300 adds no command. It documents the gates future personnel-flow commands must pass before implementation.
+- Future movement, migration, return, assignment, placement, office-service, or campaign-manpower commands must name owner module, target scope, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane.
+- Current code remains bounded: `PopulationAndHouseholds` owns household migration pressure and local household response commands; `PersonRegistry` owns identity/fidelity only; Application routes commands; UI/Unity copy projected affordances and receipts.
+- v293-v300 adds no production rule, persisted state, schema bump, migration, direct move/transfer/summon/assign-person command, command/movement/personnel/assignment ledger, manager path, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.
