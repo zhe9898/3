@@ -551,5 +551,12 @@ It should ask:
 ## V373-V380 Personnel Flow Future Lane Closeout
 
 - V357-V372 is closed only as preflight visibility: future-lane requirements are documented and visible in Great Hall, but no fidelity band, movement lane, or target cardinality changes.
+
+## V381-V388 Commoner Social Position Preflight
+
+- Commoner / class-position mobility is a future owner-lane problem over existing pressure carriers, not a new global fidelity mode.
+- Existing person dossier labels can explain household, education, trade, office, family, and memory context, but they do not promote/demote people or resolve class movement.
+- Future status drift must state whether it affects named close-orbit actors, local pooled households, active-region pools, or distant summaries before implementation.
+- Any future lane needs owner module, pressure carrier, hot path, expected cardinality, deterministic order/cap, schema impact, no-touch boundary, and validation before changing fidelity or state.
 - Distant society remains summarized; active settlements still need structured local readiness before desk-local gate text appears.
 - Future owner-lane depth must still declare precision band, deterministic selection, cap, cadence, schema impact, and projection readback separately.

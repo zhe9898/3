@@ -135,6 +135,16 @@ V357-V364 adds no boundary. It documents the boundary that a future personnel-fl
 
 Any future lane must name owner state, accepted command, target scope, no-touch boundary, cardinality, deterministic cap/order, schema impact, cadence, projection/readback, and tests before code opens the path.
 
+## Commoner social position preflight v381-v388 boundary note
+
+V381-V388 adds no boundary. It documents the gate for later commoner / class-position mobility work over the existing social-mobility substrate.
+
+`PopulationAndHouseholds` currently owns household livelihood, distress, labor/activity pressure, migration risk, and labor/marriage/migration pools. `PersonRegistry` remains identity, life-stage/death anchors, and existing `FidelityRing` only. `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, and `SocialMemoryAndRelations` may later contribute owner-lane pressure carriers only through separately planned module-owned rules.
+
+Future commoner social-position drift must name owner state, accepted command or monthly rule, target scope, no-touch boundary, hot path, expected cardinality, deterministic cap/order, schema impact, cadence, projection/readback, and tests before code opens the path.
+
+V381-V388 is not a full class engine, not a direct promote/demote command, not zhuhu/kehu conversion state, not a global per-person career simulation, and not a class/social-position/personnel/movement/focus/scheduler ledger. It adds no schema, migration, Application authority, UI/Unity authority, prose parser, manager/controller path, or `PersonRegistry` expansion.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

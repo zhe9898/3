@@ -92,6 +92,14 @@ The social base. Includes tenant farmers, laborers, shop hands, petty traders, s
 
 **Prescriptive vs. lived practice gap:** The household-registration system prescribes zhuhu/kehu categories, but actual practice includes unregistered migration, false household splitting to evade tax, unreported deaths to preserve corvée exemptions, and elite households sheltering clients as fictive kin.
 
+### Current implementation preflight: v381-v388
+
+V381-V388 records commoner social-position mobility as a future owner-lane problem, not as a complete class engine.
+
+Current code already has commoner pressure carriers: `PopulationAndHouseholds` owns livelihood, labor/activity pressure, distress, and migration/mobility pools; `EducationAndExams` owns study/exam paths; `TradeAndIndustry` owns shop, route, debt, and market attachment; `OfficeAndCareer` owns yamen/document/office contact; `FamilyCore` owns lineage support, marriage, inheritance, and branch pressure; `PublicLifeAndRumor` owns public visibility; `SocialMemoryAndRelations` owns durable reputation, shame, debt, fear, favor, and grudges.
+
+Future class/status drift must pick one owner lane and state its hot path, cardinality, deterministic cap/order, target scope, no-touch boundary, schema impact, cadence, projection fields, and validation. It must not become a UI promotion button, an Application resolver, a `PersonRegistry` social-class table, or a prose parser.
+
 ---
 
 ## 3. Exams
