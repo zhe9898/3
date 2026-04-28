@@ -199,6 +199,7 @@ Example:
 ## Post-MVP preflight namespace policy
 - social mobility fidelity ring v213-v244 remains schema-neutral: `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, person dossier movement/fidelity readbacks, runtime observability counts, and Unity shell mobility strings are runtime projections or diagnostics only. `PopulationAndHouseholds` remains schema `3`; `PersonRegistry` remains schema `1`; `SocialMemoryAndRelations` remains later durable-residue only. No migration is required.
 - social mobility fidelity ring closeout v245-v252 remains docs/tests only: it adds no module namespace, root/module schema version change, migration, save-manifest membership, movement ledger, social-mobility ledger, focus ledger, owner-lane ledger, scheduler ledger, projection cache, dormant-stub store, or `PersonRegistry` domain expansion.
+- social mobility scale budget guard v269-v276 remains docs/tests only: it adds no module namespace, root/module schema version change, migration, save-manifest membership, movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, projection cache, dormant-stub store, or `PersonRegistry` domain expansion.
 
 - black-route depth must not create a standalone `BlackRoute` namespace; current save data for that slice already stays inside `OrderAndBanditry` and `TradeAndIndustry`
 - any future black-route migration steps must therefore preserve the same module-key set unless an explicit module-addition migration introduces `WarfareCampaign` or another documented pack

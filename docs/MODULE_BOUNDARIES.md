@@ -28,6 +28,17 @@ Until a dedicated historical-process pack exists:
 
 A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
+## Social mobility scale-budget guard v269-v276 boundary note
+
+V269-V276 adds no new runtime boundary. It hardens the existing fidelity-ring boundary so later social/personnel flow cannot drift into global per-person simulation:
+- `PopulationAndHouseholds` owns household livelihood, membership activity, and labor/marriage/migration pools.
+- `PersonRegistry` owns only identity, life-stage/death anchors, and existing `FidelityRing` assignment.
+- `SocialMemoryAndRelations` owns later durable memory residue only when a future pass declares structured aftermath input and schema impact.
+- Application may assemble `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, person dossiers, and runtime diagnostics, but it may not decide authority, promotion policy, or movement outcomes.
+- UI and Unity may display projected mobility/fidelity fields only.
+
+The four precision bands are: player household / close orbit as named detail; player influence footprint or active pressure as selective detail; active chain region as structured pools and settlement summaries; distant world as pressure summaries. This pass adds no schema, migration, movement/social/focus/scheduler ledger, manager/controller path, `PersonRegistry` domain expansion, or prose parser.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

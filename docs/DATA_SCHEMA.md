@@ -1259,6 +1259,11 @@ Current social mobility fidelity ring closeout v245-v252 note:
 - The closeout does not authorize a movement ledger, social-mobility ledger, focus ledger, owner-lane ledger, scheduler ledger, dormant-stub store, or `PersonRegistry` domain expansion.
 - Future durable movement residue, demotion/dormant-state, or richer migration/class mobility state must arrive with an explicit schema/migration plan before any field is added.
 
+Current social mobility scale budget guard v269-v276 note:
+- v269-v276 is docs/test governance only and adds no persisted fields, module envelope, root schema version, module schema version, save-manifest membership, migration, projection cache, or serialized payload change.
+- The four precision bands are runtime design/architecture guidance over existing state: close-orbit named detail, influence/pressure selective detail, active-region structured pools, and distant-world pressure summaries.
+- The guard does not authorize a movement ledger, social-mobility ledger, focus ledger, scheduler ledger, global person simulation manager, dormant-stub store, or `PersonRegistry` domain expansion.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric
