@@ -309,6 +309,176 @@ public sealed class PopulationAndHouseholdsModuleTests
             Is.True);
     }
 
+    [Test]
+    public void RunMonth_HighPressureHousehold_DriftsLivelihoodPromotesRegionalPersonAndRebuildsPools()
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 34,
+            Prosperity = 36,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+
+        PersonRegistryModule registryModule = new();
+        PersonRegistryState registryState = registryModule.CreateInitialState();
+        registryState.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(9101),
+            DisplayName = "李行",
+            BirthDate = new GameDate(1180, 1),
+            Gender = PersonGender.Male,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Regional,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.Tenant,
+            Distress = 86,
+            DebtPressure = 86,
+            LaborCapacity = 24,
+            MigrationRisk = 81,
+            LandHolding = 6,
+            GrainStore = 8,
+            DependentCount = 2,
+            LaborerCount = 1,
+        });
+        populationState.Memberships.Add(new HouseholdMembershipState
+        {
+            PersonId = new PersonId(9101),
+            HouseholdId = new HouseholdId(1),
+            Livelihood = LivelihoodType.Tenant,
+            HealthResilience = 90,
+            Health = HealthStatus.Healthy,
+            Activity = PersonActivity.Farming,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        registryModule.RegisterQueries(registryState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+
+        DomainEventBuffer eventBuffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 7),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(137)),
+            queries,
+            eventBuffer,
+            new WorldDiff());
+
+        populationModule.RunMonth(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
+
+        PopulationHouseholdState household = populationState.Households.Single();
+        HouseholdMembershipState membership = populationState.Memberships.Single();
+        PersonRecord person = registryState.Persons.Single();
+
+        Assert.That(household.Livelihood, Is.EqualTo(LivelihoodType.Vagrant));
+        Assert.That(household.IsMigrating, Is.True);
+        Assert.That(membership.Livelihood, Is.EqualTo(LivelihoodType.Vagrant));
+        Assert.That(membership.Activity, Is.EqualTo(PersonActivity.Migrating));
+        Assert.That(person.FidelityRing, Is.EqualTo(FidelityRing.Local));
+        Assert.That(populationState.LaborPools, Has.Count.EqualTo(1));
+        Assert.That(populationState.MarriagePools, Has.Count.EqualTo(1));
+        Assert.That(populationState.MigrationPools, Has.Count.EqualTo(1));
+        Assert.That(populationState.MigrationPools[0].OutflowPressure, Is.GreaterThanOrEqualTo(80));
+        Assert.That(eventBuffer.Events.Any(evt => evt.EventType == PersonRegistryEventNames.FidelityRingChanged), Is.True);
+    }
+
+    [Test]
+    public void RunMonth_StableHiredLaborCanDriftBackToSmallholder()
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 66,
+            Prosperity = 64,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+
+        PersonRegistryModule registryModule = new();
+        PersonRegistryState registryState = registryModule.CreateInitialState();
+        registryState.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(9201),
+            DisplayName = "Labor Li",
+            BirthDate = new GameDate(1180, 1),
+            Gender = PersonGender.Male,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Local,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Labor Li",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.HiredLabor,
+            Distress = 20,
+            DebtPressure = 20,
+            LaborCapacity = 82,
+            MigrationRisk = 12,
+            LandHolding = 45,
+            GrainStore = 70,
+            DependentCount = 1,
+            LaborerCount = 2,
+        });
+        populationState.Memberships.Add(new HouseholdMembershipState
+        {
+            PersonId = new PersonId(9201),
+            HouseholdId = new HouseholdId(1),
+            Livelihood = LivelihoodType.HiredLabor,
+            HealthResilience = 70,
+            Health = HealthStatus.Healthy,
+            Activity = PersonActivity.Laboring,
+        });
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        registryModule.RegisterQueries(registryState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 7),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(139)),
+            queries,
+            new DomainEventBuffer(),
+            new WorldDiff());
+
+        populationModule.RunMonth(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
+
+        Assert.That(populationState.Households.Single().Livelihood, Is.EqualTo(LivelihoodType.Smallholder));
+        Assert.That(populationState.Memberships.Single().Livelihood, Is.EqualTo(LivelihoodType.Smallholder));
+        Assert.That(populationState.Memberships.Single().Activity, Is.EqualTo(PersonActivity.Farming));
+        Assert.That(populationState.LaborPools.Single().AvailableLabor, Is.GreaterThan(0));
+        Assert.That(populationState.MigrationPools.Single().OutflowPressure, Is.LessThan(40));
+    }
+
     private static PopulationHouseholdState RunSingleHouseholdMonth(LivelihoodType livelihood)
     {
         WorldSettlementsModule worldModule = new();

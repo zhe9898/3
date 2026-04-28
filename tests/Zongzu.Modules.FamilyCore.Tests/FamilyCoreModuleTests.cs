@@ -1222,6 +1222,21 @@ public sealed class FamilyCoreModuleTests
             return true;
         }
 
+        public bool ChangeFidelityRing(
+            ModuleExecutionContext context,
+            PersonId id,
+            FidelityRing targetRing,
+            string reason)
+        {
+            if (!Records.TryGetValue(id, out PersonRecord? record) || !record.IsAlive)
+            {
+                return false;
+            }
+
+            record.FidelityRing = targetRing;
+            return true;
+        }
+
         public void Seed(PersonRecord record)
         {
             Records[record.Id] = record;

@@ -38,6 +38,7 @@ internal static class GreatHallShellAdapter
 			FamilySummary = FamilyShellAdapter.BuildGreatHallFamilySummary(leadClan, bundle.PlayerCommands.Affordances),
 			EducationSummary = $"塾馆在读{studyingCount}人，场屋得捷{passedCount}人。",
 			TradeSummary = $"市账{bundle.ClanTrades.Count}册，得利{profitableTrades}支。",
+			MobilitySummary = BuildGreatHallMobilitySummary(bundle),
 			PublicLifeSummary = leadPublicLife == null
 				? "乡里、镇市与县门今月尚静。"
 				: PublicLifeShellAdapter.BuildGreatHallPublicLifeSummary(bundle.PublicLifeSettlements, leadPublicLife),
@@ -53,5 +54,19 @@ internal static class GreatHallShellAdapter
 
 		greatHall.GovernanceSummary = GovernanceShellAdapter.BuildGreatHallGovernanceSummary(bundle, greatHall.GovernanceSummary);
 		return greatHall;
+	}
+
+	private static string BuildGreatHallMobilitySummary(PresentationReadModelBundle bundle)
+	{
+		SettlementMobilitySnapshot? leadMobility = bundle.SettlementMobilities
+			.OrderByDescending(static mobility => mobility.OutflowPressure + mobility.FloatingPopulation)
+			.ThenBy(static mobility => mobility.SettlementId.Value)
+			.FirstOrDefault();
+		if (leadMobility is null)
+		{
+			return bundle.FidelityScale.Summary;
+		}
+
+		return $"{bundle.FidelityScale.Summary} {leadMobility.MovementReadbackSummary}";
 	}
 }

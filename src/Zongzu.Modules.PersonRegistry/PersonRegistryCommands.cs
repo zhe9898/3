@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
 
@@ -80,6 +81,46 @@ internal sealed class PersonRegistryCommands : IPersonRegistryCommands
             PersonRegistryEventNames.PersonDeceased,
             $"{target.DisplayName}身故登记。",
             id.Value.ToString()));
+
+        return true;
+    }
+
+    public bool ChangeFidelityRing(
+        ModuleExecutionContext context,
+        PersonId id,
+        FidelityRing targetRing,
+        string reason)
+    {
+        PersonRecord? target = null;
+        foreach (PersonRecord existing in _state.Persons)
+        {
+            if (existing.Id.Equals(id))
+            {
+                target = existing;
+                break;
+            }
+        }
+
+        if (target is null || !target.IsAlive || target.FidelityRing == targetRing)
+        {
+            return false;
+        }
+
+        FidelityRing previousRing = target.FidelityRing;
+        target.FidelityRing = targetRing;
+
+        context.DomainEvents.Emit(new DomainEventRecord(
+            KnownModuleKeys.PersonRegistry,
+            PersonRegistryEventNames.FidelityRingChanged,
+            $"{target.DisplayName}由{previousRing}环调入{targetRing}环：{reason}。",
+            id.Value.ToString(),
+            new Dictionary<string, string>
+            {
+                [DomainEventMetadataKeys.PersonId] = id.Value.ToString(),
+                [DomainEventMetadataKeys.FidelityRingBefore] = previousRing.ToString(),
+                [DomainEventMetadataKeys.FidelityRingAfter] = targetRing.ToString(),
+                [DomainEventMetadataKeys.FidelityRingReason] = reason,
+            }));
 
         return true;
     }

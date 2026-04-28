@@ -25,6 +25,19 @@ public sealed class ModuleEventHandlingScope<TState>
         return Context.Queries.GetRequired<TQuery>();
     }
 
+    public TQuery? TryGetQuery<TQuery>()
+        where TQuery : class
+    {
+        try
+        {
+            return Context.Queries.GetRequired<TQuery>();
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
     public void Emit(
         string eventType,
         string summary,

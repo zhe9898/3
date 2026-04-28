@@ -52,6 +52,8 @@ internal static class LineageShellAdapter
 			LivelihoodSummary = dossier.LivelihoodSummary,
 			HealthSummary = dossier.HealthSummary,
 			ActivitySummary = dossier.ActivitySummary,
+			MovementReadbackSummary = dossier.MovementReadbackSummary,
+			FidelityRingReadbackSummary = dossier.FidelityRingReadbackSummary,
 			EducationSummary = dossier.EducationSummary,
 			TradeSummary = dossier.TradeSummary,
 			OfficeSummary = dossier.OfficeSummary,

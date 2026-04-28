@@ -188,6 +188,15 @@ Chain 8 v165-v204 note: the suggested-action guard, suggested receipt guard, rec
 - Chain 9: regime recognition, grain-route control, household compliance, public legitimacy, ritual claim, force backing, rebellion-to-polity and dynasty-cycle consequences. The current handler already uses a first office-owned defection profile from mandate deficit, demotion pressure, clerk pressure, petition pressure, reputation strain, and authority/reputation buffer, but it is not yet the full regime-recognition/compliance chain.
 - Chain 10: canal dredging politics, formal shipment allocation, canal-office paperwork, boatmen, route factions, market substitution, and durable public/social residue. The current handler only returns canal-window facts to existing `TradeAndIndustry` and `OrderAndBanditry` owner lanes through existing fields; it is not a full canal economy, patrol AI, or yamen implementation formula.
 
+## V213-V244 Social Mobility Fidelity Ring Note
+
+This pass is not a new Renzong pressure chain. It thickens the shared "near detail, far summary" substrate that existing and future chains can read.
+
+- `PopulationAndHouseholds` now turns high household pressure into first-layer livelihood drift, member activity, and labor/marriage/migration pool readback.
+- `PersonRegistry` can move a hot person into a nearer `FidelityRing` through a narrow command, but remains identity-only.
+- Chains that later touch households, migration, relief, disorder, office, or warfare may read these structured population/fidelity projections; they must not treat them as a ledger or parse readback prose.
+- Save/schema impact is none.
+
 ## Next Thickening Priority
 
 After v38-v60 made office/yamen and Family owner-lane readback visible, and v61-v68 added the first bounded FamilyCore relief choice, deepen rule density in this order unless an explicit ExecPlan says otherwise:

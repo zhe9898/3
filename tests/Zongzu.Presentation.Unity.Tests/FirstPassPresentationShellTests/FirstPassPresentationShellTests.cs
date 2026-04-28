@@ -23,6 +23,20 @@ public sealed partial class FirstPassPresentationShellTests
     }
 
     [Test]
+    public void Compose_CopiesMobilityAndFidelityReadbacksIntoGreatHallDeskAndLineage()
+    {
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(CreateBundle());
+
+        Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("Near detail"));
+        Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("PopulationAndHouseholds owns movement"));
+        Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
+        Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("Pool readback"));
+        Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("not every regional traveler"));
+        Assert.That(shell.Lineage.PersonDossiers[0].MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
+        Assert.That(shell.Lineage.PersonDossiers[0].FidelityRingReadbackSummary, Does.Contain("PersonRegistry"));
+    }
+
+    [Test]
     public void Compose_ProjectsGreatHallCountsDateHashAndCoreSummaries()
     {
         PresentationReadModelBundle bundle = CreateBundle();
@@ -153,6 +167,8 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(dossier.BranchPositionLabel, Is.EqualTo("Main-line heir"));
         Assert.That(dossier.MemoryPressureSummary, Does.Contain("pressure 38"));
         Assert.That(dossier.LivelihoodSummary, Does.Contain("PettyTrader"));
+        Assert.That(dossier.MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
+        Assert.That(dossier.FidelityRingReadbackSummary, Does.Contain("PersonRegistry"));
         Assert.That(dossier.EducationSummary, Does.Contain("local exam passed"));
         Assert.That(dossier.OfficeSummary, Does.Contain("appointed"));
         Assert.That(dossier.SocialPositionLabel, Does.Contain("local-exam passer"));

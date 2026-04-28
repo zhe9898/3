@@ -137,3 +137,59 @@ public sealed record PlayerInfluenceFootprintSnapshot
 
     public IReadOnlyList<InfluenceReachSnapshot> Reaches { get; init; } = [];
 }
+
+public sealed record FidelityScaleSnapshot
+{
+    public int CorePersonCount { get; init; }
+
+    public int LocalPersonCount { get; init; }
+
+    public int RegionalPersonCount { get; init; }
+
+    public int NamedPersonCount { get; init; }
+
+    public string Summary { get; init; } = string.Empty;
+
+    public string FocusBudgetSummary { get; init; } = string.Empty;
+
+    public IReadOnlyList<string> SourceModuleKeys { get; init; } = [];
+}
+
+public sealed record SettlementMobilitySnapshot
+{
+    public SettlementId SettlementId { get; init; }
+
+    public string SettlementName { get; init; } = string.Empty;
+
+    public int AvailableLabor { get; init; }
+
+    public int LaborDemand { get; init; }
+
+    public int SeasonalSurplus { get; init; }
+
+    public int WageLevel { get; init; }
+
+    public int EligibleMales { get; init; }
+
+    public int EligibleFemales { get; init; }
+
+    public int MatchDifficulty { get; init; }
+
+    public int OutflowPressure { get; init; }
+
+    public int InflowPressure { get; init; }
+
+    public int FloatingPopulation { get; init; }
+
+    public int NamedLocalPersons { get; init; }
+
+    public int NamedMigratingPersons { get; init; }
+
+    public string PoolThicknessSummary { get; init; } = string.Empty;
+
+    public string MovementReadbackSummary { get; init; } = string.Empty;
+
+    public string FocusReadbackSummary { get; init; } = string.Empty;
+
+    public IReadOnlyList<string> SourceModuleKeys { get; init; } = [];
+}

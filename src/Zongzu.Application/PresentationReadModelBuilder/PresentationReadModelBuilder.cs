@@ -101,6 +101,8 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         bundle.HouseholdSocialPressures = BuildHouseholdSocialPressures(bundle);
+        bundle.FidelityScale = BuildFidelityScale(bundle);
+        bundle.SettlementMobilities = BuildSettlementMobilities(simulation.FeatureManifest, queries, bundle);
         bundle.PlayerCommands = BuildPlayerCommandSurface(bundle);
         bundle.GovernanceSettlements = BuildGovernanceSettlements(bundle);
         bundle.GovernanceFocus = BuildGovernanceFocus(bundle.GovernanceSettlements);

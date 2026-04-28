@@ -452,3 +452,10 @@ Zongzu should not ask whether a place is `village play` or `prefectural play` fi
 It should ask:
 
 **who is under pressure, who is near the player, who must be readable now, and how thick the surrounding social pool should feel.**
+
+## V213-V244 First Implementation
+
+- `PopulationAndHouseholds` now owns the first rule-density layer for social mobility: monthly household pressure can drift livelihood, synchronize membership activity, and rebuild labor, marriage, and migration pools from existing state.
+- `PersonRegistry` remains identity-only. It may execute `ChangeFidelityRing` against the existing `FidelityRing` field when a hot household needs local readback, but it does not gain household, livelihood, relation, office, memory, or capability state.
+- Player-facing readback follows the intended scale rule: nearby/high-pressure people can become named local detail, while regional people remain pooled through `SettlementMobilitySnapshot` rather than being simulated one by one.
+- Save/schema impact remains none: this pass reuses `PopulationAndHouseholds` schema `3` and `PersonRegistry` schema `1`.

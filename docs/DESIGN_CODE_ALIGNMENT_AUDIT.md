@@ -286,3 +286,9 @@
 - 长跑健康检查中的压力饱和、事件 observability 分类、未消费/未来契约事件归类，仍是诊断与平衡债务，不是当前架构失败。
 - pressure-chain 事件完整性需要继续按 `MODULE_INTEGRATION_RULES.md` 分类：projection-only receipt、future contract、dormant source、alignment bug。
 - `docs/exec-plans/active/` 仍包含许多历史活动计划。永久契约应落在 authority docs；ExecPlan 只作为执行记录，不应单独当成已完成规范。
+## v213-v244 delta - 2026-04-28
+
+- Social mobility fidelity-ring v213-v244 moves the existing "near detail, far summary" design from anchor-only into a first rule-density loop. `PopulationAndHouseholds` now owns livelihood drift, membership activity synchronization, and labor/marriage/migration pool rebuilds over existing schema `3` fields.
+- `PersonRegistry` remains identity-only: the new command surface changes only the existing `FidelityRing` and emits structured metadata. It is not a person manager, household table, career table, or social-state authority.
+- Application read models expose `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, and person dossier movement/fidelity readbacks; Unity-facing adapters and mirrored shell ViewModels copy those fields only.
+- v213-v244 adds no persisted state, schema bump, migration, social-mobility ledger, movement ledger, focus ledger, manager/controller layer, Application rule layer, UI authority, Unity authority, or `PersonRegistry` domain expansion.

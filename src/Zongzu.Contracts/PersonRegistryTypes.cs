@@ -132,6 +132,12 @@ public interface IPersonRegistryCommands
     /// in the registry.
     /// </summary>
     bool MarkDeceased(ModuleExecutionContext context, PersonId id);
+
+    bool ChangeFidelityRing(
+        ModuleExecutionContext context,
+        PersonId id,
+        FidelityRing targetRing,
+        string reason);
 }
 
 public static class PersonRegistryEventNames

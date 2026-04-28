@@ -371,3 +371,9 @@ Design principle:
 - **material life affects dignity and survival**, not set dressing
 - **lineage force is socially embedded coercion**, not a generic army
 - **imperial pressure is bargained and buffered**, not a direct command line
+
+## V213-V244 First Social-Mobility Layer
+
+- Social position now has a first executable drift layer in `PopulationAndHouseholds`: severe household pressure can push tenant or smallholder households toward seasonal migration, hired labor, or vagrancy, while recovery can move hired labor back toward smallholding when land, grain, labor, and settlement conditions support it.
+- Person movement is still bounded by fidelity budget. A few hot household members can be pulled into `Local` readback through `PersonRegistry.ChangeFidelityRing`, but regional society remains represented through labor, marriage, and migration pools.
+- This is not a full social-class engine, faction AI, or per-person world simulation. It is the first readable loop for "near detail, far summary" over existing population and registry fields.

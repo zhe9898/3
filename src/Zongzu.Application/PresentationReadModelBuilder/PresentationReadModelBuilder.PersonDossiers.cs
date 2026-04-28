@@ -153,6 +153,8 @@ public sealed partial class PresentationReadModelBuilder
                     LivelihoodSummary = BuildLivelihoodSummary(membership, household),
                     HealthSummary = BuildHealthSummary(membership),
                     ActivitySummary = BuildActivitySummary(membership, household),
+                    MovementReadbackSummary = BuildPersonMovementReadbackSummary(membership, household),
+                    FidelityRingReadbackSummary = BuildPersonFidelityRingReadbackSummary(person, membership, household),
                     EducationSummary = BuildEducationSummary(education),
                     TradeSummary = BuildTradeSummary(trade),
                     OfficeSummary = BuildOfficeSummary(office),
@@ -305,6 +307,49 @@ public sealed partial class PresentationReadModelBuilder
             ? string.Empty
             : $"labor {household.LaborCapacity}; dependents {household.DependentCount}";
         return string.Join("; ", DistinctNonEmpty($"activity {membership.Activity}", capacity));
+    }
+
+    private static string BuildPersonMovementReadbackSummary(
+        HouseholdMembershipSnapshot? membership,
+        HouseholdPressureSnapshot? household)
+    {
+        if (membership is null || household is null)
+        {
+            return "No population movement readback.";
+        }
+
+        if (membership.Activity == PersonActivity.Migrating || household.IsMigrating)
+        {
+            return $"{household.HouseholdName}迁徙风险{household.MigrationRisk}，此人作为近处人物读迁徙活动；远处同类仍由流徙池承接。";
+        }
+
+        return $"{household.HouseholdName}当前活动{membership.Activity}，生计{membership.Livelihood}；这是人口模块读回，不是UI推导。";
+    }
+
+    private static string BuildPersonFidelityRingReadbackSummary(
+        PersonRecord person,
+        HouseholdMembershipSnapshot? membership,
+        HouseholdPressureSnapshot? household)
+    {
+        string ringText = person.FidelityRing switch
+        {
+            FidelityRing.Core => "核心近处",
+            FidelityRing.Local => "地方近处",
+            FidelityRing.Regional => "远处汇总",
+            _ => "未明精度",
+        };
+
+        if (household is not null && (household.IsMigrating || household.MigrationRisk >= 80))
+        {
+            return $"{ringText}：迁徙压力可把少量人物拉进近处读回，但不把天下逐人硬算。";
+        }
+
+        if (membership is null)
+        {
+            return $"{ringText}：当前只有身份登记，未接家户活动。";
+        }
+
+        return $"{ringText}：人物精度来自PersonRegistry，家户活动来自PopulationAndHouseholds。";
     }
 
     private static string BuildEducationSummary(EducationCandidateSnapshot? education)

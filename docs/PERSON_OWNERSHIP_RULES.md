@@ -418,3 +418,10 @@ career, clan memory, and dormant social-memory stubs through queries only.
 This does not create a person master table. Each source fact remains owned by
 its module, and the dossier is rebuilt as a runtime-only read model for the
 lineage surface / person inspector.
+
+## V213-V244 Fidelity-Ring Command Boundary
+
+- `IPersonRegistryCommands.ChangeFidelityRing` changes only the existing identity/fidelity-ring field and emits a structured receipt. It is not a relationship, household, career, movement, memory, or social-status write.
+- `PopulationAndHouseholds` may request a `Regional -> Local` focus change when an already-modeled household reaches hot migration, livelihood, or labor pressure; the household livelihood and membership activity facts still remain population-owned.
+- `PersonDossiers` may show `MovementReadbackSummary` and `FidelityRingReadbackSummary`, but these are runtime projections. Future readers must not parse this prose as authority.
+- No `PersonRegistry` state expansion or schema change is part of v213-v244.

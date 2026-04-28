@@ -31,6 +31,7 @@ internal static class DeskSandboxShellAdapter
 					CampaignMobilizationSignalSnapshot? mobilizationSignal = context.GetMobilizationSignal(settlement.Id);
 					ClanTradeRouteSnapshot[] clanTradeRoutes = context.GetClanTradeRoutes(settlement.Id);
 					HouseholdSocialPressureSnapshot[] householdPressures = context.GetHouseholdPressures(settlement.Id);
+					SettlementMobilitySnapshot? mobility = context.GetMobility(settlement.Id);
 					HallDocketShellAdapter.SettlementHallAgendaProjection hallAgenda = HallDocketShellAdapter.BuildSettlementHallAgenda(bundle.HallDocket, settlement.Id);
 
 					SettlementNodeViewModel settlementNode = new()
@@ -45,6 +46,7 @@ internal static class DeskSandboxShellAdapter
 						CampaignSummary = WarfareCampaignShellAdapter.BuildSettlementCampaignSummary(campaign, mobilizationSignal, settlement, clanTradeRoutes),
 						AftermathSummary = WarfareAftermathShellAdapter.BuildSettlementAftermathSummary(settlement, populationSettlement, jurisdiction, campaign, aftermathDocket, notifications),
 						PressureSummary = BuildSettlementHouseholdPressureSummary(populationSettlement, householdPressures),
+						MobilitySummary = BuildSettlementMobilitySummary(mobility),
 						HallAgendaSummary = hallAgenda.Summary,
 						HallAgendaItems = hallAgenda.Items,
 						HallAgendaCount = hallAgenda.Count,
@@ -117,5 +119,15 @@ internal static class DeskSandboxShellAdapter
 		return string.IsNullOrWhiteSpace(householdSummary)
 			? populationSummary
 			: $"{populationSummary} {householdSummary}";
+	}
+
+	private static string BuildSettlementMobilitySummary(SettlementMobilitySnapshot? mobility)
+	{
+		if (mobility is null)
+		{
+			return "人员流动暂未投出。";
+		}
+
+		return $"{mobility.PoolThicknessSummary} {mobility.FocusReadbackSummary}";
 	}
 }

@@ -202,6 +202,9 @@ public static class DomainEventMetadataKeys
     public const string DefectionAuthorityBuffer = "defectionAuthorityBuffer";
     public const string AuthorityTier = "authorityTier";
     public const string PersonId = "personId";
+    public const string FidelityRingBefore = "fidelityRingBefore";
+    public const string FidelityRingAfter = "fidelityRingAfter";
+    public const string FidelityRingReason = "fidelityRingReason";
     public const string ClanId = "clanId";
     public const string EmotionalAxis = "emotionalAxis";
     public const string SocialPressureScore = "socialPressureScore";

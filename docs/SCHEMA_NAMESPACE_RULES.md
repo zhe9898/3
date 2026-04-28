@@ -90,6 +90,7 @@ Example:
 - court-policy receipt-docket consistency guard v181-v188 adds no persisted fields; it projects existing SocialMemory cause outcome data and PublicLife scalars onto governance/docket no-loop guard readbacks only
 - court-policy public-life receipt echo v189-v196 adds no persisted fields; it projects existing SocialMemory cause outcome data and PublicLife scalars onto public-life command readbacks only
 - court-policy first rule-density closeout audit v197-v204 adds no persisted fields; it is documentation/test governance over the v109-v196 first-layer branch and does not create court process state, appointment slate, dispatch arrival, downstream household/market/public consequence state, or any ledger
+- social mobility fidelity ring v213-v244 adds no persisted fields; it activates existing `PopulationAndHouseholds` schema `3` household, membership, labor-pool, marriage-pool, and migration-pool carriers plus existing `PersonRegistry` schema `1` `FidelityRing`. No root/module schema version changes, migration, save manifest change, social-mobility ledger, movement ledger, focus ledger, projection cache, manager/controller layer, or `PersonRegistry` domain expansion is introduced.
 
 ## Versioning rules
 - root save uses one root version integer
@@ -194,6 +195,8 @@ Example:
 - court-policy public-life receipt echo v189-v196 adds no persisted fields: `公议回执回声防误读`, `街面只读已投影的政策公议后手`, and `公议不把回执读成新政令` are runtime public-life command projection strings over existing `OfficeAndCareer` schema `7`, `PublicLifeAndRumor` schema `4`, `WorldSettlements` schema `8`, and `SocialMemoryAndRelations` schema `3` contracts. No root/module schema version change, migration, save roundtrip change, Court module, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, memory-pressure ledger, public-reading ledger, public-follow-up ledger, docket ledger, receipt ledger, receipt-docket ledger, public-life receipt echo ledger, household target field, projection cache, or save manifest update is required.
 
 ## Post-MVP preflight namespace policy
+- social mobility fidelity ring v213-v244 remains schema-neutral: `FidelityScaleSnapshot`, `SettlementMobilitySnapshot`, person dossier movement/fidelity readbacks, runtime observability counts, and Unity shell mobility strings are runtime projections or diagnostics only. `PopulationAndHouseholds` remains schema `3`; `PersonRegistry` remains schema `1`; `SocialMemoryAndRelations` remains later durable-residue only. No migration is required.
+
 - black-route depth must not create a standalone `BlackRoute` namespace; current save data for that slice already stays inside `OrderAndBanditry` and `TradeAndIndustry`
 - any future black-route migration steps must therefore preserve the same module-key set unless an explicit module-addition migration introduces `WarfareCampaign` or another documented pack
 

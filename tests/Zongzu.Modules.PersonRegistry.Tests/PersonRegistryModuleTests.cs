@@ -145,6 +145,44 @@ public sealed class PersonRegistryModuleTests
         Assert.That(found.FidelityRing, Is.EqualTo(FidelityRing.Core));
     }
 
+    [Test]
+    public void Commands_ChangeFidelityRing_EmitsIdentityOnlyReceipt()
+    {
+        PersonRegistryModule module = new();
+        PersonRegistryState state = module.CreateInitialState();
+        state.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(9),
+            DisplayName = "李行",
+            BirthDate = new GameDate(1180, 1),
+            Gender = PersonGender.Male,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Regional,
+        });
+
+        DomainEventBuffer buffer = new();
+        ModuleExecutionContext context = NewContext(new GameDate(1200, 4), buffer);
+        QueryRegistry registry = new();
+        module.RegisterQueries(state, registry);
+        IPersonRegistryCommands commands = registry.GetRequired<IPersonRegistryCommands>();
+
+        bool changed = commands.ChangeFidelityRing(
+            context,
+            new PersonId(9),
+            FidelityRing.Local,
+            "迁徙压力触发近处读回");
+
+        Assert.That(changed, Is.True);
+        Assert.That(state.Persons.Single().FidelityRing, Is.EqualTo(FidelityRing.Local));
+        IDomainEvent domainEvent = buffer.Events.Single();
+        Assert.That(domainEvent.ModuleKey, Is.EqualTo(KnownModuleKeys.PersonRegistry));
+        Assert.That(domainEvent.EventType, Is.EqualTo(PersonRegistryEventNames.FidelityRingChanged));
+        Assert.That(domainEvent.EntityKey, Is.EqualTo("9"));
+        Assert.That(domainEvent.Metadata[DomainEventMetadataKeys.FidelityRingBefore], Is.EqualTo(FidelityRing.Regional.ToString()));
+        Assert.That(domainEvent.Metadata[DomainEventMetadataKeys.FidelityRingAfter], Is.EqualTo(FidelityRing.Local.ToString()));
+    }
+
     private static ModuleExecutionContext NewContext(GameDate date, DomainEventBuffer? buffer = null)
     {
         KernelState kernelState = KernelState.Create(42L);
