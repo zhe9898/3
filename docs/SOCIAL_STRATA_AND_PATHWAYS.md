@@ -442,3 +442,9 @@ Design principle:
 - The explanation can name debt/subsistence, labor, mobility, family, office, market, public-life, or order pressure dimensions when those signals are already present.
 - This does not add a class ladder, commoner status route, zhuhu/kehu conversion, office-service lane, trade attachment lane, durable residue, selector, or global per-person simulation.
 - `PopulationAndHouseholds` remains the owner of household dynamics; `PersonRegistry` remains identity / `FidelityRing` only; distant society remains pooled summary until a later owner-lane plan changes state or fidelity.
+
+### Current household dynamics closeout: v461-v468
+
+- The v453-v460 explanation layer is closed only as first-layer readback evidence.
+- It does not add migration economy, route history, class/status drift, zhuhu/kehu conversion, office-service lane, trade attachment lane, durable residue, selector, direct movement command, or all-world per-person simulation.
+- Future commoner status or household movement depth still starts with an owner-lane plan, target scope, hot path, deterministic cap/order, cadence, schema impact, projection fields, and validation.

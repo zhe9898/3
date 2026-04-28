@@ -5143,6 +5143,109 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Household_mobility_dynamics_closeout_v461_v468_must_not_become_movement_or_status_authority()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-29_household-mobility-closeout-v461-v468.md"));
+        string builderSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.LivingSociety.cs"));
+        string deskAdapter = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Presentation.Unity",
+            "Adapters",
+            "DeskSandbox",
+            "DeskSandboxShellAdapter.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V461-V468 Household Mobility Dynamics Closeout"));
+        Assert.That(socialStrata, Does.Contain("Current household dynamics closeout: v461-v468"));
+        Assert.That(designAudit, Does.Contain("v461-v468 household mobility dynamics closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Household mobility dynamics closeout v461-v468 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Household mobility dynamics closeout v461-v468 integration note"));
+        Assert.That(simulation, Does.Contain("Current household mobility dynamics closeout v461-v468 note"));
+        Assert.That(uiPresentation, Does.Contain("v461-v468 household mobility dynamics closeout"));
+        Assert.That(acceptance, Does.Contain("Household mobility dynamics closeout v461-v468 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V461-V468 Household Mobility Dynamics Closeout"));
+        Assert.That(skillMatrix, Does.Contain("Household Mobility Closeout Through V468"));
+        Assert.That(schemaRules, Does.Contain("household mobility dynamics closeout v461-v468 remains docs/tests only"));
+        Assert.That(dataSchema, Does.Contain("Current household mobility dynamics closeout v461-v468 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+        Assert.That(execPlan, Does.Contain("No direct move"));
+        Assert.That(execPlan, Does.Contain("No `PersonRegistry` expansion"));
+        Assert.That(execPlan, Does.Contain("No parsing of `DomainEvent.Summary`"));
+
+        Assert.That(builderSource, Does.Contain("BuildHouseholdMobilityDynamicsDimensionKeys"));
+        Assert.That(builderSource, Does.Contain("BuildHouseholdMobilityDynamicsExplanationSummary"));
+        Assert.That(builderSource, Does.Not.Contain("MobilityDynamicsExplanationSummary.Split"));
+        Assert.That(builderSource, Does.Not.Contain("HouseholdMobilityDynamicsSummary.Split"));
+        Assert.That(builderSource, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(deskAdapter, Does.Contain("HouseholdMobilityDynamicsSummary = BuildSettlementHouseholdMobilityDynamicsSummary"));
+        Assert.That(deskAdapter, Does.Not.Contain("MobilityDynamicsDimensionKeys"));
+        Assert.That(personRegistrySource, Does.Not.Contain("MobilityDynamicsExplanationSummary"));
+        Assert.That(personRegistrySource, Does.Not.Contain("HouseholdMobilityDynamics"));
+        Assert.That(personRegistrySource, Does.Not.Contain("CommonerStatus"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialClass"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMobilityDynamicsCloseoutLedger",
+                     "HouseholdMobilityDynamicsLedger",
+                     "HouseholdMobilityLedger",
+                     "HouseholdMovementLedger",
+                     "MovementRouteHistory",
+                     "HouseholdRouteHistoryLedger",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "DirectHouseholdMovementResolver",
+                     "MobilitySelectorWatermark",
+                     "HouseholdMovementEngine",
+                     "HouseholdMobilityEngine",
+                     "MigrationEconomyEngine",
+                     "RouteHistoryModel",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "GlobalPersonScanner",
+                     "RegionalPersonSelector",
+                     "WorldPopulationManager",
+                     "ParseMobilityDynamicsExplanation",
+                     ".MobilityDynamicsExplanationSummary.Split",
+                     "DomainEvent.Summary.Split",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

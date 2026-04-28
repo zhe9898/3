@@ -779,3 +779,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The explanation may be displayed by Desk Sandbox as projected context for a settlement's local household pressure, but no reader may parse it, sibling mobility text, social-position prose, receipts, notification text, public-life lines, docs text, or `DomainEvent.Summary`.
 - Future commoner status or migration depth still requires a separate owner-lane plan with state, cadence, target scope, hot path, touched counts, deterministic cap/order, schema impact, projection fields, and validation.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/commoner-status/class/selector ledger, projection cache, or save-manifest change.
+
+## Household mobility dynamics closeout v461-v468 integration note
+
+- V461-V468 is integration governance over the v453-v460 explanation fields. It adds no new Query, Command, DomainEvent, handler, scheduler pass, resolver, or selector.
+- The closed layer may be read as first-layer explanation evidence only: household-pressure signals -> bounded dimension keys -> read-model summary -> Desk Sandbox copy.
+- No module may consume `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, mobility prose, social-position prose, receipt text, notification text, docs text, or `DomainEvent.Summary` as movement permission, status authority, fidelity mutation, route history, target selection, or durable residue.
+- Future household movement/status depth still requires a separate owner-lane plan with state, cadence, target scope, hot path, touched counts, deterministic cap/order, schema impact, projection fields, and validation.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/movement/route-history/status/class/selector/closeout ledger, projection cache, or save-manifest change.

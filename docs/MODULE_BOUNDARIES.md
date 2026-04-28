@@ -1264,3 +1264,11 @@ Current lite note:
 - `Application` may assemble the explanation from structured snapshots. It must not parse summaries, receipts, notification prose, mobility text, social-position text, docs text, or `DomainEvent.Summary`.
 - `Zongzu.Presentation.Unity` and the Unity shell may copy the projected explanation to Desk Sandbox only. They must not infer class/status movement, choose people, raise fidelity, or scan regional society.
 - V453-V460 adds no persisted state, schema bump, migration, mobility/class/status ledger, selector, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Household mobility dynamics closeout v461-v468 boundary note
+
+- V461-V468 adds no new production boundary. It closes v453-v460 as first-layer household mobility explanation evidence only.
+- Later migration, commoner status, route-history, office-service, trade-attachment, durable residue, or direct movement depth must not reuse this closeout as authority to move, assign, convert, select, or promote people.
+- `PopulationAndHouseholds` remains the owner of household livelihood, labor, debt, grain, land, migration, and pool carriers. `PersonRegistry` remains identity / `FidelityRing` only.
+- Application, UI, and Unity may keep showing projected explanation fields, but they must not parse those fields, calculate movement eligibility, create hidden target selection, or scan distant people.
+- V461-V468 adds no persisted state, schema bump, migration, household-mobility/movement/route-history/status/class/selector/closeout ledger, command route, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
