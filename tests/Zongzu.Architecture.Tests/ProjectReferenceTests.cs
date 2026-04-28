@@ -573,7 +573,16 @@ public class ProjectReferenceTests
         Assert.That(unitySource, Does.Not.Contain("PolicyImplementationOutcome"));
         Assert.That(personRegistrySource, Does.Not.Contain("PolicyImplementation"));
         Assert.That(personRegistrySource, Does.Not.Contain("CourtAgenda"));
-        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Court*", SearchOption.TopDirectoryOnly), Is.Empty);
+        string[] forbiddenCourtModuleDirectories = Directory
+            .GetDirectories(SrcDir, "Zongzu.Modules.*", SearchOption.TopDirectoryOnly)
+            .Where(static directory =>
+            {
+                string moduleName = Path.GetFileName(directory);
+                return moduleName.Contains("Court", StringComparison.OrdinalIgnoreCase)
+                    || moduleName.Contains("法院", StringComparison.Ordinal);
+            })
+            .ToArray();
+        Assert.That(forbiddenCourtModuleDirectories, Is.Empty);
 
         foreach (string forbidden in new[]
                  {
