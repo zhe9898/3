@@ -485,3 +485,10 @@
 - Boundary alignment: the explanation reads `PopulationAndHouseholds` household carriers and settlement pool snapshots only; `PersonRegistry` remains identity / `FidelityRing` only.
 - Unity alignment: Desk Sandbox receives `HouseholdMobilityDynamicsSummary` from the projected snapshot and does not calculate household movement, status, class, fidelity, or target selection.
 - v453-v460 adds no persisted state, schema, migration, ledger, selector, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v461-v468 household mobility dynamics closeout audit - 2026-04-29
+
+- v461-v468 closes v453-v460 as a first readback/explanation layer only: runtime household-pressure explanation, deterministic dimension-key cap, Desk Sandbox copy-only display, docs evidence, and architecture guard coverage.
+- The closeout deliberately does not claim a full migration economy, class/status engine, zhuhu/kehu conversion, route-history model, direct movement command, selector, durable movement residue, or whole-world per-person simulation.
+- Ownership remains unchanged: `PopulationAndHouseholds` owns household dynamics; `PersonRegistry` owns identity / `FidelityRing` only; Application assembles read models; UI/Unity copy projected fields only.
+- v461-v468 adds no production rule, persisted state, schema, migration, ledger, module, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

@@ -615,3 +615,10 @@ It should ask:
 - Existing household pressure signals can now explain which dimensions shape a local household's mobility posture, but they do not raise fidelity or select new people.
 - The explanation preserves the current scale rule: close/local household pressure may be readable in detail; distant society still remains pooled by settlement and pressure carriers.
 - Future work that changes status, promotes more people into detail, stores route history, or writes durable residue still needs owner pressure, deterministic selection, cap/order, cadence, schema impact, projection readback, and validation.
+
+## V461-V468 Household Mobility Dynamics Closeout
+
+- V461-V468 closes v453-v460 as a first household mobility explanation layer only.
+- The closeout preserves the scale rule: near/local household pressure may be readable through structured dimensions, while distant society remains pooled summary until an owner-lane plan promotes more detail.
+- This closeout changes no fidelity rings, adds no selector, adds no route history, and adds no global per-person simulation.
+- Future work that changes status, promotes more people into detail, stores route history, moves households, or writes durable residue still needs owner pressure, deterministic selection, cap/order, cadence, schema impact, projection readback, and validation.
