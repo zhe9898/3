@@ -67,6 +67,7 @@ public class ViewModelJsonRoundTripTests
                         SocialPositionReadbackSummary = "社会位置读回 copied from projection; not promote/demote.",
                         SocialPositionLabel = "Main-line heir, 主簿, local-exam passer",
                         CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
+                        SocialPositionSourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
                         SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
                     },
                     SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
@@ -102,6 +103,7 @@ public class ViewModelJsonRoundTripTests
                         SocialPositionReadbackSummary = "社会位置读回 copied from projection; not promote/demote.",
                         SocialPositionLabel = "Main-line heir, 主簿, local-exam passer",
                         CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
+                        SocialPositionSourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
                         SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
                     },
                 },
@@ -157,6 +159,8 @@ public class ViewModelJsonRoundTripTests
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SocialPositionReadbackSummary, Does.Contain("社会位置读回"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].EducationSummary, Does.Contain("local exam passed"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].OfficeSummary, Does.Contain("appointed"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].SocialPositionSourceModuleKeys, Does.Contain("PopulationAndHouseholds"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].SocialPositionSourceModuleKeys, Does.Contain("OfficeAndCareer"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("SocialMemoryAndRelations"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("OfficeAndCareer"));
         Assert.That(roundTripped.Lineage.FocusedPerson, Is.Not.Null);

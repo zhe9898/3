@@ -62,6 +62,7 @@ internal static class LineageShellAdapter
 			DormantMemorySummary = dossier.DormantMemorySummary,
 			SocialPositionLabel = dossier.SocialPositionLabel,
 			SocialPositionReadbackSummary = dossier.SocialPositionReadbackSummary,
+			SocialPositionSourceModuleKeys = dossier.SocialPositionSourceModuleKeys.ToArray(),
 			CurrentStatusSummary = dossier.CurrentStatusSummary,
 			SourceModuleKeys = dossier.SourceModuleKeys.ToArray()
 		};

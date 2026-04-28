@@ -305,6 +305,12 @@ V389-V396 adds `PersonDossierSnapshot.SocialPositionReadbackSummary` as the firs
 
 The readback makes the existing label legible without becoming authority. It does not implement a class engine, promote/demote people, resolve zhuhu/kehu conversion, add an office-service or trade-attachment route, write durable residue, create a ledger, parse prose, change schema, or expand `PersonRegistry`.
 
+## V397-V404 Social Position Owner-Lane Keys
+
+V397-V404 adds `PersonDossierSnapshot.SocialPositionSourceModuleKeys` as the structured source list for the v389-v396 social-position readback. It is narrower than the whole-dossier `SourceModuleKeys`: it records only the owner snapshots that made the social-position readback legible, plus `PersonRegistry` as identity / `FidelityRing` anchor.
+
+The list exists so future UI, tests, and projection readers do not parse `SocialPositionLabel`, `SocialPositionReadbackSummary`, notification prose, receipt prose, or docs text. It adds no class engine, new module, promote/demote path, zhuhu/kehu conversion, ledger, persisted state, schema bump, migration, UI authority, Unity authority, or `PersonRegistry` expansion.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

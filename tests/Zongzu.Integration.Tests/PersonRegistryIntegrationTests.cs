@@ -137,6 +137,17 @@ public sealed class PersonRegistryIntegrationTests
         Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("不是升降阶级或zhuhu/kehu转换"));
         Assert.That(dossier.CurrentStatusSummary, Does.Contain("household"));
         Assert.That(dossier.CurrentStatusSummary, Does.Contain("office County clerk"));
+        Assert.That(
+            dossier.SocialPositionSourceModuleKeys,
+            Is.EqualTo(new[]
+            {
+                KnownModuleKeys.PersonRegistry,
+                KnownModuleKeys.FamilyCore,
+                KnownModuleKeys.PopulationAndHouseholds,
+                KnownModuleKeys.EducationAndExams,
+                KnownModuleKeys.TradeAndIndustry,
+                KnownModuleKeys.OfficeAndCareer,
+            }));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PopulationAndHouseholds));
@@ -182,6 +193,7 @@ public sealed class PersonRegistryIntegrationTests
         Assert.That(dossier.SocialPositionLabel, Is.EqualTo("Registry-only person."));
         Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("当前只有PersonRegistry身份/FidelityRing"));
         Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("不是升降阶级或zhuhu/kehu转换"));
+        Assert.That(dossier.SocialPositionSourceModuleKeys, Is.EqualTo(new[] { KnownModuleKeys.PersonRegistry }));
         Assert.That(dossier.SourceModuleKeys, Is.EqualTo(new[] { KnownModuleKeys.PersonRegistry }));
     }
 

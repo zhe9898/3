@@ -171,6 +171,15 @@ public sealed partial class PresentationReadModelBuilder
                         narrative,
                         memories,
                         dormantStub),
+                    SocialPositionSourceModuleKeys = BuildSocialPositionSourceModuleKeys(
+                        familyPerson,
+                        membership,
+                        education,
+                        trade,
+                        office,
+                        narrative,
+                        memories,
+                        dormantStub),
                     CurrentStatusSummary = BuildCurrentStatusSummary(
                         person,
                         clan,
@@ -571,6 +580,50 @@ public sealed partial class PresentationReadModelBuilder
                 officeText,
                 memoryText,
                 dormantText)) + ".";
+    }
+
+    private static IReadOnlyList<string> BuildSocialPositionSourceModuleKeys(
+        FamilyPersonSnapshot? familyPerson,
+        HouseholdMembershipSnapshot? membership,
+        EducationCandidateSnapshot? education,
+        ClanTradeSnapshot? trade,
+        OfficeCareerSnapshot? office,
+        ClanNarrativeSnapshot? narrative,
+        IReadOnlyList<SocialMemoryEntrySnapshot> memories,
+        DormantStubSnapshot? dormantStub)
+    {
+        List<string> keys = [KnownModuleKeys.PersonRegistry];
+        if (familyPerson is not null)
+        {
+            keys.Add(KnownModuleKeys.FamilyCore);
+        }
+
+        if (membership is not null)
+        {
+            keys.Add(KnownModuleKeys.PopulationAndHouseholds);
+        }
+
+        if (education is not null)
+        {
+            keys.Add(KnownModuleKeys.EducationAndExams);
+        }
+
+        if (trade is not null)
+        {
+            keys.Add(KnownModuleKeys.TradeAndIndustry);
+        }
+
+        if (office is not null)
+        {
+            keys.Add(KnownModuleKeys.OfficeAndCareer);
+        }
+
+        if (narrative is not null || memories.Count > 0 || dormantStub is not null)
+        {
+            keys.Add(KnownModuleKeys.SocialMemoryAndRelations);
+        }
+
+        return keys.Distinct(StringComparer.Ordinal).ToArray();
     }
 
     private static IReadOnlyList<string> BuildPersonDossierSourceKeys(

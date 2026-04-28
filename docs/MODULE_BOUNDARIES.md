@@ -1206,3 +1206,10 @@ Current lite note:
 - `Application` remains projection/assembly only. `Zongzu.Presentation.Unity` remains copy-only. `PersonRegistry` remains identity/FidelityRing only.
 - Later Family/Office/Warfare personnel-flow depth must not reuse this closeout as authority to move, assign, summon, dispatch, or allocate people.
 - V373-V380 adds no persisted state, schema bump, migration, direct personnel command, movement resolver, future-lane-closeout ledger, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Social position owner-lane keys v397-v404 boundary note
+- `PersonRegistry` remains identity / `FidelityRing` only; `SocialPositionSourceModuleKeys` does not give it household, class, office, movement, or memory authority.
+- `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` remain the owners of the structured snapshots that may support the social-position readback.
+- `Application` may assemble the runtime source-key list from already-loaded snapshots. It must not parse social-position prose, rank people, promote/demote people, resolve zhuhu/kehu conversion, or create a second class-rule layer.
+- `Zongzu.Presentation.Unity` and the Unity shell mirror copy the projected list only.
+- V397-V404 adds no persisted state, schema bump, migration, social-position ledger, class engine, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
