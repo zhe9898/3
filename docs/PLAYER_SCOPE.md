@@ -268,6 +268,7 @@ Rules:
 - office, order, and warfare commands may write only their owning module's command receipt / directive / pressure state; any wider consequences must move through normal module cadence, queries, events, or projections
 - the v3 public-life/order leverage readback is explanatory projection only; durable social-memory residue requires `SocialMemoryAndRelations` owner-state work rather than a hidden Application or UI ledger
 - v293-v300 adds no personnel command; it only records the preflight gates for future movement / assignment / return commands
+- v301-v308 adds only `PersonnelFlowReadinessSummary` on existing public-life local response affordances/receipts; it tells the player that this household can be influenced through livelihood, labor, and migration pressure, not directly moved
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

@@ -1279,6 +1279,11 @@ Current personnel command preflight v293-v300 note:
 - The preflight does not authorize direct move/transfer/summon/assign-person state, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, global person simulation manager, dormant-stub store, durable movement residue, or `PersonRegistry` domain expansion.
 - Any future persisted personnel-command receipt, assignment state, durable movement residue, dormant-stub store, migration economy, or cross-region flow cache must open a schema/migration plan before implementation.
 
+Current personnel flow command readiness v301-v308 note:
+- `PersonnelFlowReadinessSummary` is a runtime player-command read-model/ViewModel field only. It is not saved in a module namespace, save envelope, manifest, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, durable residue store, or serialized module payload.
+- `PopulationAndHouseholds` remains schema `3`; `PersonRegistry` remains identity/fidelity only. No root save version, module schema version, migration, or manifest membership changes are required.
+- Any future persisted personnel-flow receipt, movement state, assignment state, durable residue, migration economy, dormant-stub store, or cross-region flow cache must open a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

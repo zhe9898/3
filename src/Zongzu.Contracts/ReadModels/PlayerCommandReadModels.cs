@@ -107,6 +107,8 @@ public sealed record PlayerCommandAffordanceSnapshot
 
     public string ReadbackSummary { get; init; } = string.Empty;
 
+    public string PersonnelFlowReadinessSummary { get; init; } = string.Empty;
+
     public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
 
     public string FamilyElderExplanationReadbackSummary { get; init; } = string.Empty;
@@ -161,6 +163,8 @@ public sealed record PlayerCommandReceiptSnapshot
     public string CostSummary { get; init; } = string.Empty;
 
     public string ReadbackSummary { get; init; } = string.Empty;
+
+    public string PersonnelFlowReadinessSummary { get; init; } = string.Empty;
 
     public string FamilyLaneEntryReadbackSummary { get; init; } = string.Empty;
 

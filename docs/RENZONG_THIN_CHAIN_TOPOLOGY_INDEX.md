@@ -233,6 +233,12 @@ Current seams remain bounded: `PopulationAndHouseholds` owns household livelihoo
 
 The preflight adds no production rule, player command, schema, migration, direct move/transfer/summon/assign-person path, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, manager/controller, `PersonRegistry` domain expansion, Application rule layer, UI/Unity authority, or prose parser.
 
+## V301-V308 Personnel Flow Command Readiness
+
+V301-V308 adds the first projected personnel-flow readiness readback on existing `PopulationAndHouseholds` home-household local response commands. It does not add a new command. It lets the public-life command surface say that `RestrictNightTravel`, `PoolRunnerCompensation`, and `SendHouseholdRoadMessage` can influence only this household's livelihood, labor capacity, distress, and migration pressure.
+
+The owner split remains unchanged: `PopulationAndHouseholds` owns the local household response and migration-pressure state; `PersonRegistry` owns identity and existing `FidelityRing` only; Application assembles `PersonnelFlowReadinessSummary`; UI/Unity copy the projected field. V301-V308 adds no schema, migration, direct move/transfer/summon/assign-person path, command/movement/personnel/assignment/focus/scheduler ledger, global person simulation manager, `PersonRegistry` expansion, or prose parser.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

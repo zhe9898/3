@@ -461,6 +461,14 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(localAffordances.All(static affordance => affordance.SurfaceKey == PlayerCommandSurfaceKeys.PublicLife), Is.True);
         Assert.That(localAffordances.All(affordance => affordance.TargetLabel.Contains(anchorHousehold.HouseholdName, StringComparison.Ordinal)), Is.True);
         Assert.That(localAffordances.All(static affordance => affordance.ExecutionSummary.Contains(KnownModuleKeys.PopulationAndHouseholds, StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("人员流动预备读回", StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("近处细读", StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("远处汇总", StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("不是直接调人、迁人、召人命令", StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("PopulationAndHouseholds拥有本户回应", StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("PersonRegistry只保身份/FidelityRing", StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("UI/Unity只复制投影字段", StringComparison.Ordinal)), Is.True);
+        Assert.That(localAffordances.All(static affordance => affordance.ReadbackSummary.Contains(affordance.PersonnelFlowReadinessSummary, StringComparison.Ordinal)), Is.True);
 
         int memoryCountBefore = socialState.Memories.Count;
         int orderRouteBefore = settlement.RoutePressure;
@@ -496,6 +504,9 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
                               && receipt.TargetLabel == anchorHousehold.HouseholdName);
         Assert.That(relievedReceipt.OutcomeSummary, Is.EqualTo("本户已缓"));
         Assert.That(relievedReceipt.CostSummary, Does.Contain("迁徙之念"));
+        Assert.That(relievedReceipt.PersonnelFlowReadinessSummary, Does.Contain("人员流动预备读回"));
+        Assert.That(relievedReceipt.PersonnelFlowReadinessSummary, Does.Contain("不是直接调人、迁人、召人命令"));
+        Assert.That(relievedReceipt.ReadbackSummary, Does.Contain(relievedReceipt.PersonnelFlowReadinessSummary));
         Assert.That(afterRelief.InfluenceFootprint.Reaches
             .Single(reach => reach.ReachKey == InfluenceReachKeys.OwnHousehold)
             .CommandSummary, Does.Contain("低权能回应面"));
@@ -526,6 +537,8 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
                               && receipt.TargetLabel == anchorHousehold.HouseholdName);
         Assert.That(strainedReceipt.OutcomeSummary, Is.EqualTo("本户吃紧"));
         Assert.That(strainedReceipt.ReadbackSummary, Does.Contain("债压"));
+        Assert.That(strainedReceipt.PersonnelFlowReadinessSummary, Does.Contain("赔脚户读法"));
+        Assert.That(strainedReceipt.PersonnelFlowReadinessSummary, Does.Contain("PopulationAndHouseholds拥有本户回应"));
     }
 
     [Test]

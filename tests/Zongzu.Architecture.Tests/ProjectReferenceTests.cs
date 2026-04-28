@@ -3145,6 +3145,183 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Personnel_flow_command_readiness_v301_v308_must_stay_population_projection_only_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string playerScope = File.ReadAllText(Path.Combine(RepoRoot, "docs", "PLAYER_SCOPE.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlanPath = Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "archive",
+            "2026-04-28_personnel-flow-command-readiness-v301-v308.md");
+        if (!File.Exists(execPlanPath))
+        {
+            execPlanPath = Path.Combine(
+                RepoRoot,
+                "docs",
+                "exec-plans",
+                "active",
+                "2026-04-28_personnel-flow-command-readiness-v301-v308.md");
+        }
+        string execPlan = File.ReadAllText(execPlanPath);
+        string readModelContracts = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "PlayerCommandReadModels.cs"));
+        string localResponseProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.HomeHouseholdLocalResponse.cs"));
+        string commandMetadata = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PlayerCommands.Metadata.cs"));
+        string playerCommandNames = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "PlayerCommandReadModels.cs"));
+        string playerCommandCatalog = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PlayerCommandService",
+            "PlayerCommandCatalog.cs"));
+        string playerCommandService = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PlayerCommandService",
+            "PlayerCommandService.cs"));
+        string personRegistryCommands = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PersonRegistry",
+            "PersonRegistryCommands.cs"));
+        string unitySource = string.Join(Environment.NewLine, new[]
+        {
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity", "Adapters", "Shared", "CommandShellAdapter.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Shared", "CommandAffordanceViewModel.cs"),
+            Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels", "Shared", "CommandReceiptViewModel.cs"),
+        }.Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V301-V308 Personnel Flow Command Readiness"));
+        Assert.That(playerScope, Does.Contain("v301-v308 adds only `PersonnelFlowReadinessSummary`"));
+        Assert.That(designAudit, Does.Contain("v301-v308 personnel flow command readiness audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Personnel flow command readiness v301-v308 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Personnel flow command readiness v301-v308 integration note"));
+        Assert.That(simulation, Does.Contain("Current personnel flow command readiness v301-v308 note"));
+        Assert.That(fidelityModel, Does.Contain("V301-V308 Personnel Flow Command Readiness"));
+        Assert.That(uiPresentation, Does.Contain("v301-v308 personnel flow command readiness"));
+        Assert.That(acceptance, Does.Contain("Personnel flow command readiness v301-v308 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V308"));
+        Assert.That(schemaRules, Does.Contain("personnel flow command readiness v301-v308 remains read-model/ViewModel only"));
+        Assert.That(dataSchema, Does.Contain("Current personnel flow command readiness v301-v308 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+
+        Assert.That(readModelContracts, Does.Contain("PersonnelFlowReadinessSummary"));
+        Assert.That(commandMetadata, Does.Contain("PersonnelFlowReadinessSummary ="));
+        Assert.That(localResponseProjection, Does.Contain("BuildHomeHouseholdPersonnelFlowReadinessSummary"));
+        Assert.That(localResponseProjection, Does.Contain("RestrictNightTravel"));
+        Assert.That(localResponseProjection, Does.Contain("PoolRunnerCompensation"));
+        Assert.That(localResponseProjection, Does.Contain("SendHouseholdRoadMessage"));
+
+        int projectionStart = localResponseProjection.IndexOf("private static string BuildHomeHouseholdPersonnelFlowReadinessSummary", StringComparison.Ordinal);
+        int projectionEnd = localResponseProjection.IndexOf("private static HouseholdLocalResponseAffordanceCapacity", projectionStart, StringComparison.Ordinal);
+        Assert.That(projectionStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(projectionEnd, Is.GreaterThan(projectionStart));
+        string readinessMethod = localResponseProjection[projectionStart..projectionEnd];
+
+        foreach (string token in new[]
+                 {
+                     "人员流动预备读回",
+                     "近处细读",
+                     "远处汇总",
+                     "只影响本户生计/丁力/迁徙之念",
+                     "不是直接调人、迁人、召人命令",
+                     "PopulationAndHouseholds拥有本户回应",
+                     "PersonRegistry只保身份/FidelityRing",
+                     "UI/Unity只复制投影字段",
+                 })
+        {
+            Assert.That(readinessMethod, Does.Contain(token), token);
+            Assert.That(execPlan, Does.Contain(token), token);
+        }
+
+        foreach (string forbiddenParser in new[]
+                 {
+                     "DomainEvent.Summary",
+                     "LastLocalResponseSummary",
+                     ".Summary.Contains",
+                     ".ReadbackSummary.Contains",
+                 })
+        {
+            Assert.That(readinessMethod, Does.Not.Contain(forbiddenParser), forbiddenParser);
+        }
+
+        Assert.That(playerCommandCatalog, Does.Contain("KnownModuleKeys.PopulationAndHouseholds"));
+        Assert.That(playerCommandService, Does.Contain("simulation.IssueModuleCommand(route.ModuleKey, command)"));
+        Assert.That(personRegistryCommands, Does.Contain("ChangeFidelityRing"));
+        Assert.That(unitySource, Does.Contain("PersonnelFlowReadinessSummary = command.PersonnelFlowReadinessSummary"));
+        Assert.That(unitySource, Does.Contain("PersonnelFlowReadinessSummary = receipt.PersonnelFlowReadinessSummary"));
+        Assert.That(unitySource, Does.Not.Contain("BuildHomeHouseholdPersonnelFlowReadinessSummary"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "MovePerson",
+                     "TransferPerson",
+                     "SummonPerson",
+                     "AssignPerson",
+                     "RelocatePerson",
+                     "DirectPersonnelCommand",
+                     "PersonnelCommandResolver",
+                     "PersonCommandLedger",
+                     "PersonnelLedger",
+                     "AssignmentLedger",
+                     "PersonAssignmentLedger",
+                     "MovementLedger",
+                     "PersonMovementLedger",
+                     "v301-v308",
+                 })
+        {
+            Assert.That(playerCommandNames, Does.Not.Contain(forbidden), forbidden);
+            Assert.That(playerCommandCatalog, Does.Not.Contain(forbidden), forbidden);
+            Assert.That(playerCommandService, Does.Not.Contain(forbidden), forbidden);
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        foreach (string forbiddenRegistryDomain in new[]
+                 {
+                     "PlayerCommandRequest",
+                     "HouseholdId",
+                     "SettlementId",
+                     "MigrationRisk",
+                     "Livelihood",
+                     "OfficeCareer",
+                     "Campaign",
+                 })
+        {
+            Assert.That(personRegistryCommands, Does.Not.Contain(forbiddenRegistryDomain), forbiddenRegistryDomain);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PersonnelFlow*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Migration*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

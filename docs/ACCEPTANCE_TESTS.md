@@ -691,3 +691,11 @@ At integration level, verify:
 - Architecture acceptance: guard no production command, no direct move/transfer/summon/assign-person route, no Application/UI/Unity authority, no prose parsing, no command/movement/personnel/assignment/focus/scheduler ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
 - Save/schema acceptance: v293-v300 is docs/tests only and adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, command receipt shape, or serialized module payload change.
 - Focused proof: `Personnel_command_preflight_v293_v300_must_block_direct_personnel_command_drift` plus build, `git diff --check`, and full solution tests close the audit.
+
+## Personnel flow command readiness v301-v308 acceptance - 2026-04-28
+- Projection acceptance: existing `PopulationAndHouseholds` public-life local response affordances and receipts expose `PersonnelFlowReadinessSummary`.
+- Content acceptance: the field includes `人员流动预备读回`, `近处细读`, `远处汇总`, `PopulationAndHouseholds拥有本户回应`, `PersonRegistry只保身份/FidelityRing`, and `UI/Unity只复制投影字段`.
+- Ownership acceptance: `RestrictNightTravel`, `PoolRunnerCompensation`, and `SendHouseholdRoadMessage` still resolve only in `PopulationAndHouseholds`; no direct personnel command or `PersonRegistry` movement state is added.
+- Architecture acceptance: guard no direct move/transfer/summon/assign-person path, no Application/UI/Unity authority, no prose parsing, no command/movement/personnel/assignment/focus/scheduler ledger, no global person simulation manager, no `PersonRegistry` domain expansion, and no schema/migration drift.
+- Unity acceptance: shared command ViewModels copy `PersonnelFlowReadinessSummary` from projected command fields only.
+- Save/schema acceptance: v301-v308 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel ledger, or serialized module payload change.
