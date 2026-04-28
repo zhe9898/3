@@ -689,3 +689,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It closes v381-v404 as preflight/readback/source-key evidence only, not as commoner status drift or a global per-person career simulation.
 - The closeout does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
 - Future status drift still needs one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
+
+## Current social position scale budget v413-v420 note
+
+- V413-V420 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, precision mutation, or persistence change.
+- It projects `SocialPositionScaleBudgetReadbackSummary` on person dossiers from existing `FidelityRing` and structured source keys, so the player can read "near detail, far summary" without assuming all-world per-person class simulation.
+- The readback does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
+- Future status drift still needs one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.

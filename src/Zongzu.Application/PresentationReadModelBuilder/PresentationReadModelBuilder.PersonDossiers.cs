@@ -134,6 +134,15 @@ public sealed partial class PresentationReadModelBuilder
                 DormantStubSnapshot? dormantStub = dormantStubsByPerson.TryGetValue(person.Id, out DormantStubSnapshot? stub)
                     ? stub
                     : null;
+                IReadOnlyList<string> socialPositionSourceKeys = BuildSocialPositionSourceModuleKeys(
+                    familyPerson,
+                    membership,
+                    education,
+                    trade,
+                    office,
+                    narrative,
+                    memories,
+                    dormantStub);
 
                 return new PersonDossierSnapshot
                 {
@@ -171,15 +180,10 @@ public sealed partial class PresentationReadModelBuilder
                         narrative,
                         memories,
                         dormantStub),
-                    SocialPositionSourceModuleKeys = BuildSocialPositionSourceModuleKeys(
-                        familyPerson,
-                        membership,
-                        education,
-                        trade,
-                        office,
-                        narrative,
-                        memories,
-                        dormantStub),
+                    SocialPositionSourceModuleKeys = socialPositionSourceKeys,
+                    SocialPositionScaleBudgetReadbackSummary = BuildSocialPositionScaleBudgetReadbackSummary(
+                        person.FidelityRing,
+                        socialPositionSourceKeys),
                     CurrentStatusSummary = BuildCurrentStatusSummary(
                         person,
                         clan,
@@ -541,6 +545,23 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         return $"社会位置读回：{string.Join("、", lanes)}；PersonRegistry只保身份/FidelityRing；不是升降阶级或zhuhu/kehu转换。";
+    }
+
+    private static string BuildSocialPositionScaleBudgetReadbackSummary(
+        FidelityRing fidelityRing,
+        IReadOnlyList<string> socialPositionSourceModuleKeys)
+    {
+        string detailBand = fidelityRing switch
+        {
+            FidelityRing.Core => "close detail",
+            FidelityRing.Local => "local detail",
+            FidelityRing.Regional => "regional summary",
+            _ => "summary",
+        };
+        string sourceCount = socialPositionSourceModuleKeys.Count == 1
+            ? "registry-only source"
+            : $"{socialPositionSourceModuleKeys.Count} structured owner sources";
+        return $"Social position scale budget: {detailBand}; {sourceCount}; near people can read owner-lane detail, distant society remains pooled summary; no all-world per-person class simulation.";
     }
 
     private static string BuildCurrentStatusSummary(

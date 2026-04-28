@@ -65,6 +65,8 @@ public sealed record PersonDossierSnapshot
 
     public IReadOnlyList<string> SocialPositionSourceModuleKeys { get; init; } = [];
 
+    public string SocialPositionScaleBudgetReadbackSummary { get; init; } = string.Empty;
+
     public string CurrentStatusSummary { get; init; } = string.Empty;
 
     public IReadOnlyList<string> SourceModuleKeys { get; init; } = [];

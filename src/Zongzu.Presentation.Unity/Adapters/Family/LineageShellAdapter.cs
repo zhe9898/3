@@ -63,6 +63,7 @@ internal static class LineageShellAdapter
 			SocialPositionLabel = dossier.SocialPositionLabel,
 			SocialPositionReadbackSummary = dossier.SocialPositionReadbackSummary,
 			SocialPositionSourceModuleKeys = dossier.SocialPositionSourceModuleKeys.ToArray(),
+			SocialPositionScaleBudgetReadbackSummary = dossier.SocialPositionScaleBudgetReadbackSummary,
 			CurrentStatusSummary = dossier.CurrentStatusSummary,
 			SourceModuleKeys = dossier.SourceModuleKeys.ToArray()
 		};
@@ -87,12 +88,22 @@ internal static class LineageShellAdapter
 			EducationThreadLine = dossier.EducationSummary,
 			OfficeThreadLine = dossier.OfficeSummary,
 			MemoryThreadLine = BuildMemoryThreadLine(dossier),
-			StatusLedgerLine = string.IsNullOrWhiteSpace(dossier.SocialPositionReadbackSummary)
-				? dossier.CurrentStatusSummary
-				: $"{dossier.CurrentStatusSummary} {dossier.SocialPositionReadbackSummary}",
+			StatusLedgerLine = BuildStatusLedgerLine(dossier),
 			Dossier = dossier,
 			SourceModuleKeys = dossier.SourceModuleKeys.ToArray()
 		};
+	}
+
+	private static string BuildStatusLedgerLine(PersonDossierViewModel dossier)
+	{
+		return string.Join(
+			" ",
+			new[]
+			{
+				dossier.CurrentStatusSummary,
+				dossier.SocialPositionReadbackSummary,
+				dossier.SocialPositionScaleBudgetReadbackSummary,
+			}.Where(static line => !string.IsNullOrWhiteSpace(line)));
 	}
 
 	private static string BuildMemoryThreadLine(PersonDossierViewModel dossier)

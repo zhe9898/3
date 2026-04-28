@@ -317,6 +317,12 @@ V405-V412 closes v381-v404 as the first commoner / social-position readback laye
 
 Closed here does not mean full social mobility is done. It is not a class engine, route economy, office-service ladder, tenant/landholding conversion system, durable social-position residue, or all-world person simulation. Future commoner status depth must still open a new owner-lane ExecPlan with state, cadence, target scope, hot path, expected cardinality, deterministic cap/order, schema impact, projection fields, and validation before adding rules.
 
+## V413-V420 Social Position Scale Budget
+
+V413-V420 adds `PersonDossierSnapshot.SocialPositionScaleBudgetReadbackSummary` so the person dossier explicitly reads `near detail, far summary`: close/local people may show owner-lane social-position detail, while distant society remains pooled summary.
+
+The field is built from existing `FidelityRing` and structured social-position source keys. It does not change fidelity rings, select new people, promote/demote status, resolve zhuhu/kehu conversion, add a ledger, parse prose, change schema, or expand `PersonRegistry`.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

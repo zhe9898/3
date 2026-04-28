@@ -89,6 +89,7 @@ public sealed partial class FirstPassPresentationShellTests
                         KnownModuleKeys.OfficeAndCareer,
                         KnownModuleKeys.SocialMemoryAndRelations,
                     ],
+                    SocialPositionScaleBudgetReadbackSummary = "Social position scale budget: close detail; 7 structured owner sources; near people can read owner-lane detail, distant society remains pooled summary; no all-world per-person class simulation.",
                     SourceModuleKeys =
                     [
                         KnownModuleKeys.PersonRegistry,
