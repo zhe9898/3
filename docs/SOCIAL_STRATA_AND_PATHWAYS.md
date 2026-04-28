@@ -429,3 +429,9 @@ Design principle:
 - Future first commoner status rules should start from `PopulationAndHouseholds` because household livelihood, activity, distress, debt, migration pressure, labor, land, grain, and pool thickness already live there.
 - `PersonRegistry` remains identity / `FidelityRing` only. It should not become the place where commoner class, route, service, or trade status is stored.
 - Future status depth still needs a specific owner state, cadence, deterministic target selection, schema plan, and player-facing projection before implementation.
+
+### Current scale-budget preflight: v445-v452
+
+- Commoner and personnel depth follows the rule: near detail, far summary. Close household and pressure-hit actors may be readable; distant society stays summarized through pools and settlement pressure.
+- Future status depth must say whether it touches named close-orbit actors, local households, active-region pools, or distant summaries before it changes fidelity or state.
+- No future route may use `PersonRegistry`, UI selection, or prose parsing as a class/status authority path.

@@ -4929,6 +4929,90 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Fidelity_scale_budget_preflight_v445_v452_must_keep_near_detail_far_summary_without_global_person_scan()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-28_fidelity-scale-budget-preflight-v445-v452.md"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V445-V452 Fidelity Scale Budget Preflight"));
+        Assert.That(socialStrata, Does.Contain("Current scale-budget preflight: v445-v452"));
+        Assert.That(designAudit, Does.Contain("v445-v452 fidelity scale budget preflight audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Fidelity scale budget preflight v445-v452 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Fidelity scale budget preflight v445-v452 integration note"));
+        Assert.That(simulation, Does.Contain("Current fidelity scale budget preflight v445-v452 note"));
+        Assert.That(uiPresentation, Does.Contain("v445-v452 fidelity scale budget preflight"));
+        Assert.That(acceptance, Does.Contain("Fidelity scale budget preflight v445-v452 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V445-V452 Fidelity Scale Budget Preflight"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V452"));
+        Assert.That(schemaRules, Does.Contain("fidelity scale budget preflight v445-v452 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current fidelity scale budget preflight v445-v452 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+        Assert.That(execPlan, Does.Contain("near detail, far summary"));
+        Assert.That(execPlan, Does.Contain("No fidelity-ring mutation"));
+        Assert.That(execPlan, Does.Contain("No global person scan"));
+        Assert.That(execPlan, Does.Contain("No `PersonRegistry` expansion"));
+        Assert.That(execPlan, Does.Contain("No parsing of `DomainEvent.Summary`"));
+
+        Assert.That(personRegistrySource, Does.Contain("FidelityRing"));
+        Assert.That(personRegistrySource, Does.Not.Contain("FidelityScaleBudget"));
+        Assert.That(personRegistrySource, Does.Not.Contain("TargetCardinality"));
+        Assert.That(personRegistrySource, Does.Not.Contain("RegionalPersonSelector"));
+        Assert.That(personRegistrySource, Does.Not.Contain("GlobalPersonScanner"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "GlobalPersonScanner",
+                     "GlobalPersonBrowser",
+                     "RegionalPersonSelector",
+                     "RegionalPersonSelectionManager",
+                     "AllWorldPersonSimulation",
+                     "AllWorldPersonCareerSimulation",
+                     "FidelityScaleBudgetLedger",
+                     "FidelityBudgetLedger",
+                     "ScaleBudgetLedger",
+                     "TargetCardinalityLedger",
+                     "PrecisionBandLedger",
+                     "PopulationScaleBudgetLedger",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "CommonerCareerEngine",
+                     "WorldPopulationManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "WorldManager",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialPosition*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PopulationScaleBudget*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.FidelityScaleBudget*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Strata*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

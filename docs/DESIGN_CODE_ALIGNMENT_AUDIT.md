@@ -470,3 +470,10 @@
 - Code alignment: current code already places livelihood/activity/pools, distress, debt, migration pressure, labor, land, grain, and settlement household pressure in `PopulationAndHouseholds`; `PersonRegistry` remains identity / `FidelityRing` only.
 - Boundary alignment: this pass does not add the rule. It only blocks future drift into Application, UI, Unity, `PersonRegistry`, or a standalone `SocialClass` style module before a real owner-lane plan exists.
 - v437-v444 adds no production rule, command, persisted state, schema, migration, owner-lane ledger, class engine, new module, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v445-v452 fidelity scale budget preflight audit - 2026-04-28
+
+- v445-v452 records the scale rule for future social/commoner/personnel depth: near detail is pressure-selected and owner-laned; far society remains pooled summary.
+- Code alignment: current code already has `FidelityRing` as the readability marker and keeps household pressure/pools in `PopulationAndHouseholds`. This pass adds no selector, no scheduler sweep, and no production detail promotion.
+- Boundary alignment: future work must declare target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, validation, and no-touch boundary before changing fidelity or target cardinality.
+- v445-v452 adds no production rule, command, persisted state, schema, migration, scale-budget/fidelity-budget/selector ledger, class engine, new module, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
