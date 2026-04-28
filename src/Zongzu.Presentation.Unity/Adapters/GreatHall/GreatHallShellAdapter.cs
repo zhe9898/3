@@ -64,9 +64,9 @@ internal static class GreatHallShellAdapter
 			.FirstOrDefault();
 		if (leadMobility is null)
 		{
-			return bundle.FidelityScale.Summary;
+			return $"{bundle.FidelityScale.Summary} {bundle.FidelityScale.InfluenceFootprintReadbackSummary}";
 		}
 
-		return $"{bundle.FidelityScale.Summary} {leadMobility.MovementReadbackSummary}";
+		return $"{bundle.FidelityScale.Summary} {bundle.FidelityScale.InfluenceFootprintReadbackSummary} {leadMobility.MovementReadbackSummary}";
 	}
 }

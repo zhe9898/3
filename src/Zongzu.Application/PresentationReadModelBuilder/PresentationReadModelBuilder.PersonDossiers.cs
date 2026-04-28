@@ -155,6 +155,7 @@ public sealed partial class PresentationReadModelBuilder
                     ActivitySummary = BuildActivitySummary(membership, household),
                     MovementReadbackSummary = BuildPersonMovementReadbackSummary(membership, household),
                     FidelityRingReadbackSummary = BuildPersonFidelityRingReadbackSummary(person, membership, household),
+                    InfluenceFootprintReadbackSummary = BuildPersonInfluenceFootprintReadbackSummary(person, membership, household),
                     EducationSummary = BuildEducationSummary(education),
                     TradeSummary = BuildTradeSummary(trade),
                     OfficeSummary = BuildOfficeSummary(office),
@@ -350,6 +351,30 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         return $"{ringText}：人物精度来自PersonRegistry，家户活动来自PopulationAndHouseholds。";
+    }
+
+    private static string BuildPersonInfluenceFootprintReadbackSummary(
+        PersonRecord person,
+        HouseholdMembershipSnapshot? membership,
+        HouseholdPressureSnapshot? household)
+    {
+        if (person.FidelityRing == FidelityRing.Core)
+        {
+            return "Influence footprint readback: close-orbit named detail; household and movement facts still come from owner modules.";
+        }
+
+        if (person.FidelityRing == FidelityRing.Local && household is not null &&
+            (household.MigrationRisk >= 70 || household.IsMigrating || membership?.Activity == PersonActivity.Migrating))
+        {
+            return "Influence footprint readback: pressure-selected local detail; this is not a whole-world person tick.";
+        }
+
+        if (person.FidelityRing == FidelityRing.Local)
+        {
+            return "Influence footprint readback: local readable person; ordinary distant movement remains pooled.";
+        }
+
+        return "Influence footprint readback: distant summary anchor; re-entry requires owner pressure or player reach, not UI selection.";
     }
 
     private static string BuildEducationSummary(EducationCandidateSnapshot? education)

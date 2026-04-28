@@ -128,6 +128,6 @@ internal static class DeskSandboxShellAdapter
 			return "人员流动暂未投出。";
 		}
 
-		return $"{mobility.PoolThicknessSummary} {mobility.FocusReadbackSummary}";
+		return $"{mobility.PoolThicknessSummary} {mobility.FocusReadbackSummary} {mobility.ScaleBudgetReadbackSummary}";
 	}
 }

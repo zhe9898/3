@@ -39,6 +39,17 @@ V269-V276 adds no new runtime boundary. It hardens the existing fidelity-ring bo
 
 The four precision bands are: player household / close orbit as named detail; player influence footprint or active pressure as selective detail; active chain region as structured pools and settlement summaries; distant world as pressure summaries. This pass adds no schema, migration, movement/social/focus/scheduler ledger, manager/controller path, `PersonRegistry` domain expansion, or prose parser.
 
+## Social mobility influence readback v277-v284 boundary note
+
+V277-V284 adds runtime readback fields but no new authority boundary:
+- `PopulationAndHouseholds` remains the owner of livelihood/activity/pools and migration pressure.
+- `PersonRegistry` remains the owner of identity and existing `FidelityRing` assignment only.
+- `SocialMemoryAndRelations` remains future durable-residue owner only; no same-month durable movement residue is written here.
+- Application assembles `InfluenceFootprintReadbackSummary` and `ScaleBudgetReadbackSummary` from structured snapshots as projection text only.
+- Unity copies the projected fields into shell ViewModels and summaries; it does not compute precision bands or movement outcomes.
+
+Future readers must not parse these new readback strings as authority. The pass adds no schema, migration, command surface, movement/social/focus/scheduler ledger, manager/controller path, `PersonRegistry` domain expansion, or UI rule path.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

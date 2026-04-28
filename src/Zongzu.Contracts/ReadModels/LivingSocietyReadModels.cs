@@ -152,6 +152,8 @@ public sealed record FidelityScaleSnapshot
 
     public string FocusBudgetSummary { get; init; } = string.Empty;
 
+    public string InfluenceFootprintReadbackSummary { get; init; } = string.Empty;
+
     public IReadOnlyList<string> SourceModuleKeys { get; init; } = [];
 }
 
@@ -190,6 +192,8 @@ public sealed record SettlementMobilitySnapshot
     public string MovementReadbackSummary { get; init; } = string.Empty;
 
     public string FocusReadbackSummary { get; init; } = string.Empty;
+
+    public string ScaleBudgetReadbackSummary { get; init; } = string.Empty;
 
     public IReadOnlyList<string> SourceModuleKeys { get; init; } = [];
 }

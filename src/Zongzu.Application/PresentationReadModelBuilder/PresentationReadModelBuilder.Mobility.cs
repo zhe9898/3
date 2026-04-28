@@ -27,6 +27,7 @@ public sealed partial class PresentationReadModelBuilder
             NamedPersonCount = named,
             Summary = summary,
             FocusBudgetSummary = "玩家身边活，天下不逐人硬算；压力只把少量远处人物拉进地方读回，其余仍由劳力、婚配、流徙池承接。",
+            InfluenceFootprintReadbackSummary = BuildFidelityInfluenceFootprintReadback(core, local, regional, named),
             SourceModuleKeys = [KnownModuleKeys.PersonRegistry],
         };
     }
@@ -129,6 +130,7 @@ public sealed partial class PresentationReadModelBuilder
                     PoolThicknessSummary = BuildPoolThicknessSummary(settlementName, labor, marriage, migration),
                     MovementReadbackSummary = BuildMovementReadbackSummary(settlementName, migration, migratingHouseholds, namedMigratingPersons),
                     FocusReadbackSummary = BuildFocusReadbackSummary(settlementName, namedLocalPersons, migration),
+                    ScaleBudgetReadbackSummary = BuildScaleBudgetReadbackSummary(settlementName, namedLocalPersons, labor, marriage, migration),
                     SourceModuleKeys = DistinctNonEmpty(
                         KnownModuleKeys.PopulationAndHouseholds,
                         personQueries is null ? string.Empty : KnownModuleKeys.PersonRegistry,
@@ -159,6 +161,20 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         return count;
+    }
+
+    private static string BuildFidelityInfluenceFootprintReadback(
+        int core,
+        int local,
+        int regional,
+        int named)
+    {
+        if (named == 0)
+        {
+            return "Influence footprint readback: no named dossier is projected yet; distant society remains pooled until owner pressure or player reach makes it readable.";
+        }
+
+        return $"Influence footprint readback: close-orbit named detail {core}, pressure/local detail {local}, distant summary anchors {regional}; Application projects this scale budget and does not decide movement outcomes.";
     }
 
     private static string BuildPoolThicknessSummary(
@@ -216,5 +232,31 @@ public sealed partial class PresentationReadModelBuilder
         }
 
         return $"{settlementName}当前以远处汇总为主：玩家可读池厚，不直接操纵每个行人。";
+    }
+
+    private static string BuildScaleBudgetReadbackSummary(
+        string settlementName,
+        int namedLocalPersons,
+        LaborPoolEntrySnapshot? labor,
+        MarriagePoolEntrySnapshot? marriage,
+        MigrationPoolEntrySnapshot? migration)
+    {
+        int poolThickness = (labor?.AvailableLabor ?? 0) +
+            (marriage?.EligibleMales ?? 0) +
+            (marriage?.EligibleFemales ?? 0) +
+            (migration?.FloatingPopulation ?? 0);
+        int outflow = migration?.OutflowPressure ?? 0;
+
+        if (namedLocalPersons > 0 && outflow >= 70)
+        {
+            return $"Scale budget readback: {settlementName} is pressure-selected local detail with {namedLocalPersons} named people; the remaining movement stays in pools.";
+        }
+
+        if (namedLocalPersons > 0)
+        {
+            return $"Scale budget readback: {settlementName} keeps {namedLocalPersons} named local people inside the influence footprint while ordinary movement remains summarized.";
+        }
+
+        return $"Scale budget readback: {settlementName} is active-region summary with pool thickness {poolThickness}; distant people are not hard-simulated one by one.";
     }
 }

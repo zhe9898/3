@@ -41,6 +41,8 @@ public sealed class PersonDossierViewModel
 
 	public string FidelityRingReadbackSummary { get; set; } = string.Empty;
 
+	public string InfluenceFootprintReadbackSummary { get; set; } = string.Empty;
+
 	public string EducationSummary { get; set; } = string.Empty;
 
 	public string TradeSummary { get; set; } = string.Empty;

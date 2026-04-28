@@ -630,3 +630,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Future mobility consumers must choose one of four surfaces before mutating or projecting: named detail for the player household / close orbit, selective detail for the player influence footprint or active pressure, structured pools for active chain regions, and pressure summaries for distant society.
 - `FidelityRingChanged`, population pools, settlement mobility summaries, and person dossier movement/fidelity readbacks are not ledgers. Later readers must not parse their prose or use them as hidden scheduler state.
 - Any future expansion beyond this guard must declare owner module, hot path, expected cardinality, deterministic cap/order, no-touch boundary, schema impact, and validation lane. Save/schema result for v269-v276: no persisted state, schema bump, migration, movement/social/focus/scheduler ledger, projection cache, or save-manifest change.
+
+## Social mobility influence readback v277-v284 integration note
+- V277-V284 adds read-model fields only. `InfluenceFootprintReadbackSummary` and `ScaleBudgetReadbackSummary` explain the existing fidelity/mobility substrate without introducing a new command or event channel.
+- Application may compose these strings from `PersonDossierSnapshot`, `HouseholdPressureSnapshot`, population pool snapshots, and existing `FidelityRing` values after owner modules resolve. It must not parse person dossier text, settlement mobility text, notification text, receipt prose, or `DomainEvent.Summary`.
+- Unity may copy these fields into great hall, desk, and lineage surfaces only. It must not query simulation modules, compute promotion/demotion, rank movement targets, maintain ledgers, or write SocialMemory.
+- Save/schema result: no persisted state, schema bump, migration, movement/social/focus/scheduler ledger, projection cache, or save-manifest change.

@@ -54,6 +54,7 @@ internal static class LineageShellAdapter
 			ActivitySummary = dossier.ActivitySummary,
 			MovementReadbackSummary = dossier.MovementReadbackSummary,
 			FidelityRingReadbackSummary = dossier.FidelityRingReadbackSummary,
+			InfluenceFootprintReadbackSummary = dossier.InfluenceFootprintReadbackSummary,
 			EducationSummary = dossier.EducationSummary,
 			TradeSummary = dossier.TradeSummary,
 			OfficeSummary = dossier.OfficeSummary,

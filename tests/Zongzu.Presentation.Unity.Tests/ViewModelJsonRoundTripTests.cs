@@ -58,6 +58,7 @@ public class ViewModelJsonRoundTripTests
                         ActivitySummary = "activity Studying",
                         MovementReadbackSummary = "PopulationAndHouseholds keeps activity visible.",
                         FidelityRingReadbackSummary = "PersonRegistry owns the Core ring.",
+                        InfluenceFootprintReadbackSummary = "Influence footprint readback copied from projection.",
                         EducationSummary = "local exam passed; tier CountyExam",
                         TradeSummary = "clan trade cash 92, grain 71",
                         OfficeSummary = "appointed 主簿; authority 2",
@@ -91,6 +92,7 @@ public class ViewModelJsonRoundTripTests
                         ActivitySummary = "activity Studying",
                         MovementReadbackSummary = "PopulationAndHouseholds keeps activity visible.",
                         FidelityRingReadbackSummary = "PersonRegistry owns the Core ring.",
+                        InfluenceFootprintReadbackSummary = "Influence footprint readback copied from projection.",
                         EducationSummary = "local exam passed; tier CountyExam",
                         TradeSummary = "clan trade cash 92, grain 71",
                         OfficeSummary = "appointed 主簿; authority 2",
@@ -149,6 +151,7 @@ public class ViewModelJsonRoundTripTests
         Assert.That(roundTripped.Lineage.PersonDossiers[0].LivelihoodSummary, Does.Contain("PettyTrader"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].FidelityRingReadbackSummary, Does.Contain("PersonRegistry"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].InfluenceFootprintReadbackSummary, Does.Contain("Influence footprint readback"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].EducationSummary, Does.Contain("local exam passed"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].OfficeSummary, Does.Contain("appointed"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("SocialMemoryAndRelations"));

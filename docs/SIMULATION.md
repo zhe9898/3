@@ -575,3 +575,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - V269-V276 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, or projection field.
 - It makes the simulation budget rule explicit for future work: close orbit can run as named detail, player influence or active pressure can promote bounded selective detail, active regions should usually use structured pools and settlement summaries, and the distant world should remain pressure-summary simulation rather than per-person hard ticks.
 - Future mobility/personnel-flow branches must name hot path, expected cardinality, deterministic order, cap strategy, owner module, schema impact, and validation lane before increasing fidelity.
+
+## Current social mobility influence readback v277-v284 note
+
+- V277-V284 adds no scheduler step, cadence change, event-drain rule, runtime cache, simulation formula, command, or persistence change.
+- The new readbacks explain existing simulation scale: `InfluenceFootprintReadbackSummary` says why close/local/distant people are readable at that precision, and `ScaleBudgetReadbackSummary` says whether a settlement is named local detail, pressure-selected detail, active-region pool, or distant summary.
+- Determinism depends only on already-built snapshots and stable projection ordering. Future readers must not parse these strings as input to scheduler, commands, SocialMemory, or UI decisions.
