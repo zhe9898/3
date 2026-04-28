@@ -648,3 +648,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - V357-V364 adds no simulation behavior. It is a guard for future personnel-flow owner lanes.
 - Future Family, Office, or Warfare personnel-flow rules must choose owner module state, accepted command, cadence, target scope, no-touch boundary, hot path, expected cardinality, deterministic cap/order, schema impact, projection/readback, and validation before implementation.
 - The current simulation still has no office-service personnel movement, kin transfer, campaign-manpower allocation, direct assignment, movement resolver, migration economy, future-owner-lane ledger, or prose parser.
+
+## Current personnel flow future lane surface v365-v372 note
+
+- V365-V372 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, or persistence change.
+- The new Great Hall readback is projection-time surface text over existing personnel-flow readiness affordance/receipt fields.
+- It does not promote/demote people, move people, select targets, allocate office service, allocate campaign manpower, write SocialMemory residue, or change `PersonRegistry`.
+- Future readers must not parse this surface text as scheduler, command, SocialMemory, UI, Unity, or owner-lane authority.

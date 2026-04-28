@@ -541,3 +541,9 @@ It should ask:
 - Future personnel-flow lanes cannot raise fidelity simply because a gate exists. They need owner-module rules, target scope, and cardinality limits first.
 - `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` personnel-flow work must declare whether it affects named close-orbit actors, local pooled households, active-region pools, or distant summaries before code lands.
 - Any lane that promotes more people into detail must declare deterministic selection, cap, cadence, schema impact, and projection readback separately.
+
+## V365-V372 Personnel Flow Future Lane Surface
+
+- The future-lane preflight is now visible as a projected Great Hall mobility readback, but it still does not raise fidelity or open a movement lane.
+- The surface says future Family/Office/Warfare personnel-flow work must choose owner module, accepted command, target scope, hot path, cardinality, deterministic cap/order, schema impact, and validation before implementation.
+- Desk Sandbox remains local: the new preflight is not spread onto every settlement node and does not turn distant summaries into named personnel detail.

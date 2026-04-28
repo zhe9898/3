@@ -699,3 +699,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Future Family/Office/Warfare personnel-flow paths must arrive as module-owned command/rule contracts with declared target scope, no-touch boundary, hot path, cardinality, deterministic ordering/cap, cadence, schema impact, and validation.
 - Application may later route a declared command, but it may not infer personnel movement from the current gate, command prose, receipt prose, notification text, mobility text, public-life lines, or `DomainEvent.Summary`.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/future-owner-lane ledger, projection cache, or save-manifest change.
+
+## Personnel flow future lane surface v365-v372 integration note
+- V365-V372 adds a runtime surface readback field, not an integration channel.
+- `PlayerCommandSurfaceSnapshot.PersonnelFlowFutureOwnerLanePreflightSummary` is assembled only from existing structured personnel-flow readiness affordance/receipt fields and counts.
+- Great Hall may display this preflight so the player can see that Family/Office/Warfare personnel-flow lanes still require owner-module plans; no module may consume it as authority, ledger membership, movement permission, command eligibility, or durable SocialMemory residue.
+- Application, UI, and Unity must not infer personnel movement from the preflight, command prose, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary`.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/future-lane-surface ledger, projection cache, or save-manifest change.

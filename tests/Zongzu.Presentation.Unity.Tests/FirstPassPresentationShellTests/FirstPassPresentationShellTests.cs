@@ -44,6 +44,7 @@ public sealed partial class FirstPassPresentationShellTests
                 .ToArray(),
             PersonnelFlowReadinessSummary = "人员流动命令预备汇总：只汇总已投影的人员流动预备读回；不是直接调人、迁人、召人命令。",
             PersonnelFlowOwnerLaneGateSummary = "人员流动归口门槛：当前可读归口为PopulationAndHouseholds本户回应；FamilyCore亲族调处、OfficeAndCareer文书役使、WarfareCampaign军务人力仍需另开owner-lane计划。",
+            PersonnelFlowFutureOwnerLanePreflightSummary = "人员流动未来归口预检：FamilyCore/OfficeAndCareer/WarfareCampaign仍需另开owner-lane计划；不是直接调人、迁人、召人、派役、点兵命令。",
         };
 
         PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
@@ -54,11 +55,14 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("不是直接调人、迁人、召人命令"));
         Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("人员流动归口门槛"));
         Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("另开owner-lane计划"));
+        Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("人员流动未来归口预检"));
+        Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("不是直接调人、迁人、召人、派役、点兵命令"));
         Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("Pool readback"));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("not every regional traveler"));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("人员流动归口门槛"));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("当前可读归口为PopulationAndHouseholds本户回应"));
+        Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Not.Contain("人员流动未来归口预检"));
         Assert.That(shell.Lineage.PersonDossiers[0].MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
         Assert.That(shell.Lineage.PersonDossiers[0].FidelityRingReadbackSummary, Does.Contain("PersonRegistry"));
     }

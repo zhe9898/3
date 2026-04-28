@@ -156,6 +156,7 @@ public sealed partial class PresentationReadModelBuilder
             Receipts = receipts,
             PersonnelFlowReadinessSummary = BuildPlayerCommandSurfacePersonnelFlowReadinessSummary(affordances, receipts),
             PersonnelFlowOwnerLaneGateSummary = BuildPlayerCommandSurfacePersonnelFlowOwnerLaneGateSummary(affordances, receipts),
+            PersonnelFlowFutureOwnerLanePreflightSummary = BuildPlayerCommandSurfacePersonnelFlowFutureOwnerLanePreflightSummary(affordances, receipts),
         };
     }
 
@@ -213,6 +214,26 @@ public sealed partial class PresentationReadModelBuilder
             $"人员流动归口门槛：当前可读归口为PopulationAndHouseholds本户回应，{populationAffordances}道预备命令、{populationReceipts}条回执；" +
             "FamilyCore亲族调处、OfficeAndCareer文书役使、WarfareCampaign军务人力仍需另开owner-lane计划；" +
             "Application只汇总结构化命令字段，UI/Unity只显示投影字段；PersonRegistry只保身份/FidelityRing；不是直接调人、迁人、召人命令。";
+    }
+
+    private static string BuildPlayerCommandSurfacePersonnelFlowFutureOwnerLanePreflightSummary(
+        IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
+        IReadOnlyList<PlayerCommandReceiptSnapshot> receipts)
+    {
+        int readableAffordances = affordances.Count(static affordance =>
+            !string.IsNullOrWhiteSpace(affordance.PersonnelFlowReadinessSummary));
+        int readableReceipts = receipts.Count(static receipt =>
+            !string.IsNullOrWhiteSpace(receipt.PersonnelFlowReadinessSummary));
+
+        if (readableAffordances == 0 && readableReceipts == 0)
+        {
+            return string.Empty;
+        }
+
+        return
+            $"人员流动未来归口预检：当前只有{readableAffordances}道预备命令、{readableReceipts}条回执提供结构化人员流动读法；" +
+            "FamilyCore/OfficeAndCareer/WarfareCampaign仍需另开owner-lane计划，先声明owner module、accepted command、target scope、hot path、cardinality、deterministic cap/order、schema impact和validation；" +
+            "Application只投影预检摘要，UI/Unity只复制字段；不是直接调人、迁人、召人、派役、点兵命令。";
     }
 
 }

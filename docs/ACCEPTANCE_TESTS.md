@@ -747,3 +747,11 @@ At integration level, verify:
 - Boundary acceptance: Application/UI/Unity must not infer personnel movement from the current gate or from prose; future controls must arrive as projected owner-module affordances.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
 - Save/schema acceptance: v357-v364 adds no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/future-owner-lane ledger, durable residue, or serialized module payload change.
+
+## Personnel flow future lane surface v365-v372 acceptance - 2026-04-28
+- Projection acceptance: `PlayerCommandSurfaceSnapshot.PersonnelFlowFutureOwnerLanePreflightSummary` is assembled from structured personnel-flow readiness affordance/receipt fields and displayed by Great Hall mobility readback.
+- Content acceptance: the surface can show `人员流动未来归口预检`, `FamilyCore/OfficeAndCareer/WarfareCampaign`, `owner module`, `accepted command`, `hot path`, `cardinality`, `deterministic cap/order`, `schema impact`, and `validation`.
+- Locality acceptance: Desk Sandbox does not echo this future-lane preflight onto settlement nodes; local desk gate behavior remains tied to local structured readiness.
+- Boundary acceptance: Application/UI/Unity must not infer personnel movement, direct assignment, office service, kin transfer, or campaign manpower from the preflight or prose.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, `ReadbackSummary`, receipt prose, notification prose, mobility text, public-life lines, or docs prose to derive personnel-flow authority.
+- Save/schema acceptance: v365-v372 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, movement/personnel/future-lane-surface ledger, durable residue, or serialized module payload change.

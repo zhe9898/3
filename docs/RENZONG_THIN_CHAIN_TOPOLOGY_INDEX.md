@@ -281,6 +281,12 @@ V357-V364 is a preflight guard for future personnel-flow lanes. It records that 
 
 Any later lane must name its owner command, target scope, no-touch boundary, hot path, expected cardinality, deterministic order/cap, schema impact, cadence, projection fields, and validation before implementation. V357-V364 adds no schema, migration, command, movement resolver, future-owner-lane ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
 
+## V365-V372 Personnel Flow Future Lane Surface
+
+V365-V372 surfaces that future-lane preflight on the existing player-command / Great Hall mobility readback. `PlayerCommandSurfaceSnapshot.PersonnelFlowFutureOwnerLanePreflightSummary` is assembled from structured personnel-flow readiness affordance/receipt presence, not from prose.
+
+The readback says `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` still require separate owner-lane plans with owner module, accepted command, target scope, hot path, cardinality, deterministic cap/order, schema impact, and validation before rule work. It adds no schema, migration, command, movement resolver, future-lane-surface ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.
