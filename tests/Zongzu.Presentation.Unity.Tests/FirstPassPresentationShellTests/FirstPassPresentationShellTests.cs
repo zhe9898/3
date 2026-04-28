@@ -25,10 +25,18 @@ public sealed partial class FirstPassPresentationShellTests
     [Test]
     public void Compose_CopiesMobilityAndFidelityReadbacksIntoGreatHallDeskAndLineage()
     {
-        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(CreateBundle());
+        PresentationReadModelBundle bundle = CreateBundle();
+        bundle.PlayerCommands = bundle.PlayerCommands with
+        {
+            PersonnelFlowReadinessSummary = "人员流动命令预备汇总：只汇总已投影的人员流动预备读回；不是直接调人、迁人、召人命令。",
+        };
+
+        PresentationShellViewModel shell = FirstPassPresentationShell.Compose(bundle);
 
         Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("Near detail"));
         Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("PopulationAndHouseholds owns movement"));
+        Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("人员流动命令预备汇总"));
+        Assert.That(shell.GreatHall.MobilitySummary, Does.Contain("不是直接调人、迁人、召人命令"));
         Assert.That(shell.DeskSandbox.Settlements, Has.Count.EqualTo(1));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("Pool readback"));
         Assert.That(shell.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("not every regional traveler"));

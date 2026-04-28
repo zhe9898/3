@@ -147,11 +147,46 @@ public sealed partial class PresentationReadModelBuilder
 
     private static PlayerCommandSurfaceSnapshot BuildPlayerCommandSurface(PresentationReadModelBundle bundle)
     {
+        PlayerCommandAffordanceSnapshot[] affordances = BuildPlayerCommandAffordances(bundle).ToArray();
+        PlayerCommandReceiptSnapshot[] receipts = BuildPlayerCommandReceipts(bundle).ToArray();
+
         return new PlayerCommandSurfaceSnapshot
         {
-            Affordances = BuildPlayerCommandAffordances(bundle),
-            Receipts = BuildPlayerCommandReceipts(bundle),
+            Affordances = affordances,
+            Receipts = receipts,
+            PersonnelFlowReadinessSummary = BuildPlayerCommandSurfacePersonnelFlowReadinessSummary(affordances, receipts),
         };
+    }
+
+    private static string BuildPlayerCommandSurfacePersonnelFlowReadinessSummary(
+        IReadOnlyList<PlayerCommandAffordanceSnapshot> affordances,
+        IReadOnlyList<PlayerCommandReceiptSnapshot> receipts)
+    {
+        int readableAffordances = affordances.Count(static affordance =>
+            !string.IsNullOrWhiteSpace(affordance.PersonnelFlowReadinessSummary));
+        int enabledAffordances = affordances.Count(static affordance =>
+            affordance.IsEnabled
+            && !string.IsNullOrWhiteSpace(affordance.PersonnelFlowReadinessSummary));
+        int readableReceipts = receipts.Count(static receipt =>
+            !string.IsNullOrWhiteSpace(receipt.PersonnelFlowReadinessSummary));
+        int settlementCount = affordances
+            .Where(static affordance => !string.IsNullOrWhiteSpace(affordance.PersonnelFlowReadinessSummary))
+            .Select(static affordance => affordance.SettlementId.Value)
+            .Concat(receipts
+                .Where(static receipt => !string.IsNullOrWhiteSpace(receipt.PersonnelFlowReadinessSummary))
+                .Select(static receipt => receipt.SettlementId.Value))
+            .Distinct()
+            .Count();
+
+        if (readableAffordances == 0 && readableReceipts == 0)
+        {
+            return string.Empty;
+        }
+
+        return
+            $"人员流动命令预备汇总：{settlementCount}处地方有本户回应读法，{enabledAffordances}/{readableAffordances}道命令可承接，{readableReceipts}条回执保留读法；" +
+            "只汇总已投影的人员流动预备读回，不解析ReadbackSummary、回执文案或事件Summary；" +
+            "PopulationAndHouseholds拥有本户回应，PersonRegistry只保身份/FidelityRing，UI/Unity只复制投影字段；不是直接调人、迁人、召人命令。";
     }
 
 }

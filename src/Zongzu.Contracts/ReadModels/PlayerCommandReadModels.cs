@@ -201,6 +201,8 @@ public sealed record PlayerCommandSurfaceSnapshot
 
     public IReadOnlyList<PlayerCommandReceiptSnapshot> Receipts { get; init; } = [];
 
+    public string PersonnelFlowReadinessSummary { get; init; } = string.Empty;
+
     public IEnumerable<PlayerCommandAffordanceSnapshot> EnumerateAffordances(
         string surfaceKey,
         SettlementId? settlementId = null,

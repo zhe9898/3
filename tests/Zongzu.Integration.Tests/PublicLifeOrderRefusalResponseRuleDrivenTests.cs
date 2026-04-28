@@ -469,6 +469,10 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("PersonRegistry只保身份/FidelityRing", StringComparison.Ordinal)), Is.True);
         Assert.That(localAffordances.All(static affordance => affordance.PersonnelFlowReadinessSummary.Contains("UI/Unity只复制投影字段", StringComparison.Ordinal)), Is.True);
         Assert.That(localAffordances.All(static affordance => affordance.ReadbackSummary.Contains(affordance.PersonnelFlowReadinessSummary, StringComparison.Ordinal)), Is.True);
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("人员流动命令预备汇总"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("只汇总已投影"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("不解析ReadbackSummary"));
+        Assert.That(monthNPlusOne.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("不是直接调人、迁人、召人命令"));
 
         int memoryCountBefore = socialState.Memories.Count;
         int orderRouteBefore = settlement.RoutePressure;
@@ -507,6 +511,7 @@ public sealed class PublicLifeOrderRefusalResponseRuleDrivenTests
         Assert.That(relievedReceipt.PersonnelFlowReadinessSummary, Does.Contain("人员流动预备读回"));
         Assert.That(relievedReceipt.PersonnelFlowReadinessSummary, Does.Contain("不是直接调人、迁人、召人命令"));
         Assert.That(relievedReceipt.ReadbackSummary, Does.Contain(relievedReceipt.PersonnelFlowReadinessSummary));
+        Assert.That(afterRelief.PlayerCommands.PersonnelFlowReadinessSummary, Does.Contain("1条回执保留读法"));
         Assert.That(afterRelief.InfluenceFootprint.Reaches
             .Single(reach => reach.ReachKey == InfluenceReachKeys.OwnHousehold)
             .CommandSummary, Does.Contain("低权能回应面"));

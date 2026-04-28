@@ -657,3 +657,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Application may assemble the readback from structured household snapshots and command identity. It must not parse readback prose, choose a person target, rank movement candidates, or calculate movement success.
 - Unity receives the field only through the shared command ViewModel copy path.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler ledger, projection cache, or save-manifest change.
+
+## Personnel flow surface echo v309-v316 integration note
+- V309-V316 adds `PlayerCommandSurfaceSnapshot.PersonnelFlowReadinessSummary` as a runtime surface echo over existing affordance/receipt personnel-flow readiness fields.
+- The echo is assembled only from structured `PersonnelFlowReadinessSummary` fields on player-command affordances and receipts. It must not parse `ReadbackSummary`, receipt prose, notification text, mobility text, or `DomainEvent.Summary`.
+- Great Hall mobility readback may append the command-surface echo. This is presentation of an already projected field, not a new integration channel or movement-resolution path.
+- No module may consume this echo as authority, ledger membership, movement permission, or durable SocialMemory residue.
