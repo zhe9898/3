@@ -75,6 +75,12 @@ Every surface must obey:
 - presentation does not hold authoritative logic
 - presentation follows `MODERN_GAME_ENGINEERING_STANDARDS.md` §4 Unity Presentation Standards
 
+### Regime legitimacy readback v253-v260 UI note
+
+Governance, office, docket, desk, great-hall, and public-life surfaces may show Chain 9 first-layer readback only when it is already present in projected fields such as `RegimeOfficeReadbackSummary` or public-life summaries. The player-facing wording may include `天命摇动读回`, `去就风险读回`, `官身承压姿态`, `公议向背读法`, `仍由Office/PublicLife分读`, `不是本户替朝廷修合法性`, and `不是UI判定归附成败`.
+
+The shell must keep this as mediated county/office/public interpretation, not an emperor button, not a direct household repair task, not a Court command, not a faction AI panel, and not a UI-side regime outcome. Unity shell and presentation adapters must copy projected fields only. They may not parse `DomainEvent.Summary`, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate defection, legitimacy repair, public allegiance, owner-lane selection, or SocialMemory residue.
+
 ### Court-policy first rule-density closeout audit v197-v204 UI note
 
 The v109-v196 first rule-density closeout audit v197-v204 is a presentation boundary statement, not a new shell feature. Governance, office, docket, desk, great-hall, and public-life surfaces may show the already-projected Chain 8 process / local response / public echo / receipt guard fields, but the audit does not add a new UI state, cooldown account, policy result, or Court command.

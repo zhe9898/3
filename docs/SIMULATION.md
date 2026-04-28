@@ -38,6 +38,12 @@ This keeps the design aligned with:
 - bounded player intervention
 - ordinary people, debt, illness, labor, and rumor feeling alive instead of being crushed into one large monthly jump
 
+## Current regime legitimacy readback v253-v260 note
+
+The v253-v260 Chain 9 readback uses the existing scheduler cadence and bounded event drain. A low mandate/regime pressure fact may emit `WorldSettlements.RegimeLegitimacyShifted`; `OfficeAndCareer` may resolve one highest-risk `OfficeDefected` mutation in the same month; `PublicLifeAndRumor` may read that structured fact into matching-settlement public interpretation. Application then projects `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.
+
+This adds no scheduler phase, event pool, full regime engine, faction AI, Court module, ledger, schema field, migration, same-month SocialMemory durable residue, or UI/Unity authority. The simulation proof should cover same-month pressure flow, off-scope non-inheritance, structured metadata/read-model use, no prose parsing, and the boundary that the home household is not repairing legitimacy: `不是本户替朝廷修合法性`.
+
 ## Current court-policy first rule-density closeout audit v197-v204 note
 
 The v109-v196 first rule-density closeout audit v197-v204 uses no new simulation cadence. It records that Chain 8 has a closed first-layer branch across policy process texture, local Office/PublicLife response, later SocialMemory residue, next-window memory readback, public-reading echo, public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency, and public-life receipt echo.

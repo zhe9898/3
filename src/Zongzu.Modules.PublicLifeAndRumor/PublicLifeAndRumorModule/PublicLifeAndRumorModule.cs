@@ -271,10 +271,14 @@ public sealed partial class PublicLifeAndRumorModule : ModuleRunner<PublicLifeAn
         publicLife.PrefectureDispatchPressure = Math.Clamp(publicLife.PrefectureDispatchPressure + dispatchDelta, 0, 100);
         publicLife.RoadReportLag = Math.Clamp(publicLife.RoadReportLag + (clerkPressure / 4), 0, 100);
         publicLife.PublicLegitimacy = Math.Clamp(publicLife.PublicLegitimacy + legitimacyDelta, 0, 100);
-        publicLife.ContentionSummary = $"官员摇摆读回：退避风险{risk}，天命缺口{mandateDeficit}，案牍/胥吏仍在牵制县门。";
-        publicLife.PrefectureDispatchLine = $"州县之间已见官员摇摆，仍需OfficeAndCareer lane继续读回。";
+        publicLife.ContentionSummary =
+            $"天命摇动读回：去就风险读回{risk}，天命缺口{mandateDeficit}；公议向背读法随街谈与榜示承压，仍由Office/PublicLife分读，不是本户替朝廷修合法性。";
+        publicLife.PrefectureDispatchLine =
+            $"官身承压姿态：州县之间已见去就摇摆，递报压力{publicLife.PrefectureDispatchPressure}；仍由Office/PublicLife分读，不是UI判定归附成败。";
+        publicLife.ChannelSummary =
+            $"公议向背读法：胥吏压{clerkPressure}、词牍压{petitionPressure}推高街面读法；不是本户替朝廷修合法性。";
         publicLife.LastPublicTrace =
-            $"官员摇摆读回：风险{risk}，胥吏压{clerkPressure}，词牍压{petitionPressure}，街谈升温{heatDelta}。";
+            $"去就风险读回：风险{risk}，胥吏压{clerkPressure}，词牍压{petitionPressure}，街谈升温{heatDelta}。";
     }
 
     private static bool TryResolveEventSettlementId(IDomainEvent domainEvent, out SettlementId settlementId)

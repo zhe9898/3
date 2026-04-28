@@ -87,6 +87,12 @@ Current note:
 - runtime domain-event metadata is copied into a read-only dictionary on creation and is not a save namespace
 - it does not change root or module save schema
 
+Current regime legitimacy readback v253-v260 note:
+- no root or module schema version changes
+- no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, full regime engine, faction AI, Court module, regime-recognition ledger, legitimacy ledger, defection ledger, owner-lane ledger, cooldown ledger, or same-month SocialMemory residue
+- `WorldSettlements.RegimeLegitimacyShifted` metadata, `OfficeAndCareer.OfficeDefected` metadata, `JurisdictionAuthoritySnapshot`, and `SettlementPublicLifeSnapshot` are runtime/query/projection carriers only
+- `天命摇动读回`, `去就风险读回`, `官身承压姿态`, `公议向背读法`, `仍由Office/PublicLife分读`, `不是本户替朝廷修合法性`, and `不是UI判定归附成败` are projected readback text, not persisted authority
+
 Current court-policy first rule-density closeout audit v197-v204 note:
 - no root or module schema version changes
 - no new persisted field, namespace, migration, save manifest entry, feature-pack save membership, projection cache, dispatch ledger, policy ledger, court-process ledger, owner-lane ledger, cooldown ledger, docket ledger, receipt ledger, receipt-docket ledger, public-life receipt echo ledger, or Court module

@@ -419,7 +419,14 @@ public sealed class PublicLifeAndRumorModuleTests
         SettlementPublicLifeState lanxi = state.Settlements.Single(s => s.SettlementId == new SettlementId(1));
         SettlementPublicLifeState personIdSettlement = state.Settlements.Single(s => s.SettlementId == new SettlementId(99));
         Assert.That(lanxi.StreetTalkHeat, Is.GreaterThan(12));
-        Assert.That(lanxi.PrefectureDispatchLine, Does.Contain("官员摇摆"));
+        Assert.That(lanxi.ContentionSummary, Does.Contain("天命摇动读回"));
+        Assert.That(lanxi.ContentionSummary, Does.Contain("去就风险读回84"));
+        Assert.That(lanxi.ContentionSummary, Does.Contain("公议向背读法"));
+        Assert.That(lanxi.ContentionSummary, Does.Contain("仍由Office/PublicLife分读"));
+        Assert.That(lanxi.ContentionSummary, Does.Contain("不是本户替朝廷修合法性"));
+        Assert.That(lanxi.PrefectureDispatchLine, Does.Contain("官身承压姿态"));
+        Assert.That(lanxi.PrefectureDispatchLine, Does.Contain("不是UI判定归附成败"));
+        Assert.That(lanxi.ChannelSummary, Does.Contain("公议向背读法"));
         Assert.That(lanxi.LastPublicTrace, Does.Contain("风险84"));
         Assert.That(lanxi.LastPublicTrace, Does.Not.Contain("Do not parse"));
         Assert.That(personIdSettlement.StreetTalkHeat, Is.EqualTo(3));

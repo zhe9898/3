@@ -28,6 +28,18 @@ Until a dedicated historical-process pack exists:
 
 A future historical-process pack may own high-level trend windows, named-figure pressure, and scenario chronology, but it must still integrate through Query / Command / DomainEvent and must not become a global script runner.
 
+## Regime legitimacy readback v253-v260 boundary note
+
+Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:
+- `WorldSettlements` owns the mandate/regime pressure source and `RegimeLegitimacyShifted` fact.
+- `OfficeAndCareer` owns official risk, appointment mutation, county/yamen posture, and `OfficeDefected`.
+- `PublicLifeAndRumor` owns public interpretation, notice visibility, dispatch texture, street heat, and `公议向背读法`.
+- `SocialMemoryAndRelations` writes no same-month durable residue for this pass; any future durable residue must read structured aftermath and declare its own schema/rule impact.
+- Application routes, assembles, and projects structured read models only.
+- Unity and shell adapters copy projected fields only.
+
+The readback tokens `天命摇动读回`, `去就风险读回`, `官身承压姿态`, `公议向背读法`, `仍由Office/PublicLife分读`, `不是本户替朝廷修合法性`, and `不是UI判定归附成败` are first-layer projection/readback wording over existing owner facts. V253-V260 is not a full regime engine, not a Court module, not faction AI, not an event pool, and not a legitimacy/defection/owner-lane/cooldown ledger. It adds no schema field, migration, `PersonRegistry` expansion, Application rule authority, UI/Unity authority, or manager/god-controller path.
+
 ## Court-policy first rule-density closeout audit v197-v204 boundary note
 
 The v109-v196 first rule-density closeout audit v197-v204 is documentation/test governance over the existing Chain 8 branch. It does not add runtime authority:
