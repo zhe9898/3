@@ -682,3 +682,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It projects `SocialPositionSourceModuleKeys` on person dossiers from existing owner snapshots so future surfaces can read source provenance without parsing social-position prose.
 - The key list does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
 - Future status drift still needs one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
+
+## Current social position readback closeout v405-v412 note
+
+- V405-V412 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, or persistence change.
+- It closes v381-v404 as preflight/readback/source-key evidence only, not as commoner status drift or a global per-person career simulation.
+- The closeout does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.
+- Future status drift still needs one owner lane with state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.

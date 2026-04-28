@@ -311,6 +311,12 @@ V397-V404 adds `PersonDossierSnapshot.SocialPositionSourceModuleKeys` as the str
 
 The list exists so future UI, tests, and projection readers do not parse `SocialPositionLabel`, `SocialPositionReadbackSummary`, notification prose, receipt prose, or docs text. It adds no class engine, new module, promote/demote path, zhuhu/kehu conversion, ledger, persisted state, schema bump, migration, UI authority, Unity authority, or `PersonRegistry` expansion.
 
+## V405-V412 Social Position Readback Closeout Audit
+
+V405-V412 closes v381-v404 as the first commoner / social-position readback layer only: future-lane contract, runtime readback summary, structured source-module keys, Unity copy-only presentation, and architecture evidence are now aligned.
+
+Closed here does not mean full social mobility is done. It is not a class engine, route economy, office-service ladder, tenant/landholding conversion system, durable social-position residue, or all-world person simulation. Future commoner status depth must still open a new owner-lane ExecPlan with state, cadence, target scope, hot path, expected cardinality, deterministic cap/order, schema impact, projection fields, and validation before adding rules.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

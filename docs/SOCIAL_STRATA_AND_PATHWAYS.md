@@ -399,3 +399,9 @@ Design principle:
 - `SocialPositionSourceModuleKeys` now exposes which owner-lane snapshots support a person dossier's social-position readback.
 - `PersonRegistry` appears only as the identity / `FidelityRing` anchor. Household livelihood, study/exam, trade attachment, office posture, family placement, and social-memory pressure remain in their owner modules.
 - This list is the future-safe reader path. Do not parse `SocialPositionLabel`, `SocialPositionReadbackSummary`, receipt prose, notification prose, or docs text to decide which lane contributed.
+
+### Current closeout: v405-v412
+
+- V381-V404 is closed only as a first readback layer for commoner / social-position legibility.
+- Current code can show what made a nearby person's social position readable; it cannot promote, demote, convert zhuhu/kehu status, assign office service, attach a trade route, or simulate every commoner as an individual career actor.
+- Future status drift still needs a single owner lane, target scope, cadence, deterministic cap/order, schema impact, and validation before implementation.

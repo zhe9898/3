@@ -4469,6 +4469,95 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Social_position_readback_closeout_v405_v412_must_close_readback_layer_without_class_engine()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-28_social-position-readback-closeout-v405-v412.md"));
+        string readModelContracts = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Contracts",
+            "ReadModels",
+            "PersonDossierReadModels.cs"));
+        string personDossierProjection = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Application",
+            "PresentationReadModelBuilder",
+            "PresentationReadModelBuilder.PersonDossiers.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V405-V412 Social Position Readback Closeout Audit"));
+        Assert.That(socialStrata, Does.Contain("Current closeout: v405-v412"));
+        Assert.That(designAudit, Does.Contain("v405-v412 social position readback closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Social position readback closeout v405-v412 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Social position readback closeout v405-v412 integration note"));
+        Assert.That(simulation, Does.Contain("Current social position readback closeout v405-v412 note"));
+        Assert.That(uiPresentation, Does.Contain("v405-v412 social position readback closeout"));
+        Assert.That(acceptance, Does.Contain("Social position readback closeout v405-v412 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V405-V412 Social Position Readback Closeout"));
+        Assert.That(skillMatrix, Does.Contain("Skill Alignment Through V412"));
+        Assert.That(schemaRules, Does.Contain("social position readback closeout v405-v412 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current social position readback closeout v405-v412 note"));
+        Assert.That(execPlan, Does.Contain("Target schema/migration impact: none"));
+        Assert.That(execPlan, Does.Contain("No production rule change"));
+        Assert.That(execPlan, Does.Contain("No `PersonRegistry` expansion"));
+
+        Assert.That(readModelContracts, Does.Contain("SocialPositionReadbackSummary"));
+        Assert.That(readModelContracts, Does.Contain("SocialPositionSourceModuleKeys"));
+        Assert.That(personDossierProjection, Does.Contain("BuildSocialPositionReadbackSummary"));
+        Assert.That(personDossierProjection, Does.Contain("BuildSocialPositionSourceModuleKeys"));
+        Assert.That(personDossierProjection, Does.Not.Contain("SocialPositionLabel.Split"));
+        Assert.That(personDossierProjection, Does.Not.Contain("SocialPositionReadbackSummary.Split"));
+        Assert.That(personDossierProjection, Does.Not.Contain("DomainEvent.Summary"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialPositionReadbackSummary"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialPositionSourceModuleKeys"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "PromoteCommoner",
+                     "DemoteCommoner",
+                     "ConvertZhuhuKehu",
+                     "ZhuhuKehuConversion",
+                     "CommonerMobilityLedger",
+                     "SocialPositionLedger",
+                     "ClassPositionLedger",
+                     "SocialClassLedger",
+                     "SocialPositionCloseoutLedger",
+                     "CommonerClassResolver",
+                     "SocialClassResolver",
+                     "PerPersonCareerSimulationManager",
+                     "CommonerCareerEngine",
+                     "SocialClassEngine",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialPosition*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.Strata*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.PersonnelFlow*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
