@@ -162,6 +162,15 @@ public sealed partial class PresentationReadModelBuilder
                     MemoryPressureSummary = BuildMemoryPressureSummary(narrative, memories),
                     DormantMemorySummary = BuildDormantMemorySummary(dormantStub, memoriesById),
                     SocialPositionLabel = BuildSocialPositionLabel(familyPerson, membership, education, trade, office, dormantStub),
+                    SocialPositionReadbackSummary = BuildSocialPositionReadbackSummary(
+                        familyPerson,
+                        membership,
+                        education,
+                        trade,
+                        office,
+                        narrative,
+                        memories,
+                        dormantStub),
                     CurrentStatusSummary = BuildCurrentStatusSummary(
                         person,
                         clan,
@@ -494,6 +503,35 @@ public sealed partial class PresentationReadModelBuilder
 
         string label = string.Join(", ", DistinctNonEmpty(branch, officeText, study, livelihood, tradeText, dormant));
         return string.IsNullOrWhiteSpace(label) ? "Registry-only person." : label;
+    }
+
+    private static string BuildSocialPositionReadbackSummary(
+        FamilyPersonSnapshot? familyPerson,
+        HouseholdMembershipSnapshot? membership,
+        EducationCandidateSnapshot? education,
+        ClanTradeSnapshot? trade,
+        OfficeCareerSnapshot? office,
+        ClanNarrativeSnapshot? narrative,
+        IReadOnlyList<SocialMemoryEntrySnapshot> memories,
+        DormantStubSnapshot? dormantStub)
+    {
+        string[] lanes = DistinctNonEmpty(
+                familyPerson is null ? string.Empty : "FamilyCore亲族位置",
+                membership is null ? string.Empty : "PopulationAndHouseholds生计活动",
+                education is null ? string.Empty : "EducationAndExams读书考试",
+                trade is null ? string.Empty : "TradeAndIndustry商贸附着",
+                office is null ? string.Empty : "OfficeAndCareer文书官身",
+                narrative is null && memories.Count == 0 && dormantStub is null
+                    ? string.Empty
+                    : "SocialMemoryAndRelations旧忆压力")
+            .ToArray();
+
+        if (lanes.Length == 0)
+        {
+            return "社会位置读回：当前只有PersonRegistry身份/FidelityRing；尚无家户、学业、商贸、官身或记忆owner lane；不是升降阶级或zhuhu/kehu转换。";
+        }
+
+        return $"社会位置读回：{string.Join("、", lanes)}；PersonRegistry只保身份/FidelityRing；不是升降阶级或zhuhu/kehu转换。";
     }
 
     private static string BuildCurrentStatusSummary(

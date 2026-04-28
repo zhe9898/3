@@ -299,6 +299,12 @@ V381-V388 records commoner / class-position mobility as a future owner-lane prob
 
 Future commoner status drift must name owner module, accepted command or monthly rule, pressure carrier, target scope, hot path, expected cardinality, deterministic order/cap, schema impact, cadence, projection fields, and validation. V381-V388 adds no schema, migration, direct promote/demote command, social-class resolver, class ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
 
+## V389-V396 Commoner Social Position Readback
+
+V389-V396 adds `PersonDossierSnapshot.SocialPositionReadbackSummary` as the first runtime readback surface for commoner / social-position interpretation. It is built from structured owner snapshots already used by person dossiers: family, household, education, trade, office, and social memory context.
+
+The readback makes the existing label legible without becoming authority. It does not implement a class engine, promote/demote people, resolve zhuhu/kehu conversion, add an office-service or trade-attachment route, write durable residue, create a ledger, parse prose, change schema, or expand `PersonRegistry`.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

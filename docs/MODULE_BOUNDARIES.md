@@ -145,6 +145,14 @@ Future commoner social-position drift must name owner state, accepted command or
 
 V381-V388 is not a full class engine, not a direct promote/demote command, not zhuhu/kehu conversion state, not a global per-person career simulation, and not a class/social-position/personnel/movement/focus/scheduler ledger. It adds no schema, migration, Application authority, UI/Unity authority, prose parser, manager/controller path, or `PersonRegistry` expansion.
 
+## Commoner social position readback v389-v396 boundary note
+
+V389-V396 adds a runtime read-model/ViewModel field only: `PersonDossierSnapshot.SocialPositionReadbackSummary`.
+
+`PresentationReadModelBuilder.PersonDossiers` may assemble this readback from structured `FamilyCore`, `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, and `SocialMemoryAndRelations` snapshots already used by the dossier. `PersonRegistry` still owns only identity, life-stage/death anchors, and `FidelityRing`; it does not gain household, education, office, trade, memory, class, or status state.
+
+Application assembles the readback and Unity copies it. Neither layer may parse `SocialPositionLabel`, readback prose, mobility text, public-life lines, receipt prose, notification prose, docs text, or `DomainEvent.Summary` to infer status movement. V389-V396 adds no schema, migration, promote/demote command, zhuhu/kehu conversion state, route resolver, ledger, projection cache, manager/controller path, or `PersonRegistry` expansion.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

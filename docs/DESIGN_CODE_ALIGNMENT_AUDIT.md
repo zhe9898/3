@@ -421,3 +421,10 @@
 - The current substrate already exposes household livelihood/activity/migration pressure, education/exam paths, trade/debt attachment, yamen/document contact, lineage support, public visibility, and durable social memory. Those carriers remain owner-laned.
 - Future status drift must choose one owner module and declare command or monthly rule, pressure carrier, target scope, hot path, cardinality, deterministic cap/order, schema impact, cadence, projection fields, no-touch boundary, and validation before implementation.
 - v381-v388 adds no production rule, schema, migration, direct promote/demote command, social-class resolver, class/social-position ledger, `PersonRegistry` expansion, Application rule layer, UI authority, Unity authority, or prose parser.
+
+## v389-v396 commoner social position readback audit - 2026-04-28
+
+- v389-v396 adds a runtime person-dossier readback field, `SocialPositionReadbackSummary`, so the existing `SocialPositionLabel` can be read as an owner-lane projection rather than a class state.
+- Code alignment: `PresentationReadModelBuilder.PersonDossiers` builds the readback from structured family, household, education, trade, office, and social-memory snapshots; `PersonRegistry` still contributes only identity/FidelityRing.
+- Unity alignment: `PersonDossierViewModel`, the Unity shell mirror, and `LineageShellAdapter` copy the projected field, and the focused person status ledger may display it. Unity does not infer class movement, promotion, demotion, zhuhu/kehu conversion, or route eligibility.
+- v389-v396 adds no persisted state, schema, migration, class/social-position ledger, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

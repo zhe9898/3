@@ -272,6 +272,9 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(dossier.EducationSummary, Does.Contain("local exam passed"));
         Assert.That(dossier.OfficeSummary, Does.Contain("appointed"));
         Assert.That(dossier.SocialPositionLabel, Does.Contain("local-exam passer"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("社会位置读回"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("PersonRegistry只保身份/FidelityRing"));
+        Assert.That(dossier.SocialPositionReadbackSummary, Does.Contain("不是升降阶级或zhuhu/kehu转换"));
         Assert.That(dossier.CurrentStatusSummary, Does.Contain("Living Adult"));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.PersonRegistry));
         Assert.That(dossier.SourceModuleKeys, Does.Contain(KnownModuleKeys.FamilyCore));
@@ -289,6 +292,7 @@ public sealed partial class FirstPassPresentationShellTests
         Assert.That(shell.Lineage.FocusedPerson.EducationThreadLine, Is.EqualTo(dossier.EducationSummary));
         Assert.That(shell.Lineage.FocusedPerson.OfficeThreadLine, Is.EqualTo(dossier.OfficeSummary));
         Assert.That(shell.Lineage.FocusedPerson.MemoryThreadLine, Is.EqualTo(dossier.MemoryPressureSummary));
+        Assert.That(shell.Lineage.FocusedPerson.StatusLedgerLine, Does.Contain(dossier.SocialPositionReadbackSummary));
         Assert.That(shell.Lineage.FocusedPerson.Dossier.PersonId, Is.EqualTo(dossier.PersonId));
     }
 
@@ -318,6 +322,7 @@ public sealed partial class FirstPassPresentationShellTests
                 MemoryPressureSummary = "pressure 12; trust 8, hope 6",
                 DormantMemorySummary = "No dormant social-memory stub.",
                 SocialPositionLabel = "Branch member",
+                SocialPositionReadbackSummary = "社会位置读回：FamilyCore亲族位置；PersonRegistry只保身份/FidelityRing；不是升降阶级或zhuhu/kehu转换。",
                 CurrentStatusSummary = "Living Adult; Local ring; clan Qinghe Zhang; Branch member; pressure 12.",
                 SourceModuleKeys = [KnownModuleKeys.PersonRegistry, KnownModuleKeys.FamilyCore],
             },

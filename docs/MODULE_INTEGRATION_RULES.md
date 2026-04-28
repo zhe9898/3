@@ -719,3 +719,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Future commoner status drift must open one owner lane with declared pressure carrier, target scope, hot path, cardinality, deterministic order/cap, cadence, schema impact, projection fields, and validation.
 - Application, UI, and Unity must not infer promotion, demotion, zhuhu/kehu conversion, office service, trade attachment, class movement, or durable residue from person dossier labels, mobility text, public-life lines, docs text, receipt prose, notification prose, or `DomainEvent.Summary`.
 - Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/focus/scheduler ledger, projection cache, or save-manifest change.
+
+## Commoner social position readback v389-v396 integration note
+- V389-V396 adds a runtime projection field, not a new integration channel.
+- `SocialPositionReadbackSummary` is assembled from existing structured person-dossier owner snapshots and copied to Unity-facing ViewModels. No module consumes it as authority.
+- The readback may name `FamilyCore`, `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, `SocialMemoryAndRelations`, and `PersonRegistry` ownership, but it is display guidance only.
+- Future commoner status drift still requires a separate owner-lane plan; no reader may parse the readback, `SocialPositionLabel`, mobility text, public-life lines, receipt prose, notification prose, docs text, or `DomainEvent.Summary` as authority.
+- Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/focus/scheduler/readback ledger, projection cache, or save-manifest change.

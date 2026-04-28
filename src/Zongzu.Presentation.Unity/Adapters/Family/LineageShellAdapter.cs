@@ -61,6 +61,7 @@ internal static class LineageShellAdapter
 			MemoryPressureSummary = dossier.MemoryPressureSummary,
 			DormantMemorySummary = dossier.DormantMemorySummary,
 			SocialPositionLabel = dossier.SocialPositionLabel,
+			SocialPositionReadbackSummary = dossier.SocialPositionReadbackSummary,
 			CurrentStatusSummary = dossier.CurrentStatusSummary,
 			SourceModuleKeys = dossier.SourceModuleKeys.ToArray()
 		};
@@ -85,7 +86,9 @@ internal static class LineageShellAdapter
 			EducationThreadLine = dossier.EducationSummary,
 			OfficeThreadLine = dossier.OfficeSummary,
 			MemoryThreadLine = BuildMemoryThreadLine(dossier),
-			StatusLedgerLine = dossier.CurrentStatusSummary,
+			StatusLedgerLine = string.IsNullOrWhiteSpace(dossier.SocialPositionReadbackSummary)
+				? dossier.CurrentStatusSummary
+				: $"{dossier.CurrentStatusSummary} {dossier.SocialPositionReadbackSummary}",
 			Dossier = dossier,
 			SourceModuleKeys = dossier.SourceModuleKeys.ToArray()
 		};

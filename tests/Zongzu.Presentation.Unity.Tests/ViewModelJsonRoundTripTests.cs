@@ -64,6 +64,7 @@ public class ViewModelJsonRoundTripTests
                         OfficeSummary = "appointed 主簿; authority 2",
                         MemoryPressureSummary = "pressure 38; fear 22, obligation 16",
                         DormantMemorySummary = "No dormant social-memory stub.",
+                        SocialPositionReadbackSummary = "社会位置读回 copied from projection; not promote/demote.",
                         SocialPositionLabel = "Main-line heir, 主簿, local-exam passer",
                         CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
                         SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
@@ -98,6 +99,7 @@ public class ViewModelJsonRoundTripTests
                         OfficeSummary = "appointed 主簿; authority 2",
                         MemoryPressureSummary = "pressure 38; fear 22, obligation 16",
                         DormantMemorySummary = "No dormant social-memory stub.",
+                        SocialPositionReadbackSummary = "社会位置读回 copied from projection; not promote/demote.",
                         SocialPositionLabel = "Main-line heir, 主簿, local-exam passer",
                         CurrentStatusSummary = "Living Adult; Core ring; clan Qinghe Zhang; Main-line heir; pressure 38.",
                         SourceModuleKeys = new[] { "PersonRegistry", "FamilyCore", "SocialMemoryAndRelations", "PopulationAndHouseholds", "EducationAndExams", "TradeAndIndustry", "OfficeAndCareer" },
@@ -152,6 +154,7 @@ public class ViewModelJsonRoundTripTests
         Assert.That(roundTripped.Lineage.PersonDossiers[0].MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].FidelityRingReadbackSummary, Does.Contain("PersonRegistry"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].InfluenceFootprintReadbackSummary, Does.Contain("Influence footprint readback"));
+        Assert.That(roundTripped.Lineage.PersonDossiers[0].SocialPositionReadbackSummary, Does.Contain("社会位置读回"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].EducationSummary, Does.Contain("local exam passed"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].OfficeSummary, Does.Contain("appointed"));
         Assert.That(roundTripped.Lineage.PersonDossiers[0].SourceModuleKeys, Does.Contain("SocialMemoryAndRelations"));
