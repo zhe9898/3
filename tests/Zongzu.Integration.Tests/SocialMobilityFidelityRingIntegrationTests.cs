@@ -60,6 +60,8 @@ public sealed class SocialMobilityFidelityRingIntegrationTests
         PresentationReadModelBundle bundle = new PresentationReadModelBuilder().BuildForM2(simulation);
         SettlementMobilitySnapshot mobility = bundle.SettlementMobilities.Single(entry =>
             entry.SettlementId == household.SettlementId);
+        HouseholdSocialPressureSnapshot householdPressure = bundle.HouseholdSocialPressures.Single(entry =>
+            entry.HouseholdId == household.Id);
         PersonDossierSnapshot dossier = bundle.PersonDossiers.Single(entry => entry.PersonId == travelerId);
 
         Assert.That(household.Livelihood, Is.EqualTo(LivelihoodType.Vagrant).Or.EqualTo(LivelihoodType.SeasonalMigrant));
@@ -75,6 +77,12 @@ public sealed class SocialMobilityFidelityRingIntegrationTests
         Assert.That(mobility.PoolThicknessSummary, Does.Contain("PopulationAndHouseholds").Or.Contain("池").Or.Contain("姹"));
         Assert.That(mobility.MovementReadbackSummary, Does.Contain("PopulationAndHouseholds"));
         Assert.That(mobility.ScaleBudgetReadbackSummary, Does.Contain("Scale budget readback"));
+        Assert.That(householdPressure.MobilityDynamicsDimensionKeys, Does.Contain(HouseholdSocialPressureSignalKeys.Mobility));
+        Assert.That(householdPressure.MobilityDynamicsDimensionKeys, Does.Contain(HouseholdSocialPressureSignalKeys.DebtAndSubsistence));
+        Assert.That(householdPressure.MobilityDynamicsExplanationSummary, Does.Contain("Household mobility dynamics"));
+        Assert.That(householdPressure.MobilityDynamicsExplanationSummary, Does.Contain("PopulationAndHouseholds owns household dynamics"));
+        Assert.That(householdPressure.MobilityDynamicsExplanationSummary, Does.Contain("far summary stays pooled"));
+        Assert.That(householdPressure.MobilityDynamicsExplanationSummary, Does.Contain("no PersonRegistry status authority"));
         Assert.That(mobility.FocusReadbackSummary, Does.Contain("不是").Or.Contain("涓嶆槸").Or.Contain("区域池"));
         Assert.That(dossier.MovementReadbackSummary, Does.Contain("流徙池").Or.Contain(KnownModuleKeys.PopulationAndHouseholds));
         Assert.That(dossier.FidelityRingReadbackSummary, Does.Contain("近处").Or.Contain(KnownModuleKeys.PersonRegistry));

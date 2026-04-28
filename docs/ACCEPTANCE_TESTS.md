@@ -825,3 +825,11 @@ At integration level, verify:
 - Boundary acceptance: future implementation must declare target scope, hot path, touched counts, deterministic order/cap, cadence, schema impact, projection fields, validation, and no-touch boundary before changing fidelity or target cardinality.
 - Parser guard acceptance: no reader parses `DomainEvent.Summary`, person dossier prose, social-position text, source-key display, scale-budget text, receipt prose, notification prose, mobility text, public-life lines, surface text, or docs prose to derive scale-budget or status authority.
 - Save/schema acceptance: v445-v452 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, precision-band state, selector state, scale-budget/fidelity-budget/class/social-position/commoner-status/personnel/movement ledger, durable residue, or serialized module payload change.
+
+## Household mobility dynamics explanation v453-v460 acceptance - 2026-04-28
+- Read-model acceptance: household pressure snapshots expose `MobilityDynamicsExplanationSummary` and `MobilityDynamicsDimensionKeys` assembled from existing structured household social-pressure signals.
+- Determinism acceptance: dimension keys are ordered by signal score descending, then signal key ordinal, and capped so projection work remains bounded.
+- Projection acceptance: Desk Sandbox copies the projected explanation to `HouseholdMobilityDynamicsSummary` without calculating movement, status, class, fidelity, target selection, or route eligibility.
+- Ownership acceptance: `PopulationAndHouseholds` remains the owner of household dynamics, while `PersonRegistry` remains identity / `FidelityRing` only.
+- Parser guard acceptance: no reader parses `DomainEvent.Summary`, person dossier prose, social-position text, source-key display, scale-budget text, receipt prose, notification prose, mobility text, public-life lines, surface text, docs prose, or the new explanation prose to derive mobility/status authority.
+- Save/schema acceptance: v453-v460 adds runtime read-model/ViewModel fields only and no production rule, persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, selector state, class/status/personnel/movement ledger, durable residue, or serialized module payload change.

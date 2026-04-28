@@ -771,3 +771,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Future detail promotion must enter through one declared owner lane and must name whether it targets named close-orbit actors, local households, active-region pools, or distant summaries.
 - No module may consume `FidelityRing`, scale-budget prose, social-position prose, source-key display, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as movement/status authority.
 - Save/schema result: no persisted state, schema bump, migration, scale-budget/fidelity-budget/selector/class/social-position/commoner-status/personnel/movement ledger, projection cache, or save-manifest change.
+
+## Household mobility dynamics explanation v453-v460 integration note
+
+- V453-V460 adds runtime projection fields, not an integration channel, command, event consumer, resolver, scheduler pass, or selector.
+- `MobilityDynamicsDimensionKeys` are selected from existing household social-pressure signals with deterministic ordering and a bounded cap. No module may consume this list as status authority, movement permission, fidelity mutation, or durable residue.
+- The explanation may be displayed by Desk Sandbox as projected context for a settlement's local household pressure, but no reader may parse it, sibling mobility text, social-position prose, receipts, notification text, public-life lines, docs text, or `DomainEvent.Summary`.
+- Future commoner status or migration depth still requires a separate owner-lane plan with state, cadence, target scope, hot path, touched counts, deterministic cap/order, schema impact, projection fields, and validation.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/commoner-status/class/selector ledger, projection cache, or save-manifest change.

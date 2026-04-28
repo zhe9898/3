@@ -77,6 +77,8 @@ public sealed class SettlementNodeViewModel
 
     public string PressureSummary { get; set; } = string.Empty;
 
+    public string HouseholdMobilityDynamicsSummary { get; set; } = string.Empty;
+
     public string MobilitySummary { get; set; } = string.Empty;
 
     public string HallAgendaSummary { get; set; } = string.Empty;

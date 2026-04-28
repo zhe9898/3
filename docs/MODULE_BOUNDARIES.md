@@ -1255,3 +1255,12 @@ Current lite note:
 - `PopulationAndHouseholds` and other owner lanes may only deepen detail in future work after declaring target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, and validation.
 - `Application` remains route/assembly/projection only. `Zongzu.Presentation.Unity` and the Unity shell copy projected fields only and must not infer hidden people, status movement, or far-region detail.
 - V445-V452 adds no persisted state, schema bump, migration, scale-budget ledger, fidelity-budget ledger, selector ledger, class/social-position/commoner-status module, command route, scheduler sweep, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Household mobility dynamics explanation v453-v460 boundary note
+
+- `PopulationAndHouseholds` remains the owner of household livelihood, distress, debt, labor, land, grain, migration, and settlement pool carriers.
+- `HouseholdSocialPressureSnapshot.MobilityDynamicsExplanationSummary` and `MobilityDynamicsDimensionKeys` are runtime read-model fields over existing signals. They do not add state, change monthly rules, or create a household-mobility ledger.
+- `PersonRegistry` remains identity / `FidelityRing` only and gains no commoner status, household mobility, class, route, or target-selection authority.
+- `Application` may assemble the explanation from structured snapshots. It must not parse summaries, receipts, notification prose, mobility text, social-position text, docs text, or `DomainEvent.Summary`.
+- `Zongzu.Presentation.Unity` and the Unity shell may copy the projected explanation to Desk Sandbox only. They must not infer class/status movement, choose people, raise fidelity, or scan regional society.
+- V453-V460 adds no persisted state, schema bump, migration, mobility/class/status ledger, selector, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

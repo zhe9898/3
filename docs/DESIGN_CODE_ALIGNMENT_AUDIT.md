@@ -477,3 +477,11 @@
 - Code alignment: current code already has `FidelityRing` as the readability marker and keeps household pressure/pools in `PopulationAndHouseholds`. This pass adds no selector, no scheduler sweep, and no production detail promotion.
 - Boundary alignment: future work must declare target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, validation, and no-touch boundary before changing fidelity or target cardinality.
 - v445-v452 adds no production rule, command, persisted state, schema, migration, scale-budget/fidelity-budget/selector ledger, class engine, new module, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v453-v460 household mobility dynamics explanation audit - 2026-04-28
+
+- v453-v460 adds runtime read-model explanation for existing household mobility dynamics, not a new social-class rule or mobility algorithm.
+- Code alignment: `PresentationReadModelBuilder.LivingSociety` derives `MobilityDynamicsDimensionKeys` from existing `HouseholdSocialPressureSignalSnapshot` rows with deterministic score-descending / key-ordinal ordering and a top-four cap.
+- Boundary alignment: the explanation reads `PopulationAndHouseholds` household carriers and settlement pool snapshots only; `PersonRegistry` remains identity / `FidelityRing` only.
+- Unity alignment: Desk Sandbox receives `HouseholdMobilityDynamicsSummary` from the projected snapshot and does not calculate household movement, status, class, fidelity, or target selection.
+- v453-v460 adds no persisted state, schema, migration, ledger, selector, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

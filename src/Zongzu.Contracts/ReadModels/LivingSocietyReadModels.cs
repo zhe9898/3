@@ -91,6 +91,10 @@ public sealed record HouseholdSocialPressureSnapshot
 
     public string VisibleChainSummary { get; init; } = string.Empty;
 
+    public string MobilityDynamicsExplanationSummary { get; init; } = string.Empty;
+
+    public IReadOnlyList<string> MobilityDynamicsDimensionKeys { get; init; } = [];
+
     public IReadOnlyList<HouseholdSocialPressureSignalSnapshot> Signals { get; init; } = [];
 
     public IReadOnlyList<string> SourceModuleKeys { get; init; } = [];

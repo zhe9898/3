@@ -435,3 +435,10 @@ Design principle:
 - Commoner and personnel depth follows the rule: near detail, far summary. Close household and pressure-hit actors may be readable; distant society stays summarized through pools and settlement pressure.
 - Future status depth must say whether it touches named close-orbit actors, local households, active-region pools, or distant summaries before it changes fidelity or state.
 - No future route may use `PersonRegistry`, UI selection, or prose parsing as a class/status authority path.
+
+### Current household dynamics explanation: v453-v460
+
+- Existing household mobility dynamics now have a first structured explanation readback over household social-pressure signals.
+- The explanation can name debt/subsistence, labor, mobility, family, office, market, public-life, or order pressure dimensions when those signals are already present.
+- This does not add a class ladder, commoner status route, zhuhu/kehu conversion, office-service lane, trade attachment lane, durable residue, selector, or global per-person simulation.
+- `PopulationAndHouseholds` remains the owner of household dynamics; `PersonRegistry` remains identity / `FidelityRing` only; distant society remains pooled summary until a later owner-lane plan changes state or fidelity.

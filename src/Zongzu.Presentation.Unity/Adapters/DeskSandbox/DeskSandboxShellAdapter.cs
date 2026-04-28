@@ -47,6 +47,7 @@ internal static class DeskSandboxShellAdapter
 						CampaignSummary = WarfareCampaignShellAdapter.BuildSettlementCampaignSummary(campaign, mobilizationSignal, settlement, clanTradeRoutes),
 						AftermathSummary = WarfareAftermathShellAdapter.BuildSettlementAftermathSummary(settlement, populationSettlement, jurisdiction, campaign, aftermathDocket, notifications),
 						PressureSummary = BuildSettlementHouseholdPressureSummary(populationSettlement, householdPressures),
+						HouseholdMobilityDynamicsSummary = BuildSettlementHouseholdMobilityDynamicsSummary(householdPressures),
 						MobilitySummary = BuildSettlementMobilitySummary(mobility, bundle.PlayerCommands, settlement.Id),
 						HallAgendaSummary = hallAgenda.Summary,
 						HallAgendaItems = hallAgenda.Items,
@@ -120,6 +121,14 @@ internal static class DeskSandboxShellAdapter
 		return string.IsNullOrWhiteSpace(householdSummary)
 			? populationSummary
 			: $"{populationSummary} {householdSummary}";
+	}
+
+	private static string BuildSettlementHouseholdMobilityDynamicsSummary(
+		IReadOnlyList<HouseholdSocialPressureSnapshot> householdPressures)
+	{
+		HouseholdSocialPressureSnapshot? leadHousehold = householdPressures.FirstOrDefault(static household =>
+			!string.IsNullOrWhiteSpace(household.MobilityDynamicsExplanationSummary));
+		return leadHousehold?.MobilityDynamicsExplanationSummary ?? string.Empty;
 	}
 
 	private static string BuildSettlementMobilitySummary(

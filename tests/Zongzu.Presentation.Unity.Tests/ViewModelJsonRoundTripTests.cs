@@ -118,6 +118,7 @@ public class ViewModelJsonRoundTripTests
                     {
                         SettlementName = "兰溪县",
                         Security = 80,
+                        HouseholdMobilityDynamicsSummary = "Household mobility dynamics copied from projection.",
                         MobilitySummary = "Pool readback copied from projection.",
                     },
                 },
@@ -176,6 +177,7 @@ public class ViewModelJsonRoundTripTests
         Assert.That(roundTripped.DeskSandbox.Settlements, Is.Not.Null);
         Assert.That(roundTripped.DeskSandbox.Settlements.Count, Is.EqualTo(1));
         Assert.That(roundTripped.DeskSandbox.Settlements[0].MobilitySummary, Does.Contain("Pool readback"));
+        Assert.That(roundTripped.DeskSandbox.Settlements[0].HouseholdMobilityDynamicsSummary, Does.Contain("Household mobility dynamics"));
         Assert.That(roundTripped.DeskSandbox.Settlements[0].SettlementName, Is.EqualTo("兰溪县"));
         Assert.That(roundTripped.NotificationCenter.Items, Is.Not.Null);
         Assert.That(roundTripped.NotificationCenter.Items.Count, Is.EqualTo(1));
