@@ -655,3 +655,9 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - The new Great Hall readback is projection-time surface text over existing personnel-flow readiness affordance/receipt fields.
 - It does not promote/demote people, move people, select targets, allocate office service, allocate campaign manpower, write SocialMemory residue, or change `PersonRegistry`.
 - Future readers must not parse this surface text as scheduler, command, SocialMemory, UI, Unity, or owner-lane authority.
+
+## Current personnel flow future lane closeout v373-v380 note
+
+- V373-V380 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, or persistence change.
+- It closes v357-v372 as preflight visibility only, not as a movement, assignment, office-service, kin-transfer, campaign-manpower, durable-residue, or migration simulation.
+- Future personnel-flow simulation depth must choose one owner lane and document state, cadence, cardinality, deterministic cap/order, schema impact, and validation before implementation.

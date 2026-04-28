@@ -277,6 +277,7 @@ Rules:
 - v349-v356 closes the personnel-flow gate layer as readback only; it is still not a direct move, migration, assignment, office-service, or campaign-manpower command path
 - v357-v364 blocks future owner-lane expansion until a separate owner module, command, scope, cadence, schema impact, and validation plan are declared
 - v365-v372 surfaces future owner-lane preflight in Great Hall mobility readback only; it does not add a button, direct movement, office-service assignment, kin transfer, or campaign-manpower command
+- v373-v380 closes that preflight/display layer as guidance only; future real personnel-flow commands still require a separate owner-lane plan
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

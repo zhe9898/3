@@ -1324,6 +1324,11 @@ Current personnel flow future lane surface v365-v372 note:
 - The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, future-lane-surface ledger, durable residue, or serialized module payload.
 - Any future persisted Family/Office/Warfare personnel-flow lane, command history, movement receipt, assignment state, migration state, projection cache, or durable social residue still requires a separate schema/migration plan before implementation.
 
+Current personnel flow future lane closeout v373-v380 note:
+- V373-V380 is docs/tests closeout only and adds no persisted fields.
+- The closeout does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, command ledger, movement ledger, personnel ledger, assignment ledger, focus ledger, scheduler ledger, future-lane-closeout ledger, durable residue, or serialized module payload.
+- Any future Family/Office/Warfare personnel-flow owner lane with persisted state, command history, movement receipt, assignment state, migration state, projection cache, or durable social residue still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

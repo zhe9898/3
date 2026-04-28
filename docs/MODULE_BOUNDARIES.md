@@ -1181,3 +1181,10 @@ Current lite note:
 - `Application` may assemble the preflight from structured affordance/receipt readiness fields; it may not calculate movement success, choose people, or parse prose.
 - `Zongzu.Presentation.Unity` may copy the projected field into Great Hall mobility readback only. Desk Sandbox locality remains governed by existing settlement-local readiness checks.
 - V365-V372 adds no persisted state, schema bump, migration, direct personnel command, movement resolver, future-lane-surface ledger, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Personnel flow future lane closeout v373-v380 boundary note
+- V373-V380 adds no new production boundary. It audits v357-v372 as planning/readback evidence only.
+- `PopulationAndHouseholds` remains the current readable local-response lane; `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` remain future owner lanes until each has its own command/rule/state/schema/validation plan.
+- `Application` remains projection/assembly only. `Zongzu.Presentation.Unity` remains copy-only. `PersonRegistry` remains identity/FidelityRing only.
+- Later Family/Office/Warfare personnel-flow depth must not reuse this closeout as authority to move, assign, summon, dispatch, or allocate people.
+- V373-V380 adds no persisted state, schema bump, migration, direct personnel command, movement resolver, future-lane-closeout ledger, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
