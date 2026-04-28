@@ -81,6 +81,12 @@ Governance, office, docket, desk, great-hall, and public-life surfaces may show 
 
 The shell must keep this as mediated county/office/public interpretation, not an emperor button, not a direct household repair task, not a Court command, not a faction AI panel, and not a UI-side regime outcome. Unity shell and presentation adapters must copy projected fields only. They may not parse `DomainEvent.Summary`, receipt prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate defection, legitimacy repair, public allegiance, owner-lane selection, or SocialMemory residue.
 
+### Regime legitimacy readback closeout v261-v268 UI note
+
+The v261-v268 closeout adds no new UI surface. Governance, office, docket, desk, great-hall, and public-life surfaces may continue to show only the projected v253-v260 Chain 9 readback fields. The closeout wording must not be treated as a new player control, faction panel, public-allegiance meter, dynasty-cycle display, Court command, or household legitimacy-repair task.
+
+Unity shell and presentation adapters remain copy-only. They may not parse `DomainEvent.Summary`, receipt prose, projection prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`, and they may not calculate defection, legitimacy repair, public allegiance, owner-lane status, or durable SocialMemory residue.
+
 ### Court-policy first rule-density closeout audit v197-v204 UI note
 
 The v109-v196 first rule-density closeout audit v197-v204 is a presentation boundary statement, not a new shell feature. Governance, office, docket, desk, great-hall, and public-life surfaces may show the already-projected Chain 8 process / local response / public echo / receipt guard fields, but the audit does not add a new UI state, cooldown account, policy result, or Court command.

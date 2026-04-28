@@ -44,6 +44,12 @@ The v253-v260 Chain 9 readback uses the existing scheduler cadence and bounded e
 
 This adds no scheduler phase, event pool, full regime engine, faction AI, Court module, ledger, schema field, migration, same-month SocialMemory durable residue, or UI/Unity authority. The simulation proof should cover same-month pressure flow, off-scope non-inheritance, structured metadata/read-model use, no prose parsing, and the boundary that the home household is not repairing legitimacy: `不是本户替朝廷修合法性`.
 
+## Current regime legitimacy readback closeout v261-v268 note
+
+The v261-v268 closeout adds no simulation cadence and no runtime rule. It records that the existing v253-v260 Chain 9 path is closed only for first-layer readback: one mandate/regime pressure edge, one office-owned defection mutation, matching public-life interpretation, governance projection, and Unity copy-only display.
+
+This closeout must not be used as a scheduler phase, recurring demand, regime-recognition formula, public allegiance calculation, durable memory write, faction AI, event pool, ledger, schema field, migration, or UI/Unity authority. Future deeper regime work must declare owner state, cadence, fanout, recovery/decay, save/schema impact, and validation separately.
+
 ## Current court-policy first rule-density closeout audit v197-v204 note
 
 The v109-v196 first rule-density closeout audit v197-v204 uses no new simulation cadence. It records that Chain 8 has a closed first-layer branch across policy process texture, local Office/PublicLife response, later SocialMemory residue, next-window memory readback, public-reading echo, public follow-up cue, docket guard, suggested-action guard, suggested-receipt guard, receipt-docket consistency, and public-life receipt echo.

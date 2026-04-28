@@ -76,6 +76,20 @@ Forbidden:
 - treating the readback as a full regime engine, court engine, faction AI, event pool, regime-recognition ledger, legitimacy ledger, defection ledger, owner-lane ledger, cooldown ledger, or policy/court process ledger
 - adding a Court module, schema field, migration, save-manifest change, Application rule layer, UI rule layer, Unity authority, `PersonRegistry` expansion, manager/god-controller path, or same-month SocialMemory durable residue
 
+### Chain 9 v261-v268 regime legitimacy readback closeout integration note
+
+V261-V268 adds no new integration channel. It audits the existing v253-v260 data path and records that Chain 9 is closed only as first-layer readback:
+- `WorldSettlements.RegimeLegitimacyShifted` structured pressure
+- `OfficeAndCareer.OfficeDefected` owner mutation and metadata
+- `PublicLifeAndRumor` matching-settlement public interpretation
+- Application governance/read-model projection
+- Unity copy-only ViewModels
+
+Forbidden:
+- treating the closeout as a full regime-recognition system, public-allegiance simulation, faction AI, dynasty-cycle model, Court module, event pool, ledger, schema field, migration, or new scheduler phase
+- letting Application/UI/Unity calculate defection success, legitimacy repair, public allegiance, owner-lane status, or SocialMemory residue
+- parsing `DomainEvent.Summary`, receipt prose, projection prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary`
+
 ### Chain 8 v197-v204 first rule-density closeout audit integration note
 
 The v109-v196 first rule-density closeout audit v197-v204 is integration governance only. It documents that Chain 8 has a closed first-layer readback branch, but it adds no new integration channel and no production rule.

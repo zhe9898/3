@@ -1,5 +1,13 @@
 # DESIGN_CODE_ALIGNMENT_AUDIT
 
+## v261-v268 regime legitimacy readback closeout audit - 2026-04-28
+
+- V261-V268 closes the v253-v260 Chain 9 first readback-thickening branch as audit evidence only. It records that `RegimeLegitimacyShifted -> OfficeDefected -> PublicLifeAndRumor` is readable through Office/PublicLife owner lanes, not that full regime recognition is implemented.
+- Code alignment: no production rule changes are introduced. The already-implemented owner split remains `WorldSettlements` for mandate/regime pressure source, `OfficeAndCareer` for defection risk and appointment mutation, `PublicLifeAndRumor` for public interpretation, Application for projection assembly, and Unity for copy-only presentation.
+- This is not a full regime engine, public-allegiance simulation, faction AI, dynasty-cycle model, Court module, event pool, or ledger branch. Regime recognition, household compliance, ritual legitimacy, force backing, rebellion-to-polity consequences, and durable regime SocialMemory residue remain future debt.
+- No reader may parse `DomainEvent.Summary`, receipt prose, projection prose, public-life prose, `OfficialNoticeLine`, `PrefectureDispatchLine`, `LastAdministrativeTrace`, `LastPetitionOutcome`, `LastLocalResponseSummary`, or `LastRefusalResponseSummary` as authority.
+- Save/schema audit: v261-v268 adds no persisted field, root/module schema bump, migration, save manifest change, module envelope, regime-recognition ledger, legitimacy ledger, defection ledger, public-allegiance ledger, owner-lane ledger, cooldown ledger, scheduler ledger, projection cache, manager/god-controller path, Application rule layer, UI/Unity authority, or `PersonRegistry` expansion.
+
 ## v253-v260 regime legitimacy readback - 2026-04-28
 
 - Chain 9 now has a first readback-thickening layer over the existing `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor` path. This is still regime/office/public readback, not a full regime-recognition engine.
