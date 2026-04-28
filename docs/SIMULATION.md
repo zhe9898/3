@@ -661,3 +661,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - V373-V380 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, or persistence change.
 - It closes v357-v372 as preflight visibility only, not as a movement, assignment, office-service, kin-transfer, campaign-manpower, durable-residue, or migration simulation.
 - Future personnel-flow simulation depth must choose one owner lane and document state, cadence, cardinality, deterministic cap/order, schema impact, and validation before implementation.
+
+## Current commoner social position preflight v381-v388 note
+
+- V381-V388 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, or persistence change.
+- It records that commoner / class-position mobility must remain scale-budgeted: near households can be read through existing household/person dossier projections, while distant society remains summarized by pools and pressure carriers.
+- Future commoner status drift must choose one owner lane and document pressure carrier, state, cadence, target scope, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation before implementation.
+- It does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, or change `PersonRegistry`.

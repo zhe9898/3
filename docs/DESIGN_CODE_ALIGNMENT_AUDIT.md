@@ -414,3 +414,10 @@
 - The closeout does not claim FamilyCore kin transfer, OfficeAndCareer office-service assignment, WarfareCampaign manpower allocation, direct movement, durable movement residue, or a full migration/social-mobility economy.
 - Future work must choose one owner lane and declare accepted command, target scope, hot path, cardinality, deterministic cap/order, schema impact, cadence, projection fields, no-touch boundary, and validation before implementation.
 - v373-v380 adds no production rule, schema, migration, command, movement resolver, future-lane-closeout ledger, `PersonRegistry` expansion, Application rule layer, UI authority, Unity authority, or prose parser.
+
+## v381-v388 commoner social position preflight audit - 2026-04-28
+
+- v381-v388 documents commoner / class-position mobility as future rule work over existing pressure carriers, not as a new class engine.
+- The current substrate already exposes household livelihood/activity/migration pressure, education/exam paths, trade/debt attachment, yamen/document contact, lineage support, public visibility, and durable social memory. Those carriers remain owner-laned.
+- Future status drift must choose one owner module and declare command or monthly rule, pressure carrier, target scope, hot path, cardinality, deterministic cap/order, schema impact, cadence, projection fields, no-touch boundary, and validation before implementation.
+- v381-v388 adds no production rule, schema, migration, direct promote/demote command, social-class resolver, class/social-position ledger, `PersonRegistry` expansion, Application rule layer, UI authority, Unity authority, or prose parser.

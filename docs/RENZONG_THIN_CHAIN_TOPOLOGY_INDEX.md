@@ -293,6 +293,12 @@ V373-V380 closes v357-v372 as a future-lane preflight visibility layer only. Clo
 
 It is not a direct movement system, migration economy, office-service lane, kin-transfer lane, campaign-manpower lane, assignment path, durable movement residue, or full social mobility engine. Future depth must open a new owner-lane ExecPlan with state, cadence, cardinality, deterministic cap/order, schema impact, no-touch boundary, and validation before adding rules.
 
+## V381-V388 Commoner Social Position Preflight
+
+V381-V388 records commoner / class-position mobility as a future owner-lane problem over the existing social-mobility substrate. It acknowledges current carriers in `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, `FamilyCore`, `PublicLifeAndRumor`, and `SocialMemoryAndRelations`, but it does not implement a class engine.
+
+Future commoner status drift must name owner module, accepted command or monthly rule, pressure carrier, target scope, hot path, expected cardinality, deterministic order/cap, schema impact, cadence, projection fields, and validation. V381-V388 adds no schema, migration, direct promote/demote command, social-class resolver, class ledger, UI authority, Unity authority, prose parser, or `PersonRegistry` expansion.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.

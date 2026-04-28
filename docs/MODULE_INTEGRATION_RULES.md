@@ -712,3 +712,10 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The closed layer is `future owner-lane contract` -> `PersonnelFlowFutureOwnerLanePreflightSummary` -> Great Hall display. It is not a command route, resolver, event consumer, ledger, or movement permission.
 - Future Family/Office/Warfare personnel-flow integration must open a separate owner-lane plan and cannot consume this closeout, the surface text, command prose, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/future-lane-closeout ledger, projection cache, or save-manifest change.
+
+## Commoner social position preflight v381-v388 integration note
+- V381-V388 adds no integration channel. It is a gate for future commoner / social-position mobility work only.
+- Current readable carriers remain the existing owner surfaces: `PopulationAndHouseholds` livelihood/activity/pools, `PersonRegistry` identity/FidelityRing, and adjacent projections from education, trade, office, family, public life, and social memory.
+- Future commoner status drift must open one owner lane with declared pressure carrier, target scope, hot path, cardinality, deterministic order/cap, cadence, schema impact, projection fields, and validation.
+- Application, UI, and Unity must not infer promotion, demotion, zhuhu/kehu conversion, office service, trade attachment, class movement, or durable residue from person dossier labels, mobility text, public-life lines, docs text, receipt prose, notification prose, or `DomainEvent.Summary`.
+- Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/focus/scheduler ledger, projection cache, or save-manifest change.
