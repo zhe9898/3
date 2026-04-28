@@ -717,3 +717,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It recommends `PopulationAndHouseholds` as the first future runtime owner lane for commoner status depth because that module already owns household livelihood/activity/pools and pressure carriers.
 - The preflight does not promote/demote people, resolve zhuhu/kehu conversion, select office service, assign trade attachment, write durable social-position residue, choose regional people, or change `PersonRegistry`.
 - Future implementation still needs `PopulationAndHouseholds` state/cadence/target-scope/no-touch/hot-path/cardinality/cap-order/schema/projection/validation before code lands.
+
+## Current fidelity scale budget preflight v445-v452 note
+
+- V445-V452 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, precision mutation, selection rule, or persistence change.
+- It documents the scale budget: close/pressure-hit actors may become readable through owner-laned projection; distant society stays summarized through pools and pressure carriers.
+- The preflight does not promote/demote people, mutate fidelity rings, run a global person scan, choose regional people, resolve zhuhu/kehu conversion, or change `PersonRegistry`.
+- Future implementation still needs target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, validation, and no-touch boundary before code lands.

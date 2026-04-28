@@ -765,3 +765,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Future commoner status integration should start in `PopulationAndHouseholds` unless a later ExecPlan explicitly proves another owner lane. The future lane must declare state, cadence, target scope, no-touch boundary, hot path, cardinality, deterministic cap/order, schema impact, projection fields, and validation.
 - `PersonRegistry`, Application, UI, Unity, docs text, and projection prose must not be consumed as status authority.
 - Save/schema result: no persisted state, schema bump, migration, class/social-position/commoner-status/personnel/movement/owner-lane/preflight ledger, projection cache, or save-manifest change.
+
+## Fidelity scale budget preflight v445-v452 integration note
+- V445-V452 adds no integration channel, command, event, resolver, consumer, scheduler pass, or selector.
+- Future detail promotion must enter through one declared owner lane and must name whether it targets named close-orbit actors, local households, active-region pools, or distant summaries.
+- No module may consume `FidelityRing`, scale-budget prose, social-position prose, source-key display, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as movement/status authority.
+- Save/schema result: no persisted state, schema bump, migration, scale-budget/fidelity-budget/selector/class/social-position/commoner-status/personnel/movement ledger, projection cache, or save-manifest change.

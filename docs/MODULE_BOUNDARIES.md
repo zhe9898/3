@@ -1248,3 +1248,10 @@ Current lite note:
 - `Application` may only route/assemble future projections once an owner lane exists; it must not become a status resolver.
 - `Zongzu.Presentation.Unity` and the Unity shell must not infer status movement, pick regional people, or present a class browser from current readbacks.
 - V437-V444 adds no persisted state, schema bump, migration, owner-lane ledger, class/social-position/commoner-status module, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Fidelity scale budget preflight v445-v452 boundary note
+- V445-V452 adds no production boundary. It documents "near detail, far summary" as the required scale budget before any future commoner/personnel/social-position depth raises precision.
+- `PersonRegistry` remains identity / `FidelityRing` only. It must not become a global person scanner, regional selector, class/status authority, or movement engine.
+- `PopulationAndHouseholds` and other owner lanes may only deepen detail in future work after declaring target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, and validation.
+- `Application` remains route/assembly/projection only. `Zongzu.Presentation.Unity` and the Unity shell copy projected fields only and must not infer hidden people, status movement, or far-region detail.
+- V445-V452 adds no persisted state, schema bump, migration, scale-budget ledger, fidelity-budget ledger, selector ledger, class/social-position/commoner-status module, command route, scheduler sweep, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

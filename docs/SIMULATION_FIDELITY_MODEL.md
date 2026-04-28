@@ -602,3 +602,10 @@ It should ask:
 - Future commoner status depth should begin from `PopulationAndHouseholds` household pressure and pool ownership, not from `PersonRegistry` or UI selection.
 - Any future status rule that raises precision or names more people must state target scope, deterministic cap/order, cadence, schema impact, projection readback, and no-touch boundary first.
 - This preflight changes no fidelity rings and adds no new selector.
+
+## V445-V452 Fidelity Scale Budget Preflight
+
+- "Near detail, far summary" is the performance and authority rule for future social/commoner/personnel depth.
+- Player-near and pressure-hit actors may become readable only through owner-laned, deterministic, capped projection paths. Distant society remains pool/pressure summary until a later owner lane explicitly promotes bounded detail.
+- Future work must declare target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, and validation before changing fidelity, target cardinality, or selection behavior.
+- This preflight changes no fidelity rings, adds no selector, and adds no global per-person simulation.

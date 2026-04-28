@@ -345,6 +345,14 @@ This is not an implementation. It adds no command, monthly rule, resolver, event
 
 Future implementation still needs a separate ExecPlan with owner state, cadence, target scope, no-touch boundary, hot path, expected cardinality, deterministic cap/order, schema impact, projection fields, and validation.
 
+## V445-V452 Fidelity Scale Budget Preflight
+
+V445-V452 records the performance and authority rule behind the social-position branch: "near detail, far summary." Player-near or pressure-hit people may become readable through owner-laned projections, while distant society remains represented through settlement/household pools and pressure carriers.
+
+This is not a new selector or runtime precision pass. It adds no fidelity-ring mutation, global person scan, regional person browser, scheduler sweep, class/commoner-status engine, schema field, migration, new module, ledger, Application authority, UI authority, Unity authority, or `PersonRegistry` expansion.
+
+Future implementation that raises detail must declare target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, and validation before code lands.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.
