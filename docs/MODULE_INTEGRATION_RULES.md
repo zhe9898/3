@@ -663,3 +663,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The echo is assembled only from structured `PersonnelFlowReadinessSummary` fields on player-command affordances and receipts. It must not parse `ReadbackSummary`, receipt prose, notification text, mobility text, or `DomainEvent.Summary`.
 - Great Hall mobility readback may append the command-surface echo. This is presentation of an already projected field, not a new integration channel or movement-resolution path.
 - No module may consume this echo as authority, ledger membership, movement permission, or durable SocialMemory residue.
+
+## Personnel flow readiness closeout v317-v324 integration note
+- V317-V324 adds no integration channel. It closes v293-v316 as a first personnel-flow command-readiness layer only.
+- The closed layer consists of preflight gates, existing `PopulationAndHouseholds` local-response readiness readback, a command-surface echo, and Great Hall display of projected fields.
+- Future personnel-flow command work still must enter through a named owner module and must not use the v293-v316 readbacks as authority, ledger membership, movement permission, or durable SocialMemory residue.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/closeout ledger, projection cache, or save-manifest change.

@@ -511,3 +511,9 @@ It should ask:
 - Great Hall mobility readback may show `人员流动命令预备汇总`, but the echo is still derived from projected command readiness fields, not from per-person scanning or movement simulation.
 - It preserves the same fidelity rule: player-near household leverage is readable, while distant people remain represented through pools and ring budgets.
 - It adds no new person iteration budget, movement ledger, or persisted cache.
+
+## V317-V324 Personnel Flow Readiness Closeout
+
+- The v293-v316 branch is closed as a first personnel-flow command-readiness layer, not as a full movement simulation.
+- Fidelity remains scale-budgeted: player-near household readiness can be read in command surfaces, while distant movement remains pooled and summarized.
+- The closeout adds no person iteration budget, direct personnel command, movement ledger, persisted cache, or schema change.

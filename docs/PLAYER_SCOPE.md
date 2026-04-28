@@ -270,6 +270,7 @@ Rules:
 - v293-v300 adds no personnel command; it only records the preflight gates for future movement / assignment / return commands
 - v301-v308 adds only `PersonnelFlowReadinessSummary` on existing public-life local response affordances/receipts; it tells the player that this household can be influenced through livelihood, labor, and migration pressure, not directly moved
 - v309-v316 adds only a command-surface echo of those readiness fields for Great Hall mobility readback; it does not let the player pick, summon, assign, or move people directly
+- v317-v324 closes that branch as first-layer readiness only; it is not a complete migration, social-mobility, office-service, or campaign-manpower command system
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 
