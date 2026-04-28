@@ -386,3 +386,10 @@
 - The containment rule keeps active local personnel-flow readiness readable while quiet or distant settlements remain mobility pool summaries.
 - Desk Sandbox still uses structured command-surface enumeration by settlement. It does not parse command summaries, receipt prose, notification prose, mobility text, public-life lines, docs prose, or `DomainEvent.Summary`.
 - v341-v348 adds no schema, migration, direct personnel command, movement/personnel/desk-gate containment ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.
+
+## v349-v356 personnel flow gate closeout audit - 2026-04-28
+
+- v349-v356 closes v325-v348 as the first owner-lane gate layer: projected command-surface gate, Great Hall echo, Desk Sandbox local echo, and no leakage onto quiet/distant settlements.
+- The closeout deliberately does not claim a personnel command system, migration economy, assignment system, office-service lane, campaign-manpower lane, durable movement residue, or full social mobility engine.
+- Future depth must select one owner lane and declare target scope, hot path, expected cardinality, deterministic order/cap, schema impact, no-touch boundary, and validation lane before implementation.
+- v349-v356 adds no production rule, schema, migration, direct personnel command, movement/personnel/owner-lane-gate ledger, `PersonRegistry` expansion, Application movement resolver, UI authority, Unity authority, or prose parser.

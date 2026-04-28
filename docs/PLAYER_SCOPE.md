@@ -274,6 +274,7 @@ Rules:
 - v325-v332 adds only an owner-lane gate readback; it tells the player which module can currently read personnel-flow pressure and which possible lanes still require future owner-lane plans
 - v333-v340 adds only a Desk Sandbox local echo of that gate when the settlement already has projected personnel-flow readiness commands or receipts
 - v341-v348 keeps the desk echo local: quiet or distant settlements do not inherit a global personnel-flow owner-lane gate without structured local readiness
+- v349-v356 closes the personnel-flow gate layer as readback only; it is still not a direct move, migration, assignment, office-service, or campaign-manpower command path
 - disabled office or warfare paths must not leak their commands into the shell
 - same-month handling is allowed only for explicitly bounded command windows such as office review or campaign directive updates
 

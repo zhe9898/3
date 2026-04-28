@@ -119,6 +119,14 @@ Desk Sandbox must keep the gate local to settlements that have structured public
 
 Application still assembles projected command fields only. V341-V348 adds no schema, migration, command route, movement/personnel/desk-gate containment ledger, prose parser, UI authority, Unity authority, or `PersonRegistry` expansion.
 
+## Personnel flow gate closeout v349-v356 boundary note
+
+V349-V356 adds no boundary and closes no future owner lane. It closes only the current readback layer around personnel-flow gate visibility.
+
+`PopulationAndHouseholds` remains the only current readable personnel-flow lane through household response and migration pressure. `FamilyCore`, `OfficeAndCareer`, and `WarfareCampaign` remain future owner-lane plans until separate rules are designed.
+
+Application, UI, and Unity remain projection/copy surfaces. V349-V356 adds no command route, movement resolver, owner-lane-gate ledger, schema, migration, prose parser, or `PersonRegistry` expansion.
+
 ## Regime legitimacy readback v253-v260 boundary note
 
 Chain 9 v253-v260 keeps the existing regime legitimacy pressure path inside current owner lanes:

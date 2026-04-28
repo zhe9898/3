@@ -687,3 +687,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Desk Sandbox must keep the gate tied to structured local public-life `PersonnelFlowReadinessSummary` affordances or receipts for the same settlement.
 - Quiet or distant settlements keep mobility summaries and do not inherit another settlement's local gate echo.
 - Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/desk-gate-containment ledger, projection cache, or save-manifest change.
+
+## Personnel flow gate closeout v349-v356 integration note
+- V349-V356 adds no integration channel. It closes the current personnel-flow gate visibility layer as readback only.
+- The closed layer is `PersonnelFlowReadinessSummary` -> `PersonnelFlowOwnerLaneGateSummary` -> Great Hall readback -> Desk Sandbox local echo -> containment against quiet/distant node leakage.
+- Future integration for Family, Office, Warfare, or broader migration/personnel movement must open a separate owner-lane plan and cannot reuse this closeout as authority.
+- Save/schema result: no persisted state, schema bump, migration, command/movement/personnel/assignment/focus/scheduler/owner-lane-gate ledger, projection cache, or save-manifest change.
