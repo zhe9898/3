@@ -456,3 +456,10 @@
 - Code alignment: production scale-budget wording already maps Regional to summary; this pass adds focused test and docs evidence without changing production rule code.
 - Boundary alignment: regional / distant society stays pooled and summary-first. The guard does not select new named actors, raise fidelity, create class routes, or add a global per-person career simulation.
 - v421-v428 adds no persisted state, schema, migration, scale-budget ledger, social-position ledger, class engine, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v429-v436 social position scale closeout audit - 2026-04-28
+
+- v429-v436 closes v381-v428 as a first readback / source-key / scale-budget / regional-summary visibility substrate only.
+- The closeout does not graduate the layer into class mobility, zhuhu/kehu conversion, office-service work, trade attachment, clerk/artisan/merchant routes, durable social-position residue, or global per-person career simulation.
+- Shell alignment: lineage/person-inspector surfaces may read projected fields, but they must not become class ladders, promote/demote boards, regional person selectors, or global person browsers.
+- v429-v436 adds no production rule, persisted state, schema, migration, ledger, command route, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

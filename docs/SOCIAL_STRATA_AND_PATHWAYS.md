@@ -417,3 +417,9 @@ Design principle:
 - A `FidelityRing.Regional` person dossier must read as regional summary, not close/local detail.
 - This protects the far-summary side of the scale budget: regional society remains pooled and pressure-carried unless a later owner lane explicitly raises precision with deterministic cap/order, schema impact, and validation.
 - This guard adds no new social class, commoner route, office-service lane, or per-person world simulation.
+
+### Current closeout: v429-v436
+
+- V381-V428 is closed only as first-layer social-position visibility: future-lane requirements, readback, structured source keys, scale-budget wording, and regional summary guard.
+- Current code can explain why a nearby dossier has social-position context and why regional society remains summary-first. It still cannot promote, demote, convert zhuhu/kehu status, assign office service, attach trade work, or simulate every commoner as an individual career actor.
+- Future status depth still needs a single owner lane, target scope, cadence, deterministic cap/order, schema impact, and validation before implementation.

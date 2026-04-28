@@ -1359,6 +1359,11 @@ Current social position regional scale guard v421-v428 note:
 - The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, promote/demote state, zhuhu/kehu conversion state, precision-band state, class ledger, social-position ledger, personnel ledger, movement ledger, scale-budget ledger, durable social-position residue, or serialized module payload.
 - Any future persisted regional precision, selection state, commoner status drift, conversion state, route history, durable residue, source provenance, or projection cache still requires a separate owner-module schema/migration plan before implementation.
 
+Current social position scale closeout v429-v436 note:
+- V429-V436 is docs/tests closeout only and adds no persisted fields.
+- The closeout does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, promote/demote state, zhuhu/kehu conversion state, precision-band state, class ledger, social-position ledger, personnel ledger, movement ledger, source-key ledger, scale-budget ledger, closeout ledger, durable social-position residue, or serialized module payload.
+- Any future persisted commoner status drift, conversion state, route history, precision state, source provenance, durable residue, or projection cache still requires a separate owner-module schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

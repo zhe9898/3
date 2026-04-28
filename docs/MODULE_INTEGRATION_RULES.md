@@ -753,3 +753,9 @@ Until the general seam exists, any command route not yet moved into its owning m
 - No module may consume regional scale-budget text as command authority, class movement, precision mutation, durable residue, route eligibility, or target selection.
 - Future commoner status integration still requires a separate owner-lane plan; no reader may parse the scale-budget text, social-position prose, source-key display, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
 - Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/scale-budget ledger, projection cache, or save-manifest change.
+
+## Social position scale closeout v429-v436 integration note
+- V429-V436 adds no integration channel. It closes the preflight/readback/source-key/scale-budget/regional-guard layer as evidence only.
+- The closed layer is display and validation substrate, not a command route, event consumer, resolver, ledger, selection rule, or movement/class permission.
+- Future commoner status integration must open a separate owner-lane plan and cannot consume closeout prose, social-position text, source-key display, scale-budget text, receipt prose, notification text, mobility text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
+- Save/schema result: no persisted state, schema bump, migration, class/social-position/personnel/movement/source-key/scale-budget/closeout ledger, projection cache, or save-manifest change.

@@ -1234,3 +1234,10 @@ Current lite note:
 - `Application` remains projection/assembly only; the guard must not become a hidden selection pass or precision policy.
 - `Zongzu.Presentation.Unity` remains copy-only and gains no rule for choosing regional people.
 - V421-V428 adds no persisted state, schema bump, migration, class/social-position/scale-budget ledger, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Social position scale closeout v429-v436 boundary note
+- V429-V436 adds no new production boundary. It closes v381-v428 as first-layer social-position visibility evidence only.
+- `PersonRegistry` remains identity / `FidelityRing` only. It still does not own household status, class movement, office service, trade attachment, memory residue, or regional person selection.
+- `PopulationAndHouseholds`, `EducationAndExams`, `TradeAndIndustry`, `OfficeAndCareer`, `FamilyCore`, and `SocialMemoryAndRelations` remain separate owner lanes. Future status depth must choose one owner lane before changing state, route, residue, precision, or target cardinality.
+- `Application` remains projection/assembly only. `Zongzu.Presentation.Unity` and the Unity shell mirror remain copy-only.
+- V429-V436 adds no persisted state, schema bump, migration, class/social-position/scale-budget/closeout ledger, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

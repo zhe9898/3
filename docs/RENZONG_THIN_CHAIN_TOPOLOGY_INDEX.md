@@ -329,6 +329,14 @@ V421-V428 guards the far-summary half of the same scale budget. A registry-only 
 
 This is tests/docs evidence only: no new production rule, fidelity-ring mutation, target selection, class route, ledger, schema, migration, Application authority, UI authority, Unity authority, or `PersonRegistry` expansion.
 
+## V429-V436 Social Position Scale Closeout
+
+V429-V436 closes v381-v428 as a first commoner / social-position visibility substrate only: future-lane contract, runtime social-position readback, structured owner-lane source keys, scale-budget readback, regional summary guard, and Unity copy-only evidence are aligned.
+
+Closed here does not mean full class mobility is implemented. It is not a class engine, zhuhu/kehu conversion system, office-service route, trade-attachment route, clerk/artisan/merchant ladder, durable social-position residue, regional person selector, global person browser, or all-world per-person career simulation.
+
+Future commoner status depth must still open a new owner-lane ExecPlan with state, cadence, target scope, hot path, expected cardinality, deterministic cap/order, schema impact, projection fields, and validation before adding rules.
+
 ## Chain 9 Regime Legitimacy Readback - v253-v260
 
 V253-V260 adds the first readback-thickening layer for Chain 9. It keeps the same-month path `WorldSettlements.RegimeLegitimacyShifted -> OfficeAndCareer.OfficeDefected -> PublicLifeAndRumor`, but makes the player-facing surfaces read the pressure as `天命摇动读回`, `去就风险读回`, `官身承压姿态`, and `公议向背读法`.
