@@ -803,3 +803,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Future household mobility integration must open a separate owner-lane plan and cannot consume this closeout, `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, scale-budget prose, social-position prose, source-key display, receipt text, notification text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
 - Application, UI, and Unity must not infer movement success, route eligibility, status drift, target selection, fidelity promotion, or durable SocialMemory residue from the closeout.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/owner-lane/preflight/closeout/movement/route-history/status/class/selector ledger, projection cache, or save-manifest change.
+
+## Household mobility runtime rules-data readiness v501-v508 integration note
+
+- V501-V508 adds no Query, Command, DomainEvent, handler, scheduler pass, resolver, selector, route-history reader, rules-data loader, or SocialMemory residue path.
+- The integration map says the later first runtime rule should be consumed only by `PopulationAndHouseholds`, using existing household/pool/settlement snapshots and already-owned event metadata. Application may route and assemble only after an owner rule exists.
+- Future rules-data may hold thresholds, weights, regional/era modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities, but it must be owner-consumed and validated. It is not a runtime plugin system, arbitrary script surface, runtime assembly load, or reflection-heavy rule loader.
+- No module may consume `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, projection prose, receipt text, public-life lines, docs text, or `DomainEvent.Summary` as movement authority.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/readiness/rules-data/movement/route-history/status/class/selector ledger, projection cache, rules-data loader, or save-manifest change.

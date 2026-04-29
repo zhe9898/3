@@ -36,6 +36,14 @@ Future household mobility depth still needs a separate owner-lane ExecPlan with 
 
 V485-V492 adds no schema, migration, ledger, module, movement command, route-history model, migration economy, selector, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
 
+## V501-V508 Household Mobility First Runtime Rule And Rules-Data Readiness
+
+V501-V508 opens the first runtime rule readiness map and hardcoded extraction map for household mobility. It does not implement household movement. It records that the first real rule should start inside `PopulationAndHouseholds`, use monthly authority before any xun-band thickening, and read existing livelihood/activity/distress/debt/labor/grain/land/migration-pressure/pool carriers.
+
+The target scope is player-near households, pressure-hit local households, active-region pools, and distant summaries. Quiet households, off-scope settlements, distant pooled society, `PersonRegistry`, Application, UI, and Unity stay no-touch. Future fanout must declare deterministic household/pool/settlement caps and stable ordering before touching runtime targets.
+
+The extraction map registers current hardcoded thresholds, weights, caps, recovery/decay rules, ordering rules, regional assumptions, era/scenario assumptions, and pool limits in `PopulationAndHouseholds` as candidates for owner-consumed authored rules-data. V501-V508 adds no schema, migration, loader, authored runtime plugin marketplace, movement command, route-history model, migration economy, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

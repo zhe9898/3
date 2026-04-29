@@ -634,4 +634,11 @@ It should ask:
 
 - V485-V492 closes v469-v476 as preflight governance only; it does not change fidelity rings, add a selector, store route history, move households, or write durable residue.
 - The closeout preserves near detail, far summary: future household mobility rules may thicken player-near or pressure-hit households only after one owner lane declares target scope, touched counts, deterministic cap/order, cadence, schema impact, projection fields, validation, and no-touch boundary.
+
+## V501-V508 Household Mobility First Runtime Rule And Rules-Data Readiness
+
+- V501-V508 adds no fidelity-ring mutation, target selector, route-history state, movement rule, or durable residue. It records the scale shape that a later first runtime rule must follow.
+- The future target scope is player-near households, pressure-hit local households, active-region pools, and distant summaries. Distant society must remain pooled unless a separate plan promotes bounded detail.
+- Future monthly fanout must declare maximum households, pools, and settlements touched per pass, sort deterministically before cap, and fall back to summary pressure when over cap.
+- The hardcoded extraction map identifies thresholds, weights, caps, recovery/decay rules, deterministic ordering, regional/era assumptions, and pool limits that should move into owner-consumed rules-data over time without becoming a runtime plugin surface.
 - Distant society remains summarized by pools and settlement pressure until a later owner-laned rule explicitly promotes bounded detail.

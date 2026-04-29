@@ -752,3 +752,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It closes v469-v476 as gate evidence only: owner-lane requirements are documented and guarded, but no household movement or migration economy rule is active.
 - Future household mobility simulation depth must still choose one owner lane and document state, cadence, cardinality, deterministic cap/order, schema impact, no-touch boundary, projection fields, and validation before implementation.
 - The closeout preserves near detail, far summary and does not promote distant society into per-person or per-household runtime detail.
+
+## Current household mobility runtime rules-data readiness v501-v508 note
+
+- V501-V508 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, movement selector, route-history model, durable residue, rules-data loader, or persistence change.
+- It records a first runtime rule readiness map: future authority should be monthly-first, `PopulationAndHouseholds`-owned, deterministic, bounded by fanout, and visible through near detail / far summary.
+- Existing xun behavior remains existing household-pressure cadence context. Xun-band grouping is not promoted into a new household movement authority path.
+- Future implementation must cap and order candidate households/pools/settlements deterministically, leave quiet/off-scope/distant pooled society untouched, and stop for schema/migration review if persisted state is required.
+- The hardcoded extraction map is documentation only: thresholds, weights, caps, recovery/decay rules, regional/era assumptions, and pool limits are candidates for later owner-consumed authored rules-data.
