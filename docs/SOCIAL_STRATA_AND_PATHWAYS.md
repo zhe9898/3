@@ -477,3 +477,10 @@ Design principle:
 - Future data categories are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities.
 - The current repo has no reusable runtime rules-data/content/config pattern, so this pass remains docs/tests-only and adds no loader or default file.
 - `PopulationAndHouseholds` remains the later owner lane; Application, UI, Unity, prose, and `PersonRegistry` remain outside household movement authority.
+
+### Current household mobility default rules-data skeleton gate: v517-v524
+
+- V517-V524 defines the default skeleton shape for future household mobility rules-data without adding a file, loader, validator implementation, movement rule, route history, selector, class/status drift, or per-person world simulation.
+- The future skeleton is data-only and owner-consumed: `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, `validationResult`, and deterministic declaration order.
+- Parameter groups remain social-pressure tuning categories, not class ladders: threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities.
+- The skeleton does not enter save and cannot be read by Application, UI, Unity, prose, or `PersonRegistry` as movement authority.

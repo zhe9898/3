@@ -456,6 +456,14 @@ Current note:
 - Future rules-data may later describe threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities, but only through a separate owner-consumed validation plan.
 - `PopulationAndHouseholds` remains schema `3`; `PersonRegistry` gains no household mobility, route, class, status, selector, config, validation, or durable-residue fields.
 
+## Current household mobility default rules-data skeleton v517-v524 note
+
+- V517-V524 changes no persisted module state, root envelope, module envelope, feature manifest, migration step, serialized read-model cache, rules-data file, rules-data loader, validator, default skeleton file, or save manifest.
+- The future skeleton shape is documented only: `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, `validationResult`, and deterministic declaration order.
+- The tracked `content/` tree has no reusable runtime rules-data/content/config pattern for household mobility, so this pass adds no `content/rules-data`, default file, loader, validator, persisted config, or schema namespace.
+- The skeleton does not enter save and does not change current hardcoded behavior.
+- `PopulationAndHouseholds` remains schema `3`; `PersonRegistry` gains no household mobility, route, class, status, selector, config, validation, or durable-residue fields.
+
 ### EducationAndExams state
 ```csharp
 public sealed class EducationAndExamsState {

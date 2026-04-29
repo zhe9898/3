@@ -768,3 +768,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Future parameter categories are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities.
 - Because no reusable runtime rules-data/content/config pattern exists in this repo today, this pass does not add a default file or loader.
 - The future consumer remains `PopulationAndHouseholds`; Application, UI, Unity, docs text, projection prose, public-life lines, and `DomainEvent.Summary` remain outside authority.
+
+## Current household mobility default rules-data skeleton v517-v524 note
+
+- V517-V524 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, movement selector, route-history model, durable residue, default rules-data file, loader, validator implementation, or persistence change.
+- It defines only the future default skeleton shape: `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, `validationResult`, and deterministic declaration order.
+- Future parameter groups are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities.
+- The skeleton does not enter save, does not change current hardcoded behavior, and does not create `content/rules-data`.
+- The future consumer remains `PopulationAndHouseholds`; Application, UI, Unity, docs text, projection prose, public-life lines, and `DomainEvent.Summary` remain outside authority.

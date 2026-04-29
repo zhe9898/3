@@ -820,3 +820,12 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Because the repo has no reusable runtime rules-data/content/config pattern, this pass does not add a default file or loader. A later owner implementation must add validation before any runtime use.
 - No module may consume config, validation text, fallback text, `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, projection prose, receipt text, public-life lines, docs text, or `DomainEvent.Summary` as movement authority.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/rules-data/contract/movement/route-history/status/class/selector ledger, projection cache, rules-data loader, validator, config file, or save-manifest change.
+
+## Household mobility default rules-data skeleton v517-v524 integration note
+
+- V517-V524 adds no Query, Command, DomainEvent, handler, scheduler pass, resolver, selector, route-history reader, rules-data loader, validator implementation, default file, or SocialMemory residue path.
+- The future skeleton shape is `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, `validationResult`, and deterministic declaration order.
+- Future parameter groups are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities.
+- Because the repo has no reusable runtime rules-data/content/config pattern, this pass does not create `content/rules-data`. A later owner implementation must add validation before runtime use.
+- No module may consume skeleton text, config, validation text, fallback text, `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, projection prose, receipt text, public-life lines, docs text, or `DomainEvent.Summary` as movement authority.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/rules-data/default-skeleton/movement/route-history/status/class/selector ledger, projection cache, rules-data loader, validator, config file, or save-manifest change.

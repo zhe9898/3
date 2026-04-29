@@ -650,3 +650,11 @@ It should ask:
 - Rules-data may later tune threshold bands, pressure weights, regional/era modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities, but only after validation and owner consumption inside `PopulationAndHouseholds`.
 - Application, UI, and Unity may not read rules-data to promote distant summaries, infer hidden households, calculate movement, or raise fidelity.
 - Because the repo has no reusable runtime rules-data/content/config pattern today, this pass is docs/tests-only contract preflight.
+
+## V517-V524 Household Mobility Default Rules-Data Skeleton
+
+- V517-V524 adds no fidelity-ring mutation, target selector, route-history state, movement rule, default rules-data file, loader, validator implementation, or durable residue.
+- The future skeleton keeps scale explicit through ordered fanout caps and tie-break priorities, but it remains contract text only in this pass.
+- `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, and `validationResult` are future data-only skeleton fields, not save state or UI authority.
+- Application, UI, and Unity may not read a skeleton to promote distant summaries, infer hidden households, calculate movement, or raise fidelity.
+- Because no reusable runtime rules-data/content/config pattern exists, this pass does not create `content/rules-data`.

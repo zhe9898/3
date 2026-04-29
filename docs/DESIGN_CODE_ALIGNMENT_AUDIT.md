@@ -523,3 +523,11 @@
 - Code alignment: the tracked `content/` tree currently contains authoring/generated presentation material, not a reusable owner-consumed runtime rules-data pattern; this PR therefore remains docs/tests-only.
 - Extraction alignment: threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities are the future parameter categories.
 - v509-v516 adds no production rule, persisted state, schema, migration, loader, validator, rules-data file, ledger, module, movement command, route-history model, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, or runtime plugin system.
+
+## v517-v524 household mobility default rules-data skeleton audit - 2026-04-30
+
+- v517-v524 defines the future default skeleton shape only. It is not a default config file, loader, validator implementation, or runtime behavior change.
+- Design alignment: the future skeleton is data-only and owner-consumed, with `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, `validationResult`, and deterministic declaration order.
+- Code alignment: no reusable owner-consumed runtime rules-data/content/config pattern exists in the repo today, so this PR does not create `content/rules-data`.
+- Extraction alignment: the future skeleton groups threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities without changing current hardcoded behavior.
+- v517-v524 adds no production rule, persisted state, schema, migration, default file, loader, validator, ledger, module, movement command, route-history model, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, or runtime plugin system.
