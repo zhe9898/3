@@ -469,3 +469,11 @@ Design principle:
 - Target scope remains scale-budgeted: player-near households, pressure-hit local households, active-region pools, and distant summaries. Quiet households, off-scope settlements, distant pooled society, `PersonRegistry`, Application, UI, and Unity stay no-touch.
 - Thresholds, weights, regional/era assumptions, recovery/decay rates, fanout caps, tie-break priorities, and pool limits should move over time into owner-consumed authored rules-data, but not into a runtime plugin marketplace or prose-owned authority.
 - The closeout preserves near detail, far summary: player-near and pressure-hit households can become richer only through future bounded owner rules; distant society remains summarized by pools and settlement pressure.
+
+### Current household mobility rules-data contract preflight: v509-v516
+
+- V509-V516 defines a future rules-data contract for household mobility without adding movement, route history, migration economy, selector state, class/status drift, or per-person world simulation.
+- The contract keeps social drift pressure-carried rather than class-tree driven: stable ids, schema/version, deterministic ordering, default fallback, readable validation errors, and owner-consumed use only.
+- Future data categories are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities.
+- The current repo has no reusable runtime rules-data/content/config pattern, so this pass remains docs/tests-only and adds no loader or default file.
+- `PopulationAndHouseholds` remains the later owner lane; Application, UI, Unity, prose, and `PersonRegistry` remain outside household movement authority.

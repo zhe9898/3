@@ -5659,6 +5659,155 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Household_mobility_rules_data_contract_v509_v516_must_stay_contract_preflight_not_runtime_plugin_system()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string engineeringRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ENGINEERING_RULES.md"));
+        string livingWorldRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RULES_DRIVEN_LIVING_WORLD.md"));
+        string extensibilityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "EXTENSIBILITY_MODEL.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-30_household-mobility-rules-data-contract-v509-v516.md"));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V509-V516 Household Mobility Rules-Data Contract And Validator Preflight"));
+        Assert.That(socialStrata, Does.Contain("Current household mobility rules-data contract preflight: v509-v516"));
+        Assert.That(designAudit, Does.Contain("v509-v516 household mobility rules-data contract preflight audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Household mobility rules-data contract preflight v509-v516 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Household mobility rules-data contract preflight v509-v516 integration note"));
+        Assert.That(simulation, Does.Contain("Current household mobility rules-data contract preflight v509-v516 note"));
+        Assert.That(uiPresentation, Does.Contain("v509-v516 household mobility rules-data contract preflight"));
+        Assert.That(acceptance, Does.Contain("Household mobility rules-data contract preflight v509-v516 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V509-V516 Household Mobility Rules-Data Contract And Validator Preflight"));
+        Assert.That(skillMatrix, Does.Contain("Household Mobility Rules-Data Contract Preflight Through V516"));
+        Assert.That(schemaRules, Does.Contain("household mobility rules-data contract preflight v509-v516 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current household mobility rules-data contract preflight v509-v516 note"));
+
+        Assert.That(engineeringRules, Does.Contain("do not bury game rules in UI or config loaders"));
+        Assert.That(engineeringRules, Does.Contain("do not bypass boundaries through reflection"));
+        Assert.That(livingWorldRules, Does.Contain("data may configure a rule"));
+        Assert.That(extensibilityModel, Does.Contain("must not become runtime plugin marketplaces"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "Target schema/migration impact: none",
+                     "docs/tests-only contract preflight",
+                     "No runtime behavior change",
+                     "No rules-data loader",
+                     "no reusable runtime rules-data/content/config pattern exists",
+                     "stable ids",
+                     "schema/version",
+                     "deterministic ordering",
+                     "default fallback",
+                     "validation errors",
+                     "owner-consumed only",
+                     "no UI/Application authority",
+                     "no arbitrary script/plugin execution",
+                     "threshold bands",
+                     "pressure weights",
+                     "regional modifiers",
+                     "era/scenario modifiers",
+                     "recovery/decay rates",
+                     "fanout caps",
+                     "deterministic tie-break priorities",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "authoring")), Is.True);
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "generated")), Is.True);
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "rules-data")), Is.False);
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "config")), Is.False);
+
+        Assert.That(personRegistrySource, Does.Contain("FidelityRing"));
+        Assert.That(personRegistrySource, Does.Not.Contain("HouseholdMobilityRulesData"));
+        Assert.That(personRegistrySource, Does.Not.Contain("HouseholdMobilityContract"));
+        Assert.That(personRegistrySource, Does.Not.Contain("HouseholdMobilityRoute"));
+        Assert.That(personRegistrySource, Does.Not.Contain("CommonerStatus"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialClass"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMobilityRulesDataContract",
+                     "HouseholdMobilityRulesDataValidator",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityDefaultRulesData",
+                     "HouseholdMobilityRulesDataFile",
+                     "HouseholdMobilityRulesDataLedger",
+                     "HouseholdMobilityContractLedger",
+                     "IRulesDataProvider",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "ReflectionRuleLoader",
+                     "DynamicRuleAssembly",
+                     "HouseholdMobilityScriptRule",
+                     "ApplicationHouseholdMobilityRulesDataResolver",
+                     "UiHouseholdMobilityRulesDataResolver",
+                     "UnityHouseholdMobilityRulesDataResolver",
+                     "Assembly.Load(",
+                     "Assembly.LoadFrom(",
+                     "Activator.CreateInstance(",
+                     "CSScript",
+                     "RoslynScript",
+                     "JintEngine",
+                     "MoonSharp",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "MigrationEconomyEngine",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "HouseholdMobilitySelector",
+                     "HouseholdMovementEngine",
+                     "DirectHouseholdMovementResolver",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "GlobalPersonScanner",
+                     "RegionalPersonSelector",
+                     "WorldPopulationManager",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "ParseHouseholdMobilityContract",
+                     "ParseHouseholdMobilityReadiness",
+                     "ParseMobilityDynamicsExplanation",
+                     "DomainEvent.Summary.Split",
+                     ".MobilityDynamicsExplanationSummary.Split",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MobilitySelector*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

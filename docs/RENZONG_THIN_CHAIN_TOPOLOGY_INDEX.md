@@ -44,6 +44,14 @@ The target scope is player-near households, pressure-hit local households, activ
 
 The extraction map registers current hardcoded thresholds, weights, caps, recovery/decay rules, ordering rules, regional assumptions, era/scenario assumptions, and pool limits in `PopulationAndHouseholds` as candidates for owner-consumed authored rules-data. V501-V508 adds no schema, migration, loader, authored runtime plugin marketplace, movement command, route-history model, migration economy, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
 
+## V509-V516 Household Mobility Rules-Data Contract And Validator Preflight
+
+V509-V516 defines the future household mobility rules-data contract and validator preflight without changing runtime behavior. The contract requires stable ids, schema/version, deterministic ordering, default fallback, readable validation errors, owner-consumed use only, no UI/Application authority, and no arbitrary script/plugin execution.
+
+The repo currently has `content/authoring` and `content/generated`, but no reusable owner-consumed runtime rules-data/content/config pattern for household mobility. Therefore this pass remains docs/tests-only and adds no rules-data loader or default rules-data file.
+
+Future rules-data may carry threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities. It remains `PopulationAndHouseholds`-owned input for later owner rules, not a runtime plugin marketplace, Application resolver, UI/Unity rule path, prose parser, movement command, route-history model, migration economy, selector, target-cardinality state, durable residue, `PersonRegistry` expansion, or save/schema change.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

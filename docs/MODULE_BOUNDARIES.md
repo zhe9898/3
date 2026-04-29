@@ -1299,3 +1299,12 @@ Current lite note:
 - Future fanout must declare household/pool/settlement caps, deterministic ordering, and stable tie-break priority before runtime behavior changes.
 - Current hardcoded thresholds, weights, caps, recovery/decay rules, ordering rules, regional assumptions, era/scenario assumptions, and pool limits are candidates for owner-consumed authored rules-data, not permission for Application/UI/Unity calculation or runtime plugin loading.
 - V501-V508 adds no persisted state, schema bump, migration, rules-data loader, runtime plugin marketplace, household-mobility/movement/route-history/status/class/selector/readiness ledger, command route, movement authority, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Household mobility rules-data contract preflight v509-v516 boundary note
+
+- V509-V516 adds no production boundary. It defines a future rules-data contract and validator preflight only.
+- The future consumer remains `PopulationAndHouseholds`; Application, UI, Unity, `PersonRegistry`, and other modules may not calculate household mobility outcomes from rules-data.
+- Required future contract traits are stable ids, schema/version, deterministic ordering, default fallback, readable validation errors, owner-consumed use only, no UI/Application authority, and no arbitrary script/plugin execution.
+- Future parameter categories are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities.
+- The current repo has no reusable runtime rules-data/content/config pattern, so this pass adds no rules-data loader, default file, validator implementation, or config-backed runtime rule.
+- V509-V516 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, validator, runtime plugin marketplace, arbitrary script surface, runtime assembly load, reflection-heavy loader, household-mobility/movement/route-history/status/class/selector/contract ledger, command route, movement authority, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
