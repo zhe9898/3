@@ -455,3 +455,10 @@ Design principle:
 - The scale rule is still near detail, far summary: player-near and pressure-hit households can become richer local readbacks; distant society remains settlement/pool pressure summary until a bounded owner-lane rule promotes detail.
 - A future implementation must declare owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before changing runtime behavior.
 - This preflight does not add migration economy, route history, class/status drift, zhuhu/kehu conversion, office-service lane, trade attachment lane, durable residue, selector, direct movement command, `PersonRegistry` expansion, or UI/Unity authority.
+
+### Current household mobility preflight closeout: v485-v492
+
+- V469-V476 is closed only as future-rule gate evidence. The codebase still has no household movement command, route-history model, migration economy, selector, or class/status drift rule.
+- `PopulationAndHouseholds` remains the default first owner lane for later household mobility depth; `PersonRegistry` remains identity / `FidelityRing` only.
+- Future household mobility implementation still needs one owner-lane plan naming owned state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation.
+- The closeout preserves near detail, far summary: player-near and pressure-hit households can become richer only through future bounded owner rules; distant society remains summarized by pools and settlement pressure.

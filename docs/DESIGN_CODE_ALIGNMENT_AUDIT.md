@@ -500,3 +500,10 @@
 - Future work must declare owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before implementation.
 - The audit preserves near detail, far summary: close and pressure-hit households may become readable through bounded owner-lane rules, while distant society remains pooled summary until explicitly promoted.
 - v469-v476 adds no schema, migration, ledger, module, route-history model, migration economy, movement command, selector, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v485-v492 household mobility preflight closeout audit - 2026-04-29
+
+- v485-v492 closes v469-v476 as preflight governance only. It records that the future household mobility gate is documented and guarded, not that movement, route history, migration economy, selector state, or status drift exists.
+- Ownership remains unchanged: `PopulationAndHouseholds` is the default first future owner lane, `PersonRegistry` owns identity / `FidelityRing` only, Application assembles projections only, and UI/Unity copy projected fields only.
+- Future runtime depth must still open a separate owner-lane ExecPlan with owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation.
+- v485-v492 adds no production rule, persisted state, schema, migration, ledger, module, movement command, route-history model, selector, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.

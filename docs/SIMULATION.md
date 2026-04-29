@@ -745,3 +745,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Future household mobility runtime depth should start from `PopulationAndHouseholds` unless a later ExecPlan proves another owner lane; that module already owns household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers.
 - The future rule must declare cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before code lands.
 - The scale budget remains near detail, far summary: player-near and pressure-hit households may become readable through owner-laned rules, while distant society remains pool/settlement pressure summary until explicitly promoted.
+
+## Current household mobility preflight closeout v485-v492 note
+
+- V485-V492 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, fidelity mutation, movement selector, route-history model, durable residue, or persistence change.
+- It closes v469-v476 as gate evidence only: owner-lane requirements are documented and guarded, but no household movement or migration economy rule is active.
+- Future household mobility simulation depth must still choose one owner lane and document state, cadence, cardinality, deterministic cap/order, schema impact, no-touch boundary, projection fields, and validation before implementation.
+- The closeout preserves near detail, far summary and does not promote distant society into per-person or per-household runtime detail.

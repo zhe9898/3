@@ -26,6 +26,16 @@ V469-V476 is a preflight for the next possible household mobility rule-density l
 
 The scale rule remains "near detail, far summary": player-near and pressure-hit households may become more readable through a future owner-laned rule; distant society stays settlement/pool pressure summary until a separate plan promotes bounded detail. V469-V476 adds no schema, migration, ledger, module, manager/controller path, `PersonRegistry` expansion, Application/UI/Unity authority, or prose parser.
 
+## V485-V492 Household Mobility Preflight Closeout Audit
+
+V485-V492 closes v469-v476 as owner-lane preflight evidence only. Closed here means the future gate is documented, tested, and aligned with the skill matrix; it does not mean household movement rules are implemented.
+
+The closeout keeps the same split: `PopulationAndHouseholds` remains the default first future owner lane, `PersonRegistry` remains identity / `FidelityRing` only, Application remains projection/assembly only, and UI/Unity copy projected fields only.
+
+Future household mobility depth still needs a separate owner-lane ExecPlan with owned state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before runtime code lands.
+
+V485-V492 adds no schema, migration, ledger, module, movement command, route-history model, migration economy, selector, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.
