@@ -427,6 +427,13 @@ Current note:
 - `LastUpdated` on climate / tempering records must be a valid `GameDate` even for default or migrated state; default `0000-00` dates are invalid save data.
 - `SocialMemoryAndRelations.PressureTempered` and `SocialMemoryAndRelations.EmotionalPressureShifted` are runtime receipts after owned state mutation; their metadata does not extend save schema.
 
+## Current household mobility owner-lane preflight v469-v476 note
+
+- V469-V476 changes no persisted module state, root envelope, module envelope, feature manifest, migration step, or serialized read-model cache.
+- `PopulationAndHouseholds` remains the default first owner lane for future household mobility depth because household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers already live in that module state.
+- Future route history, selector state, target-cardinality state, durable SocialMemory movement residue, commoner status drift, zhuhu/kehu conversion, projection cache, or new owner state is a schema/migration decision and requires a separate plan before implementation.
+- `PersonRegistry` remains identity / `FidelityRing` only and gains no household mobility, route, class, status, or durable-residue fields.
+
 ### EducationAndExams state
 ```csharp
 public sealed class EducationAndExamsState {

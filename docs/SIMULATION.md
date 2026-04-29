@@ -738,3 +738,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - The closeout records that v453-v460 is complete only as a first household mobility explanation layer: existing household signals, deterministic dimension keys, projected explanation, and Desk Sandbox copy-only display.
 - The closeout does not promote/demote people, resolve zhuhu/kehu conversion, select office service, attach trade work, write durable movement residue, choose regional people, create route history, or change `PersonRegistry`.
 - Future mobility/status depth still needs owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, schema impact, projection fields, validation, and no-touch boundary before code lands.
+
+## Current household mobility owner-lane preflight v469-v476 note
+
+- V469-V476 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, fidelity mutation, movement selector, route-history model, or persistence change.
+- Future household mobility runtime depth should start from `PopulationAndHouseholds` unless a later ExecPlan proves another owner lane; that module already owns household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers.
+- The future rule must declare cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before code lands.
+- The scale budget remains near detail, far summary: player-near and pressure-hit households may become readable through owner-laned rules, while distant society remains pool/settlement pressure summary until explicitly promoted.

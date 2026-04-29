@@ -448,3 +448,10 @@ Design principle:
 - The v453-v460 explanation layer is closed only as first-layer readback evidence.
 - It does not add migration economy, route history, class/status drift, zhuhu/kehu conversion, office-service lane, trade attachment lane, durable residue, selector, direct movement command, or all-world per-person simulation.
 - Future commoner status or household movement depth still starts with an owner-lane plan, target scope, hot path, deterministic cap/order, cadence, schema impact, projection fields, and validation.
+
+### Current household mobility owner-lane preflight: v469-v476
+
+- Future household mobility rule depth should start from `PopulationAndHouseholds` unless a later ExecPlan proves another owner lane, because household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers already live there.
+- The scale rule is still near detail, far summary: player-near and pressure-hit households can become richer local readbacks; distant society remains settlement/pool pressure summary until a bounded owner-lane rule promotes detail.
+- A future implementation must declare owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before changing runtime behavior.
+- This preflight does not add migration economy, route history, class/status drift, zhuhu/kehu conversion, office-service lane, trade attachment lane, durable residue, selector, direct movement command, `PersonRegistry` expansion, or UI/Unity authority.

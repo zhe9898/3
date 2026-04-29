@@ -622,3 +622,10 @@ It should ask:
 - The closeout preserves the scale rule: near/local household pressure may be readable through structured dimensions, while distant society remains pooled summary until an owner-lane plan promotes more detail.
 - This closeout changes no fidelity rings, adds no selector, adds no route history, and adds no global per-person simulation.
 - Future work that changes status, promotes more people into detail, stores route history, moves households, or writes durable residue still needs owner pressure, deterministic selection, cap/order, cadence, schema impact, projection readback, and validation.
+
+## V469-V476 Household Mobility Owner-Lane Preflight
+
+- V469-V476 records the gate for future household mobility rule depth; it does not change fidelity rings, add a selector, store route history, move households, or write durable residue.
+- `PopulationAndHouseholds` is the default first owner lane because household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers already live there.
+- The scale rule remains near detail, far summary. Player-near and pressure-hit households can later receive richer owner-laned rules; distant society remains pooled settlement pressure until explicitly promoted.
+- Future work must declare target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, validation, and no-touch boundary before changing runtime detail or target cardinality.
