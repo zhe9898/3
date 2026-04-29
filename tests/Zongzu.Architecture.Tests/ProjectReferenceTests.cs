@@ -5808,6 +5808,146 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Household_mobility_default_rules_data_skeleton_v517_v524_must_remain_docs_tests_only_without_loader_when_no_pattern_exists()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-30_household-mobility-default-rules-data-skeleton-v517-v524.md"));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V517-V524 Household Mobility Default Rules-Data Skeleton"));
+        Assert.That(socialStrata, Does.Contain("Current household mobility default rules-data skeleton gate: v517-v524"));
+        Assert.That(designAudit, Does.Contain("v517-v524 household mobility default rules-data skeleton audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Household mobility default rules-data skeleton v517-v524 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Household mobility default rules-data skeleton v517-v524 integration note"));
+        Assert.That(simulation, Does.Contain("Current household mobility default rules-data skeleton v517-v524 note"));
+        Assert.That(uiPresentation, Does.Contain("v517-v524 household mobility default rules-data skeleton"));
+        Assert.That(acceptance, Does.Contain("Household mobility default rules-data skeleton v517-v524 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V517-V524 Household Mobility Default Rules-Data Skeleton"));
+        Assert.That(skillMatrix, Does.Contain("Household Mobility Default Rules-Data Skeleton Through V524"));
+        Assert.That(schemaRules, Does.Contain("household mobility default rules-data skeleton v517-v524 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current household mobility default rules-data skeleton v517-v524 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "Target schema/migration impact: none",
+                     "docs/tests-only skeleton contract",
+                     "No runtime behavior change",
+                     "No default rules-data file",
+                     "No rules-data loader",
+                     "No validator implementation",
+                     "no reusable runtime rules-data/content/config pattern exists",
+                     "ruleSetId",
+                     "schemaVersion",
+                     "ownerModule",
+                     "defaultFallbackPolicy",
+                     "parameterGroups",
+                     "validationResult",
+                     "deterministic declaration order",
+                     "thresholdBands",
+                     "pressureWeights",
+                     "regionalModifiers",
+                     "eraScenarioModifiers",
+                     "recoveryDecayRates",
+                     "fanoutCaps",
+                     "tieBreakPriorities",
+                     "The skeleton does not enter save",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "authoring")), Is.True);
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "generated")), Is.True);
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "rules-data")), Is.False);
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "config")), Is.False);
+
+        Assert.That(personRegistrySource, Does.Contain("FidelityRing"));
+        Assert.That(personRegistrySource, Does.Not.Contain("HouseholdMobilityDefaultRulesData"));
+        Assert.That(personRegistrySource, Does.Not.Contain("HouseholdMobilityRulesData"));
+        Assert.That(personRegistrySource, Does.Not.Contain("HouseholdMobilityRoute"));
+        Assert.That(personRegistrySource, Does.Not.Contain("CommonerStatus"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialClass"));
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMobilityDefaultRulesData",
+                     "DefaultHouseholdMobilityRulesData",
+                     "HouseholdMobilityDefaultRulesDataValidator",
+                     "HouseholdMobilityRulesDataContract",
+                     "HouseholdMobilityRulesDataValidator",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "HouseholdMobilityRulesDataLedger",
+                     "HouseholdMobilityDefaultSkeletonLedger",
+                     "IRulesDataProvider",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "ReflectionRuleLoader",
+                     "DynamicRuleAssembly",
+                     "ApplicationHouseholdMobilityRulesDataResolver",
+                     "UiHouseholdMobilityRulesDataResolver",
+                     "UnityHouseholdMobilityRulesDataResolver",
+                     "Assembly.Load(",
+                     "Assembly.LoadFrom(",
+                     "Activator.CreateInstance(",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "MigrationEconomyEngine",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "HouseholdMobilitySelector",
+                     "HouseholdMovementEngine",
+                     "DirectHouseholdMovementResolver",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "GlobalPersonScanner",
+                     "RegionalPersonSelector",
+                     "WorldPopulationManager",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "ParseHouseholdMobilityDefaultSkeleton",
+                     "ParseHouseholdMobilityContract",
+                     "ParseMobilityDynamicsExplanation",
+                     "DomainEvent.Summary.Split",
+                     ".MobilityDynamicsExplanationSummary.Split",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MobilitySelector*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

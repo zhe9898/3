@@ -52,6 +52,14 @@ The repo currently has `content/authoring` and `content/generated`, but no reusa
 
 Future rules-data may carry threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities. It remains `PopulationAndHouseholds`-owned input for later owner rules, not a runtime plugin marketplace, Application resolver, UI/Unity rule path, prose parser, movement command, route-history model, migration economy, selector, target-cardinality state, durable residue, `PersonRegistry` expansion, or save/schema change.
 
+## V517-V524 Household Mobility Default Rules-Data Skeleton
+
+V517-V524 records the default rules-data skeleton contract for future household mobility extraction. Because the repo still has no reusable owner-consumed runtime rules-data/content/config pattern, this pass remains docs/tests-only and adds no default file, loader, validator implementation, runtime rule, or save/schema change.
+
+The future skeleton shape is data-only: `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, ordered `parameterGroups`, `validationResult`, and deterministic declaration order. Parameter groups remain threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities.
+
+The skeleton is not authority state and does not enter save. It is not a runtime plugin marketplace, arbitrary script surface, Application resolver, UI/Unity rule path, movement command, route-history model, migration economy, selector, target-cardinality state, durable residue, `PersonRegistry` expansion, or prose parser.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

@@ -1308,3 +1308,12 @@ Current lite note:
 - Future parameter categories are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities.
 - The current repo has no reusable runtime rules-data/content/config pattern, so this pass adds no rules-data loader, default file, validator implementation, or config-backed runtime rule.
 - V509-V516 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, validator, runtime plugin marketplace, arbitrary script surface, runtime assembly load, reflection-heavy loader, household-mobility/movement/route-history/status/class/selector/contract ledger, command route, movement authority, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Household mobility default rules-data skeleton v517-v524 boundary note
+
+- V517-V524 adds no production boundary. It defines a future default rules-data skeleton shape only.
+- The future consumer remains `PopulationAndHouseholds`; the skeleton is not authority state and does not enter save.
+- Future skeleton fields are `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, `validationResult`, and deterministic declaration order.
+- Parameter groups are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities.
+- Because the current repo has no reusable runtime rules-data/content/config pattern, this pass adds no `content/rules-data`, rules-data loader, default file, validator implementation, or config-backed runtime rule.
+- V517-V524 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, validator, runtime plugin marketplace, arbitrary script surface, runtime assembly load, reflection-heavy loader, household-mobility/movement/route-history/status/class/selector/default-skeleton ledger, command route, movement authority, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
