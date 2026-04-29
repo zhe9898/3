@@ -434,6 +434,13 @@ Current note:
 - Future route history, selector state, target-cardinality state, durable SocialMemory movement residue, commoner status drift, zhuhu/kehu conversion, projection cache, or new owner state is a schema/migration decision and requires a separate plan before implementation.
 - `PersonRegistry` remains identity / `FidelityRing` only and gains no household mobility, route, class, status, or durable-residue fields.
 
+## Current household mobility preflight closeout v485-v492 note
+
+- V485-V492 changes no persisted module state, root envelope, module envelope, feature manifest, migration step, or serialized read-model cache.
+- The closeout does not add owner-lane state, route-history state, selector state, target-cardinality state, durable SocialMemory movement residue, commoner status drift, zhuhu/kehu conversion, projection cache, or any new module state.
+- Future household mobility depth still requires a separate owner-module schema/migration plan before storing mobility histories, movement routes, selector watermarks, target-cardinality state, residue, status drift, or projection caches.
+- `PersonRegistry` remains identity / `FidelityRing` only and gains no household mobility, route, class, status, selector, or durable-residue fields.
+
 ### EducationAndExams state
 ```csharp
 public sealed class EducationAndExamsState {

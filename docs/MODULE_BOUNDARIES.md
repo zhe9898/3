@@ -1281,3 +1281,11 @@ Current lite note:
 - `PersonRegistry` remains identity / `FidelityRing` only. It must not store household mobility, commoner status, class drift, route history, target selection, office-service status, trade attachment, or durable residue.
 - Application remains route/assembly/projection only. UI, `Zongzu.Presentation.Unity`, and the Unity shell copy projected fields only and must not infer movement, scan distant people, or promote far summaries into hidden targets.
 - V469-V476 adds no persisted state, schema bump, migration, owner-lane ledger, household-mobility ledger, movement ledger, route-history ledger, selector ledger, module, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Household mobility preflight closeout v485-v492 boundary note
+
+- V485-V492 adds no new production boundary. It closes v469-v476 as a future-rule gate, not as runtime household mobility authority.
+- Later household movement, route history, status drift, selector state, durable residue, or fidelity promotion must not reuse this closeout as authority to move, assign, convert, select, promote, or remember households.
+- `PopulationAndHouseholds` remains the default first future owner lane because the relevant household pressure carriers already live there. `PersonRegistry` remains identity / `FidelityRing` only.
+- Application, UI, and Unity may keep showing existing projected household mobility explanation fields, but they must not parse those fields, calculate movement eligibility, create hidden target selection, or scan distant people.
+- V485-V492 adds no persisted state, schema bump, migration, household-mobility/movement/route-history/status/class/selector/preflight/closeout ledger, command route, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

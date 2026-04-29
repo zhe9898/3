@@ -629,3 +629,9 @@ It should ask:
 - `PopulationAndHouseholds` is the default first owner lane because household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers already live there.
 - The scale rule remains near detail, far summary. Player-near and pressure-hit households can later receive richer owner-laned rules; distant society remains pooled settlement pressure until explicitly promoted.
 - Future work must declare target scope, hot path, touched counts, deterministic cap/order, cadence, schema impact, projection fields, validation, and no-touch boundary before changing runtime detail or target cardinality.
+
+## V485-V492 Household Mobility Preflight Closeout
+
+- V485-V492 closes v469-v476 as preflight governance only; it does not change fidelity rings, add a selector, store route history, move households, or write durable residue.
+- The closeout preserves near detail, far summary: future household mobility rules may thicken player-near or pressure-hit households only after one owner lane declares target scope, touched counts, deterministic cap/order, cadence, schema impact, projection fields, validation, and no-touch boundary.
+- Distant society remains summarized by pools and settlement pressure until a later owner-laned rule explicitly promotes bounded detail.

@@ -795,3 +795,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - No module may consume `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, scale-budget prose, social-position prose, source-key display, receipt text, notification text, docs text, public-life lines, or `DomainEvent.Summary` as movement permission, status authority, route history, target selection, durable residue, or fidelity mutation.
 - Application may route and assemble after an owner exists, but it must not calculate movement success, status drift, target eligibility, route eligibility, or durable SocialMemory residue.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/owner-lane/preflight/movement/route-history/status/class/selector ledger, projection cache, or save-manifest change.
+
+## Household mobility preflight closeout v485-v492 integration note
+
+- V485-V492 adds no integration channel, command, event, resolver, consumer, scheduler pass, selector, route-history reader, or SocialMemory residue path.
+- The closed layer is docs/tests evidence only: household-mobility explanation -> owner-lane preflight gate -> closeout guard. It is not a command route, event consumer, resolver, ledger, selection rule, or movement permission.
+- Future household mobility integration must open a separate owner-lane plan and cannot consume this closeout, `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, scale-budget prose, social-position prose, source-key display, receipt text, notification text, public-life lines, docs text, or `DomainEvent.Summary` as authority.
+- Application, UI, and Unity must not infer movement success, route eligibility, status drift, target selection, fidelity promotion, or durable SocialMemory residue from the closeout.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/owner-lane/preflight/closeout/movement/route-history/status/class/selector ledger, projection cache, or save-manifest change.
