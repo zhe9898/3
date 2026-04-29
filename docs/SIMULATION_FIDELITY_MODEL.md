@@ -642,3 +642,11 @@ It should ask:
 - Future monthly fanout must declare maximum households, pools, and settlements touched per pass, sort deterministically before cap, and fall back to summary pressure when over cap.
 - The hardcoded extraction map identifies thresholds, weights, caps, recovery/decay rules, deterministic ordering, regional/era assumptions, and pool limits that should move into owner-consumed rules-data over time without becoming a runtime plugin surface.
 - Distant society remains summarized by pools and settlement pressure until a later owner-laned rule explicitly promotes bounded detail.
+
+## V509-V516 Household Mobility Rules-Data Contract And Validator Preflight
+
+- V509-V516 adds no fidelity-ring mutation, target selector, route-history state, movement rule, rules-data loader, validator implementation, or durable residue.
+- The future contract keeps near detail, far summary by requiring deterministic fanout caps and tie-break priorities before any owner rule can touch households, pools, or settlements.
+- Rules-data may later tune threshold bands, pressure weights, regional/era modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities, but only after validation and owner consumption inside `PopulationAndHouseholds`.
+- Application, UI, and Unity may not read rules-data to promote distant summaries, infer hidden households, calculate movement, or raise fidelity.
+- Because the repo has no reusable runtime rules-data/content/config pattern today, this pass is docs/tests-only contract preflight.

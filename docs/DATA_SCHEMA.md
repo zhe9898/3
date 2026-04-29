@@ -448,6 +448,14 @@ Current note:
 - The hardcoded extraction map is documentation and architecture-test evidence. It does not add rules-data authority, persisted config, owner-lane state, selector state, target-cardinality state, route-history state, durable movement residue, class/status state, movement ledger, household-mobility ledger, projection cache, or `PersonRegistry` domain fields.
 - Future authored rules-data must still prove whether it is persisted content/config, how it is validated, how defaults/fallbacks work, and whether save/schema docs need a separate update.
 
+## Current household mobility rules-data contract preflight v509-v516 note
+
+- V509-V516 changes no persisted module state, root envelope, module envelope, feature manifest, migration step, serialized read-model cache, rules-data file, rules-data loader, validator, or save manifest.
+- The future contract is documented only. It requires stable ids, schema/version, deterministic ordering, default fallback, readable validation errors, owner-consumed use only, no UI/Application authority, and no arbitrary script/plugin execution.
+- The tracked `content/` tree has no reusable runtime rules-data/content/config pattern for household mobility, so this pass adds no default skeleton, loader, validator, persisted config, or schema namespace.
+- Future rules-data may later describe threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities, but only through a separate owner-consumed validation plan.
+- `PopulationAndHouseholds` remains schema `3`; `PersonRegistry` gains no household mobility, route, class, status, selector, config, validation, or durable-residue fields.
+
 ### EducationAndExams state
 ```csharp
 public sealed class EducationAndExamsState {

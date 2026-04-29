@@ -760,3 +760,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Existing xun behavior remains existing household-pressure cadence context. Xun-band grouping is not promoted into a new household movement authority path.
 - Future implementation must cap and order candidate households/pools/settlements deterministically, leave quiet/off-scope/distant pooled society untouched, and stop for schema/migration review if persisted state is required.
 - The hardcoded extraction map is documentation only: thresholds, weights, caps, recovery/decay rules, regional/era assumptions, and pool limits are candidates for later owner-consumed authored rules-data.
+
+## Current household mobility rules-data contract preflight v509-v516 note
+
+- V509-V516 adds no simulation behavior, scheduler step, cadence change, event-drain rule, runtime cache, command route, resolver, movement selector, route-history model, durable residue, rules-data loader, validator implementation, or persistence change.
+- It defines a future rules-data contract for owner-consumed household mobility parameters: stable ids, schema/version, deterministic ordering, default fallback, readable validation errors, no UI/Application authority, and no arbitrary script/plugin execution.
+- Future parameter categories are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities.
+- Because no reusable runtime rules-data/content/config pattern exists in this repo today, this pass does not add a default file or loader.
+- The future consumer remains `PopulationAndHouseholds`; Application, UI, Unity, docs text, projection prose, public-life lines, and `DomainEvent.Summary` remain outside authority.

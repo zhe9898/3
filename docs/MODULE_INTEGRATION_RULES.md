@@ -811,3 +811,12 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Future rules-data may hold thresholds, weights, regional/era modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities, but it must be owner-consumed and validated. It is not a runtime plugin system, arbitrary script surface, runtime assembly load, or reflection-heavy rule loader.
 - No module may consume `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, projection prose, receipt text, public-life lines, docs text, or `DomainEvent.Summary` as movement authority.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/readiness/rules-data/movement/route-history/status/class/selector ledger, projection cache, rules-data loader, or save-manifest change.
+
+## Household mobility rules-data contract preflight v509-v516 integration note
+
+- V509-V516 adds no Query, Command, DomainEvent, handler, scheduler pass, resolver, selector, route-history reader, rules-data loader, validator implementation, or SocialMemory residue path.
+- The future contract requires stable ids, schema/version, deterministic ordering, default fallback, readable validation errors, owner-consumed use only, no UI/Application authority, and no arbitrary script/plugin execution.
+- Future rules-data categories are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities.
+- Because the repo has no reusable runtime rules-data/content/config pattern, this pass does not add a default file or loader. A later owner implementation must add validation before any runtime use.
+- No module may consume config, validation text, fallback text, `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, projection prose, receipt text, public-life lines, docs text, or `DomainEvent.Summary` as movement authority.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/rules-data/contract/movement/route-history/status/class/selector ledger, projection cache, rules-data loader, validator, config file, or save-manifest change.

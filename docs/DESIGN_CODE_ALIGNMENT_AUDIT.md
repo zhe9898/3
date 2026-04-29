@@ -515,3 +515,11 @@
 - Code alignment: existing carriers are already in `PopulationAndHouseholds`: household livelihood, activity, distress, debt, labor, grain, land, migration risk, local-response carryover, settlement summaries, and labor/marriage/migration pools.
 - Extraction alignment: existing hardcoded thresholds, weights, caps, recovery/decay rules, ordering, regional assumptions, era/scenario assumptions, and pool limits are documented as future owner-consumed authored rules-data candidates. This is not runtime plugin loading, arbitrary scripts, or UI/Application authority.
 - v501-v508 adds no production rule, persisted state, schema, migration, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v509-v516 household mobility rules-data contract preflight audit - 2026-04-30
+
+- v509-v516 defines the future rules-data contract and validator preflight. It is not a rules-data implementation, loader, validator, or runtime behavior change.
+- Design alignment: future data can configure owner rules only through stable ids, schema/version, deterministic ordering, default fallback, validation errors, owner-consumed use, no UI/Application authority, and no arbitrary script/plugin execution.
+- Code alignment: the tracked `content/` tree currently contains authoring/generated presentation material, not a reusable owner-consumed runtime rules-data pattern; this PR therefore remains docs/tests-only.
+- Extraction alignment: threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and deterministic tie-break priorities are the future parameter categories.
+- v509-v516 adds no production rule, persisted state, schema, migration, loader, validator, rules-data file, ledger, module, movement command, route-history model, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, or runtime plugin system.
