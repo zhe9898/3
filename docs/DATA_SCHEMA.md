@@ -441,6 +441,13 @@ Current note:
 - Future household mobility depth still requires a separate owner-module schema/migration plan before storing mobility histories, movement routes, selector watermarks, target-cardinality state, residue, status drift, or projection caches.
 - `PersonRegistry` remains identity / `FidelityRing` only and gains no household mobility, route, class, status, selector, or durable-residue fields.
 
+## Current household mobility runtime rules-data readiness v501-v508 note
+
+- V501-V508 changes no persisted module state, root envelope, module envelope, feature manifest, migration step, serialized read-model cache, rules-data file, rules-data loader, or save manifest.
+- The readiness map documents existing `PopulationAndHouseholds` state and snapshot carriers only: household livelihood/activity/distress/debt/labor/grain/land/migration pressure, local-response carryover, settlement summaries, and labor/marriage/migration pools.
+- The hardcoded extraction map is documentation and architecture-test evidence. It does not add rules-data authority, persisted config, owner-lane state, selector state, target-cardinality state, route-history state, durable movement residue, class/status state, movement ledger, household-mobility ledger, projection cache, or `PersonRegistry` domain fields.
+- Future authored rules-data must still prove whether it is persisted content/config, how it is validated, how defaults/fallbacks work, and whether save/schema docs need a separate update.
+
 ### EducationAndExams state
 ```csharp
 public sealed class EducationAndExamsState {

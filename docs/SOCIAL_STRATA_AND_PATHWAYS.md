@@ -461,4 +461,11 @@ Design principle:
 - V469-V476 is closed only as future-rule gate evidence. The codebase still has no household movement command, route-history model, migration economy, selector, or class/status drift rule.
 - `PopulationAndHouseholds` remains the default first owner lane for later household mobility depth; `PersonRegistry` remains identity / `FidelityRing` only.
 - Future household mobility implementation still needs one owner-lane plan naming owned state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation.
+
+### Current household mobility runtime/rules-data readiness: v501-v508
+
+- V501-V508 moves the gate one step forward by documenting a first runtime rule readiness map and hardcoded extraction map. It still adds no household movement, route-history, migration economy, selector, class/status drift, or per-person world simulation.
+- The first future rule should start from `PopulationAndHouseholds` and read existing household livelihood/activity/distress/debt/labor/grain/land/migration-pressure and pool carriers. These are social-pressure carriers, not a universal social-class ladder.
+- Target scope remains scale-budgeted: player-near households, pressure-hit local households, active-region pools, and distant summaries. Quiet households, off-scope settlements, distant pooled society, `PersonRegistry`, Application, UI, and Unity stay no-touch.
+- Thresholds, weights, regional/era assumptions, recovery/decay rates, fanout caps, tie-break priorities, and pool limits should move over time into owner-consumed authored rules-data, but not into a runtime plugin marketplace or prose-owned authority.
 - The closeout preserves near detail, far summary: player-near and pressure-hit households can become richer only through future bounded owner rules; distant society remains summarized by pools and settlement pressure.

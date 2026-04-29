@@ -1289,3 +1289,13 @@ Current lite note:
 - `PopulationAndHouseholds` remains the default first future owner lane because the relevant household pressure carriers already live there. `PersonRegistry` remains identity / `FidelityRing` only.
 - Application, UI, and Unity may keep showing existing projected household mobility explanation fields, but they must not parse those fields, calculate movement eligibility, create hidden target selection, or scan distant people.
 - V485-V492 adds no persisted state, schema bump, migration, household-mobility/movement/route-history/status/class/selector/preflight/closeout ledger, command route, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Household mobility runtime rules-data readiness v501-v508 boundary note
+
+- V501-V508 adds no new production boundary. It records a first runtime rule readiness map and hardcoded extraction map only.
+- `PopulationAndHouseholds` remains the future first runtime owner lane because household livelihood, member activity, distress, debt, labor, grain, land, migration risk, local-response carryover, settlement summaries, and labor/marriage/migration pools already live in that namespace.
+- A future rule should be monthly-first. Xun-band household pressure remains existing cadence/projection context until a later plan proves a runtime need.
+- The documented target scope is player-near households, pressure-hit local households, active-region pools, and distant summaries. Quiet households, off-scope settlements, distant pooled society, `PersonRegistry`, Application, UI, and Unity remain no-touch.
+- Future fanout must declare household/pool/settlement caps, deterministic ordering, and stable tie-break priority before runtime behavior changes.
+- Current hardcoded thresholds, weights, caps, recovery/decay rules, ordering rules, regional assumptions, era/scenario assumptions, and pool limits are candidates for owner-consumed authored rules-data, not permission for Application/UI/Unity calculation or runtime plugin loading.
+- V501-V508 adds no persisted state, schema bump, migration, rules-data loader, runtime plugin marketplace, household-mobility/movement/route-history/status/class/selector/readiness ledger, command route, movement authority, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

@@ -507,3 +507,11 @@
 - Ownership remains unchanged: `PopulationAndHouseholds` is the default first future owner lane, `PersonRegistry` owns identity / `FidelityRing` only, Application assembles projections only, and UI/Unity copy projected fields only.
 - Future runtime depth must still open a separate owner-lane ExecPlan with owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation.
 - v485-v492 adds no production rule, persisted state, schema, migration, ledger, module, movement command, route-history model, selector, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v501-v508 household mobility runtime rules-data readiness audit - 2026-04-30
+
+- v501-v508 records a first runtime rule readiness map and hardcoded extraction map. It is not the first household movement implementation.
+- Design alignment: the future rule should be `PopulationAndHouseholds`-owned, monthly-first, deterministic, bounded by household/pool/settlement fanout, and readable through near detail / far summary.
+- Code alignment: existing carriers are already in `PopulationAndHouseholds`: household livelihood, activity, distress, debt, labor, grain, land, migration risk, local-response carryover, settlement summaries, and labor/marriage/migration pools.
+- Extraction alignment: existing hardcoded thresholds, weights, caps, recovery/decay rules, ordering, regional assumptions, era/scenario assumptions, and pool limits are documented as future owner-consumed authored rules-data candidates. This is not runtime plugin loading, arbitrary scripts, or UI/Application authority.
+- v501-v508 adds no production rule, persisted state, schema, migration, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
