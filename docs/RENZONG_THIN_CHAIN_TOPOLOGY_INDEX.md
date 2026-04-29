@@ -18,6 +18,14 @@ V461-V468 closes v453-v460 as a first household mobility explanation layer only.
 
 The closeout is not a new migration economy, class/status engine, route-history model, selector, durable residue path, direct movement command, or per-person world simulation. `PopulationAndHouseholds` remains the owner of household livelihood, labor, debt, grain, land, migration, and pool dynamics; `PersonRegistry` remains identity / `FidelityRing` only; Application assembles projections; Unity copies projected fields. V461-V468 adds no production rule, schema, migration, ledger, module, manager/controller path, parser, `PersonRegistry` expansion, or UI/Unity authority.
 
+## V469-V476 Household Mobility Owner-Lane Preflight
+
+V469-V476 is a preflight for the next possible household mobility rule-density layer. It does not implement movement, migration economy, route history, selector state, durable residue, status/class drift, or per-person world simulation.
+
+`PopulationAndHouseholds` remains the default first owner lane because it already owns household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers. Future household mobility depth must declare owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before code lands.
+
+The scale rule remains "near detail, far summary": player-near and pressure-hit households may become more readable through a future owner-laned rule; distant society stays settlement/pool pressure summary until a separate plan promotes bounded detail. V469-V476 adds no schema, migration, ledger, module, manager/controller path, `PersonRegistry` expansion, Application/UI/Unity authority, or prose parser.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

@@ -787,3 +787,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - No module may consume `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, mobility prose, social-position prose, receipt text, notification text, docs text, or `DomainEvent.Summary` as movement permission, status authority, fidelity mutation, route history, target selection, or durable residue.
 - Future household movement/status depth still requires a separate owner-lane plan with state, cadence, target scope, hot path, touched counts, deterministic cap/order, schema impact, projection fields, and validation.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/movement/route-history/status/class/selector/closeout ledger, projection cache, or save-manifest change.
+
+## Household mobility owner-lane preflight v469-v476 integration note
+
+- V469-V476 adds no integration channel, command, event, resolver, consumer, scheduler pass, selector, or route-history reader.
+- Future household mobility integration should start in `PopulationAndHouseholds` unless a later ExecPlan explicitly proves another owner lane. The future lane must declare owned state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation.
+- No module may consume `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, scale-budget prose, social-position prose, source-key display, receipt text, notification text, docs text, public-life lines, or `DomainEvent.Summary` as movement permission, status authority, route history, target selection, durable residue, or fidelity mutation.
+- Application may route and assemble after an owner exists, but it must not calculate movement success, status drift, target eligibility, route eligibility, or durable SocialMemory residue.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/owner-lane/preflight/movement/route-history/status/class/selector ledger, projection cache, or save-manifest change.

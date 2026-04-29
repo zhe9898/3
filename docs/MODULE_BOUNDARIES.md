@@ -1272,3 +1272,12 @@ Current lite note:
 - `PopulationAndHouseholds` remains the owner of household livelihood, labor, debt, grain, land, migration, and pool carriers. `PersonRegistry` remains identity / `FidelityRing` only.
 - Application, UI, and Unity may keep showing projected explanation fields, but they must not parse those fields, calculate movement eligibility, create hidden target selection, or scan distant people.
 - V461-V468 adds no persisted state, schema bump, migration, household-mobility/movement/route-history/status/class/selector/closeout ledger, command route, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## Household mobility owner-lane preflight v469-v476 boundary note
+
+- V469-V476 adds no production boundary. It gates a future household mobility runtime rule before any movement, route, status, selector, or durable residue authority is added.
+- `PopulationAndHouseholds` is the default first owner lane because household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers already live inside that namespace.
+- A future owner-lane pass must name owned state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before implementation.
+- `PersonRegistry` remains identity / `FidelityRing` only. It must not store household mobility, commoner status, class drift, route history, target selection, office-service status, trade attachment, or durable residue.
+- Application remains route/assembly/projection only. UI, `Zongzu.Presentation.Unity`, and the Unity shell copy projected fields only and must not infer movement, scan distant people, or promote far summaries into hidden targets.
+- V469-V476 adds no persisted state, schema bump, migration, owner-lane ledger, household-mobility ledger, movement ledger, route-history ledger, selector ledger, module, command route, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

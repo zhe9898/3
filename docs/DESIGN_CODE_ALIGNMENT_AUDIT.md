@@ -492,3 +492,11 @@
 - The closeout deliberately does not claim a full migration economy, class/status engine, zhuhu/kehu conversion, route-history model, direct movement command, selector, durable movement residue, or whole-world per-person simulation.
 - Ownership remains unchanged: `PopulationAndHouseholds` owns household dynamics; `PersonRegistry` owns identity / `FidelityRing` only; Application assembles read models; UI/Unity copy projected fields only.
 - v461-v468 adds no production rule, persisted state, schema, migration, ledger, module, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
+
+## v469-v476 household mobility owner-lane preflight audit - 2026-04-29
+
+- v469-v476 adds no production rule. It records the gate a future household mobility rule must pass before moving from explanation into runtime depth.
+- `PopulationAndHouseholds` is the default first owner lane because it already owns household livelihood, activity, distress, debt, labor, grain, land, migration pressure, and pool carriers.
+- Future work must declare owner state, cadence, target scope, hot path, touched counts, deterministic cap/order, no-touch boundary, schema impact, projection fields, and validation before implementation.
+- The audit preserves near detail, far summary: close and pressure-hit households may become readable through bounded owner-lane rules, while distant society remains pooled summary until explicitly promoted.
+- v469-v476 adds no schema, migration, ledger, module, route-history model, migration economy, movement command, selector, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, or prose parser.
