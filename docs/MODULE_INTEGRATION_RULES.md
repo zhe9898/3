@@ -853,3 +853,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The existing `PopulationEventNames.MigrationStarted` receipt remains threshold evidence only; it is not a movement command or route-history event.
 - Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, cap behavior, or household mobility outcome.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/closeout/movement/route-history/status/class/selector/cooldown ledger, projection cache, rules-data loader, config file, or save-manifest change.
+
+## Household mobility runtime rule health evidence v549-v556 integration note
+
+- V549-V556 adds no new integration path. It is diagnostics/readiness evidence for the first monthly `PopulationAndHouseholds` rule.
+- The first runtime rule remains an internal monthly owner path and does not introduce a second runtime rule, Query, Command, public handler, scheduler phase, route-history reader, movement resolver, SocialMemory residue path, long-run tuner, or performance optimization path.
+- The existing `PopulationEventNames.MigrationStarted` receipt remains threshold evidence only; it is not a movement command, route-history event, or long-run health signal by itself.
+- Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, cap behavior, health classification, or household mobility outcome.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/health-evidence/movement/route-history/status/class/selector/cooldown ledger, projection cache, rules-data loader, config file, diagnostic state, or save-manifest change.

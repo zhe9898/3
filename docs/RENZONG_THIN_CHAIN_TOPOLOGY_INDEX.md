@@ -84,6 +84,14 @@ The closeout freezes the boundary: existing `MigrationRisk`, `IsMigrating`, `Mig
 
 Schema/migration impact remains none. This pass adds no production behavior, movement command, route-history state, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, loader, plugin surface, or prose parser.
 
+## V549-V556 Household Mobility Runtime Rule Health Evidence
+
+V549-V556 records diagnostics/readiness evidence for the first household mobility runtime rule. It is not a second rule, movement system, route-history model, long-run saturation tuning pass, or performance optimization claim.
+
+The current topology remains the V533-V540 monthly `PopulationAndHouseholds` pressure nudge: one active pool and two household candidates by default, deterministic cap/order, existing `MigrationRisk` / `IsMigrating` output, and the existing `MigrationStarted` threshold receipt only.
+
+The next gate before widening household mobility is explicit health proof: touched household/pool/settlement counts, no-touch proof for quiet/off-scope/distant summaries, same-seed replay evidence, pressure-band interpretation, and hot-path/cardinality notes. V549-V556 adds no schema, migration, movement command, route-history state, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, runtime plugin surface, or prose parser.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

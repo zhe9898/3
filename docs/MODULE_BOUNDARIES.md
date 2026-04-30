@@ -1341,3 +1341,11 @@ Current lite note:
 - Application, UI, Unity, `PersonRegistry`, other modules, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` still do not calculate eligibility, fanout, or outcomes.
 - Any future move from pressure nudge to household movement, route history, recovery/decay depth, persistent cooldown, selector, or target-cardinality state requires a separate boundary plan and schema decision before code.
 - V541-V548 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, movement command, route-history model, movement ledger, owner-lane ledger, cooldown ledger, selector watermark, target-cardinality state, durable residue, runtime plugin marketplace, arbitrary script surface, reflection-heavy loader, or UI/Unity authority.
+
+## Household mobility runtime rule health evidence v549-v556 boundary note
+
+- V549-V556 is diagnostics/readiness evidence only. It does not add another `PopulationAndHouseholds` rule path, module, command, query, event, loader, presentation field, or scheduler phase.
+- The first runtime rule remains inside `PopulationAndHouseholds` and remains limited to existing `MigrationRisk`, `IsMigrating`, `MigrationPools`, and the existing `MigrationStarted` threshold receipt.
+- Future widening must first document touched household/pool/settlement counts, deterministic cap/order, same-seed replay proof, no-touch boundaries, pressure-band interpretation, and hot-path/cardinality notes.
+- Application, UI, Unity, `PersonRegistry`, other modules, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` still do not calculate eligibility, fanout, health classification, or outcomes.
+- V549-V556 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, movement command, route-history model, movement ledger, owner-lane ledger, cooldown ledger, selector watermark, target-cardinality state, durable residue, runtime plugin marketplace, arbitrary script surface, reflection-heavy loader, long-run saturation tuner, performance optimization path, or UI/Unity authority.

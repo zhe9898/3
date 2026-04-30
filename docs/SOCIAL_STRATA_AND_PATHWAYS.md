@@ -505,3 +505,10 @@ Design principle:
 - It does not add a second runtime rule, status/class drift, zhuhu/kehu conversion, relocation, route history, migration economy, durable social residue, or full-population person simulation.
 - The current social meaning remains a local pressure nudge over existing household distress/debt/labor/grain/land/livelihood/migration signals.
 - Any future household movement, deeper regional variation, or persistent history must return with a new owner-lane plan and schema decision before implementation.
+
+### Current household mobility runtime rule health evidence: v549-v556
+
+- V549-V556 records health/readiness evidence for the first monthly household mobility runtime rule; it does not add another social-status formula or runtime rule.
+- The existing social interpretation remains bounded: one active local pool may nudge capped pressure-hit households, while quiet households, lower-priority pools, off-scope settlements, and distant pooled society remain no-touch.
+- The next social gate before expansion is evidence of touched counts, deterministic cap/order, same-seed replay, no-touch summaries, and pressure-band interpretation; this is not long-run saturation tuning.
+- It adds no relocation, route history, migration economy, zhuhu/kehu conversion, durable social residue, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, or schema change.

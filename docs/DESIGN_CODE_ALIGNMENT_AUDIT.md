@@ -555,3 +555,11 @@
 - Code alignment: no production behavior changes in this closeout; architecture tests lock the existing `PopulationAndHouseholds` owner boundary.
 - Validation alignment: closeout evidence proves no second runtime rule, no Application/UI/Unity authority, no `PersonRegistry` expansion, no schema drift, and no prose parsing.
 - v541-v548 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, or runtime plugin system.
+
+## v549-v556 household mobility runtime rule health evidence audit - 2026-04-30
+
+- v549-v556 records health/readiness evidence for the first household mobility runtime rule without changing production behavior.
+- Design alignment: the first rule remains a bounded pressure nudge; this pass does not widen fanout, add movement, or claim long-run saturation tuning.
+- Code alignment: architecture tests keep `ApplyMonthlyHouseholdMobilityRuntimeRule` as the single owner rule path and keep `PopulationAndHouseholds` schema `3`.
+- Validation alignment: evidence requirements now call out touched counts, deterministic cap/order, same-seed replay, no-touch boundaries, pressure-band interpretation, and hot-path/cardinality notes before any future widening.
+- v549-v556 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, runtime plugin system, long-run optimizer, or performance optimization claim.
