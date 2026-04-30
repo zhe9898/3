@@ -1333,3 +1333,11 @@ Current lite note:
 - The rule writes only existing owner fields: `MigrationRisk`, `IsMigrating`, pool summaries, and the existing `MigrationStarted` event if the existing threshold is crossed.
 - Application, UI, Unity, `PersonRegistry`, other modules, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` do not calculate target eligibility or outcomes.
 - V533-V540 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, movement command, route-history model, movement ledger, owner-lane ledger, cooldown ledger, selector watermark, target-cardinality state, durable residue, runtime plugin marketplace, arbitrary script surface, reflection-heavy loader, or UI/Unity authority.
+
+## Household mobility first runtime rule closeout v541-v548 boundary note
+
+- V541-V548 is closeout only. It does not add another `PopulationAndHouseholds` rule path, module, command, query, event, loader, or presentation field.
+- The first runtime rule remains inside `PopulationAndHouseholds` and remains limited to existing `MigrationRisk`, `IsMigrating`, `MigrationPools`, and the existing `MigrationStarted` threshold receipt.
+- Application, UI, Unity, `PersonRegistry`, other modules, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` still do not calculate eligibility, fanout, or outcomes.
+- Any future move from pressure nudge to household movement, route history, recovery/decay depth, persistent cooldown, selector, or target-cardinality state requires a separate boundary plan and schema decision before code.
+- V541-V548 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, movement command, route-history model, movement ledger, owner-lane ledger, cooldown ledger, selector watermark, target-cardinality state, durable residue, runtime plugin marketplace, arbitrary script surface, reflection-heavy loader, or UI/Unity authority.

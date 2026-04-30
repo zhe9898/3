@@ -672,3 +672,10 @@ It should ask:
 - The far-summary rule is unchanged: quiet households, lower-priority active pools, off-scope settlements, and distant pooled society are not expanded into hidden household movement targets.
 - The rule writes only existing `PopulationAndHouseholds` fields and existing pool summaries. It adds no route-history state, movement ledger, cooldown ledger, selector watermark, target-cardinality state, class/status state, or `PersonRegistry` detail expansion.
 - Replay fidelity remains deterministic because selection is ordered by pool pressure / settlement id and household score / household id, with no random choice or prose parsing.
+
+## V541-V548 Household Mobility First Runtime Rule Closeout
+
+- V541-V548 is a fidelity closeout, not a new fidelity promotion rule.
+- It preserves the V533-V540 budget: one active pool and two pressure-hit households by default, with distant society staying summarized.
+- No new detail ring, selector watermark, route-history state, cooldown ledger, target-cardinality state, `PersonRegistry` expansion, or UI-owned eligibility logic is introduced.
+- Any later expansion from pressure nudge to movement, projection, or persisted route history must name owner, cadence, fanout, schema impact, and no-touch proof in a new plan.
