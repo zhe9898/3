@@ -798,3 +798,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - The closeout records that V533-V540 remains the only first runtime rule in this track, and it stays monthly, owner-only, deterministic, and capped.
 - Future household mobility expansion must declare whether it changes runtime behavior, projection, save/schema, fanout, cadence, or no-touch boundaries before implementation.
 - Application/UI/Unity continue to display projected owner fields only and must not calculate target eligibility or household mobility outcome.
+
+## Current household mobility runtime rule health evidence v549-v556 note
+
+- V549-V556 adds no scheduler phase, cadence change, runtime rule, event-drain rule, command route, movement selector, route-history model, durable residue, migration economy, class/status engine, rules-data loader, default file, persistence change, long-run saturation tuning, or performance optimization.
+- The health-evidence pass records the next gate before widening: touched household/pool/settlement counts, deterministic cap/order, same-seed replay, no-touch proof, pressure-band interpretation, and hot-path/cardinality notes.
+- The V533-V540 rule remains monthly, owner-only, deterministic, and capped; the existing `MigrationStarted` event remains threshold evidence only.
+- Application/UI/Unity continue to display projected owner fields only and must not calculate target eligibility, health classification, or household mobility outcome.

@@ -679,3 +679,10 @@ It should ask:
 - It preserves the V533-V540 budget: one active pool and two pressure-hit households by default, with distant society staying summarized.
 - No new detail ring, selector watermark, route-history state, cooldown ledger, target-cardinality state, `PersonRegistry` expansion, or UI-owned eligibility logic is introduced.
 - Any later expansion from pressure nudge to movement, projection, or persisted route history must name owner, cadence, fanout, schema impact, and no-touch proof in a new plan.
+
+## V549-V556 Household Mobility Runtime Rule Health Evidence
+
+- V549-V556 is a fidelity health-evidence pass, not a detail-ring promotion, movement rule, or fanout expansion.
+- It keeps the V533-V540 budget unchanged: one active pool and two pressure-hit households by default, with deterministic cap/order and distant society remaining summarized.
+- The next gate before widening requires touched household/pool/settlement counts, no-touch proof, same-seed replay evidence, pressure-band interpretation, and hot-path/cardinality notes.
+- No new selector watermark, route-history state, cooldown ledger, target-cardinality state, `PersonRegistry` expansion, long-run saturation tuning, performance optimization claim, or UI-owned eligibility logic is introduced.
