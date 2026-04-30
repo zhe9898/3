@@ -845,3 +845,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The only event path is the existing `PopulationEventNames.MigrationStarted` threshold receipt; no movement command, relocation command, or route-history event is introduced.
 - Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, cap behavior, or household mobility outcome.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/rules-data/movement/route-history/status/class/selector/cooldown ledger, projection cache, rules-data loader, config file, or save-manifest change.
+
+## Household mobility first runtime rule closeout v541-v548 integration note
+
+- V541-V548 adds no new integration path. It is docs/tests closeout for the V501-V540 track.
+- The first runtime rule remains an internal monthly `PopulationAndHouseholds` path and does not introduce a second runtime rule, Query, Command, public handler, scheduler phase, route-history reader, movement resolver, or SocialMemory residue path.
+- The existing `PopulationEventNames.MigrationStarted` receipt remains threshold evidence only; it is not a movement command or route-history event.
+- Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, cap behavior, or household mobility outcome.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/closeout/movement/route-history/status/class/selector/cooldown ledger, projection cache, rules-data loader, config file, or save-manifest change.

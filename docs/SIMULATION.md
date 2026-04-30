@@ -791,3 +791,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Bounded fanout defaults to one active pool and two households, with a one-point existing migration-risk nudge. Malformed monthly cap/threshold/delta data falls back deterministically.
 - The rule creates no scheduler phase, command route, movement selector, route-history model, durable residue, migration economy, class/status engine, rules-data loader, default file, or persistence change.
 - No Application/UI/Unity path calculates target eligibility or household mobility outcome; public shells may only display owner-projected fields.
+
+## Current household mobility first runtime rule closeout v541-v548 note
+
+- V541-V548 adds no scheduler phase, cadence change, runtime rule, event-drain rule, command route, movement selector, route-history model, durable residue, migration economy, class/status engine, rules-data loader, default file, or persistence change.
+- The closeout records that V533-V540 remains the only first runtime rule in this track, and it stays monthly, owner-only, deterministic, and capped.
+- Future household mobility expansion must declare whether it changes runtime behavior, projection, save/schema, fanout, cadence, or no-touch boundaries before implementation.
+- Application/UI/Unity continue to display projected owner fields only and must not calculate target eligibility or household mobility outcome.

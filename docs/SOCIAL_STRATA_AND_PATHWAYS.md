@@ -498,3 +498,10 @@ Design principle:
 - The social effect is deliberately narrow: the highest-pressure active local pool may nudge at most two pressure-hit households by one existing migration-risk point.
 - This is not status-class conversion, household relocation, route history, migration economy, zhuhu/kehu engine, durable social residue, or all-world person simulation.
 - Quiet households, lower-priority active pools, off-scope settlements, distant pooled society, `PersonRegistry`, Application, UI, and Unity remain no-touch authority surfaces.
+
+### Current household mobility first runtime rule closeout: v541-v548
+
+- V541-V548 closes the first runtime rule as bounded household-pressure evidence only.
+- It does not add a second runtime rule, status/class drift, zhuhu/kehu conversion, relocation, route history, migration economy, durable social residue, or full-population person simulation.
+- The current social meaning remains a local pressure nudge over existing household distress/debt/labor/grain/land/livelihood/migration signals.
+- Any future household movement, deeper regional variation, or persistent history must return with a new owner-lane plan and schema decision before implementation.

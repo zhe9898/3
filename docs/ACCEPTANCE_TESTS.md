@@ -891,3 +891,10 @@ At integration level, verify:
 - Determinism acceptance: same-seed replay produces the same household risk, migration status, pool summary, and structured event signature.
 - Fallback acceptance: malformed monthly runtime cap data reports a readable validation error and falls back deterministically to default caps.
 - Save/schema acceptance: v533-v540 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, rules-data file, rules-data loader, default file, owner-lane state, selector state, target-cardinality state, route-history state, cooldown state, class/status/personnel/movement/household-mobility/runtime-rule ledger, durable residue, or serialized module payload change.
+
+## Household mobility first runtime rule closeout v541-v548 acceptance - 2026-04-30
+- Closeout acceptance: V541-V548 adds docs/tests evidence only and no runtime behavior change.
+- Boundary acceptance: no second household mobility runtime rule, movement command, relocation command, route-history model, migration economy, class/status engine, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, or `PersonRegistry` expansion is introduced.
+- Ownership acceptance: `PopulationAndHouseholds` remains the sole owner of the first runtime rule; Application, UI, Unity, prose, public-life lines, receipt text, docs text, and `DomainEvent.Summary` do not calculate mobility outcomes.
+- Future-work acceptance: any next mobility rule, projection field, movement history, recovery/decay expansion, or persisted state requires a separate ExecPlan before implementation.
+- Save/schema acceptance: v541-v548 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, rules-data file, rules-data loader, default file, owner-lane state, selector state, target-cardinality state, route-history state, cooldown state, class/status/personnel/movement/household-mobility/runtime-rule/closeout ledger, durable residue, or serialized module payload change.
