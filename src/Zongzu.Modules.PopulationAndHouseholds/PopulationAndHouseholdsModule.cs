@@ -8,8 +8,18 @@ namespace Zongzu.Modules.PopulationAndHouseholds;
 
 public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHouseholdsState>
 {
-    private static readonly PopulationHouseholdMobilityRulesData HouseholdMobilityRulesData =
-        PopulationHouseholdMobilityRulesData.Default;
+    private readonly PopulationHouseholdMobilityRulesData _householdMobilityRulesData;
+
+    public PopulationAndHouseholdsModule()
+        : this(PopulationHouseholdMobilityRulesData.Default)
+    {
+    }
+
+    public PopulationAndHouseholdsModule(PopulationHouseholdMobilityRulesData householdMobilityRulesData)
+    {
+        _householdMobilityRulesData = householdMobilityRulesData
+            ?? throw new ArgumentNullException(nameof(householdMobilityRulesData));
+    }
 
     private static readonly string[] CommandNames =
     [
@@ -182,10 +192,20 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         }
 
         SynchronizeMembershipLivelihoodsAndActivities(scope.State);
-        PromoteHotHouseholdMembers(scope.Context, scope.State, personQueries, personCommands);
+        PromoteHotHouseholdMembers(
+            scope.Context,
+            scope.State,
+            personQueries,
+            personCommands,
+            _householdMobilityRulesData);
         AdvanceIllnessAndAdjudicateDeaths(scope);
 
         RebuildSettlementSummaries(scope.State, personQueries);
+        if (ApplyMonthlyHouseholdMobilityRuntimeRule(scope))
+        {
+            SynchronizeMembershipLivelihoodsAndActivities(scope.State);
+            RebuildSettlementSummaries(scope.State, personQueries);
+        }
     }
 
     private static void ApplyXunPulseAdjustments(
@@ -1458,7 +1478,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         ModuleExecutionContext context,
         PopulationAndHouseholdsState state,
         IPersonRegistryQueries? personQueries,
-        IPersonRegistryCommands? personCommands)
+        IPersonRegistryCommands? personCommands,
+        PopulationHouseholdMobilityRulesData rulesData)
     {
         if (personQueries is null || personCommands is null || state.Memberships.Count == 0)
         {
@@ -1467,7 +1488,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
         Dictionary<HouseholdId, PopulationHouseholdState> householdsById = state.Households
             .ToDictionary(static household => household.Id, static household => household);
-        int focusedMemberPromotionCap = HouseholdMobilityRulesData.GetFocusedMemberPromotionCapOrDefault();
+        int focusedMemberPromotionCap = rulesData.GetFocusedMemberPromotionCapOrDefault();
 
         foreach (IGrouping<HouseholdId, HouseholdMembershipState> group in state.Memberships
             .GroupBy(static membership => membership.HouseholdId)
@@ -1499,6 +1520,113 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                     focusReason);
             }
         }
+    }
+
+    private bool ApplyMonthlyHouseholdMobilityRuntimeRule(
+        ModuleExecutionScope<PopulationAndHouseholdsState> scope)
+    {
+        int activePoolThreshold = _householdMobilityRulesData
+            .GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault();
+        int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
+        int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
+        int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
+
+        if (settlementCap <= 0
+            || householdCap <= 0
+            || riskDelta <= 0
+            || scope.State.Households.Count == 0
+            || scope.State.MigrationPools.Count == 0)
+        {
+            return false;
+        }
+
+        MigrationPoolEntryState[] activePools = scope.State.MigrationPools
+            .Where(pool => pool.OutflowPressure >= activePoolThreshold)
+            .OrderByDescending(static pool => pool.OutflowPressure)
+            .ThenBy(static pool => pool.SettlementId.Value)
+            .Take(settlementCap)
+            .ToArray();
+
+        bool changed = false;
+        foreach (MigrationPoolEntryState pool in activePools)
+        {
+            PopulationHouseholdState[] candidates = scope.State.Households
+                .Where(household => household.SettlementId == pool.SettlementId
+                    && IsMonthlyHouseholdMobilityRuntimeCandidate(household))
+                .OrderByDescending(ComputeMonthlyHouseholdMobilityRuntimeScore)
+                .ThenBy(static household => household.Id.Value)
+                .Take(householdCap)
+                .ToArray();
+
+            foreach (PopulationHouseholdState household in candidates)
+            {
+                int oldMigrationRisk = household.MigrationRisk;
+                household.MigrationRisk = Math.Clamp(household.MigrationRisk + riskDelta, 0, 100);
+                household.IsMigrating = ResolveMigrationStatus(household);
+                if (household.MigrationRisk == oldMigrationRisk)
+                {
+                    continue;
+                }
+
+                changed = true;
+                scope.RecordDiff(
+                    $"Household mobility pressure raised {household.HouseholdName} migration risk from {oldMigrationRisk} to {household.MigrationRisk}.",
+                    household.Id.Value.ToString());
+
+                if (oldMigrationRisk < 80 && household.MigrationRisk >= 80)
+                {
+                    scope.Emit(
+                        PopulationEventNames.MigrationStarted,
+                        $"{household.HouseholdName} reached the migration pressure threshold.",
+                        household.Id.Value.ToString(),
+                        new Dictionary<string, string>
+                        {
+                            [DomainEventMetadataKeys.Cause] = DomainEventMetadataValues.CauseSocialPressure,
+                            [DomainEventMetadataKeys.SettlementId] = household.SettlementId.Value.ToString(),
+                            [DomainEventMetadataKeys.HouseholdId] = household.Id.Value.ToString(),
+                        });
+                }
+            }
+        }
+
+        return changed;
+    }
+
+    private static bool IsMonthlyHouseholdMobilityRuntimeCandidate(PopulationHouseholdState household)
+    {
+        if (household.IsMigrating || household.MigrationRisk >= 80 || household.MigrationRisk < 55)
+        {
+            return false;
+        }
+
+        return household.Distress >= 60
+            || household.DebtPressure >= 60
+            || household.LaborCapacity < 45
+            || household.GrainStore < 25
+            || household.LandHolding < 15
+            || household.Livelihood is LivelihoodType.SeasonalMigrant or LivelihoodType.HiredLabor;
+    }
+
+    private static int ComputeMonthlyHouseholdMobilityRuntimeScore(PopulationHouseholdState household)
+    {
+        int laborPressure = Math.Max(0, 60 - household.LaborCapacity);
+        int grainPressure = Math.Max(0, 25 - household.GrainStore) / 2;
+        int landPressure = Math.Max(0, 20 - household.LandHolding) / 2;
+        int livelihoodPressure = household.Livelihood switch
+        {
+            LivelihoodType.SeasonalMigrant => 18,
+            LivelihoodType.HiredLabor => 10,
+            LivelihoodType.Tenant => 6,
+            _ => 0,
+        };
+
+        return (household.MigrationRisk * 4)
+            + household.Distress
+            + household.DebtPressure
+            + laborPressure
+            + grainPressure
+            + landPressure
+            + livelihoodPressure;
     }
 
     private static string ResolveFocusPromotionReason(PopulationHouseholdState household)

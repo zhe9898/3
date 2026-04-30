@@ -665,3 +665,10 @@ It should ask:
 - Default focused member promotion remains capped at two regional members per pressure-hit household, ordered by household id and person id.
 - The far-summary rule is unchanged: quiet households, off-scope settlements, and distant pooled society do not become hidden detailed targets.
 - Application, UI, Unity, prose, and `PersonRegistry` do not consume the extracted rule data to raise detail or calculate movement.
+
+## V533-V540 PopulationAndHouseholds First Household Mobility Runtime Rule
+
+- V533-V540 keeps the first runtime rule in the near-detail band: one active settlement pool and two pressure-hit households by default.
+- The far-summary rule is unchanged: quiet households, lower-priority active pools, off-scope settlements, and distant pooled society are not expanded into hidden household movement targets.
+- The rule writes only existing `PopulationAndHouseholds` fields and existing pool summaries. It adds no route-history state, movement ledger, cooldown ledger, selector watermark, target-cardinality state, class/status state, or `PersonRegistry` detail expansion.
+- Replay fidelity remains deterministic because selection is ordered by pool pressure / settlement id and household score / household id, with no random choice or prose parsing.

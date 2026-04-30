@@ -539,3 +539,11 @@
 - Code alignment: `PopulationHouseholdMobilityRulesData` provides the default cap and deterministic validation/fallback. `PromoteHotHouseholdMembers` consumes that owner data while preserving household-id then person-id ordering.
 - Extraction alignment: this is the first production extraction from the v501-v524 map, but it does not introduce a loader, `content/rules-data`, or external config path.
 - v525-v532 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, or runtime plugin system.
+
+## v533-v540 population households first mobility runtime rule audit - 2026-04-30
+
+- v533-v540 implements the first household mobility runtime rule inside `PopulationAndHouseholds`, after the existing monthly pool rebuild.
+- Design alignment: the rule is a bounded pressure nudge, not relocation. It chooses one active pool and two household candidates by default, then adjusts existing migration pressure only.
+- Code alignment: `PopulationHouseholdMobilityRulesData` owns the threshold, caps, and risk delta. `PopulationAndHouseholdsModule` consumes it internally and keeps deterministic pool/household ordering.
+- Validation alignment: focused tests compare default rule behavior against a disabled-rule baseline, prove cap/no-touch behavior, prove same-seed replay stability, and prove malformed monthly cap fallback.
+- v533-v540 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, or runtime plugin system.

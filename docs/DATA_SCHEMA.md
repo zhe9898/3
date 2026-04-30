@@ -1426,6 +1426,12 @@ Current household mobility first hardcoded rule extraction v525-v532 note:
 - The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, rules-data file, content/rules-data namespace, projection cache, selector state, target-cardinality state, route-history state, class ledger, commoner-status ledger, household-mobility ledger, movement ledger, extraction ledger, durable residue, or serialized module payload.
 - Any future persisted rules-data file, route history, selector watermark, commoner status drift, movement residue, durable residue, or projection cache still requires a separate schema/migration plan before implementation.
 
+Current household mobility first runtime rule v533-v540 note:
+- Existing state is sufficient for the first runtime rule. The rule uses `MigrationPools`, `MigrationRisk`, `IsMigrating`, livelihood, distress, debt, labor, grain, and land fields already present in schema 3.
+- Monthly threshold/cap/delta values live in runtime owner code shape only and are not persisted or loaded from a save/content namespace.
+- The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, rules-data file, content/rules-data namespace, projection cache, selector state, target-cardinality state, route-history state, movement ledger, cooldown ledger, owner-lane ledger, class ledger, commoner-status ledger, household-mobility ledger, durable residue, or serialized module payload.
+- Any future persisted movement history, route history, cooldown, selector watermark, commoner status drift, movement residue, durable residue, or projection cache still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

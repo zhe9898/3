@@ -526,6 +526,70 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleTouchesOnlyCappedEligibleHouseholdsInActivePool()
+    {
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeRiskDelta = 0 });
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(PopulationHouseholdMobilityRulesData.Default);
+
+        Assert.That(
+            GetHousehold(actual.State, 1).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 1).MigrationRisk + 1));
+        Assert.That(
+            GetHousehold(actual.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk + 1));
+
+        Assert.That(
+            GetHousehold(actual.State, 3).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 3).MigrationRisk),
+            "The household cap leaves the lower-priority pressure-hit household untouched.");
+        Assert.That(
+            GetHousehold(actual.State, 4).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 4).MigrationRisk),
+            "Quiet households below the candidate floor remain untouched.");
+        Assert.That(
+            GetHousehold(actual.State, 5).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 5).MigrationRisk),
+            "The settlement cap leaves the lower-priority active pool untouched.");
+        Assert.That(
+            GetHousehold(actual.State, 6).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 6).MigrationRisk),
+            "The settlement cap leaves the lower-priority active pool untouched.");
+
+        Assert.That(actual.State.MigrationPools, Has.Count.EqualTo(baseline.State.MigrationPools.Count));
+        Assert.That(actual.Diff.Entries.Count, Is.EqualTo(baseline.Diff.Entries.Count + 2));
+        Assert.That(
+            actual.Diff.Entries
+                .Where(entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(entry => entry.EntityKey),
+            Is.EquivalentTo(new[] { "1", "2" }));
+    }
+
+    [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleReplaySameSeedStable()
+    {
+        PopulationMobilityRunResult first = RunFirstMobilityRuntimeScenario(PopulationHouseholdMobilityRulesData.Default);
+        PopulationMobilityRunResult second = RunFirstMobilityRuntimeScenario(PopulationHouseholdMobilityRulesData.Default);
+
+        Assert.That(BuildFirstMobilityRuntimeSignature(second), Is.EqualTo(BuildFirstMobilityRuntimeSignature(first)));
+    }
+
+    [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = -1 };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors.Single(), Does.Contain("monthly_runtime_household_cap"));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeHouseholdCapOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeHouseholdCap));
+    }
+
+    [Test]
     public void RunMonth_StableHiredLaborCanDriftBackToSmallholder()
     {
         WorldSettlementsModule worldModule = new();
@@ -651,6 +715,178 @@ public sealed class PopulationAndHouseholdsModuleTests
         populationModule.RunMonth(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
         return populationState.Households[0];
     }
+
+    private static PopulationMobilityRunResult RunFirstMobilityRuntimeScenario(
+        PopulationHouseholdMobilityRulesData rulesData)
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 50,
+            Prosperity = 50,
+            BaselineInstitutionCount = 1,
+        });
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(2),
+            Name = "Yanguan",
+            Security = 50,
+            Prosperity = 50,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+
+        PopulationAndHouseholdsModule populationModule = new(rulesData);
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.AddRange(
+        [
+            new PopulationHouseholdState
+            {
+                Id = new HouseholdId(1),
+                HouseholdName = "Tenant Li",
+                SettlementId = new SettlementId(1),
+                Livelihood = LivelihoodType.Tenant,
+                Distress = 61,
+                DebtPressure = 64,
+                LaborCapacity = 42,
+                MigrationRisk = 77,
+                LandHolding = 12,
+                GrainStore = 20,
+                DependentCount = 2,
+                LaborerCount = 1,
+            },
+            new PopulationHouseholdState
+            {
+                Id = new HouseholdId(2),
+                HouseholdName = "Labor Wu",
+                SettlementId = new SettlementId(1),
+                Livelihood = LivelihoodType.HiredLabor,
+                Distress = 60,
+                DebtPressure = 70,
+                LaborCapacity = 44,
+                MigrationRisk = 76,
+                LandHolding = 8,
+                GrainStore = 22,
+                DependentCount = 2,
+                LaborerCount = 1,
+            },
+            new PopulationHouseholdState
+            {
+                Id = new HouseholdId(3),
+                HouseholdName = "Migrant Sun",
+                SettlementId = new SettlementId(1),
+                Livelihood = LivelihoodType.SeasonalMigrant,
+                Distress = 60,
+                DebtPressure = 60,
+                LaborCapacity = 48,
+                MigrationRisk = 65,
+                LandHolding = 18,
+                GrainStore = 28,
+                DependentCount = 1,
+                LaborerCount = 1,
+            },
+            new PopulationHouseholdState
+            {
+                Id = new HouseholdId(4),
+                HouseholdName = "Quiet Zheng",
+                SettlementId = new SettlementId(1),
+                Livelihood = LivelihoodType.Smallholder,
+                Distress = 30,
+                DebtPressure = 20,
+                LaborCapacity = 70,
+                MigrationRisk = 40,
+                LandHolding = 35,
+                GrainStore = 70,
+                DependentCount = 1,
+                LaborerCount = 2,
+            },
+            new PopulationHouseholdState
+            {
+                Id = new HouseholdId(5),
+                HouseholdName = "Tenant He",
+                SettlementId = new SettlementId(2),
+                Livelihood = LivelihoodType.Tenant,
+                Distress = 60,
+                DebtPressure = 62,
+                LaborCapacity = 44,
+                MigrationRisk = 62,
+                LandHolding = 11,
+                GrainStore = 25,
+                DependentCount = 2,
+                LaborerCount = 1,
+            },
+            new PopulationHouseholdState
+            {
+                Id = new HouseholdId(6),
+                HouseholdName = "Labor Qian",
+                SettlementId = new SettlementId(2),
+                Livelihood = LivelihoodType.HiredLabor,
+                Distress = 60,
+                DebtPressure = 62,
+                LaborCapacity = 44,
+                MigrationRisk = 62,
+                LandHolding = 11,
+                GrainStore = 25,
+                DependentCount = 2,
+                LaborerCount = 1,
+            },
+        ]);
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+
+        DomainEventBuffer eventBuffer = new();
+        WorldDiff diff = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 8),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(211)),
+            queries,
+            eventBuffer,
+            diff);
+
+        populationModule.RunMonth(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
+        return new PopulationMobilityRunResult(populationState, eventBuffer, diff);
+    }
+
+    private static PopulationHouseholdState GetHousehold(PopulationAndHouseholdsState state, int householdId)
+    {
+        return state.Households.Single(household => household.Id == new HouseholdId(householdId));
+    }
+
+    private static string BuildFirstMobilityRuntimeSignature(PopulationMobilityRunResult result)
+    {
+        string households = string.Join(
+            "|",
+            result.State.Households
+                .OrderBy(static household => household.Id.Value)
+                .Select(static household =>
+                    $"{household.Id.Value}:{household.SettlementId.Value}:{household.MigrationRisk}:{household.IsMigrating}:{household.Livelihood}"));
+        string pools = string.Join(
+            "|",
+            result.State.MigrationPools
+                .OrderBy(static pool => pool.SettlementId.Value)
+                .Select(static pool =>
+                    $"{pool.SettlementId.Value}:{pool.OutflowPressure}:{pool.InflowPressure}:{pool.FloatingPopulation}"));
+        string events = string.Join(
+            "|",
+            result.EventBuffer.Events.Select(static evt =>
+                $"{evt.ModuleKey}:{evt.EventType}:{evt.EntityKey}"));
+
+        return $"{households}::{pools}::{events}";
+    }
+
+    private sealed record PopulationMobilityRunResult(
+        PopulationAndHouseholdsState State,
+        DomainEventBuffer EventBuffer,
+        WorldDiff Diff);
 
     private sealed class StubWarfareCampaignQueries : IWarfareCampaignQueries
     {

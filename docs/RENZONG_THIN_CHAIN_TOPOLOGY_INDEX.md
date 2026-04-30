@@ -68,6 +68,14 @@ This is an owner-consumed rules-data shape inside `PopulationAndHouseholds`, not
 
 Schema/migration impact remains none. The extraction does not add persisted state, change cadence, create a movement ledger, or promote distant pooled society into hidden household targets.
 
+## V533-V540 PopulationAndHouseholds First Household Mobility Runtime Rule
+
+V533-V540 lands the first small household mobility runtime rule inside `PopulationAndHouseholds`. The monthly owner pass reads existing `MigrationPools` plus household livelihood, distress, debt, labor, grain, land, and migration pressure; it does not read prose or UI state.
+
+The default rule selects at most one active settlement pool by outflow pressure, then at most two pressure-hit household candidates by deterministic score and household id. It only nudges existing `MigrationRisk` / `IsMigrating` and may emit the existing `MigrationStarted` event if the existing threshold is crossed.
+
+This remains near detail far summary: player-near and pressure-hit local households may receive bounded detail pressure, while quiet households, lower-priority active pools, off-scope settlements, and distant pooled society remain untouched. There is no movement command, route history, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, or save/schema change.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

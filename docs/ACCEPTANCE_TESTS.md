@@ -884,3 +884,10 @@ At integration level, verify:
 - Fallback acceptance: malformed cap data reports a readable validation error and falls back deterministically to the default cap.
 - Ownership acceptance: `PopulationAndHouseholds` remains the only consumer. Application, UI, Unity, `PersonRegistry`, prose, public-life lines, receipt text, docs text, and `DomainEvent.Summary` do not become movement authority.
 - Save/schema acceptance: v525-v532 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, rules-data file, rules-data loader, default file, owner-lane state, selector state, target-cardinality state, route-history state, class/status/personnel/movement/household-mobility/rules-data/extraction ledger, durable residue, or serialized module payload change.
+
+## PopulationAndHouseholds first mobility runtime rule v533-v540 acceptance - 2026-04-30
+- Runtime acceptance: the monthly owner rule touches only eligible households inside the highest-priority active pool, using deterministic cap/order.
+- No-touch acceptance: quiet households, lower-priority active pools, off-scope settlements, distant summaries, `PersonRegistry`, Application, UI, Unity, prose, public-life lines, receipt text, docs text, and `DomainEvent.Summary` do not become movement authority.
+- Determinism acceptance: same-seed replay produces the same household risk, migration status, pool summary, and structured event signature.
+- Fallback acceptance: malformed monthly runtime cap data reports a readable validation error and falls back deterministically to default caps.
+- Save/schema acceptance: v533-v540 adds no persisted fields, module envelope, root/module schema version change, migration, save manifest change, projection cache, rules-data file, rules-data loader, default file, owner-lane state, selector state, target-cardinality state, route-history state, cooldown state, class/status/personnel/movement/household-mobility/runtime-rule ledger, durable residue, or serialized module payload change.
