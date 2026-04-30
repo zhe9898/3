@@ -8,6 +8,9 @@ namespace Zongzu.Modules.PopulationAndHouseholds;
 
 public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<PopulationAndHouseholdsState>
 {
+    private static readonly PopulationHouseholdMobilityRulesData HouseholdMobilityRulesData =
+        PopulationHouseholdMobilityRulesData.Default;
+
     private static readonly string[] CommandNames =
     [
         PlayerCommandNames.RestrictNightTravel,
@@ -1464,6 +1467,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
         Dictionary<HouseholdId, PopulationHouseholdState> householdsById = state.Households
             .ToDictionary(static household => household.Id, static household => household);
+        int focusedMemberPromotionCap = HouseholdMobilityRulesData.GetFocusedMemberPromotionCapOrDefault();
 
         foreach (IGrouping<HouseholdId, HouseholdMembershipState> group in state.Memberships
             .GroupBy(static membership => membership.HouseholdId)
@@ -1486,7 +1490,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                     personQueries.TryGetPerson(membership.PersonId, out PersonRecord person)
                     && person.IsAlive
                     && person.FidelityRing == FidelityRing.Regional)
-                .Take(2))
+                .Take(focusedMemberPromotionCap))
             {
                 personCommands.ChangeFidelityRing(
                     context,

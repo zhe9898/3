@@ -484,3 +484,10 @@ Design principle:
 - The future skeleton is data-only and owner-consumed: `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, `validationResult`, and deterministic declaration order.
 - Parameter groups remain social-pressure tuning categories, not class ladders: threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities.
 - The skeleton does not enter save and cannot be read by Application, UI, Unity, prose, or `PersonRegistry` as movement authority.
+
+### Current household mobility first hardcoded rule extraction: v525-v532
+
+- V525-V532 extracts the focused member promotion fanout cap from a naked module constant into `PopulationHouseholdMobilityRulesData`.
+- The default remains two regional members per pressure-hit household, preserving the existing near-detail promotion behavior and person-id tie-break order.
+- This is still not class/status drift, zhuhu/kehu conversion, migration economy, route history, direct movement, durable residue, or all-world per-person simulation.
+- `PopulationAndHouseholds` is the only consumer. Application, UI, Unity, prose, and `PersonRegistry` do not read this rule data as authority.

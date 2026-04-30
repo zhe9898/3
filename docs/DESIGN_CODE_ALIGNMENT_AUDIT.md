@@ -531,3 +531,11 @@
 - Code alignment: no reusable owner-consumed runtime rules-data/content/config pattern exists in the repo today, so this PR does not create `content/rules-data`.
 - Extraction alignment: the future skeleton groups threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities without changing current hardcoded behavior.
 - v517-v524 adds no production rule, persisted state, schema, migration, default file, loader, validator, ledger, module, movement command, route-history model, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, or runtime plugin system.
+
+## v525-v532 population households first hardcoded rule extraction audit - 2026-04-30
+
+- v525-v532 extracts one hardcoded cap already present in `PopulationAndHouseholds`: focused member promotion fanout.
+- Design alignment: the extraction keeps near detail bounded. A pressure-hit household may promote at most the default two regional members into local detail; distant society remains pooled summary.
+- Code alignment: `PopulationHouseholdMobilityRulesData` provides the default cap and deterministic validation/fallback. `PromoteHotHouseholdMembers` consumes that owner data while preserving household-id then person-id ordering.
+- Extraction alignment: this is the first production extraction from the v501-v524 map, but it does not introduce a loader, `content/rules-data`, or external config path.
+- v525-v532 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, durable residue, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, or runtime plugin system.

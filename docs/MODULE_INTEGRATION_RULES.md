@@ -829,3 +829,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Because the repo has no reusable runtime rules-data/content/config pattern, this pass does not create `content/rules-data`. A later owner implementation must add validation before runtime use.
 - No module may consume skeleton text, config, validation text, fallback text, `MobilityDynamicsExplanationSummary`, `MobilityDynamicsDimensionKeys`, `HouseholdMobilityDynamicsSummary`, projection prose, receipt text, public-life lines, docs text, or `DomainEvent.Summary` as movement authority.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/rules-data/default-skeleton/movement/route-history/status/class/selector ledger, projection cache, rules-data loader, validator, config file, or save-manifest change.
+
+## PopulationAndHouseholds first hardcoded rule extraction v525-v532 integration note
+
+- V525-V532 adds no Query, Command, DomainEvent, handler, scheduler pass, resolver, selector, route-history reader, rules-data loader, default file, or SocialMemory residue path.
+- `PopulationAndHouseholds` consumes its own `PopulationHouseholdMobilityRulesData` to replace the previous hardcoded focused member promotion fanout cap with the same default value.
+- The integration path is internal owner code only: existing household grouping, household-id ordering, person-id ordering, and `IPersonRegistryCommands.ChangeFidelityRing` remain the same.
+- Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not consume the cap as movement authority.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/rules-data/extraction/movement/route-history/status/class/selector ledger, projection cache, rules-data loader, default file, config file, or save-manifest change.
