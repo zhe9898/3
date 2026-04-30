@@ -1420,6 +1420,12 @@ Current household mobility dynamics closeout v461-v468 note:
 - v461-v468 is docs/tests closeout only. It does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, projection cache, selector state, target-cardinality state, route-history state, class ledger, commoner-status ledger, household-mobility ledger, movement ledger, closeout ledger, durable residue, or serialized module payload.
 - Any future persisted household mobility history, movement route, selector watermark, commoner status drift, durable residue, or projection cache still requires a separate schema/migration plan before implementation.
 
+Current household mobility first hardcoded rule extraction v525-v532 note:
+- `PopulationHouseholdMobilityRulesData` is runtime owner-consumed code shape only inside `PopulationAndHouseholds`.
+- The focused member promotion cap default remains 2 and is not persisted.
+- The pass does not add a module namespace, save envelope field, manifest membership, root/module schema version, migration, rules-data file, content/rules-data namespace, projection cache, selector state, target-cardinality state, route-history state, class ledger, commoner-status ledger, household-mobility ledger, movement ledger, extraction ledger, durable residue, or serialized module payload.
+- Any future persisted rules-data file, route history, selector watermark, commoner status drift, movement residue, durable residue, or projection cache still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

@@ -1317,3 +1317,11 @@ Current lite note:
 - Parameter groups are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities.
 - Because the current repo has no reusable runtime rules-data/content/config pattern, this pass adds no `content/rules-data`, rules-data loader, default file, validator implementation, or config-backed runtime rule.
 - V517-V524 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, validator, runtime plugin marketplace, arbitrary script surface, runtime assembly load, reflection-heavy loader, household-mobility/movement/route-history/status/class/selector/default-skeleton ledger, command route, movement authority, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## PopulationAndHouseholds first hardcoded rule extraction v525-v532 boundary note
+
+- V525-V532 extracts one existing `PopulationAndHouseholds` cap into owner-consumed rules data. It does not create a new module boundary.
+- `PopulationHouseholdMobilityRulesData` is consumed only by `PopulationAndHouseholds`; Application, UI, Unity, `PersonRegistry`, and other modules do not read it to calculate outcomes.
+- The extracted parameter is the focused member promotion fanout cap. Default remains 2, and deterministic household-id then person-id ordering remains unchanged.
+- This is not a household movement authority path, route-history model, migration economy, selector, class/status engine, loader, `content/rules-data`, runtime plugin marketplace, or prose parser.
+- V525-V532 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, household-mobility/movement/route-history/status/class/selector/extraction ledger, command route, movement authority, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.

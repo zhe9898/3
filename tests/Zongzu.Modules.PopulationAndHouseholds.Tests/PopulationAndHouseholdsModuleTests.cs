@@ -400,6 +400,132 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_HighPressureHousehold_DefaultMobilityRulesDataPromotesTwoRegionalPeopleInPersonIdOrder()
+    {
+        WorldSettlementsModule worldModule = new();
+        WorldSettlementsState worldState = worldModule.CreateInitialState();
+        worldState.Settlements.Add(new SettlementStateData
+        {
+            Id = new SettlementId(1),
+            Name = "Lanxi",
+            Security = 34,
+            Prosperity = 36,
+            BaselineInstitutionCount = 1,
+        });
+
+        FamilyCoreModule familyModule = new();
+        FamilyCoreState familyState = familyModule.CreateInitialState();
+
+        PersonRegistryModule registryModule = new();
+        PersonRegistryState registryState = registryModule.CreateInitialState();
+        registryState.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(9301),
+            DisplayName = "Regional A",
+            BirthDate = new GameDate(1180, 1),
+            Gender = PersonGender.Male,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Regional,
+        });
+        registryState.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(9302),
+            DisplayName = "Regional B",
+            BirthDate = new GameDate(1181, 1),
+            Gender = PersonGender.Male,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Regional,
+        });
+        registryState.Persons.Add(new PersonRecord
+        {
+            Id = new PersonId(9303),
+            DisplayName = "Regional C",
+            BirthDate = new GameDate(1182, 1),
+            Gender = PersonGender.Male,
+            LifeStage = LifeStage.Adult,
+            IsAlive = true,
+            FidelityRing = FidelityRing.Regional,
+        });
+
+        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
+        populationState.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Tenant Li",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.Tenant,
+            Distress = 86,
+            DebtPressure = 86,
+            LaborCapacity = 24,
+            MigrationRisk = 81,
+            LandHolding = 6,
+            GrainStore = 8,
+            DependentCount = 2,
+            LaborerCount = 1,
+        });
+        foreach (PersonRecord person in registryState.Persons)
+        {
+            populationState.Memberships.Add(new HouseholdMembershipState
+            {
+                PersonId = person.Id,
+                HouseholdId = new HouseholdId(1),
+                Livelihood = LivelihoodType.Tenant,
+                HealthResilience = 90,
+                Health = HealthStatus.Healthy,
+                Activity = PersonActivity.Farming,
+            });
+        }
+
+        QueryRegistry queries = new();
+        worldModule.RegisterQueries(worldState, queries);
+        familyModule.RegisterQueries(familyState, queries);
+        registryModule.RegisterQueries(registryState, queries);
+        populationModule.RegisterQueries(populationState, queries);
+
+        DomainEventBuffer eventBuffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1200, 7),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(139)),
+            queries,
+            eventBuffer,
+            new WorldDiff());
+
+        populationModule.RunMonth(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
+
+        IReadOnlyDictionary<PersonId, PersonRecord> peopleById = registryState.Persons
+            .ToDictionary(static person => person.Id, static person => person);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultFocusedMemberPromotionCap,
+            Is.EqualTo(2));
+        Assert.That(peopleById[new PersonId(9301)].FidelityRing, Is.EqualTo(FidelityRing.Local));
+        Assert.That(peopleById[new PersonId(9302)].FidelityRing, Is.EqualTo(FidelityRing.Local));
+        Assert.That(peopleById[new PersonId(9303)].FidelityRing, Is.EqualTo(FidelityRing.Regional));
+        Assert.That(
+            eventBuffer.Events.Count(evt => evt.EventType == PersonRegistryEventNames.FidelityRingChanged),
+            Is.EqualTo(2));
+    }
+
+    [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidFocusedMemberPromotionCapFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData = new(-1);
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors, Has.Count.EqualTo(1));
+        Assert.That(validation.Errors[0], Does.Contain("focused_member_promotion_cap"));
+        Assert.That(
+            rulesData.GetFocusedMemberPromotionCapOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultFocusedMemberPromotionCap));
+    }
+
+    [Test]
     public void RunMonth_StableHiredLaborCanDriftBackToSmallholder()
     {
         WorldSettlementsModule worldModule = new();

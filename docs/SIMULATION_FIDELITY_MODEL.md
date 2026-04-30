@@ -658,3 +658,10 @@ It should ask:
 - `ruleSetId`, `schemaVersion`, `ownerModule`, `defaultFallbackPolicy`, `parameterGroups`, and `validationResult` are future data-only skeleton fields, not save state or UI authority.
 - Application, UI, and Unity may not read a skeleton to promote distant summaries, infer hidden households, calculate movement, or raise fidelity.
 - Because no reusable runtime rules-data/content/config pattern exists, this pass does not create `content/rules-data`.
+
+## V525-V532 PopulationAndHouseholds First Hardcoded Rule Extraction
+
+- V525-V532 extracts a near-detail fanout cap already used by `PopulationAndHouseholds`; it does not add a new selector, fidelity-ring sweep, route-history state, movement rule, loader, or durable residue.
+- Default focused member promotion remains capped at two regional members per pressure-hit household, ordered by household id and person id.
+- The far-summary rule is unchanged: quiet households, off-scope settlements, and distant pooled society do not become hidden detailed targets.
+- Application, UI, Unity, prose, and `PersonRegistry` do not consume the extracted rule data to raise detail or calculate movement.

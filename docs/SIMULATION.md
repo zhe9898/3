@@ -776,3 +776,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Future parameter groups are threshold bands, pressure weights, regional modifiers, era/scenario modifiers, recovery/decay rates, fanout caps, and tie-break priorities.
 - The skeleton does not enter save, does not change current hardcoded behavior, and does not create `content/rules-data`.
 - The future consumer remains `PopulationAndHouseholds`; Application, UI, Unity, docs text, projection prose, public-life lines, and `DomainEvent.Summary` remain outside authority.
+
+## Current household mobility first hardcoded rule extraction v525-v532 note
+
+- V525-V532 changes runtime code shape but preserves behavior: the focused member promotion fanout cap is now owner-consumed from `PopulationHouseholdMobilityRulesData`, with the default still 2.
+- It adds no scheduler step, cadence change, event-drain rule, command route, movement selector, route-history model, durable residue, rules-data loader, default file, or persistence change.
+- Determinism is preserved by keeping the existing monthly pass, household-id grouping/order, person-id order, and same cap value.
+- Malformed owner rules data falls back to the same default cap; no Application/UI/Unity path can calculate movement or target eligibility from the parameter.

@@ -5596,7 +5596,8 @@ public class ProjectReferenceTests
                      "ComputeTaxSeasonBurdenProfile",
                      "ComputeSubsistencePressureProfile",
                      "ComputeOfficialSupplyBurdenProfile",
-                     ".Take(2)",
+                     "DefaultFocusedMemberPromotionCap",
+                     "GetFocusedMemberPromotionCapOrDefault",
                  })
         {
             Assert.That(populationSource, Does.Contain(existingCarrier), existingCarrier);
@@ -5930,6 +5931,164 @@ public class ProjectReferenceTests
                      "CharacterManager",
                      "ParseHouseholdMobilityDefaultSkeleton",
                      "ParseHouseholdMobilityContract",
+                     "ParseMobilityDynamicsExplanation",
+                     "DomainEvent.Summary.Split",
+                     ".MobilityDynamicsExplanationSummary.Split",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MobilitySelector*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_first_hardcoded_rule_extraction_v525_v532_must_stay_owner_consumed_schema_neutral_and_ui_free()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-04-30_population-households-first-hardcoded-rule-extraction-v525-v532.md"));
+        string populationModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string rulesDataSource = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V525-V532 PopulationAndHouseholds First Hardcoded Rule Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current household mobility first hardcoded rule extraction: v525-v532"));
+        Assert.That(designAudit, Does.Contain("v525-v532 population households first hardcoded rule extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds first hardcoded rule extraction v525-v532 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds first hardcoded rule extraction v525-v532 integration note"));
+        Assert.That(simulation, Does.Contain("Current household mobility first hardcoded rule extraction v525-v532 note"));
+        Assert.That(uiPresentation, Does.Contain("v525-v532 population households first hardcoded rule extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds first hardcoded rule extraction v525-v532 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V525-V532 PopulationAndHouseholds First Hardcoded Rule Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds First Hardcoded Rule Extraction Through V532"));
+        Assert.That(schemaRules, Does.Contain("population households first hardcoded rule extraction v525-v532 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current household mobility first hardcoded rule extraction v525-v532 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "Target schema/migration impact: none",
+                     "Extracted rule",
+                     "focused member promotion fanout cap",
+                     "DefaultFocusedMemberPromotionCap",
+                     "default remains 2",
+                     "deterministic household-id then person-id order",
+                     "invalid cap falls back to default",
+                     "No loader",
+                     "No `content/rules-data`",
+                     "Owner: `PopulationAndHouseholds`",
+                     "Application/UI/Unity do not consume",
+                     "No `PersonRegistry` expansion",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(rulesDataSource, Does.Contain("PopulationHouseholdMobilityRulesData"));
+        Assert.That(rulesDataSource, Does.Contain("DefaultFocusedMemberPromotionCap = 2"));
+        Assert.That(rulesDataSource, Does.Contain("MaxFocusedMemberPromotionCap = 8"));
+        Assert.That(rulesDataSource, Does.Contain("focused_member_promotion_cap"));
+        Assert.That(rulesDataSource, Does.Contain("GetFocusedMemberPromotionCapOrDefault"));
+        Assert.That(populationModule, Does.Contain("HouseholdMobilityRulesData"));
+        Assert.That(populationModule, Does.Contain("PopulationHouseholdMobilityRulesData.Default"));
+        Assert.That(populationModule, Does.Contain("focusedMemberPromotionCap"));
+        Assert.That(populationModule, Does.Contain(".Take(focusedMemberPromotionCap)"));
+        Assert.That(populationModule, Does.Not.Contain(".Take(2))"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+
+        Assert.That(Directory.Exists(Path.Combine(RepoRoot, "content", "rules-data")), Is.False);
+        Assert.That(personRegistrySource, Does.Contain("FidelityRing"));
+        Assert.That(personRegistrySource, Does.Not.Contain("PopulationHouseholdMobilityRulesData"));
+        Assert.That(personRegistrySource, Does.Not.Contain("FocusedMemberPromotionCap"));
+        Assert.That(personRegistrySource, Does.Not.Contain("HouseholdMobilityRoute"));
+        Assert.That(personRegistrySource, Does.Not.Contain("CommonerStatus"));
+        Assert.That(personRegistrySource, Does.Not.Contain("SocialClass"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "FocusedMemberPromotionCap",
+                     "DefaultFocusedMemberPromotionCap",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "HouseholdMobilityRulesDataLedger",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "ReflectionRuleLoader",
+                     "DynamicRuleAssembly",
+                     "ApplicationHouseholdMobilityRulesDataResolver",
+                     "UiHouseholdMobilityRulesDataResolver",
+                     "UnityHouseholdMobilityRulesDataResolver",
+                     "Assembly.Load(",
+                     "Assembly.LoadFrom(",
+                     "Activator.CreateInstance(",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "MigrationEconomyEngine",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "HouseholdMobilitySelector",
+                     "HouseholdMovementEngine",
+                     "DirectHouseholdMovementResolver",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "GlobalPersonScanner",
+                     "RegionalPersonSelector",
+                     "WorldPopulationManager",
+                     "WorldManager",
+                     "PersonManager",
+                     "CharacterManager",
+                     "ParseHouseholdMobilityRulesData",
                      "ParseMobilityDynamicsExplanation",
                      "DomainEvent.Summary.Split",
                      ".MobilityDynamicsExplanationSummary.Split",

@@ -60,6 +60,14 @@ The future skeleton shape is data-only: `ruleSetId`, `schemaVersion`, `ownerModu
 
 The skeleton is not authority state and does not enter save. It is not a runtime plugin marketplace, arbitrary script surface, Application resolver, UI/Unity rule path, movement command, route-history model, migration economy, selector, target-cardinality state, durable residue, `PersonRegistry` expansion, or prose parser.
 
+## V525-V532 PopulationAndHouseholds First Hardcoded Rule Extraction
+
+V525-V532 extracts one low-risk hardcoded cap from `PopulationAndHouseholds`: the focused member promotion fanout cap used when a pressure-hit household makes regional members locally readable. The default remains two members, and the existing deterministic household-id then person-id ordering remains the tie-break path.
+
+This is an owner-consumed rules-data shape inside `PopulationAndHouseholds`, not a loader, `content/rules-data`, movement command, route-history model, migration economy, selector, class/status engine, or `PersonRegistry` expansion. Application, UI, and Unity do not read the rule data or calculate household mobility outcomes.
+
+Schema/migration impact remains none. The extraction does not add persisted state, change cadence, create a movement ledger, or promote distant pooled society into hidden household targets.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.
