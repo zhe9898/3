@@ -1325,3 +1325,11 @@ Current lite note:
 - The extracted parameter is the focused member promotion fanout cap. Default remains 2, and deterministic household-id then person-id ordering remains unchanged.
 - This is not a household movement authority path, route-history model, migration economy, selector, class/status engine, loader, `content/rules-data`, runtime plugin marketplace, or prose parser.
 - V525-V532 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, household-mobility/movement/route-history/status/class/selector/extraction ledger, command route, movement authority, module, manager/controller path, `PersonRegistry` expansion, or UI/Unity authority.
+
+## PopulationAndHouseholds first mobility runtime rule v533-v540 boundary note
+
+- V533-V540 keeps household mobility authority inside `PopulationAndHouseholds`; it does not create a new household mobility, household movement, migration economy, route-history, selector, status, or class module.
+- The monthly owner rule reads existing owner state and summaries: `MigrationPools`, livelihood, distress, debt, labor, grain, land, and migration risk.
+- The rule writes only existing owner fields: `MigrationRisk`, `IsMigrating`, pool summaries, and the existing `MigrationStarted` event if the existing threshold is crossed.
+- Application, UI, Unity, `PersonRegistry`, other modules, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` do not calculate target eligibility or outcomes.
+- V533-V540 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, movement command, route-history model, movement ledger, owner-lane ledger, cooldown ledger, selector watermark, target-cardinality state, durable residue, runtime plugin marketplace, arbitrary script surface, reflection-heavy loader, or UI/Unity authority.

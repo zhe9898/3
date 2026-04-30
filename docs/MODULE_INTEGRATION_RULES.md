@@ -837,3 +837,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The integration path is internal owner code only: existing household grouping, household-id ordering, person-id ordering, and `IPersonRegistryCommands.ChangeFidelityRing` remain the same.
 - Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not consume the cap as movement authority.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/rules-data/extraction/movement/route-history/status/class/selector ledger, projection cache, rules-data loader, default file, config file, or save-manifest change.
+
+## PopulationAndHouseholds first mobility runtime rule v533-v540 integration note
+
+- V533-V540 adds no new Query, Command, public handler, scheduler phase, route-history reader, movement resolver, SocialMemory residue path, or Application orchestration.
+- Integration stays internal to the existing monthly `PopulationAndHouseholds` pass: after pool summaries are rebuilt, the owner rule reads active `MigrationPools` and capped household candidates, then rebuilds owner summaries if it changed existing risk fields.
+- The only event path is the existing `PopulationEventNames.MigrationStarted` threshold receipt; no movement command, relocation command, or route-history event is introduced.
+- Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, cap behavior, or household mobility outcome.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/rules-data/movement/route-history/status/class/selector/cooldown ledger, projection cache, rules-data loader, config file, or save-manifest change.

@@ -783,3 +783,11 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - It adds no scheduler step, cadence change, event-drain rule, command route, movement selector, route-history model, durable residue, rules-data loader, default file, or persistence change.
 - Determinism is preserved by keeping the existing monthly pass, household-id grouping/order, person-id order, and same cap value.
 - Malformed owner rules data falls back to the same default cap; no Application/UI/Unity path can calculate movement or target eligibility from the parameter.
+
+## Current household mobility first runtime rule v533-v540 note
+
+- V533-V540 adds a monthly owner rule after the existing `PopulationAndHouseholds` pool rebuild. It reads active `MigrationPools` and capped household candidates from existing state.
+- Deterministic target selection is pool outflow pressure descending, settlement id, then household pressure score descending, household id.
+- Bounded fanout defaults to one active pool and two households, with a one-point existing migration-risk nudge. Malformed monthly cap/threshold/delta data falls back deterministically.
+- The rule creates no scheduler phase, command route, movement selector, route-history model, durable residue, migration economy, class/status engine, rules-data loader, default file, or persistence change.
+- No Application/UI/Unity path calculates target eligibility or household mobility outcome; public shells may only display owner-projected fields.

@@ -491,3 +491,10 @@ Design principle:
 - The default remains two regional members per pressure-hit household, preserving the existing near-detail promotion behavior and person-id tie-break order.
 - This is still not class/status drift, zhuhu/kehu conversion, migration economy, route history, direct movement, durable residue, or all-world per-person simulation.
 - `PopulationAndHouseholds` is the only consumer. Application, UI, Unity, prose, and `PersonRegistry` do not read this rule data as authority.
+
+### Current household mobility first runtime rule: v533-v540
+
+- V533-V540 adds the first tiny monthly runtime rule in `PopulationAndHouseholds`, using existing household livelihood, distress, debt, labor, grain, land, migration risk, and `MigrationPools` outflow pressure.
+- The social effect is deliberately narrow: the highest-pressure active local pool may nudge at most two pressure-hit households by one existing migration-risk point.
+- This is not status-class conversion, household relocation, route history, migration economy, zhuhu/kehu engine, durable social residue, or all-world person simulation.
+- Quiet households, lower-priority active pools, off-scope settlements, distant pooled society, `PersonRegistry`, Application, UI, and Unity remain no-touch authority surfaces.

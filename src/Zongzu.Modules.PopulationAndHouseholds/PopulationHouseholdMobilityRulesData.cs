@@ -3,23 +3,77 @@ using System.Collections.Generic;
 
 namespace Zongzu.Modules.PopulationAndHouseholds;
 
-public sealed record PopulationHouseholdMobilityRulesData(int FocusedMemberPromotionCap)
+public sealed record PopulationHouseholdMobilityRulesData(
+    int FocusedMemberPromotionCap,
+    int MonthlyRuntimeActivePoolOutflowThreshold,
+    int MonthlyRuntimeSettlementCap,
+    int MonthlyRuntimeHouseholdCap,
+    int MonthlyRuntimeRiskDelta)
 {
     public const int DefaultFocusedMemberPromotionCap = 2;
     public const int MaxFocusedMemberPromotionCap = 8;
+    public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
+    public const int DefaultMonthlyRuntimeSettlementCap = 1;
+    public const int DefaultMonthlyRuntimeHouseholdCap = 2;
+    public const int DefaultMonthlyRuntimeRiskDelta = 1;
+    public const int MaxMonthlyRuntimeSettlementCap = 8;
+    public const int MaxMonthlyRuntimeHouseholdCap = 16;
+    public const int MaxMonthlyRuntimeRiskDelta = 8;
 
     public static PopulationHouseholdMobilityRulesData Default { get; } =
-        new(DefaultFocusedMemberPromotionCap);
+        new(
+            DefaultFocusedMemberPromotionCap,
+            DefaultMonthlyRuntimeActivePoolOutflowThreshold,
+            DefaultMonthlyRuntimeSettlementCap,
+            DefaultMonthlyRuntimeHouseholdCap,
+            DefaultMonthlyRuntimeRiskDelta);
+
+    public PopulationHouseholdMobilityRulesData(int focusedMemberPromotionCap)
+        : this(
+            focusedMemberPromotionCap,
+            DefaultMonthlyRuntimeActivePoolOutflowThreshold,
+            DefaultMonthlyRuntimeSettlementCap,
+            DefaultMonthlyRuntimeHouseholdCap,
+            DefaultMonthlyRuntimeRiskDelta)
+    {
+    }
 
     public PopulationHouseholdMobilityRulesValidationResult Validate()
     {
+        List<string> errors = new();
+
         if (FocusedMemberPromotionCap is < 0 or > MaxFocusedMemberPromotionCap)
         {
-            return PopulationHouseholdMobilityRulesValidationResult.Invalid(
+            errors.Add(
                 $"focused_member_promotion_cap must be between 0 and {MaxFocusedMemberPromotionCap}.");
         }
 
-        return PopulationHouseholdMobilityRulesValidationResult.Valid;
+        if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
+        {
+            errors.Add("monthly_runtime_active_pool_outflow_threshold must be between 0 and 100.");
+        }
+
+        if (MonthlyRuntimeSettlementCap is < 0 or > MaxMonthlyRuntimeSettlementCap)
+        {
+            errors.Add(
+                $"monthly_runtime_settlement_cap must be between 0 and {MaxMonthlyRuntimeSettlementCap}.");
+        }
+
+        if (MonthlyRuntimeHouseholdCap is < 0 or > MaxMonthlyRuntimeHouseholdCap)
+        {
+            errors.Add(
+                $"monthly_runtime_household_cap must be between 0 and {MaxMonthlyRuntimeHouseholdCap}.");
+        }
+
+        if (MonthlyRuntimeRiskDelta is < 0 or > MaxMonthlyRuntimeRiskDelta)
+        {
+            errors.Add(
+                $"monthly_runtime_risk_delta must be between 0 and {MaxMonthlyRuntimeRiskDelta}.");
+        }
+
+        return errors.Count == 0
+            ? PopulationHouseholdMobilityRulesValidationResult.Valid
+            : new PopulationHouseholdMobilityRulesValidationResult(false, errors);
     }
 
     public int GetFocusedMemberPromotionCapOrDefault()
@@ -27,6 +81,34 @@ public sealed record PopulationHouseholdMobilityRulesData(int FocusedMemberPromo
         return Validate().IsValid
             ? FocusedMemberPromotionCap
             : DefaultFocusedMemberPromotionCap;
+    }
+
+    public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeActivePoolOutflowThreshold
+            : DefaultMonthlyRuntimeActivePoolOutflowThreshold;
+    }
+
+    public int GetMonthlyRuntimeSettlementCapOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeSettlementCap
+            : DefaultMonthlyRuntimeSettlementCap;
+    }
+
+    public int GetMonthlyRuntimeHouseholdCapOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeHouseholdCap
+            : DefaultMonthlyRuntimeHouseholdCap;
+    }
+
+    public int GetMonthlyRuntimeRiskDeltaOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeRiskDelta
+            : DefaultMonthlyRuntimeRiskDelta;
     }
 }
 
@@ -36,9 +118,4 @@ public sealed record PopulationHouseholdMobilityRulesValidationResult(
 {
     public static PopulationHouseholdMobilityRulesValidationResult Valid { get; } =
         new(true, Array.Empty<string>());
-
-    public static PopulationHouseholdMobilityRulesValidationResult Invalid(string error)
-    {
-        return new PopulationHouseholdMobilityRulesValidationResult(false, [error]);
-    }
 }
