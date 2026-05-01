@@ -525,3 +525,9 @@ Design principle:
 - V565-V572 turns the widening-gate requirement into focused test evidence over the current first runtime rule; it does not widen fanout or add a second rule.
 - The owner test proves the current default fixture touches exactly two eligible households in one selected active pool while leaving the lower-priority candidate, quiet household, and lower-priority active pool untouched.
 - Social interpretation stays at pressure-nudge scale: no relocation, route history, migration economy, zhuhu/kehu conversion, durable social residue, class/status engine, persisted touch-count state, diagnostic state, performance cache, `PersonRegistry` expansion, Application/UI/Unity authority, or schema change.
+
+### Current household mobility rules-data fallback matrix: v573-v580
+
+- V573-V580 adds fallback evidence for malformed household mobility runtime rules-data; it does not introduce a runtime loader or content file.
+- Malformed threshold/cap/delta values fall back to defaults, and an owner run with malformed runtime rules-data must match the default run signature.
+- Social interpretation remains owner-state pressure readback only: no relocation, route history, migration economy, zhuhu/kehu conversion, durable social residue, class/status engine, persisted touch-count state, diagnostic state, performance cache, `PersonRegistry` expansion, Application/UI/Unity authority, runtime plugin marketplace, or schema change.

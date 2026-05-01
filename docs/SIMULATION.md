@@ -819,3 +819,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - The test proves the current default fixture touches exactly two eligible households in one selected active pool while leaving the lower-priority selected-pool candidate, quiet household, and lower-priority active pool untouched.
 - The proof derives touched counts in tests by comparing existing risk deltas against a zero-risk-delta baseline. Runtime state still has no touched-count field, diagnostic state, performance cache, or projection-owned counter.
 - Application/UI/Unity continue to display projected owner fields only and must not calculate target eligibility, touched counts, health classification, performance status, or household mobility outcome.
+
+## Current household mobility rules-data fallback matrix v573-v580 note
+
+- V573-V580 adds focused fallback evidence, not a scheduler phase, cadence change, runtime rule, event-drain rule, command route, movement selector, route-history model, durable residue, migration economy, class/status engine, rules-data loader, default file, persistence change, counters, caches, long-run saturation tuning, or performance optimization.
+- Malformed runtime threshold/cap/delta rules-data validates with readable errors and falls back to defaults.
+- The owner-result proof requires malformed runtime rules-data to produce the same monthly signature as default rules-data, keeping fallback inside `PopulationAndHouseholds`.
+- Application/UI/Unity continue to display projected owner fields only and must not calculate validation fallback, target eligibility, touched counts, health classification, performance status, or household mobility outcome.
