@@ -519,3 +519,9 @@ Design principle:
 - Any future social expansion must state whether pressure bands reflect intended local distress, missing recovery, missing allocation, or projection debt before changing recovery/decay formulas.
 - The gate requires touched household/pool/settlement counts and quiet/off-scope/distant-summary no-touch proof before richer household movement or regional detail can land.
 - It adds no relocation, route history, migration economy, zhuhu/kehu conversion, durable social residue, class/status engine, touch-count state, diagnostic state, performance cache, `PersonRegistry` expansion, Application/UI/Unity authority, or schema change.
+
+### Current household mobility runtime touch-count proof: v565-v572
+
+- V565-V572 turns the widening-gate requirement into focused test evidence over the current first runtime rule; it does not widen fanout or add a second rule.
+- The owner test proves the current default fixture touches exactly two eligible households in one selected active pool while leaving the lower-priority candidate, quiet household, and lower-priority active pool untouched.
+- Social interpretation stays at pressure-nudge scale: no relocation, route history, migration economy, zhuhu/kehu conversion, durable social residue, class/status engine, persisted touch-count state, diagnostic state, performance cache, `PersonRegistry` expansion, Application/UI/Unity authority, or schema change.

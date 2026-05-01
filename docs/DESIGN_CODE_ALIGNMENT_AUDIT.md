@@ -571,3 +571,11 @@
 - Code alignment: no production code changes; architecture tests keep the existing first rule path, default caps, and `PopulationAndHouseholds` schema `3` unchanged.
 - Validation alignment: a later widening PR must add focused owner tests, architecture/no-touch checks, replay proof, and performance evidence only when it claims a performance change.
 - v557-v564 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, touch-count state, diagnostic state, performance cache, recovery/decay formula change, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, runtime plugin system, long-run optimizer, or performance optimization claim.
+
+## v565-v572 household mobility runtime touch-count proof audit - 2026-05-01
+
+- v565-v572 adds focused owner-test evidence for the current default touch budget without changing production behavior.
+- Design alignment: the proof keeps household mobility at pressure-nudge scale and documents exactly which in-scope households/pool are touched before any later fanout expansion can be considered.
+- Code alignment: production `PopulationAndHouseholds` runtime code, default caps, and schema `3` remain unchanged; the new evidence lives in module tests and an architecture guard.
+- Validation alignment: focused tests prove two eligible households in one selected active pool are touched, while the lower-priority candidate, quiet household, and lower-priority active pool remain no-touch.
+- v565-v572 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, persisted touch-count state, diagnostic state, performance cache, recovery/decay formula change, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, runtime plugin system, long-run optimizer, or performance optimization claim.

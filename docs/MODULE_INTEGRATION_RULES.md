@@ -869,3 +869,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The existing `PopulationEventNames.MigrationStarted` receipt remains threshold evidence only; it is not a movement command, route-history event, touched-count signal, performance signal, or long-run health signal by itself.
 - Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, touched counts, cap behavior, health classification, performance status, or household mobility outcome.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/widening-gate/movement/route-history/status/class/selector/cooldown/touch-count/diagnostic ledger, projection cache, rules-data loader, config file, performance cache, or save-manifest change.
+
+## Household mobility runtime touch-count proof v565-v572 integration note
+
+- V565-V572 adds no new integration path. It is focused test evidence for the current first household mobility runtime rule's default touch budget.
+- The first runtime rule remains an internal monthly `PopulationAndHouseholds` path and does not introduce a second runtime rule, Query, Command, public handler, scheduler phase, route-history reader, movement resolver, SocialMemory residue path, counter path, cache path, long-run tuner, or performance optimization path.
+- The focused owner test counts existing risk deltas against a zero-risk-delta baseline; that proof is not a runtime touched-count signal and is not persisted.
+- Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, touched counts, cap behavior, health classification, performance status, or household mobility outcome.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/touch-count-proof/movement/route-history/status/class/selector/cooldown/touch-count/diagnostic ledger, projection cache, rules-data loader, config file, performance cache, or save-manifest change.
