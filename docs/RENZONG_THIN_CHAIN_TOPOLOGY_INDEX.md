@@ -100,6 +100,12 @@ The live topology is unchanged: the V533-V540 monthly `PopulationAndHouseholds` 
 
 Before any later PR widens this lane, it must declare owner state, target scope, proposed touched counts, deterministic order/caps, no-touch boundary, pressure-band interpretation, schema decision, validation lane, and whether performance evidence is actually being claimed. V557-V564 adds no schema, migration, touch-count state, diagnostic state, performance cache, movement command, route-history state, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, runtime plugin surface, or prose parser.
 
+## V565-V572 Household Mobility Runtime Touch-Count Proof
+
+V565-V572 adds focused test evidence for the current V533-V540 household mobility runtime rule touch budget. It is not fanout widening: the default rule still touches at most one selected active pool and two eligible households in the focused fixture, using existing deterministic pool order and household score/order.
+
+The proof compares a default run with a zero-risk-delta baseline so the touched households can be counted without adding counters, diagnostic state, projection fields, or persisted state. The test also proves the lower-priority pressure-hit household, quiet household, lower-priority active pool, off-scope settlement, distant summaries, `PersonRegistry`, Application, UI, and Unity remain no-touch for authority. V565-V572 adds no schema, migration, movement command, route-history state, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, runtime plugin surface, performance cache, long-run saturation tuning, or prose parser.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

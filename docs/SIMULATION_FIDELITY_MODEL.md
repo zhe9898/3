@@ -693,3 +693,10 @@ It should ask:
 - The near-detail budget stays unchanged: one active pool and two pressure-hit households by default, with distant society summarized.
 - Future fanout expansion must name current/proposed touched households, pools, and settlements per month, then prove deterministic cap/order and no-touch behavior before implementation.
 - Future recovery/decay changes must first classify pressure-band meaning; future performance work must first name the hot path and cardinality. This pass adds no selector watermark, route-history state, cooldown ledger, target-cardinality state, touch-count state, diagnostic state, performance cache, `PersonRegistry` expansion, long-run saturation tuning, or UI-owned eligibility logic.
+
+## V565-V572 Household Mobility Runtime Touch-Count Proof
+
+- V565-V572 is fidelity proof, not fidelity widening.
+- The current near-detail budget is now covered by focused owner-test evidence: one selected active pool and two eligible households in the fixture receive the existing monthly pressure nudge.
+- The proof uses a zero-risk-delta baseline to count touched households without adding persisted counters, diagnostic state, performance cache, projection fields, or new rule authority.
+- The lower-priority selected-pool candidate, quiet household, lower-priority active pool, off-scope settlements, distant pooled society, `PersonRegistry`, Application, UI, and Unity remain no-touch. Future widening still needs a separate ExecPlan before changing fanout, formulas, schema, or presentation.

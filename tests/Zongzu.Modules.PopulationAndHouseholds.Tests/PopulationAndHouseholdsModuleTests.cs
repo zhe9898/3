@@ -566,6 +566,41 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleDefaultCapsTouchOnlyOnePoolAndTwoHouseholds()
+    {
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeRiskDelta = 0 });
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(PopulationHouseholdMobilityRulesData.Default);
+
+        int[] selectedPoolTouchedHouseholds = actual.State.Households
+            .Where(household =>
+                GetHousehold(actual.State, household.Id.Value).MigrationRisk
+                == GetHousehold(baseline.State, household.Id.Value).MigrationRisk + 1)
+            .Select(static household => household.Id.Value)
+            .OrderBy(static householdId => householdId)
+            .ToArray();
+        int[] selectedPoolTouchedSettlements = selectedPoolTouchedHouseholds
+            .Select(householdId => GetHousehold(actual.State, householdId).SettlementId.Value)
+            .Distinct()
+            .OrderBy(static settlementId => settlementId)
+            .ToArray();
+        int[] monthlyRuntimeDiffKeys = actual.Diff.Entries
+            .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+            .Select(static entry => int.Parse(entry.EntityKey!))
+            .OrderBy(static householdId => householdId)
+            .ToArray();
+
+        Assert.That(selectedPoolTouchedHouseholds, Is.EqualTo(new[] { 1, 2 }));
+        Assert.That(selectedPoolTouchedSettlements, Is.EqualTo(new[] { 1 }));
+        Assert.That(monthlyRuntimeDiffKeys, Is.EqualTo(selectedPoolTouchedHouseholds));
+
+        Assert.That(GetHousehold(actual.State, 3).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 3).MigrationRisk));
+        Assert.That(GetHousehold(actual.State, 4).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 4).MigrationRisk));
+        Assert.That(GetHousehold(actual.State, 5).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 5).MigrationRisk));
+        Assert.That(GetHousehold(actual.State, 6).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 6).MigrationRisk));
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRuleReplaySameSeedStable()
     {
         PopulationMobilityRunResult first = RunFirstMobilityRuntimeScenario(PopulationHouseholdMobilityRulesData.Default);
