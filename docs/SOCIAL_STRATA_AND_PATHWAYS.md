@@ -531,3 +531,6 @@ Design principle:
 - V573-V580 adds fallback evidence for malformed household mobility runtime rules-data; it does not introduce a runtime loader or content file.
 - Malformed threshold/cap/delta values fall back to defaults, and an owner run with malformed runtime rules-data must match the default run signature.
 - Social interpretation remains owner-state pressure readback only: no relocation, route history, migration economy, zhuhu/kehu conversion, durable social residue, class/status engine, persisted touch-count state, diagnostic state, performance cache, `PersonRegistry` expansion, Application/UI/Unity authority, runtime plugin marketplace, or schema change.
+### Current household mobility runtime threshold no-touch proof: v581-v588
+
+V581-V588 records that the first household mobility runtime rule can be blocked by `monthly_runtime_active_pool_outflow_threshold` without touching households or pools. The no-touch proof stays inside `PopulationAndHouseholds`, compares against a zero-risk-delta baseline, and adds no social class/status ladder, route history, movement command, or `PersonRegistry` expansion.

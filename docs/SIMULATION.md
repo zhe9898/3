@@ -826,3 +826,8 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - Malformed runtime threshold/cap/delta rules-data validates with readable errors and falls back to defaults.
 - The owner-result proof requires malformed runtime rules-data to produce the same monthly signature as default rules-data, keeping fallback inside `PopulationAndHouseholds`.
 - Application/UI/Unity continue to display projected owner fields only and must not calculate validation fallback, target eligibility, touched counts, health classification, performance status, or household mobility outcome.
+## Current household mobility runtime threshold no-touch v581-v588 note
+
+V581-V588 proves the existing first household mobility runtime rule remains bounded when active-pool thresholding blocks selection. The owner test compares the threshold-blocked run with a zero-risk-delta baseline, checks that fixture pools stay below the maximum threshold, and verifies no `Household mobility pressure` diff entries are produced.
+
+No scheduler cadence, runtime formula, fanout cap, ordering rule, save schema, route-history model, or movement command changes.

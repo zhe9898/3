@@ -1372,3 +1372,8 @@ Current lite note:
 - Existing `PopulationHouseholdMobilityRulesData` remains owner-consumed by `PopulationAndHouseholds`; Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` do not calculate validation fallback or outcomes.
 - Malformed runtime threshold/cap/delta values fall back to defaults, and owner-result evidence requires malformed rules-data to match the default monthly signature.
 - V573-V580 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, movement command, route-history model, movement ledger, owner-lane ledger, cooldown ledger, selector watermark, target-cardinality state, persisted touch-count state, diagnostic state, performance cache, durable residue, runtime plugin marketplace, arbitrary script surface, reflection-heavy loader, long-run saturation tuner, performance optimization path, or UI/Unity authority.
+## Household mobility runtime threshold no-touch v581-v588 boundary note
+
+V581-V588 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects active-pool threshold blocking. The pass adds only tests/docs and keeps selection, ordering, fanout, threshold fallback, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, cache, or `PersonRegistry` expansion is introduced.

@@ -483,3 +483,8 @@ After v38-v60 made office/yamen and Family owner-lane readback visible, and v61-
 2. fuller court-policy process, only after policy wording, dispatch arrival, and public-life interpretation keep owner lanes rather than becoming an office-only thin receipt;
 3. household/family relief choice variants, only as bounded FamilyCore commands that reuse existing fields or carry explicit schema/migration plans;
 4. social-memory residue deepening for Family relief, only from structured aftermath and never from `Family救济选择读回`, receipt prose, or `DomainEvent.Summary`.
+## V581-V588 Household Mobility Runtime Threshold No-Touch Proof
+
+V581-V588 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule respects the active-pool threshold as a deterministic no-touch gate. The proof keeps the branch within the existing owner lane: threshold-blocked pools produce the same household/pool signature as the zero-risk-delta baseline and emit no `Household mobility pressure` diff.
+
+This is not a migration engine, route-history model, movement command, or second household mobility rule. Schema/migration impact: none.

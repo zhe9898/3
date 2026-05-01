@@ -610,6 +610,26 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleActivePoolThresholdNoTouchesHouseholdsOrPools()
+    {
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeRiskDelta = 0 });
+        PopulationMobilityRunResult thresholdBlocked = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeActivePoolOutflowThreshold = 100 });
+
+        Assert.That(
+            baseline.State.MigrationPools.Select(static pool => pool.OutflowPressure),
+            Is.All.LessThan(100),
+            "The fixture must keep every pool below the maximum threshold for this no-touch proof.");
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(thresholdBlocked),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(baseline)));
+        Assert.That(
+            thresholdBlocked.Diff.Entries.Where(static entry => entry.Description.Contains("Household mobility pressure")),
+            Is.Empty);
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =

@@ -707,3 +707,8 @@ It should ask:
 - Malformed active-pool threshold, settlement cap, household cap, and risk delta values fall back to defaults, preserving the existing near-detail budget.
 - The owner-result proof requires malformed runtime rules-data to produce the same monthly run signature as default rules-data.
 - This adds no runtime loader, rules-data file, persisted counters, diagnostic state, performance cache, projection fields, plugin surface, or new rule authority.
+## V581-V588 Household Mobility Runtime Threshold No-Touch Proof
+
+V581-V588 keeps household mobility fidelity bounded by proving an active-pool threshold can leave the first runtime rule inert for below-threshold pools. This reinforces near detail / far summary discipline: only eligible active pools may be considered, while below-threshold pools and their households remain untouched.
+
+No runtime behavior, schema, cache, diagnostic state, or performance claim is added.
