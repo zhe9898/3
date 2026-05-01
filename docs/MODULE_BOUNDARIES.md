@@ -1349,3 +1349,11 @@ Current lite note:
 - Future widening must first document touched household/pool/settlement counts, deterministic cap/order, same-seed replay proof, no-touch boundaries, pressure-band interpretation, and hot-path/cardinality notes.
 - Application, UI, Unity, `PersonRegistry`, other modules, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` still do not calculate eligibility, fanout, health classification, or outcomes.
 - V549-V556 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, movement command, route-history model, movement ledger, owner-lane ledger, cooldown ledger, selector watermark, target-cardinality state, durable residue, runtime plugin marketplace, arbitrary script surface, reflection-heavy loader, long-run saturation tuner, performance optimization path, or UI/Unity authority.
+
+## Household mobility runtime widening gate v557-v564 boundary note
+
+- V557-V564 is preflight only. It does not add another `PopulationAndHouseholds` rule path, widen fanout, change caps, change recovery/decay formulas, add counters, add caches, or add a scheduler phase.
+- The first runtime rule remains inside `PopulationAndHouseholds` and remains limited to existing `MigrationRisk`, `IsMigrating`, `MigrationPools`, and the existing `MigrationStarted` threshold receipt.
+- Future widening must declare owner state, target scope, current/proposed touched counts, deterministic order/caps, no-touch boundaries, pressure-band interpretation, schema decision, validation lane, and whether performance evidence is claimed.
+- Application, UI, Unity, `PersonRegistry`, other modules, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` still do not calculate eligibility, fanout, touched counts, health classification, performance status, or outcomes.
+- V557-V564 adds no persisted state, schema bump, migration, rules-data file, rules-data loader, movement command, route-history model, movement ledger, owner-lane ledger, cooldown ledger, selector watermark, target-cardinality state, touch-count state, diagnostic state, performance cache, durable residue, runtime plugin marketplace, arbitrary script surface, reflection-heavy loader, long-run saturation tuner, performance optimization path, or UI/Unity authority.

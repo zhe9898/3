@@ -686,3 +686,10 @@ It should ask:
 - It keeps the V533-V540 budget unchanged: one active pool and two pressure-hit households by default, with deterministic cap/order and distant society remaining summarized.
 - The next gate before widening requires touched household/pool/settlement counts, no-touch proof, same-seed replay evidence, pressure-band interpretation, and hot-path/cardinality notes.
 - No new selector watermark, route-history state, cooldown ledger, target-cardinality state, `PersonRegistry` expansion, long-run saturation tuning, performance optimization claim, or UI-owned eligibility logic is introduced.
+
+## V557-V564 Household Mobility Runtime Widening Gate
+
+- V557-V564 is a fidelity widening gate, not a fidelity widening implementation.
+- The near-detail budget stays unchanged: one active pool and two pressure-hit households by default, with distant society summarized.
+- Future fanout expansion must name current/proposed touched households, pools, and settlements per month, then prove deterministic cap/order and no-touch behavior before implementation.
+- Future recovery/decay changes must first classify pressure-band meaning; future performance work must first name the hot path and cardinality. This pass adds no selector watermark, route-history state, cooldown ledger, target-cardinality state, touch-count state, diagnostic state, performance cache, `PersonRegistry` expansion, long-run saturation tuning, or UI-owned eligibility logic.

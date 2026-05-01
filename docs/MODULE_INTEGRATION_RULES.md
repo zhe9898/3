@@ -861,3 +861,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The existing `PopulationEventNames.MigrationStarted` receipt remains threshold evidence only; it is not a movement command, route-history event, or long-run health signal by itself.
 - Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, cap behavior, health classification, or household mobility outcome.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/health-evidence/movement/route-history/status/class/selector/cooldown ledger, projection cache, rules-data loader, config file, diagnostic state, or save-manifest change.
+
+## Household mobility runtime widening gate v557-v564 integration note
+
+- V557-V564 adds no new integration path. It is a preflight gate for later household mobility fanout/formula expansion.
+- The first runtime rule remains an internal monthly `PopulationAndHouseholds` path and does not introduce a second runtime rule, Query, Command, public handler, scheduler phase, route-history reader, movement resolver, SocialMemory residue path, counter path, cache path, long-run tuner, or performance optimization path.
+- The existing `PopulationEventNames.MigrationStarted` receipt remains threshold evidence only; it is not a movement command, route-history event, touched-count signal, performance signal, or long-run health signal by itself.
+- Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, touched counts, cap behavior, health classification, performance status, or household mobility outcome.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/widening-gate/movement/route-history/status/class/selector/cooldown/touch-count/diagnostic ledger, projection cache, rules-data loader, config file, performance cache, or save-manifest change.

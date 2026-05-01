@@ -92,6 +92,14 @@ The current topology remains the V533-V540 monthly `PopulationAndHouseholds` pre
 
 The next gate before widening household mobility is explicit health proof: touched household/pool/settlement counts, no-touch proof for quiet/off-scope/distant summaries, same-seed replay evidence, pressure-band interpretation, and hot-path/cardinality notes. V549-V556 adds no schema, migration, movement command, route-history state, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, runtime plugin surface, or prose parser.
 
+## V557-V564 Household Mobility Runtime Widening Gate
+
+V557-V564 freezes the widening gate for future household mobility runtime work. It is a docs/tests preflight, not a fanout expansion, second runtime rule, recovery/decay change, long-run saturation tuning pass, counter/caching implementation, or performance optimization claim.
+
+The live topology is unchanged: the V533-V540 monthly `PopulationAndHouseholds` pressure nudge still defaults to one active pool and two household candidates, writes existing `MigrationRisk` / `IsMigrating`, updates existing `MigrationPools`, and may emit only the existing `MigrationStarted` threshold receipt.
+
+Before any later PR widens this lane, it must declare owner state, target scope, proposed touched counts, deterministic order/caps, no-touch boundary, pressure-band interpretation, schema decision, validation lane, and whether performance evidence is actually being claimed. V557-V564 adds no schema, migration, touch-count state, diagnostic state, performance cache, movement command, route-history state, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, runtime plugin surface, or prose parser.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.
