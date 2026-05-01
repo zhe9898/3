@@ -625,6 +625,58 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidRuntimeParametersFallBackToDefaults()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimeActivePoolOutflowThreshold = -1,
+                MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
+                MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
+                MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors, Has.Count.EqualTo(4));
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_active_pool_outflow_threshold")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_settlement_cap")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_household_cap")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_risk_delta")), Is.True);
+        Assert.That(
+            rulesData.GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeActivePoolOutflowThreshold));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeSettlementCapOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeSettlementCap));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeHouseholdCapOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeHouseholdCap));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeRiskDeltaOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeRiskDelta));
+    }
+
+    [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleMalformedRulesDataFallsBackToDefaultOutcome()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimeActivePoolOutflowThreshold = -1,
+                MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
+                MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
+                MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
+            };
+
+        PopulationMobilityRunResult defaultResult = RunFirstMobilityRuntimeScenario(PopulationHouseholdMobilityRulesData.Default);
+        PopulationMobilityRunResult malformedResult = RunFirstMobilityRuntimeScenario(malformedRulesData);
+
+        Assert.That(BuildFirstMobilityRuntimeSignature(malformedResult), Is.EqualTo(BuildFirstMobilityRuntimeSignature(defaultResult)));
+    }
+
+    [Test]
     public void RunMonth_StableHiredLaborCanDriftBackToSmallholder()
     {
         WorldSettlementsModule worldModule = new();

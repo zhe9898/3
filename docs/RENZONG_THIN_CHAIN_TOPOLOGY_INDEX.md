@@ -106,6 +106,12 @@ V565-V572 adds focused test evidence for the current V533-V540 household mobilit
 
 The proof compares a default run with a zero-risk-delta baseline so the touched households can be counted without adding counters, diagnostic state, projection fields, or persisted state. The test also proves the lower-priority pressure-hit household, quiet household, lower-priority active pool, off-scope settlement, distant summaries, `PersonRegistry`, Application, UI, and Unity remain no-touch for authority. V565-V572 adds no schema, migration, movement command, route-history state, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, runtime plugin surface, performance cache, long-run saturation tuning, or prose parser.
 
+## V573-V580 Household Mobility Rules-Data Fallback Matrix
+
+V573-V580 adds focused fallback evidence for the household mobility runtime rules-data shape. It proves malformed runtime parameters report validation errors and fall back deterministically to defaults, including active-pool threshold, settlement cap, household cap, and risk delta.
+
+The owner-result proof compares a malformed rules-data run with the default run and requires the same `PopulationAndHouseholds` monthly signature. This pass adds no runtime behavior, rules-data loader, rules-data file, runtime plugin marketplace, arbitrary script rule, reflection-heavy loading, schema, migration, fanout widening, movement command, route-history state, migration economy, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, performance cache, or prose parser.
+
 ## Thin-Chain Closeout Status - v101-v108
 
 As of the v101-v108 closeout audit, the current Renzong thin-chain skeleton is treated as closed through v100. "Closed" here means the live thin topology has source pressure, owning modules, scheduler drain or delayed-month behavior, repetition guard, off-scope boundary where applicable, downstream receipt/projection, owner-lane readback, UI/Unity copy-only display, no-summary-parsing guards, and no-save/no-schema documentation.

@@ -877,3 +877,11 @@ Until the general seam exists, any command route not yet moved into its owning m
 - The focused owner test counts existing risk deltas against a zero-risk-delta baseline; that proof is not a runtime touched-count signal and is not persisted.
 - Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate target selection, touched counts, cap behavior, health classification, performance status, or household mobility outcome.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/touch-count-proof/movement/route-history/status/class/selector/cooldown/touch-count/diagnostic ledger, projection cache, rules-data loader, config file, performance cache, or save-manifest change.
+
+## Household mobility rules-data fallback matrix v573-v580 integration note
+
+- V573-V580 adds no new integration path. It is focused fallback evidence for existing owner-consumed rules-data shape.
+- Existing fallback getters remain internal to `PopulationAndHouseholds` consumption and do not introduce a Query, Command, public handler, scheduler phase, route-history reader, movement resolver, SocialMemory residue path, counter path, cache path, loader path, plugin path, or performance optimization path.
+- Malformed runtime rules-data fallback is proven by owner tests and is not a runtime config marketplace, arbitrary script rule, runtime assembly, reflection-heavy loader, or persisted validation ledger.
+- Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate validation fallback, target selection, touched counts, cap behavior, health classification, performance status, or household mobility outcome.
+- Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/fallback-matrix/movement/route-history/status/class/selector/cooldown/touch-count/diagnostic ledger, projection cache, rules-data loader, config file, performance cache, or save-manifest change.

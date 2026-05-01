@@ -579,3 +579,11 @@
 - Code alignment: production `PopulationAndHouseholds` runtime code, default caps, and schema `3` remain unchanged; the new evidence lives in module tests and an architecture guard.
 - Validation alignment: focused tests prove two eligible households in one selected active pool are touched, while the lower-priority candidate, quiet household, and lower-priority active pool remain no-touch.
 - v565-v572 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, persisted touch-count state, diagnostic state, performance cache, recovery/decay formula change, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, runtime plugin system, long-run optimizer, or performance optimization claim.
+
+## v573-v580 household mobility rules-data fallback matrix audit - 2026-05-01
+
+- v573-v580 adds focused fallback evidence for malformed runtime rules-data without changing production behavior.
+- Design alignment: fallback keeps malformed threshold/cap/delta input from becoming hidden rule widening or an unsafe content authority path.
+- Code alignment: production `PopulationAndHouseholds` runtime code, default caps, validation behavior, and schema `3` remain unchanged; the new evidence lives in module tests and an architecture guard.
+- Validation alignment: focused tests prove validation errors are readable, fallback getters return defaults, and a malformed runtime rules-data run matches the default run signature.
+- v573-v580 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, persisted touch-count state, diagnostic state, performance cache, recovery/decay formula change, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, runtime plugin system, long-run optimizer, or performance optimization claim.

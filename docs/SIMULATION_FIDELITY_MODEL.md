@@ -700,3 +700,10 @@ It should ask:
 - The current near-detail budget is now covered by focused owner-test evidence: one selected active pool and two eligible households in the fixture receive the existing monthly pressure nudge.
 - The proof uses a zero-risk-delta baseline to count touched households without adding persisted counters, diagnostic state, performance cache, projection fields, or new rule authority.
 - The lower-priority selected-pool candidate, quiet household, lower-priority active pool, off-scope settlements, distant pooled society, `PersonRegistry`, Application, UI, and Unity remain no-touch. Future widening still needs a separate ExecPlan before changing fanout, formulas, schema, or presentation.
+
+## V573-V580 Household Mobility Rules-Data Fallback Matrix
+
+- V573-V580 is fallback proof, not fidelity widening.
+- Malformed active-pool threshold, settlement cap, household cap, and risk delta values fall back to defaults, preserving the existing near-detail budget.
+- The owner-result proof requires malformed runtime rules-data to produce the same monthly run signature as default rules-data.
+- This adds no runtime loader, rules-data file, persisted counters, diagnostic state, performance cache, projection fields, plugin surface, or new rule authority.
