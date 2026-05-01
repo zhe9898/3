@@ -587,3 +587,8 @@
 - Code alignment: production `PopulationAndHouseholds` runtime code, default caps, validation behavior, and schema `3` remain unchanged; the new evidence lives in module tests and an architecture guard.
 - Validation alignment: focused tests prove validation errors are readable, fallback getters return defaults, and a malformed runtime rules-data run matches the default run signature.
 - v573-v580 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, persisted touch-count state, diagnostic state, performance cache, recovery/decay formula change, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, runtime plugin system, long-run optimizer, or performance optimization claim.
+## v581-v588 household mobility runtime threshold no-touch audit - 2026-05-01
+
+The v581-v588 pass adds threshold no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves that a maximum active-pool threshold blocks selection for the fixture, matches a zero-risk-delta baseline, and emits no household mobility pressure diff.
+
+Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.

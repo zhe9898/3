@@ -885,3 +885,8 @@ Until the general seam exists, any command route not yet moved into its owning m
 - Malformed runtime rules-data fallback is proven by owner tests and is not a runtime config marketplace, arbitrary script rule, runtime assembly, reflection-heavy loader, or persisted validation ledger.
 - Application, UI, Unity, `PersonRegistry`, docs text, projection prose, receipt text, public-life lines, and `DomainEvent.Summary` must not calculate validation fallback, target selection, touched counts, cap behavior, health classification, performance status, or household mobility outcome.
 - Save/schema result: no persisted state, schema bump, migration, household-mobility/runtime-rule/fallback-matrix/movement/route-history/status/class/selector/cooldown/touch-count/diagnostic ledger, projection cache, rules-data loader, config file, performance cache, or save-manifest change.
+## Household mobility runtime threshold no-touch v581-v588 integration note
+
+V581-V588 adds no new cross-module command, event consumer, projection parser, or scheduler path. The threshold no-touch proof records an existing `PopulationAndHouseholds` behavior: below-threshold migration pools are not selected by the first household mobility runtime rule, so no household mobility pressure diff is emitted.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate active-pool eligibility, threshold blocking, target ordering, or household movement outcomes.

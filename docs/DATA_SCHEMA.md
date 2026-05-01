@@ -1468,3 +1468,6 @@ Current household mobility rules-data fallback matrix v573-v580 note:
 - parent/child age relationships must remain plausible
 - module state may reference only valid core entity IDs
 - module-local references may not point into disabled modules without a documented null/default policy
+Current household mobility runtime threshold no-touch v581-v588 note:
+
+V581-V588 adds focused tests/docs proving active-pool threshold blocking for the first `PopulationAndHouseholds` household mobility runtime rule. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.
