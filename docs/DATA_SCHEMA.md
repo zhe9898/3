@@ -1444,6 +1444,12 @@ Current household mobility runtime rule health evidence v549-v556 note:
 - The V533-V540 first runtime rule continues to use only existing `MigrationPools`, `MigrationRisk`, `IsMigrating`, livelihood, distress, debt, labor, grain, and land fields.
 - Any future persisted movement history, route history, cooldown, selector watermark, long-run health marker, commoner status drift, movement residue, durable residue, or projection cache still requires a separate schema/migration plan before implementation.
 
+Current household mobility runtime widening gate v557-v564 note:
+- V557-V564 is docs/tests preflight and does not change `PopulationAndHouseholds` schema 3.
+- The pass adds no module namespace, save envelope field, manifest membership, root/module schema version, migration, rules-data file, content/rules-data namespace, projection cache, selector state, target-cardinality state, route-history state, movement ledger, cooldown ledger, owner-lane ledger, class ledger, commoner-status ledger, household-mobility ledger, touch-count state, diagnostic state, performance cache, durable residue, or serialized module payload.
+- The V533-V540 first runtime rule continues to use only existing `MigrationPools`, `MigrationRisk`, `IsMigrating`, livelihood, distress, debt, labor, grain, and land fields.
+- Any future persisted touched counts, movement history, route history, cooldown, selector watermark, long-run health marker, commoner status drift, movement residue, durable residue, performance cache, or projection cache still requires a separate schema/migration plan before implementation.
+
 ## 7. Invariants
 - dead people cannot hold active pregnancy, study attendance, office duty, or active campaign assignment
 - spouse links must be symmetric

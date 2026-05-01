@@ -563,3 +563,11 @@
 - Code alignment: architecture tests keep `ApplyMonthlyHouseholdMobilityRuntimeRule` as the single owner rule path and keep `PopulationAndHouseholds` schema `3`.
 - Validation alignment: evidence requirements now call out touched counts, deterministic cap/order, same-seed replay, no-touch boundaries, pressure-band interpretation, and hot-path/cardinality notes before any future widening.
 - v549-v556 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, runtime plugin system, long-run optimizer, or performance optimization claim.
+
+## v557-v564 household mobility runtime widening gate audit - 2026-05-01
+
+- v557-v564 freezes the next widening gate after V549-V556 without changing production behavior.
+- Design alignment: future widening must start from owner state, target scope, touched counts, deterministic cap/order, no-touch proof, and pressure-band meaning rather than directly raising caps or tuning formulas.
+- Code alignment: no production code changes; architecture tests keep the existing first rule path, default caps, and `PopulationAndHouseholds` schema `3` unchanged.
+- Validation alignment: a later widening PR must add focused owner tests, architecture/no-touch checks, replay proof, and performance evidence only when it claims a performance change.
+- v557-v564 adds no persisted state, schema, migration, rules-data file, loader, ledger, module, movement command, route-history model, selector, target-cardinality state, cooldown state, touch-count state, diagnostic state, performance cache, recovery/decay formula change, class/status engine, migration economy, manager/controller path, `PersonRegistry` expansion, Application authority, UI authority, Unity authority, prose parser, runtime plugin system, long-run optimizer, or performance optimization claim.

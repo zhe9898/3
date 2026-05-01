@@ -512,3 +512,10 @@ Design principle:
 - The existing social interpretation remains bounded: one active local pool may nudge capped pressure-hit households, while quiet households, lower-priority pools, off-scope settlements, and distant pooled society remain no-touch.
 - The next social gate before expansion is evidence of touched counts, deterministic cap/order, same-seed replay, no-touch summaries, and pressure-band interpretation; this is not long-run saturation tuning.
 - It adds no relocation, route history, migration economy, zhuhu/kehu conversion, durable social residue, class/status engine, `PersonRegistry` expansion, Application/UI/Unity authority, or schema change.
+
+### Current household mobility runtime widening gate: v557-v564
+
+- V557-V564 keeps household mobility social interpretation at the current pressure-nudge scale; it does not widen fanout or add a second runtime rule.
+- Any future social expansion must state whether pressure bands reflect intended local distress, missing recovery, missing allocation, or projection debt before changing recovery/decay formulas.
+- The gate requires touched household/pool/settlement counts and quiet/off-scope/distant-summary no-touch proof before richer household movement or regional detail can land.
+- It adds no relocation, route history, migration economy, zhuhu/kehu conversion, durable social residue, class/status engine, touch-count state, diagnostic state, performance cache, `PersonRegistry` expansion, Application/UI/Unity authority, or schema change.

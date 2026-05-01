@@ -805,3 +805,10 @@ No module may insert ad hoc hidden execution outside the scheduler.
 - The health-evidence pass records the next gate before widening: touched household/pool/settlement counts, deterministic cap/order, same-seed replay, no-touch proof, pressure-band interpretation, and hot-path/cardinality notes.
 - The V533-V540 rule remains monthly, owner-only, deterministic, and capped; the existing `MigrationStarted` event remains threshold evidence only.
 - Application/UI/Unity continue to display projected owner fields only and must not calculate target eligibility, health classification, or household mobility outcome.
+
+## Current household mobility runtime widening gate v557-v564 note
+
+- V557-V564 adds no scheduler phase, cadence change, runtime rule, event-drain rule, command route, movement selector, route-history model, durable residue, migration economy, class/status engine, rules-data loader, default file, persistence change, counters, caches, long-run saturation tuning, or performance optimization.
+- The widening gate requires a later implementation PR to name target scope, current/proposed touched household/pool/settlement counts, deterministic cap/order, same-seed replay, no-touch proof, pressure-band interpretation, schema decision, and validation lane before changing behavior.
+- The V533-V540 rule remains monthly, owner-only, deterministic, and capped at the current defaults; the existing `MigrationStarted` event remains threshold evidence only.
+- Application/UI/Unity continue to display projected owner fields only and must not calculate target eligibility, touched counts, health classification, performance status, or household mobility outcome.
