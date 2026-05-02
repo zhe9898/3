@@ -957,3 +957,9 @@ No scheduler cadence change, distress economy retune, debt/labor/grain/land/live
 V757-V764 changes the first household mobility runtime rule's debt-pressure trigger threshold from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default no-touch behavior remain unchanged.
 
 No scheduler cadence change, debt economy retune, distress/labor/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime labor-trigger extraction v765-v772 note
+
+V765-V772 changes the first household mobility runtime rule's labor-capacity trigger ceiling from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default no-touch behavior remain unchanged.
+
+No scheduler cadence change, labor model retune, debt/distress/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

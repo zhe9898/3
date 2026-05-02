@@ -1535,6 +1535,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeDistressTriggerThresholdOrDefault();
         int debtPressureTriggerThreshold = _householdMobilityRulesData
             .GetMonthlyRuntimeDebtPressureTriggerThresholdOrDefault();
+        int laborCapacityTriggerCeiling = _householdMobilityRulesData
+            .GetMonthlyRuntimeLaborCapacityTriggerCeilingOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
         int laborCapacityPressureFloor = _householdMobilityRulesData
@@ -1579,7 +1581,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         candidateMigrationRiskFloor,
                         candidateMigrationRiskCeiling,
                         distressTriggerThreshold,
-                        debtPressureTriggerThreshold))
+                        debtPressureTriggerThreshold,
+                        laborCapacityTriggerCeiling))
                 .OrderByDescending(household =>
                     ComputeMonthlyHouseholdMobilityRuntimeScore(
                         household,
@@ -1633,7 +1636,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int candidateMigrationRiskFloor,
         int candidateMigrationRiskCeiling,
         int distressTriggerThreshold,
-        int debtPressureTriggerThreshold)
+        int debtPressureTriggerThreshold,
+        int laborCapacityTriggerCeiling)
     {
         if (household.IsMigrating
             || household.MigrationRisk >= candidateMigrationRiskCeiling
@@ -1644,7 +1648,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
         return household.Distress >= distressTriggerThreshold
             || household.DebtPressure >= debtPressureTriggerThreshold
-            || household.LaborCapacity < 45
+            || household.LaborCapacity < laborCapacityTriggerCeiling
             || household.GrainStore < 25
             || household.LandHolding < 15
             || household.Livelihood is LivelihoodType.SeasonalMigrant or LivelihoodType.HiredLabor;

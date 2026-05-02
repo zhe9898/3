@@ -1551,3 +1551,7 @@ V749-V756 extracts the runtime distress trigger threshold into owner-consumed in
 Current household mobility runtime debt-trigger extraction v757-v764 note:
 
 V757-V764 extracts the runtime debt-pressure trigger threshold into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted debt-trigger field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, debt-trigger state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime labor-trigger extraction v765-v772 note:
+
+V765-V772 extracts the runtime labor-capacity trigger ceiling into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted labor-trigger field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, labor-trigger state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
