@@ -850,3 +850,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, labor mod
 V773-V780 keeps household mobility fidelity bounded while extracting the first runtime rule's grain-store trigger floor into owner-consumed rules-data. Default floor 25 preserves prior no-touch behavior for households at the grain trigger boundary when no other trigger qualifies them; malformed values fall back to default instead of silently widening runtime work.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, grain economy retune, labor/debt/distress/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V781-V788 Household Mobility Runtime Land Trigger Extraction
+
+V781-V788 keeps household mobility fidelity bounded while extracting the first runtime rule's land-holding trigger floor into owner-consumed rules-data. Default floor 15 preserves prior no-touch behavior for households at the land trigger boundary when no other trigger qualifies them; malformed values fall back to default instead of silently widening runtime work.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, land economy retune, grain/labor/debt/distress/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

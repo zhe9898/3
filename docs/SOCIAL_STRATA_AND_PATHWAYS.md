@@ -650,3 +650,9 @@ Default rules-data keeps the labor-capacity trigger ceiling at 45, malformed thr
 V773-V780 records that the first household mobility runtime rule's grain-store trigger floor has been moved into owner-consumed rules-data. The social meaning remains bounded: thin grain stores can qualify an already-windowed household for the small monthly pressure nudge, but this is not a grain economy, famine system, status engine, or relocation command.
 
 Default rules-data keeps the grain-store trigger floor at 25, malformed threshold input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime land-trigger extraction: v781-v788
+
+V781-V788 records that the first household mobility runtime rule's land-holding trigger floor has been moved into owner-consumed rules-data. The social meaning remains bounded: thin land holding can qualify an already-windowed household for the small monthly pressure nudge, but this is not a land economy, tenancy/status engine, or relocation command.
+
+Default rules-data keeps the land-holding trigger floor at 15, malformed threshold input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.

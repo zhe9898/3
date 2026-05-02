@@ -1082,3 +1082,10 @@ Acceptance evidence for V773-V780:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultGrainStoreTriggerFloorPreservesPreviousNoTouchBehavior` proves default grain-store trigger floor 25 and explicit default floor produce the same monthly runtime signature while a household at the floor remains no-touch when no other trigger qualifies it.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeGrainStoreTriggerFloorFallsBackToDefault` proves malformed grain-trigger data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_grain_trigger_extraction_v773_v780_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime land-trigger extraction v781-v788 acceptance - 2026-05-03
+
+Acceptance evidence for V781-V788:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultLandHoldingTriggerFloorPreservesPreviousNoTouchBehavior` proves default land-holding trigger floor 15 and explicit default floor produce the same monthly runtime signature while a household at the floor remains no-touch when no other trigger qualifies it.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeLandHoldingTriggerFloorFallsBackToDefault` proves malformed land-trigger data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_land_trigger_extraction_v781_v788_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
