@@ -513,3 +513,8 @@ This is not a migration engine, route-history model, movement command, fanout wi
 V621-V628 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule resolves equal-outflow active pools by deterministic settlement-id ordering. With settlement cap one, the lower settlement id receives the existing pressure pass and the tied higher settlement id plus its households remain no-touch.
 
 This is not a migration engine, route-history model, movement command, fanout widening, pool ordering retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
+## V629-V636 Household Mobility Runtime Score-Ordering No-Touch Proof
+
+V629-V636 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule resolves candidate households by deterministic score before household-id tie-break. With household cap one, the higher-score candidate receives the existing pressure nudge and the lower household id remains no-touch.
+
+This is not a migration engine, route-history model, movement command, fanout widening, score formula retune, candidate ordering retune, or second household mobility rule. Schema/migration impact: none.

@@ -737,3 +737,8 @@ No runtime behavior, schema, cache, diagnostic state, ordering retune, score ret
 V621-V628 reinforces household mobility fidelity budget limits by proving equal-outflow active pools resolve through stable settlement-id ordering before the cap is applied. This keeps near-detail pool promotion bounded and deterministic while the tied higher settlement id remains summary/no-touch.
 
 No runtime behavior, schema, cache, diagnostic state, pool ordering retune, threshold retune, or performance claim is added.
+## V629-V636 Household Mobility Runtime Score-Ordering No-Touch Proof
+
+V629-V636 reinforces household mobility fidelity budget limits by proving candidate score ordering selects the highest-scored pressure household before household-id tie-break applies. This keeps near-detail promotion bounded by existing pressure score while lower-score candidates remain no-touch under cap one.
+
+No runtime behavior, schema, cache, diagnostic state, score formula retune, candidate ordering retune, or performance claim is added.

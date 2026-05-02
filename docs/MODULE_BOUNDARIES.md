@@ -1402,3 +1402,8 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V621-V628 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects deterministic active-pool tie-break ordering. The pass adds only tests/docs and keeps pool outflow ordering, lower-settlement-id tie-break selection, settlement cap application, fanout, and no-touch behavior inside the owning module.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, pool ordering ledger, cache, or `PersonRegistry` expansion is introduced.
+## Household mobility runtime score-ordering no-touch v629-v636 boundary note
+
+V629-V636 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects deterministic candidate score ordering before household-id tie-break. The pass adds only tests/docs and keeps candidate scoring, cap application, fanout, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, score-order ledger, cache, or `PersonRegistry` expansion is introduced.
