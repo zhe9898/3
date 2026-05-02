@@ -1443,3 +1443,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V677-V684 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's selected-household `MigrationStarted` event threshold is now read from `PopulationHouseholdMobilityRulesData` with default 80.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, threshold-extraction state, event-routing ledger, validation ledger, cache, candidate filter retune, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime candidate-floor extraction v685-v692 boundary note
+
+V685-V692 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's candidate migration-risk floor is now read from `PopulationHouseholdMobilityRulesData` with default 55.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, candidate-floor state, event-routing ledger, validation ledger, cache, high-risk filter retune, fanout widening, or `PersonRegistry` expansion is introduced.

@@ -998,3 +998,10 @@ Acceptance evidence for V677-V684:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultMigrationStartedEventThresholdPreservesPreviousEventBehavior` proves default threshold 80 and explicit default threshold produce the same selected threshold-event signature.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationStartedEventThresholdFallsBackToDefault` proves malformed threshold data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_threshold_extraction_v677_v684_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime candidate-floor extraction v685-v692 acceptance - 2026-05-03
+
+Acceptance evidence for V685-V692:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultCandidateMigrationRiskFloorPreservesPreviousNoTouchBehavior` proves default candidate floor 55 and explicit default floor produce the same monthly runtime signature while below-floor households remain no-touch versus the zero-risk-delta baseline.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCandidateMigrationRiskFloorFallsBackToDefault` proves malformed floor data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_candidate_floor_extraction_v685_v692_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

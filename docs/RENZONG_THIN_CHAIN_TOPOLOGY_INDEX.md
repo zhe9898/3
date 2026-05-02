@@ -554,3 +554,9 @@ This is not a migration engine, route-history model, movement command, new event
 V677-V684 extracts the first `PopulationAndHouseholds` household mobility runtime rule's `MigrationStarted` event-crossing threshold into owner-consumed rules-data. The default event threshold remains 80, so the selected crossing household's existing event behavior stays equivalent under default rules-data while malformed threshold input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, candidate filter retune, general migration-state retune, or second household mobility rule. Schema/migration impact: none.
+
+## V685-V692 Household Mobility Runtime Candidate Floor Extraction
+
+V685-V692 extracts the first `PopulationAndHouseholds` household mobility runtime rule's candidate migration-risk floor into owner-consumed rules-data. The default candidate floor remains 55, so below-floor households remain no-touch under default rules-data while malformed floor input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, high-risk filter retune, general migration-state retune, or second household mobility rule. Schema/migration impact: none.

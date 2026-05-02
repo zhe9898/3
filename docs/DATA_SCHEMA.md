@@ -1511,3 +1511,7 @@ V669-V676 adds focused tests/docs proving same-seed replay stability for the fir
 Current household mobility runtime threshold extraction v677-v684 note:
 
 V677-V684 extracts the selected-household runtime `MigrationStarted` event threshold into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted threshold field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, threshold-extraction state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime candidate-floor extraction v685-v692 note:
+
+V685-V692 extracts the runtime candidate migration-risk floor into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted candidate-floor field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, candidate-floor state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

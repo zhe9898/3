@@ -778,3 +778,9 @@ No runtime behavior, schema, cache, diagnostic state, new event type, event rout
 V677-V684 keeps household mobility fidelity bounded while extracting the first runtime rule's selected-household `MigrationStarted` event threshold into owner-consumed rules-data. Default threshold 80 preserves the prior near-detail behavior; malformed threshold values fall back to default instead of silently widening or suppressing runtime evidence.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, fanout widening, candidate filter retune, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V685-V692 Household Mobility Runtime Candidate Floor Extraction
+
+V685-V692 keeps household mobility fidelity bounded while extracting the first runtime rule's candidate migration-risk floor into owner-consumed rules-data. Default floor 55 preserves the prior near-detail eligibility behavior; malformed floor values fall back to default instead of silently widening runtime work.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, fanout widening, high-risk filter retune, general migration-state retune, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

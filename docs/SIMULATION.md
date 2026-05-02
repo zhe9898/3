@@ -897,3 +897,9 @@ No scheduler cadence, runtime formula, fanout widening, new event type, event ro
 V677-V684 changes the first household mobility runtime rule's threshold event check from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate filtering, deterministic ordering, fanout caps, event type, and default threshold behavior remain unchanged.
 
 No scheduler cadence change, fanout widening, candidate filter retune, general migration-state retune, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime candidate-floor extraction v685-v692 note
+
+V685-V692 changes the first household mobility runtime rule's low-risk candidate floor from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, high-risk filtering, deterministic ordering, fanout caps, event type, and default floor behavior remain unchanged.
+
+No scheduler cadence change, fanout widening, high-risk filter retune, general migration-state retune, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

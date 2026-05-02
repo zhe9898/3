@@ -662,3 +662,13 @@ Design alignment: this is hardcoded threshold extraction, not a new migration sy
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the threshold or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default equivalence and malformed threshold fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, candidate filter retune, fanout widening, or second runtime rule.
+
+## v685-v692 household mobility runtime candidate-floor extraction audit - 2026-05-03
+
+The v685-v692 pass extracts the first `PopulationAndHouseholds` runtime rule's low-risk candidate floor into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded candidate-floor extraction, not a fanout widening pass. Default candidate floor 55 preserves prior no-touch behavior for below-floor households, while malformed floor values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the floor or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default equivalence and malformed floor fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, high-risk filter retune, general migration-state retune, fanout widening, or second runtime rule.
