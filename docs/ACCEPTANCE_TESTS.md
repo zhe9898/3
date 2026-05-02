@@ -985,3 +985,9 @@ Acceptance evidence for V653-V660:
 Acceptance evidence for V661-V668:
 - `RunMonth_FirstMobilityRuntimeRuleThresholdEventCarriesMetadataWithoutSummaryParsing` proves the selected threshold event's cause, settlement id, and household id are read from `Metadata`, while `Summary` is not used to recover those machine facts.
 - Architecture guard `Household_mobility_runtime_event_metadata_no_prose_v661_v668_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no new event type, no event routing change, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime event-metadata replay v669-v676 acceptance - 2026-05-02
+
+Acceptance evidence for V669-V676:
+- `RunMonth_FirstMobilityRuntimeRuleThresholdEventMetadataReplayStable` proves the selected threshold event's type, entity key, cause, settlement id, household id, and downstream summary remain stable across repeated same-seed owner runs.
+- Architecture guard `Household_mobility_runtime_event_metadata_replay_v669_v676_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no new event type, no event routing change, no replay state, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

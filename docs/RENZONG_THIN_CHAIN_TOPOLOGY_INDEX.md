@@ -542,3 +542,9 @@ This is not a migration engine, route-history model, movement command, new event
 V661-V668 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule's existing threshold event is readable through structured metadata, not `Summary` prose. The selected crossing household's event carries cause, settlement id, and household id in `Metadata`, while prose remains downstream explanation and not a rule input.
 
 This is not a migration engine, route-history model, movement command, new event type, event routing change, prose parser, fanout widening, threshold retune, cap semantics retune, or second household mobility rule. Schema/migration impact: none.
+
+## V669-V676 Household Mobility Runtime Event Metadata Replay Proof
+
+V669-V676 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule's selected threshold-event metadata signature is stable across repeated same-seed runs. Event type, entity key, cause, settlement id, household id, and downstream summary match without adding runtime replay state.
+
+This is not a migration engine, route-history model, movement command, new event type, event routing change, replay ledger, fanout widening, threshold retune, cap semantics retune, or second household mobility rule. Schema/migration impact: none.

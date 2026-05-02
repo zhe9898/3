@@ -766,3 +766,9 @@ No runtime behavior, schema, cache, diagnostic state, new event type, event rout
 V661-V668 reinforces household mobility fidelity budget limits by proving selected threshold-event readback can stay structured. Cause, settlement id, and household id come from metadata on the existing event, while prose stays a downstream explanation that does not promote distant summaries or unselected households into rule work.
 
 No runtime behavior, schema, cache, diagnostic state, new event type, event routing change, prose parser, fanout widening, threshold retune, cap semantics retune, or performance claim is added.
+
+## V669-V676 Household Mobility Runtime Event Metadata Replay Proof
+
+V669-V676 reinforces household mobility fidelity budget limits by proving selected threshold-event metadata is replay-stable under the existing deterministic owner fixture. Replay comparison remains test evidence only and does not promote event signatures into saved state or presentation-side selectors.
+
+No runtime behavior, schema, cache, diagnostic state, new event type, event routing change, replay ledger, fanout widening, threshold retune, cap semantics retune, or performance claim is added.

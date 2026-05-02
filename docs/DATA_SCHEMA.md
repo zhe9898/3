@@ -1503,3 +1503,7 @@ V653-V660 adds focused tests/docs proving threshold-event no-touch behavior for 
 Current household mobility runtime event-metadata no-prose v661-v668 note:
 
 V661-V668 adds focused tests/docs proving structured event metadata, not event prose, carries cause, settlement id, and household id for the first runtime rule's threshold event. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, event-metadata ledger, prose-parsing ledger, event-routing ledger, migration-started selector state, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.
+
+Current household mobility runtime event-metadata replay v669-v676 note:
+
+V669-V676 adds focused tests/docs proving same-seed replay stability for the first runtime rule's selected threshold-event metadata signature. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, event-replay state, event-metadata ledger, event-routing ledger, migration-started selector state, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.

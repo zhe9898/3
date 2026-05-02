@@ -568,3 +568,7 @@ V653-V660 records that the existing `MigrationStarted` threshold event remains o
 ### Current household mobility runtime event-metadata no-prose proof: v661-v668
 
 V661-V668 records that the first runtime rule's threshold event is socially readable through structured owner metadata, not event prose. The proof stays inside `PopulationAndHouseholds`, derives cause, settlement, and household identity from `Metadata`, and keeps `Summary` downstream without adding a social class/status ladder, route history, movement command, prose parser, event router, or `PersonRegistry` expansion.
+
+### Current household mobility runtime event-metadata replay proof: v669-v676
+
+V669-V676 records that the first runtime rule's threshold-event metadata remains stable across same-seed owner runs. The proof stays inside `PopulationAndHouseholds`, compares event type, entity key, cause, settlement id, household id, and downstream summary as test evidence only, and adds no social class/status ladder, route history, movement command, replay state, event router, or `PersonRegistry` expansion.

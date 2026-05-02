@@ -646,3 +646,9 @@ Alignment result: no runtime behavior change, no movement authority, no new even
 The v661-v668 pass adds event-metadata no-prose evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves the selected threshold event's cause, settlement id, and household id are available from `Metadata`; `Summary` is not used as a machine input.
 
 Alignment result: no runtime behavior change, no movement authority, no new event type, no event routing change, no prose parser, no rules-data loader, no threshold retune, no cap semantics retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+
+## v669-v676 household mobility runtime event-metadata replay audit - 2026-05-02
+
+The v669-v676 pass adds same-seed replay evidence for the first `PopulationAndHouseholds` household mobility runtime rule's selected threshold-event metadata. The owner test proves event type, entity key, cause, settlement id, household id, and downstream summary remain stable across repeated same-seed runs.
+
+Alignment result: no runtime behavior change, no movement authority, no new event type, no event routing change, no replay state, no rules-data loader, no threshold retune, no cap semantics retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
