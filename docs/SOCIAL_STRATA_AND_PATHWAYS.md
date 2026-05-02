@@ -632,3 +632,9 @@ Default rules-data keeps the candidate migration-risk ceiling at 80, malformed c
 V749-V756 records that the first household mobility runtime rule's distress trigger threshold has been moved into owner-consumed rules-data. The social meaning remains bounded: distress can qualify an already-windowed household for the small monthly pressure nudge, but this is not a full poverty, migration, status, or relocation economy.
 
 Default rules-data keeps the distress trigger threshold at 60, malformed threshold input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime debt-trigger extraction: v757-v764
+
+V757-V764 records that the first household mobility runtime rule's debt-pressure trigger threshold has been moved into owner-consumed rules-data. The social meaning remains bounded: debt pressure can qualify an already-windowed household for the small monthly pressure nudge, but this is not a credit market, migration economy, status engine, or relocation command.
+
+Default rules-data keeps the debt-pressure trigger threshold at 60, malformed threshold input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.

@@ -9,6 +9,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
     int MonthlyRuntimeDistressTriggerThreshold,
+    int MonthlyRuntimeDebtPressureTriggerThreshold,
     int MonthlyRuntimeMigrationRiskScoreWeight,
     int MonthlyRuntimeLaborCapacityPressureFloor,
     int MonthlyRuntimeGrainStorePressureFloor,
@@ -26,6 +27,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskCeiling = 80;
     public const int DefaultMonthlyRuntimeDistressTriggerThreshold = 60;
+    public const int DefaultMonthlyRuntimeDebtPressureTriggerThreshold = 60;
     public const int DefaultMonthlyRuntimeMigrationRiskScoreWeight = 4;
     public const int DefaultMonthlyRuntimeLaborCapacityPressureFloor = 60;
     public const int DefaultMonthlyRuntimeGrainStorePressureFloor = 25;
@@ -52,6 +54,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
             DefaultMonthlyRuntimeDistressTriggerThreshold,
+            DefaultMonthlyRuntimeDebtPressureTriggerThreshold,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -70,6 +73,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
             DefaultMonthlyRuntimeDistressTriggerThreshold,
+            DefaultMonthlyRuntimeDebtPressureTriggerThreshold,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -112,6 +116,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (MonthlyRuntimeDistressTriggerThreshold is < 0 or > 100)
         {
             errors.Add("monthly_runtime_distress_trigger_threshold must be between 0 and 100.");
+        }
+
+        if (MonthlyRuntimeDebtPressureTriggerThreshold is < 0 or > 100)
+        {
+            errors.Add("monthly_runtime_debt_pressure_trigger_threshold must be between 0 and 100.");
         }
 
         if (MonthlyRuntimeMigrationRiskScoreWeight is < 0 or > MaxMonthlyRuntimeMigrationRiskScoreWeight)
@@ -209,6 +218,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeDistressTriggerThreshold
             : DefaultMonthlyRuntimeDistressTriggerThreshold;
+    }
+
+    public int GetMonthlyRuntimeDebtPressureTriggerThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeDebtPressureTriggerThreshold
+            : DefaultMonthlyRuntimeDebtPressureTriggerThreshold;
     }
 
     public int GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault()

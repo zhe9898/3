@@ -1497,3 +1497,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V749-V756 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's distress trigger threshold is now read from `PopulationHouseholdMobilityRulesData` with default 60 and validation range 0..100.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, distress-trigger state, event-routing ledger, validation ledger, cache, debt/labor/grain/land/livelihood trigger extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime debt-trigger extraction v757-v764 boundary note
+
+V757-V764 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's debt-pressure trigger threshold is now read from `PopulationHouseholdMobilityRulesData` with default 60 and validation range 0..100.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, debt-trigger state, event-routing ledger, validation ledger, cache, distress/labor/grain/land/livelihood trigger extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.

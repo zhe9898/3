@@ -832,3 +832,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, migration
 V749-V756 keeps household mobility fidelity bounded while extracting the first runtime rule's distress trigger threshold into owner-consumed rules-data. Default threshold 60 preserves prior no-touch behavior for households below the distress trigger when no other trigger qualifies them; malformed values fall back to default instead of silently widening runtime work.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, distress economy retune, debt/labor/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V757-V764 Household Mobility Runtime Debt Trigger Extraction
+
+V757-V764 keeps household mobility fidelity bounded while extracting the first runtime rule's debt-pressure trigger threshold into owner-consumed rules-data. Default threshold 60 preserves prior no-touch behavior for households below the debt trigger when no other trigger qualifies them; malformed values fall back to default instead of silently widening runtime work.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, debt economy retune, distress/labor/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
