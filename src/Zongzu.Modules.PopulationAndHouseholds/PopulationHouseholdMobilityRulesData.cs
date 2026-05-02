@@ -6,6 +6,7 @@ namespace Zongzu.Modules.PopulationAndHouseholds;
 public sealed record PopulationHouseholdMobilityRulesData(
     int FocusedMemberPromotionCap,
     int MonthlyRuntimeActivePoolOutflowThreshold,
+    int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeSettlementCap,
     int MonthlyRuntimeHouseholdCap,
     int MonthlyRuntimeRiskDelta,
@@ -14,6 +15,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultFocusedMemberPromotionCap = 2;
     public const int MaxFocusedMemberPromotionCap = 8;
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
+    public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeSettlementCap = 1;
     public const int DefaultMonthlyRuntimeHouseholdCap = 2;
     public const int DefaultMonthlyRuntimeRiskDelta = 1;
@@ -27,6 +29,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
         new(
             DefaultFocusedMemberPromotionCap,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
+            DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
             DefaultMonthlyRuntimeRiskDelta,
@@ -36,6 +39,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
         : this(
             focusedMemberPromotionCap,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
+            DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
             DefaultMonthlyRuntimeRiskDelta,
@@ -56,6 +60,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
         {
             errors.Add("monthly_runtime_active_pool_outflow_threshold must be between 0 and 100.");
+        }
+
+        if (MonthlyRuntimeCandidateMigrationRiskFloor is < 0 or > 100)
+        {
+            errors.Add("monthly_runtime_candidate_migration_risk_floor must be between 0 and 100.");
         }
 
         if (MonthlyRuntimeSettlementCap is < 0 or > MaxMonthlyRuntimeSettlementCap)
@@ -99,6 +108,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeActivePoolOutflowThreshold
             : DefaultMonthlyRuntimeActivePoolOutflowThreshold;
+    }
+
+    public int GetMonthlyRuntimeCandidateMigrationRiskFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeCandidateMigrationRiskFloor
+            : DefaultMonthlyRuntimeCandidateMigrationRiskFloor;
     }
 
     public int GetMonthlyRuntimeSettlementCapOrDefault()

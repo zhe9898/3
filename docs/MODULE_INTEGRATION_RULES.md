@@ -956,3 +956,9 @@ The integration contract remains owner-consumed structured metadata only. Applic
 V677-V684 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the selected-household runtime `MigrationStarted` event threshold into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default threshold 80.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate threshold crossing, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime candidate-floor extraction v685-v692 integration note
+
+V685-V692 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the low-risk runtime candidate floor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default floor 55.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate candidate-floor eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
