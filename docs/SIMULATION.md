@@ -836,3 +836,8 @@ No scheduler cadence, runtime formula, fanout cap, ordering rule, save schema, r
 V589-V596 proves the existing first household mobility runtime rule remains bounded when zero fanout caps block selection. The owner test compares settlement-cap-blocked and household-cap-blocked runs with a zero-risk-delta baseline and verifies no `Household mobility pressure` diff entries are produced.
 
 No scheduler cadence, runtime formula, fanout widening, ordering rule, save schema, route-history model, or movement command changes.
+## Current household mobility runtime zero-risk-delta no-touch v597-v604 note
+
+V597-V604 proves the existing first household mobility runtime rule remains bounded when zero risk delta blocks target mutation. The owner test compares a risk-delta-blocked run with a cap-blocked no-touch baseline and verifies no `Household mobility pressure` diff entries are produced.
+
+No scheduler cadence, runtime formula, fanout widening, ordering rule, save schema, route-history model, or movement command changes.

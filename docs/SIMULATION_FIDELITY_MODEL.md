@@ -717,3 +717,8 @@ No runtime behavior, schema, cache, diagnostic state, or performance claim is ad
 V589-V596 reinforces household mobility fidelity budget limits by proving zero fanout caps leave the first runtime rule inert. This keeps near detail bounded by explicit caps and prevents quiet/off-scope households from being promoted into rule work through accidental fanout.
 
 No runtime behavior, schema, cache, diagnostic state, or performance claim is added.
+## V597-V604 Household Mobility Runtime Zero-Risk-Delta No-Touch Proof
+
+V597-V604 reinforces household mobility fidelity budget limits by proving zero risk delta leaves the first runtime rule inert. This keeps pressure mutation bounded by owner-consumed parameters and prevents accidental household touches when risk increment is disabled.
+
+No runtime behavior, schema, cache, diagnostic state, or performance claim is added.

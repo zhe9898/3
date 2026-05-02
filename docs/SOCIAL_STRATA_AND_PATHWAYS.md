@@ -537,3 +537,6 @@ V581-V588 records that the first household mobility runtime rule can be blocked 
 ### Current household mobility runtime zero-cap no-touch proof: v589-v596
 
 V589-V596 records that settlement and household fanout caps can block the first household mobility runtime rule without touching households or pools. The no-touch proof stays inside `PopulationAndHouseholds`, compares against a zero-risk-delta baseline, and adds no social class/status ladder, route history, movement command, or `PersonRegistry` expansion.
+### Current household mobility runtime zero-risk-delta no-touch proof: v597-v604
+
+V597-V604 records that zero runtime risk delta blocks the first household mobility runtime rule without touching households or pools. The no-touch proof stays inside `PopulationAndHouseholds`, compares against a cap-blocked no-touch baseline, and adds no social class/status ladder, route history, movement command, or `PersonRegistry` expansion.

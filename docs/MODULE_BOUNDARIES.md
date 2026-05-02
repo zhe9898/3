@@ -1382,3 +1382,8 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V589-V596 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects zero fanout caps. The pass adds only tests/docs and keeps cap blocking, selection, ordering, fanout, threshold fallback, and no-touch behavior inside the owning module.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, cache, or `PersonRegistry` expansion is introduced.
+## Household mobility runtime zero-risk-delta no-touch v597-v604 boundary note
+
+V597-V604 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects zero risk delta. The pass adds only tests/docs and keeps risk-delta blocking, selection, ordering, fanout, threshold fallback, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, cache, or `PersonRegistry` expansion is introduced.

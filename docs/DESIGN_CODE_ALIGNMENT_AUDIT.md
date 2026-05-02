@@ -597,3 +597,8 @@ Alignment result: no runtime behavior change, no movement authority, no rules-da
 The v589-v596 pass adds zero-cap no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves settlement cap zero and household cap zero both match a zero-risk-delta baseline and emit no household mobility pressure diff.
 
 Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+## v597-v604 household mobility runtime zero-risk-delta no-touch audit - 2026-05-02
+
+The v597-v604 pass adds zero-risk-delta no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves risk delta zero matches a cap-blocked no-touch baseline and emits no household mobility pressure diff.
+
+Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
