@@ -1392,3 +1392,8 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V605-V612 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects candidate filtering. The pass adds only tests/docs and keeps candidate filtering, selection, ordering, fanout, threshold fallback, and no-touch behavior inside the owning module.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, cache, or `PersonRegistry` expansion is introduced.
+## Household mobility runtime tie-break no-touch v613-v620 boundary note
+
+V613-V620 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects deterministic score tie-break ordering. The pass adds only tests/docs and keeps candidate scoring, lower-household-id tie-break selection, cap application, fanout, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, ordering ledger, cache, or `PersonRegistry` expansion is introduced.

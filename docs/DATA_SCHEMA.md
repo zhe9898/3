@@ -1480,3 +1480,6 @@ V597-V604 adds focused tests/docs proving zero-risk-delta blocking for the first
 Current household mobility runtime candidate-filter no-touch v605-v612 note:
 
 V605-V612 adds focused tests/docs proving candidate-filter no-touch behavior for the first `PopulationAndHouseholds` household mobility runtime rule. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.
+Current household mobility runtime tie-break no-touch v613-v620 note:
+
+V613-V620 adds focused tests/docs proving deterministic tie-break no-touch behavior for the first `PopulationAndHouseholds` household mobility runtime rule. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, tie-break ledger, ordering ledger, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.

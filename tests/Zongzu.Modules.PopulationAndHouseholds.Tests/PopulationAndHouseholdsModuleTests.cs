@@ -701,6 +701,55 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleTieBreakTouchesLowerHouseholdIdWhenScoresMatch()
+    {
+        static void ConfigureTieBreakFixture(PopulationAndHouseholdsState state)
+        {
+            PopulationHouseholdState lowerId = GetHousehold(state, 1);
+            lowerId.Livelihood = LivelihoodType.Tenant;
+            lowerId.Distress = 62;
+            lowerId.DebtPressure = 64;
+            lowerId.LaborCapacity = 42;
+            lowerId.MigrationRisk = 76;
+            lowerId.LandHolding = 12;
+            lowerId.GrainStore = 20;
+
+            PopulationHouseholdState higherId = GetHousehold(state, 2);
+            higherId.Livelihood = LivelihoodType.Tenant;
+            higherId.Distress = 61;
+            higherId.DebtPressure = 64;
+            higherId.LaborCapacity = 42;
+            higherId.MigrationRisk = 76;
+            higherId.LandHolding = 12;
+            higherId.GrainStore = 20;
+        }
+
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            cappedRules with { MonthlyRuntimeRiskDelta = 0 },
+            ConfigureTieBreakFixture);
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(
+            cappedRules,
+            ConfigureTieBreakFixture);
+
+        Assert.That(
+            ComputeFirstMobilityRuntimeScoreForTest(GetHousehold(baseline.State, 1)),
+            Is.EqualTo(ComputeFirstMobilityRuntimeScoreForTest(GetHousehold(baseline.State, 2))),
+            "The fixture must reach the owner-rule ordering step with tied runtime scores.");
+        Assert.That(GetHousehold(actual.State, 1).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 1).MigrationRisk + 1));
+        Assert.That(
+            GetHousehold(actual.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk),
+            "The higher household id remains no-touch when cap one is consumed by the lower-id tie-break winner.");
+        Assert.That(
+            actual.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!)),
+            Is.EqualTo(new[] { 1 }));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
@@ -1062,6 +1111,28 @@ public sealed class PopulationAndHouseholdsModuleTests
                 $"{evt.ModuleKey}:{evt.EventType}:{evt.EntityKey}"));
 
         return $"{households}::{pools}::{events}";
+    }
+
+    private static int ComputeFirstMobilityRuntimeScoreForTest(PopulationHouseholdState household)
+    {
+        int laborPressure = Math.Max(0, 60 - household.LaborCapacity);
+        int grainPressure = Math.Max(0, 25 - household.GrainStore) / 2;
+        int landPressure = Math.Max(0, 20 - household.LandHolding) / 2;
+        int livelihoodPressure = household.Livelihood switch
+        {
+            LivelihoodType.SeasonalMigrant => 18,
+            LivelihoodType.HiredLabor => 10,
+            LivelihoodType.Tenant => 6,
+            _ => 0,
+        };
+
+        return (household.MigrationRisk * 4)
+            + household.Distress
+            + household.DebtPressure
+            + laborPressure
+            + grainPressure
+            + landPressure
+            + livelihoodPressure;
     }
 
     private sealed record PopulationMobilityRunResult(

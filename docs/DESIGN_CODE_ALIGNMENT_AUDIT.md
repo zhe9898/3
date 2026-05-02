@@ -607,3 +607,8 @@ Alignment result: no runtime behavior change, no movement authority, no rules-da
 The v605-v612 pass adds candidate-filter no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves filtered households are untouched while the remaining eligible candidate receives the deterministic pressure diff.
 
 Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+## v613-v620 household mobility runtime tie-break no-touch audit - 2026-05-02
+
+The v613-v620 pass adds deterministic ordering / tie-break no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves tied household runtime scores are resolved by lower household id under cap one, while the tied higher household id receives no household mobility pressure diff.
+
+Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no ordering retune, no score retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.

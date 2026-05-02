@@ -543,3 +543,6 @@ V597-V604 records that zero runtime risk delta blocks the first household mobili
 ### Current household mobility runtime candidate-filter no-touch proof: v605-v612
 
 V605-V612 records that candidate filters block the first household mobility runtime rule from touching already-migrating/high-risk households or households below the candidate migration-risk floor. The proof stays inside `PopulationAndHouseholds` and adds no social class/status ladder, route history, movement command, or `PersonRegistry` expansion.
+### Current household mobility runtime tie-break no-touch proof: v613-v620
+
+V613-V620 records that equal-score household candidates are resolved by deterministic household-id ordering in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows the lower household id consumes the cap-one touch, and keeps the tied higher household id no-touch without adding a social class/status ladder, route history, movement command, or `PersonRegistry` expansion.
