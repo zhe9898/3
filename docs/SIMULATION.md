@@ -846,3 +846,8 @@ No scheduler cadence, runtime formula, fanout widening, ordering rule, save sche
 V605-V612 proves the existing first household mobility runtime rule remains bounded when candidate filters exclude already-migrating/high-risk households and households below the candidate floor. The owner test verifies filtered households receive no `Household mobility pressure` diff while the remaining eligible candidate is selected deterministically.
 
 No scheduler cadence, runtime formula, fanout widening, ordering rule, save schema, route-history model, or movement command changes.
+## Current household mobility runtime tie-break no-touch v613-v620 note
+
+V613-V620 proves the existing first household mobility runtime rule remains bounded when equal-score candidates reach the ordering step. The owner test verifies the tied lower household id receives the cap-one `Household mobility pressure` diff while the tied higher household id remains no-touch.
+
+No scheduler cadence, runtime formula, fanout widening, ordering retune, score retune, save schema, route-history model, or movement command changes.

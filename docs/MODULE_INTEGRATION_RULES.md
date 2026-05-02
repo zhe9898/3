@@ -905,3 +905,8 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V605-V612 adds no new cross-module command, event consumer, projection parser, or scheduler path. The candidate-filter no-touch proof records existing `PopulationAndHouseholds` behavior: already-migrating/high-risk and below-floor households are not runtime targets, so no household mobility pressure diff is emitted for those households.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate candidate filtering, fanout eligibility, target ordering, or household movement outcomes.
+## Household mobility runtime tie-break no-touch v613-v620 integration note
+
+V613-V620 adds no new cross-module command, event consumer, projection parser, or scheduler path. The tie-break no-touch proof records existing `PopulationAndHouseholds` behavior: equal-score runtime candidates are ordered by household id before the cap is applied, so the tied higher household id remains no-touch when cap one is consumed by the lower id.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate tie-break priority, fanout eligibility, target ordering, or household movement outcomes.

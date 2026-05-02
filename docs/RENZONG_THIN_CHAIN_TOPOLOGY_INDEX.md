@@ -503,3 +503,8 @@ This is not a migration engine, route-history model, movement command, fanout wi
 V605-V612 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule respects candidate filtering as a deterministic no-touch gate. Already-migrating/high-risk households and below-floor households are not touched, while the remaining eligible candidate is selected in deterministic order.
 
 This is not a migration engine, route-history model, movement command, fanout widening, candidate retuning pass, or second household mobility rule. Schema/migration impact: none.
+## V613-V620 Household Mobility Runtime Tie-Break No-Touch Proof
+
+V613-V620 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule resolves equal-score household candidates by deterministic household-id ordering. With household cap one, the tied lower household id receives the existing pressure nudge and the tied higher household id remains no-touch.
+
+This is not a migration engine, route-history model, movement command, fanout widening, ordering retune, score retune, or second household mobility rule. Schema/migration impact: none.

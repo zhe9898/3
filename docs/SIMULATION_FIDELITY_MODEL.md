@@ -727,3 +727,8 @@ No runtime behavior, schema, cache, diagnostic state, or performance claim is ad
 V605-V612 reinforces household mobility fidelity budget limits by proving candidate filters keep already-migrating/high-risk and below-floor households out of the first runtime rule. This keeps near detail bounded by eligibility gates rather than expanding into universal household scanning.
 
 No runtime behavior, schema, cache, diagnostic state, or performance claim is added.
+## V613-V620 Household Mobility Runtime Tie-Break No-Touch Proof
+
+V613-V620 reinforces household mobility fidelity budget limits by proving equal-score runtime candidates resolve through stable household-id ordering before the cap is applied. This keeps near-detail promotion bounded and deterministic while the tied higher household id remains summary/no-touch.
+
+No runtime behavior, schema, cache, diagnostic state, ordering retune, score retune, or performance claim is added.

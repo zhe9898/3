@@ -946,3 +946,8 @@ Acceptance evidence for V597-V604:
 Acceptance evidence for V605-V612:
 - `RunMonth_FirstMobilityRuntimeRuleCandidateFiltersNoTouchMigratingHighRiskOrBelowFloorHouseholds` proves already-migrating/high-risk households and below-floor households are filtered out, while the remaining eligible candidate gets the deterministic `Household mobility pressure` diff.
 - Architecture guard `Household_mobility_runtime_candidate_filter_no_touch_v605_v612_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.
+## Household mobility runtime tie-break no-touch v613-v620 acceptance - 2026-05-02
+
+Acceptance evidence for V613-V620:
+- `RunMonth_FirstMobilityRuntimeRuleTieBreakTouchesLowerHouseholdIdWhenScoresMatch` proves equal-score household candidates resolve through deterministic lower-household-id ordering under household cap one, and the tied higher household id receives no `Household mobility pressure` diff.
+- Architecture guard `Household_mobility_runtime_tiebreak_no_touch_v613_v620_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no ordering retune, no score retune, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.
