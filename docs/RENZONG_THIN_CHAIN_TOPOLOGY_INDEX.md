@@ -620,3 +620,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V765-V772 extracts the first `PopulationAndHouseholds` household mobility runtime rule's labor-capacity trigger ceiling into owner-consumed rules-data. The default labor-capacity trigger ceiling remains 45, so candidate eligibility and no-touch behavior remain equivalent under default rules-data while malformed threshold input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, labor model retune, debt/distress/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V773-V780 Household Mobility Runtime Grain Trigger Extraction
+
+V773-V780 extracts the first `PopulationAndHouseholds` household mobility runtime rule's grain-store trigger floor into owner-consumed rules-data. The default grain-store trigger floor remains 25, so candidate eligibility and no-touch behavior remain equivalent under default rules-data while malformed threshold input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, grain economy retune, labor/debt/distress/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
