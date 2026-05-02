@@ -572,3 +572,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V701-V708 extracts the first `PopulationAndHouseholds` household mobility runtime rule's labor-capacity pressure floor into owner-consumed rules-data. The default labor floor remains 60, so the score-ordering fixture and selected household remain equivalent under default rules-data while malformed floor input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, labor model retune, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
+
+## V709-V716 Household Mobility Runtime Grain Floor Extraction
+
+V709-V716 extracts the first `PopulationAndHouseholds` household mobility runtime rule's grain-store pressure floor into owner-consumed rules-data. The default grain floor remains 25, so the score-ordering fixture and selected household remain equivalent under default rules-data while malformed floor input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, grain economy retune, grain pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, or second household mobility rule. Schema/migration impact: none.

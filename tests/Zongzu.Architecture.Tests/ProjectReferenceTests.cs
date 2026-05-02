@@ -10105,6 +10105,196 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Household_mobility_runtime_grain_floor_extraction_v709_v716_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_household-mobility-runtime-grain-floor-extraction-v709-v716.md"));
+        string householdModuleTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "PopulationAndHouseholdsModuleTests.cs"));
+        string populationModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V709-V716 Household Mobility Runtime Grain Floor Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current household mobility runtime grain-floor extraction: v709-v716"));
+        Assert.That(designAudit, Does.Contain("v709-v716 household mobility runtime grain-floor extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Household mobility runtime grain-floor extraction v709-v716 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Household mobility runtime grain-floor extraction v709-v716 integration note"));
+        Assert.That(simulation, Does.Contain("Current household mobility runtime grain-floor extraction v709-v716 note"));
+        Assert.That(uiPresentation, Does.Contain("v709-v716 household mobility runtime grain-floor extraction"));
+        Assert.That(acceptance, Does.Contain("Household mobility runtime grain-floor extraction v709-v716 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V709-V716 Household Mobility Runtime Grain Floor Extraction"));
+        Assert.That(skillMatrix, Does.Contain("Household Mobility Runtime Grain Floor Extraction Through V716"));
+        Assert.That(schemaRules, Does.Contain("household mobility runtime grain-floor extraction v709-v716 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current household mobility runtime grain-floor extraction v709-v716 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "Target schema/migration impact: none",
+                     "owner-consumed rules-data extraction",
+                     "default grain-store pressure floor remains 25",
+                     "No runtime behavior change under default rules-data",
+                     "No grain economy retune",
+                     "No grain pressure divisor extraction",
+                     "No score formula retune beyond literal extraction",
+                     "No migration-risk weight retune",
+                     "No labor-floor retune",
+                     "No fanout widening",
+                     "No high-risk filter retune",
+                     "No event threshold retune",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No direct route-history",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes",
+                     "No long-run saturation tuning",
+                     "No performance optimization claim",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(rulesData, Does.Contain("MonthlyRuntimeGrainStorePressureFloor"));
+        Assert.That(rulesData, Does.Contain("DefaultMonthlyRuntimeGrainStorePressureFloor = 25"));
+        Assert.That(rulesData, Does.Contain("GetMonthlyRuntimeGrainStorePressureFloorOrDefault"));
+        Assert.That(rulesData, Does.Contain("monthly_runtime_grain_store_pressure_floor"));
+        Assert.That(populationModule, Does.Contain("GetMonthlyRuntimeGrainStorePressureFloorOrDefault"));
+        Assert.That(populationModule, Does.Contain("grainStorePressureFloor - household.GrainStore"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(
+            Regex.Matches(populationModule, @"\bApplyMonthlyHouseholdMobilityRuntimeRule\s*\(").Count,
+            Is.EqualTo(2),
+            "The grain-floor extraction must not add or duplicate the monthly household mobility runtime rule path.");
+        Assert.That(
+            householdModuleTests,
+            Does.Contain("RunMonth_FirstMobilityRuntimeRuleDefaultGrainStorePressureFloorPreservesPreviousScoreOrdering"));
+        Assert.That(
+            householdModuleTests,
+            Does.Contain("PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeGrainStorePressureFloorFallsBackToDefault"));
+        Assert.That(populationState, Does.Not.Contain("MonthlyRuntimeGrainStorePressureFloor"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Cooldown"));
+        Assert.That(populationState, Does.Not.Contain("GrainFloorExtractionState"));
+        Assert.That(populationState, Does.Not.Contain("ValidationLedger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "MonthlyRuntimeGrainStorePressureFloor",
+                     "GetMonthlyRuntimeGrainStorePressureFloorOrDefault",
+                     "ApplyMonthlyHouseholdMobilityRuntimeRule",
+                     "HouseholdMobilityGrainPressureInterpreter",
+                     "HouseholdMobilityEventRouter",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "MonthlyRuntime",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "GrainFloorExtraction",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "GrainEconomyEngine",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityGrainFloorState",
+                     "HouseholdMobilityGrainFloorLedger",
+                     "HouseholdMobilityEventRoutingLedger",
+                     "HouseholdMobilityMigrationStartedSelectorState",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
