@@ -788,6 +788,36 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleScoreOrderingTouchesHigherScoreBeforeLowerHouseholdId()
+    {
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            cappedRules with { MonthlyRuntimeRiskDelta = 0 });
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(cappedRules);
+
+        Assert.That(
+            ComputeFirstMobilityRuntimeScoreForTest(GetHousehold(baseline.State, 2)),
+            Is.GreaterThan(ComputeFirstMobilityRuntimeScoreForTest(GetHousehold(baseline.State, 1))),
+            "The fixture must reach candidate ordering with household 2 scoring above the lower household id.");
+        Assert.That(
+            GetHousehold(actual.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk + 1));
+        Assert.That(
+            GetHousehold(actual.State, 1).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 1).MigrationRisk),
+            "The lower household id remains no-touch when cap one is consumed by the higher-score candidate.");
+        Assert.That(
+            GetHousehold(actual.State, 3).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 3).MigrationRisk));
+        Assert.That(
+            actual.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!)),
+            Is.EqualTo(new[] { 2 }));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
