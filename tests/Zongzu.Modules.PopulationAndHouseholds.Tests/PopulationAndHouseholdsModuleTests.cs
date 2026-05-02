@@ -918,6 +918,52 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleDefaultGrainStoreTriggerFloorPreservesPreviousNoTouchBehavior()
+    {
+        static void ConfigureGrainTriggerFixture(PopulationAndHouseholdsState state)
+        {
+            PopulationHouseholdState atGrainTriggerFloor = GetHousehold(state, 2);
+            atGrainTriggerFloor.Livelihood = LivelihoodType.Smallholder;
+            atGrainTriggerFloor.MigrationRisk = 70;
+            atGrainTriggerFloor.Distress = 55;
+            atGrainTriggerFloor.DebtPressure = 55;
+            atGrainTriggerFloor.LaborCapacity = 50;
+            atGrainTriggerFloor.GrainStore = 25;
+            atGrainTriggerFloor.LandHolding = 20;
+            atGrainTriggerFloor.IsMigrating = false;
+        }
+
+        PopulationHouseholdMobilityRulesData explicitDefaultGrainTriggerRules =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimeGrainStoreTriggerFloor =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeGrainStoreTriggerFloor,
+            };
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeRiskDelta = 0 },
+            ConfigureGrainTriggerFixture);
+        PopulationMobilityRunResult defaultResult = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default,
+            ConfigureGrainTriggerFixture);
+        PopulationMobilityRunResult explicitDefaultGrainTriggerResult = RunFirstMobilityRuntimeScenario(
+            explicitDefaultGrainTriggerRules,
+            ConfigureGrainTriggerFixture);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeGrainStoreTriggerFloor,
+            Is.EqualTo(25));
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(explicitDefaultGrainTriggerResult),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(defaultResult)));
+        Assert.That(
+            GetHousehold(defaultResult.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk));
+        Assert.That(
+            GetHousehold(explicitDefaultGrainTriggerResult.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk));
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRuleTieBreakTouchesLowerHouseholdIdWhenScoresMatch()
     {
         static void ConfigureTieBreakFixture(PopulationAndHouseholdsState state)
@@ -1492,6 +1538,7 @@ public sealed class PopulationAndHouseholdsModuleTests
                 MonthlyRuntimeDistressTriggerThreshold = -1,
                 MonthlyRuntimeDebtPressureTriggerThreshold = -1,
                 MonthlyRuntimeLaborCapacityTriggerCeiling = -1,
+                MonthlyRuntimeGrainStoreTriggerFloor = -1,
                 MonthlyRuntimeMigrationRiskScoreWeight =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationRiskScoreWeight + 1,
                 MonthlyRuntimeLaborCapacityPressureFloor = -1,
@@ -1511,13 +1558,14 @@ public sealed class PopulationAndHouseholdsModuleTests
         PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
 
         Assert.That(validation.IsValid, Is.False);
-        Assert.That(validation.Errors, Has.Count.EqualTo(16));
+        Assert.That(validation.Errors, Has.Count.EqualTo(17));
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_active_pool_outflow_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_ceiling")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_distress_trigger_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_debt_pressure_trigger_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_labor_capacity_trigger_ceiling")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_grain_store_trigger_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_migration_risk_score_weight")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_labor_capacity_pressure_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_grain_store_pressure_floor")), Is.True);
@@ -1548,6 +1596,9 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeLaborCapacityTriggerCeilingOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLaborCapacityTriggerCeiling));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeGrainStoreTriggerFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeGrainStoreTriggerFloor));
         Assert.That(
             rulesData.GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationRiskScoreWeight));
@@ -1653,6 +1704,21 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeLaborCapacityTriggerCeilingOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLaborCapacityTriggerCeiling));
+    }
+
+    [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeGrainStoreTriggerFloorFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeGrainStoreTriggerFloor = -1 };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors.Single(), Does.Contain("monthly_runtime_grain_store_trigger_floor"));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeGrainStoreTriggerFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeGrainStoreTriggerFloor));
     }
 
     [Test]
@@ -1773,6 +1839,7 @@ public sealed class PopulationAndHouseholdsModuleTests
                 MonthlyRuntimeDistressTriggerThreshold = -1,
                 MonthlyRuntimeDebtPressureTriggerThreshold = -1,
                 MonthlyRuntimeLaborCapacityTriggerCeiling = -1,
+                MonthlyRuntimeGrainStoreTriggerFloor = -1,
                 MonthlyRuntimeMigrationRiskScoreWeight =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationRiskScoreWeight + 1,
                 MonthlyRuntimeLaborCapacityPressureFloor = -1,

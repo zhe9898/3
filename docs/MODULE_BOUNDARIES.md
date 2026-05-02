@@ -1509,3 +1509,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V765-V772 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's labor-capacity trigger ceiling is now read from `PopulationHouseholdMobilityRulesData` with default 45 and validation range 0..100.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, labor-trigger state, event-routing ledger, validation ledger, cache, debt/distress/grain/land/livelihood trigger extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime grain-trigger extraction v773-v780 boundary note
+
+V773-V780 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's grain-store trigger floor is now read from `PopulationHouseholdMobilityRulesData` with default 25 and validation range 0..100.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, grain-trigger state, event-routing ledger, validation ledger, cache, labor/debt/distress/land/livelihood trigger extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.

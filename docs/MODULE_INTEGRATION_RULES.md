@@ -1022,3 +1022,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V765-V772 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the labor-capacity trigger ceiling into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default ceiling 45.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate labor eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime grain-trigger extraction v773-v780 integration note
+
+V773-V780 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the grain-store trigger floor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default floor 25.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate grain eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
