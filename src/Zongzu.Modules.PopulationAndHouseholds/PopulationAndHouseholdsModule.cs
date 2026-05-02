@@ -1535,6 +1535,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeLaborCapacityPressureFloorOrDefault();
         int grainStorePressureFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeGrainStorePressureFloorOrDefault();
+        int grainStorePressureDivisor = _householdMobilityRulesData
+            .GetMonthlyRuntimeGrainStorePressureDivisorOrDefault();
         int landHoldingPressureFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeLandHoldingPressureFloorOrDefault();
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
@@ -1571,6 +1573,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         migrationRiskScoreWeight,
                         laborCapacityPressureFloor,
                         grainStorePressureFloor,
+                        grainStorePressureDivisor,
                         landHoldingPressureFloor))
                 .ThenBy(static household => household.Id.Value)
                 .Take(householdCap)
@@ -1635,10 +1638,11 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int migrationRiskScoreWeight,
         int laborCapacityPressureFloor,
         int grainStorePressureFloor,
+        int grainStorePressureDivisor,
         int landHoldingPressureFloor)
     {
         int laborPressure = Math.Max(0, laborCapacityPressureFloor - household.LaborCapacity);
-        int grainPressure = Math.Max(0, grainStorePressureFloor - household.GrainStore) / 2;
+        int grainPressure = Math.Max(0, grainStorePressureFloor - household.GrainStore) / grainStorePressureDivisor;
         int landPressure = Math.Max(0, landHoldingPressureFloor - household.LandHolding) / 2;
         int livelihoodPressure = household.Livelihood switch
         {
