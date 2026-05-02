@@ -915,3 +915,9 @@ No scheduler cadence change, score formula retune beyond literal extraction, fan
 V701-V708 changes the first household mobility runtime rule's labor-capacity pressure floor from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate filters, deterministic ordering, fanout caps, event type, and default labor-pressure behavior remain unchanged.
 
 No scheduler cadence change, labor model retune, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime grain-floor extraction v709-v716 note
+
+V709-V716 changes the first household mobility runtime rule's grain-store pressure floor from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate filters, deterministic ordering, fanout caps, event type, and default grain-pressure behavior remain unchanged.
+
+No scheduler cadence change, grain economy retune, grain pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

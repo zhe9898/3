@@ -796,3 +796,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, score for
 V701-V708 keeps household mobility fidelity bounded while extracting the first runtime rule's labor-capacity pressure floor into owner-consumed rules-data. Default floor 60 preserves the prior candidate ordering behavior; malformed floor values fall back to default instead of silently widening or reordering runtime work.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, labor model retune, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V709-V716 Household Mobility Runtime Grain Floor Extraction
+
+V709-V716 keeps household mobility fidelity bounded while extracting the first runtime rule's grain-store pressure floor into owner-consumed rules-data. Default floor 25 preserves the prior candidate ordering behavior; malformed floor values fall back to default instead of silently widening or reordering runtime work.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, grain economy retune, grain pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

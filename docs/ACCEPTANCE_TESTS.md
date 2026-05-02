@@ -1019,3 +1019,10 @@ Acceptance evidence for V701-V708:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultLaborCapacityPressureFloorPreservesPreviousScoreOrdering` proves default labor-capacity pressure floor 60 and explicit default floor produce the same monthly runtime signature and selected household under cap one.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeLaborCapacityPressureFloorFallsBackToDefault` proves malformed labor-floor data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_labor_floor_extraction_v701_v708_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime grain-floor extraction v709-v716 acceptance - 2026-05-03
+
+Acceptance evidence for V709-V716:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultGrainStorePressureFloorPreservesPreviousScoreOrdering` proves default grain-store pressure floor 25 and explicit default floor produce the same monthly runtime signature and selected household under cap one.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeGrainStorePressureFloorFallsBackToDefault` proves malformed grain-floor data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_grain_floor_extraction_v709_v716_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
