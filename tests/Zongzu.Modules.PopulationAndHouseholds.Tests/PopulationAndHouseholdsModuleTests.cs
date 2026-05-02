@@ -964,6 +964,35 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleThresholdEventCarriesMetadataWithoutSummaryParsing()
+    {
+        static void ConfigureThresholdMetadataFixture(PopulationAndHouseholdsState state)
+        {
+            GetHousehold(state, 2).MigrationRisk = 78;
+        }
+
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(cappedRules, ConfigureThresholdMetadataFixture);
+
+        IDomainEvent thresholdEvent = actual.EventBuffer.Events.Single(evt =>
+            evt.EventType == PopulationEventNames.MigrationStarted
+            && evt.EntityKey == "2");
+
+        string metadataTuple = string.Join(
+            ":",
+            thresholdEvent.Metadata[DomainEventMetadataKeys.Cause],
+            thresholdEvent.Metadata[DomainEventMetadataKeys.SettlementId],
+            thresholdEvent.Metadata[DomainEventMetadataKeys.HouseholdId]);
+
+        Assert.That(metadataTuple, Is.EqualTo("social-pressure:1:2"));
+        Assert.That(thresholdEvent.Summary, Does.Not.Contain(DomainEventMetadataKeys.Cause));
+        Assert.That(thresholdEvent.Summary, Does.Not.Contain(DomainEventMetadataKeys.SettlementId));
+        Assert.That(thresholdEvent.Summary, Does.Not.Contain(DomainEventMetadataKeys.HouseholdId));
+        Assert.That(thresholdEvent.Summary, Does.Not.Contain(DomainEventMetadataValues.CauseSocialPressure));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =

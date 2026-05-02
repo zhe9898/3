@@ -938,3 +938,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V653-V660 adds no new cross-module command, event consumer, projection parser, event router, or scheduler path. The threshold-event no-touch proof records existing `PopulationAndHouseholds` behavior: only a selected household that crosses the existing threshold emits the existing `PopulationEventNames.MigrationStarted` structured event with existing metadata, while unselected/off-cap households emit no threshold event.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate threshold crossing, event selection, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime event-metadata no-prose v661-v668 integration note
+
+V661-V668 adds no new cross-module command, event consumer, projection parser, event router, or scheduler path. The event-metadata no-prose proof records existing `PopulationAndHouseholds` behavior: selected threshold events expose cause, settlement id, and household id through `Metadata`, so downstream interpretation must not parse `DomainEvent.Summary`, projection prose, receipt text, public-life lines, or docs text.
+
+The integration contract remains owner-consumed structured metadata only. Application/UI/Unity must not calculate event metadata meaning, threshold crossing, fanout eligibility, target ordering, or household movement outcomes.

@@ -760,3 +760,9 @@ No runtime behavior, schema, cache, diagnostic state, cap semantics retune, glob
 V653-V660 reinforces household mobility fidelity budget limits by proving threshold events are downstream of selected near-detail household touches only. A selected household that crosses the existing migration-started threshold may emit the existing structured event, while unselected/off-cap households remain summary/no-touch and emit no threshold event.
 
 No runtime behavior, schema, cache, diagnostic state, new event type, event routing change, fanout widening, threshold retune, cap semantics retune, or performance claim is added.
+
+## V661-V668 Household Mobility Runtime Event Metadata No-Prose Proof
+
+V661-V668 reinforces household mobility fidelity budget limits by proving selected threshold-event readback can stay structured. Cause, settlement id, and household id come from metadata on the existing event, while prose stays a downstream explanation that does not promote distant summaries or unselected households into rule work.
+
+No runtime behavior, schema, cache, diagnostic state, new event type, event routing change, prose parser, fanout widening, threshold retune, cap semantics retune, or performance claim is added.
