@@ -1467,3 +1467,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V709-V716 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's grain-store pressure floor is now read from `PopulationHouseholdMobilityRulesData` with default 25.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, grain-floor state, event-routing ledger, validation ledger, cache, grain economy retune, grain pressure divisor extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime land-floor extraction v717-v724 boundary note
+
+V717-V724 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's land-holding pressure floor is now read from `PopulationHouseholdMobilityRulesData` with default 20.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, land-floor state, event-routing ledger, validation ledger, cache, land economy retune, land pressure divisor extraction, class/status engine, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.

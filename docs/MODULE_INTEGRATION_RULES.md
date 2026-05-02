@@ -980,3 +980,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V709-V716 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the grain-store pressure floor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default floor 25.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate grain pressure, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime land-floor extraction v717-v724 integration note
+
+V717-V724 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the land-holding pressure floor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default floor 20.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate land pressure, validation fallback, fanout eligibility, target ordering, or household movement outcomes.

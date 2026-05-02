@@ -1535,6 +1535,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeLaborCapacityPressureFloorOrDefault();
         int grainStorePressureFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeGrainStorePressureFloorOrDefault();
+        int landHoldingPressureFloor = _householdMobilityRulesData
+            .GetMonthlyRuntimeLandHoldingPressureFloorOrDefault();
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
         int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
         int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
@@ -1568,7 +1570,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         household,
                         migrationRiskScoreWeight,
                         laborCapacityPressureFloor,
-                        grainStorePressureFloor))
+                        grainStorePressureFloor,
+                        landHoldingPressureFloor))
                 .ThenBy(static household => household.Id.Value)
                 .Take(householdCap)
                 .ToArray();
@@ -1631,11 +1634,12 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         PopulationHouseholdState household,
         int migrationRiskScoreWeight,
         int laborCapacityPressureFloor,
-        int grainStorePressureFloor)
+        int grainStorePressureFloor,
+        int landHoldingPressureFloor)
     {
         int laborPressure = Math.Max(0, laborCapacityPressureFloor - household.LaborCapacity);
         int grainPressure = Math.Max(0, grainStorePressureFloor - household.GrainStore) / 2;
-        int landPressure = Math.Max(0, 20 - household.LandHolding) / 2;
+        int landPressure = Math.Max(0, landHoldingPressureFloor - household.LandHolding) / 2;
         int livelihoodPressure = household.Livelihood switch
         {
             LivelihoodType.SeasonalMigrant => 18,
