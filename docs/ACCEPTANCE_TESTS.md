@@ -1061,3 +1061,10 @@ Acceptance evidence for V749-V756:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultDistressTriggerThresholdPreservesPreviousNoTouchBehavior` proves default distress trigger threshold 60 and explicit default threshold produce the same monthly runtime signature while a household below the threshold remains no-touch when no other trigger qualifies it.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeDistressTriggerThresholdFallsBackToDefault` proves malformed distress-trigger data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_distress_trigger_extraction_v749_v756_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime debt-trigger extraction v757-v764 acceptance - 2026-05-03
+
+Acceptance evidence for V757-V764:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultDebtPressureTriggerThresholdPreservesPreviousNoTouchBehavior` proves default debt-pressure trigger threshold 60 and explicit default threshold produce the same monthly runtime signature while a household below the threshold remains no-touch when no other trigger qualifies it.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeDebtPressureTriggerThresholdFallsBackToDefault` proves malformed debt-trigger data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_debt_trigger_extraction_v757_v764_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

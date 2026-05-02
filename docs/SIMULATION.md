@@ -951,3 +951,9 @@ No scheduler cadence change, migration-started event threshold retune, candidate
 V749-V756 changes the first household mobility runtime rule's distress trigger threshold from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default no-touch behavior remain unchanged.
 
 No scheduler cadence change, distress economy retune, debt/labor/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime debt-trigger extraction v757-v764 note
+
+V757-V764 changes the first household mobility runtime rule's debt-pressure trigger threshold from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default no-touch behavior remain unchanged.
+
+No scheduler cadence change, debt economy retune, distress/labor/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

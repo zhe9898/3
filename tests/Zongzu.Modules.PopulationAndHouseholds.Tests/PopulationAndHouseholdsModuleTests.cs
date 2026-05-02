@@ -826,6 +826,52 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleDefaultDebtPressureTriggerThresholdPreservesPreviousNoTouchBehavior()
+    {
+        static void ConfigureDebtTriggerFixture(PopulationAndHouseholdsState state)
+        {
+            PopulationHouseholdState belowDebtTrigger = GetHousehold(state, 2);
+            belowDebtTrigger.Livelihood = LivelihoodType.Smallholder;
+            belowDebtTrigger.MigrationRisk = 70;
+            belowDebtTrigger.Distress = 55;
+            belowDebtTrigger.DebtPressure = 59;
+            belowDebtTrigger.LaborCapacity = 50;
+            belowDebtTrigger.GrainStore = 30;
+            belowDebtTrigger.LandHolding = 20;
+            belowDebtTrigger.IsMigrating = false;
+        }
+
+        PopulationHouseholdMobilityRulesData explicitDefaultDebtTriggerRules =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimeDebtPressureTriggerThreshold =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeDebtPressureTriggerThreshold,
+            };
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeRiskDelta = 0 },
+            ConfigureDebtTriggerFixture);
+        PopulationMobilityRunResult defaultResult = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default,
+            ConfigureDebtTriggerFixture);
+        PopulationMobilityRunResult explicitDefaultDebtTriggerResult = RunFirstMobilityRuntimeScenario(
+            explicitDefaultDebtTriggerRules,
+            ConfigureDebtTriggerFixture);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeDebtPressureTriggerThreshold,
+            Is.EqualTo(60));
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(explicitDefaultDebtTriggerResult),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(defaultResult)));
+        Assert.That(
+            GetHousehold(defaultResult.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk));
+        Assert.That(
+            GetHousehold(explicitDefaultDebtTriggerResult.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk));
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRuleTieBreakTouchesLowerHouseholdIdWhenScoresMatch()
     {
         static void ConfigureTieBreakFixture(PopulationAndHouseholdsState state)
@@ -1398,6 +1444,7 @@ public sealed class PopulationAndHouseholdsModuleTests
                 MonthlyRuntimeCandidateMigrationRiskCeiling =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeCandidateMigrationRiskCeiling + 1,
                 MonthlyRuntimeDistressTriggerThreshold = -1,
+                MonthlyRuntimeDebtPressureTriggerThreshold = -1,
                 MonthlyRuntimeMigrationRiskScoreWeight =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationRiskScoreWeight + 1,
                 MonthlyRuntimeLaborCapacityPressureFloor = -1,
@@ -1417,11 +1464,12 @@ public sealed class PopulationAndHouseholdsModuleTests
         PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
 
         Assert.That(validation.IsValid, Is.False);
-        Assert.That(validation.Errors, Has.Count.EqualTo(14));
+        Assert.That(validation.Errors, Has.Count.EqualTo(15));
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_active_pool_outflow_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_ceiling")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_distress_trigger_threshold")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_debt_pressure_trigger_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_migration_risk_score_weight")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_labor_capacity_pressure_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_grain_store_pressure_floor")), Is.True);
@@ -1446,6 +1494,9 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeDistressTriggerThresholdOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeDistressTriggerThreshold));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeDebtPressureTriggerThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeDebtPressureTriggerThreshold));
         Assert.That(
             rulesData.GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationRiskScoreWeight));
@@ -1521,6 +1572,21 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeDistressTriggerThresholdOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeDistressTriggerThreshold));
+    }
+
+    [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeDebtPressureTriggerThresholdFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeDebtPressureTriggerThreshold = -1 };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors.Single(), Does.Contain("monthly_runtime_debt_pressure_trigger_threshold"));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeDebtPressureTriggerThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeDebtPressureTriggerThreshold));
     }
 
     [Test]
@@ -1639,6 +1705,7 @@ public sealed class PopulationAndHouseholdsModuleTests
                 MonthlyRuntimeCandidateMigrationRiskCeiling =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeCandidateMigrationRiskCeiling + 1,
                 MonthlyRuntimeDistressTriggerThreshold = -1,
+                MonthlyRuntimeDebtPressureTriggerThreshold = -1,
                 MonthlyRuntimeMigrationRiskScoreWeight =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationRiskScoreWeight + 1,
                 MonthlyRuntimeLaborCapacityPressureFloor = -1,

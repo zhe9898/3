@@ -1010,3 +1010,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V749-V756 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the distress trigger threshold into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default threshold 60.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate distress eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime debt-trigger extraction v757-v764 integration note
+
+V757-V764 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the debt-pressure trigger threshold into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default threshold 60.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate debt eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.

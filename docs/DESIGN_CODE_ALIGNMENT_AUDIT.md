@@ -752,3 +752,13 @@ Design alignment: this is hardcoded distress-trigger extraction, not a distress 
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the distress trigger or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default no-touch equivalence and malformed distress-trigger fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v757-v764 household mobility runtime debt-trigger extraction audit - 2026-05-03
+
+The v757-v764 pass extracts the first `PopulationAndHouseholds` runtime rule's debt-pressure trigger threshold into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded debt-trigger extraction, not a debt economy retune, distress/labor/grain/land/livelihood trigger extraction, or score formula expansion. Default debt-pressure trigger threshold 60 preserves prior no-touch behavior under default rules-data, while malformed threshold values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the debt trigger or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default no-touch equivalence and malformed debt-trigger fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
