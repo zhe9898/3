@@ -634,3 +634,9 @@ Alignment result: no runtime behavior change, no movement authority, no rules-da
 The v645-v652 pass adds per-selected-pool household cap no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves settlement cap two and household cap one touch one deterministic household in each selected pool while lower-score households in each pool receive no household mobility pressure diff.
 
 Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no cap semantics retune, no global household cap, no pool ordering retune, no score formula retune, no candidate ordering retune, no threshold retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+
+## v653-v660 household mobility runtime threshold-event no-touch audit - 2026-05-02
+
+The v653-v660 pass adds threshold-event no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves a selected capped household crossing from 79 to 80 emits only the existing `MigrationStarted` structured event for that household, while unselected/off-cap households emit no threshold event and receive no household mobility pressure diff.
+
+Alignment result: no runtime behavior change, no movement authority, no new event type, no event routing change, no rules-data loader, no threshold retune, no cap semantics retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.

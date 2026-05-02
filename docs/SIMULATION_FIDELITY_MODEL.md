@@ -754,3 +754,9 @@ No runtime behavior, schema, cache, diagnostic state, pool ordering retune, scor
 V645-V652 reinforces household mobility fidelity budget limits by proving household cap application is per selected active pool, not a global cross-pool target selector. This keeps near-detail promotion bounded within each selected pool while lower-score households remain no-touch under per-pool cap one.
 
 No runtime behavior, schema, cache, diagnostic state, cap semantics retune, global household cap, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, or performance claim is added.
+
+## V653-V660 Household Mobility Runtime Threshold Event No-Touch Proof
+
+V653-V660 reinforces household mobility fidelity budget limits by proving threshold events are downstream of selected near-detail household touches only. A selected household that crosses the existing migration-started threshold may emit the existing structured event, while unselected/off-cap households remain summary/no-touch and emit no threshold event.
+
+No runtime behavior, schema, cache, diagnostic state, new event type, event routing change, fanout widening, threshold retune, cap semantics retune, or performance claim is added.

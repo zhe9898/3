@@ -973,3 +973,9 @@ Acceptance evidence for V637-V644:
 Acceptance evidence for V645-V652:
 - `RunMonth_FirstMobilityRuntimeRuleHouseholdCapAppliesPerSelectedPool` proves household cap one is applied inside each selected active pool under settlement cap two, and lower-score households in each selected pool receive no `Household mobility pressure` diff.
 - Architecture guard `Household_mobility_runtime_per_pool_cap_no_touch_v645_v652_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no cap semantics retune, no global household cap, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime threshold-event no-touch v653-v660 acceptance - 2026-05-02
+
+Acceptance evidence for V653-V660:
+- `RunMonth_FirstMobilityRuntimeRuleEmitsThresholdEventOnlyForSelectedCrossingHousehold` proves a selected capped household crossing from 79 to 80 emits only the existing `MigrationStarted` structured event for that household, and unselected/off-cap households emit no threshold event or `Household mobility pressure` diff.
+- Architecture guard `Household_mobility_runtime_threshold_event_no_touch_v653_v660_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no new event type, no event routing change, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.

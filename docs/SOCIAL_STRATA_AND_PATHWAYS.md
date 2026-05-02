@@ -560,3 +560,7 @@ V637-V644 records that active-pool priority is applied before cross-pool househo
 ### Current household mobility runtime per-pool cap no-touch proof: v645-v652
 
 V645-V652 records that household cap application is scoped inside each selected active pool in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows two selected pools each receive one deterministic household touch under cap one, and keeps lower-score households in each pool no-touch without adding a social class/status ladder, route history, movement command, global household cap, or `PersonRegistry` expansion.
+
+### Current household mobility runtime threshold-event no-touch proof: v653-v660
+
+V653-V660 records that the existing `MigrationStarted` threshold event remains owner-scoped in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows only the selected crossing household emits the structured event with existing metadata, and keeps unselected/off-cap households from emitting threshold events or receiving household mobility pressure diffs without adding a social class/status ladder, route history, movement command, new event type, event router, or `PersonRegistry` expansion.

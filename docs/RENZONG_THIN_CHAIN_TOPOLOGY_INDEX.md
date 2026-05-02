@@ -530,3 +530,9 @@ This is not a migration engine, route-history model, movement command, fanout wi
 V645-V652 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule applies the household cap inside each selected active pool, not as a global cross-pool cap. With settlement cap two and household cap one, each selected pool receives one deterministic household touch while lower-score households inside those pools remain no-touch.
 
 This is not a migration engine, route-history model, movement command, fanout widening, cap semantics retune, global household cap, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
+
+## V653-V660 Household Mobility Runtime Threshold Event No-Touch Proof
+
+V653-V660 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule emits the existing `MigrationStarted` structured event only when a selected household crosses the existing threshold. The proof keeps the branch inside the owner lane: a capped selected household may cross from 79 to 80, while unselected/off-cap households emit no threshold event and receive no household mobility pressure diff.
+
+This is not a migration engine, route-history model, movement command, new event type, event routing change, fanout widening, threshold retune, cap semantics retune, or second household mobility rule. Schema/migration impact: none.

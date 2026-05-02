@@ -873,3 +873,9 @@ No scheduler cadence, runtime formula, fanout widening, pool ordering retune, sc
 V645-V652 proves the existing first household mobility runtime rule remains bounded when household cap application is scoped inside each selected active pool. The owner test verifies settlement cap two and household cap one touch one deterministic household in each selected pool while lower-score households in those pools receive no `Household mobility pressure` diff.
 
 No scheduler cadence, runtime formula, fanout widening, cap semantics retune, global household cap, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, save schema, route-history model, or movement command changes.
+
+## Current household mobility runtime threshold-event no-touch v653-v660 note
+
+V653-V660 proves the existing first household mobility runtime rule keeps threshold-event emission bounded to selected crossing households. The owner test verifies a capped selected household crossing from 79 to 80 emits the existing `MigrationStarted` structured event, while unselected/off-cap households emit no threshold event and receive no `Household mobility pressure` diff.
+
+No scheduler cadence, runtime formula, fanout widening, new event type, event routing change, threshold retune, cap semantics retune, save schema, route-history model, or movement command changes.

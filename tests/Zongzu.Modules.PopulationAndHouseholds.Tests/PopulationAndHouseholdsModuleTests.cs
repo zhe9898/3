@@ -925,6 +925,45 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleEmitsThresholdEventOnlyForSelectedCrossingHousehold()
+    {
+        static void ConfigureThresholdEventFixture(PopulationAndHouseholdsState state)
+        {
+            GetHousehold(state, 2).MigrationRisk = 78;
+        }
+
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            cappedRules with { MonthlyRuntimeRiskDelta = 0 },
+            ConfigureThresholdEventFixture);
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(
+            cappedRules,
+            ConfigureThresholdEventFixture);
+
+        IDomainEvent thresholdEvent = actual.EventBuffer.Events.Single(evt =>
+            evt.EventType == PopulationEventNames.MigrationStarted
+            && evt.EntityKey == "2");
+
+        Assert.That(GetHousehold(baseline.State, 2).MigrationRisk, Is.EqualTo(79));
+        Assert.That(GetHousehold(actual.State, 2).MigrationRisk, Is.EqualTo(80));
+        Assert.That(GetHousehold(actual.State, 2).IsMigrating, Is.True);
+        Assert.That(
+            actual.EventBuffer.Events
+                .Where(static evt => evt.EventType == PopulationEventNames.MigrationStarted)
+                .Select(static evt => evt.EntityKey),
+            Is.EqualTo(new[] { "2" }));
+        Assert.That(
+            actual.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!)),
+            Is.EqualTo(new[] { 2 }));
+        Assert.That(thresholdEvent.Metadata[DomainEventMetadataKeys.Cause], Is.EqualTo(DomainEventMetadataValues.CauseSocialPressure));
+        Assert.That(thresholdEvent.Metadata[DomainEventMetadataKeys.SettlementId], Is.EqualTo("1"));
+        Assert.That(thresholdEvent.Metadata[DomainEventMetadataKeys.HouseholdId], Is.EqualTo("2"));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =

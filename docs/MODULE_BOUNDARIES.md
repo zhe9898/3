@@ -1419,3 +1419,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V645-V652 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule applies household cap limits inside each selected active pool. The pass adds only tests/docs and keeps pool selection, per-pool cap application, candidate scoring, fanout, and no-touch behavior inside the owning module.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, per-pool cap ledger, global household cap ledger, cache, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime threshold-event no-touch v653-v660 boundary note
+
+V653-V660 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule emits the existing threshold receipt only for a selected household that crosses the existing migration-started threshold. The pass adds only tests/docs and keeps threshold crossing, event emission, structured metadata, fanout, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, threshold-event ledger, event-routing ledger, migration-started selector state, cache, or `PersonRegistry` expansion is introduced.
