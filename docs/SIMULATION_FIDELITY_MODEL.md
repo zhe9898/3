@@ -790,3 +790,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, fanout wi
 V693-V700 keeps household mobility fidelity bounded while extracting the first runtime rule's migration-risk score weight into owner-consumed rules-data. Default weight 4 preserves the prior candidate ordering behavior; malformed weight values fall back to default instead of silently widening or reordering runtime work.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, score formula retune, fanout widening, filter retune, threshold retune, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V701-V708 Household Mobility Runtime Labor Floor Extraction
+
+V701-V708 keeps household mobility fidelity bounded while extracting the first runtime rule's labor-capacity pressure floor into owner-consumed rules-data. Default floor 60 preserves the prior candidate ordering behavior; malformed floor values fall back to default instead of silently widening or reordering runtime work.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, labor model retune, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

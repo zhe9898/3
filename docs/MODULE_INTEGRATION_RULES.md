@@ -968,3 +968,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V693-V700 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the migration-risk score weight into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default weight 4.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate score weights, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime labor-floor extraction v701-v708 integration note
+
+V701-V708 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the labor-capacity pressure floor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default floor 60.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate labor pressure, validation fallback, fanout eligibility, target ordering, or household movement outcomes.

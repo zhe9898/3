@@ -1519,3 +1519,7 @@ V685-V692 extracts the runtime candidate migration-risk floor into owner-consume
 Current household mobility runtime score-weight extraction v693-v700 note:
 
 V693-V700 extracts the runtime migration-risk score weight into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted score-weight field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, score-weight state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime labor-floor extraction v701-v708 note:
+
+V701-V708 extracts the runtime labor-capacity pressure floor into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted labor-floor field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, labor-floor state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

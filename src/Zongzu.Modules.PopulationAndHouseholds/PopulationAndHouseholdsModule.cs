@@ -1531,6 +1531,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeCandidateMigrationRiskFloorOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
+        int laborCapacityPressureFloor = _householdMobilityRulesData
+            .GetMonthlyRuntimeLaborCapacityPressureFloorOrDefault();
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
         int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
         int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
@@ -1560,7 +1562,10 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                 .Where(household => household.SettlementId == pool.SettlementId
                     && IsMonthlyHouseholdMobilityRuntimeCandidate(household, candidateMigrationRiskFloor))
                 .OrderByDescending(household =>
-                    ComputeMonthlyHouseholdMobilityRuntimeScore(household, migrationRiskScoreWeight))
+                    ComputeMonthlyHouseholdMobilityRuntimeScore(
+                        household,
+                        migrationRiskScoreWeight,
+                        laborCapacityPressureFloor))
                 .ThenBy(static household => household.Id.Value)
                 .Take(householdCap)
                 .ToArray();
@@ -1621,9 +1626,10 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
     private static int ComputeMonthlyHouseholdMobilityRuntimeScore(
         PopulationHouseholdState household,
-        int migrationRiskScoreWeight)
+        int migrationRiskScoreWeight,
+        int laborCapacityPressureFloor)
     {
-        int laborPressure = Math.Max(0, 60 - household.LaborCapacity);
+        int laborPressure = Math.Max(0, laborCapacityPressureFloor - household.LaborCapacity);
         int grainPressure = Math.Max(0, 25 - household.GrainStore) / 2;
         int landPressure = Math.Max(0, 20 - household.LandHolding) / 2;
         int livelihoodPressure = household.Livelihood switch

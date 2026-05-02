@@ -682,3 +682,13 @@ Design alignment: this is hardcoded score-weight extraction, not a score formula
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the score weight or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default equivalence and malformed score-weight fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, filter retune, threshold retune, fanout widening, or second runtime rule.
+
+## v701-v708 household mobility runtime labor-floor extraction audit - 2026-05-03
+
+The v701-v708 pass extracts the first `PopulationAndHouseholds` runtime rule's labor-capacity pressure floor into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded labor-floor extraction, not a labor model retune or score formula expansion. Default labor-capacity pressure floor 60 preserves prior selected-household ordering under default rules-data, while malformed floor values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the labor floor or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default equivalence and malformed labor-floor fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, filter retune, threshold retune, fanout widening, or second runtime rule.

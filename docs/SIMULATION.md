@@ -909,3 +909,9 @@ No scheduler cadence change, fanout widening, high-risk filter retune, general m
 V693-V700 changes the first household mobility runtime rule's migration-risk score weight from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate filters, deterministic ordering, fanout caps, event type, and default score behavior remain unchanged.
 
 No scheduler cadence change, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime labor-floor extraction v701-v708 note
+
+V701-V708 changes the first household mobility runtime rule's labor-capacity pressure floor from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate filters, deterministic ordering, fanout caps, event type, and default labor-pressure behavior remain unchanged.
+
+No scheduler cadence change, labor model retune, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
