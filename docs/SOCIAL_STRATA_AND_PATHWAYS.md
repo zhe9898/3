@@ -572,3 +572,9 @@ V661-V668 records that the first runtime rule's threshold event is socially read
 ### Current household mobility runtime event-metadata replay proof: v669-v676
 
 V669-V676 records that the first runtime rule's threshold-event metadata remains stable across same-seed owner runs. The proof stays inside `PopulationAndHouseholds`, compares event type, entity key, cause, settlement id, household id, and downstream summary as test evidence only, and adds no social class/status ladder, route history, movement command, replay state, event router, or `PersonRegistry` expansion.
+
+### Current household mobility runtime threshold extraction: v677-v684
+
+V677-V684 records that one remaining hardcoded event threshold in the first household mobility runtime rule has been moved into owner-consumed rules-data. The social meaning remains a pressure-threshold receipt for a selected near-detail household; it does not become household relocation, zhuhu/kehu conversion, class/status movement, route history, or a full social mobility ladder.
+
+Default rules-data keeps the threshold at 80, malformed threshold input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.

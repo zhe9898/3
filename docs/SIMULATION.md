@@ -891,3 +891,9 @@ No scheduler cadence, runtime formula, fanout widening, new event type, event ro
 V669-V676 proves the existing first household mobility runtime rule keeps selected threshold-event metadata replay-stable under same-seed owner runs. The owner test compares event type, entity key, cause, settlement id, household id, and downstream summary as test evidence only.
 
 No scheduler cadence, runtime formula, fanout widening, new event type, event routing change, replay state, threshold retune, cap semantics retune, save schema, route-history model, or movement command changes.
+
+## Current household mobility runtime threshold extraction v677-v684 note
+
+V677-V684 changes the first household mobility runtime rule's threshold event check from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate filtering, deterministic ordering, fanout caps, event type, and default threshold behavior remain unchanged.
+
+No scheduler cadence change, fanout widening, candidate filter retune, general migration-state retune, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

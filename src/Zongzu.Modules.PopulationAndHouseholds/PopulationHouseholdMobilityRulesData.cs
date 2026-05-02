@@ -8,7 +8,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeSettlementCap,
     int MonthlyRuntimeHouseholdCap,
-    int MonthlyRuntimeRiskDelta)
+    int MonthlyRuntimeRiskDelta,
+    int MonthlyRuntimeMigrationStartedEventThreshold)
 {
     public const int DefaultFocusedMemberPromotionCap = 2;
     public const int MaxFocusedMemberPromotionCap = 8;
@@ -16,9 +17,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeSettlementCap = 1;
     public const int DefaultMonthlyRuntimeHouseholdCap = 2;
     public const int DefaultMonthlyRuntimeRiskDelta = 1;
+    public const int DefaultMonthlyRuntimeMigrationStartedEventThreshold = 80;
     public const int MaxMonthlyRuntimeSettlementCap = 8;
     public const int MaxMonthlyRuntimeHouseholdCap = 16;
     public const int MaxMonthlyRuntimeRiskDelta = 8;
+    public const int MaxMonthlyRuntimeMigrationStartedEventThreshold = 100;
 
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
@@ -26,7 +29,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
-            DefaultMonthlyRuntimeRiskDelta);
+            DefaultMonthlyRuntimeRiskDelta,
+            DefaultMonthlyRuntimeMigrationStartedEventThreshold);
 
     public PopulationHouseholdMobilityRulesData(int focusedMemberPromotionCap)
         : this(
@@ -34,7 +38,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
-            DefaultMonthlyRuntimeRiskDelta)
+            DefaultMonthlyRuntimeRiskDelta,
+            DefaultMonthlyRuntimeMigrationStartedEventThreshold)
     {
     }
 
@@ -69,6 +74,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"monthly_runtime_risk_delta must be between 0 and {MaxMonthlyRuntimeRiskDelta}.");
+        }
+
+        if (MonthlyRuntimeMigrationStartedEventThreshold is < 1 or > MaxMonthlyRuntimeMigrationStartedEventThreshold)
+        {
+            errors.Add(
+                $"monthly_runtime_migration_started_event_threshold must be between 1 and {MaxMonthlyRuntimeMigrationStartedEventThreshold}.");
         }
 
         return errors.Count == 0
@@ -109,6 +120,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeRiskDelta
             : DefaultMonthlyRuntimeRiskDelta;
+    }
+
+    public int GetMonthlyRuntimeMigrationStartedEventThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeMigrationStartedEventThreshold
+            : DefaultMonthlyRuntimeMigrationStartedEventThreshold;
     }
 }
 

@@ -652,3 +652,13 @@ Alignment result: no runtime behavior change, no movement authority, no new even
 The v669-v676 pass adds same-seed replay evidence for the first `PopulationAndHouseholds` household mobility runtime rule's selected threshold-event metadata. The owner test proves event type, entity key, cause, settlement id, household id, and downstream summary remain stable across repeated same-seed runs.
 
 Alignment result: no runtime behavior change, no movement authority, no new event type, no event routing change, no replay state, no rules-data loader, no threshold retune, no cap semantics retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+
+## v677-v684 household mobility runtime threshold extraction audit - 2026-05-03
+
+The v677-v684 pass extracts the first `PopulationAndHouseholds` runtime rule's selected-household `MigrationStarted` event threshold into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded threshold extraction, not a new migration system. Default event threshold 80 preserves prior behavior, while malformed threshold values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the threshold or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default equivalence and malformed threshold fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, candidate filter retune, fanout widening, or second runtime rule.

@@ -1437,3 +1437,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V669-V676 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule's selected threshold-event metadata signature is stable under same-seed replay. The pass adds only tests/docs and keeps replay comparison, metadata meaning, threshold crossing, event emission, fanout, and no-touch behavior inside owner tests.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, event-replay state, event-metadata ledger, event-routing ledger, migration-started selector state, cache, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime threshold extraction v677-v684 boundary note
+
+V677-V684 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's selected-household `MigrationStarted` event threshold is now read from `PopulationHouseholdMobilityRulesData` with default 80.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, threshold-extraction state, event-routing ledger, validation ledger, cache, candidate filter retune, fanout widening, or `PersonRegistry` expansion is introduced.

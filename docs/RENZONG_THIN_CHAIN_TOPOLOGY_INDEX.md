@@ -548,3 +548,9 @@ This is not a migration engine, route-history model, movement command, new event
 V669-V676 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule's selected threshold-event metadata signature is stable across repeated same-seed runs. Event type, entity key, cause, settlement id, household id, and downstream summary match without adding runtime replay state.
 
 This is not a migration engine, route-history model, movement command, new event type, event routing change, replay ledger, fanout widening, threshold retune, cap semantics retune, or second household mobility rule. Schema/migration impact: none.
+
+## V677-V684 Household Mobility Runtime Threshold Extraction
+
+V677-V684 extracts the first `PopulationAndHouseholds` household mobility runtime rule's `MigrationStarted` event-crossing threshold into owner-consumed rules-data. The default event threshold remains 80, so the selected crossing household's existing event behavior stays equivalent under default rules-data while malformed threshold input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, candidate filter retune, general migration-state retune, or second household mobility rule. Schema/migration impact: none.
