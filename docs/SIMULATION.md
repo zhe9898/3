@@ -945,3 +945,9 @@ No scheduler cadence change, land economy retune, land floor retune, grain press
 V741-V748 changes the first household mobility runtime rule's high-risk candidate ceiling from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate floor, deterministic ordering, fanout caps, event type, and default high-risk no-touch behavior remain unchanged.
 
 No scheduler cadence change, migration-started event threshold retune, candidate floor retune, trigger threshold extraction, score formula retune beyond literal extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime distress-trigger extraction v749-v756 note
+
+V749-V756 changes the first household mobility runtime rule's distress trigger threshold from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default no-touch behavior remain unchanged.
+
+No scheduler cadence change, distress economy retune, debt/labor/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

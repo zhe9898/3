@@ -1531,6 +1531,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeCandidateMigrationRiskFloorOrDefault();
         int candidateMigrationRiskCeiling = _householdMobilityRulesData
             .GetMonthlyRuntimeCandidateMigrationRiskCeilingOrDefault();
+        int distressTriggerThreshold = _householdMobilityRulesData
+            .GetMonthlyRuntimeDistressTriggerThresholdOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
         int laborCapacityPressureFloor = _householdMobilityRulesData
@@ -1573,7 +1575,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                     && IsMonthlyHouseholdMobilityRuntimeCandidate(
                         household,
                         candidateMigrationRiskFloor,
-                        candidateMigrationRiskCeiling))
+                        candidateMigrationRiskCeiling,
+                        distressTriggerThreshold))
                 .OrderByDescending(household =>
                     ComputeMonthlyHouseholdMobilityRuntimeScore(
                         household,
@@ -1625,7 +1628,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
     private static bool IsMonthlyHouseholdMobilityRuntimeCandidate(
         PopulationHouseholdState household,
         int candidateMigrationRiskFloor,
-        int candidateMigrationRiskCeiling)
+        int candidateMigrationRiskCeiling,
+        int distressTriggerThreshold)
     {
         if (household.IsMigrating
             || household.MigrationRisk >= candidateMigrationRiskCeiling
@@ -1634,7 +1638,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             return false;
         }
 
-        return household.Distress >= 60
+        return household.Distress >= distressTriggerThreshold
             || household.DebtPressure >= 60
             || household.LaborCapacity < 45
             || household.GrainStore < 25

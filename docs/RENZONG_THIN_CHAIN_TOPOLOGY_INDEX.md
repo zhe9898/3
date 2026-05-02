@@ -602,3 +602,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V741-V748 extracts the first `PopulationAndHouseholds` household mobility runtime rule's candidate high-risk ceiling into owner-consumed rules-data. The default candidate migration-risk ceiling remains 80, so households at or above that value remain no-touch candidates under default rules-data while malformed ceiling input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, migration-started event threshold retune, candidate floor retune, trigger threshold extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V749-V756 Household Mobility Runtime Distress Trigger Extraction
+
+V749-V756 extracts the first `PopulationAndHouseholds` household mobility runtime rule's distress trigger threshold into owner-consumed rules-data. The default distress trigger threshold remains 60, so candidate eligibility and no-touch behavior remain equivalent under default rules-data while malformed threshold input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, distress economy retune, debt/labor/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
