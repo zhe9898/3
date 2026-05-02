@@ -992,3 +992,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V725-V732 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the grain-store pressure divisor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default divisor 2.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate grain pressure, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime land-divisor extraction v733-v740 integration note
+
+V733-V740 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the land-holding pressure divisor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default divisor 2.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate land pressure, validation fallback, fanout eligibility, target ordering, or household movement outcomes.

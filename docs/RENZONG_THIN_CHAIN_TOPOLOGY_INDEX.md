@@ -590,3 +590,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V725-V732 extracts the first `PopulationAndHouseholds` household mobility runtime rule's grain-store pressure divisor into owner-consumed rules-data. The default grain divisor remains 2, and validation rejects 0, so the score-ordering fixture and selected household remain equivalent under default rules-data while malformed divisor input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, grain economy retune, grain floor retune, land pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
+
+## V733-V740 Household Mobility Runtime Land Divisor Extraction
+
+V733-V740 extracts the first `PopulationAndHouseholds` household mobility runtime rule's land-holding pressure divisor into owner-consumed rules-data. The default land divisor remains 2, and validation rejects 0, so the score-ordering fixture and selected household remain equivalent under default rules-data while malformed divisor input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, land economy retune, land floor retune, grain pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, or second household mobility rule. Schema/migration impact: none.

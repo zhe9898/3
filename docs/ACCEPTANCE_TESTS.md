@@ -1040,3 +1040,10 @@ Acceptance evidence for V725-V732:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultGrainStorePressureDivisorPreservesPreviousScoreOrdering` proves default grain-store pressure divisor 2 and explicit default divisor produce the same monthly runtime signature and selected household under cap one.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeGrainStorePressureDivisorFallsBackToDefault` proves malformed grain-divisor data is rejected and falls back to default, including divisor 0.
 - Architecture guard `Household_mobility_runtime_grain_divisor_extraction_v725_v732_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime land-divisor extraction v733-v740 acceptance - 2026-05-03
+
+Acceptance evidence for V733-V740:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultLandHoldingPressureDivisorPreservesPreviousScoreOrdering` proves default land-holding pressure divisor 2 and explicit default divisor produce the same monthly runtime signature and selected household under cap one.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeLandHoldingPressureDivisorFallsBackToDefault` proves malformed land-divisor data is rejected and falls back to default, including divisor 0.
+- Architecture guard `Household_mobility_runtime_land_divisor_extraction_v733_v740_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

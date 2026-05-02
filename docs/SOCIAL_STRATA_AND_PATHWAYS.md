@@ -614,3 +614,9 @@ Default rules-data keeps the land-holding pressure floor at 20, malformed floor 
 V725-V732 records that the first household mobility runtime rule's grain-store pressure divisor has been moved into owner-consumed rules-data. The social meaning remains bounded: grain shortage still contributes to ordering already-eligible near-detail households inside the selected pool, not distant society, grain-market simulation, or household relocation.
 
 Default rules-data keeps the grain-store pressure divisor at 2, malformed divisor input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime land-divisor extraction: v733-v740
+
+V733-V740 records that the first household mobility runtime rule's land-holding pressure divisor has been moved into owner-consumed rules-data. The social meaning remains bounded: thin holdings still contribute to ordering already-eligible near-detail households inside the selected pool, not distant society, land-market simulation, household relocation, or social-class promotion/demotion.
+
+Default rules-data keeps the land-holding pressure divisor at 2, malformed divisor input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
