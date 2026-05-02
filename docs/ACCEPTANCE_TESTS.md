@@ -979,3 +979,9 @@ Acceptance evidence for V645-V652:
 Acceptance evidence for V653-V660:
 - `RunMonth_FirstMobilityRuntimeRuleEmitsThresholdEventOnlyForSelectedCrossingHousehold` proves a selected capped household crossing from 79 to 80 emits only the existing `MigrationStarted` structured event for that household, and unselected/off-cap households emit no threshold event or `Household mobility pressure` diff.
 - Architecture guard `Household_mobility_runtime_threshold_event_no_touch_v653_v660_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no new event type, no event routing change, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime event-metadata no-prose v661-v668 acceptance - 2026-05-02
+
+Acceptance evidence for V661-V668:
+- `RunMonth_FirstMobilityRuntimeRuleThresholdEventCarriesMetadataWithoutSummaryParsing` proves the selected threshold event's cause, settlement id, and household id are read from `Metadata`, while `Summary` is not used to recover those machine facts.
+- Architecture guard `Household_mobility_runtime_event_metadata_no_prose_v661_v668_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no new event type, no event routing change, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

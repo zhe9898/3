@@ -1425,3 +1425,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V653-V660 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule emits the existing threshold receipt only for a selected household that crosses the existing migration-started threshold. The pass adds only tests/docs and keeps threshold crossing, event emission, structured metadata, fanout, and no-touch behavior inside the owning module.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, threshold-event ledger, event-routing ledger, migration-started selector state, cache, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime event-metadata no-prose v661-v668 boundary note
+
+V661-V668 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule's selected threshold event is interpreted through structured metadata rather than prose. The pass adds only tests/docs and keeps metadata meaning, threshold crossing, event emission, fanout, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, event-metadata ledger, prose-parsing ledger, event-routing ledger, migration-started selector state, cache, or `PersonRegistry` expansion is introduced.

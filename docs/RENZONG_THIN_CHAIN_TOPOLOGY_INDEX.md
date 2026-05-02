@@ -536,3 +536,9 @@ This is not a migration engine, route-history model, movement command, fanout wi
 V653-V660 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule emits the existing `MigrationStarted` structured event only when a selected household crosses the existing threshold. The proof keeps the branch inside the owner lane: a capped selected household may cross from 79 to 80, while unselected/off-cap households emit no threshold event and receive no household mobility pressure diff.
 
 This is not a migration engine, route-history model, movement command, new event type, event routing change, fanout widening, threshold retune, cap semantics retune, or second household mobility rule. Schema/migration impact: none.
+
+## V661-V668 Household Mobility Runtime Event Metadata No-Prose Proof
+
+V661-V668 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule's existing threshold event is readable through structured metadata, not `Summary` prose. The selected crossing household's event carries cause, settlement id, and household id in `Metadata`, while prose remains downstream explanation and not a rule input.
+
+This is not a migration engine, route-history model, movement command, new event type, event routing change, prose parser, fanout widening, threshold retune, cap semantics retune, or second household mobility rule. Schema/migration impact: none.

@@ -640,3 +640,9 @@ Alignment result: no runtime behavior change, no movement authority, no rules-da
 The v653-v660 pass adds threshold-event no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves a selected capped household crossing from 79 to 80 emits only the existing `MigrationStarted` structured event for that household, while unselected/off-cap households emit no threshold event and receive no household mobility pressure diff.
 
 Alignment result: no runtime behavior change, no movement authority, no new event type, no event routing change, no rules-data loader, no threshold retune, no cap semantics retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+
+## v661-v668 household mobility runtime event-metadata no-prose audit - 2026-05-02
+
+The v661-v668 pass adds event-metadata no-prose evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves the selected threshold event's cause, settlement id, and household id are available from `Metadata`; `Summary` is not used as a machine input.
+
+Alignment result: no runtime behavior change, no movement authority, no new event type, no event routing change, no prose parser, no rules-data loader, no threshold retune, no cap semantics retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.

@@ -564,3 +564,7 @@ V645-V652 records that household cap application is scoped inside each selected 
 ### Current household mobility runtime threshold-event no-touch proof: v653-v660
 
 V653-V660 records that the existing `MigrationStarted` threshold event remains owner-scoped in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows only the selected crossing household emits the structured event with existing metadata, and keeps unselected/off-cap households from emitting threshold events or receiving household mobility pressure diffs without adding a social class/status ladder, route history, movement command, new event type, event router, or `PersonRegistry` expansion.
+
+### Current household mobility runtime event-metadata no-prose proof: v661-v668
+
+V661-V668 records that the first runtime rule's threshold event is socially readable through structured owner metadata, not event prose. The proof stays inside `PopulationAndHouseholds`, derives cause, settlement, and household identity from `Metadata`, and keeps `Summary` downstream without adding a social class/status ladder, route history, movement command, prose parser, event router, or `PersonRegistry` expansion.

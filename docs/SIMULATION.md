@@ -879,3 +879,9 @@ No scheduler cadence, runtime formula, fanout widening, cap semantics retune, gl
 V653-V660 proves the existing first household mobility runtime rule keeps threshold-event emission bounded to selected crossing households. The owner test verifies a capped selected household crossing from 79 to 80 emits the existing `MigrationStarted` structured event, while unselected/off-cap households emit no threshold event and receive no `Household mobility pressure` diff.
 
 No scheduler cadence, runtime formula, fanout widening, new event type, event routing change, threshold retune, cap semantics retune, save schema, route-history model, or movement command changes.
+
+## Current household mobility runtime event-metadata no-prose v661-v668 note
+
+V661-V668 proves the existing first household mobility runtime rule keeps threshold-event interpretation structured. The owner test verifies cause, settlement id, and household id are read from `Metadata`, while `Summary` remains prose and is not needed to recover authority ids or cause.
+
+No scheduler cadence, runtime formula, fanout widening, new event type, event routing change, prose parser, threshold retune, cap semantics retune, save schema, route-history model, or movement command changes.
