@@ -900,3 +900,8 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V597-V604 adds no new cross-module command, event consumer, projection parser, or scheduler path. The zero-risk-delta no-touch proof records existing `PopulationAndHouseholds` behavior: risk delta zero exits before target mutation, so no household mobility pressure diff is emitted.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate risk-delta blocking, fanout eligibility, target ordering, or household movement outcomes.
+## Household mobility runtime candidate-filter no-touch v605-v612 integration note
+
+V605-V612 adds no new cross-module command, event consumer, projection parser, or scheduler path. The candidate-filter no-touch proof records existing `PopulationAndHouseholds` behavior: already-migrating/high-risk and below-floor households are not runtime targets, so no household mobility pressure diff is emitted for those households.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate candidate filtering, fanout eligibility, target ordering, or household movement outcomes.

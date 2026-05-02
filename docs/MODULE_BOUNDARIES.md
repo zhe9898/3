@@ -1387,3 +1387,8 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V597-V604 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects zero risk delta. The pass adds only tests/docs and keeps risk-delta blocking, selection, ordering, fanout, threshold fallback, and no-touch behavior inside the owning module.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, cache, or `PersonRegistry` expansion is introduced.
+## Household mobility runtime candidate-filter no-touch v605-v612 boundary note
+
+V605-V612 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects candidate filtering. The pass adds only tests/docs and keeps candidate filtering, selection, ordering, fanout, threshold fallback, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, cache, or `PersonRegistry` expansion is introduced.
