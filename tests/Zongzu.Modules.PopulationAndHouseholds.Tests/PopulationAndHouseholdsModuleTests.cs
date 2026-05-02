@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
@@ -670,6 +671,36 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleCandidateFiltersNoTouchMigratingHighRiskOrBelowFloorHouseholds()
+    {
+        static void ConfigureCandidateFilters(PopulationAndHouseholdsState state)
+        {
+            PopulationHouseholdState alreadyMigrating = GetHousehold(state, 1);
+            alreadyMigrating.MigrationRisk = 82;
+            alreadyMigrating.IsMigrating = true;
+
+            PopulationHouseholdState belowFloor = GetHousehold(state, 2);
+            belowFloor.MigrationRisk = 52;
+        }
+
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeRiskDelta = 0 },
+            ConfigureCandidateFilters);
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default,
+            ConfigureCandidateFilters);
+
+        Assert.That(GetHousehold(actual.State, 1).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 1).MigrationRisk));
+        Assert.That(GetHousehold(actual.State, 2).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk));
+        Assert.That(GetHousehold(actual.State, 3).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 3).MigrationRisk + 1));
+        Assert.That(
+            actual.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!)),
+            Is.EqualTo(new[] { 3 }));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
@@ -864,7 +895,8 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     private static PopulationMobilityRunResult RunFirstMobilityRuntimeScenario(
-        PopulationHouseholdMobilityRulesData rulesData)
+        PopulationHouseholdMobilityRulesData rulesData,
+        Action<PopulationAndHouseholdsState>? configureState = null)
     {
         WorldSettlementsModule worldModule = new();
         WorldSettlementsState worldState = worldModule.CreateInitialState();
@@ -983,6 +1015,8 @@ public sealed class PopulationAndHouseholdsModuleTests
                 LaborerCount = 1,
             },
         ]);
+
+        configureState?.Invoke(populationState);
 
         QueryRegistry queries = new();
         worldModule.RegisterQueries(worldState, queries);

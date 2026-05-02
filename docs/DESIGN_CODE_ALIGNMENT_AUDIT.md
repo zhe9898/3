@@ -602,3 +602,8 @@ Alignment result: no runtime behavior change, no movement authority, no rules-da
 The v597-v604 pass adds zero-risk-delta no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves risk delta zero matches a cap-blocked no-touch baseline and emits no household mobility pressure diff.
 
 Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+## v605-v612 household mobility runtime candidate-filter no-touch audit - 2026-05-02
+
+The v605-v612 pass adds candidate-filter no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves filtered households are untouched while the remaining eligible candidate receives the deterministic pressure diff.
+
+Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.

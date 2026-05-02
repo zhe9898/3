@@ -941,3 +941,8 @@ Acceptance evidence for V589-V596:
 Acceptance evidence for V597-V604:
 - `RunMonth_FirstMobilityRuntimeRuleZeroRiskDeltaNoTouchHouseholdsOrPools` proves risk delta zero blocks the first household mobility runtime rule, matches a cap-blocked no-touch baseline, and emits no `Household mobility pressure` diff.
 - Architecture guard `Household_mobility_runtime_zero_risk_delta_no_touch_v597_v604_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.
+## Household mobility runtime candidate-filter no-touch v605-v612 acceptance - 2026-05-02
+
+Acceptance evidence for V605-V612:
+- `RunMonth_FirstMobilityRuntimeRuleCandidateFiltersNoTouchMigratingHighRiskOrBelowFloorHouseholds` proves already-migrating/high-risk households and below-floor households are filtered out, while the remaining eligible candidate gets the deterministic `Household mobility pressure` diff.
+- Architecture guard `Household_mobility_runtime_candidate_filter_no_touch_v605_v612_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.

@@ -498,3 +498,8 @@ This is not a migration engine, route-history model, movement command, fanout wi
 V597-V604 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule respects zero risk delta as a deterministic no-touch gate. Risk delta zero matches a cap-blocked no-touch baseline and emits no `Household mobility pressure` diff.
 
 This is not a migration engine, route-history model, movement command, fanout widening, risk tuning pass, or second household mobility rule. Schema/migration impact: none.
+## V605-V612 Household Mobility Runtime Candidate Filter No-Touch Proof
+
+V605-V612 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule respects candidate filtering as a deterministic no-touch gate. Already-migrating/high-risk households and below-floor households are not touched, while the remaining eligible candidate is selected in deterministic order.
+
+This is not a migration engine, route-history model, movement command, fanout widening, candidate retuning pass, or second household mobility rule. Schema/migration impact: none.

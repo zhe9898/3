@@ -841,3 +841,8 @@ No scheduler cadence, runtime formula, fanout widening, ordering rule, save sche
 V597-V604 proves the existing first household mobility runtime rule remains bounded when zero risk delta blocks target mutation. The owner test compares a risk-delta-blocked run with a cap-blocked no-touch baseline and verifies no `Household mobility pressure` diff entries are produced.
 
 No scheduler cadence, runtime formula, fanout widening, ordering rule, save schema, route-history model, or movement command changes.
+## Current household mobility runtime candidate-filter no-touch v605-v612 note
+
+V605-V612 proves the existing first household mobility runtime rule remains bounded when candidate filters exclude already-migrating/high-risk households and households below the candidate floor. The owner test verifies filtered households receive no `Household mobility pressure` diff while the remaining eligible candidate is selected deterministically.
+
+No scheduler cadence, runtime formula, fanout widening, ordering rule, save schema, route-history model, or movement command changes.

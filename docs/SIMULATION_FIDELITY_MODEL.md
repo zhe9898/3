@@ -722,3 +722,8 @@ No runtime behavior, schema, cache, diagnostic state, or performance claim is ad
 V597-V604 reinforces household mobility fidelity budget limits by proving zero risk delta leaves the first runtime rule inert. This keeps pressure mutation bounded by owner-consumed parameters and prevents accidental household touches when risk increment is disabled.
 
 No runtime behavior, schema, cache, diagnostic state, or performance claim is added.
+## V605-V612 Household Mobility Runtime Candidate Filter No-Touch Proof
+
+V605-V612 reinforces household mobility fidelity budget limits by proving candidate filters keep already-migrating/high-risk and below-floor households out of the first runtime rule. This keeps near detail bounded by eligibility gates rather than expanding into universal household scanning.
+
+No runtime behavior, schema, cache, diagnostic state, or performance claim is added.
