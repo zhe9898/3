@@ -546,3 +546,6 @@ V605-V612 records that candidate filters block the first household mobility runt
 ### Current household mobility runtime tie-break no-touch proof: v613-v620
 
 V613-V620 records that equal-score household candidates are resolved by deterministic household-id ordering in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows the lower household id consumes the cap-one touch, and keeps the tied higher household id no-touch without adding a social class/status ladder, route history, movement command, or `PersonRegistry` expansion.
+### Current household mobility runtime pool tie-break no-touch proof: v621-v628
+
+V621-V628 records that equal-outflow active pools are resolved by deterministic settlement-id ordering in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows the lower settlement id consumes the cap-one pool touch, and keeps the tied higher settlement id no-touch without adding a social class/status ladder, route history, movement command, or `PersonRegistry` expansion.

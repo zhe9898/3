@@ -750,6 +750,44 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRulePoolTieBreakTouchesLowerSettlementIdWhenOutflowsMatch()
+    {
+        static void ConfigurePoolTieBreakFixture(PopulationAndHouseholdsState state)
+        {
+            GetHousehold(state, 5).MigrationRisk = 64;
+            GetHousehold(state, 6).MigrationRisk = 64;
+        }
+
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeRiskDelta = 0 },
+            ConfigurePoolTieBreakFixture);
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default,
+            ConfigurePoolTieBreakFixture);
+
+        Assert.That(
+            GetMigrationPool(baseline.State, 1).OutflowPressure,
+            Is.EqualTo(GetMigrationPool(baseline.State, 2).OutflowPressure),
+            "The fixture must reach the active-pool ordering step with tied outflow pressure.");
+        Assert.That(GetHousehold(actual.State, 1).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 1).MigrationRisk + 1));
+        Assert.That(GetHousehold(actual.State, 2).MigrationRisk, Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk + 1));
+        Assert.That(
+            GetHousehold(actual.State, 5).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 5).MigrationRisk),
+            "The higher settlement id remains no-touch when cap one is consumed by the lower-settlement-id pool.");
+        Assert.That(
+            GetHousehold(actual.State, 6).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 6).MigrationRisk),
+            "The higher settlement id remains no-touch when cap one is consumed by the lower-settlement-id pool.");
+        Assert.That(
+            actual.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!))
+                .OrderBy(static householdId => householdId),
+            Is.EqualTo(new[] { 1, 2 }));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
@@ -1089,6 +1127,11 @@ public sealed class PopulationAndHouseholdsModuleTests
     private static PopulationHouseholdState GetHousehold(PopulationAndHouseholdsState state, int householdId)
     {
         return state.Households.Single(household => household.Id == new HouseholdId(householdId));
+    }
+
+    private static MigrationPoolEntryState GetMigrationPool(PopulationAndHouseholdsState state, int settlementId)
+    {
+        return state.MigrationPools.Single(pool => pool.SettlementId == new SettlementId(settlementId));
     }
 
     private static string BuildFirstMobilityRuntimeSignature(PopulationMobilityRunResult result)

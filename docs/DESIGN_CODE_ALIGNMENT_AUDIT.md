@@ -612,3 +612,8 @@ Alignment result: no runtime behavior change, no movement authority, no rules-da
 The v613-v620 pass adds deterministic ordering / tie-break no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves tied household runtime scores are resolved by lower household id under cap one, while the tied higher household id receives no household mobility pressure diff.
 
 Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no ordering retune, no score retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+## v621-v628 household mobility runtime pool tie-break no-touch audit - 2026-05-02
+
+The v621-v628 pass adds active-pool deterministic ordering / settlement-id tie-break no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves tied pool outflow pressure is resolved by lower settlement id under cap one, while the tied higher settlement id receives no household mobility pressure diff.
+
+Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no pool ordering retune, no threshold retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
