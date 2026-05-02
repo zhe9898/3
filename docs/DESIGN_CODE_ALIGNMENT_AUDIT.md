@@ -628,3 +628,9 @@ Alignment result: no runtime behavior change, no movement authority, no rules-da
 The v637-v644 pass adds active-pool priority before cross-pool household score no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves a higher-outflow pool is selected under settlement cap one even when a household in the lower-priority pool has a higher runtime score, while that off-pool household receives no household mobility pressure diff.
 
 Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no pool ordering retune, no score formula retune, no candidate ordering retune, no threshold retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+
+## v645-v652 household mobility runtime per-pool cap no-touch audit - 2026-05-02
+
+The v645-v652 pass adds per-selected-pool household cap no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves settlement cap two and household cap one touch one deterministic household in each selected pool while lower-score households in each pool receive no household mobility pressure diff.
+
+Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no cap semantics retune, no global household cap, no pool ordering retune, no score formula retune, no candidate ordering retune, no threshold retune, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.

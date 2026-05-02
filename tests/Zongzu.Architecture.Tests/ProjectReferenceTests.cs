@@ -8623,6 +8623,191 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Household_mobility_runtime_per_pool_cap_no_touch_v645_v652_must_remain_test_evidence_only_without_runtime_or_schema_drift()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-02_household-mobility-runtime-per-pool-cap-proof-v645-v652.md"));
+        string householdModuleTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "PopulationAndHouseholdsModuleTests.cs"));
+        string populationModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V645-V652 Household Mobility Runtime Per-Pool Cap No-Touch Proof"));
+        Assert.That(socialStrata, Does.Contain("Current household mobility runtime per-pool cap no-touch proof: v645-v652"));
+        Assert.That(designAudit, Does.Contain("v645-v652 household mobility runtime per-pool cap no-touch audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Household mobility runtime per-pool cap no-touch v645-v652 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Household mobility runtime per-pool cap no-touch v645-v652 integration note"));
+        Assert.That(simulation, Does.Contain("Current household mobility runtime per-pool cap no-touch v645-v652 note"));
+        Assert.That(uiPresentation, Does.Contain("v645-v652 household mobility runtime per-pool cap no-touch"));
+        Assert.That(acceptance, Does.Contain("Household mobility runtime per-pool cap no-touch v645-v652 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V645-V652 Household Mobility Runtime Per-Pool Cap No-Touch Proof"));
+        Assert.That(skillMatrix, Does.Contain("Household Mobility Runtime Per-Pool Cap No-Touch Through V652"));
+        Assert.That(schemaRules, Does.Contain("household mobility runtime per-pool cap no-touch v645-v652 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current household mobility runtime per-pool cap no-touch v645-v652 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "Target schema/migration impact: none",
+                     "per-selected-pool household cap evidence",
+                     "No runtime behavior change",
+                     "No fanout widening",
+                     "No pool ordering retune",
+                     "No score formula retune",
+                     "No candidate ordering retune",
+                     "No threshold retune",
+                     "No cap semantics retune",
+                     "No global household cap",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No direct route-history",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes",
+                     "No long-run saturation tuning",
+                     "No performance optimization claim",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(
+            householdModuleTests,
+            Does.Contain("RunMonth_FirstMobilityRuntimeRuleHouseholdCapAppliesPerSelectedPool"));
+        Assert.That(householdModuleTests, Does.Contain("The second selected pool also receives its own cap-one household touch"));
+        Assert.That(householdModuleTests, Does.Contain("the household cap is not global"));
+        Assert.That(householdModuleTests, Does.Contain("new[] { 2, 6 }"));
+        Assert.That(
+            Regex.Matches(populationModule, @"\bApplyMonthlyHouseholdMobilityRuntimeRule\s*\(").Count,
+            Is.EqualTo(2),
+            "The per-pool cap proof must not add or duplicate the monthly household mobility runtime rule path.");
+        Assert.That(populationModule, Does.Contain(".Take(settlementCap)"));
+        Assert.That(populationModule, Does.Contain(".Take(householdCap)"));
+        Assert.That(populationModule, Does.Contain("foreach (MigrationPoolEntryState pool in activePools)"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Cooldown"));
+        Assert.That(populationState, Does.Not.Contain("TouchCount"));
+        Assert.That(populationState, Does.Not.Contain("PerPoolCapLedger"));
+        Assert.That(populationState, Does.Not.Contain("GlobalHouseholdCapLedger"));
+        Assert.That(populationState, Does.Not.Contain("ActivePoolLedger"));
+        Assert.That(populationState, Does.Not.Contain("DiagnosticState"));
+        Assert.That(populationState, Does.Not.Contain("PerformanceCache"));
+        Assert.That(populationState, Does.Not.Contain("ValidationLedger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "ApplyMonthlyHouseholdMobilityRuntimeRule",
+                     "HouseholdMobilityPerPoolCap",
+                     "HouseholdMobilityGlobalHouseholdCap",
+                     "HouseholdMobilityTargetSelector",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "MonthlyRuntime",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "PerPoolCapNoTouch",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityTouchCountState",
+                     "HouseholdMobilityDiagnosticState",
+                     "HouseholdMobilityPerformanceCache",
+                     "HouseholdMobilityPerPoolCapLedger",
+                     "HouseholdMobilityGlobalHouseholdCapLedger",
+                     "HouseholdMobilityActivePoolLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

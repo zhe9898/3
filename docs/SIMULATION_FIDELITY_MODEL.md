@@ -748,3 +748,9 @@ No runtime behavior, schema, cache, diagnostic state, score formula retune, cand
 V637-V644 reinforces household mobility fidelity budget limits by proving active-pool priority is applied before cross-pool household score comparison. This keeps near-detail promotion bounded by selected active pools while a higher-scoring household in a lower-priority pool remains summary/no-touch under settlement cap one.
 
 No runtime behavior, schema, cache, diagnostic state, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, or performance claim is added.
+
+## V645-V652 Household Mobility Runtime Per-Pool Cap No-Touch Proof
+
+V645-V652 reinforces household mobility fidelity budget limits by proving household cap application is per selected active pool, not a global cross-pool target selector. This keeps near-detail promotion bounded within each selected pool while lower-score households remain no-touch under per-pool cap one.
+
+No runtime behavior, schema, cache, diagnostic state, cap semantics retune, global household cap, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, or performance claim is added.

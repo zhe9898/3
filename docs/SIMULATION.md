@@ -867,3 +867,9 @@ No scheduler cadence, runtime formula, fanout widening, score formula retune, ca
 V637-V644 proves the existing first household mobility runtime rule remains bounded when active-pool priority is applied before cross-pool household score comparison. The owner test verifies a higher-scoring household in a lower-priority unselected pool receives no `Household mobility pressure` diff under settlement cap one.
 
 No scheduler cadence, runtime formula, fanout widening, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, save schema, route-history model, or movement command changes.
+
+## Current household mobility runtime per-pool cap no-touch v645-v652 note
+
+V645-V652 proves the existing first household mobility runtime rule remains bounded when household cap application is scoped inside each selected active pool. The owner test verifies settlement cap two and household cap one touch one deterministic household in each selected pool while lower-score households in those pools receive no `Household mobility pressure` diff.
+
+No scheduler cadence, runtime formula, fanout widening, cap semantics retune, global household cap, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, save schema, route-history model, or movement command changes.

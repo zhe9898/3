@@ -556,3 +556,7 @@ V629-V636 records that higher household runtime score outranks lower household i
 ### Current household mobility runtime pool-priority no-touch proof: v637-v644
 
 V637-V644 records that active-pool priority is applied before cross-pool household score comparison in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows the higher-outflow pool consumes the cap-one settlement pass, and keeps a higher-scoring household in the lower-priority pool no-touch without adding a social class/status ladder, route history, movement command, or `PersonRegistry` expansion.
+
+### Current household mobility runtime per-pool cap no-touch proof: v645-v652
+
+V645-V652 records that household cap application is scoped inside each selected active pool in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows two selected pools each receive one deterministic household touch under cap one, and keeps lower-score households in each pool no-touch without adding a social class/status ladder, route history, movement command, global household cap, or `PersonRegistry` expansion.

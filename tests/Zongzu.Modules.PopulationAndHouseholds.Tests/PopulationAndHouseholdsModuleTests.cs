@@ -882,6 +882,49 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleHouseholdCapAppliesPerSelectedPool()
+    {
+        PopulationHouseholdMobilityRulesData perPoolCapRules =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimeSettlementCap = 2,
+                MonthlyRuntimeHouseholdCap = 1,
+            };
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            perPoolCapRules with { MonthlyRuntimeRiskDelta = 0 });
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(perPoolCapRules);
+
+        Assert.That(
+            GetMigrationPool(baseline.State, 1).OutflowPressure,
+            Is.GreaterThanOrEqualTo(perPoolCapRules.GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()));
+        Assert.That(
+            GetMigrationPool(baseline.State, 2).OutflowPressure,
+            Is.GreaterThanOrEqualTo(perPoolCapRules.GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()));
+        Assert.That(
+            GetHousehold(actual.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk + 1),
+            "The first selected pool receives its own cap-one household touch.");
+        Assert.That(
+            GetHousehold(actual.State, 6).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 6).MigrationRisk + 1),
+            "The second selected pool also receives its own cap-one household touch; the household cap is not global.");
+        Assert.That(
+            GetHousehold(actual.State, 1).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 1).MigrationRisk),
+            "The lower-score household in the first selected pool remains no-touch under per-pool cap one.");
+        Assert.That(
+            GetHousehold(actual.State, 5).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 5).MigrationRisk),
+            "The lower-score household in the second selected pool remains no-touch under per-pool cap one.");
+        Assert.That(
+            actual.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!))
+                .OrderBy(static householdId => householdId),
+            Is.EqualTo(new[] { 2, 6 }));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
