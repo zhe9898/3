@@ -1377,3 +1377,8 @@ Current lite note:
 V581-V588 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects active-pool threshold blocking. The pass adds only tests/docs and keeps selection, ordering, fanout, threshold fallback, and no-touch behavior inside the owning module.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, cache, or `PersonRegistry` expansion is introduced.
+## Household mobility runtime zero-cap no-touch v589-v596 boundary note
+
+V589-V596 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule respects zero fanout caps. The pass adds only tests/docs and keeps cap blocking, selection, ordering, fanout, threshold fallback, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, cache, or `PersonRegistry` expansion is introduced.

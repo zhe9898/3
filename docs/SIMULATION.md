@@ -831,3 +831,8 @@ No module may insert ad hoc hidden execution outside the scheduler.
 V581-V588 proves the existing first household mobility runtime rule remains bounded when active-pool thresholding blocks selection. The owner test compares the threshold-blocked run with a zero-risk-delta baseline, checks that fixture pools stay below the maximum threshold, and verifies no `Household mobility pressure` diff entries are produced.
 
 No scheduler cadence, runtime formula, fanout cap, ordering rule, save schema, route-history model, or movement command changes.
+## Current household mobility runtime zero-cap no-touch v589-v596 note
+
+V589-V596 proves the existing first household mobility runtime rule remains bounded when zero fanout caps block selection. The owner test compares settlement-cap-blocked and household-cap-blocked runs with a zero-risk-delta baseline and verifies no `Household mobility pressure` diff entries are produced.
+
+No scheduler cadence, runtime formula, fanout widening, ordering rule, save schema, route-history model, or movement command changes.
