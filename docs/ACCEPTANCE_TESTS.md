@@ -951,3 +951,8 @@ Acceptance evidence for V605-V612:
 Acceptance evidence for V613-V620:
 - `RunMonth_FirstMobilityRuntimeRuleTieBreakTouchesLowerHouseholdIdWhenScoresMatch` proves equal-score household candidates resolve through deterministic lower-household-id ordering under household cap one, and the tied higher household id receives no `Household mobility pressure` diff.
 - Architecture guard `Household_mobility_runtime_tiebreak_no_touch_v613_v620_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no ordering retune, no score retune, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.
+## Household mobility runtime pool tie-break no-touch v621-v628 acceptance - 2026-05-02
+
+Acceptance evidence for V621-V628:
+- `RunMonth_FirstMobilityRuntimeRulePoolTieBreakTouchesLowerSettlementIdWhenOutflowsMatch` proves equal-outflow active pools resolve through deterministic lower-settlement-id ordering under settlement cap one, and the tied higher settlement id receives no `Household mobility pressure` diff.
+- Architecture guard `Household_mobility_runtime_pool_tiebreak_no_touch_v621_v628_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no pool ordering retune, no threshold retune, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.

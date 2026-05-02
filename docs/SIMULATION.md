@@ -851,3 +851,8 @@ No scheduler cadence, runtime formula, fanout widening, ordering rule, save sche
 V613-V620 proves the existing first household mobility runtime rule remains bounded when equal-score candidates reach the ordering step. The owner test verifies the tied lower household id receives the cap-one `Household mobility pressure` diff while the tied higher household id remains no-touch.
 
 No scheduler cadence, runtime formula, fanout widening, ordering retune, score retune, save schema, route-history model, or movement command changes.
+## Current household mobility runtime pool tie-break no-touch v621-v628 note
+
+V621-V628 proves the existing first household mobility runtime rule remains bounded when equal-outflow active pools reach the ordering step. The owner test verifies the lower settlement id receives the cap-one pool pass while the tied higher settlement id and its households remain no-touch.
+
+No scheduler cadence, runtime formula, fanout widening, pool ordering retune, threshold retune, save schema, route-history model, or movement command changes.
