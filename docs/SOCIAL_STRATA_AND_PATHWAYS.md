@@ -552,3 +552,7 @@ V621-V628 records that equal-outflow active pools are resolved by deterministic 
 ### Current household mobility runtime score-ordering no-touch proof: v629-v636
 
 V629-V636 records that higher household runtime score outranks lower household id in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows the higher-score candidate consumes the cap-one touch, and keeps the lower household id no-touch without adding a social class/status ladder, route history, movement command, or `PersonRegistry` expansion.
+
+### Current household mobility runtime pool-priority no-touch proof: v637-v644
+
+V637-V644 records that active-pool priority is applied before cross-pool household score comparison in the first household mobility runtime rule. The proof stays inside `PopulationAndHouseholds`, shows the higher-outflow pool consumes the cap-one settlement pass, and keeps a higher-scoring household in the lower-priority pool no-touch without adding a social class/status ladder, route history, movement command, or `PersonRegistry` expansion.

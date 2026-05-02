@@ -818,6 +818,70 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRulePoolPriorityPrecedesCrossPoolHouseholdScore()
+    {
+        static void ConfigurePoolPriorityFixture(PopulationAndHouseholdsState state)
+        {
+            PopulationHouseholdState selectedPoolOutflowCarrier = GetHousehold(state, 4);
+            selectedPoolOutflowCarrier.MigrationRisk = 79;
+
+            PopulationHouseholdState offPoolHighScore = GetHousehold(state, 5);
+            offPoolHighScore.Livelihood = LivelihoodType.HiredLabor;
+            offPoolHighScore.Distress = 75;
+            offPoolHighScore.DebtPressure = 78;
+            offPoolHighScore.LaborCapacity = 35;
+            offPoolHighScore.MigrationRisk = 78;
+            offPoolHighScore.LandHolding = 8;
+            offPoolHighScore.GrainStore = 20;
+
+            PopulationHouseholdState offPoolLowRiskBalance = GetHousehold(state, 6);
+            offPoolLowRiskBalance.MigrationRisk = 35;
+        }
+
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimeSettlementCap = 1,
+                MonthlyRuntimeHouseholdCap = 1,
+            };
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            cappedRules with { MonthlyRuntimeRiskDelta = 0 },
+            ConfigurePoolPriorityFixture);
+        PopulationMobilityRunResult actual = RunFirstMobilityRuntimeScenario(
+            cappedRules,
+            ConfigurePoolPriorityFixture);
+
+        int selectedPoolBestScore = new[] { 1, 2, 3, 4 }
+            .Select(householdId => ComputeFirstMobilityRuntimeScoreForTest(GetHousehold(baseline.State, householdId)))
+            .Max();
+
+        Assert.That(
+            GetMigrationPool(baseline.State, 1).OutflowPressure,
+            Is.GreaterThan(GetMigrationPool(baseline.State, 2).OutflowPressure),
+            "The fixture must prove active-pool priority before any cross-pool household score comparison.");
+        Assert.That(
+            ComputeFirstMobilityRuntimeScoreForTest(GetHousehold(baseline.State, 5)),
+            Is.GreaterThan(selectedPoolBestScore),
+            "The off-pool household must have the stronger runtime score while remaining outside the selected pool.");
+        Assert.That(
+            GetHousehold(actual.State, 2).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 2).MigrationRisk + 1));
+        Assert.That(
+            GetHousehold(actual.State, 5).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 5).MigrationRisk),
+            "The higher-scoring off-pool household remains no-touch because active-pool priority is applied before household score.");
+        Assert.That(
+            GetHousehold(actual.State, 6).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 6).MigrationRisk),
+            "The lower-priority pool remains no-touch when settlement cap one is consumed by the higher-outflow pool.");
+        Assert.That(
+            actual.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!)),
+            Is.EqualTo(new[] { 2 }));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
