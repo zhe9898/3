@@ -991,3 +991,10 @@ Acceptance evidence for V661-V668:
 Acceptance evidence for V669-V676:
 - `RunMonth_FirstMobilityRuntimeRuleThresholdEventMetadataReplayStable` proves the selected threshold event's type, entity key, cause, settlement id, household id, and downstream summary remain stable across repeated same-seed owner runs.
 - Architecture guard `Household_mobility_runtime_event_metadata_replay_v669_v676_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no new event type, no event routing change, no replay state, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime threshold extraction v677-v684 acceptance - 2026-05-03
+
+Acceptance evidence for V677-V684:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultMigrationStartedEventThresholdPreservesPreviousEventBehavior` proves default threshold 80 and explicit default threshold produce the same selected threshold-event signature.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationStartedEventThresholdFallsBackToDefault` proves malformed threshold data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_threshold_extraction_v677_v684_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

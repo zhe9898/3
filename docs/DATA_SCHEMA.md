@@ -1507,3 +1507,7 @@ V661-V668 adds focused tests/docs proving structured event metadata, not event p
 Current household mobility runtime event-metadata replay v669-v676 note:
 
 V669-V676 adds focused tests/docs proving same-seed replay stability for the first runtime rule's selected threshold-event metadata signature. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, event-replay state, event-metadata ledger, event-routing ledger, migration-started selector state, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.
+
+Current household mobility runtime threshold extraction v677-v684 note:
+
+V677-V684 extracts the selected-household runtime `MigrationStarted` event threshold into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted threshold field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, threshold-extraction state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

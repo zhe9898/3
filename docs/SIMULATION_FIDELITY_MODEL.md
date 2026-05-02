@@ -772,3 +772,9 @@ No runtime behavior, schema, cache, diagnostic state, new event type, event rout
 V669-V676 reinforces household mobility fidelity budget limits by proving selected threshold-event metadata is replay-stable under the existing deterministic owner fixture. Replay comparison remains test evidence only and does not promote event signatures into saved state or presentation-side selectors.
 
 No runtime behavior, schema, cache, diagnostic state, new event type, event routing change, replay ledger, fanout widening, threshold retune, cap semantics retune, or performance claim is added.
+
+## V677-V684 Household Mobility Runtime Threshold Extraction
+
+V677-V684 keeps household mobility fidelity bounded while extracting the first runtime rule's selected-household `MigrationStarted` event threshold into owner-consumed rules-data. Default threshold 80 preserves the prior near-detail behavior; malformed threshold values fall back to default instead of silently widening or suppressing runtime evidence.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, fanout widening, candidate filter retune, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

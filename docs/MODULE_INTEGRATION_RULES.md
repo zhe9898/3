@@ -950,3 +950,9 @@ The integration contract remains owner-consumed structured metadata only. Applic
 V669-V676 adds no new cross-module command, event consumer, projection parser, event router, replay store, or scheduler path. The event-metadata replay proof records existing `PopulationAndHouseholds` behavior: repeated same-seed owner runs produce the same selected threshold-event signature without persisting replay state or exposing a selector.
 
 The integration contract remains owner-consumed structured metadata only. Application/UI/Unity must not calculate event replay signatures, event metadata meaning, threshold crossing, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime threshold extraction v677-v684 integration note
+
+V677-V684 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the selected-household runtime `MigrationStarted` event threshold into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default threshold 80.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate threshold crossing, validation fallback, fanout eligibility, target ordering, or household movement outcomes.

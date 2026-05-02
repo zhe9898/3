@@ -1530,6 +1530,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
         int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
         int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
+        int migrationStartedEventThreshold = _householdMobilityRulesData
+            .GetMonthlyRuntimeMigrationStartedEventThresholdOrDefault();
 
         if (settlementCap <= 0
             || householdCap <= 0
@@ -1573,7 +1575,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                     $"Household mobility pressure raised {household.HouseholdName} migration risk from {oldMigrationRisk} to {household.MigrationRisk}.",
                     household.Id.Value.ToString());
 
-                if (oldMigrationRisk < 80 && household.MigrationRisk >= 80)
+                if (oldMigrationRisk < migrationStartedEventThreshold
+                    && household.MigrationRisk >= migrationStartedEventThreshold)
                 {
                     scope.Emit(
                         PopulationEventNames.MigrationStarted,

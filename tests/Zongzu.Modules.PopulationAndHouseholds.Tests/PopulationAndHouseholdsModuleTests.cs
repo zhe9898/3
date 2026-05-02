@@ -964,6 +964,56 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleDefaultMigrationStartedEventThresholdPreservesPreviousEventBehavior()
+    {
+        static void ConfigureThresholdEventFixture(PopulationAndHouseholdsState state)
+        {
+            GetHousehold(state, 2).MigrationRisk = 78;
+        }
+
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationHouseholdMobilityRulesData explicitDefaultThresholdRules =
+            cappedRules with
+            {
+                MonthlyRuntimeMigrationStartedEventThreshold =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationStartedEventThreshold,
+            };
+
+        PopulationMobilityRunResult defaultResult = RunFirstMobilityRuntimeScenario(
+            cappedRules,
+            ConfigureThresholdEventFixture);
+        PopulationMobilityRunResult explicitDefaultThresholdResult = RunFirstMobilityRuntimeScenario(
+            explicitDefaultThresholdRules,
+            ConfigureThresholdEventFixture);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationStartedEventThreshold,
+            Is.EqualTo(80));
+        Assert.That(
+            BuildThresholdEventSignature(explicitDefaultThresholdResult),
+            Is.EqualTo(BuildThresholdEventSignature(defaultResult)));
+        Assert.That(GetHousehold(defaultResult.State, 2).MigrationRisk, Is.EqualTo(80));
+        Assert.That(GetHousehold(explicitDefaultThresholdResult.State, 2).MigrationRisk, Is.EqualTo(80));
+
+        static string BuildThresholdEventSignature(PopulationMobilityRunResult result)
+        {
+            IDomainEvent thresholdEvent = result.EventBuffer.Events.Single(evt =>
+                evt.EventType == PopulationEventNames.MigrationStarted
+                && evt.EntityKey == "2");
+
+            return string.Join(
+                "|",
+                thresholdEvent.EventType,
+                thresholdEvent.EntityKey,
+                thresholdEvent.Metadata[DomainEventMetadataKeys.Cause],
+                thresholdEvent.Metadata[DomainEventMetadataKeys.SettlementId],
+                thresholdEvent.Metadata[DomainEventMetadataKeys.HouseholdId],
+                thresholdEvent.Summary);
+        }
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRuleThresholdEventCarriesMetadataWithoutSummaryParsing()
     {
         static void ConfigureThresholdMetadataFixture(PopulationAndHouseholdsState state)
@@ -1049,16 +1099,21 @@ public sealed class PopulationAndHouseholdsModuleTests
                 MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
                 MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
                 MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
+                MonthlyRuntimeMigrationStartedEventThreshold =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationStartedEventThreshold + 1,
             };
 
         PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
 
         Assert.That(validation.IsValid, Is.False);
-        Assert.That(validation.Errors, Has.Count.EqualTo(4));
+        Assert.That(validation.Errors, Has.Count.EqualTo(5));
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_active_pool_outflow_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_settlement_cap")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_household_cap")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_risk_delta")), Is.True);
+        Assert.That(
+            validation.Errors.Any(static error => error.Contains("monthly_runtime_migration_started_event_threshold")),
+            Is.True);
         Assert.That(
             rulesData.GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeActivePoolOutflowThreshold));
@@ -1071,6 +1126,24 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeRiskDeltaOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeRiskDelta));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeMigrationStartedEventThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationStartedEventThreshold));
+    }
+
+    [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationStartedEventThresholdFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeMigrationStartedEventThreshold = 0 };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors.Single(), Does.Contain("monthly_runtime_migration_started_event_threshold"));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeMigrationStartedEventThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationStartedEventThreshold));
     }
 
     [Test]
@@ -1083,6 +1156,8 @@ public sealed class PopulationAndHouseholdsModuleTests
                 MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
                 MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
                 MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
+                MonthlyRuntimeMigrationStartedEventThreshold =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationStartedEventThreshold + 1,
             };
 
         PopulationMobilityRunResult defaultResult = RunFirstMobilityRuntimeScenario(PopulationHouseholdMobilityRulesData.Default);
