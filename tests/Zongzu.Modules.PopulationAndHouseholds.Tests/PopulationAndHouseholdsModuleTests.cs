@@ -993,6 +993,38 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleThresholdEventMetadataReplayStable()
+    {
+        static void ConfigureThresholdReplayFixture(PopulationAndHouseholdsState state)
+        {
+            GetHousehold(state, 2).MigrationRisk = 78;
+        }
+
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationMobilityRunResult first = RunFirstMobilityRuntimeScenario(cappedRules, ConfigureThresholdReplayFixture);
+        PopulationMobilityRunResult second = RunFirstMobilityRuntimeScenario(cappedRules, ConfigureThresholdReplayFixture);
+
+        Assert.That(BuildThresholdEventMetadataSignature(second), Is.EqualTo(BuildThresholdEventMetadataSignature(first)));
+
+        static string BuildThresholdEventMetadataSignature(PopulationMobilityRunResult result)
+        {
+            IDomainEvent thresholdEvent = result.EventBuffer.Events.Single(evt =>
+                evt.EventType == PopulationEventNames.MigrationStarted
+                && evt.EntityKey == "2");
+
+            return string.Join(
+                "|",
+                thresholdEvent.EventType,
+                thresholdEvent.EntityKey,
+                thresholdEvent.Metadata[DomainEventMetadataKeys.Cause],
+                thresholdEvent.Metadata[DomainEventMetadataKeys.SettlementId],
+                thresholdEvent.Metadata[DomainEventMetadataKeys.HouseholdId],
+                thresholdEvent.Summary);
+        }
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
