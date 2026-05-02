@@ -672,3 +672,13 @@ Design alignment: this is hardcoded candidate-floor extraction, not a fanout wid
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the floor or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default equivalence and malformed floor fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, high-risk filter retune, general migration-state retune, fanout widening, or second runtime rule.
+
+## v693-v700 household mobility runtime score-weight extraction audit - 2026-05-03
+
+The v693-v700 pass extracts the first `PopulationAndHouseholds` runtime rule's migration-risk score weight into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded score-weight extraction, not a score formula retune. Default migration-risk score weight 4 preserves prior selected-household ordering under default rules-data, while malformed weight values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the score weight or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default equivalence and malformed score-weight fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, filter retune, threshold retune, fanout widening, or second runtime rule.

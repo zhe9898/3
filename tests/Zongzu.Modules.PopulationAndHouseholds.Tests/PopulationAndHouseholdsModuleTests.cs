@@ -857,6 +857,34 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleDefaultMigrationRiskScoreWeightPreservesPreviousScoreOrdering()
+    {
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationHouseholdMobilityRulesData explicitDefaultWeightRules =
+            cappedRules with
+            {
+                MonthlyRuntimeMigrationRiskScoreWeight =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationRiskScoreWeight,
+            };
+
+        PopulationMobilityRunResult defaultResult = RunFirstMobilityRuntimeScenario(cappedRules);
+        PopulationMobilityRunResult explicitDefaultWeightResult = RunFirstMobilityRuntimeScenario(explicitDefaultWeightRules);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationRiskScoreWeight,
+            Is.EqualTo(4));
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(explicitDefaultWeightResult),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(defaultResult)));
+        Assert.That(
+            explicitDefaultWeightResult.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!)),
+            Is.EqualTo(new[] { 2 }));
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRulePoolPriorityPrecedesCrossPoolHouseholdScore()
     {
         static void ConfigurePoolPriorityFixture(PopulationAndHouseholdsState state)
@@ -1136,6 +1164,8 @@ public sealed class PopulationAndHouseholdsModuleTests
             {
                 MonthlyRuntimeActivePoolOutflowThreshold = -1,
                 MonthlyRuntimeCandidateMigrationRiskFloor = -1,
+                MonthlyRuntimeMigrationRiskScoreWeight =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationRiskScoreWeight + 1,
                 MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
                 MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
                 MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
@@ -1146,9 +1176,10 @@ public sealed class PopulationAndHouseholdsModuleTests
         PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
 
         Assert.That(validation.IsValid, Is.False);
-        Assert.That(validation.Errors, Has.Count.EqualTo(6));
+        Assert.That(validation.Errors, Has.Count.EqualTo(7));
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_active_pool_outflow_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_floor")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_migration_risk_score_weight")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_settlement_cap")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_household_cap")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_risk_delta")), Is.True);
@@ -1161,6 +1192,9 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeCandidateMigrationRiskFloorOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeCandidateMigrationRiskFloor));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationRiskScoreWeight));
         Assert.That(
             rulesData.GetMonthlyRuntimeSettlementCapOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeSettlementCap));
@@ -1191,6 +1225,21 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationRiskScoreWeightFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeMigrationRiskScoreWeight = -1 };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors.Single(), Does.Contain("monthly_runtime_migration_risk_score_weight"));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationRiskScoreWeight));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationStartedEventThresholdFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
@@ -1213,6 +1262,8 @@ public sealed class PopulationAndHouseholdsModuleTests
             {
                 MonthlyRuntimeActivePoolOutflowThreshold = -1,
                 MonthlyRuntimeCandidateMigrationRiskFloor = -1,
+                MonthlyRuntimeMigrationRiskScoreWeight =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationRiskScoreWeight + 1,
                 MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
                 MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
                 MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
@@ -1541,7 +1592,7 @@ public sealed class PopulationAndHouseholdsModuleTests
             _ => 0,
         };
 
-        return (household.MigrationRisk * 4)
+        return (household.MigrationRisk * PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationRiskScoreWeight)
             + household.Distress
             + household.DebtPressure
             + laborPressure
