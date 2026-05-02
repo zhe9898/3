@@ -1495,3 +1495,7 @@ V637-V644 adds focused tests/docs proving active-pool priority before cross-pool
 Current household mobility runtime per-pool cap no-touch v645-v652 note:
 
 V645-V652 adds focused tests/docs proving household cap application is per selected active pool for the first `PopulationAndHouseholds` household mobility runtime rule. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, per-pool cap ledger, global household cap ledger, active-pool ledger, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.
+
+Current household mobility runtime threshold-event no-touch v653-v660 note:
+
+V653-V660 adds focused tests/docs proving threshold-event no-touch behavior for the first `PopulationAndHouseholds` household mobility runtime rule. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, threshold-event ledger, event-routing ledger, migration-started selector state, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.

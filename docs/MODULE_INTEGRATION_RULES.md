@@ -932,3 +932,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V645-V652 adds no new cross-module command, event consumer, projection parser, or scheduler path. The per-pool cap no-touch proof records existing `PopulationAndHouseholds` behavior: after active pools are selected, household cap one is applied inside each selected pool, so one deterministic candidate per selected pool may be touched and lower-score households in each pool remain no-touch.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate per-pool cap application, global household cap semantics, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime threshold-event no-touch v653-v660 integration note
+
+V653-V660 adds no new cross-module command, event consumer, projection parser, event router, or scheduler path. The threshold-event no-touch proof records existing `PopulationAndHouseholds` behavior: only a selected household that crosses the existing threshold emits the existing `PopulationEventNames.MigrationStarted` structured event with existing metadata, while unselected/off-cap households emit no threshold event.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate threshold crossing, event selection, fanout eligibility, target ordering, or household movement outcomes.
