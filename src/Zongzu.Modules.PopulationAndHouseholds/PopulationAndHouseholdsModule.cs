@@ -1529,6 +1529,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault();
         int candidateMigrationRiskFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeCandidateMigrationRiskFloorOrDefault();
+        int migrationRiskScoreWeight = _householdMobilityRulesData
+            .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
         int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
         int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
@@ -1557,7 +1559,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             PopulationHouseholdState[] candidates = scope.State.Households
                 .Where(household => household.SettlementId == pool.SettlementId
                     && IsMonthlyHouseholdMobilityRuntimeCandidate(household, candidateMigrationRiskFloor))
-                .OrderByDescending(ComputeMonthlyHouseholdMobilityRuntimeScore)
+                .OrderByDescending(household =>
+                    ComputeMonthlyHouseholdMobilityRuntimeScore(household, migrationRiskScoreWeight))
                 .ThenBy(static household => household.Id.Value)
                 .Take(householdCap)
                 .ToArray();
@@ -1616,7 +1619,9 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             || household.Livelihood is LivelihoodType.SeasonalMigrant or LivelihoodType.HiredLabor;
     }
 
-    private static int ComputeMonthlyHouseholdMobilityRuntimeScore(PopulationHouseholdState household)
+    private static int ComputeMonthlyHouseholdMobilityRuntimeScore(
+        PopulationHouseholdState household,
+        int migrationRiskScoreWeight)
     {
         int laborPressure = Math.Max(0, 60 - household.LaborCapacity);
         int grainPressure = Math.Max(0, 25 - household.GrainStore) / 2;
@@ -1629,7 +1634,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             _ => 0,
         };
 
-        return (household.MigrationRisk * 4)
+        return (household.MigrationRisk * migrationRiskScoreWeight)
             + household.Distress
             + household.DebtPressure
             + laborPressure

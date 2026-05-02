@@ -560,3 +560,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V685-V692 extracts the first `PopulationAndHouseholds` household mobility runtime rule's candidate migration-risk floor into owner-consumed rules-data. The default candidate floor remains 55, so below-floor households remain no-touch under default rules-data while malformed floor input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, high-risk filter retune, general migration-state retune, or second household mobility rule. Schema/migration impact: none.
+
+## V693-V700 Household Mobility Runtime Score Weight Extraction
+
+V693-V700 extracts the first `PopulationAndHouseholds` household mobility runtime rule's migration-risk score weight into owner-consumed rules-data. The default score weight remains 4, so the score-ordering fixture and selected household remain equivalent under default rules-data while malformed weight input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, score formula retune, fanout widening, filter retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
