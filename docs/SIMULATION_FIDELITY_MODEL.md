@@ -742,3 +742,9 @@ No runtime behavior, schema, cache, diagnostic state, pool ordering retune, thre
 V629-V636 reinforces household mobility fidelity budget limits by proving candidate score ordering selects the highest-scored pressure household before household-id tie-break applies. This keeps near-detail promotion bounded by existing pressure score while lower-score candidates remain no-touch under cap one.
 
 No runtime behavior, schema, cache, diagnostic state, score formula retune, candidate ordering retune, or performance claim is added.
+
+## V637-V644 Household Mobility Runtime Pool-Priority No-Touch Proof
+
+V637-V644 reinforces household mobility fidelity budget limits by proving active-pool priority is applied before cross-pool household score comparison. This keeps near-detail promotion bounded by selected active pools while a higher-scoring household in a lower-priority pool remains summary/no-touch under settlement cap one.
+
+No runtime behavior, schema, cache, diagnostic state, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, or performance claim is added.

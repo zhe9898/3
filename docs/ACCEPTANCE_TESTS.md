@@ -961,3 +961,9 @@ Acceptance evidence for V621-V628:
 Acceptance evidence for V629-V636:
 - `RunMonth_FirstMobilityRuntimeRuleScoreOrderingTouchesHigherScoreBeforeLowerHouseholdId` proves higher candidate score outranks lower household id under household cap one, and the lower household id receives no `Household mobility pressure` diff.
 - Architecture guard `Household_mobility_runtime_score_ordering_no_touch_v629_v636_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no score formula retune, no candidate ordering retune, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime pool-priority no-touch v637-v644 acceptance - 2026-05-02
+
+Acceptance evidence for V637-V644:
+- `RunMonth_FirstMobilityRuntimeRulePoolPriorityPrecedesCrossPoolHouseholdScore` proves active-pool priority is applied before cross-pool household score comparison under settlement cap one, and the higher-scoring off-pool household receives no `Household mobility pressure` diff.
+- Architecture guard `Household_mobility_runtime_pool_priority_no_touch_v637_v644_must_remain_test_evidence_only_without_runtime_or_schema_drift` proves this remains tests/docs evidence only: no loader, no plugin marketplace, no movement authority, no pool ordering retune, no score formula retune, no candidate ordering retune, no threshold retune, no schema drift, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority drift.

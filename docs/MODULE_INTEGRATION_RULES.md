@@ -920,3 +920,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V629-V636 adds no new cross-module command, event consumer, projection parser, or scheduler path. The score-ordering no-touch proof records existing `PopulationAndHouseholds` behavior: higher-score candidates are selected before household-id tie-break, so a lower household id remains no-touch when cap one is consumed by the higher-score candidate.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate candidate score ordering, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime pool-priority no-touch v637-v644 integration note
+
+V637-V644 adds no new cross-module command, event consumer, projection parser, or scheduler path. The pool-priority no-touch proof records existing `PopulationAndHouseholds` behavior: active pools are selected by outflow priority before household scores are considered inside each selected pool, so a higher-scoring household in an unselected lower-priority pool remains no-touch.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate active-pool priority, cross-pool household score comparison, fanout eligibility, target ordering, or household movement outcomes.
