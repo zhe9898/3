@@ -820,3 +820,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, grain eco
 V733-V740 keeps household mobility fidelity bounded while extracting the first runtime rule's land-holding pressure divisor into owner-consumed rules-data. Default divisor 2 preserves the prior candidate ordering behavior; malformed divisor values fall back to default instead of silently widening or reordering runtime work, and divisor 0 cannot reach the score path.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, land economy retune, land floor retune, grain pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V741-V748 Household Mobility Runtime Candidate Ceiling Extraction
+
+V741-V748 keeps household mobility fidelity bounded while extracting the first runtime rule's high-risk candidate ceiling into owner-consumed rules-data. Default ceiling 80 preserves prior no-touch behavior for households already at the high-risk edge; malformed ceiling values fall back to default instead of silently widening or reordering runtime work.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, migration-started event threshold retune, candidate floor retune, trigger threshold extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

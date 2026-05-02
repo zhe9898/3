@@ -7,6 +7,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int FocusedMemberPromotionCap,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
+    int MonthlyRuntimeCandidateMigrationRiskCeiling,
     int MonthlyRuntimeMigrationRiskScoreWeight,
     int MonthlyRuntimeLaborCapacityPressureFloor,
     int MonthlyRuntimeGrainStorePressureFloor,
@@ -22,6 +23,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxFocusedMemberPromotionCap = 8;
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
+    public const int DefaultMonthlyRuntimeCandidateMigrationRiskCeiling = 80;
     public const int DefaultMonthlyRuntimeMigrationRiskScoreWeight = 4;
     public const int DefaultMonthlyRuntimeLaborCapacityPressureFloor = 60;
     public const int DefaultMonthlyRuntimeGrainStorePressureFloor = 25;
@@ -35,6 +37,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxMonthlyRuntimeSettlementCap = 8;
     public const int MaxMonthlyRuntimeHouseholdCap = 16;
     public const int MaxMonthlyRuntimeRiskDelta = 8;
+    public const int MaxMonthlyRuntimeCandidateMigrationRiskCeiling = 100;
     public const int MaxMonthlyRuntimeMigrationRiskScoreWeight = 16;
     public const int MaxMonthlyRuntimeGrainStorePressureDivisor = 16;
     public const int MaxMonthlyRuntimeLandHoldingPressureDivisor = 16;
@@ -45,6 +48,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultFocusedMemberPromotionCap,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
+            DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -61,6 +65,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             focusedMemberPromotionCap,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
+            DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -92,6 +97,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (MonthlyRuntimeCandidateMigrationRiskFloor is < 0 or > 100)
         {
             errors.Add("monthly_runtime_candidate_migration_risk_floor must be between 0 and 100.");
+        }
+
+        if (MonthlyRuntimeCandidateMigrationRiskCeiling is < 1 or > MaxMonthlyRuntimeCandidateMigrationRiskCeiling)
+        {
+            errors.Add(
+                $"monthly_runtime_candidate_migration_risk_ceiling must be between 1 and {MaxMonthlyRuntimeCandidateMigrationRiskCeiling}.");
         }
 
         if (MonthlyRuntimeMigrationRiskScoreWeight is < 0 or > MaxMonthlyRuntimeMigrationRiskScoreWeight)
@@ -175,6 +186,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeCandidateMigrationRiskFloor
             : DefaultMonthlyRuntimeCandidateMigrationRiskFloor;
+    }
+
+    public int GetMonthlyRuntimeCandidateMigrationRiskCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeCandidateMigrationRiskCeiling
+            : DefaultMonthlyRuntimeCandidateMigrationRiskCeiling;
     }
 
     public int GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault()
