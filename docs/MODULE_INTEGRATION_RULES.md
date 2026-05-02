@@ -926,3 +926,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V637-V644 adds no new cross-module command, event consumer, projection parser, or scheduler path. The pool-priority no-touch proof records existing `PopulationAndHouseholds` behavior: active pools are selected by outflow priority before household scores are considered inside each selected pool, so a higher-scoring household in an unselected lower-priority pool remains no-touch.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate active-pool priority, cross-pool household score comparison, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime per-pool cap no-touch v645-v652 integration note
+
+V645-V652 adds no new cross-module command, event consumer, projection parser, or scheduler path. The per-pool cap no-touch proof records existing `PopulationAndHouseholds` behavior: after active pools are selected, household cap one is applied inside each selected pool, so one deterministic candidate per selected pool may be touched and lower-score households in each pool remain no-touch.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate per-pool cap application, global household cap semantics, fanout eligibility, target ordering, or household movement outcomes.

@@ -524,3 +524,9 @@ This is not a migration engine, route-history model, movement command, fanout wi
 V637-V644 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule applies active-pool priority before cross-pool household score comparison. With settlement cap one, the higher-outflow pool receives the existing pressure pass while a higher-scoring household in a lower-priority pool remains no-touch.
 
 This is not a migration engine, route-history model, movement command, fanout widening, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
+
+## V645-V652 Household Mobility Runtime Per-Pool Cap No-Touch Proof
+
+V645-V652 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule applies the household cap inside each selected active pool, not as a global cross-pool cap. With settlement cap two and household cap one, each selected pool receives one deterministic household touch while lower-score households inside those pools remain no-touch.
+
+This is not a migration engine, route-history model, movement command, fanout widening, cap semantics retune, global household cap, pool ordering retune, score formula retune, candidate ordering retune, threshold retune, or second household mobility rule. Schema/migration impact: none.

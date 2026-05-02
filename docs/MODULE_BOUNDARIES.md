@@ -1413,3 +1413,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V637-V644 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule applies active-pool priority before cross-pool household score comparison. The pass adds only tests/docs and keeps pool priority, settlement cap application, candidate scoring, fanout, and no-touch behavior inside the owning module.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, pool-priority ledger, cross-pool score ledger, cache, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime per-pool cap no-touch v645-v652 boundary note
+
+V645-V652 is a `PopulationAndHouseholds` owner-lane proof that the first household mobility runtime rule applies household cap limits inside each selected active pool. The pass adds only tests/docs and keeps pool selection, per-pool cap application, candidate scoring, fanout, and no-touch behavior inside the owning module.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, schema field, per-pool cap ledger, global household cap ledger, cache, or `PersonRegistry` expansion is introduced.
