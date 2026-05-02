@@ -8,6 +8,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeMigrationRiskScoreWeight,
+    int MonthlyRuntimeLaborCapacityPressureFloor,
     int MonthlyRuntimeSettlementCap,
     int MonthlyRuntimeHouseholdCap,
     int MonthlyRuntimeRiskDelta,
@@ -18,6 +19,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeMigrationRiskScoreWeight = 4;
+    public const int DefaultMonthlyRuntimeLaborCapacityPressureFloor = 60;
     public const int DefaultMonthlyRuntimeSettlementCap = 1;
     public const int DefaultMonthlyRuntimeHouseholdCap = 2;
     public const int DefaultMonthlyRuntimeRiskDelta = 1;
@@ -34,6 +36,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
+            DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
             DefaultMonthlyRuntimeRiskDelta,
@@ -45,6 +48,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
+            DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
             DefaultMonthlyRuntimeRiskDelta,
@@ -76,6 +80,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"monthly_runtime_migration_risk_score_weight must be between 0 and {MaxMonthlyRuntimeMigrationRiskScoreWeight}.");
+        }
+
+        if (MonthlyRuntimeLaborCapacityPressureFloor is < 0 or > 100)
+        {
+            errors.Add("monthly_runtime_labor_capacity_pressure_floor must be between 0 and 100.");
         }
 
         if (MonthlyRuntimeSettlementCap is < 0 or > MaxMonthlyRuntimeSettlementCap)
@@ -133,6 +142,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeMigrationRiskScoreWeight
             : DefaultMonthlyRuntimeMigrationRiskScoreWeight;
+    }
+
+    public int GetMonthlyRuntimeLaborCapacityPressureFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeLaborCapacityPressureFloor
+            : DefaultMonthlyRuntimeLaborCapacityPressureFloor;
     }
 
     public int GetMonthlyRuntimeSettlementCapOrDefault()

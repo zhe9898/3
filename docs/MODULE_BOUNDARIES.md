@@ -1455,3 +1455,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V693-V700 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's migration-risk score weight is now read from `PopulationHouseholdMobilityRulesData` with default 4.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, score-weight state, event-routing ledger, validation ledger, cache, score formula retune, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime labor-floor extraction v701-v708 boundary note
+
+V701-V708 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's labor-capacity pressure floor is now read from `PopulationHouseholdMobilityRulesData` with default 60.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, labor-floor state, event-routing ledger, validation ledger, cache, labor model retune, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.

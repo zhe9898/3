@@ -1012,3 +1012,10 @@ Acceptance evidence for V693-V700:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultMigrationRiskScoreWeightPreservesPreviousScoreOrdering` proves default migration-risk score weight 4 and explicit default weight produce the same monthly runtime signature and selected household under cap one.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationRiskScoreWeightFallsBackToDefault` proves malformed score-weight data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_score_weight_extraction_v693_v700_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime labor-floor extraction v701-v708 acceptance - 2026-05-03
+
+Acceptance evidence for V701-V708:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultLaborCapacityPressureFloorPreservesPreviousScoreOrdering` proves default labor-capacity pressure floor 60 and explicit default floor produce the same monthly runtime signature and selected household under cap one.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeLaborCapacityPressureFloorFallsBackToDefault` proves malformed labor-floor data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_labor_floor_extraction_v701_v708_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
