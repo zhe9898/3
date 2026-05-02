@@ -1539,6 +1539,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeGrainStorePressureDivisorOrDefault();
         int landHoldingPressureFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeLandHoldingPressureFloorOrDefault();
+        int landHoldingPressureDivisor = _householdMobilityRulesData
+            .GetMonthlyRuntimeLandHoldingPressureDivisorOrDefault();
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
         int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
         int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
@@ -1574,7 +1576,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         laborCapacityPressureFloor,
                         grainStorePressureFloor,
                         grainStorePressureDivisor,
-                        landHoldingPressureFloor))
+                        landHoldingPressureFloor,
+                        landHoldingPressureDivisor))
                 .ThenBy(static household => household.Id.Value)
                 .Take(householdCap)
                 .ToArray();
@@ -1639,11 +1642,12 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int laborCapacityPressureFloor,
         int grainStorePressureFloor,
         int grainStorePressureDivisor,
-        int landHoldingPressureFloor)
+        int landHoldingPressureFloor,
+        int landHoldingPressureDivisor)
     {
         int laborPressure = Math.Max(0, laborCapacityPressureFloor - household.LaborCapacity);
         int grainPressure = Math.Max(0, grainStorePressureFloor - household.GrainStore) / grainStorePressureDivisor;
-        int landPressure = Math.Max(0, landHoldingPressureFloor - household.LandHolding) / 2;
+        int landPressure = Math.Max(0, landHoldingPressureFloor - household.LandHolding) / landHoldingPressureDivisor;
         int livelihoodPressure = household.Livelihood switch
         {
             LivelihoodType.SeasonalMigrant => 18,

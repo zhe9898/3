@@ -1001,6 +1001,35 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleDefaultLandHoldingPressureDivisorPreservesPreviousScoreOrdering()
+    {
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationHouseholdMobilityRulesData explicitDefaultLandDivisorRules =
+            cappedRules with
+            {
+                MonthlyRuntimeLandHoldingPressureDivisor =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLandHoldingPressureDivisor,
+            };
+
+        PopulationMobilityRunResult defaultResult = RunFirstMobilityRuntimeScenario(cappedRules);
+        PopulationMobilityRunResult explicitDefaultLandDivisorResult =
+            RunFirstMobilityRuntimeScenario(explicitDefaultLandDivisorRules);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLandHoldingPressureDivisor,
+            Is.EqualTo(2));
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(explicitDefaultLandDivisorResult),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(defaultResult)));
+        Assert.That(
+            explicitDefaultLandDivisorResult.Diff.Entries
+                .Where(static entry => entry.Description.Contains("Household mobility pressure"))
+                .Select(static entry => int.Parse(entry.EntityKey!)),
+            Is.EqualTo(new[] { 2 }));
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRulePoolPriorityPrecedesCrossPoolHouseholdScore()
     {
         static void ConfigurePoolPriorityFixture(PopulationAndHouseholdsState state)
@@ -1287,6 +1316,8 @@ public sealed class PopulationAndHouseholdsModuleTests
                 MonthlyRuntimeGrainStorePressureDivisor =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeGrainStorePressureDivisor + 1,
                 MonthlyRuntimeLandHoldingPressureFloor = -1,
+                MonthlyRuntimeLandHoldingPressureDivisor =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLandHoldingPressureDivisor + 1,
                 MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
                 MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
                 MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
@@ -1297,7 +1328,7 @@ public sealed class PopulationAndHouseholdsModuleTests
         PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
 
         Assert.That(validation.IsValid, Is.False);
-        Assert.That(validation.Errors, Has.Count.EqualTo(11));
+        Assert.That(validation.Errors, Has.Count.EqualTo(12));
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_active_pool_outflow_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_migration_risk_score_weight")), Is.True);
@@ -1305,6 +1336,7 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_grain_store_pressure_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_grain_store_pressure_divisor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_land_holding_pressure_floor")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_land_holding_pressure_divisor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_settlement_cap")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_household_cap")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_risk_delta")), Is.True);
@@ -1332,6 +1364,9 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeLandHoldingPressureFloorOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLandHoldingPressureFloor));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeLandHoldingPressureDivisorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLandHoldingPressureDivisor));
         Assert.That(
             rulesData.GetMonthlyRuntimeSettlementCapOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeSettlementCap));
@@ -1437,6 +1472,21 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeLandHoldingPressureDivisorFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeLandHoldingPressureDivisor = 0 };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors.Single(), Does.Contain("monthly_runtime_land_holding_pressure_divisor"));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeLandHoldingPressureDivisorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLandHoldingPressureDivisor));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationStartedEventThresholdFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
@@ -1466,6 +1516,8 @@ public sealed class PopulationAndHouseholdsModuleTests
                 MonthlyRuntimeGrainStorePressureDivisor =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeGrainStorePressureDivisor + 1,
                 MonthlyRuntimeLandHoldingPressureFloor = -1,
+                MonthlyRuntimeLandHoldingPressureDivisor =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLandHoldingPressureDivisor + 1,
                 MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
                 MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
                 MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
@@ -1792,7 +1844,8 @@ public sealed class PopulationAndHouseholdsModuleTests
             / PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeGrainStorePressureDivisor;
         int landPressure = Math.Max(
             0,
-            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLandHoldingPressureFloor - household.LandHolding) / 2;
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLandHoldingPressureFloor - household.LandHolding)
+            / PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLandHoldingPressureDivisor;
         int livelihoodPressure = household.Livelihood switch
         {
             LivelihoodType.SeasonalMigrant => 18,

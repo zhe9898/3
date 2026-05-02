@@ -722,3 +722,13 @@ Design alignment: this is hardcoded grain-divisor extraction, not a grain econom
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the grain divisor or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default equivalence and malformed grain-divisor fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, filter retune, threshold retune, fanout widening, or second runtime rule.
+
+## v733-v740 household mobility runtime land-divisor extraction audit - 2026-05-03
+
+The v733-v740 pass extracts the first `PopulationAndHouseholds` runtime rule's land-holding pressure divisor into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded land-divisor extraction, not a land economy retune, land floor retune, grain pressure divisor extraction, or score formula expansion. Default land-holding pressure divisor 2 preserves prior selected-household ordering under default rules-data, while malformed divisor values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the land divisor or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default equivalence and malformed land-divisor fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, filter retune, threshold retune, fanout widening, or second runtime rule.

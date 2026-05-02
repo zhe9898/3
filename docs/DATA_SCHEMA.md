@@ -1535,3 +1535,7 @@ V717-V724 extracts the runtime land-holding pressure floor into owner-consumed i
 Current household mobility runtime grain-divisor extraction v725-v732 note:
 
 V725-V732 extracts the runtime grain-store pressure divisor into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted grain-divisor field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, grain-divisor state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime land-divisor extraction v733-v740 note:
+
+V733-V740 extracts the runtime land-holding pressure divisor into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted land-divisor field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, land-divisor state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
