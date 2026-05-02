@@ -488,3 +488,8 @@ After v38-v60 made office/yamen and Family owner-lane readback visible, and v61-
 V581-V588 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule respects the active-pool threshold as a deterministic no-touch gate. The proof keeps the branch within the existing owner lane: threshold-blocked pools produce the same household/pool signature as the zero-risk-delta baseline and emit no `Household mobility pressure` diff.
 
 This is not a migration engine, route-history model, movement command, or second household mobility rule. Schema/migration impact: none.
+## V589-V596 Household Mobility Runtime Zero-Cap No-Touch Proof
+
+V589-V596 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule respects zero fanout caps as deterministic no-touch gates. Settlement cap zero selects no active pools, household cap zero selects no households, and both paths match the zero-risk-delta baseline with no `Household mobility pressure` diff.
+
+This is not a migration engine, route-history model, movement command, fanout widening, or second household mobility rule. Schema/migration impact: none.

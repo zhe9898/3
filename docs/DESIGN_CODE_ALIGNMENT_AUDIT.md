@@ -592,3 +592,8 @@
 The v581-v588 pass adds threshold no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves that a maximum active-pool threshold blocks selection for the fixture, matches a zero-risk-delta baseline, and emits no household mobility pressure diff.
 
 Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.
+## v589-v596 household mobility runtime zero-cap no-touch audit - 2026-05-01
+
+The v589-v596 pass adds zero-cap no-touch evidence for the first `PopulationAndHouseholds` household mobility runtime rule. The owner test proves settlement cap zero and household cap zero both match a zero-risk-delta baseline and emit no household mobility pressure diff.
+
+Alignment result: no runtime behavior change, no movement authority, no rules-data loader, no route-history state, no schema drift, no `PersonRegistry` expansion, and no Application/UI/Unity calculation path.

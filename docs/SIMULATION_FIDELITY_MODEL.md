@@ -712,3 +712,8 @@ It should ask:
 V581-V588 keeps household mobility fidelity bounded by proving an active-pool threshold can leave the first runtime rule inert for below-threshold pools. This reinforces near detail / far summary discipline: only eligible active pools may be considered, while below-threshold pools and their households remain untouched.
 
 No runtime behavior, schema, cache, diagnostic state, or performance claim is added.
+## V589-V596 Household Mobility Runtime Zero-Cap No-Touch Proof
+
+V589-V596 reinforces household mobility fidelity budget limits by proving zero fanout caps leave the first runtime rule inert. This keeps near detail bounded by explicit caps and prevents quiet/off-scope households from being promoted into rule work through accidental fanout.
+
+No runtime behavior, schema, cache, diagnostic state, or performance claim is added.

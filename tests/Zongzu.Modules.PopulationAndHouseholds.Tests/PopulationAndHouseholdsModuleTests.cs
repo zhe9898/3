@@ -630,6 +630,30 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleZeroCapsNoTouchHouseholdsOrPools()
+    {
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeRiskDelta = 0 });
+        PopulationMobilityRunResult settlementCapBlocked = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeSettlementCap = 0 });
+        PopulationMobilityRunResult householdCapBlocked = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 0 });
+
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(settlementCapBlocked),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(baseline)));
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(householdCapBlocked),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(baseline)));
+        Assert.That(
+            settlementCapBlocked.Diff.Entries.Where(static entry => entry.Description.Contains("Household mobility pressure")),
+            Is.Empty);
+        Assert.That(
+            householdCapBlocked.Diff.Entries.Where(static entry => entry.Description.Contains("Household mobility pressure")),
+            Is.Empty);
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCapFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =

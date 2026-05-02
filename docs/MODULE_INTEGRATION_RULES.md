@@ -890,3 +890,8 @@ Until the general seam exists, any command route not yet moved into its owning m
 V581-V588 adds no new cross-module command, event consumer, projection parser, or scheduler path. The threshold no-touch proof records an existing `PopulationAndHouseholds` behavior: below-threshold migration pools are not selected by the first household mobility runtime rule, so no household mobility pressure diff is emitted.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate active-pool eligibility, threshold blocking, target ordering, or household movement outcomes.
+## Household mobility runtime zero-cap no-touch v589-v596 integration note
+
+V589-V596 adds no new cross-module command, event consumer, projection parser, or scheduler path. The zero-cap no-touch proof records existing `PopulationAndHouseholds` behavior: zero settlement cap selects no active pools and zero household cap selects no households, so no household mobility pressure diff is emitted.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate cap blocking, fanout eligibility, target ordering, or household movement outcomes.
