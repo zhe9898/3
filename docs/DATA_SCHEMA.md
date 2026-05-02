@@ -1474,3 +1474,6 @@ V581-V588 adds focused tests/docs proving active-pool threshold blocking for the
 Current household mobility runtime zero-cap no-touch v589-v596 note:
 
 V589-V596 adds focused tests/docs proving zero-cap blocking for the first `PopulationAndHouseholds` household mobility runtime rule. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.
+Current household mobility runtime zero-risk-delta no-touch v597-v604 note:
+
+V597-V604 adds focused tests/docs proving zero-risk-delta blocking for the first `PopulationAndHouseholds` household mobility runtime rule. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, diagnostic state, performance cache, rules-data file, loader, or save-manifest change is added.

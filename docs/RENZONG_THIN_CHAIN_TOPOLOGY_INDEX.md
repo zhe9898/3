@@ -493,3 +493,8 @@ This is not a migration engine, route-history model, movement command, or second
 V589-V596 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule respects zero fanout caps as deterministic no-touch gates. Settlement cap zero selects no active pools, household cap zero selects no households, and both paths match the zero-risk-delta baseline with no `Household mobility pressure` diff.
 
 This is not a migration engine, route-history model, movement command, fanout widening, or second household mobility rule. Schema/migration impact: none.
+## V597-V604 Household Mobility Runtime Zero-Risk-Delta No-Touch Proof
+
+V597-V604 adds focused proof that the first `PopulationAndHouseholds` household mobility runtime rule respects zero risk delta as a deterministic no-touch gate. Risk delta zero matches a cap-blocked no-touch baseline and emits no `Household mobility pressure` diff.
+
+This is not a migration engine, route-history model, movement command, fanout widening, risk tuning pass, or second household mobility rule. Schema/migration impact: none.

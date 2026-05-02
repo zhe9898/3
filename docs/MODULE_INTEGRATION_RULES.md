@@ -895,3 +895,8 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V589-V596 adds no new cross-module command, event consumer, projection parser, or scheduler path. The zero-cap no-touch proof records existing `PopulationAndHouseholds` behavior: zero settlement cap selects no active pools and zero household cap selects no households, so no household mobility pressure diff is emitted.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate cap blocking, fanout eligibility, target ordering, or household movement outcomes.
+## Household mobility runtime zero-risk-delta no-touch v597-v604 integration note
+
+V597-V604 adds no new cross-module command, event consumer, projection parser, or scheduler path. The zero-risk-delta no-touch proof records existing `PopulationAndHouseholds` behavior: risk delta zero exits before target mutation, so no household mobility pressure diff is emitted.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate risk-delta blocking, fanout eligibility, target ordering, or household movement outcomes.
