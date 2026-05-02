@@ -702,3 +702,13 @@ Design alignment: this is hardcoded grain-floor extraction, not a grain economy 
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the grain floor or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default equivalence and malformed grain-floor fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, filter retune, threshold retune, fanout widening, or second runtime rule.
+
+## v717-v724 household mobility runtime land-floor extraction audit - 2026-05-03
+
+The v717-v724 pass extracts the first `PopulationAndHouseholds` runtime rule's land-holding pressure floor into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded land-floor extraction, not a land economy retune, land pressure divisor extraction, class/status engine, or score formula expansion. Default land-holding pressure floor 20 preserves prior selected-household ordering under default rules-data, while malformed floor values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the land floor or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default equivalence and malformed land-floor fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, filter retune, threshold retune, fanout widening, or second runtime rule.
