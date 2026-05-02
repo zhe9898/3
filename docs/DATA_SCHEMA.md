@@ -1543,3 +1543,7 @@ V733-V740 extracts the runtime land-holding pressure divisor into owner-consumed
 Current household mobility runtime candidate-ceiling extraction v741-v748 note:
 
 V741-V748 extracts the runtime high-risk candidate ceiling into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted candidate-ceiling field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, candidate-ceiling state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime distress-trigger extraction v749-v756 note:
+
+V749-V756 extracts the runtime distress trigger threshold into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted distress-trigger field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, distress-trigger state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

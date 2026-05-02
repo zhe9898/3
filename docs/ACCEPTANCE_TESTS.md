@@ -1054,3 +1054,10 @@ Acceptance evidence for V741-V748:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultCandidateMigrationRiskCeilingPreservesPreviousNoTouchBehavior` proves default candidate migration-risk ceiling 80 and explicit default ceiling produce the same monthly runtime signature while a household at the ceiling remains no-touch.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCandidateMigrationRiskCeilingFallsBackToDefault` proves malformed candidate-ceiling data is rejected and falls back to default, including ceiling 0.
 - Architecture guard `Household_mobility_runtime_candidate_ceiling_extraction_v741_v748_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime distress-trigger extraction v749-v756 acceptance - 2026-05-03
+
+Acceptance evidence for V749-V756:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultDistressTriggerThresholdPreservesPreviousNoTouchBehavior` proves default distress trigger threshold 60 and explicit default threshold produce the same monthly runtime signature while a household below the threshold remains no-touch when no other trigger qualifies it.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeDistressTriggerThresholdFallsBackToDefault` proves malformed distress-trigger data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_distress_trigger_extraction_v749_v756_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

@@ -826,3 +826,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, land econ
 V741-V748 keeps household mobility fidelity bounded while extracting the first runtime rule's high-risk candidate ceiling into owner-consumed rules-data. Default ceiling 80 preserves prior no-touch behavior for households already at the high-risk edge; malformed ceiling values fall back to default instead of silently widening or reordering runtime work.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, migration-started event threshold retune, candidate floor retune, trigger threshold extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V749-V756 Household Mobility Runtime Distress Trigger Extraction
+
+V749-V756 keeps household mobility fidelity bounded while extracting the first runtime rule's distress trigger threshold into owner-consumed rules-data. Default threshold 60 preserves prior no-touch behavior for households below the distress trigger when no other trigger qualifies them; malformed values fall back to default instead of silently widening runtime work.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, distress economy retune, debt/labor/grain/land/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

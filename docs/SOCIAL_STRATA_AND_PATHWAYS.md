@@ -626,3 +626,9 @@ Default rules-data keeps the land-holding pressure divisor at 2, malformed divis
 V741-V748 records that the first household mobility runtime rule's high-risk candidate ceiling has been moved into owner-consumed rules-data. The social meaning remains bounded: households already at the default migration-risk ceiling are not re-selected for the small monthly pressure nudge, and this does not become movement, relocation, route history, or a social-status engine.
 
 Default rules-data keeps the candidate migration-risk ceiling at 80, malformed ceiling input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime distress-trigger extraction: v749-v756
+
+V749-V756 records that the first household mobility runtime rule's distress trigger threshold has been moved into owner-consumed rules-data. The social meaning remains bounded: distress can qualify an already-windowed household for the small monthly pressure nudge, but this is not a full poverty, migration, status, or relocation economy.
+
+Default rules-data keeps the distress trigger threshold at 60, malformed threshold input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.

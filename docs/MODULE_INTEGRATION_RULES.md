@@ -1004,3 +1004,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V741-V748 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the high-risk candidate ceiling into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default ceiling 80.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate high-risk eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime distress-trigger extraction v749-v756 integration note
+
+V749-V756 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the distress trigger threshold into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default threshold 60.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate distress eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
