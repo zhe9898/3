@@ -1529,6 +1529,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault();
         int candidateMigrationRiskFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeCandidateMigrationRiskFloorOrDefault();
+        int candidateMigrationRiskCeiling = _householdMobilityRulesData
+            .GetMonthlyRuntimeCandidateMigrationRiskCeilingOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
         int laborCapacityPressureFloor = _householdMobilityRulesData
@@ -1568,7 +1570,10 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         {
             PopulationHouseholdState[] candidates = scope.State.Households
                 .Where(household => household.SettlementId == pool.SettlementId
-                    && IsMonthlyHouseholdMobilityRuntimeCandidate(household, candidateMigrationRiskFloor))
+                    && IsMonthlyHouseholdMobilityRuntimeCandidate(
+                        household,
+                        candidateMigrationRiskFloor,
+                        candidateMigrationRiskCeiling))
                 .OrderByDescending(household =>
                     ComputeMonthlyHouseholdMobilityRuntimeScore(
                         household,
@@ -1619,10 +1624,11 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
     private static bool IsMonthlyHouseholdMobilityRuntimeCandidate(
         PopulationHouseholdState household,
-        int candidateMigrationRiskFloor)
+        int candidateMigrationRiskFloor,
+        int candidateMigrationRiskCeiling)
     {
         if (household.IsMigrating
-            || household.MigrationRisk >= 80
+            || household.MigrationRisk >= candidateMigrationRiskCeiling
             || household.MigrationRisk < candidateMigrationRiskFloor)
         {
             return false;

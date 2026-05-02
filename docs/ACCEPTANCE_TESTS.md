@@ -1047,3 +1047,10 @@ Acceptance evidence for V733-V740:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultLandHoldingPressureDivisorPreservesPreviousScoreOrdering` proves default land-holding pressure divisor 2 and explicit default divisor produce the same monthly runtime signature and selected household under cap one.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeLandHoldingPressureDivisorFallsBackToDefault` proves malformed land-divisor data is rejected and falls back to default, including divisor 0.
 - Architecture guard `Household_mobility_runtime_land_divisor_extraction_v733_v740_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime candidate-ceiling extraction v741-v748 acceptance - 2026-05-03
+
+Acceptance evidence for V741-V748:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultCandidateMigrationRiskCeilingPreservesPreviousNoTouchBehavior` proves default candidate migration-risk ceiling 80 and explicit default ceiling produce the same monthly runtime signature while a household at the ceiling remains no-touch.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeCandidateMigrationRiskCeilingFallsBackToDefault` proves malformed candidate-ceiling data is rejected and falls back to default, including ceiling 0.
+- Architecture guard `Household_mobility_runtime_candidate_ceiling_extraction_v741_v748_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

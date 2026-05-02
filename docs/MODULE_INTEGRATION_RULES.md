@@ -998,3 +998,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V733-V740 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the land-holding pressure divisor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default divisor 2.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate land pressure, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime candidate-ceiling extraction v741-v748 integration note
+
+V741-V748 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the high-risk candidate ceiling into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default ceiling 80.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate high-risk eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.

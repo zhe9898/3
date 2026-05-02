@@ -1485,3 +1485,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V733-V740 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's land-holding pressure divisor is now read from `PopulationHouseholdMobilityRulesData` with default 2 and validation range 1..16.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, land-divisor state, event-routing ledger, validation ledger, cache, land economy retune, grain pressure divisor extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime candidate-ceiling extraction v741-v748 boundary note
+
+V741-V748 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's high-risk candidate ceiling is now read from `PopulationHouseholdMobilityRulesData` with default 80 and validation range 1..100.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, candidate-ceiling state, event-routing ledger, validation ledger, cache, migration-started event threshold retune, candidate floor retune, trigger threshold extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.

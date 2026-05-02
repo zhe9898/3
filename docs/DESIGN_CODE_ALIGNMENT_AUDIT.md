@@ -732,3 +732,13 @@ Design alignment: this is hardcoded land-divisor extraction, not a land economy 
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the land divisor or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default equivalence and malformed land-divisor fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, filter retune, threshold retune, fanout widening, or second runtime rule.
+
+## v741-v748 household mobility runtime candidate-ceiling extraction audit - 2026-05-03
+
+The v741-v748 pass extracts the first `PopulationAndHouseholds` runtime rule's high-risk candidate ceiling into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded candidate-ceiling extraction, not a migration-started event threshold retune, candidate floor retune, trigger threshold extraction, or score formula expansion. Default candidate migration-risk ceiling 80 preserves prior high-risk no-touch behavior under default rules-data, while malformed ceiling values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the candidate ceiling or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default no-touch equivalence and malformed candidate-ceiling fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, threshold retune, fanout widening, or second runtime rule.

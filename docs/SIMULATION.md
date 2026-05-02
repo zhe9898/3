@@ -939,3 +939,9 @@ No scheduler cadence change, grain economy retune, grain floor retune, land pres
 V733-V740 changes the first household mobility runtime rule's land-holding pressure divisor from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate filters, deterministic ordering, fanout caps, event type, and default land-pressure behavior remain unchanged.
 
 No scheduler cadence change, land economy retune, land floor retune, grain pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime candidate-ceiling extraction v741-v748 note
+
+V741-V748 changes the first household mobility runtime rule's high-risk candidate ceiling from a naked literal to an owner-consumed rules-data getter. The monthly cadence, active-pool selection, candidate floor, deterministic ordering, fanout caps, event type, and default high-risk no-touch behavior remain unchanged.
+
+No scheduler cadence change, migration-started event threshold retune, candidate floor retune, trigger threshold extraction, score formula retune beyond literal extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

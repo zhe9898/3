@@ -596,3 +596,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V733-V740 extracts the first `PopulationAndHouseholds` household mobility runtime rule's land-holding pressure divisor into owner-consumed rules-data. The default land divisor remains 2, and validation rejects 0, so the score-ordering fixture and selected household remain equivalent under default rules-data while malformed divisor input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, land economy retune, land floor retune, grain pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
+
+## V741-V748 Household Mobility Runtime Candidate Ceiling Extraction
+
+V741-V748 extracts the first `PopulationAndHouseholds` household mobility runtime rule's candidate high-risk ceiling into owner-consumed rules-data. The default candidate migration-risk ceiling remains 80, so households at or above that value remain no-touch candidates under default rules-data while malformed ceiling input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, migration-started event threshold retune, candidate floor retune, trigger threshold extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
