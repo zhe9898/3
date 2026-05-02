@@ -584,3 +584,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V717-V724 extracts the first `PopulationAndHouseholds` household mobility runtime rule's land-holding pressure floor into owner-consumed rules-data. The default land floor remains 20, so the score-ordering fixture and selected household remain equivalent under default rules-data while malformed floor input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, land economy retune, land pressure divisor extraction, class/status engine, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
+
+## V725-V732 Household Mobility Runtime Grain Divisor Extraction
+
+V725-V732 extracts the first `PopulationAndHouseholds` household mobility runtime rule's grain-store pressure divisor into owner-consumed rules-data. The default grain divisor remains 2, and validation rejects 0, so the score-ordering fixture and selected household remain equivalent under default rules-data while malformed divisor input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, grain economy retune, grain floor retune, land pressure divisor extraction, score formula retune beyond literal extraction, fanout widening, filter retune, threshold retune, or second household mobility rule. Schema/migration impact: none.
