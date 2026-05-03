@@ -229,6 +229,68 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistencePricePressure], Is.EqualTo("9"));
     }
 
+    [Test]
+    public void GrainPriceSpike_DefaultPriceLevelBandRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                GrainPriceLevelPressureBands = new[]
+                {
+                    new PopulationHouseholdMobilityThresholdScoreBand(170, 7),
+                    new PopulationHouseholdMobilityThresholdScoreBand(150, 5),
+                    new PopulationHouseholdMobilityThresholdScoreBand(130, 3),
+                    new PopulationHouseholdMobilityThresholdScoreBand(120, 2),
+                },
+                GrainPriceLevelPressureFallbackScore = 1,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
+            RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultGrainPriceLevelPressureFallbackScore, Is.EqualTo(1));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultGrainPriceLevelPressureBands,
+            Is.EqualTo(new[]
+            {
+                new PopulationHouseholdMobilityThresholdScoreBand(170, 7),
+                new PopulationHouseholdMobilityThresholdScoreBand(150, 5),
+                new PopulationHouseholdMobilityThresholdScoreBand(130, 3),
+                new PopulationHouseholdMobilityThresholdScoreBand(120, 2),
+            }));
+        Assert.That(explicitPreviousBaseline.GetGrainPriceLevelPressureScoreOrDefault(130), Is.EqualTo(3));
+        Assert.That(explicitPreviousBaseline.GetGrainPriceLevelPressureScoreOrDefault(119), Is.EqualTo(1));
+        Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistencePricePressure], Is.EqualTo("9"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidPriceLevelBandRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                GrainPriceLevelPressureBands = new[]
+                {
+                    new PopulationHouseholdMobilityThresholdScoreBand(130, 3),
+                    new PopulationHouseholdMobilityThresholdScoreBand(170, 7),
+                },
+                GrainPriceLevelPressureFallbackScore = 99,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(malformedRulesData.GetGrainPriceLevelPressureScoreOrDefault(130), Is.EqualTo(3));
+        Assert.That(malformedRulesData.GetGrainPriceLevelPressureFallbackScoreOrDefault(), Is.EqualTo(1));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistencePricePressure], Is.EqualTo("9"));
+    }
+
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunMissingMetadataGrainPriceSpike(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

@@ -961,6 +961,12 @@ The v957-v964 pass moves grain-price price-pressure clamp bounds from `ComputePr
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns grain-price pressure and household subsistence outcomes; Application/UI/Unity do not calculate grain price pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
 
+## v965-v972 population households grain price level band extraction audit - 2026-05-03
+
+The v965-v972 pass moves grain-price level threshold/score bands from `ComputePricePressure` literals into validated `PopulationHouseholdMobilityRulesData` defaults and fallback getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns grain-price pressure and household subsistence outcomes; Application/UI/Unity do not calculate grain price level bands or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
 Design alignment: this is behavior-neutral file organization and hardcoded-formula isolation after the query split, not a formula retune, rules-data extraction, movement command, route-history model, or class/status selector.
 
 Code alignment: dispatch/emit receipt code remains in the owner module call sites while private profile formulas move into the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.

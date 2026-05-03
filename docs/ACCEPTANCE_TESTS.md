@@ -1229,3 +1229,9 @@ Acceptance evidence for V949-V956:
 Acceptance evidence for V957-V964:
 - Population tests `GrainPriceSpike_DefaultPricePressureClampRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidPricePressureClampRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior price-pressure clamp behavior and malformed clamp config falls back deterministically.
 - Architecture guard `Population_households_grain_price_pressure_clamp_extraction_v957_v964_must_remain_owner_consumed_and_schema_neutral` proves grain price pressure clamp bounds moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+## PopulationAndHouseholds grain price level band extraction v965-v972 acceptance - 2026-05-03
+
+Acceptance evidence for V965-V972:
+- Population tests `GrainPriceSpike_DefaultPriceLevelBandRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidPriceLevelBandRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior price-level band behavior and malformed band config falls back deterministically.
+- Architecture guard `Population_households_grain_price_level_band_extraction_v965_v972_must_remain_owner_consumed_and_schema_neutral` proves grain price level bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.

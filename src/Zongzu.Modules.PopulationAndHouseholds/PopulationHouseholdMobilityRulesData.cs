@@ -28,6 +28,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int GrainPriceShockDemandClampCeiling,
     int GrainPricePressureClampFloor,
     int GrainPricePressureClampCeiling,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> GrainPriceLevelPressureBands,
+    int GrainPriceLevelPressureFallbackScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -83,6 +85,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultGrainPriceShockDemandClampCeiling = 100;
     public const int DefaultGrainPricePressureClampFloor = 4;
     public const int DefaultGrainPricePressureClampCeiling = 14;
+    public const int DefaultGrainPriceLevelPressureFallbackScore = 1;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -143,6 +146,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Tenant, 6),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultGrainPriceLevelPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(170, 7),
+            new PopulationHouseholdMobilityThresholdScoreBand(150, 5),
+            new PopulationHouseholdMobilityThresholdScoreBand(130, 3),
+            new PopulationHouseholdMobilityThresholdScoreBand(120, 2),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -167,6 +180,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceShockDemandClampCeiling,
             DefaultGrainPricePressureClampFloor,
             DefaultGrainPricePressureClampCeiling,
+            DefaultGrainPriceLevelPressureBands,
+            DefaultGrainPriceLevelPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -221,6 +236,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceShockDemandClampCeiling,
             DefaultGrainPricePressureClampFloor,
             DefaultGrainPricePressureClampCeiling,
+            DefaultGrainPriceLevelPressureBands,
+            DefaultGrainPriceLevelPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -470,6 +487,35 @@ public sealed record PopulationHouseholdMobilityRulesData(
             && GrainPricePressureClampFloor > GrainPricePressureClampCeiling)
         {
             errors.Add("grain_price_pressure_clamp_floor must not exceed grain_price_pressure_clamp_ceiling.");
+        }
+
+        if (GrainPriceLevelPressureBands is null
+            || GrainPriceLevelPressureBands.Count == 0
+            || GrainPriceLevelPressureBands.Any(static band =>
+                band.Threshold is < 0 or > MaxGrainPriceShockPrice
+                || band.Score is < 0 or > MaxGrainPricePressure)
+            || GrainPriceLevelPressureBands.Select(static band => band.Threshold).Distinct().Count() != GrainPriceLevelPressureBands.Count)
+        {
+            errors.Add(
+                $"grain_price_level_pressure_bands must be non-empty, distinct, and between threshold 0..{MaxGrainPriceShockPrice} and score 0..{MaxGrainPricePressure}.");
+        }
+
+        if (GrainPriceLevelPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < GrainPriceLevelPressureBands.Count; index++)
+            {
+                if (GrainPriceLevelPressureBands[index - 1].Threshold <= GrainPriceLevelPressureBands[index].Threshold)
+                {
+                    errors.Add("grain_price_level_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (GrainPriceLevelPressureFallbackScore is < 0 or > MaxGrainPricePressure)
+        {
+            errors.Add(
+                $"grain_price_level_pressure_fallback_score must be between 0 and {MaxGrainPricePressure}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -811,6 +857,33 @@ public sealed record PopulationHouseholdMobilityRulesData(
             : DefaultGrainPricePressureClampCeiling;
     }
 
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> GetGrainPriceLevelPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceLevelPressureBands
+            : DefaultGrainPriceLevelPressureBands;
+    }
+
+    public int GetGrainPriceLevelPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceLevelPressureFallbackScore
+            : DefaultGrainPriceLevelPressureFallbackScore;
+    }
+
+    public int GetGrainPriceLevelPressureScoreOrDefault(int currentPrice)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in GetGrainPriceLevelPressureBandsOrDefault())
+        {
+            if (currentPrice >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetGrainPriceLevelPressureFallbackScoreOrDefault();
+    }
+
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
     {
         return Validate().IsValid
@@ -1040,6 +1113,10 @@ public sealed record PopulationHouseholdMobilityRulesValidationResult(
 public readonly record struct PopulationHouseholdMobilityLivelihoodScoreWeight(
     LivelihoodType Livelihood,
     int Weight);
+
+public readonly record struct PopulationHouseholdMobilityThresholdScoreBand(
+    int Threshold,
+    int Score);
 
 public enum PopulationHouseholdMobilityPoolTieBreakPriority
 {
