@@ -1100,4 +1100,10 @@ V949-V956 changes grain-price signal parameter ownership only. The grain-price e
 
 No event pool, movement command, route-history path, grain-shock ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
 
+## Current population households grain price pressure clamp extraction v957-v964 note
+
+V957-V964 changes grain-price price-pressure clamp ownership only. The grain-price event path now reads price-pressure clamp bounds from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, grain-price-pressure ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

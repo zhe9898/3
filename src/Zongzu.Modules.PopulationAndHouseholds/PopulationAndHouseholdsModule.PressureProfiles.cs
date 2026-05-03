@@ -58,7 +58,7 @@ public sealed partial class PopulationAndHouseholdsModule
             : fallback;
     }
 
-    private static SubsistencePressureProfile ComputeSubsistencePressureProfile(
+    private SubsistencePressureProfile ComputeSubsistencePressureProfile(
         PopulationHouseholdState household,
         GrainPriceShockSignal signal)
     {
@@ -71,7 +71,7 @@ public sealed partial class PopulationAndHouseholdsModule
             ComputeSubsistenceInteractionPressure(household));
     }
 
-    private static int ComputePricePressure(GrainPriceShockSignal signal)
+    private int ComputePricePressure(GrainPriceShockSignal signal)
     {
         int priceLevel = signal.CurrentPrice switch
         {
@@ -100,7 +100,10 @@ public sealed partial class PopulationAndHouseholdsModule
             _ => 0,
         };
 
-        return Math.Clamp(priceLevel + priceJump + marketTightness, 4, 14);
+        return Math.Clamp(
+            priceLevel + priceJump + marketTightness,
+            _householdMobilityRulesData.GetGrainPricePressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetGrainPricePressureClampCeilingOrDefault());
     }
 
     private static int ComputeGrainBufferPressure(PopulationHouseholdState household)

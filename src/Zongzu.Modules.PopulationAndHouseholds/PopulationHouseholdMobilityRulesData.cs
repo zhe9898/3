@@ -26,6 +26,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int GrainPriceShockSupplyClampCeiling,
     int GrainPriceShockDemandClampFloor,
     int GrainPriceShockDemandClampCeiling,
+    int GrainPricePressureClampFloor,
+    int GrainPricePressureClampCeiling,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -79,9 +81,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultGrainPriceShockSupplyClampCeiling = 100;
     public const int DefaultGrainPriceShockDemandClampFloor = 0;
     public const int DefaultGrainPriceShockDemandClampCeiling = 100;
+    public const int DefaultGrainPricePressureClampFloor = 4;
+    public const int DefaultGrainPricePressureClampCeiling = 14;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
+    public const int MaxGrainPricePressure = 32;
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskCeiling = 80;
@@ -160,6 +165,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceShockSupplyClampCeiling,
             DefaultGrainPriceShockDemandClampFloor,
             DefaultGrainPriceShockDemandClampCeiling,
+            DefaultGrainPricePressureClampFloor,
+            DefaultGrainPricePressureClampCeiling,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -212,6 +219,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceShockSupplyClampCeiling,
             DefaultGrainPriceShockDemandClampFloor,
             DefaultGrainPriceShockDemandClampCeiling,
+            DefaultGrainPricePressureClampFloor,
+            DefaultGrainPricePressureClampCeiling,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -442,6 +451,25 @@ public sealed record PopulationHouseholdMobilityRulesData(
                 || GrainPriceShockDefaultDemand > GrainPriceShockDemandClampCeiling))
         {
             errors.Add("grain_price_shock_default_demand must stay within the demand clamp range.");
+        }
+
+        if (GrainPricePressureClampFloor is < 0 or > MaxGrainPricePressure)
+        {
+            errors.Add(
+                $"grain_price_pressure_clamp_floor must be between 0 and {MaxGrainPricePressure}.");
+        }
+
+        if (GrainPricePressureClampCeiling is < 0 or > MaxGrainPricePressure)
+        {
+            errors.Add(
+                $"grain_price_pressure_clamp_ceiling must be between 0 and {MaxGrainPricePressure}.");
+        }
+
+        if (GrainPricePressureClampFloor is >= 0 and <= MaxGrainPricePressure
+            && GrainPricePressureClampCeiling is >= 0 and <= MaxGrainPricePressure
+            && GrainPricePressureClampFloor > GrainPricePressureClampCeiling)
+        {
+            errors.Add("grain_price_pressure_clamp_floor must not exceed grain_price_pressure_clamp_ceiling.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -767,6 +795,20 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? GrainPriceShockDemandClampCeiling
             : DefaultGrainPriceShockDemandClampCeiling;
+    }
+
+    public int GetGrainPricePressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPricePressureClampFloor
+            : DefaultGrainPricePressureClampFloor;
+    }
+
+    public int GetGrainPricePressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPricePressureClampCeiling
+            : DefaultGrainPricePressureClampCeiling;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()

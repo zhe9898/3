@@ -1647,3 +1647,7 @@ V941-V948 extracts monthly prosperity/security/clan-relief/drift thresholds into
 Current population households grain price signal rules-data extraction v949-v956 note:
 
 V949-V956 extracts grain-price shock signal fallback and clamp values into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted grain-shock field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households grain price pressure clamp extraction v957-v964 note:
+
+V957-V964 extracts grain-price price-pressure clamp bounds into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted grain-price-pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
