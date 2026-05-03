@@ -55,6 +55,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistenceFragilityPressureClampCeiling,
     int SubsistenceInteractionGrainShortageStoreFloorExclusive,
     int SubsistenceInteractionGrainShortageStoreCeilingExclusive,
+    int SubsistenceInteractionCashNeedBoostScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -128,6 +129,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultSubsistenceFragilityPressureClampCeiling = 7;
     public const int DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive = 0;
     public const int DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive = 25;
+    public const int DefaultSubsistenceInteractionCashNeedBoostScore = 2;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -143,6 +145,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MinSubsistenceFragilityPressure = 0;
     public const int MaxSubsistenceFragilityPressure = 16;
     public const int MaxSubsistenceInteractionGrainStoreThreshold = 100;
+    public const int MaxSubsistenceInteractionPressureContribution = 8;
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskCeiling = 80;
@@ -344,6 +347,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceFragilityPressureClampCeiling,
             DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive,
             DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive,
+            DefaultSubsistenceInteractionCashNeedBoostScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -425,6 +429,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceFragilityPressureClampCeiling,
             DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive,
             DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive,
+            DefaultSubsistenceInteractionCashNeedBoostScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -1001,6 +1006,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 "subsistence_interaction_grain_shortage_store_floor_exclusive must be less than ceiling_exclusive.");
+        }
+
+        if (SubsistenceInteractionCashNeedBoostScore is < 0 or > MaxSubsistenceInteractionPressureContribution)
+        {
+            errors.Add(
+                $"subsistence_interaction_cash_need_boost_score must be between 0 and {MaxSubsistenceInteractionPressureContribution}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1674,6 +1685,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     {
         return grainStore > GetSubsistenceInteractionGrainShortageStoreFloorExclusiveOrDefault()
             && grainStore < GetSubsistenceInteractionGrainShortageStoreCeilingExclusiveOrDefault();
+    }
+
+    public int GetSubsistenceInteractionCashNeedBoostScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceInteractionCashNeedBoostScore
+            : DefaultSubsistenceInteractionCashNeedBoostScore;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()

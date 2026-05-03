@@ -133,7 +133,7 @@ public sealed partial class PopulationAndHouseholdsModule
 
         if (isGrainShortage && IsCashNeedLivelihood(household.Livelihood))
         {
-            interaction += 2;
+            interaction += _householdMobilityRulesData.GetSubsistenceInteractionCashNeedBoostScoreOrDefault();
         }
 
         if (isGrainShortage && household.DebtPressure >= 60)
