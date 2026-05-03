@@ -1634,4 +1634,10 @@ V933-V940 splits private monthly health lifecycle handling into `PopulationAndHo
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains health-lifecycle, illness-death, or mortality-formula authority.
 
+## PopulationAndHouseholds monthly pressure rules-data extraction v941-v948 boundary note
+
+V941-V948 extracts monthly prosperity/security/clan-relief/drift thresholds into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` monthly owner pass. Module ownership, monthly cadence, household traversal, pressure mutation, event emission, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains monthly-pressure or rules-data outcome authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.

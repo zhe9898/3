@@ -15783,6 +15783,225 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_monthly_pressure_rules_data_extraction_v941_v948_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-monthly-pressure-rules-data-extraction-v941-v948.md"));
+        string mainModuleFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "PopulationAndHouseholdsModuleTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V941-V948 PopulationAndHouseholds Monthly Pressure Rules-Data Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households monthly pressure rules-data extraction: v941-v948"));
+        Assert.That(designAudit, Does.Contain("v941-v948 population households monthly pressure rules-data extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds monthly pressure rules-data extraction v941-v948 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds monthly pressure rules-data extraction v941-v948 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households monthly pressure rules-data extraction v941-v948 note"));
+        Assert.That(uiPresentation, Does.Contain("v941-v948 population households monthly pressure rules-data extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds monthly pressure rules-data extraction v941-v948 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V941-V948 PopulationAndHouseholds Monthly Pressure Rules-Data Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Monthly Pressure Rules-Data Extraction Through V948"));
+        Assert.That(schemaRules, Does.Contain("population households monthly pressure rules-data extraction v941-v948 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households monthly pressure rules-data extraction v941-v948 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "monthly prosperity distress threshold",
+                     "monthly prosperity relief threshold",
+                     "monthly security distress threshold",
+                     "monthly security relief threshold",
+                     "monthly clan-support relief threshold",
+                     "monthly random drift min inclusive",
+                     "monthly random drift max exclusive",
+                     "No monthly pressure behavior change under default rules-data",
+                     "No pressure formula retune",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No content/config namespace",
+                     "No runtime plugin marketplace",
+                     "No second household mobility runtime rule",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate monthly pressure outcomes, household mobility outcomes, or household pressure results",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string extractedLiteral in new[]
+                 {
+                     "settlement.Prosperity < 50",
+                     "settlement.Prosperity >= 60",
+                     "settlement.Security < 45",
+                     "settlement.Security >= 55",
+                     "clanSupport >= 60",
+                     "NextInt(-1, 2)",
+                 })
+        {
+            Assert.That(mainModuleFile, Does.Not.Contain(extractedLiteral), extractedLiteral);
+        }
+
+        foreach (string ownerGetter in new[]
+                 {
+                     "GetMonthlyPressureProsperityDistressThresholdOrDefault",
+                     "GetMonthlyPressureProsperityReliefThresholdOrDefault",
+                     "GetMonthlyPressureSecurityDistressThresholdOrDefault",
+                     "GetMonthlyPressureSecurityReliefThresholdOrDefault",
+                     "GetMonthlyPressureClanSupportReliefThresholdOrDefault",
+                     "GetMonthlyPressureDriftMinInclusiveOrDefault",
+                     "GetMonthlyPressureDriftMaxExclusiveOrDefault",
+                 })
+        {
+            Assert.That(mainModuleFile, Does.Contain(ownerGetter), ownerGetter);
+            Assert.That(rulesData, Does.Contain(ownerGetter), ownerGetter);
+        }
+
+        foreach (string rulesDataToken in new[]
+                 {
+                     "DefaultMonthlyPressureProsperityDistressThreshold = 50",
+                     "DefaultMonthlyPressureProsperityReliefThreshold = 60",
+                     "DefaultMonthlyPressureSecurityDistressThreshold = 45",
+                     "DefaultMonthlyPressureSecurityReliefThreshold = 55",
+                     "DefaultMonthlyPressureClanSupportReliefThreshold = 60",
+                     "DefaultMonthlyPressureDriftMinInclusive = -1",
+                     "DefaultMonthlyPressureDriftMaxExclusive = 2",
+                     "monthly_pressure_prosperity_distress_threshold must not exceed monthly_pressure_prosperity_relief_threshold",
+                     "monthly_pressure_security_distress_threshold must not exceed monthly_pressure_security_relief_threshold",
+                     "monthly_pressure_drift_min_inclusive must be less than monthly_pressure_drift_max_exclusive",
+                 })
+        {
+            Assert.That(rulesData, Does.Contain(rulesDataToken), rulesDataToken);
+        }
+
+        Assert.That(populationTests, Does.Contain("RunMonth_DefaultMonthlyPressureRulesDataMatchesExplicitPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("RunMonth_InvalidMonthlyPressureRulesDataFallsBackToDefault"));
+        Assert.That(populationTests, Does.Contain("BuildHouseholdPressureSignature"));
+        Assert.That(rulesData, Does.Not.Contain("HouseholdMobilityRulesDataLoader"));
+        Assert.That(rulesData, Does.Not.Contain("HouseholdMobilityRulesDataFile"));
+        Assert.That(rulesData, Does.Not.Contain("Assembly.Load("));
+        Assert.That(mainModuleFile, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("MonthlyPressure"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "MonthlyPressureProsperityDistressThreshold",
+                     "MonthlyPressureSecurityDistressThreshold",
+                     "MonthlyPressureClanSupportReliefThreshold",
+                     "MonthlyPressureDriftMinInclusive",
+                     "PopulationAndHouseholdsMonthlyPressureRules",
+                     "MonthlyPressureOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "MonthlyPressure",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "MonthlyPressureLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

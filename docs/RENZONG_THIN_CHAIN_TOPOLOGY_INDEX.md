@@ -746,3 +746,9 @@ This is not a runtime behavior change, campaign formula retune, rules-data extra
 V933-V940 continues the large-file split by moving private monthly health, illness, and illness-death adjudication into `PopulationAndHouseholdsModule.HealthLifecycle.cs`. `RunMonth` keeps the same call point after membership synchronization and hot-household member promotion, and membership ordering, health thresholds, illness-month caps, `PersonRegistry` command seam, receipt text, and dependent-count adjustment remain unchanged.
 
 This is not a runtime behavior change, mortality formula retune, rules-data extraction, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V941-V948 PopulationAndHouseholds Monthly Pressure Rules-Data Extraction
+
+V941-V948 extracts the `RunMonth` monthly prosperity/security/clan-relief/drift thresholds from C# literals into owner-consumed `PopulationHouseholdMobilityRulesData`. Default values preserve the previous behavior: prosperity `< 50`, prosperity `>= 60`, security `< 45`, security `>= 55`, clan support `>= 60`, and drift `NextInt(-1, 2)`.
+
+This is not a runtime behavior retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.

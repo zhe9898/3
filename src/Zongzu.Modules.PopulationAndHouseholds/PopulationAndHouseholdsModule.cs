@@ -114,6 +114,13 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         IFamilyCoreQueries familyQueries = scope.GetRequiredQuery<IFamilyCoreQueries>();
         IPersonRegistryQueries? personQueries = scope.TryGetQuery<IPersonRegistryQueries>();
         IPersonRegistryCommands? personCommands = scope.TryGetQuery<IPersonRegistryCommands>();
+        int prosperityDistressThreshold = _householdMobilityRulesData.GetMonthlyPressureProsperityDistressThresholdOrDefault();
+        int prosperityReliefThreshold = _householdMobilityRulesData.GetMonthlyPressureProsperityReliefThresholdOrDefault();
+        int securityDistressThreshold = _householdMobilityRulesData.GetMonthlyPressureSecurityDistressThresholdOrDefault();
+        int securityReliefThreshold = _householdMobilityRulesData.GetMonthlyPressureSecurityReliefThresholdOrDefault();
+        int clanSupportReliefThreshold = _householdMobilityRulesData.GetMonthlyPressureClanSupportReliefThresholdOrDefault();
+        int driftMinInclusive = _householdMobilityRulesData.GetMonthlyPressureDriftMinInclusiveOrDefault();
+        int driftMaxExclusive = _householdMobilityRulesData.GetMonthlyPressureDriftMaxExclusiveOrDefault();
 
         foreach (PopulationHouseholdState household in scope.State.Households.OrderBy(static household => household.Id.Value))
         {
@@ -126,11 +133,11 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             bool wasMigrating = household.IsMigrating;
             bool livelihoodCollapseEmitted = false;
 
-            int prosperityPressure = settlement.Prosperity < 50 ? 1 : settlement.Prosperity >= 60 ? -1 : 0;
-            int securityPressure = settlement.Security < 45 ? 1 : settlement.Security >= 55 ? -1 : 0;
+            int prosperityPressure = settlement.Prosperity < prosperityDistressThreshold ? 1 : settlement.Prosperity >= prosperityReliefThreshold ? -1 : 0;
+            int securityPressure = settlement.Security < securityDistressThreshold ? 1 : settlement.Security >= securityReliefThreshold ? -1 : 0;
             int livelihoodPressure = ComputeLivelihoodDistressBaseline(household.Livelihood);
-            int relief = clanSupport >= 60 ? 1 : 0;
-            int drift = scope.Context.Random.NextInt(-1, 2);
+            int relief = clanSupport >= clanSupportReliefThreshold ? 1 : 0;
+            int drift = scope.Context.Random.NextInt(driftMinInclusive, driftMaxExclusive);
 
             household.Distress = Math.Clamp(household.Distress + prosperityPressure + securityPressure + livelihoodPressure + drift - relief, 0, 100);
             household.DebtPressure = Math.Clamp(household.DebtPressure + ComputeDebtDelta(household.Distress), 0, 100);

@@ -1639,3 +1639,7 @@ V925-V932 moves private warfare aftermath handling into a partial file. Schema/m
 Current population households health lifecycle file split v933-v940 note:
 
 V933-V940 moves private health lifecycle handling into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted health-lifecycle split field, illness state beyond existing fields, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, health-lifecycle ledger, illness ledger, mortality ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households monthly pressure rules-data extraction v941-v948 note:
+
+V941-V948 extracts monthly prosperity/security/clan-relief/drift thresholds into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted monthly-pressure field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, monthly-pressure ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

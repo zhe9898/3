@@ -1088,4 +1088,10 @@ V933-V940 changes file layout only. Health lifecycle handling moves into a parti
 
 No event pool, movement command, route-history path, health-lifecycle ledger, illness ledger, mortality ledger, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
 
+## Current population households monthly pressure rules-data extraction v941-v948 note
+
+V941-V948 changes monthly pressure parameter ownership only. `RunMonth` now reads prosperity/security/clan-relief/drift thresholds from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, household traversal, owner-state mutation, emitted events, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, monthly-pressure ledger, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

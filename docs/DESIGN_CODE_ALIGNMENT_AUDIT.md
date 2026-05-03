@@ -943,6 +943,12 @@ The v933-v940 pass moves private monthly health, illness, and illness-death adju
 
 Alignment check: this remains a behavior-neutral modular-monolith file split. `PopulationAndHouseholds` still owns health lifecycle adjudication during its monthly cadence and uses the existing `PersonRegistry` command seam only for the already-existing deceased mark; Application/UI/Unity do not calculate health or illness-death outcomes; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
 
+## v941-v948 population households monthly pressure rules-data extraction audit - 2026-05-03
+
+The v941-v948 pass moves monthly prosperity/security/clan-relief/drift thresholds from `PopulationAndHouseholdsModule.cs` literals into validated `PopulationHouseholdMobilityRulesData` defaults and fallback getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns monthly household pressure outcomes; Application/UI/Unity do not calculate monthly pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
 Design alignment: this is behavior-neutral file organization and hardcoded-formula isolation after the query split, not a formula retune, rules-data extraction, movement command, route-history model, or class/status selector.
 
 Code alignment: dispatch/emit receipt code remains in the owner module call sites while private profile formulas move into the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
