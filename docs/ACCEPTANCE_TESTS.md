@@ -1276,3 +1276,11 @@ Acceptance evidence for V1013-V1020:
 - Architecture guard `Population_households_subsistence_labor_clamp_extraction_v1013_v1020_must_remain_owner_consumed_and_schema_neutral` proves the clamp moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract grain-buffer, fragility, interaction, tax-season, or official-supply formulas.
+
+## PopulationAndHouseholds subsistence grain buffer extraction v1021-v1028 acceptance - 2026-05-03
+
+Acceptance evidence for V1021-V1028:
+- Population tests `GrainPriceSpike_DefaultGrainBufferRulesDataMatchesPreviousBaseline`, `GrainPriceSpike_CustomGrainBufferRulesDataIsOwnerConsumed`, and `GrainPriceSpike_InvalidGrainBufferRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior grain-buffer behavior, owner custom bands are consumed deterministically, and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_grain_buffer_extraction_v1021_v1028_must_remain_owner_consumed_and_schema_neutral` proves grain-buffer bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract fragility, interaction, tax-season, or official-supply formulas.

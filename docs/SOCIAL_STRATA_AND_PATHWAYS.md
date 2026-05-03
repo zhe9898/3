@@ -817,3 +817,9 @@ The extraction is default-equivalent. It does not extract the final labor clamp,
 V1013-V1020 moves the final subsistence labor pressure clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp stays a private `PopulationAndHouseholds` pressure bound, not a social rank, class/status engine, migration economy rule, route-history state, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune labor-capacity or dependent-count scoring, and it does not create subsistence-labor state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence grain buffer extraction: v1021-v1028
+
+V1021-V1028 moves the subsistence grain-buffer threshold scoring into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. Grain stores remain household livelihood/resource pressure inputs, not a class/status ladder, migration economy rule, route-history state, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune price, market, labor, fragility, or interaction scoring, and it does not create grain-buffer state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
