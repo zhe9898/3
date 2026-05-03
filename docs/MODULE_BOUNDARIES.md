@@ -1718,3 +1718,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1045-V1052 extracts the subsistence fragility migration threshold/score/fallback into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, distress/debt/fragility-clamp scoring, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains fragility-migration, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
+
+## PopulationAndHouseholds subsistence fragility clamp extraction v1053-v1060 boundary note
+
+V1053-V1060 extracts the subsistence fragility final clamp floor/ceiling into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, distress/debt/migration scoring, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains fragility-clamp, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.

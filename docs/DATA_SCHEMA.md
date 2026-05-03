@@ -1694,3 +1694,7 @@ V1037-V1044 extracts subsistence fragility debt pressure bands into in-code owne
 Current population households subsistence fragility migration extraction v1045-v1052 note:
 
 V1045-V1052 extracts the subsistence fragility migration risk threshold, pressure score, and fallback score into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted fragility-migration pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households subsistence fragility clamp extraction v1053-v1060 note:
+
+V1053-V1060 extracts the subsistence fragility final clamp floor and ceiling into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted fragility-clamp pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

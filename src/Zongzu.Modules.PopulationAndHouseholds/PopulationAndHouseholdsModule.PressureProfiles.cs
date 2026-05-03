@@ -119,7 +119,10 @@ public sealed partial class PopulationAndHouseholdsModule
         int migrationPressure = _householdMobilityRulesData.GetSubsistenceFragilityMigrationPressureScoreOrDefault(
             household.IsMigrating,
             household.MigrationRisk);
-        return Math.Clamp(distressPressure + debtPressure + migrationPressure, 0, 7);
+        return Math.Clamp(
+            distressPressure + debtPressure + migrationPressure,
+            _householdMobilityRulesData.GetSubsistenceFragilityPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetSubsistenceFragilityPressureClampCeilingOrDefault());
     }
 
     private static int ComputeSubsistenceInteractionPressure(PopulationHouseholdState household)

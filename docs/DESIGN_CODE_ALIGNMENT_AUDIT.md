@@ -1039,3 +1039,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1045-v1052 pass moves the `ComputeSubsistenceFragilityPressure` migration flag/risk contribution from C# literals into validated `PopulationHouseholdMobilityRulesData` default threshold, score, and fallback getters.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; distress/debt/fragility-clamp and interaction scoring remain unchanged; Application/UI/Unity do not calculate fragility migration pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1053-v1060 population households subsistence fragility clamp extraction audit - 2026-05-03
+
+The v1053-v1060 pass moves the `ComputeSubsistenceFragilityPressure` final clamp from C# literals into validated `PopulationHouseholdMobilityRulesData` default floor/ceiling getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; distress/debt/migration and interaction scoring remain unchanged; Application/UI/Unity do not calculate fragility clamp pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
