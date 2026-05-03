@@ -1064,4 +1064,10 @@ V901-V908 changes file layout only. Trade-shock, grain-price, world-pulse, tax-s
 
 No event pool, movement command, route-history path, event-routing ledger, plugin loading, or schema state is introduced.
 
+## Current population households livelihood drift file split v909-v916 note
+
+V909-V916 changes file layout only. Monthly livelihood drift helpers move into a partial file while `RunMonth`, scheduler cadence, household traversal order, drift thresholds, baseline mapping, emitted receipts, and metadata remain unchanged.
+
+No event pool, movement command, route-history path, livelihood-drift ledger, class/status engine, plugin loading, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

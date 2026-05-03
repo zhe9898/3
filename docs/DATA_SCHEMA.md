@@ -1623,3 +1623,7 @@ V893-V900 moves private pressure profile computation helpers into a partial file
 Current population households event dispatch file split v901-v908 note:
 
 V901-V908 moves private event-dispatch/application helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted event-dispatch split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, event-dispatch ledger, event-routing ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households livelihood drift file split v909-v916 note:
+
+V909-V916 moves private monthly livelihood drift helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted livelihood-drift split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, livelihood-drift ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
