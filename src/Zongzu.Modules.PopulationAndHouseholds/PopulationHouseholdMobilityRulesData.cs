@@ -30,6 +30,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int GrainPricePressureClampCeiling,
     IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> GrainPriceLevelPressureBands,
     int GrainPriceLevelPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> GrainPriceJumpPressureBands,
+    int GrainPriceJumpPressureFallbackScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -86,6 +88,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultGrainPricePressureClampFloor = 4;
     public const int DefaultGrainPricePressureClampCeiling = 14;
     public const int DefaultGrainPriceLevelPressureFallbackScore = 1;
+    public const int DefaultGrainPriceJumpPressureFallbackScore = 0;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -156,6 +159,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(120, 2),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultGrainPriceJumpPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(45, 5),
+            new PopulationHouseholdMobilityThresholdScoreBand(30, 4),
+            new PopulationHouseholdMobilityThresholdScoreBand(18, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(8, 1),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -182,6 +195,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPricePressureClampCeiling,
             DefaultGrainPriceLevelPressureBands,
             DefaultGrainPriceLevelPressureFallbackScore,
+            DefaultGrainPriceJumpPressureBands,
+            DefaultGrainPriceJumpPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -238,6 +253,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPricePressureClampCeiling,
             DefaultGrainPriceLevelPressureBands,
             DefaultGrainPriceLevelPressureFallbackScore,
+            DefaultGrainPriceJumpPressureBands,
+            DefaultGrainPriceJumpPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -516,6 +533,35 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"grain_price_level_pressure_fallback_score must be between 0 and {MaxGrainPricePressure}.");
+        }
+
+        if (GrainPriceJumpPressureBands is null
+            || GrainPriceJumpPressureBands.Count == 0
+            || GrainPriceJumpPressureBands.Any(static band =>
+                band.Threshold is < 0 or > MaxGrainPriceShockPriceDelta
+                || band.Score is < 0 or > MaxGrainPricePressure)
+            || GrainPriceJumpPressureBands.Select(static band => band.Threshold).Distinct().Count() != GrainPriceJumpPressureBands.Count)
+        {
+            errors.Add(
+                $"grain_price_jump_pressure_bands must be non-empty, distinct, and between threshold 0..{MaxGrainPriceShockPriceDelta} and score 0..{MaxGrainPricePressure}.");
+        }
+
+        if (GrainPriceJumpPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < GrainPriceJumpPressureBands.Count; index++)
+            {
+                if (GrainPriceJumpPressureBands[index - 1].Threshold <= GrainPriceJumpPressureBands[index].Threshold)
+                {
+                    errors.Add("grain_price_jump_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (GrainPriceJumpPressureFallbackScore is < 0 or > MaxGrainPricePressure)
+        {
+            errors.Add(
+                $"grain_price_jump_pressure_fallback_score must be between 0 and {MaxGrainPricePressure}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -882,6 +928,33 @@ public sealed record PopulationHouseholdMobilityRulesData(
         }
 
         return GetGrainPriceLevelPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> GetGrainPriceJumpPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceJumpPressureBands
+            : DefaultGrainPriceJumpPressureBands;
+    }
+
+    public int GetGrainPriceJumpPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceJumpPressureFallbackScore
+            : DefaultGrainPriceJumpPressureFallbackScore;
+    }
+
+    public int GetGrainPriceJumpPressureScoreOrDefault(int priceDelta)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in GetGrainPriceJumpPressureBandsOrDefault())
+        {
+            if (priceDelta >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetGrainPriceJumpPressureFallbackScoreOrDefault();
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()

@@ -1112,4 +1112,10 @@ V965-V972 changes grain-price level band ownership only. The grain-price event p
 
 No event pool, movement command, route-history path, grain-price-level ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
 
+## Current population households grain price jump band extraction v973-v980 note
+
+V973-V980 changes grain-price jump band ownership only. The grain-price event path now reads price-jump threshold/score bands from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, grain-price-jump ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.
