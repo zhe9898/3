@@ -812,3 +812,13 @@ Design alignment: this is hardcoded livelihood-score extraction, not a livelihoo
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the livelihood score weights or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default ordering equivalence and malformed livelihood-score fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v805-v812 household mobility runtime pressure-score extraction audit - 2026-05-03
+
+The v805-v812 pass extracts the first `PopulationAndHouseholds` runtime rule's distress/debt score weights into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded pressure-score extraction, not a pressure formula retune, livelihood engine retune, class/status engine, migration economy, or broader score formula expansion. Default weights `Distress=1` and `DebtPressure=1` preserve prior candidate ordering under default rules-data, while malformed weight values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the pressure score weights or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default ordering equivalence and malformed pressure-score fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.

@@ -644,3 +644,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V797-V804 extracts the first `PopulationAndHouseholds` household mobility runtime rule's livelihood score weights into owner-consumed rules-data. The default ordered weights remain `SeasonalMigrant=18`, `HiredLabor=10`, and `Tenant=6`, while unmatched livelihoods still score `0`.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, livelihood engine retune, trigger extraction, migration-risk score retune, pressure floor/divisor extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V805-V812 Household Mobility Runtime Pressure Score Weight Extraction
+
+V805-V812 extracts the first `PopulationAndHouseholds` household mobility runtime rule's implicit distress/debt unit score weights into owner-consumed rules-data. The default weights remain `Distress=1` and `DebtPressure=1`, preserving ordering under default rules-data.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, pressure formula retune, livelihood engine retune, trigger extraction, migration-risk score retune, livelihood score retune, pressure floor/divisor extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.

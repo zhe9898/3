@@ -1046,3 +1046,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V797-V804 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the livelihood score weights into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default weights `SeasonalMigrant=18`, `HiredLabor=10`, and `Tenant=6`.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate livelihood score weights, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime pressure-score extraction v805-v812 integration note
+
+V805-V812 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the distress/debt pressure score weights into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default weights `Distress=1` and `DebtPressure=1`.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate pressure score weights, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
