@@ -1599,3 +1599,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V885-V892 splits the private `PopulationQueries` implementation and clone helpers into `PopulationAndHouseholdsModule.Queries.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, query registration, command/event/query seams, scheduler cadence, and snapshot copy behavior remain unchanged.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, query-surface split state, query ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## PopulationAndHouseholds pressure profile file split v893-v900 boundary note
+
+V893-V900 splits private grain, tax-season, and official-supply pressure profile helpers into `PopulationAndHouseholdsModule.PressureProfiles.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, command/event/query seams, scheduler cadence, metadata fallback values, and formulas remain unchanged.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.

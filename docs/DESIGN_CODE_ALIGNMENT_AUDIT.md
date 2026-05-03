@@ -909,6 +909,14 @@ Design alignment: this is behavior-neutral file organization after the runtime, 
 
 Code alignment: query registration stays in the owner module and the moved query implementation remains private inside the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
 
+## v893-v900 population households pressure profile file split audit - 2026-05-03
+
+The v893-v900 pass moves private pressure profile computation helpers from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.PressureProfiles.cs`.
+
+Design alignment: this is behavior-neutral file organization and hardcoded-formula isolation after the query split, not a formula retune, rules-data extraction, movement command, route-history model, or class/status selector.
+
+Code alignment: dispatch/emit receipt code remains in the owner module call sites while private profile formulas move into the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
+
 ## v877-v884 population households pool rebuild file split audit - 2026-05-03
 
 The v877-v884 pass moves settlement summary and labor/marriage/migration pool rebuild helpers from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.PoolRebuild.cs`.

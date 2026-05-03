@@ -14621,6 +14621,197 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_pressure_profile_file_split_v893_v900_must_preserve_owner_behavior_and_schema_neutrality()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-pressure-profile-file-split-v893-v900.md"));
+        string mainModuleFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string pressureProfilesFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V893-V900 PopulationAndHouseholds Pressure Profile File Split"));
+        Assert.That(socialStrata, Does.Contain("Current population households pressure profile file split: v893-v900"));
+        Assert.That(designAudit, Does.Contain("v893-v900 population households pressure profile file split audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds pressure profile file split v893-v900 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds pressure profile file split v893-v900 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households pressure profile file split v893-v900 note"));
+        Assert.That(uiPresentation, Does.Contain("v893-v900 population households pressure profile file split"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds pressure profile file split v893-v900 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V893-V900 PopulationAndHouseholds Pressure Profile File Split"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Pressure Profile File Split Through V900"));
+        Assert.That(schemaRules, Does.Contain("population households pressure profile file split v893-v900 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households pressure profile file split v893-v900 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-neutral file split",
+                     "Runtime behavior change: none",
+                     "Target schema/migration impact: none",
+                     "PopulationAndHouseholdsModule.PressureProfiles.cs",
+                     "No pressure formula change",
+                     "No metadata fallback change",
+                     "No event behavior change",
+                     "No receipt/projection text movement",
+                     "No rules-data parameter change",
+                     "No fanout widening",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes or pressure profile results",
+                     "No authored rules-data externalization in this split",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string movedDefinition in new[]
+                 {
+                     "private static GrainPriceShockSignal ResolveGrainPriceShockSignal",
+                     "private static int ReadMetadataInt",
+                     "private static SubsistencePressureProfile ComputeSubsistencePressureProfile",
+                     "private static TaxSeasonBurdenProfile ComputeTaxSeasonBurdenProfile",
+                     "private static OfficialSupplySignal ResolveOfficialSupplySignal",
+                     "private static OfficialSupplyBurdenProfile ComputeOfficialSupplyBurdenProfile",
+                     "private readonly record struct GrainPriceShockSignal",
+                     "private readonly record struct SubsistencePressureProfile",
+                     "private readonly record struct TaxSeasonBurdenProfile",
+                     "private readonly record struct OfficialSupplySignal",
+                     "private readonly record struct OfficialSupplyBurdenProfile",
+                 })
+        {
+            Assert.That(mainModuleFile, Does.Not.Contain(movedDefinition), movedDefinition);
+            Assert.That(pressureProfilesFile, Does.Contain(movedDefinition), movedDefinition);
+        }
+
+        Assert.That(pressureProfilesFile, Does.Contain("public sealed partial class PopulationAndHouseholdsModule"));
+        Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(currentPrice, 50, 200)"));
+        Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(priceLevel + priceJump + marketTightness, 4, 14)"));
+        Assert.That(pressureProfilesFile, Does.Contain("14 + VisibilityPressure + LiquidityPressure + LaborPressure + FragilityPressure + InteractionPressure"));
+        Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(frontierPressure, 0, 100)"));
+        Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(interaction, -3, 5)"));
+        Assert.That(mainModuleFile, Does.Contain("scope.Emit("));
+        Assert.That(mainModuleFile, Does.Contain("ApplyGrainPriceSubsistencePressure(scope, domainEvent)"));
+        Assert.That(mainModuleFile, Does.Contain("ApplyTaxSeasonPressure(scope, domainEvent)"));
+        Assert.That(mainModuleFile, Does.Contain("private static void DispatchOfficeSupplyEvents"));
+        Assert.That(mainModuleFile, Does.Contain("OfficialSupplySignal signal = ResolveOfficialSupplySignal(domainEvent)"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationAndHouseholdsModule.PressureProfiles",
+                     "PopulationAndHouseholdsPressureProfileFileSplit",
+                     "PressureProfileFormulaAuthority",
+                     "HouseholdMobilityPressureInterpreter",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "PressureProfile",
+                     "HouseholdMobilityPressureInterpreter",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "PopulationAndHouseholdsPressureProfileFileSplit",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "PopulationAndHouseholdsPressureProfileFileSplitState",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
@@ -14933,8 +15124,9 @@ public class ProjectReferenceTests
                     "PopulationAndHouseholdsModule.MembershipFocus.cs" => 1,
                     "PopulationAndHouseholdsModule.PoolRebuild.cs" => 2,
                     "PopulationAndHouseholdsModule.Queries.cs" => 3,
-                    "PopulationAndHouseholdsModule.cs" => 4,
-                    _ => 5,
+                    "PopulationAndHouseholdsModule.PressureProfiles.cs" => 4,
+                    "PopulationAndHouseholdsModule.cs" => 5,
+                    _ => 6,
                 })
                 .ThenBy(static file => file, StringComparer.Ordinal)
                 .Select(File.ReadAllText));

@@ -710,3 +710,9 @@ This is not a runtime behavior change, migration engine, route-history model, mo
 V885-V892 continues the large-file split by moving the private `PopulationQueries` implementation and clone helpers into `PopulationAndHouseholdsModule.Queries.cs`. The query surface remains owner-owned, read-only, deterministically ordered, and downstream of `PopulationAndHouseholds` state.
 
 This is not a runtime behavior change, projection authority shift, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, snapshot field expansion, fanout widening, target filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V893-V900 PopulationAndHouseholds Pressure Profile File Split
+
+V893-V900 continues the large-file split by moving grain subsistence, tax-season, and official-supply pressure profile helpers into `PopulationAndHouseholdsModule.PressureProfiles.cs`. Event dispatch, receipts, and projection-facing text remain in the owner module call sites; only pure private formula helpers and record structs move.
+
+This is not a runtime behavior change, rules-data extraction, formula retune, metadata fallback change, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, or second household mobility rule. Schema/migration impact: none.

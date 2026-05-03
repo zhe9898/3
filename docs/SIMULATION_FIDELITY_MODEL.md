@@ -934,3 +934,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, pool form
 V885-V892 changes file layout only. The private query surface stays in the same `PopulationAndHouseholds` fidelity lane, still copying owner state into snapshots with the same stable ordering and without presentation-side calculation.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, snapshot field expansion, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V893-V900 PopulationAndHouseholds Pressure Profile File Split
+
+V893-V900 changes file layout only. Grain subsistence, tax-season, and official-supply pressure profile helpers stay in the same `PopulationAndHouseholds` fidelity lane, with formulas and metadata fallbacks unchanged.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, formula retune, metadata fallback change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
