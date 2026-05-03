@@ -758,3 +758,9 @@ This is not a runtime behavior retune, migration engine, route-history model, mo
 V949-V956 extracts grain-price shock metadata fallback and clamp constants from `PopulationAndHouseholdsModule.PressureProfiles.cs` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default values preserve the previous behavior: current price fallback `130`, old price fallback `100`, supply fallback `50`, demand fallback `70`, current price clamp `50..200`, price delta clamp `0..150`, supply clamp `0..100`, and demand clamp `0..100`.
 
 This is not a grain price formula retune, subsistence pressure retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V957-V964 PopulationAndHouseholds Grain Price Pressure Clamp Extraction
+
+V957-V964 extracts the `ComputePricePressure` final clamp bounds into owner-consumed `PopulationHouseholdMobilityRulesData`. Default values preserve the previous behavior: price pressure is clamped to `4..14`.
+
+This is not a grain price band retune, subsistence pressure retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.

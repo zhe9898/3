@@ -1646,4 +1646,10 @@ V949-V956 extracts grain-price shock signal fallback and clamp values into `Popu
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains grain-shock, pressure-profile, or rules-data outcome authority.
 
+## PopulationAndHouseholds grain price pressure clamp extraction v957-v964 boundary note
+
+V957-V964 extracts grain-price price-pressure clamp bounds into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` grain-price pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains grain-price-pressure, pressure-profile, or rules-data outcome authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
