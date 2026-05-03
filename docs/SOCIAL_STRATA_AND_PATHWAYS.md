@@ -688,3 +688,9 @@ V821-V828 records that the first household mobility runtime rule's migration-ris
 V829-V836 records that the first household mobility runtime rule's deterministic active-pool and household tie-break priorities have been moved into owner-consumed rules-data. The social meaning remains bounded: equal-pressure choices still resolve by stable ids by default, not by status rank, player preference, route history, social class, or UI-side ordering.
 
 Default rules-data keeps the migration status threshold at `80`, malformed threshold data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime unmatched livelihood score extraction: v837-v844
+
+V837-V844 records that the first household mobility runtime rule's unmatched-livelihood score fallback has been moved into owner-consumed rules-data. The social meaning remains bounded: an unmatched livelihood still contributes `0` by default, so this does not create a hidden status rank, class rail, route preference, or UI-side movement selector.
+
+Default rules-data keeps the unmatched livelihood fallback at `0`, malformed fallback data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.

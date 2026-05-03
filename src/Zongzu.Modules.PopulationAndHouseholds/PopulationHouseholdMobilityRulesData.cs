@@ -17,6 +17,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeLandHoldingTriggerFloor,
     IReadOnlyList<LivelihoodType> MonthlyRuntimeTriggerLivelihoods,
     IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> MonthlyRuntimeLivelihoodScoreWeights,
+    int MonthlyRuntimeUnmatchedLivelihoodScoreWeight,
     int MonthlyRuntimeDistressScoreWeight,
     int MonthlyRuntimeDebtPressureScoreWeight,
     int MonthlyRuntimeMigrationRiskScoreWeight,
@@ -45,6 +46,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeLaborCapacityTriggerCeiling = 45;
     public const int DefaultMonthlyRuntimeGrainStoreTriggerFloor = 25;
     public const int DefaultMonthlyRuntimeLandHoldingTriggerFloor = 15;
+    public const int DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight = 0;
     public const int DefaultMonthlyRuntimeDistressScoreWeight = 1;
     public const int DefaultMonthlyRuntimeDebtPressureScoreWeight = 1;
     public const int DefaultMonthlyRuntimeMigrationRiskScoreWeight = 4;
@@ -103,6 +105,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeLandHoldingTriggerFloor,
             DefaultMonthlyRuntimeTriggerLivelihoods,
             DefaultMonthlyRuntimeLivelihoodScoreWeights,
+            DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight,
             DefaultMonthlyRuntimeDistressScoreWeight,
             DefaultMonthlyRuntimeDebtPressureScoreWeight,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
@@ -134,6 +137,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeLandHoldingTriggerFloor,
             DefaultMonthlyRuntimeTriggerLivelihoods,
             DefaultMonthlyRuntimeLivelihoodScoreWeights,
+            DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight,
             DefaultMonthlyRuntimeDistressScoreWeight,
             DefaultMonthlyRuntimeDebtPressureScoreWeight,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
@@ -225,6 +229,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"monthly_runtime_livelihood_score_weights must be non-empty, distinct, defined, and between 0 and {MaxMonthlyRuntimeLivelihoodScoreWeight}.");
+        }
+
+        if (MonthlyRuntimeUnmatchedLivelihoodScoreWeight is < 0 or > MaxMonthlyRuntimeLivelihoodScoreWeight)
+        {
+            errors.Add(
+                $"monthly_runtime_unmatched_livelihood_score_weight must be between 0 and {MaxMonthlyRuntimeLivelihoodScoreWeight}.");
         }
 
         if (MonthlyRuntimeDistressScoreWeight is < 0 or > MaxMonthlyRuntimePressureScoreWeight)
@@ -414,6 +424,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
             : DefaultMonthlyRuntimeLivelihoodScoreWeights;
     }
 
+    public int GetMonthlyRuntimeUnmatchedLivelihoodScoreWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeUnmatchedLivelihoodScoreWeight
+            : DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight;
+    }
+
     public int GetMonthlyRuntimeLivelihoodScoreWeightOrDefault(LivelihoodType livelihood)
     {
         foreach (PopulationHouseholdMobilityLivelihoodScoreWeight entry in
@@ -425,7 +442,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             }
         }
 
-        return 0;
+        return GetMonthlyRuntimeUnmatchedLivelihoodScoreWeightOrDefault();
     }
 
     public int GetMonthlyRuntimeDistressScoreWeightOrDefault()

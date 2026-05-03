@@ -1587,3 +1587,7 @@ V821-V828 extracts the runtime migration-risk clamp bounds into owner-consumed i
 Current household mobility runtime tie-break priority extraction v829-v836 note:
 
 V829-V836 extracts the runtime active-pool and household tie-break priorities into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted tie-break priority field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, tie-break state, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime unmatched livelihood score extraction v837-v844 note:
+
+V837-V844 extracts the runtime unmatched-livelihood score fallback into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted unmatched-livelihood score field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, unmatched-livelihood state, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

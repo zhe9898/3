@@ -668,3 +668,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V829-V836 extracts the first `PopulationAndHouseholds` household mobility runtime rule's deterministic tie-break priorities into owner-consumed rules-data. The default active-pool tie-break remains settlement id ascending, and the default household tie-break remains household id ascending.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, ordering retune, score formula retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V837-V844 Household Mobility Runtime Unmatched Livelihood Score Extraction
+
+V837-V844 extracts the first `PopulationAndHouseholds` household mobility runtime rule's unmatched-livelihood score fallback into owner-consumed rules-data. The default fallback remains `0`, so unmatched livelihoods still add no extra candidate score under default rules-data.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, livelihood weight retune, score formula retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.

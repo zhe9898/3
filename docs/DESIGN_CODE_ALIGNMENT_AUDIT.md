@@ -852,3 +852,13 @@ Design alignment: this is hardcoded deterministic-order extraction, not an order
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read tie-break priorities or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default tie-break equivalence and malformed priority fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v837-v844 household mobility runtime unmatched livelihood score extraction audit - 2026-05-03
+
+The v837-v844 pass extracts the first `PopulationAndHouseholds` runtime rule's unmatched-livelihood score fallback into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded fallback extraction, not a livelihood weight retune, score formula retune, movement command, route-history model, fanout widening, or class/status selector. Default fallback `0` preserves prior unmatched-livelihood scoring under default rules-data, while malformed fallback values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read unmatched-livelihood fallback or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default unmatched fallback equivalence, non-default owner consumption, and malformed fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.

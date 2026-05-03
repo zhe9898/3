@@ -892,3 +892,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, migration
 V829-V836 keeps household mobility fidelity bounded while extracting the first runtime rule's deterministic tie-break priorities into owner-consumed rules-data. Default settlement-id and household-id ascending priorities preserve the current near-detail/far-summary ordering behavior, and malformed priority data falls back instead of changing selected targets.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, ordering retune, score formula retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V837-V844 Household Mobility Runtime Unmatched Livelihood Score Extraction
+
+V837-V844 keeps household mobility fidelity bounded while extracting the first runtime rule's unmatched-livelihood score fallback into owner-consumed rules-data. Default fallback `0` preserves the previous candidate score contribution for livelihoods not listed in the score-weight table, and malformed fallback data falls back instead of changing selected targets.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, livelihood weight retune, score formula retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
