@@ -692,3 +692,9 @@ Remaining inline controls are zero-cap/no-delta and empty-collection no-op guard
 V861-V868 begins the large-file split after closeout by moving the first household mobility runtime rule and its local helpers into `PopulationAndHouseholdsModule.MobilityRuntime.cs`. The rule remains private `PopulationAndHouseholds` owner code in the same partial class and still uses the same owner-consumed rules-data and deterministic cap/order path.
 
 This is not a runtime behavior change, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, formula retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V869-V876 PopulationAndHouseholds Membership Focus File Split
+
+V869-V876 continues the large-file split by moving membership livelihood/activity synchronization and hot-household member fidelity promotion helpers into `PopulationAndHouseholdsModule.MembershipFocus.cs`. The helpers remain private `PopulationAndHouseholds` owner code in the same partial class and still use existing ordered membership traversal and focused-member promotion cap rules-data.
+
+This is not a runtime behavior change, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, formula retune, fanout widening, focus-ring retune, filter expansion, or second household mobility rule. Schema/migration impact: none.

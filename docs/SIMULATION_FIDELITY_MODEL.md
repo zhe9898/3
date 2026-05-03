@@ -916,3 +916,9 @@ The closeout classifies remaining inline controls as non-extraction targets: zer
 V861-V868 changes file layout only. The first household mobility runtime rule stays in the same `PopulationAndHouseholds` fidelity lane, still bounded by active pools, local eligible households, deterministic ordering, and existing rules-data caps.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, formula change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V869-V876 PopulationAndHouseholds Membership Focus File Split
+
+V869-V876 changes file layout only. Membership synchronization and hot-household focus promotion stay in the same `PopulationAndHouseholds` fidelity lane, still bounded by existing membership lists, deterministic ordering, and the existing focused-member promotion cap.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, fidelity-ring retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

@@ -1094,3 +1094,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V861-V868 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves the first household mobility runtime rule into a dedicated partial file inside the same owner module.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate moved rule behavior, fanout eligibility, target ordering, threshold crossings, or household movement outcomes.
+
+## PopulationAndHouseholds membership focus file split v869-v876 integration note
+
+V869-V876 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves membership synchronization and hot-household focus promotion helpers into a dedicated partial file inside the same owner module.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate moved membership synchronization, focus promotion, fidelity-ring decisions, or household movement outcomes.

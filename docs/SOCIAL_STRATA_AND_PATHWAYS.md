@@ -712,3 +712,9 @@ Remaining inline no-op guards, changed-flow, threshold crossing, and boolean can
 V861-V868 moves the first household mobility runtime rule into a dedicated partial file without changing social-strata behavior. Household mobility pressure remains an owner-side monthly rule over existing livelihood, distress, debt, labor, grain, land, and migration-risk signals.
 
 The split is organizational only. It does not create a status rank, class rail, route preference, movement selector, route-history, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved method.
+
+### Current population households membership focus file split: v869-v876
+
+V869-V876 moves membership livelihood/activity synchronization and hot-household member fidelity promotion helpers into a dedicated partial file without changing social-strata behavior. Household members still copy their household livelihood/activity state through the owner module, and focus promotion remains bounded by existing rules-data.
+
+The split is organizational only. It does not create a status rank, class rail, movement selector, route-history, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved helpers.

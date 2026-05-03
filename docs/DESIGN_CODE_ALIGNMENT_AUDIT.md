@@ -892,3 +892,13 @@ Design alignment: this is behavior-neutral file organization after extraction cl
 Code alignment: the moved methods remain private members of the same partial `PopulationAndHouseholdsModule` class. Existing architecture guards now read the aggregate module source so behavior evidence survives file splitting instead of depending on one oversized file.
 
 Validation alignment: an architecture guard proves the moved method still exists once, the main module still calls it, no duplicate runtime rule path is added, no schema drift occurs, and Application/UI/Unity/`PersonRegistry` authority boundaries remain unchanged.
+
+## v869-v876 population households membership focus file split audit - 2026-05-03
+
+The v869-v876 pass moves membership synchronization and hot-household focus promotion helpers from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.MembershipFocus.cs`.
+
+Design alignment: this is behavior-neutral file organization after the runtime rule split, not a membership rule change, fidelity-ring behavior change, promotion-cap retune, movement command, route-history model, or class/status selector.
+
+Code alignment: the moved methods remain private members of the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
+
+Validation alignment: an architecture guard proves the moved helpers remain private owner code, call sites remain in the main module, no schema drift occurs, and Application/UI/Unity/`PersonRegistry` authority boundaries remain unchanged.

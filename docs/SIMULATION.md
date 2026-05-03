@@ -1035,3 +1035,9 @@ No scheduler cadence change, threshold retune, weight retune, floor/divisor retu
 V861-V868 changes file layout only. The first household mobility runtime rule remains on the monthly owner cadence and uses the same candidate filters, score computation, deterministic tie-breaks, fanout caps, risk delta, clamps, and event threshold.
 
 No scheduler cadence change, threshold retune, weight retune, floor/divisor retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.
+
+## Current population households membership focus file split v869-v876 note
+
+V869-V876 changes file layout only. Membership synchronization and hot-household focus promotion remain on existing owner call sites and use the same membership ordering, household grouping, focused-member promotion cap, and `PersonRegistry` command seam.
+
+No scheduler cadence change, membership behavior change, fidelity-ring behavior change, promotion-cap retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.
