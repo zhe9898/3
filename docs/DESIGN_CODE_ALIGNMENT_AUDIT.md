@@ -1045,3 +1045,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1053-v1060 pass moves the `ComputeSubsistenceFragilityPressure` final clamp from C# literals into validated `PopulationHouseholdMobilityRulesData` default floor/ceiling getters.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; distress/debt/migration and interaction scoring remain unchanged; Application/UI/Unity do not calculate fragility clamp pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1061-v1068 population households subsistence interaction grain shortage extraction audit - 2026-05-03
+
+The v1061-v1068 pass moves the `ComputeSubsistenceInteractionPressure` grain-shortage window from C# literals into validated `PopulationHouseholdMobilityRulesData` default floor/ceiling getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; cash-need boost, debt threshold boost, resilience relief, and interaction clamp remain unchanged; Application/UI/Unity do not calculate interaction grain-shortage pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.

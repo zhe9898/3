@@ -1064,6 +1064,82 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceFragilityPressure], Is.EqualTo("4"));
     }
 
+    [Test]
+    public void GrainPriceSpike_DefaultInteractionGrainShortageRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceInteractionGrainShortageStoreFloorExclusive = 0,
+                SubsistenceInteractionGrainShortageStoreCeilingExclusive = 25,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
+            RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive,
+            Is.EqualTo(0));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive,
+            Is.EqualTo(25));
+        Assert.That(explicitPreviousBaseline.IsSubsistenceInteractionGrainShortageStoreOrDefault(10), Is.True);
+        Assert.That(explicitPreviousBaseline.IsSubsistenceInteractionGrainShortageStoreOrDefault(0), Is.False);
+        Assert.That(explicitPreviousBaseline.IsSubsistenceInteractionGrainShortageStoreOrDefault(25), Is.False);
+        Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceInteractionPressure], Is.EqualTo("3"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_CustomInteractionGrainShortageRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceInteractionGrainShortageStoreFloorExclusive = 0,
+                SubsistenceInteractionGrainShortageStoreCeilingExclusive = 5,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState customHousehold, IDomainEvent customEvent) =
+            RunMissingMetadataGrainPriceSpike(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customRulesData.IsSubsistenceInteractionGrainShortageStoreOrDefault(10), Is.False);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.SubsistenceInteractionPressure], Is.EqualTo("0"));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta]),
+            Is.EqualTo(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta]) - 3));
+        Assert.That(customHousehold.GrainStore, Is.EqualTo(defaultHousehold.GrainStore));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidInteractionGrainShortageRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceInteractionGrainShortageStoreFloorExclusive = 25,
+                SubsistenceInteractionGrainShortageStoreCeilingExclusive = 25,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetSubsistenceInteractionGrainShortageStoreFloorExclusiveOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive));
+        Assert.That(
+            malformedRulesData.GetSubsistenceInteractionGrainShortageStoreCeilingExclusiveOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceInteractionPressure], Is.EqualTo("3"));
+    }
+
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunMissingMetadataGrainPriceSpike(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

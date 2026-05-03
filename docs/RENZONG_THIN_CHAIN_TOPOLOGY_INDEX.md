@@ -844,3 +844,9 @@ V1053-V1060 extracts the final subsistence fragility clamp from `ComputeSubsiste
 This is not a migration engine, target selector, movement command, route-history, interaction, tax-season, official-supply, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
 
 The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate fragility clamp pressure or household mobility outcomes.
+
+## V1061-V1068 PopulationAndHouseholds Subsistence Interaction Grain Shortage Extraction
+
+V1061-V1068 extracts the grain-shortage window from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default floor/ceiling preserve prior behavior: `GrainStore > 0 && GrainStore < 25`.
+
+This is not a cash-need boost extraction, debt-threshold extraction, resilience relief extraction, interaction clamp extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

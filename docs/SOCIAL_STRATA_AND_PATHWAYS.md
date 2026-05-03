@@ -847,3 +847,9 @@ The extraction is default-equivalent. It does not retune distress, debt, fragili
 V1053-V1060 moves the subsistence fragility final clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private pressure-boundary guard, not a migration economy rule, class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune distress, debt, migration-risk, interaction, tax-season, or official-supply formulas, and it does not create fragility-clamp state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence interaction grain shortage extraction: v1061-v1068
+
+V1061-V1068 moves the subsistence interaction grain-shortage window into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The grain window remains a private pressure input, not a migration economy rule, class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune cash-need boost, debt threshold boost, resilience relief, interaction clamp, tax-season, or official-supply formulas, and it does not create interaction-grain-shortage state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
