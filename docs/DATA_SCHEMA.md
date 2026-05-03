@@ -1635,3 +1635,7 @@ V917-V924 moves private xun/month pulse helpers into a partial file. Schema/migr
 Current population households warfare aftermath file split v925-v932 note:
 
 V925-V932 moves private warfare aftermath handling into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted warfare-aftermath split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, warfare-aftermath ledger, campaign-aftermath ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households health lifecycle file split v933-v940 note:
+
+V933-V940 moves private health lifecycle handling into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted health-lifecycle split field, illness state beyond existing fields, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, health-lifecycle ledger, illness ledger, mortality ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

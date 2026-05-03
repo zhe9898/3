@@ -937,6 +937,12 @@ The v925-v932 pass moves private warfare-campaign aftermath handling from `Popul
 
 Alignment check: this remains a behavior-neutral modular-monolith file split. `PopulationAndHouseholds` still owns household campaign aftermath pressure after receiving warfare events; Application/UI/Unity do not calculate warfare aftermath outcomes; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
 
+## v933-v940 population households health lifecycle file split audit - 2026-05-03
+
+The v933-v940 pass moves private monthly health, illness, and illness-death adjudication from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.HealthLifecycle.cs`.
+
+Alignment check: this remains a behavior-neutral modular-monolith file split. `PopulationAndHouseholds` still owns health lifecycle adjudication during its monthly cadence and uses the existing `PersonRegistry` command seam only for the already-existing deceased mark; Application/UI/Unity do not calculate health or illness-death outcomes; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
 Design alignment: this is behavior-neutral file organization and hardcoded-formula isolation after the query split, not a formula retune, rules-data extraction, movement command, route-history model, or class/status selector.
 
 Code alignment: dispatch/emit receipt code remains in the owner module call sites while private profile formulas move into the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.

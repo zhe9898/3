@@ -1628,4 +1628,10 @@ V925-V932 splits private warfare-campaign aftermath handling into `PopulationAnd
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains warfare-aftermath or campaign-delta authority.
 
+## PopulationAndHouseholds health lifecycle file split v933-v940 boundary note
+
+V933-V940 splits private monthly health lifecycle handling into `PopulationAndHouseholdsModule.HealthLifecycle.cs` while keeping it inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, monthly call order, person-id membership traversal, health thresholds, illness-month caps, `PersonRegistry` command seam, emitted receipts, and dependent-count adjustment remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains health-lifecycle, illness-death, or mortality-formula authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.

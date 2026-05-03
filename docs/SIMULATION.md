@@ -1082,4 +1082,10 @@ V925-V932 changes file layout only. Warfare aftermath handling moves into a part
 
 No event pool, movement command, route-history path, warfare-aftermath ledger, campaign-aftermath ledger, class/status engine, plugin loading, or schema state is introduced.
 
+## Current population households health lifecycle file split v933-v940 note
+
+V933-V940 changes file layout only. Health lifecycle handling moves into a partial file while `RunMonth`, scheduler cadence, monthly call order, person-id membership traversal, health thresholds, illness-month caps, deceased command seam, emitted receipts, and metadata remain unchanged.
+
+No event pool, movement command, route-history path, health-lifecycle ledger, illness ledger, mortality ledger, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

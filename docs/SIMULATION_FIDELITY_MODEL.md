@@ -963,4 +963,10 @@ V925-V932 changes file layout only. Warfare aftermath handling stays inside the 
 
 No new household target store, movement ledger, route-history model, selector watermark, warfare-aftermath ledger, campaign-aftermath ledger, class/status state, or distant-society detail promotion is added.
 
+## V933-V940 PopulationAndHouseholds Health Lifecycle File Split
+
+V933-V940 changes file layout only. Monthly health lifecycle handling stays inside the same `PopulationAndHouseholds` owner lane, membership traversal remains ordered by person id, and near-detail/far-summary fidelity behavior is unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, health-lifecycle ledger, illness ledger, mortality ledger, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
 No persisted schema, loader, rules-data file, cache, diagnostic state, formula retune, metadata fallback change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

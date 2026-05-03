@@ -1205,3 +1205,9 @@ Acceptance evidence for V917-V924:
 Acceptance evidence for V925-V932:
 - Architecture guard `Population_households_warfare_aftermath_file_split_v925_v932_must_preserve_owner_behavior_and_schema_neutrality` proves warfare aftermath handling was moved into `PopulationAndHouseholdsModule.WarfareAftermath.cs` without changing event handling order, settlement-scoped household traversal, campaign delta formulas, receipt text, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing population warfare/campaign behavior tests; this split moves private owner warfare aftermath helpers only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds health lifecycle file split v933-v940 acceptance - 2026-05-03
+
+Acceptance evidence for V933-V940:
+- Architecture guard `Population_households_health_lifecycle_file_split_v933_v940_must_preserve_owner_behavior_and_schema_neutrality` proves health lifecycle handling was moved into `PopulationAndHouseholdsModule.HealthLifecycle.cs` without changing monthly call order, person-id membership traversal, health thresholds, illness-month caps, emitted receipt text, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing population health/illness behavior tests; this split moves a private owner health lifecycle helper only and adds no new owner rule or presentation field.
