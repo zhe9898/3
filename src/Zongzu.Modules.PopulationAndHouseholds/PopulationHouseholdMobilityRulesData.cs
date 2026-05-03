@@ -28,6 +28,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeSettlementCap,
     int MonthlyRuntimeHouseholdCap,
     int MonthlyRuntimeRiskDelta,
+    int MonthlyRuntimeMigrationStatusThreshold,
     int MonthlyRuntimeMigrationStartedEventThreshold)
 {
     public const int DefaultFocusedMemberPromotionCap = 2;
@@ -51,6 +52,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeSettlementCap = 1;
     public const int DefaultMonthlyRuntimeHouseholdCap = 2;
     public const int DefaultMonthlyRuntimeRiskDelta = 1;
+    public const int DefaultMonthlyRuntimeMigrationStatusThreshold = 80;
     public const int DefaultMonthlyRuntimeMigrationStartedEventThreshold = 80;
     public const int MaxMonthlyRuntimeSettlementCap = 8;
     public const int MaxMonthlyRuntimeHouseholdCap = 16;
@@ -61,6 +63,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxMonthlyRuntimeMigrationRiskScoreWeight = 16;
     public const int MaxMonthlyRuntimeGrainStorePressureDivisor = 16;
     public const int MaxMonthlyRuntimeLandHoldingPressureDivisor = 16;
+    public const int MaxMonthlyRuntimeMigrationStatusThreshold = 100;
     public const int MaxMonthlyRuntimeMigrationStartedEventThreshold = 100;
 
     public static IReadOnlyList<LivelihoodType> DefaultMonthlyRuntimeTriggerLivelihoods { get; } =
@@ -99,6 +102,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
             DefaultMonthlyRuntimeRiskDelta,
+            DefaultMonthlyRuntimeMigrationStatusThreshold,
             DefaultMonthlyRuntimeMigrationStartedEventThreshold);
 
     public PopulationHouseholdMobilityRulesData(int focusedMemberPromotionCap)
@@ -125,6 +129,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
             DefaultMonthlyRuntimeRiskDelta,
+            DefaultMonthlyRuntimeMigrationStatusThreshold,
             DefaultMonthlyRuntimeMigrationStartedEventThreshold)
     {
     }
@@ -263,6 +268,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"monthly_runtime_risk_delta must be between 0 and {MaxMonthlyRuntimeRiskDelta}.");
+        }
+
+        if (MonthlyRuntimeMigrationStatusThreshold is < 1 or > MaxMonthlyRuntimeMigrationStatusThreshold)
+        {
+            errors.Add(
+                $"monthly_runtime_migration_status_threshold must be between 1 and {MaxMonthlyRuntimeMigrationStatusThreshold}.");
         }
 
         if (MonthlyRuntimeMigrationStartedEventThreshold is < 1 or > MaxMonthlyRuntimeMigrationStartedEventThreshold)
@@ -442,6 +453,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeRiskDelta
             : DefaultMonthlyRuntimeRiskDelta;
+    }
+
+    public int GetMonthlyRuntimeMigrationStatusThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeMigrationStatusThreshold
+            : DefaultMonthlyRuntimeMigrationStatusThreshold;
     }
 
     public int GetMonthlyRuntimeMigrationStartedEventThresholdOrDefault()

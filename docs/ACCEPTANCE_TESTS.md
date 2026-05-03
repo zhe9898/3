@@ -1110,3 +1110,10 @@ Acceptance evidence for V805-V812:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultPressureScoreWeightsPreservePreviousScoreOrdering` proves default pressure score weights `Distress=1` and `DebtPressure=1` and explicit default weights produce the same monthly runtime signature.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimePressureScoreWeightsFallBackToDefault` proves malformed pressure-score data is rejected and falls back to default unit weights.
 - Architecture guard `Household_mobility_runtime_pressure_score_weight_extraction_v805_v812_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime migration-status extraction v813-v820 acceptance - 2026-05-03
+
+Acceptance evidence for V813-V820:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultMigrationStatusThresholdPreservesPreviousStatusBehavior` proves default migration status threshold `80` and explicit default threshold produce the same monthly runtime signature and migrating status after a selected household crosses to `80`.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationStatusThresholdFallsBackToDefault` proves malformed migration-status threshold data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_migration_status_threshold_extraction_v813_v820_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
