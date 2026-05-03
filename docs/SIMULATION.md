@@ -1023,3 +1023,9 @@ No scheduler cadence change, livelihood weight retune, score formula retune, fan
 V845-V852 changes the first household mobility runtime rule's labor/grain/land pressure contribution floor from inline `0` behavior to owner-consumed rules-data. The monthly cadence, active-pool selection, pressure floors/divisors, matched livelihood weights, candidate filters, fanout caps, event type, and default non-negative contribution behavior remain unchanged.
 
 No scheduler cadence change, pressure floor retune, divisor retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime extraction closeout v853-v860 note
+
+V853-V860 changes no runtime simulation code. It closes the first household mobility runtime rule hardcoded extraction track and records that remaining inline controls are owner-method control flow, not authored rules-data knobs.
+
+No scheduler cadence change, threshold retune, weight retune, floor/divisor retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, file split, or second household mobility runtime rule is added.

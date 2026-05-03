@@ -13698,6 +13698,289 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Household_mobility_runtime_extraction_closeout_v853_v860_must_classify_remaining_guards_without_schema_or_authority_drift()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_household-mobility-runtime-extraction-closeout-v853-v860.md"));
+        string populationModule = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V853-V860 Household Mobility Runtime Extraction Closeout"));
+        Assert.That(socialStrata, Does.Contain("Current household mobility runtime extraction closeout: v853-v860"));
+        Assert.That(designAudit, Does.Contain("v853-v860 household mobility runtime extraction closeout audit"));
+        Assert.That(moduleBoundaries, Does.Contain("Household mobility runtime extraction closeout v853-v860 boundary note"));
+        Assert.That(integrationRules, Does.Contain("Household mobility runtime extraction closeout v853-v860 integration note"));
+        Assert.That(simulation, Does.Contain("Current household mobility runtime extraction closeout v853-v860 note"));
+        Assert.That(uiPresentation, Does.Contain("v853-v860 household mobility runtime extraction closeout"));
+        Assert.That(acceptance, Does.Contain("Household mobility runtime extraction closeout v853-v860 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V853-V860 Household Mobility Runtime Extraction Closeout"));
+        Assert.That(skillMatrix, Does.Contain("Household Mobility Runtime Extraction Closeout Through V860"));
+        Assert.That(schemaRules, Does.Contain("household mobility runtime extraction closeout v853-v860 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current household mobility runtime extraction closeout v853-v860 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "hardcoded extraction closeout",
+                     "Runtime behavior change: none",
+                     "Target schema/migration impact: none",
+                     "remaining inline controls",
+                     "not authored rules-data knobs",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No external authored rules-data file",
+                     "No runtime plugin marketplace",
+                     "No direct route-history",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes",
+                     "No large-file split in this closeout PR",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string extractedRulesDataToken in new[]
+                 {
+                     "MonthlyRuntimeActivePoolOutflowThreshold",
+                     "MonthlyRuntimeCandidateMigrationRiskFloor",
+                     "MonthlyRuntimeCandidateMigrationRiskCeiling",
+                     "MonthlyRuntimeDistressTriggerThreshold",
+                     "MonthlyRuntimeDebtPressureTriggerThreshold",
+                     "MonthlyRuntimeLaborCapacityTriggerCeiling",
+                     "MonthlyRuntimeGrainStoreTriggerFloor",
+                     "MonthlyRuntimeLandHoldingTriggerFloor",
+                     "MonthlyRuntimeTriggerLivelihoods",
+                     "MonthlyRuntimeLivelihoodScoreWeights",
+                     "MonthlyRuntimeUnmatchedLivelihoodScoreWeight",
+                     "MonthlyRuntimeDistressScoreWeight",
+                     "MonthlyRuntimeDebtPressureScoreWeight",
+                     "MonthlyRuntimeMigrationRiskScoreWeight",
+                     "MonthlyRuntimePressureContributionFloor",
+                     "MonthlyRuntimeLaborCapacityPressureFloor",
+                     "MonthlyRuntimeGrainStorePressureFloor",
+                     "MonthlyRuntimeGrainStorePressureDivisor",
+                     "MonthlyRuntimeLandHoldingPressureFloor",
+                     "MonthlyRuntimeLandHoldingPressureDivisor",
+                     "MonthlyRuntimeSettlementCap",
+                     "MonthlyRuntimeHouseholdCap",
+                     "MonthlyRuntimePoolTieBreakPriority",
+                     "MonthlyRuntimeHouseholdTieBreakPriority",
+                     "MonthlyRuntimeRiskDelta",
+                     "MonthlyRuntimeMigrationRiskClampFloor",
+                     "MonthlyRuntimeMigrationRiskClampCeiling",
+                     "MonthlyRuntimeMigrationStatusThreshold",
+                     "MonthlyRuntimeMigrationStartedEventThreshold",
+                 })
+        {
+            Assert.That(rulesData, Does.Contain(extractedRulesDataToken), extractedRulesDataToken);
+        }
+
+        foreach (string runtimeGetter in new[]
+                 {
+                     "GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault",
+                     "GetMonthlyRuntimeCandidateMigrationRiskFloorOrDefault",
+                     "GetMonthlyRuntimeCandidateMigrationRiskCeilingOrDefault",
+                     "GetMonthlyRuntimeDistressTriggerThresholdOrDefault",
+                     "GetMonthlyRuntimeDebtPressureTriggerThresholdOrDefault",
+                     "GetMonthlyRuntimeLaborCapacityTriggerCeilingOrDefault",
+                     "GetMonthlyRuntimeGrainStoreTriggerFloorOrDefault",
+                     "GetMonthlyRuntimeLandHoldingTriggerFloorOrDefault",
+                     "GetMonthlyRuntimeTriggerLivelihoodsOrDefault",
+                     "GetMonthlyRuntimeLivelihoodScoreWeightsOrDefault",
+                     "GetMonthlyRuntimeUnmatchedLivelihoodScoreWeightOrDefault",
+                     "GetMonthlyRuntimeDistressScoreWeightOrDefault",
+                     "GetMonthlyRuntimeDebtPressureScoreWeightOrDefault",
+                     "GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault",
+                     "GetMonthlyRuntimePressureContributionFloorOrDefault",
+                     "GetMonthlyRuntimeLaborCapacityPressureFloorOrDefault",
+                     "GetMonthlyRuntimeGrainStorePressureFloorOrDefault",
+                     "GetMonthlyRuntimeGrainStorePressureDivisorOrDefault",
+                     "GetMonthlyRuntimeLandHoldingPressureFloorOrDefault",
+                     "GetMonthlyRuntimeLandHoldingPressureDivisorOrDefault",
+                     "GetMonthlyRuntimeSettlementCapOrDefault",
+                     "GetMonthlyRuntimeHouseholdCapOrDefault",
+                     "GetMonthlyRuntimePoolTieBreakPriorityOrDefault",
+                     "GetMonthlyRuntimeHouseholdTieBreakPriorityOrDefault",
+                     "GetMonthlyRuntimeRiskDeltaOrDefault",
+                     "GetMonthlyRuntimeMigrationRiskClampFloorOrDefault",
+                     "GetMonthlyRuntimeMigrationRiskClampCeilingOrDefault",
+                     "GetMonthlyRuntimeMigrationStatusThresholdOrDefault",
+                     "GetMonthlyRuntimeMigrationStartedEventThresholdOrDefault",
+                 })
+        {
+            Assert.That(populationModule, Does.Contain(runtimeGetter), runtimeGetter);
+        }
+
+        int runtimeStart = populationModule.IndexOf(
+            "private bool ApplyMonthlyHouseholdMobilityRuntimeRule",
+            StringComparison.Ordinal);
+        int runtimeEnd = populationModule.IndexOf(
+            "private static IOrderedEnumerable<MigrationPoolEntryState> ApplyMonthlyRuntimePoolTieBreak",
+            runtimeStart,
+            StringComparison.Ordinal);
+        Assert.That(runtimeStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(runtimeEnd, Is.GreaterThan(runtimeStart));
+        string runtimeRule = populationModule[runtimeStart..runtimeEnd];
+        foreach (string remainingControl in new[]
+                 {
+                     "settlementCap <= 0",
+                     "householdCap <= 0",
+                     "riskDelta <= 0",
+                     "scope.State.Households.Count == 0",
+                     "scope.State.MigrationPools.Count == 0",
+                     "bool changed = false",
+                     "changed = true",
+                     "oldMigrationRisk < migrationStartedEventThreshold",
+                     "household.MigrationRisk >= migrationStartedEventThreshold",
+                 })
+        {
+            Assert.That(runtimeRule, Does.Contain(remainingControl), remainingControl);
+        }
+
+        Assert.That(
+            Regex.Matches(populationModule, @"\bApplyMonthlyHouseholdMobilityRuntimeRule\s*\(").Count,
+            Is.EqualTo(2),
+            "The extraction closeout must not add or duplicate the monthly household mobility runtime rule path.");
+
+        int scoreStart = populationModule.IndexOf(
+            "private static int ComputeMonthlyHouseholdMobilityRuntimeScore",
+            StringComparison.Ordinal);
+        int scoreEnd = populationModule.IndexOf(
+            "private static int ResolveMonthlyHouseholdMobilityLivelihoodScoreWeight",
+            scoreStart,
+            StringComparison.Ordinal);
+        Assert.That(scoreStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(scoreEnd, Is.GreaterThan(scoreStart));
+        string scoreMethod = populationModule[scoreStart..scoreEnd];
+        Assert.That(scoreMethod, Does.Not.Contain("Math.Max(0,"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Cooldown"));
+        Assert.That(populationState, Does.Not.Contain("SelectorWatermark"));
+        Assert.That(populationState, Does.Not.Contain("TargetCardinality"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "MonthlyRuntimeActivePoolOutflowThreshold",
+                     "MonthlyRuntimeCandidateMigrationRiskFloor",
+                     "MonthlyRuntimeCandidateMigrationRiskCeiling",
+                     "MonthlyRuntimeDistressTriggerThreshold",
+                     "MonthlyRuntimeDebtPressureTriggerThreshold",
+                     "MonthlyRuntimeLaborCapacityTriggerCeiling",
+                     "MonthlyRuntimeGrainStoreTriggerFloor",
+                     "MonthlyRuntimeLandHoldingTriggerFloor",
+                     "MonthlyRuntimePressureContributionFloor",
+                     "MonthlyRuntimePoolTieBreakPriority",
+                     "MonthlyRuntimeHouseholdTieBreakPriority",
+                     "MonthlyRuntimeMigrationStatusThreshold",
+                     "MonthlyRuntimeMigrationStartedEventThreshold",
+                     "HouseholdMobilityGuardInterpreter",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "MonthlyRuntime",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "HouseholdMobilityExtractionCloseout",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "HouseholdMobilityExtractionCloseoutState",
+                     "HouseholdMobilityGuardLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

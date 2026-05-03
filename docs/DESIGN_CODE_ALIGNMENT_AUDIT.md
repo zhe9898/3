@@ -872,3 +872,13 @@ Design alignment: this is hardcoded contribution-floor extraction, not a pressur
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read pressure contribution floors or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default contribution-floor equivalence and malformed fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v853-v860 household mobility runtime extraction closeout audit - 2026-05-03
+
+The v853-v860 pass closes the first `PopulationAndHouseholds` runtime rule hardcoded extraction track without changing runtime behavior.
+
+Design alignment: extracted parameter families cover the first rule's thresholds, weights, caps, floors/divisors, tie-break priorities, delta, clamps, status threshold, and event threshold. Remaining inline no-op guards, changed-flow, threshold crossing, and boolean candidate composition are intentionally not authored rules-data knobs.
+
+Code alignment: no runtime source changes are made in this closeout. `PopulationAndHouseholds` remains the only owner-side consumer of household mobility rules-data; Application, presentation, Unity, persistence, and `PersonRegistry` do not calculate household mobility outcomes.
+
+Validation alignment: an architecture guard proves closeout docs, extracted parameter coverage, remaining guard classification, no schema drift, no loader/file, no plugin marketplace, no movement command, no route-history state, no fanout widening, no file split, and no second runtime rule.

@@ -700,3 +700,9 @@ Default rules-data keeps the unmatched livelihood fallback at `0`, malformed fal
 V845-V852 records that the first household mobility runtime rule's pressure contribution floor has been moved into owner-consumed rules-data. The social meaning remains bounded: labor, grain, and land pressure contributions still floor at `0` by default, so this does not create a status rank, class rail, route preference, or UI-side movement selector.
 
 Default rules-data keeps the pressure contribution floor at `0`, malformed floor data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime extraction closeout: v853-v860
+
+V853-V860 records that the first household mobility runtime rule's hardcoded extraction track is closed for parameter data. The social-strata meaning remains bounded to owner-side pressure selection over existing household livelihood, distress, debt, labor, grain, land, and migration-risk signals.
+
+Remaining inline no-op guards, changed-flow, threshold crossing, and boolean candidate composition are not authored rules-data knobs. They do not become status ranks, class rails, movement selectors, route-history, or UI-visible social positions, and Application/UI/Unity still may not infer household movement or social status from them.
