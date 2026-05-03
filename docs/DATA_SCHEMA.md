@@ -1595,3 +1595,7 @@ V837-V844 extracts the runtime unmatched-livelihood score fallback into owner-co
 Current household mobility runtime pressure contribution floor extraction v845-v852 note:
 
 V845-V852 extracts the runtime pressure contribution floor into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted pressure-contribution floor field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-contribution state, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime extraction closeout v853-v860 note:
+
+V853-V860 closes the first household mobility runtime rule hardcoded extraction track with docs/tests evidence only. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted closeout field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, remaining-guard state, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, file-split schema, or save-manifest change is added.

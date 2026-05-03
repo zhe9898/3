@@ -1082,3 +1082,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V845-V852 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the pressure contribution floor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default floor `0`.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate pressure contribution floors, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime extraction closeout v853-v860 integration note
+
+V853-V860 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It closes the first household mobility runtime rule parameter extraction track and documents that remaining inline guards are not authored rules-data knobs.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate remaining guard behavior, fanout eligibility, target ordering, threshold crossings, or household movement outcomes.

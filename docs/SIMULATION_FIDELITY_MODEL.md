@@ -904,3 +904,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, livelihoo
 V845-V852 keeps household mobility fidelity bounded while extracting the first runtime rule's non-negative pressure contribution floor into owner-consumed rules-data. Default floor `0` preserves the previous labor/grain/land score contribution behavior, and malformed floor data falls back instead of changing selected targets.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, pressure floor retune, divisor retune, score formula retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V853-V860 Household Mobility Runtime Extraction Closeout
+
+V853-V860 keeps household mobility fidelity at the first-rule bounded monthly slice and closes the parameter extraction track. The rule still touches only capped active pools and eligible local households; distant society remains summary pressure unless a future owner-lane rule separately promotes detail.
+
+The closeout classifies remaining inline controls as non-extraction targets: zero-cap/no-delta no-op guards, empty-collection no-op guards, changed-flow, threshold crossing comparison, and candidate boolean composition. No persisted schema, loader, rules-data file, cache, diagnostic state, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, file split, or performance claim is added.

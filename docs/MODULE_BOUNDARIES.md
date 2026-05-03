@@ -1569,3 +1569,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V845-V852 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's non-negative labor/grain/land pressure contribution floor is now read from `PopulationHouseholdMobilityRulesData` with default `0` behavior.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-contribution ledger, ordering ledger, event-routing ledger, validation ledger, cache, class/status engine, score formula retune, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime extraction closeout v853-v860 boundary note
+
+V853-V860 closes the first `PopulationAndHouseholds` household mobility runtime rule hardcoded extraction track. The remaining inline guards are control-flow boundaries rather than rules-data authority: no-op cap/delta checks, empty-state checks, changed-flow, threshold crossing, and boolean candidate composition stay inside the owner method.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, closeout ledger, ordering ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, file split, or `PersonRegistry` expansion is introduced.

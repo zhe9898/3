@@ -680,3 +680,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V845-V852 extracts the first `PopulationAndHouseholds` household mobility runtime rule's non-negative pressure contribution floor into owner-consumed rules-data. The default contribution floor remains `0`, so labor, grain, and land pressure contributions still cannot go negative under default rules-data.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, pressure floor retune, divisor retune, score formula retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V853-V860 Household Mobility Runtime Extraction Closeout
+
+V853-V860 closes the first household mobility runtime rule hardcoded extraction track. The extracted owner-consumed rules-data families now cover active-pool threshold, candidate floor/ceiling, trigger thresholds, trigger livelihoods, livelihood weights, unmatched fallback, pressure score weights, pressure contribution floor, pressure floors/divisors, fanout caps, tie-break priorities, risk delta, risk clamp, migration status threshold, and migration-started event threshold.
+
+Remaining inline controls are zero-cap/no-delta and empty-collection no-op guards, changed/no-changed flow, threshold crossing comparison, and candidate boolean composition. These are not authored rules-data knobs and stay inline to avoid creating control-flow config authority. This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
