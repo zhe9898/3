@@ -740,3 +740,9 @@ This is not a runtime behavior change, monthly formula retune, rules-data extrac
 V925-V932 continues the large-file split by moving private warfare-campaign aftermath handling into `PopulationAndHouseholdsModule.WarfareAftermath.cs`. `HandleEvents` keeps the same trade/world/family/office dispatch order before applying warfare aftermath, and campaign household selection, delta formulas, receipt text, and ordering remain unchanged.
 
 This is not a runtime behavior change, campaign formula retune, rules-data extraction, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, or second household mobility rule. Schema/migration impact: none.
+
+## V933-V940 PopulationAndHouseholds Health Lifecycle File Split
+
+V933-V940 continues the large-file split by moving private monthly health, illness, and illness-death adjudication into `PopulationAndHouseholdsModule.HealthLifecycle.cs`. `RunMonth` keeps the same call point after membership synchronization and hot-household member promotion, and membership ordering, health thresholds, illness-month caps, `PersonRegistry` command seam, receipt text, and dependent-count adjustment remain unchanged.
+
+This is not a runtime behavior change, mortality formula retune, rules-data extraction, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.

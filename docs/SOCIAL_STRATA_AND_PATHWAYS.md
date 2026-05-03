@@ -752,3 +752,9 @@ V917-V924 moves private xun/month pulse helpers into a dedicated partial file wi
 V925-V932 moves private warfare aftermath handling into a dedicated partial file without changing social-strata behavior. Campaign pressure still affects households only through `PopulationAndHouseholds` owner logic; it is not a migration economy, class/status engine, rank ladder, route-history store, or `PersonRegistry` expansion.
 
 The split is organizational only. It does not create a status rank, class rail, pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved helpers.
+
+### Current population households health lifecycle file split: v933-v940
+
+V933-V940 moves private health lifecycle handling into a dedicated partial file without changing social-strata behavior. Illness and illness-death adjudication still belongs to `PopulationAndHouseholds` owner logic and uses the existing `PersonRegistry` command seam only to mark a person deceased; it is not a class/status engine, rank ladder, social mobility path, or `PersonRegistry` domain expansion.
+
+The split is organizational only. It does not create a status rank, class rail, health ledger, mortality ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement, health outcomes, or social status from the moved helper.
