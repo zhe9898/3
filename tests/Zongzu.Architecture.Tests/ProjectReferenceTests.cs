@@ -2536,10 +2536,7 @@ public class ProjectReferenceTests
     [Test]
     public void Social_mobility_fidelity_ring_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string personRegistryModule = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PersonRegistry",
@@ -5969,10 +5966,7 @@ public class ProjectReferenceTests
             "exec-plans",
             "active",
             "2026-04-30_population-households-first-hardcoded-rule-extraction-v525-v532.md"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesDataSource = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -6127,10 +6121,7 @@ public class ProjectReferenceTests
             "exec-plans",
             "active",
             "2026-04-30_population-households-first-mobility-runtime-rule-v533-v540.md"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesDataSource = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -6295,10 +6286,7 @@ public class ProjectReferenceTests
             "exec-plans",
             "active",
             "2026-04-30_household-mobility-first-runtime-rule-closeout-v541-v548.md"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesDataSource = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -6456,10 +6444,7 @@ public class ProjectReferenceTests
             "exec-plans",
             "active",
             "2026-04-30_household-mobility-runtime-rule-health-evidence-v549-v556.md"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesDataSource = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -6619,10 +6604,7 @@ public class ProjectReferenceTests
             "exec-plans",
             "active",
             "2026-05-01_household-mobility-runtime-widening-gate-v557-v564.md"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesDataSource = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -6804,10 +6786,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesDataSource = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -6996,10 +6975,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesDataSource = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -7196,10 +7172,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -7380,10 +7353,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -7566,10 +7536,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -7750,10 +7717,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -7922,10 +7886,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -8100,10 +8061,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -8282,10 +8240,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -8469,10 +8424,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -8656,10 +8608,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -8841,10 +8790,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -9021,10 +8967,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -9209,10 +9152,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -9390,10 +9330,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -9573,10 +9510,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -9758,10 +9692,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -9944,10 +9875,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -10131,10 +10059,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -10321,10 +10246,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -10512,10 +10434,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -10704,10 +10623,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -10896,10 +10812,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -11089,10 +11002,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -11285,10 +11195,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -11480,10 +11387,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -11674,10 +11578,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -11867,10 +11768,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -12059,10 +11957,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -12246,10 +12141,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -12456,10 +12348,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -12668,10 +12557,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -12868,10 +12754,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -13077,10 +12960,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -13292,10 +13172,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -13506,10 +13383,7 @@ public class ProjectReferenceTests
             "tests",
             "Zongzu.Modules.PopulationAndHouseholds.Tests",
             "PopulationAndHouseholdsModuleTests.cs"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -13718,10 +13592,7 @@ public class ProjectReferenceTests
             "exec-plans",
             "active",
             "2026-05-03_household-mobility-runtime-extraction-closeout-v853-v860.md"));
-        string populationModule = File.ReadAllText(Path.Combine(
-            SrcDir,
-            "Zongzu.Modules.PopulationAndHouseholds",
-            "PopulationAndHouseholdsModule.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string rulesData = File.ReadAllText(Path.Combine(
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
@@ -13951,6 +13822,201 @@ public class ProjectReferenceTests
                      "SocialClassEngine",
                      "HouseholdMobilityExtractionCloseoutState",
                      "HouseholdMobilityGuardLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_runtime_rule_file_split_v861_v868_must_preserve_owner_behavior_and_schema_neutrality()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-runtime-rule-file-split-v861-v868.md"));
+        string mainModuleFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string runtimeFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.MobilityRuntime.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V861-V868 PopulationAndHouseholds Runtime Rule File Split"));
+        Assert.That(socialStrata, Does.Contain("Current population households runtime rule file split: v861-v868"));
+        Assert.That(designAudit, Does.Contain("v861-v868 population households runtime rule file split audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds runtime rule file split v861-v868 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds runtime rule file split v861-v868 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households runtime rule file split v861-v868 note"));
+        Assert.That(uiPresentation, Does.Contain("v861-v868 population households runtime rule file split"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds runtime rule file split v861-v868 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V861-V868 PopulationAndHouseholds Runtime Rule File Split"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Runtime Rule File Split Through V868"));
+        Assert.That(schemaRules, Does.Contain("population households runtime rule file split v861-v868 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households runtime rule file split v861-v868 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-neutral file split",
+                     "Runtime behavior change: none",
+                     "Target schema/migration impact: none",
+                     "PopulationAndHouseholdsModule.MobilityRuntime.cs",
+                     "No runtime rule formula change",
+                     "No rules-data parameter change",
+                     "No rule extraction change",
+                     "No fanout widening",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes",
+                     "No authored rules-data externalization in this split",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(mainModuleFile, Does.Contain("if (ApplyMonthlyHouseholdMobilityRuntimeRule(scope))"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private bool ApplyMonthlyHouseholdMobilityRuntimeRule"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static IOrderedEnumerable<MigrationPoolEntryState> ApplyMonthlyRuntimePoolTieBreak"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static int ComputeMonthlyHouseholdMobilityRuntimeScore"));
+
+        Assert.That(runtimeFile, Does.Contain("public sealed partial class PopulationAndHouseholdsModule"));
+        Assert.That(runtimeFile, Does.Contain("private bool ApplyMonthlyHouseholdMobilityRuntimeRule"));
+        Assert.That(runtimeFile, Does.Contain("private static IOrderedEnumerable<MigrationPoolEntryState> ApplyMonthlyRuntimePoolTieBreak"));
+        Assert.That(runtimeFile, Does.Contain("private static IOrderedEnumerable<PopulationHouseholdState> ApplyMonthlyRuntimeHouseholdTieBreak"));
+        Assert.That(runtimeFile, Does.Contain("private static bool IsMonthlyHouseholdMobilityRuntimeCandidate"));
+        Assert.That(runtimeFile, Does.Contain("private static int ComputeMonthlyHouseholdMobilityRuntimeScore"));
+        Assert.That(runtimeFile, Does.Contain("private static int ResolveMonthlyHouseholdMobilityLivelihoodScoreWeight"));
+        Assert.That(runtimeFile, Does.Contain("GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault"));
+        Assert.That(runtimeFile, Does.Contain("GetMonthlyRuntimePressureContributionFloorOrDefault"));
+        Assert.That(runtimeFile, Does.Contain("GetMonthlyRuntimeMigrationStartedEventThresholdOrDefault"));
+        Assert.That(runtimeFile, Does.Contain("Math.Max(pressureContributionFloor, laborCapacityPressureFloor - household.LaborCapacity)"));
+        Assert.That(runtimeFile, Does.Not.Contain("Math.Max(0,"));
+
+        Assert.That(
+            Regex.Matches(populationModule, @"\bApplyMonthlyHouseholdMobilityRuntimeRule\s*\(").Count,
+            Is.EqualTo(2),
+            "The file split must keep exactly one call and one private implementation of the first runtime rule.");
+        Assert.That(
+            Regex.Matches(populationModule, @"\bComputeMonthlyHouseholdMobilityRuntimeScore\s*\(").Count,
+            Is.EqualTo(2),
+            "The file split must keep one score method and one score call.");
+        Assert.That(rulesData, Does.Contain("PopulationHouseholdMobilityRulesData"));
+        Assert.That(rulesData, Does.Contain("DefaultMonthlyRuntimeRiskDelta = 1"));
+        Assert.That(rulesData, Does.Contain("DefaultMonthlyRuntimeMigrationStartedEventThreshold = 80"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("FileSplit"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "MonthlyRuntimeActivePoolOutflowThreshold",
+                     "MonthlyRuntimePressureContributionFloor",
+                     "MonthlyRuntimeMigrationStartedEventThreshold",
+                     "PopulationAndHouseholdsModule.MobilityRuntime",
+                     "HouseholdMobilityFileSplitInterpreter",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "MonthlyRuntime",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "PopulationAndHouseholdsRuntimeRuleFileSplit",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "PopulationAndHouseholdsRuntimeRuleFileSplitState",
+                     "HouseholdMobilityFileSplitLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",
                      "OwnerLaneLedger",
@@ -14280,6 +14346,21 @@ public class ProjectReferenceTests
             .SelectMany(root => Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories))
             .Where(static file => !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
                 && !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal));
+    }
+
+    private static string ReadPopulationAndHouseholdsModuleSource()
+    {
+        return string.Join(
+            Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PopulationAndHouseholds"))
+                .OrderBy(static file => Path.GetFileName(file) switch
+                {
+                    "PopulationAndHouseholdsModule.MobilityRuntime.cs" => 0,
+                    "PopulationAndHouseholdsModule.cs" => 1,
+                    _ => 2,
+                })
+                .ThenBy(static file => file, StringComparer.Ordinal)
+                .Select(File.ReadAllText));
     }
 
     private static string[] FindTokenOccurrences(IEnumerable<string> files, IReadOnlyCollection<string> forbiddenTokens)

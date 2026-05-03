@@ -882,3 +882,13 @@ Design alignment: extracted parameter families cover the first rule's thresholds
 Code alignment: no runtime source changes are made in this closeout. `PopulationAndHouseholds` remains the only owner-side consumer of household mobility rules-data; Application, presentation, Unity, persistence, and `PersonRegistry` do not calculate household mobility outcomes.
 
 Validation alignment: an architecture guard proves closeout docs, extracted parameter coverage, remaining guard classification, no schema drift, no loader/file, no plugin marketplace, no movement command, no route-history state, no fanout widening, no file split, and no second runtime rule.
+
+## v861-v868 population households runtime rule file split audit - 2026-05-03
+
+The v861-v868 pass moves the first household mobility runtime rule from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.MobilityRuntime.cs`.
+
+Design alignment: this is behavior-neutral file organization after extraction closeout, not a rule formula change, target-ordering change, rules-data expansion, movement command, route-history model, or class/status selector.
+
+Code alignment: the moved methods remain private members of the same partial `PopulationAndHouseholdsModule` class. Existing architecture guards now read the aggregate module source so behavior evidence survives file splitting instead of depending on one oversized file.
+
+Validation alignment: an architecture guard proves the moved method still exists once, the main module still calls it, no duplicate runtime rule path is added, no schema drift occurs, and Application/UI/Unity/`PersonRegistry` authority boundaries remain unchanged.

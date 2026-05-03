@@ -910,3 +910,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, pressure 
 V853-V860 keeps household mobility fidelity at the first-rule bounded monthly slice and closes the parameter extraction track. The rule still touches only capped active pools and eligible local households; distant society remains summary pressure unless a future owner-lane rule separately promotes detail.
 
 The closeout classifies remaining inline controls as non-extraction targets: zero-cap/no-delta no-op guards, empty-collection no-op guards, changed-flow, threshold crossing comparison, and candidate boolean composition. No persisted schema, loader, rules-data file, cache, diagnostic state, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, file split, or performance claim is added.
+
+## V861-V868 PopulationAndHouseholds Runtime Rule File Split
+
+V861-V868 changes file layout only. The first household mobility runtime rule stays in the same `PopulationAndHouseholds` fidelity lane, still bounded by active pools, local eligible households, deterministic ordering, and existing rules-data caps.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, formula change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
