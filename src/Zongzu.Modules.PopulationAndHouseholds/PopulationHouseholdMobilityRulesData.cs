@@ -56,6 +56,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistenceInteractionGrainShortageStoreFloorExclusive,
     int SubsistenceInteractionGrainShortageStoreCeilingExclusive,
     int SubsistenceInteractionCashNeedBoostScore,
+    int SubsistenceInteractionDebtPressureThreshold,
+    int SubsistenceInteractionDebtPressureBoostScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -130,6 +132,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive = 0;
     public const int DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive = 25;
     public const int DefaultSubsistenceInteractionCashNeedBoostScore = 2;
+    public const int DefaultSubsistenceInteractionDebtPressureThreshold = 60;
+    public const int DefaultSubsistenceInteractionDebtPressureBoostScore = 1;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -348,6 +352,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive,
             DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive,
             DefaultSubsistenceInteractionCashNeedBoostScore,
+            DefaultSubsistenceInteractionDebtPressureThreshold,
+            DefaultSubsistenceInteractionDebtPressureBoostScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -430,6 +436,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive,
             DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive,
             DefaultSubsistenceInteractionCashNeedBoostScore,
+            DefaultSubsistenceInteractionDebtPressureThreshold,
+            DefaultSubsistenceInteractionDebtPressureBoostScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -1012,6 +1020,17 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"subsistence_interaction_cash_need_boost_score must be between 0 and {MaxSubsistenceInteractionPressureContribution}.");
+        }
+
+        if (SubsistenceInteractionDebtPressureThreshold is < 0 or > 100)
+        {
+            errors.Add("subsistence_interaction_debt_pressure_threshold must be between 0 and 100.");
+        }
+
+        if (SubsistenceInteractionDebtPressureBoostScore is < 0 or > MaxSubsistenceInteractionPressureContribution)
+        {
+            errors.Add(
+                $"subsistence_interaction_debt_pressure_boost_score must be between 0 and {MaxSubsistenceInteractionPressureContribution}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1692,6 +1711,25 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? SubsistenceInteractionCashNeedBoostScore
             : DefaultSubsistenceInteractionCashNeedBoostScore;
+    }
+
+    public int GetSubsistenceInteractionDebtPressureThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceInteractionDebtPressureThreshold
+            : DefaultSubsistenceInteractionDebtPressureThreshold;
+    }
+
+    public bool IsSubsistenceInteractionDebtPressureOrDefault(int debtPressure)
+    {
+        return debtPressure >= GetSubsistenceInteractionDebtPressureThresholdOrDefault();
+    }
+
+    public int GetSubsistenceInteractionDebtPressureBoostScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceInteractionDebtPressureBoostScore
+            : DefaultSubsistenceInteractionDebtPressureBoostScore;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
