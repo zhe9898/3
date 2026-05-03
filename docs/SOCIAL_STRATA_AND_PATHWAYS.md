@@ -662,3 +662,9 @@ Default rules-data keeps the land-holding trigger floor at 15, malformed thresho
 V789-V796 records that the first household mobility runtime rule's trigger livelihood list has been moved into owner-consumed rules-data. The social meaning remains bounded: seasonal migrant and hired-labor households can qualify for the small monthly pressure nudge, but this is not a class/status engine, career rail, migration economy, or relocation command.
 
 Default rules-data keeps the trigger livelihood list at `[SeasonalMigrant, HiredLabor]`, malformed list input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime livelihood-score extraction: v797-v804
+
+V797-V804 records that the first household mobility runtime rule's livelihood score weights have been moved into owner-consumed rules-data. The social meaning remains bounded: seasonal migrant, hired-labor, and tenant livelihoods can change candidate ordering inside the already-windowed monthly pressure nudge, but this is not a livelihood engine, class/status engine, career rail, migration economy, or relocation command.
+
+Default rules-data keeps score weights at `SeasonalMigrant=18`, `HiredLabor=10`, and `Tenant=6`; unmatched livelihoods still score `0`, malformed weight data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.

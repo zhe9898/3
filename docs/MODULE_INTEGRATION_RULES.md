@@ -1040,3 +1040,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V789-V796 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the trigger livelihood list into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default list `[SeasonalMigrant, HiredLabor]`.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate livelihood eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime livelihood-score extraction v797-v804 integration note
+
+V797-V804 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the livelihood score weights into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default weights `SeasonalMigrant=18`, `HiredLabor=10`, and `Tenant=6`.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate livelihood score weights, validation fallback, fanout eligibility, target ordering, or household movement outcomes.

@@ -16,6 +16,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeGrainStoreTriggerFloor,
     int MonthlyRuntimeLandHoldingTriggerFloor,
     IReadOnlyList<LivelihoodType> MonthlyRuntimeTriggerLivelihoods,
+    IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> MonthlyRuntimeLivelihoodScoreWeights,
     int MonthlyRuntimeMigrationRiskScoreWeight,
     int MonthlyRuntimeLaborCapacityPressureFloor,
     int MonthlyRuntimeGrainStorePressureFloor,
@@ -51,6 +52,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxMonthlyRuntimeHouseholdCap = 16;
     public const int MaxMonthlyRuntimeRiskDelta = 8;
     public const int MaxMonthlyRuntimeCandidateMigrationRiskCeiling = 100;
+    public const int MaxMonthlyRuntimeLivelihoodScoreWeight = 32;
     public const int MaxMonthlyRuntimeMigrationRiskScoreWeight = 16;
     public const int MaxMonthlyRuntimeGrainStorePressureDivisor = 16;
     public const int MaxMonthlyRuntimeLandHoldingPressureDivisor = 16;
@@ -58,6 +60,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
 
     public static IReadOnlyList<LivelihoodType> DefaultMonthlyRuntimeTriggerLivelihoods { get; } =
         new[] { LivelihoodType.SeasonalMigrant, LivelihoodType.HiredLabor };
+
+    public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        DefaultMonthlyRuntimeLivelihoodScoreWeights { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.SeasonalMigrant, 18),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.HiredLabor, 10),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Tenant, 6),
+        };
 
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
@@ -71,6 +82,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeGrainStoreTriggerFloor,
             DefaultMonthlyRuntimeLandHoldingTriggerFloor,
             DefaultMonthlyRuntimeTriggerLivelihoods,
+            DefaultMonthlyRuntimeLivelihoodScoreWeights,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -94,6 +106,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeGrainStoreTriggerFloor,
             DefaultMonthlyRuntimeLandHoldingTriggerFloor,
             DefaultMonthlyRuntimeTriggerLivelihoods,
+            DefaultMonthlyRuntimeLivelihoodScoreWeights,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -164,6 +177,20 @@ public sealed record PopulationHouseholdMobilityRulesData(
             || MonthlyRuntimeTriggerLivelihoods.Distinct().Count() != MonthlyRuntimeTriggerLivelihoods.Count)
         {
             errors.Add("monthly_runtime_trigger_livelihoods must be non-empty, distinct, and defined.");
+        }
+
+        if (MonthlyRuntimeLivelihoodScoreWeights is null
+            || MonthlyRuntimeLivelihoodScoreWeights.Count == 0
+            || MonthlyRuntimeLivelihoodScoreWeights.Any(static entry =>
+                !Enum.IsDefined(entry.Livelihood)
+                || entry.Weight is < 0 or > MaxMonthlyRuntimeLivelihoodScoreWeight)
+            || MonthlyRuntimeLivelihoodScoreWeights
+                .Select(static entry => entry.Livelihood)
+                .Distinct()
+                .Count() != MonthlyRuntimeLivelihoodScoreWeights.Count)
+        {
+            errors.Add(
+                $"monthly_runtime_livelihood_score_weights must be non-empty, distinct, defined, and between 0 and {MaxMonthlyRuntimeLivelihoodScoreWeight}.");
         }
 
         if (MonthlyRuntimeMigrationRiskScoreWeight is < 0 or > MaxMonthlyRuntimeMigrationRiskScoreWeight)
@@ -298,6 +325,27 @@ public sealed record PopulationHouseholdMobilityRulesData(
             : DefaultMonthlyRuntimeTriggerLivelihoods;
     }
 
+    public IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> GetMonthlyRuntimeLivelihoodScoreWeightsOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeLivelihoodScoreWeights
+            : DefaultMonthlyRuntimeLivelihoodScoreWeights;
+    }
+
+    public int GetMonthlyRuntimeLivelihoodScoreWeightOrDefault(LivelihoodType livelihood)
+    {
+        foreach (PopulationHouseholdMobilityLivelihoodScoreWeight entry in
+                 GetMonthlyRuntimeLivelihoodScoreWeightsOrDefault())
+        {
+            if (entry.Livelihood == livelihood)
+            {
+                return entry.Weight;
+            }
+        }
+
+        return 0;
+    }
+
     public int GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault()
     {
         return Validate().IsValid
@@ -376,3 +424,7 @@ public sealed record PopulationHouseholdMobilityRulesValidationResult(
     public static PopulationHouseholdMobilityRulesValidationResult Valid { get; } =
         new(true, Array.Empty<string>());
 }
+
+public readonly record struct PopulationHouseholdMobilityLivelihoodScoreWeight(
+    LivelihoodType Livelihood,
+    int Weight);

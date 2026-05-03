@@ -1543,6 +1543,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeLandHoldingTriggerFloorOrDefault();
         IReadOnlyList<LivelihoodType> triggerLivelihoods = _householdMobilityRulesData
             .GetMonthlyRuntimeTriggerLivelihoodsOrDefault();
+        IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> livelihoodScoreWeights =
+            _householdMobilityRulesData.GetMonthlyRuntimeLivelihoodScoreWeightsOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
         int laborCapacityPressureFloor = _householdMobilityRulesData
@@ -1600,7 +1602,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         grainStorePressureFloor,
                         grainStorePressureDivisor,
                         landHoldingPressureFloor,
-                        landHoldingPressureDivisor))
+                        landHoldingPressureDivisor,
+                        livelihoodScoreWeights))
                 .ThenBy(static household => household.Id.Value)
                 .Take(householdCap)
                 .ToArray();
@@ -1673,18 +1676,15 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int grainStorePressureFloor,
         int grainStorePressureDivisor,
         int landHoldingPressureFloor,
-        int landHoldingPressureDivisor)
+        int landHoldingPressureDivisor,
+        IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> livelihoodScoreWeights)
     {
         int laborPressure = Math.Max(0, laborCapacityPressureFloor - household.LaborCapacity);
         int grainPressure = Math.Max(0, grainStorePressureFloor - household.GrainStore) / grainStorePressureDivisor;
         int landPressure = Math.Max(0, landHoldingPressureFloor - household.LandHolding) / landHoldingPressureDivisor;
-        int livelihoodPressure = household.Livelihood switch
-        {
-            LivelihoodType.SeasonalMigrant => 18,
-            LivelihoodType.HiredLabor => 10,
-            LivelihoodType.Tenant => 6,
-            _ => 0,
-        };
+        int livelihoodPressure = ResolveMonthlyHouseholdMobilityLivelihoodScoreWeight(
+            household.Livelihood,
+            livelihoodScoreWeights);
 
         return (household.MigrationRisk * migrationRiskScoreWeight)
             + household.Distress
@@ -1693,6 +1693,21 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             + grainPressure
             + landPressure
             + livelihoodPressure;
+    }
+
+    private static int ResolveMonthlyHouseholdMobilityLivelihoodScoreWeight(
+        LivelihoodType livelihood,
+        IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> livelihoodScoreWeights)
+    {
+        foreach (PopulationHouseholdMobilityLivelihoodScoreWeight entry in livelihoodScoreWeights)
+        {
+            if (entry.Livelihood == livelihood)
+            {
+                return entry.Weight;
+            }
+        }
+
+        return 0;
     }
 
     private static string ResolveFocusPromotionReason(PopulationHouseholdState household)
