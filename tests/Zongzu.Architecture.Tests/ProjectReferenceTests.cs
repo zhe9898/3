@@ -14241,6 +14241,200 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_pool_rebuild_file_split_v877_v884_must_preserve_owner_behavior_and_schema_neutrality()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-pool-rebuild-file-split-v877-v884.md"));
+        string mainModuleFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string poolRebuildFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PoolRebuild.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V877-V884 PopulationAndHouseholds Pool Rebuild File Split"));
+        Assert.That(socialStrata, Does.Contain("Current population households pool rebuild file split: v877-v884"));
+        Assert.That(designAudit, Does.Contain("v877-v884 population households pool rebuild file split audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds pool rebuild file split v877-v884 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds pool rebuild file split v877-v884 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households pool rebuild file split v877-v884 note"));
+        Assert.That(uiPresentation, Does.Contain("v877-v884 population households pool rebuild file split"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds pool rebuild file split v877-v884 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V877-V884 PopulationAndHouseholds Pool Rebuild File Split"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Pool Rebuild File Split Through V884"));
+        Assert.That(schemaRules, Does.Contain("population households pool rebuild file split v877-v884 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households pool rebuild file split v877-v884 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-neutral file split",
+                     "Runtime behavior change: none",
+                     "Target schema/migration impact: none",
+                     "PopulationAndHouseholdsModule.PoolRebuild.cs",
+                     "No settlement summary behavior change",
+                     "No labor pool formula change",
+                     "No marriage pool formula change",
+                     "No migration pool formula change",
+                     "No pool limit extraction",
+                     "No rules-data parameter change",
+                     "No fanout widening",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes or pool rebuild results",
+                     "No authored rules-data externalization in this split",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(mainModuleFile, Does.Contain("RebuildSettlementSummaries(scope.State, personQueries)"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static void RebuildSettlementSummaries"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static void RebuildLaborPools"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static int ComputeHouseholdLaborDemand"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static void RebuildMarriagePools"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static bool IsMarriagePoolEligible"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static void RebuildMigrationPools"));
+
+        Assert.That(poolRebuildFile, Does.Contain("public sealed partial class PopulationAndHouseholdsModule"));
+        Assert.That(poolRebuildFile, Does.Contain("private static void RebuildSettlementSummaries"));
+        Assert.That(poolRebuildFile, Does.Contain("private static void RebuildLaborPools"));
+        Assert.That(poolRebuildFile, Does.Contain("private static int ComputeHouseholdLaborDemand"));
+        Assert.That(poolRebuildFile, Does.Contain("private static void RebuildMarriagePools"));
+        Assert.That(poolRebuildFile, Does.Contain("private static bool IsMarriagePoolEligible"));
+        Assert.That(poolRebuildFile, Does.Contain("private static void RebuildMigrationPools"));
+        Assert.That(poolRebuildFile, Does.Contain(".GroupBy(static household => household.SettlementId)"));
+        Assert.That(poolRebuildFile, Does.Contain(".OrderBy(static group => group.Key.Value)"));
+        Assert.That(poolRebuildFile, Does.Contain("group.OrderBy(static household => household.Id.Value)"));
+        Assert.That(poolRebuildFile, Does.Contain(".OrderBy(static membership => membership.PersonId.Value)"));
+        Assert.That(poolRebuildFile, Does.Contain("households.Sum(ComputeHouseholdLaborDemand)"));
+        Assert.That(poolRebuildFile, Does.Contain("Math.Clamp(50 + ((laborDemand - availableLabor) / households.Length) + (averageMigration / 4), 20, 120)"));
+        Assert.That(poolRebuildFile, Does.Contain("Math.Clamp((mismatch * 12) + averageDistress / 3 + averageMigration / 4, 0, 100)"));
+        Assert.That(poolRebuildFile, Does.Contain("Math.Clamp(averageMigration + migratingHouseholds * 8 + migratingMembers * 2, 0, 100)"));
+
+        Assert.That(Regex.Matches(poolRebuildFile, @"private static void RebuildSettlementSummaries\s*\(").Count, Is.EqualTo(1));
+        Assert.That(Regex.Matches(poolRebuildFile, @"private static void RebuildLaborPools\s*\(").Count, Is.EqualTo(1));
+        Assert.That(Regex.Matches(poolRebuildFile, @"private static int ComputeHouseholdLaborDemand\s*\(").Count, Is.EqualTo(1));
+        Assert.That(Regex.Matches(poolRebuildFile, @"private static void RebuildMarriagePools\s*\(").Count, Is.EqualTo(1));
+        Assert.That(Regex.Matches(poolRebuildFile, @"private static bool IsMarriagePoolEligible\s*\(").Count, Is.EqualTo(1));
+        Assert.That(Regex.Matches(poolRebuildFile, @"private static void RebuildMigrationPools\s*\(").Count, Is.EqualTo(1));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("PoolRebuild"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationAndHouseholdsModule.PoolRebuild",
+                     "PopulationAndHouseholdsPoolRebuildFileSplit",
+                     "PoolRebuildFormulaAuthority",
+                     "HouseholdMobilityPoolInterpreter",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "PoolRebuild",
+                     "LaborPoolFormula",
+                     "MarriagePoolFormula",
+                     "MigrationPoolFormula",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "PopulationAndHouseholdsPoolRebuildFileSplit",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "PopulationAndHouseholdsPoolRebuildFileSplitState",
+                     "PoolRebuildLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
@@ -14551,8 +14745,9 @@ public class ProjectReferenceTests
                 {
                     "PopulationAndHouseholdsModule.MobilityRuntime.cs" => 0,
                     "PopulationAndHouseholdsModule.MembershipFocus.cs" => 1,
-                    "PopulationAndHouseholdsModule.cs" => 2,
-                    _ => 3,
+                    "PopulationAndHouseholdsModule.PoolRebuild.cs" => 2,
+                    "PopulationAndHouseholdsModule.cs" => 3,
+                    _ => 4,
                 })
                 .ThenBy(static file => file, StringComparer.Ordinal)
                 .Select(File.ReadAllText));

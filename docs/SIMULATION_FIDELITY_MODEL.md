@@ -922,3 +922,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, formula c
 V869-V876 changes file layout only. Membership synchronization and hot-household focus promotion stay in the same `PopulationAndHouseholds` fidelity lane, still bounded by existing membership lists, deterministic ordering, and the existing focused-member promotion cap.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, fidelity-ring retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V877-V884 PopulationAndHouseholds Pool Rebuild File Split
+
+V877-V884 changes file layout only. Settlement summary, labor pool, marriage pool, and migration pool rebuilds stay in the same `PopulationAndHouseholds` fidelity lane, still bounded by existing household and membership lists, stable settlement/household/member ordering, and the same pool formulas.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, pool formula retune, pool limit extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

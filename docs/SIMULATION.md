@@ -1041,3 +1041,9 @@ No scheduler cadence change, threshold retune, weight retune, floor/divisor retu
 V869-V876 changes file layout only. Membership synchronization and hot-household focus promotion remain on existing owner call sites and use the same membership ordering, household grouping, focused-member promotion cap, and `PersonRegistry` command seam.
 
 No scheduler cadence change, membership behavior change, fidelity-ring behavior change, promotion-cap retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.
+
+## Current population households pool rebuild file split v877-v884 note
+
+V877-V884 changes file layout only. Settlement summary and labor/marriage/migration pool rebuilds remain on existing owner call sites and use the same settlement grouping, household ordering, membership ordering, pool formulas, and `PersonRegistry` query seam.
+
+No scheduler cadence change, pool behavior change, labor/marriage/migration formula retune, pool limit extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

@@ -1587,3 +1587,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V869-V876 splits membership synchronization and hot-household focus promotion helpers into `PopulationAndHouseholdsModule.MembershipFocus.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, command/event/query seams, scheduler cadence, and focused-member promotion cap consumption remain unchanged.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, membership-focus split state, focus ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## PopulationAndHouseholds pool rebuild file split v877-v884 boundary note
+
+V877-V884 splits settlement summary and labor/marriage/migration pool rebuild helpers into `PopulationAndHouseholdsModule.PoolRebuild.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, command/event/query seams, scheduler cadence, and pool formulas remain unchanged.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pool-rebuild split state, pool ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.

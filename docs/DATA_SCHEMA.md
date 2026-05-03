@@ -1607,3 +1607,7 @@ V861-V868 moves private owner-rule methods into a partial file. Schema/migration
 Current population households membership focus file split v869-v876 note:
 
 V869-V876 moves private membership synchronization and focus-promotion helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted membership-focus split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, focus ledger, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households pool rebuild file split v877-v884 note:
+
+V877-V884 moves private settlement summary and labor/marriage/migration pool rebuild helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted pool-rebuild split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pool ledger, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
