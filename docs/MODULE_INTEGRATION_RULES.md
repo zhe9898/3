@@ -1106,3 +1106,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V877-V884 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves settlement summary and labor/marriage/migration pool rebuild helpers into a dedicated partial file inside the same owner module.
 
 The integration contract remains owner-owned pool rebuilds plus existing query readbacks only. Application/UI/Unity must not calculate moved settlement summaries, labor pools, marriage pools, migration pools, or household movement outcomes.
+
+## PopulationAndHouseholds query surface file split v885-v892 integration note
+
+V885-V892 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves the private query implementation and clone helpers into a dedicated partial file inside the same owner module.
+
+The integration contract remains owner-owned query snapshots only. Application/UI/Unity may read projected/query fields through existing seams but must not calculate household movement outcomes, query snapshot results, or rule outputs from the moved query helpers.

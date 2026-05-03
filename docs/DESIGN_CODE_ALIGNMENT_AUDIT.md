@@ -901,6 +901,14 @@ Design alignment: this is behavior-neutral file organization after the runtime r
 
 Code alignment: the moved methods remain private members of the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
 
+## v885-v892 population households query surface file split audit - 2026-05-03
+
+The v885-v892 pass moves the private `PopulationQueries` implementation and clone helpers from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.Queries.cs`.
+
+Design alignment: this is behavior-neutral file organization after the runtime, membership-focus, and pool-rebuild splits, not a query contract change, snapshot field expansion, movement command, route-history model, or class/status selector.
+
+Code alignment: query registration stays in the owner module and the moved query implementation remains private inside the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
+
 ## v877-v884 population households pool rebuild file split audit - 2026-05-03
 
 The v877-v884 pass moves settlement summary and labor/marriage/migration pool rebuild helpers from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.PoolRebuild.cs`.

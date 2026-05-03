@@ -1047,3 +1047,9 @@ No scheduler cadence change, membership behavior change, fidelity-ring behavior 
 V877-V884 changes file layout only. Settlement summary and labor/marriage/migration pool rebuilds remain on existing owner call sites and use the same settlement grouping, household ordering, membership ordering, pool formulas, and `PersonRegistry` query seam.
 
 No scheduler cadence change, pool behavior change, labor/marriage/migration formula retune, pool limit extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.
+
+## Current population households query surface file split v885-v892 note
+
+V885-V892 changes file layout only. Query registration remains on the existing owner seam, and query snapshots still copy households, settlements, memberships, and pools with the same stable ordering.
+
+No scheduler cadence change, query behavior change, snapshot field expansion, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

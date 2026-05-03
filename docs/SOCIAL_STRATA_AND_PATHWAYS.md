@@ -724,3 +724,9 @@ The split is organizational only. It does not create a status rank, class rail, 
 V877-V884 moves settlement summary, labor pool, marriage pool, and migration pool rebuild helpers into a dedicated partial file without changing social-strata behavior. Pool outputs still come from `PopulationAndHouseholds` owner state and existing `PersonRegistry` query readbacks; no class/status lane is created.
 
 The split is organizational only. It does not create a status rank, class rail, pool ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved helpers.
+
+### Current population households query surface file split: v885-v892
+
+V885-V892 moves the private `PopulationQueries` implementation and clone helpers into a dedicated partial file without changing social-strata behavior. Query snapshots still copy owner state; they do not classify households into new social ranks or expose a class/status engine.
+
+The split is organizational only. It does not create a status rank, class rail, query ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved query helpers.
