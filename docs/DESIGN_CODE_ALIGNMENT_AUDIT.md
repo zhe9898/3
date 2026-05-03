@@ -901,4 +901,12 @@ Design alignment: this is behavior-neutral file organization after the runtime r
 
 Code alignment: the moved methods remain private members of the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
 
+## v877-v884 population households pool rebuild file split audit - 2026-05-03
+
+The v877-v884 pass moves settlement summary and labor/marriage/migration pool rebuild helpers from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.PoolRebuild.cs`.
+
+Design alignment: this is behavior-neutral file organization after the runtime and membership-focus splits, not a pool rule change, labor/marriage/migration formula retune, pool limit extraction, movement command, route-history model, or class/status selector.
+
+Code alignment: the moved methods remain private members of the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
+
 Validation alignment: an architecture guard proves the moved helpers remain private owner code, call sites remain in the main module, no schema drift occurs, and Application/UI/Unity/`PersonRegistry` authority boundaries remain unchanged.

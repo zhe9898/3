@@ -1100,3 +1100,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V869-V876 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves membership synchronization and hot-household focus promotion helpers into a dedicated partial file inside the same owner module.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate moved membership synchronization, focus promotion, fidelity-ring decisions, or household movement outcomes.
+
+## PopulationAndHouseholds pool rebuild file split v877-v884 integration note
+
+V877-V884 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves settlement summary and labor/marriage/migration pool rebuild helpers into a dedicated partial file inside the same owner module.
+
+The integration contract remains owner-owned pool rebuilds plus existing query readbacks only. Application/UI/Unity must not calculate moved settlement summaries, labor pools, marriage pools, migration pools, or household movement outcomes.

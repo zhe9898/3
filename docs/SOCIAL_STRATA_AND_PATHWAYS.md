@@ -718,3 +718,9 @@ The split is organizational only. It does not create a status rank, class rail, 
 V869-V876 moves membership livelihood/activity synchronization and hot-household member fidelity promotion helpers into a dedicated partial file without changing social-strata behavior. Household members still copy their household livelihood/activity state through the owner module, and focus promotion remains bounded by existing rules-data.
 
 The split is organizational only. It does not create a status rank, class rail, movement selector, route-history, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved helpers.
+
+### Current population households pool rebuild file split: v877-v884
+
+V877-V884 moves settlement summary, labor pool, marriage pool, and migration pool rebuild helpers into a dedicated partial file without changing social-strata behavior. Pool outputs still come from `PopulationAndHouseholds` owner state and existing `PersonRegistry` query readbacks; no class/status lane is created.
+
+The split is organizational only. It does not create a status rank, class rail, pool ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved helpers.

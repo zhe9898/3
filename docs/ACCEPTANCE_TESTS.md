@@ -1163,3 +1163,9 @@ Acceptance evidence for V861-V868:
 Acceptance evidence for V869-V876:
 - Architecture guard `Population_households_membership_focus_file_split_v869_v876_must_preserve_owner_behavior_and_schema_neutrality` proves membership synchronization and hot-household focus promotion helpers were moved into `PopulationAndHouseholdsModule.MembershipFocus.cs` without changing call sites, changing rules-data consumption, changing schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing membership/focus behavior tests; this split moves private owner methods only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds pool rebuild file split v877-v884 acceptance - 2026-05-03
+
+Acceptance evidence for V877-V884:
+- Architecture guard `Population_households_pool_rebuild_file_split_v877_v884_must_preserve_owner_behavior_and_schema_neutrality` proves settlement summary and labor/marriage/migration pool rebuild helpers were moved into `PopulationAndHouseholdsModule.PoolRebuild.cs` without changing call sites, changing formulas, changing schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing population/pool behavior tests; this split moves private owner methods only and adds no new owner rule or presentation field.
