@@ -788,3 +788,11 @@ This is not a subsistence pressure retune, migration engine, route-history model
 V989-V996 extracts the `ComputeMarketDependencyPressure` livelihood-to-score mapping into owner-consumed `PopulationHouseholdMobilityRulesData`. Default weights preserve prior behavior for petty trader/boatman, artisan/hired labor/seasonal migrant, service/tenant/unknown, smallholder, and fallback scores.
 
 This is not a labor, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V997-V1004 PopulationAndHouseholds Subsistence Labor Capacity Extraction
+
+V997-V1004 extracts the labor-capacity threshold-to-score portion of `ComputeSubsistenceLaborPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bands preserve prior behavior for `>=80`, `>=60`, `>=40`, `>=25`, and fallback labor-capacity scores.
+
+This is not a dependent-count, labor-clamp, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate subsistence labor or household mobility outcomes.

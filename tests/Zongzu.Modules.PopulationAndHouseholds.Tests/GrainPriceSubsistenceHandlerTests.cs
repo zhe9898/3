@@ -478,6 +478,63 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceMarketDependencyPressure], Is.EqualTo("4"));
     }
 
+    [Test]
+    public void GrainPriceSpike_DefaultLaborCapacityRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceLaborCapacityPressureBands = new[]
+                {
+                    new PopulationHouseholdMobilityThresholdScoreBand(80, -2),
+                    new PopulationHouseholdMobilityThresholdScoreBand(60, -1),
+                    new PopulationHouseholdMobilityThresholdScoreBand(40, 0),
+                    new PopulationHouseholdMobilityThresholdScoreBand(25, 1),
+                },
+                SubsistenceLaborCapacityPressureFallbackScore = 2,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
+            RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistenceLaborCapacityPressureFallbackScore, Is.EqualTo(2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistenceLaborCapacityPressureBands, Is.EqualTo(explicitPreviousBaseline.SubsistenceLaborCapacityPressureBands));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceLaborCapacityPressureScoreOrDefault(85), Is.EqualTo(-2));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceLaborCapacityPressureScoreOrDefault(60), Is.EqualTo(-1));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceLaborCapacityPressureScoreOrDefault(40), Is.EqualTo(0));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceLaborCapacityPressureScoreOrDefault(25), Is.EqualTo(1));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceLaborCapacityPressureScoreOrDefault(10), Is.EqualTo(2));
+        Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceLaborPressure], Is.EqualTo("2"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidLaborCapacityRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceLaborCapacityPressureBands = new[]
+                {
+                    new PopulationHouseholdMobilityThresholdScoreBand(80, -2),
+                    new PopulationHouseholdMobilityThresholdScoreBand(80, 0),
+                },
+                SubsistenceLaborCapacityPressureFallbackScore = 99,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(malformedRulesData.GetSubsistenceLaborCapacityPressureScoreOrDefault(25), Is.EqualTo(1));
+        Assert.That(malformedRulesData.GetSubsistenceLaborCapacityPressureFallbackScoreOrDefault(), Is.EqualTo(2));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceLaborPressure], Is.EqualTo("2"));
+    }
+
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunMissingMetadataGrainPriceSpike(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

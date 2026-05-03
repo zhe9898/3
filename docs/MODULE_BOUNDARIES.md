@@ -1677,3 +1677,8 @@ V989-V996 extracts subsistence market dependency livelihood score weights into `
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains market-dependency, pressure-profile, or rules-data outcome authority.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
+## PopulationAndHouseholds subsistence labor capacity extraction v997-v1004 boundary note
+
+V997-V1004 extracts subsistence labor-capacity threshold score bands into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, dependent-count pressure, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains subsistence-labor, pressure-profile, rules-data, or household mobility outcome authority.

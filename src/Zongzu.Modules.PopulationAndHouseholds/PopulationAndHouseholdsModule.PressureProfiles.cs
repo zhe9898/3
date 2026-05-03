@@ -102,16 +102,10 @@ public sealed partial class PopulationAndHouseholdsModule
         return _householdMobilityRulesData.GetSubsistenceMarketDependencyPressureScoreOrDefault(household.Livelihood);
     }
 
-    private static int ComputeSubsistenceLaborPressure(PopulationHouseholdState household)
+    private int ComputeSubsistenceLaborPressure(PopulationHouseholdState household)
     {
-        int laborPressure = household.LaborCapacity switch
-        {
-            >= 80 => -2,
-            >= 60 => -1,
-            >= 40 => 0,
-            >= 25 => 1,
-            _ => 2,
-        };
+        int laborPressure = _householdMobilityRulesData.GetSubsistenceLaborCapacityPressureScoreOrDefault(
+            household.LaborCapacity);
 
         int dependentPressure = household.DependentCount switch
         {

@@ -1131,3 +1131,8 @@ V989-V996 changes market dependency score ownership only. The grain-price subsis
 No event pool, movement command, route-history path, market-dependency ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
 
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.
+## Current population households subsistence labor capacity extraction v997-v1004 note
+
+V997-V1004 changes labor-capacity score ownership only. The grain-price subsistence path now reads labor-capacity pressure bands from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, dependent-count pressure, final labor clamp, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, subsistence-labor ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
