@@ -1539,6 +1539,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeLaborCapacityTriggerCeilingOrDefault();
         int grainStoreTriggerFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeGrainStoreTriggerFloorOrDefault();
+        int landHoldingTriggerFloor = _householdMobilityRulesData
+            .GetMonthlyRuntimeLandHoldingTriggerFloorOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
         int laborCapacityPressureFloor = _householdMobilityRulesData
@@ -1585,7 +1587,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         distressTriggerThreshold,
                         debtPressureTriggerThreshold,
                         laborCapacityTriggerCeiling,
-                        grainStoreTriggerFloor))
+                        grainStoreTriggerFloor,
+                        landHoldingTriggerFloor))
                 .OrderByDescending(household =>
                     ComputeMonthlyHouseholdMobilityRuntimeScore(
                         household,
@@ -1641,7 +1644,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int distressTriggerThreshold,
         int debtPressureTriggerThreshold,
         int laborCapacityTriggerCeiling,
-        int grainStoreTriggerFloor)
+        int grainStoreTriggerFloor,
+        int landHoldingTriggerFloor)
     {
         if (household.IsMigrating
             || household.MigrationRisk >= candidateMigrationRiskCeiling
@@ -1654,7 +1658,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             || household.DebtPressure >= debtPressureTriggerThreshold
             || household.LaborCapacity < laborCapacityTriggerCeiling
             || household.GrainStore < grainStoreTriggerFloor
-            || household.LandHolding < 15
+            || household.LandHolding < landHoldingTriggerFloor
             || household.Livelihood is LivelihoodType.SeasonalMigrant or LivelihoodType.HiredLabor;
     }
 

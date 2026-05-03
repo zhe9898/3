@@ -12,6 +12,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeDebtPressureTriggerThreshold,
     int MonthlyRuntimeLaborCapacityTriggerCeiling,
     int MonthlyRuntimeGrainStoreTriggerFloor,
+    int MonthlyRuntimeLandHoldingTriggerFloor,
     int MonthlyRuntimeMigrationRiskScoreWeight,
     int MonthlyRuntimeLaborCapacityPressureFloor,
     int MonthlyRuntimeGrainStorePressureFloor,
@@ -32,6 +33,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeDebtPressureTriggerThreshold = 60;
     public const int DefaultMonthlyRuntimeLaborCapacityTriggerCeiling = 45;
     public const int DefaultMonthlyRuntimeGrainStoreTriggerFloor = 25;
+    public const int DefaultMonthlyRuntimeLandHoldingTriggerFloor = 15;
     public const int DefaultMonthlyRuntimeMigrationRiskScoreWeight = 4;
     public const int DefaultMonthlyRuntimeLaborCapacityPressureFloor = 60;
     public const int DefaultMonthlyRuntimeGrainStorePressureFloor = 25;
@@ -61,6 +63,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeDebtPressureTriggerThreshold,
             DefaultMonthlyRuntimeLaborCapacityTriggerCeiling,
             DefaultMonthlyRuntimeGrainStoreTriggerFloor,
+            DefaultMonthlyRuntimeLandHoldingTriggerFloor,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -82,6 +85,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeDebtPressureTriggerThreshold,
             DefaultMonthlyRuntimeLaborCapacityTriggerCeiling,
             DefaultMonthlyRuntimeGrainStoreTriggerFloor,
+            DefaultMonthlyRuntimeLandHoldingTriggerFloor,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -139,6 +143,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (MonthlyRuntimeGrainStoreTriggerFloor is < 0 or > 100)
         {
             errors.Add("monthly_runtime_grain_store_trigger_floor must be between 0 and 100.");
+        }
+
+        if (MonthlyRuntimeLandHoldingTriggerFloor is < 0 or > 100)
+        {
+            errors.Add("monthly_runtime_land_holding_trigger_floor must be between 0 and 100.");
         }
 
         if (MonthlyRuntimeMigrationRiskScoreWeight is < 0 or > MaxMonthlyRuntimeMigrationRiskScoreWeight)
@@ -257,6 +266,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeGrainStoreTriggerFloor
             : DefaultMonthlyRuntimeGrainStoreTriggerFloor;
+    }
+
+    public int GetMonthlyRuntimeLandHoldingTriggerFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeLandHoldingTriggerFloor
+            : DefaultMonthlyRuntimeLandHoldingTriggerFloor;
     }
 
     public int GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault()

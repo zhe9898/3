@@ -782,3 +782,13 @@ Design alignment: this is hardcoded grain-trigger extraction, not a grain econom
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the grain trigger or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default no-touch equivalence and malformed grain-trigger fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v781-v788 household mobility runtime land-trigger extraction audit - 2026-05-03
+
+The v781-v788 pass extracts the first `PopulationAndHouseholds` runtime rule's land-holding trigger floor into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded land-trigger extraction, not a land economy retune, grain/labor/debt/distress/livelihood trigger extraction, or score formula expansion. Default land-holding trigger floor 15 preserves prior no-touch behavior under default rules-data, while malformed threshold values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the land trigger or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default no-touch equivalence and malformed land-trigger fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.

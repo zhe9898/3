@@ -1515,3 +1515,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V773-V780 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's grain-store trigger floor is now read from `PopulationHouseholdMobilityRulesData` with default 25 and validation range 0..100.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, grain-trigger state, event-routing ledger, validation ledger, cache, labor/debt/distress/land/livelihood trigger extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime land-trigger extraction v781-v788 boundary note
+
+V781-V788 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's land-holding trigger floor is now read from `PopulationHouseholdMobilityRulesData` with default 15 and validation range 0..100.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, land-trigger state, event-routing ledger, validation ledger, cache, grain/labor/debt/distress/livelihood trigger extraction, score formula expansion, fanout widening, or `PersonRegistry` expansion is introduced.
