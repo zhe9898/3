@@ -1736,3 +1736,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1069-V1076 extracts the subsistence interaction cash-need boost score into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, grain-shortage window, debt/resilience interaction scoring, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains interaction-cash-need, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
+
+## PopulationAndHouseholds subsistence interaction debt-boost extraction v1077-v1084 boundary note
+
+V1077-V1084 extracts the subsistence interaction debt pressure threshold and boost score into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, grain-shortage window, cash-need interaction scoring, resilience interaction scoring, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains interaction-debt, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.

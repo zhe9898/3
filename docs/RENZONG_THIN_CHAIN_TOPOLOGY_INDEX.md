@@ -856,3 +856,9 @@ This is not a cash-need boost extraction, debt-threshold extraction, resilience 
 V1069-V1076 extracts the cash-need livelihood boost from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default score preserves prior behavior: grain shortage plus cash-need livelihood contributes `+2`.
 
 This is not a debt-threshold extraction, resilience relief extraction, interaction clamp extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1077-V1084 PopulationAndHouseholds Subsistence Interaction Debt-Boost Extraction
+
+V1077-V1084 extracts the grain-shortage debt pressure gate and boost from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default threshold and score preserve prior behavior: grain shortage plus `DebtPressure >= 60` contributes `+1`.
+
+This is not a resilience relief extraction, interaction clamp extraction, tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

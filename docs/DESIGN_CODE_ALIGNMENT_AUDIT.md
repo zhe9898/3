@@ -1057,3 +1057,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1069-v1076 pass moves the `ComputeSubsistenceInteractionPressure` cash-need boost from C# literal `+2` into validated `PopulationHouseholdMobilityRulesData` default getter.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; grain-shortage window, debt threshold boost, resilience relief, and interaction clamp remain unchanged; Application/UI/Unity do not calculate interaction cash-need pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1077-v1084 population households subsistence interaction debt-boost extraction audit - 2026-05-03
+
+The v1077-v1084 pass moves the `ComputeSubsistenceInteractionPressure` debt pressure gate and boost from C# literals `>= 60` and `+1` into validated `PopulationHouseholdMobilityRulesData` default getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; grain-shortage window, cash-need boost, resilience relief, and interaction clamp remain unchanged; Application/UI/Unity do not calculate interaction debt pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.

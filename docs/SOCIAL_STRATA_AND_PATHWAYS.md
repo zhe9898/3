@@ -859,3 +859,9 @@ The extraction is default-equivalent. It does not retune cash-need boost, debt t
 V1069-V1076 moves the subsistence interaction cash-need boost into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The boost remains a private pressure input over existing livelihood classification, not a migration economy rule, class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune grain-shortage window, debt threshold boost, resilience relief, interaction clamp, tax-season, or official-supply formulas, and it does not create interaction-cash-need state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence interaction debt-boost extraction: v1077-v1084
+
+V1077-V1084 moves the subsistence interaction debt threshold and boost into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. Debt pressure remains one household-owned subsistence pressure signal inside PopulationAndHouseholds, not a migration economy rule, class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune grain-shortage window, cash-need boost, resilience relief, interaction clamp, tax-season, or official-supply formulas, and it does not create interaction-debt state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
