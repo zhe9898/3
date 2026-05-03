@@ -1300,3 +1300,11 @@ Acceptance evidence for V1037-V1044:
 - Architecture guard `Population_households_subsistence_fragility_debt_extraction_v1037_v1044_must_remain_owner_consumed_and_schema_neutral` proves fragility debt bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract fragility migration, clamp, interaction, tax-season, or official-supply formulas.
+
+## PopulationAndHouseholds subsistence fragility migration extraction v1045-v1052 acceptance - 2026-05-03
+
+Acceptance evidence for V1045-V1052:
+- Population tests `GrainPriceSpike_DefaultFragilityMigrationRulesDataMatchesPreviousBaseline`, `GrainPriceSpike_CustomFragilityMigrationRulesDataIsOwnerConsumed`, and `GrainPriceSpike_InvalidFragilityMigrationRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior fragility migration behavior, owner custom threshold is consumed deterministically, and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_fragility_migration_extraction_v1045_v1052_must_remain_owner_consumed_and_schema_neutral` proves fragility migration threshold/score/fallback moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract fragility clamp, interaction, tax-season, or official-supply formulas.

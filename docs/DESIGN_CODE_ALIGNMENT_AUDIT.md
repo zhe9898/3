@@ -1033,3 +1033,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1037-v1044 pass moves the `ComputeSubsistenceFragilityPressure` debt threshold-to-score map from C# literals into validated `PopulationHouseholdMobilityRulesData` default bands and fallback getters.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; distress/migration/fragility-clamp and interaction scoring remain unchanged; Application/UI/Unity do not calculate fragility debt pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1045-v1052 population households subsistence fragility migration extraction audit - 2026-05-03
+
+The v1045-v1052 pass moves the `ComputeSubsistenceFragilityPressure` migration flag/risk contribution from C# literals into validated `PopulationHouseholdMobilityRulesData` default threshold, score, and fallback getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; distress/debt/fragility-clamp and interaction scoring remain unchanged; Application/UI/Unity do not calculate fragility migration pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.

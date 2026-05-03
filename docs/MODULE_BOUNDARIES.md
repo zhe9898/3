@@ -1712,3 +1712,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1037-V1044 extracts subsistence fragility debt bands into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, distress/migration/fragility-clamp scoring, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains fragility-debt, pressure-profile, rules-data, or household mobility outcome authority.
+
+## PopulationAndHouseholds subsistence fragility migration extraction v1045-v1052 boundary note
+
+V1045-V1052 extracts the subsistence fragility migration threshold/score/fallback into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, distress/debt/fragility-clamp scoring, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains fragility-migration, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
