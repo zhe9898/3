@@ -987,4 +987,10 @@ V957-V964 changes parameter ownership only. Grain-price price-pressure clamp bou
 
 No new household target store, movement ledger, route-history model, selector watermark, grain-price-pressure state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
 
+## V965-V972 PopulationAndHouseholds Grain Price Level Band Extraction
+
+V965-V972 changes parameter ownership only. Grain-price level threshold/score bands are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, price jump bands, market tightness bands, subsistence pressure formulas, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, grain-price-level state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
 No persisted schema, loader, rules-data file, cache, diagnostic state, formula retune, metadata fallback change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

@@ -16426,6 +16426,198 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_grain_price_level_band_extraction_v965_v972_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-grain-price-level-band-extraction-v965-v972.md"));
+        string pressureProfilesFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "GrainPriceSubsistenceHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V965-V972 PopulationAndHouseholds Grain Price Level Band Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households grain price level band extraction: v965-v972"));
+        Assert.That(designAudit, Does.Contain("v965-v972 population households grain price level band extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds grain price level band extraction v965-v972 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds grain price level band extraction v965-v972 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households grain price level band extraction v965-v972 note"));
+        Assert.That(uiPresentation, Does.Contain("v965-v972 population households grain price level band extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds grain price level band extraction v965-v972 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V965-V972 PopulationAndHouseholds Grain Price Level Band Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Grain Price Level Band Extraction Through V972"));
+        Assert.That(schemaRules, Does.Contain("population households grain price level band extraction v965-v972 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households grain price level band extraction v965-v972 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "grain price level pressure threshold/score bands",
+                     "grain price level pressure fallback score",
+                     "Band order is deterministic and validated as descending threshold order",
+                     "No price jump band extraction",
+                     "No market tightness band extraction",
+                     "No subsistence pressure profile retune",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No content/config namespace",
+                     "No runtime plugin marketplace",
+                     "No second household mobility runtime rule",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate grain price level bands, household pressure, or household mobility outcomes",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string extractedSwitchToken in new[]
+                 {
+                     ">= 170 => 7",
+                     ">= 150 => 5",
+                     ">= 130 => 3",
+                     ">= 120 => 2",
+                     "_ => 1",
+                 })
+        {
+            Assert.That(pressureProfilesFile, Does.Not.Contain(extractedSwitchToken), extractedSwitchToken);
+        }
+
+        Assert.That(pressureProfilesFile, Does.Contain("GetGrainPriceLevelPressureScoreOrDefault(signal.CurrentPrice)"));
+        Assert.That(pressureProfilesFile, Does.Contain("GetGrainPricePressureClampFloorOrDefault"));
+        Assert.That(rulesData, Does.Contain("DefaultGrainPriceLevelPressureFallbackScore = 1"));
+        Assert.That(rulesData, Does.Contain("DefaultGrainPriceLevelPressureBands"));
+        Assert.That(rulesData, Does.Contain("new PopulationHouseholdMobilityThresholdScoreBand(170, 7)"));
+        Assert.That(rulesData, Does.Contain("new PopulationHouseholdMobilityThresholdScoreBand(150, 5)"));
+        Assert.That(rulesData, Does.Contain("new PopulationHouseholdMobilityThresholdScoreBand(130, 3)"));
+        Assert.That(rulesData, Does.Contain("new PopulationHouseholdMobilityThresholdScoreBand(120, 2)"));
+        Assert.That(rulesData, Does.Contain("grain_price_level_pressure_bands must be ordered by descending threshold"));
+        Assert.That(rulesData, Does.Contain("GetGrainPriceLevelPressureScoreOrDefault"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_DefaultPriceLevelBandRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_InvalidPriceLevelBandRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("PopulationHouseholdMobilityThresholdScoreBand"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("GrainPriceLevel"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "GrainPriceLevelPressureBands",
+                     "PopulationAndHouseholdsGrainPriceLevelRules",
+                     "GrainPriceLevelOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "GrainPriceLevel",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "GrainPriceLevelLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

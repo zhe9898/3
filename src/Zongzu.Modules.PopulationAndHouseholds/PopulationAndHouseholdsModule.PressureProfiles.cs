@@ -73,14 +73,7 @@ public sealed partial class PopulationAndHouseholdsModule
 
     private int ComputePricePressure(GrainPriceShockSignal signal)
     {
-        int priceLevel = signal.CurrentPrice switch
-        {
-            >= 170 => 7,
-            >= 150 => 5,
-            >= 130 => 3,
-            >= 120 => 2,
-            _ => 1,
-        };
+        int priceLevel = _householdMobilityRulesData.GetGrainPriceLevelPressureScoreOrDefault(signal.CurrentPrice);
 
         int priceJump = signal.PriceDelta switch
         {

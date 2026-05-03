@@ -764,3 +764,9 @@ This is not a grain price formula retune, subsistence pressure retune, migration
 V957-V964 extracts the `ComputePricePressure` final clamp bounds into owner-consumed `PopulationHouseholdMobilityRulesData`. Default values preserve the previous behavior: price pressure is clamped to `4..14`.
 
 This is not a grain price band retune, subsistence pressure retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V965-V972 PopulationAndHouseholds Grain Price Level Band Extraction
+
+V965-V972 extracts the `ComputePricePressure` price-level threshold/score bands into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bands preserve the previous behavior: `>= 170 => 7`, `>= 150 => 5`, `>= 130 => 3`, `>= 120 => 2`, fallback `1`.
+
+This is not a grain price band retune, price jump extraction, market tightness extraction, subsistence pressure retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.
