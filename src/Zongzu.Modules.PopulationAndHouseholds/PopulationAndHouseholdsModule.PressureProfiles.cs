@@ -75,15 +75,8 @@ public sealed partial class PopulationAndHouseholdsModule
     {
         int priceLevel = _householdMobilityRulesData.GetGrainPriceLevelPressureScoreOrDefault(signal.CurrentPrice);
         int priceJump = _householdMobilityRulesData.GetGrainPriceJumpPressureScoreOrDefault(signal.PriceDelta);
-
-        int marketTightness = Math.Max(0, signal.Demand - signal.Supply) switch
-        {
-            >= 60 => 4,
-            >= 40 => 3,
-            >= 20 => 2,
-            >= 8 => 1,
-            _ => 0,
-        };
+        int marketTightness = _householdMobilityRulesData.GetGrainPriceMarketTightnessPressureScoreOrDefault(
+            Math.Max(0, signal.Demand - signal.Supply));
 
         return Math.Clamp(
             priceLevel + priceJump + marketTightness,

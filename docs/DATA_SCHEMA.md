@@ -1659,3 +1659,7 @@ V965-V972 extracts grain-price level threshold/score bands into in-code owner-co
 Current population households grain price jump band extraction v973-v980 note:
 
 V973-V980 extracts grain-price jump threshold/score bands into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted grain-price-jump field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households grain price market tightness band extraction v981-v988 note:
+
+V981-V988 extracts grain-price market tightness threshold/score bands into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted market-tightness field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
