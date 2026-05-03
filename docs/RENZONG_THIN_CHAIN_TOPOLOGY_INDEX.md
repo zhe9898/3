@@ -850,3 +850,9 @@ The path remains a private `PopulationAndHouseholds` subsistence pressure compon
 V1061-V1068 extracts the grain-shortage window from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default floor/ceiling preserve prior behavior: `GrainStore > 0 && GrainStore < 25`.
 
 This is not a cash-need boost extraction, debt-threshold extraction, resilience relief extraction, interaction clamp extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1069-V1076 PopulationAndHouseholds Subsistence Interaction Cash-Need Extraction
+
+V1069-V1076 extracts the cash-need livelihood boost from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default score preserves prior behavior: grain shortage plus cash-need livelihood contributes `+2`.
+
+This is not a debt-threshold extraction, resilience relief extraction, interaction clamp extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
