@@ -97,23 +97,9 @@ public sealed partial class PopulationAndHouseholdsModule
         };
     }
 
-    private static int ComputeMarketDependencyPressure(PopulationHouseholdState household)
+    private int ComputeMarketDependencyPressure(PopulationHouseholdState household)
     {
-        return household.Livelihood switch
-        {
-            LivelihoodType.PettyTrader => 4,
-            LivelihoodType.Boatman => 4,
-            LivelihoodType.Artisan => 3,
-            LivelihoodType.HiredLabor => 3,
-            LivelihoodType.SeasonalMigrant => 3,
-            LivelihoodType.DomesticServant => 2,
-            LivelihoodType.YamenRunner => 2,
-            LivelihoodType.Vagrant => 2,
-            LivelihoodType.Tenant => 2,
-            LivelihoodType.Unknown => 2,
-            LivelihoodType.Smallholder => 1,
-            _ => 2,
-        };
+        return _householdMobilityRulesData.GetSubsistenceMarketDependencyPressureScoreOrDefault(household.Livelihood);
     }
 
     private static int ComputeSubsistenceLaborPressure(PopulationHouseholdState household)
