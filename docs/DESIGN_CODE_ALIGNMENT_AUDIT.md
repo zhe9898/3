@@ -792,3 +792,13 @@ Design alignment: this is hardcoded land-trigger extraction, not a land economy 
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the land trigger or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default no-touch equivalence and malformed land-trigger fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v789-v796 household mobility runtime livelihood-trigger extraction audit - 2026-05-03
+
+The v789-v796 pass extracts the first `PopulationAndHouseholds` runtime rule's trigger livelihood list into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded livelihood-trigger extraction, not a livelihood engine retune, class/status engine, migration economy, or score formula expansion. Default trigger list `[SeasonalMigrant, HiredLabor]` preserves prior candidate behavior under default rules-data, while malformed list values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the livelihood trigger list or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default candidate equivalence and malformed livelihood-list fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.

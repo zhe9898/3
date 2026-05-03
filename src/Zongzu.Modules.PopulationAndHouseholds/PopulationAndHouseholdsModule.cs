@@ -1541,6 +1541,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeGrainStoreTriggerFloorOrDefault();
         int landHoldingTriggerFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeLandHoldingTriggerFloorOrDefault();
+        IReadOnlyList<LivelihoodType> triggerLivelihoods = _householdMobilityRulesData
+            .GetMonthlyRuntimeTriggerLivelihoodsOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
         int laborCapacityPressureFloor = _householdMobilityRulesData
@@ -1588,7 +1590,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         debtPressureTriggerThreshold,
                         laborCapacityTriggerCeiling,
                         grainStoreTriggerFloor,
-                        landHoldingTriggerFloor))
+                        landHoldingTriggerFloor,
+                        triggerLivelihoods))
                 .OrderByDescending(household =>
                     ComputeMonthlyHouseholdMobilityRuntimeScore(
                         household,
@@ -1645,7 +1648,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int debtPressureTriggerThreshold,
         int laborCapacityTriggerCeiling,
         int grainStoreTriggerFloor,
-        int landHoldingTriggerFloor)
+        int landHoldingTriggerFloor,
+        IReadOnlyList<LivelihoodType> triggerLivelihoods)
     {
         if (household.IsMigrating
             || household.MigrationRisk >= candidateMigrationRiskCeiling
@@ -1659,7 +1663,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             || household.LaborCapacity < laborCapacityTriggerCeiling
             || household.GrainStore < grainStoreTriggerFloor
             || household.LandHolding < landHoldingTriggerFloor
-            || household.Livelihood is LivelihoodType.SeasonalMigrant or LivelihoodType.HiredLabor;
+            || triggerLivelihoods.Contains(household.Livelihood);
     }
 
     private static int ComputeMonthlyHouseholdMobilityRuntimeScore(

@@ -856,3 +856,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, grain eco
 V781-V788 keeps household mobility fidelity bounded while extracting the first runtime rule's land-holding trigger floor into owner-consumed rules-data. Default floor 15 preserves prior no-touch behavior for households at the land trigger boundary when no other trigger qualifies them; malformed values fall back to default instead of silently widening runtime work.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, land economy retune, grain/labor/debt/distress/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V789-V796 Household Mobility Runtime Livelihood Trigger Extraction
+
+V789-V796 keeps household mobility fidelity bounded while extracting the first runtime rule's trigger livelihood list into owner-consumed rules-data. Default list `[SeasonalMigrant, HiredLabor]` preserves prior candidate behavior for livelihood-qualified households when no other trigger qualifies them; malformed values fall back to default instead of silently widening runtime work.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, livelihood engine retune, livelihood score weight extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

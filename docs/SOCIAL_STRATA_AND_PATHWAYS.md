@@ -656,3 +656,9 @@ Default rules-data keeps the grain-store trigger floor at 25, malformed threshol
 V781-V788 records that the first household mobility runtime rule's land-holding trigger floor has been moved into owner-consumed rules-data. The social meaning remains bounded: thin land holding can qualify an already-windowed household for the small monthly pressure nudge, but this is not a land economy, tenancy/status engine, or relocation command.
 
 Default rules-data keeps the land-holding trigger floor at 15, malformed threshold input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime livelihood-trigger extraction: v789-v796
+
+V789-V796 records that the first household mobility runtime rule's trigger livelihood list has been moved into owner-consumed rules-data. The social meaning remains bounded: seasonal migrant and hired-labor households can qualify for the small monthly pressure nudge, but this is not a class/status engine, career rail, migration economy, or relocation command.
+
+Default rules-data keeps the trigger livelihood list at `[SeasonalMigrant, HiredLabor]`, malformed list input falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.

@@ -1034,3 +1034,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V781-V788 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the land-holding trigger floor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default floor 15.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate land eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime livelihood-trigger extraction v789-v796 integration note
+
+V789-V796 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the trigger livelihood list into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default list `[SeasonalMigrant, HiredLabor]`.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate livelihood eligibility, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
