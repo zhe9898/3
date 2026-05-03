@@ -125,16 +125,18 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetSubsistenceFragilityPressureClampCeilingOrDefault());
     }
 
-    private static int ComputeSubsistenceInteractionPressure(PopulationHouseholdState household)
+    private int ComputeSubsistenceInteractionPressure(PopulationHouseholdState household)
     {
         int interaction = 0;
+        bool isGrainShortage =
+            _householdMobilityRulesData.IsSubsistenceInteractionGrainShortageStoreOrDefault(household.GrainStore);
 
-        if (household.GrainStore is > 0 and < 25 && IsCashNeedLivelihood(household.Livelihood))
+        if (isGrainShortage && IsCashNeedLivelihood(household.Livelihood))
         {
             interaction += 2;
         }
 
-        if (household.GrainStore is > 0 and < 25 && household.DebtPressure >= 60)
+        if (isGrainShortage && household.DebtPressure >= 60)
         {
             interaction += 1;
         }

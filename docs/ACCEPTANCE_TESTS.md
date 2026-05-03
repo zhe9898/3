@@ -1316,3 +1316,11 @@ Acceptance evidence for V1053-V1060:
 - Architecture guard `Population_households_subsistence_fragility_clamp_extraction_v1053_v1060_must_remain_owner_consumed_and_schema_neutral` proves fragility clamp floor/ceiling moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract interaction, tax-season, or official-supply formulas.
+
+## PopulationAndHouseholds subsistence interaction grain shortage extraction v1061-v1068 acceptance - 2026-05-03
+
+Acceptance evidence for V1061-V1068:
+- Population tests `GrainPriceSpike_DefaultInteractionGrainShortageRulesDataMatchesPreviousBaseline`, `GrainPriceSpike_CustomInteractionGrainShortageRulesDataIsOwnerConsumed`, and `GrainPriceSpike_InvalidInteractionGrainShortageRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior interaction grain-shortage window behavior, owner custom window is consumed deterministically, and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_interaction_grain_shortage_extraction_v1061_v1068_must_remain_owner_consumed_and_schema_neutral` proves interaction grain-shortage floor/ceiling moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract cash-need boost, debt threshold boost, resilience relief, interaction clamp, tax-season, or official-supply formulas.

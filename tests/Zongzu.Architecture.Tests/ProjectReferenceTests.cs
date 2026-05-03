@@ -18343,7 +18343,7 @@ public class ProjectReferenceTests
             "private int ComputeSubsistenceFragilityPressure",
             StringComparison.Ordinal);
         int subsistenceInteractionStart = pressureProfilesFile.IndexOf(
-            "private static int ComputeSubsistenceInteractionPressure",
+            "private int ComputeSubsistenceInteractionPressure",
             StringComparison.Ordinal);
         Assert.That(subsistenceFragilityStart, Is.GreaterThanOrEqualTo(0));
         Assert.That(subsistenceInteractionStart, Is.GreaterThan(subsistenceFragilityStart));
@@ -18542,7 +18542,7 @@ public class ProjectReferenceTests
             "private int ComputeSubsistenceFragilityPressure",
             StringComparison.Ordinal);
         int subsistenceInteractionStart = pressureProfilesFile.IndexOf(
-            "private static int ComputeSubsistenceInteractionPressure",
+            "private int ComputeSubsistenceInteractionPressure",
             StringComparison.Ordinal);
         Assert.That(subsistenceFragilityStart, Is.GreaterThanOrEqualTo(0));
         Assert.That(subsistenceInteractionStart, Is.GreaterThan(subsistenceFragilityStart));
@@ -18654,6 +18654,194 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "FragilityClampLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_subsistence_interaction_grain_shortage_extraction_v1061_v1068_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-subsistence-interaction-grain-shortage-extraction-v1061-v1068.md"));
+        string pressureProfilesFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "GrainPriceSubsistenceHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int interactionStart = pressureProfilesFile.IndexOf(
+            "private int ComputeSubsistenceInteractionPressure",
+            StringComparison.Ordinal);
+        int resolveScopeStart = pressureProfilesFile.IndexOf(
+            "private static SettlementId? ResolveSettlementScope",
+            StringComparison.Ordinal);
+        Assert.That(interactionStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(resolveScopeStart, Is.GreaterThan(interactionStart));
+        string interactionBody = pressureProfilesFile.Substring(interactionStart, resolveScopeStart - interactionStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1061-V1068 PopulationAndHouseholds Subsistence Interaction Grain Shortage Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households subsistence interaction grain shortage extraction: v1061-v1068"));
+        Assert.That(designAudit, Does.Contain("v1061-v1068 population households subsistence interaction grain shortage extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds subsistence interaction grain shortage extraction v1061-v1068 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds subsistence interaction grain shortage extraction v1061-v1068 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households subsistence interaction grain shortage extraction v1061-v1068 note"));
+        Assert.That(uiPresentation, Does.Contain("v1061-v1068 population households subsistence interaction grain shortage extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds subsistence interaction grain shortage extraction v1061-v1068 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1061-V1068 PopulationAndHouseholds Subsistence Interaction Grain Shortage Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Subsistence Interaction Grain Shortage Extraction Through V1068"));
+        Assert.That(schemaRules, Does.Contain("population households subsistence interaction grain shortage extraction v1061-v1068 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households subsistence interaction grain shortage extraction v1061-v1068 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "subsistence interaction grain-shortage store floor exclusive",
+                     "subsistence interaction grain-shortage store ceiling exclusive",
+                     "Cash-need boost, debt threshold boost, resilience relief, and interaction clamp remain unchanged",
+                     "No cash-need interaction boost extraction",
+                     "No debt interaction threshold extraction",
+                     "No resilience relief extraction",
+                     "No subsistence interaction clamp extraction",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate interaction grain-shortage pressure, household pressure, or household mobility outcomes",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(interactionBody, Does.Contain("IsSubsistenceInteractionGrainShortageStoreOrDefault"));
+        Assert.That(interactionBody, Does.Not.Contain("GrainStore is > 0 and < 25"));
+        Assert.That(rulesData, Does.Contain("DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive = 0"));
+        Assert.That(rulesData, Does.Contain("DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive = 25"));
+        Assert.That(rulesData, Does.Contain("subsistence_interaction_grain_shortage_store_floor_exclusive must be between"));
+        Assert.That(rulesData, Does.Contain("subsistence_interaction_grain_shortage_store_ceiling_exclusive must be between"));
+        Assert.That(rulesData, Does.Contain("subsistence_interaction_grain_shortage_store_floor_exclusive must be less than ceiling_exclusive"));
+        Assert.That(rulesData, Does.Contain("IsSubsistenceInteractionGrainShortageStoreOrDefault"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_DefaultInteractionGrainShortageRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_CustomInteractionGrainShortageRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_InvalidInteractionGrainShortageRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("InteractionGrainShortage"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "SubsistenceInteractionGrainShortage",
+                     "PopulationAndHouseholdsInteractionRules",
+                     "InteractionGrainShortageOutcomeCalculator",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "InteractionGrainShortage",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "InteractionGrainShortageLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

@@ -1237,3 +1237,9 @@ The existing grain-price event path remains the integration seam: it reads fragi
 V1053-V1060 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts the `ComputeSubsistenceFragilityPressure` final clamp into validated owner-consumed rules-data.
 
 The existing grain-price event path remains the integration seam: it reads fragility clamp floor/ceiling values through `PopulationHouseholdMobilityRulesData` fallback getters and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer fragility clamp pressure or household pressure outcomes.
+
+## PopulationAndHouseholds subsistence interaction grain shortage extraction v1061-v1068 integration note
+
+V1061-V1068 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts the `ComputeSubsistenceInteractionPressure` grain-shortage window into validated owner-consumed rules-data.
+
+The existing grain-price event path remains the integration seam: it reads interaction grain-shortage floor/ceiling values through `PopulationHouseholdMobilityRulesData` fallback getters and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer interaction grain-shortage pressure or household pressure outcomes.

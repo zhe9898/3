@@ -1178,3 +1178,9 @@ No event pool, movement command, route-history path, fragility-migration ledger,
 V1053-V1060 changes fragility final-clamp ownership only. The grain-price subsistence path now reads clamp floor and ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, distress/debt/migration scoring, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, fragility-clamp ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households subsistence interaction grain shortage extraction v1061-v1068 note
+
+V1061-V1068 changes interaction grain-shortage window ownership only. The grain-price subsistence path now reads grain-shortage floor and ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, cash-need boost, debt threshold boost, resilience relief, interaction clamp, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, interaction-grain-shortage ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
