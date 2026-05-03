@@ -770,3 +770,9 @@ This is not a grain price band retune, subsistence pressure retune, migration en
 V965-V972 extracts the `ComputePricePressure` price-level threshold/score bands into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bands preserve the previous behavior: `>= 170 => 7`, `>= 150 => 5`, `>= 130 => 3`, `>= 120 => 2`, fallback `1`.
 
 This is not a grain price band retune, price jump extraction, market tightness extraction, subsistence pressure retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V973-V980 PopulationAndHouseholds Grain Price Jump Band Extraction
+
+V973-V980 extracts the `ComputePricePressure` price-jump threshold/score bands into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bands preserve the previous behavior: `>= 45 => 5`, `>= 30 => 4`, `>= 18 => 2`, `>= 8 => 1`, fallback `0`.
+
+This is not a market tightness extraction, subsistence pressure retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.

@@ -1658,4 +1658,10 @@ V965-V972 extracts grain-price level threshold/score bands into `PopulationHouse
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains grain-price-level, pressure-profile, or rules-data outcome authority.
 
+## PopulationAndHouseholds grain price jump band extraction v973-v980 boundary note
+
+V973-V980 extracts grain-price jump threshold/score bands into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` grain-price pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains grain-price-jump, pressure-profile, or rules-data outcome authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
