@@ -638,3 +638,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V789-V796 extracts the first `PopulationAndHouseholds` household mobility runtime rule's trigger livelihood list into owner-consumed rules-data. The default list remains `[SeasonalMigrant, HiredLabor]`, so candidate eligibility remains equivalent under default rules-data while malformed list input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, livelihood engine retune, livelihood score weight extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V797-V804 Household Mobility Runtime Livelihood Score Weight Extraction
+
+V797-V804 extracts the first `PopulationAndHouseholds` household mobility runtime rule's livelihood score weights into owner-consumed rules-data. The default ordered weights remain `SeasonalMigrant=18`, `HiredLabor=10`, and `Tenant=6`, while unmatched livelihoods still score `0`.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, livelihood engine retune, trigger extraction, migration-risk score retune, pressure floor/divisor extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.

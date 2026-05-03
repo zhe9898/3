@@ -981,3 +981,9 @@ No scheduler cadence change, land economy retune, grain/labor/debt/distress/live
 V789-V796 changes the first household mobility runtime rule's trigger livelihood pattern from naked enum matching to an owner-consumed rules-data list. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default candidate behavior remain unchanged.
 
 No scheduler cadence change, livelihood engine retune, livelihood score weight extraction, score formula retune beyond literal extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime livelihood-score extraction v797-v804 note
+
+V797-V804 changes the first household mobility runtime rule's livelihood score pattern from a naked enum switch to an owner-consumed rules-data weight list. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default selected-household ordering remain unchanged.
+
+No scheduler cadence change, livelihood engine retune, trigger extraction, migration-risk score retune, pressure floor/divisor extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

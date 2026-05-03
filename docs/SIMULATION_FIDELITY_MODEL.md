@@ -862,3 +862,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, land econ
 V789-V796 keeps household mobility fidelity bounded while extracting the first runtime rule's trigger livelihood list into owner-consumed rules-data. Default list `[SeasonalMigrant, HiredLabor]` preserves prior candidate behavior for livelihood-qualified households when no other trigger qualifies them; malformed values fall back to default instead of silently widening runtime work.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, livelihood engine retune, livelihood score weight extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V797-V804 Household Mobility Runtime Livelihood Score Weight Extraction
+
+V797-V804 keeps household mobility fidelity bounded while extracting the first runtime rule's livelihood score weights into owner-consumed rules-data. Default weights `SeasonalMigrant=18`, `HiredLabor=10`, and `Tenant=6` preserve candidate ordering under default rules-data; unmatched livelihoods still score `0`, and malformed weight data falls back instead of silently retuning social mobility.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, livelihood engine retune, trigger extraction, migration-risk score retune, pressure floor/divisor extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
