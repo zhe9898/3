@@ -1035,3 +1035,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1021-V1028 changes parameter ownership only. Subsistence grain-buffer pressure bands are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, price/market/labor/fragility/interaction formulas, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, grain-buffer state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1029-V1036 PopulationAndHouseholds Subsistence Fragility Distress Extraction
+
+V1029-V1036 changes parameter ownership only. Subsistence fragility distress bands are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, debt/migration/fragility-clamp formulas, interaction formulas, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, fragility-distress state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
