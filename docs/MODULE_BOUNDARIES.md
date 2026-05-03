@@ -1694,3 +1694,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1013-V1020 extracts the final subsistence labor pressure clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, labor-capacity/dependent-count scoring, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains subsistence-labor, pressure-profile, rules-data, or household mobility outcome authority.
+
+## PopulationAndHouseholds subsistence grain buffer extraction v1021-v1028 boundary note
+
+V1021-V1028 extracts subsistence grain-buffer pressure bands into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, price/market/labor/fragility/interaction scoring, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains grain-buffer, pressure-profile, rules-data, or household mobility outcome authority.

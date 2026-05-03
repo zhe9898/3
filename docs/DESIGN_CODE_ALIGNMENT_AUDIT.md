@@ -1015,3 +1015,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1013-v1020 pass moves the final `ComputeSubsistenceLaborPressure` clamp from C# literals into validated `PopulationHouseholdMobilityRulesData` default floor/ceiling values and fallback getters.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; labor-capacity and dependent-count scoring remain unchanged; Application/UI/Unity do not calculate subsistence labor pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1021-v1028 population households subsistence grain buffer extraction audit - 2026-05-03
+
+The v1021-v1028 pass moves the `ComputeGrainBufferPressure` grain-store threshold-to-score map from C# literals into validated `PopulationHouseholdMobilityRulesData` default bands and fallback getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; price/market/labor/fragility/interaction scoring remains unchanged; Application/UI/Unity do not calculate grain-buffer pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.

@@ -34,6 +34,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int GrainPriceJumpPressureFallbackScore,
     IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> GrainPriceMarketTightnessPressureBands,
     int GrainPriceMarketTightnessPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> SubsistenceGrainBufferPressureBands,
+    int SubsistenceGrainBufferPressureFallbackScore,
     IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> SubsistenceMarketDependencyPressureScoreWeights,
     int SubsistenceMarketDependencyPressureFallbackScore,
     IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> SubsistenceLaborCapacityPressureBands,
@@ -100,6 +102,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultGrainPriceLevelPressureFallbackScore = 1;
     public const int DefaultGrainPriceJumpPressureFallbackScore = 0;
     public const int DefaultGrainPriceMarketTightnessPressureFallbackScore = 0;
+    public const int DefaultSubsistenceGrainBufferPressureFallbackScore = 6;
     public const int DefaultSubsistenceMarketDependencyPressureFallbackScore = 2;
     public const int DefaultSubsistenceLaborCapacityPressureFallbackScore = 2;
     public const int DefaultSubsistenceDependentCountPressureFallbackScore = 0;
@@ -109,6 +112,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
     public const int MaxGrainPricePressure = 32;
+    public const int MinSubsistenceGrainBufferPressure = -8;
+    public const int MaxSubsistenceGrainBufferPressure = 8;
+    public const int MaxSubsistenceGrainBufferThreshold = 100;
     public const int MinSubsistenceLaborPressure = -2;
     public const int MaxSubsistenceLaborPressure = 4;
     public const int MaxSubsistenceDependentCountPressure = 4;
@@ -199,6 +205,17 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(8, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultSubsistenceGrainBufferPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(85, -5),
+            new PopulationHouseholdMobilityThresholdScoreBand(65, -3),
+            new PopulationHouseholdMobilityThresholdScoreBand(45, -1),
+            new PopulationHouseholdMobilityThresholdScoreBand(25, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(1, 5),
+        };
+
     public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
         DefaultSubsistenceMarketDependencyPressureScoreWeights { get; } =
         new[]
@@ -264,6 +281,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceJumpPressureFallbackScore,
             DefaultGrainPriceMarketTightnessPressureBands,
             DefaultGrainPriceMarketTightnessPressureFallbackScore,
+            DefaultSubsistenceGrainBufferPressureBands,
+            DefaultSubsistenceGrainBufferPressureFallbackScore,
             DefaultSubsistenceMarketDependencyPressureScoreWeights,
             DefaultSubsistenceMarketDependencyPressureFallbackScore,
             DefaultSubsistenceLaborCapacityPressureBands,
@@ -332,6 +351,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceJumpPressureFallbackScore,
             DefaultGrainPriceMarketTightnessPressureBands,
             DefaultGrainPriceMarketTightnessPressureFallbackScore,
+            DefaultSubsistenceGrainBufferPressureBands,
+            DefaultSubsistenceGrainBufferPressureFallbackScore,
             DefaultSubsistenceMarketDependencyPressureScoreWeights,
             DefaultSubsistenceMarketDependencyPressureFallbackScore,
             DefaultSubsistenceLaborCapacityPressureBands,
@@ -677,6 +698,36 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"grain_price_market_tightness_pressure_fallback_score must be between 0 and {MaxGrainPricePressure}.");
+        }
+
+        if (SubsistenceGrainBufferPressureBands is null
+            || SubsistenceGrainBufferPressureBands.Count == 0
+            || SubsistenceGrainBufferPressureBands.Any(static band =>
+                band.Threshold is < 0 or > MaxSubsistenceGrainBufferThreshold
+                || band.Score is < MinSubsistenceGrainBufferPressure or > MaxSubsistenceGrainBufferPressure)
+            || SubsistenceGrainBufferPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != SubsistenceGrainBufferPressureBands.Count)
+        {
+            errors.Add(
+                $"subsistence_grain_buffer_pressure_bands must be non-empty, distinct, and between threshold 0..{MaxSubsistenceGrainBufferThreshold} and score {MinSubsistenceGrainBufferPressure}..{MaxSubsistenceGrainBufferPressure}.");
+        }
+
+        if (SubsistenceGrainBufferPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < SubsistenceGrainBufferPressureBands.Count; index++)
+            {
+                if (SubsistenceGrainBufferPressureBands[index - 1].Threshold <= SubsistenceGrainBufferPressureBands[index].Threshold)
+                {
+                    errors.Add("subsistence_grain_buffer_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (SubsistenceGrainBufferPressureFallbackScore is < MinSubsistenceGrainBufferPressure or > MaxSubsistenceGrainBufferPressure)
+        {
+            errors.Add(
+                $"subsistence_grain_buffer_pressure_fallback_score must be between {MinSubsistenceGrainBufferPressure} and {MaxSubsistenceGrainBufferPressure}.");
         }
 
         if (SubsistenceMarketDependencyPressureScoreWeights is null
@@ -1195,6 +1246,35 @@ public sealed record PopulationHouseholdMobilityRulesData(
         }
 
         return GetGrainPriceMarketTightnessPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetSubsistenceGrainBufferPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceGrainBufferPressureBands
+            : DefaultSubsistenceGrainBufferPressureBands;
+    }
+
+    public int GetSubsistenceGrainBufferPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceGrainBufferPressureFallbackScore
+            : DefaultSubsistenceGrainBufferPressureFallbackScore;
+    }
+
+    public int GetSubsistenceGrainBufferPressureScoreOrDefault(int grainStore)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetSubsistenceGrainBufferPressureBandsOrDefault())
+        {
+            if (grainStore >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetSubsistenceGrainBufferPressureFallbackScoreOrDefault();
     }
 
     public IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>

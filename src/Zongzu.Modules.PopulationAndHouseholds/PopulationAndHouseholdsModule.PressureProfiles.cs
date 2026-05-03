@@ -84,17 +84,9 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetGrainPricePressureClampCeilingOrDefault());
     }
 
-    private static int ComputeGrainBufferPressure(PopulationHouseholdState household)
+    private int ComputeGrainBufferPressure(PopulationHouseholdState household)
     {
-        return household.GrainStore switch
-        {
-            >= 85 => -5,
-            >= 65 => -3,
-            >= 45 => -1,
-            >= 25 => 2,
-            > 0 => 5,
-            _ => 6,
-        };
+        return _householdMobilityRulesData.GetSubsistenceGrainBufferPressureScoreOrDefault(household.GrainStore);
     }
 
     private int ComputeMarketDependencyPressure(PopulationHouseholdState household)

@@ -809,4 +809,10 @@ V1013-V1020 extracts the final subsistence labor pressure clamp from `ComputeSub
 
 This is not a grain-buffer, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
 
+## V1021-V1028 PopulationAndHouseholds Subsistence Grain Buffer Extraction
+
+V1021-V1028 extracts the subsistence grain-buffer threshold-to-score map from `ComputeGrainBufferPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bands preserve prior behavior for high stores, low stores, and empty/fallback stores.
+
+This is not a price-pressure, market-dependency, labor, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
 The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate dependent-count pressure or household mobility outcomes.

@@ -1678,3 +1678,7 @@ V1005-V1012 extracts subsistence dependent-count pressure bands into in-code own
 Current population households subsistence labor clamp extraction v1013-v1020 note:
 
 V1013-V1020 extracts the final subsistence labor pressure clamp into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted subsistence-labor pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households subsistence grain buffer extraction v1021-v1028 note:
+
+V1021-V1028 extracts subsistence grain-buffer pressure bands into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted grain-buffer pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
