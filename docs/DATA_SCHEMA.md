@@ -1591,3 +1591,7 @@ V829-V836 extracts the runtime active-pool and household tie-break priorities in
 Current household mobility runtime unmatched livelihood score extraction v837-v844 note:
 
 V837-V844 extracts the runtime unmatched-livelihood score fallback into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted unmatched-livelihood score field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, unmatched-livelihood state, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime pressure contribution floor extraction v845-v852 note:
+
+V845-V852 extracts the runtime pressure contribution floor into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted pressure-contribution floor field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-contribution state, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

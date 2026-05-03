@@ -1017,3 +1017,9 @@ No scheduler cadence change, ordering retune, score formula retune, fanout widen
 V837-V844 changes the first household mobility runtime rule's unmatched-livelihood score fallback from inline `0` behavior to owner-consumed rules-data. The monthly cadence, active-pool selection, matched livelihood weights, candidate filters, fanout caps, event type, and default unmatched fallback remain unchanged.
 
 No scheduler cadence change, livelihood weight retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime pressure contribution floor extraction v845-v852 note
+
+V845-V852 changes the first household mobility runtime rule's labor/grain/land pressure contribution floor from inline `0` behavior to owner-consumed rules-data. The monthly cadence, active-pool selection, pressure floors/divisors, matched livelihood weights, candidate filters, fanout caps, event type, and default non-negative contribution behavior remain unchanged.
+
+No scheduler cadence change, pressure floor retune, divisor retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

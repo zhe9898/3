@@ -694,3 +694,9 @@ Default rules-data keeps the migration status threshold at `80`, malformed thres
 V837-V844 records that the first household mobility runtime rule's unmatched-livelihood score fallback has been moved into owner-consumed rules-data. The social meaning remains bounded: an unmatched livelihood still contributes `0` by default, so this does not create a hidden status rank, class rail, route preference, or UI-side movement selector.
 
 Default rules-data keeps the unmatched livelihood fallback at `0`, malformed fallback data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime pressure contribution floor extraction: v845-v852
+
+V845-V852 records that the first household mobility runtime rule's pressure contribution floor has been moved into owner-consumed rules-data. The social meaning remains bounded: labor, grain, and land pressure contributions still floor at `0` by default, so this does not create a status rank, class rail, route preference, or UI-side movement selector.
+
+Default rules-data keeps the pressure contribution floor at `0`, malformed floor data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
