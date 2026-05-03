@@ -939,4 +939,10 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, snapshot 
 
 V893-V900 changes file layout only. Grain subsistence, tax-season, and official-supply pressure profile helpers stay in the same `PopulationAndHouseholds` fidelity lane, with formulas and metadata fallbacks unchanged.
 
+## V901-V908 PopulationAndHouseholds Event Dispatch File Split
+
+V901-V908 changes file layout only. Event-dispatch/application helpers stay inside the same `PopulationAndHouseholds` owner lane, `HandleEvents` keeps the same ordered dispatch calls, and near-detail/far-summary fidelity behavior is unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, event-dispatch ledger, or distant-society detail promotion is added.
+
 No persisted schema, loader, rules-data file, cache, diagnostic state, formula retune, metadata fallback change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

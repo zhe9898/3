@@ -1604,4 +1604,10 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 
 V893-V900 splits private grain, tax-season, and official-supply pressure profile helpers into `PopulationAndHouseholdsModule.PressureProfiles.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, command/event/query seams, scheduler cadence, metadata fallback values, and formulas remain unchanged.
 
+## PopulationAndHouseholds event dispatch file split v901-v908 boundary note
+
+V901-V908 splits private trade-shock, world-pulse, family-branch, grain-price, tax-season, and official-supply event-dispatch/application helpers into `PopulationAndHouseholdsModule.EventDispatch.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, event subscriptions, emitted metadata, scheduler cadence, deterministic ordering, and household pressure authority remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains event-dispatch authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.

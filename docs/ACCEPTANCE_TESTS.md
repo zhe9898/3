@@ -1181,3 +1181,9 @@ Acceptance evidence for V885-V892:
 Acceptance evidence for V893-V900:
 - Architecture guard `Population_households_pressure_profile_file_split_v893_v900_must_preserve_owner_behavior_and_schema_neutrality` proves grain, tax-season, and official-supply pressure profile helpers were moved into `PopulationAndHouseholdsModule.PressureProfiles.cs` without changing formulas, metadata fallbacks, event receipts, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing population pressure-chain behavior tests; this split moves private owner formula helpers only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds event dispatch file split v901-v908 acceptance - 2026-05-03
+
+Acceptance evidence for V901-V908:
+- Architecture guard `Population_households_event_dispatch_file_split_v901_v908_must_preserve_owner_behavior_and_schema_neutrality` proves trade-shock, grain-price, world-pulse, tax-season, family-branch, and official-supply event-dispatch/application helpers were moved into `PopulationAndHouseholdsModule.EventDispatch.cs` without changing event order, emitted metadata, receipt text, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing population pressure-chain behavior tests; this split moves private owner event-dispatch/application methods only and adds no new owner rule or presentation field.

@@ -1117,4 +1117,10 @@ The integration contract remains owner-owned query snapshots only. Application/U
 
 V893-V900 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves private pressure profile computation helpers into a dedicated partial file inside the same owner module.
 
+## PopulationAndHouseholds event dispatch file split v901-v908 integration note
+
+V901-V908 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves private event-dispatch/application helpers into a dedicated partial file inside the same owner module.
+
+The existing `HandleEvents` method remains the integration seam: it calls trade-shock, world-pulse, family-branch, and office-supply dispatch in the same order as before. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text.
+
 The integration contract remains owner-owned event handling plus private profile computation only. Application/UI/Unity may read projected/query fields through existing seams but must not calculate household movement outcomes, pressure profile results, or rule outputs from the moved helpers.
