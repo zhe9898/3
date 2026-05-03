@@ -14047,6 +14047,200 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_membership_focus_file_split_v869_v876_must_preserve_owner_behavior_and_schema_neutrality()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-membership-focus-file-split-v869-v876.md"));
+        string mainModuleFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string membershipFocusFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.MembershipFocus.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V869-V876 PopulationAndHouseholds Membership Focus File Split"));
+        Assert.That(socialStrata, Does.Contain("Current population households membership focus file split: v869-v876"));
+        Assert.That(designAudit, Does.Contain("v869-v876 population households membership focus file split audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds membership focus file split v869-v876 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds membership focus file split v869-v876 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households membership focus file split v869-v876 note"));
+        Assert.That(uiPresentation, Does.Contain("v869-v876 population households membership focus file split"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds membership focus file split v869-v876 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V869-V876 PopulationAndHouseholds Membership Focus File Split"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Membership Focus File Split Through V876"));
+        Assert.That(schemaRules, Does.Contain("population households membership focus file split v869-v876 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households membership focus file split v869-v876 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-neutral file split",
+                     "Runtime behavior change: none",
+                     "Target schema/migration impact: none",
+                     "PopulationAndHouseholdsModule.MembershipFocus.cs",
+                     "No membership behavior change",
+                     "No fidelity-ring behavior change",
+                     "No focused-member promotion cap change",
+                     "No rules-data parameter change",
+                     "No fanout widening",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes",
+                     "No authored rules-data externalization in this split",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(mainModuleFile, Does.Contain("SynchronizeMembershipLivelihoodsAndActivities(scope.State)"));
+        Assert.That(mainModuleFile, Does.Contain("PromoteHotHouseholdMembers("));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static void SynchronizeMembershipLivelihoodsAndActivities"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static PersonActivity ResolveHouseholdActivity"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static void PromoteHotHouseholdMembers"));
+        Assert.That(mainModuleFile, Does.Not.Contain("private static string ResolveFocusPromotionReason"));
+
+        Assert.That(membershipFocusFile, Does.Contain("public sealed partial class PopulationAndHouseholdsModule"));
+        Assert.That(membershipFocusFile, Does.Contain("private static void SynchronizeMembershipLivelihoodsAndActivities"));
+        Assert.That(membershipFocusFile, Does.Contain("private static PersonActivity ResolveHouseholdActivity"));
+        Assert.That(membershipFocusFile, Does.Contain("private static void PromoteHotHouseholdMembers"));
+        Assert.That(membershipFocusFile, Does.Contain("private static string ResolveFocusPromotionReason"));
+        Assert.That(membershipFocusFile, Does.Contain("state.Memberships.OrderBy(static member => member.PersonId.Value)"));
+        Assert.That(membershipFocusFile, Does.Contain("GetFocusedMemberPromotionCapOrDefault"));
+        Assert.That(membershipFocusFile, Does.Contain(".GroupBy(static membership => membership.HouseholdId)"));
+        Assert.That(membershipFocusFile, Does.Contain(".OrderBy(static group => group.Key.Value)"));
+        Assert.That(membershipFocusFile, Does.Contain(".Take(focusedMemberPromotionCap)"));
+        Assert.That(membershipFocusFile, Does.Contain("personCommands.ChangeFidelityRing("));
+
+        Assert.That(
+            Regex.Matches(populationModule, @"\bPromoteHotHouseholdMembers\s*\(").Count,
+            Is.EqualTo(2),
+            "The file split must keep exactly one call and one private implementation of hot-household promotion.");
+        Assert.That(
+            Regex.Matches(populationModule, @"\bResolveFocusPromotionReason\s*\(").Count,
+            Is.EqualTo(2),
+            "The file split must keep one focus reason helper and one caller.");
+        Assert.That(rulesData, Does.Contain("DefaultFocusedMemberPromotionCap = 2"));
+        Assert.That(rulesData, Does.Contain("GetFocusedMemberPromotionCapOrDefault"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("MembershipFocus"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "FocusedMemberPromotionCap",
+                     "PopulationAndHouseholdsModule.MembershipFocus",
+                     "HouseholdMobilityFocusInterpreter",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "PopulationHouseholdMobilityRulesData",
+                     "FocusedMemberPromotionCap",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "PopulationAndHouseholdsMembershipFocusFileSplit",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "PopulationAndHouseholdsMembershipFocusFileSplitState",
+                     "HouseholdMobilityFocusLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
@@ -14356,8 +14550,9 @@ public class ProjectReferenceTests
                 .OrderBy(static file => Path.GetFileName(file) switch
                 {
                     "PopulationAndHouseholdsModule.MobilityRuntime.cs" => 0,
-                    "PopulationAndHouseholdsModule.cs" => 1,
-                    _ => 2,
+                    "PopulationAndHouseholdsModule.MembershipFocus.cs" => 1,
+                    "PopulationAndHouseholdsModule.cs" => 2,
+                    _ => 3,
                 })
                 .ThenBy(static file => file, StringComparer.Ordinal)
                 .Select(File.ReadAllText));

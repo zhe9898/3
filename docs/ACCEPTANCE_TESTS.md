@@ -1157,3 +1157,9 @@ Acceptance evidence for V853-V860:
 Acceptance evidence for V861-V868:
 - Architecture guard `Population_households_runtime_rule_file_split_v861_v868_must_preserve_owner_behavior_and_schema_neutrality` proves the first runtime rule was moved into `PopulationAndHouseholdsModule.MobilityRuntime.cs` without adding a duplicate runtime rule path, changing rules-data consumption, changing schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing first-rule test set; this split moves private owner methods only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds membership focus file split v869-v876 acceptance - 2026-05-03
+
+Acceptance evidence for V869-V876:
+- Architecture guard `Population_households_membership_focus_file_split_v869_v876_must_preserve_owner_behavior_and_schema_neutrality` proves membership synchronization and hot-household focus promotion helpers were moved into `PopulationAndHouseholdsModule.MembershipFocus.cs` without changing call sites, changing rules-data consumption, changing schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing membership/focus behavior tests; this split moves private owner methods only and adds no new owner rule or presentation field.

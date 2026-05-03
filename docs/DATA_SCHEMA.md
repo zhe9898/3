@@ -1603,3 +1603,7 @@ V853-V860 closes the first household mobility runtime rule hardcoded extraction 
 Current population households runtime rule file split v861-v868 note:
 
 V861-V868 moves private owner-rule methods into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted file-split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, split-state marker, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households membership focus file split v869-v876 note:
+
+V869-V876 moves private membership synchronization and focus-promotion helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted membership-focus split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, focus ledger, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

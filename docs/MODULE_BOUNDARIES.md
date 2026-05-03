@@ -1581,3 +1581,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V861-V868 splits the first household mobility runtime rule into `PopulationAndHouseholdsModule.MobilityRuntime.cs` while keeping it inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, command/event/query seams, scheduler cadence, and rules-data consumption remain unchanged.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, file-split state, ordering ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## PopulationAndHouseholds membership focus file split v869-v876 boundary note
+
+V869-V876 splits membership synchronization and hot-household focus promotion helpers into `PopulationAndHouseholdsModule.MembershipFocus.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, command/event/query seams, scheduler cadence, and focused-member promotion cap consumption remain unchanged.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, membership-focus split state, focus ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
