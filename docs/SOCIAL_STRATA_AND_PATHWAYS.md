@@ -764,3 +764,9 @@ The split is organizational only. It does not create a status rank, class rail, 
 V941-V948 moves monthly prosperity/security/clan-relief/drift thresholds into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The extracted values still drive household pressure inside `PopulationAndHouseholds`; they are not a class/status engine, rank ladder, social mobility path, route-history store, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not create a status rank, class rail, monthly-pressure ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement, monthly pressure, or social status from config.
+
+### Current population households grain price signal rules-data extraction: v949-v956
+
+V949-V956 moves grain-price shock signal fallback and clamp values into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values only normalize `GrainPriceSpike` metadata before `PopulationAndHouseholds` computes household subsistence pressure; they are not a class/status engine, rank ladder, social mobility path, route-history store, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not create a status rank, class rail, grain-shock ledger, pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement, household pressure, or social status from config.

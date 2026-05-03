@@ -14,6 +14,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyPressureClanSupportReliefThreshold,
     int MonthlyPressureDriftMinInclusive,
     int MonthlyPressureDriftMaxExclusive,
+    int GrainPriceShockDefaultCurrentPrice,
+    int GrainPriceShockDefaultOldPrice,
+    int GrainPriceShockDefaultSupply,
+    int GrainPriceShockDefaultDemand,
+    int GrainPriceShockCurrentPriceClampFloor,
+    int GrainPriceShockCurrentPriceClampCeiling,
+    int GrainPriceShockPriceDeltaClampFloor,
+    int GrainPriceShockPriceDeltaClampCeiling,
+    int GrainPriceShockSupplyClampFloor,
+    int GrainPriceShockSupplyClampCeiling,
+    int GrainPriceShockDemandClampFloor,
+    int GrainPriceShockDemandClampCeiling,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -55,6 +67,21 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyPressureDriftMaxExclusive = 2;
     public const int MinMonthlyPressureDriftBound = -8;
     public const int MaxMonthlyPressureDriftBound = 9;
+    public const int DefaultGrainPriceShockDefaultCurrentPrice = 130;
+    public const int DefaultGrainPriceShockDefaultOldPrice = 100;
+    public const int DefaultGrainPriceShockDefaultSupply = 50;
+    public const int DefaultGrainPriceShockDefaultDemand = 70;
+    public const int DefaultGrainPriceShockCurrentPriceClampFloor = 50;
+    public const int DefaultGrainPriceShockCurrentPriceClampCeiling = 200;
+    public const int DefaultGrainPriceShockPriceDeltaClampFloor = 0;
+    public const int DefaultGrainPriceShockPriceDeltaClampCeiling = 150;
+    public const int DefaultGrainPriceShockSupplyClampFloor = 0;
+    public const int DefaultGrainPriceShockSupplyClampCeiling = 100;
+    public const int DefaultGrainPriceShockDemandClampFloor = 0;
+    public const int DefaultGrainPriceShockDemandClampCeiling = 100;
+    public const int MaxGrainPriceShockPrice = 500;
+    public const int MaxGrainPriceShockPriceDelta = 500;
+    public const int MaxGrainPriceShockPercentage = 100;
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskCeiling = 80;
@@ -121,6 +148,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyPressureClanSupportReliefThreshold,
             DefaultMonthlyPressureDriftMinInclusive,
             DefaultMonthlyPressureDriftMaxExclusive,
+            DefaultGrainPriceShockDefaultCurrentPrice,
+            DefaultGrainPriceShockDefaultOldPrice,
+            DefaultGrainPriceShockDefaultSupply,
+            DefaultGrainPriceShockDefaultDemand,
+            DefaultGrainPriceShockCurrentPriceClampFloor,
+            DefaultGrainPriceShockCurrentPriceClampCeiling,
+            DefaultGrainPriceShockPriceDeltaClampFloor,
+            DefaultGrainPriceShockPriceDeltaClampCeiling,
+            DefaultGrainPriceShockSupplyClampFloor,
+            DefaultGrainPriceShockSupplyClampCeiling,
+            DefaultGrainPriceShockDemandClampFloor,
+            DefaultGrainPriceShockDemandClampCeiling,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -161,6 +200,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyPressureClanSupportReliefThreshold,
             DefaultMonthlyPressureDriftMinInclusive,
             DefaultMonthlyPressureDriftMaxExclusive,
+            DefaultGrainPriceShockDefaultCurrentPrice,
+            DefaultGrainPriceShockDefaultOldPrice,
+            DefaultGrainPriceShockDefaultSupply,
+            DefaultGrainPriceShockDefaultDemand,
+            DefaultGrainPriceShockCurrentPriceClampFloor,
+            DefaultGrainPriceShockCurrentPriceClampCeiling,
+            DefaultGrainPriceShockPriceDeltaClampFloor,
+            DefaultGrainPriceShockPriceDeltaClampCeiling,
+            DefaultGrainPriceShockSupplyClampFloor,
+            DefaultGrainPriceShockSupplyClampCeiling,
+            DefaultGrainPriceShockDemandClampFloor,
+            DefaultGrainPriceShockDemandClampCeiling,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -261,6 +312,136 @@ public sealed record PopulationHouseholdMobilityRulesData(
             && MonthlyPressureDriftMinInclusive >= MonthlyPressureDriftMaxExclusive)
         {
             errors.Add("monthly_pressure_drift_min_inclusive must be less than monthly_pressure_drift_max_exclusive.");
+        }
+
+        if (GrainPriceShockDefaultCurrentPrice is < 0 or > MaxGrainPriceShockPrice)
+        {
+            errors.Add(
+                $"grain_price_shock_default_current_price must be between 0 and {MaxGrainPriceShockPrice}.");
+        }
+
+        if (GrainPriceShockDefaultOldPrice is < 0 or > MaxGrainPriceShockPrice)
+        {
+            errors.Add(
+                $"grain_price_shock_default_old_price must be between 0 and {MaxGrainPriceShockPrice}.");
+        }
+
+        if (GrainPriceShockDefaultSupply is < 0 or > MaxGrainPriceShockPercentage)
+        {
+            errors.Add(
+                $"grain_price_shock_default_supply must be between 0 and {MaxGrainPriceShockPercentage}.");
+        }
+
+        if (GrainPriceShockDefaultDemand is < 0 or > MaxGrainPriceShockPercentage)
+        {
+            errors.Add(
+                $"grain_price_shock_default_demand must be between 0 and {MaxGrainPriceShockPercentage}.");
+        }
+
+        if (GrainPriceShockCurrentPriceClampFloor is < 0 or > MaxGrainPriceShockPrice)
+        {
+            errors.Add(
+                $"grain_price_shock_current_price_clamp_floor must be between 0 and {MaxGrainPriceShockPrice}.");
+        }
+
+        if (GrainPriceShockCurrentPriceClampCeiling is < 0 or > MaxGrainPriceShockPrice)
+        {
+            errors.Add(
+                $"grain_price_shock_current_price_clamp_ceiling must be between 0 and {MaxGrainPriceShockPrice}.");
+        }
+
+        if (GrainPriceShockCurrentPriceClampFloor is >= 0 and <= MaxGrainPriceShockPrice
+            && GrainPriceShockCurrentPriceClampCeiling is >= 0 and <= MaxGrainPriceShockPrice
+            && GrainPriceShockCurrentPriceClampFloor > GrainPriceShockCurrentPriceClampCeiling)
+        {
+            errors.Add("grain_price_shock_current_price_clamp_floor must not exceed grain_price_shock_current_price_clamp_ceiling.");
+        }
+
+        if (GrainPriceShockDefaultCurrentPrice is >= 0 and <= MaxGrainPriceShockPrice
+            && GrainPriceShockCurrentPriceClampFloor is >= 0 and <= MaxGrainPriceShockPrice
+            && GrainPriceShockCurrentPriceClampCeiling is >= 0 and <= MaxGrainPriceShockPrice
+            && GrainPriceShockCurrentPriceClampFloor <= GrainPriceShockCurrentPriceClampCeiling
+            && (GrainPriceShockDefaultCurrentPrice < GrainPriceShockCurrentPriceClampFloor
+                || GrainPriceShockDefaultCurrentPrice > GrainPriceShockCurrentPriceClampCeiling))
+        {
+            errors.Add("grain_price_shock_default_current_price must stay within the current price clamp range.");
+        }
+
+        if (GrainPriceShockPriceDeltaClampFloor is < 0 or > MaxGrainPriceShockPriceDelta)
+        {
+            errors.Add(
+                $"grain_price_shock_price_delta_clamp_floor must be between 0 and {MaxGrainPriceShockPriceDelta}.");
+        }
+
+        if (GrainPriceShockPriceDeltaClampCeiling is < 0 or > MaxGrainPriceShockPriceDelta)
+        {
+            errors.Add(
+                $"grain_price_shock_price_delta_clamp_ceiling must be between 0 and {MaxGrainPriceShockPriceDelta}.");
+        }
+
+        if (GrainPriceShockPriceDeltaClampFloor is >= 0 and <= MaxGrainPriceShockPriceDelta
+            && GrainPriceShockPriceDeltaClampCeiling is >= 0 and <= MaxGrainPriceShockPriceDelta
+            && GrainPriceShockPriceDeltaClampFloor > GrainPriceShockPriceDeltaClampCeiling)
+        {
+            errors.Add("grain_price_shock_price_delta_clamp_floor must not exceed grain_price_shock_price_delta_clamp_ceiling.");
+        }
+
+        if (GrainPriceShockSupplyClampFloor is < 0 or > MaxGrainPriceShockPercentage)
+        {
+            errors.Add(
+                $"grain_price_shock_supply_clamp_floor must be between 0 and {MaxGrainPriceShockPercentage}.");
+        }
+
+        if (GrainPriceShockSupplyClampCeiling is < 0 or > MaxGrainPriceShockPercentage)
+        {
+            errors.Add(
+                $"grain_price_shock_supply_clamp_ceiling must be between 0 and {MaxGrainPriceShockPercentage}.");
+        }
+
+        if (GrainPriceShockSupplyClampFloor is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockSupplyClampCeiling is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockSupplyClampFloor > GrainPriceShockSupplyClampCeiling)
+        {
+            errors.Add("grain_price_shock_supply_clamp_floor must not exceed grain_price_shock_supply_clamp_ceiling.");
+        }
+
+        if (GrainPriceShockDefaultSupply is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockSupplyClampFloor is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockSupplyClampCeiling is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockSupplyClampFloor <= GrainPriceShockSupplyClampCeiling
+            && (GrainPriceShockDefaultSupply < GrainPriceShockSupplyClampFloor
+                || GrainPriceShockDefaultSupply > GrainPriceShockSupplyClampCeiling))
+        {
+            errors.Add("grain_price_shock_default_supply must stay within the supply clamp range.");
+        }
+
+        if (GrainPriceShockDemandClampFloor is < 0 or > MaxGrainPriceShockPercentage)
+        {
+            errors.Add(
+                $"grain_price_shock_demand_clamp_floor must be between 0 and {MaxGrainPriceShockPercentage}.");
+        }
+
+        if (GrainPriceShockDemandClampCeiling is < 0 or > MaxGrainPriceShockPercentage)
+        {
+            errors.Add(
+                $"grain_price_shock_demand_clamp_ceiling must be between 0 and {MaxGrainPriceShockPercentage}.");
+        }
+
+        if (GrainPriceShockDemandClampFloor is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockDemandClampCeiling is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockDemandClampFloor > GrainPriceShockDemandClampCeiling)
+        {
+            errors.Add("grain_price_shock_demand_clamp_floor must not exceed grain_price_shock_demand_clamp_ceiling.");
+        }
+
+        if (GrainPriceShockDefaultDemand is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockDemandClampFloor is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockDemandClampCeiling is >= 0 and <= MaxGrainPriceShockPercentage
+            && GrainPriceShockDemandClampFloor <= GrainPriceShockDemandClampCeiling
+            && (GrainPriceShockDefaultDemand < GrainPriceShockDemandClampFloor
+                || GrainPriceShockDefaultDemand > GrainPriceShockDemandClampCeiling))
+        {
+            errors.Add("grain_price_shock_default_demand must stay within the demand clamp range.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -502,6 +683,90 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyPressureDriftMaxExclusive
             : DefaultMonthlyPressureDriftMaxExclusive;
+    }
+
+    public int GetGrainPriceShockDefaultCurrentPriceOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockDefaultCurrentPrice
+            : DefaultGrainPriceShockDefaultCurrentPrice;
+    }
+
+    public int GetGrainPriceShockDefaultOldPriceOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockDefaultOldPrice
+            : DefaultGrainPriceShockDefaultOldPrice;
+    }
+
+    public int GetGrainPriceShockDefaultSupplyOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockDefaultSupply
+            : DefaultGrainPriceShockDefaultSupply;
+    }
+
+    public int GetGrainPriceShockDefaultDemandOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockDefaultDemand
+            : DefaultGrainPriceShockDefaultDemand;
+    }
+
+    public int GetGrainPriceShockCurrentPriceClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockCurrentPriceClampFloor
+            : DefaultGrainPriceShockCurrentPriceClampFloor;
+    }
+
+    public int GetGrainPriceShockCurrentPriceClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockCurrentPriceClampCeiling
+            : DefaultGrainPriceShockCurrentPriceClampCeiling;
+    }
+
+    public int GetGrainPriceShockPriceDeltaClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockPriceDeltaClampFloor
+            : DefaultGrainPriceShockPriceDeltaClampFloor;
+    }
+
+    public int GetGrainPriceShockPriceDeltaClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockPriceDeltaClampCeiling
+            : DefaultGrainPriceShockPriceDeltaClampCeiling;
+    }
+
+    public int GetGrainPriceShockSupplyClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockSupplyClampFloor
+            : DefaultGrainPriceShockSupplyClampFloor;
+    }
+
+    public int GetGrainPriceShockSupplyClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockSupplyClampCeiling
+            : DefaultGrainPriceShockSupplyClampCeiling;
+    }
+
+    public int GetGrainPriceShockDemandClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockDemandClampFloor
+            : DefaultGrainPriceShockDemandClampFloor;
+    }
+
+    public int GetGrainPriceShockDemandClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? GrainPriceShockDemandClampCeiling
+            : DefaultGrainPriceShockDemandClampCeiling;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()

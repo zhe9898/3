@@ -1153,4 +1153,10 @@ V941-V948 adds no new cross-module command, event consumer, projection parser, e
 
 The existing `RunMonth` method remains the integration seam: it reads monthly pressure values through `PopulationHouseholdMobilityRulesData` fallback getters and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer monthly pressure outcomes.
 
+## PopulationAndHouseholds grain price signal rules-data extraction v949-v956 integration note
+
+V949-V956 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts `GrainPriceSpike` signal fallback and clamp values into validated owner-consumed rules-data.
+
+The existing grain-price event path remains the integration seam: it reads signal values through `PopulationHouseholdMobilityRulesData` fallback getters and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer grain shock or household pressure outcomes.
+
 The integration contract remains owner-owned event handling plus private profile computation only. Application/UI/Unity may read projected/query fields through existing seams but must not calculate household movement outcomes, pressure profile results, or rule outputs from the moved helpers.

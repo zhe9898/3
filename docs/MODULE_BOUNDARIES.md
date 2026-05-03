@@ -1640,4 +1640,10 @@ V941-V948 extracts monthly prosperity/security/clan-relief/drift thresholds into
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains monthly-pressure or rules-data outcome authority.
 
+## PopulationAndHouseholds grain price signal rules-data extraction v949-v956 boundary note
+
+V949-V956 extracts grain-price shock signal fallback and clamp values into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` grain-price event handling path. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains grain-shock, pressure-profile, or rules-data outcome authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.

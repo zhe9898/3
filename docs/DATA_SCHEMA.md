@@ -1643,3 +1643,7 @@ V933-V940 moves private health lifecycle handling into a partial file. Schema/mi
 Current population households monthly pressure rules-data extraction v941-v948 note:
 
 V941-V948 extracts monthly prosperity/security/clan-relief/drift thresholds into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted monthly-pressure field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, monthly-pressure ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households grain price signal rules-data extraction v949-v956 note:
+
+V949-V956 extracts grain-price shock signal fallback and clamp values into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted grain-shock field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

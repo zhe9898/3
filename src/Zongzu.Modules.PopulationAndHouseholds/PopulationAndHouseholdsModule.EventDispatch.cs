@@ -8,7 +8,7 @@ namespace Zongzu.Modules.PopulationAndHouseholds;
 
 public sealed partial class PopulationAndHouseholdsModule
 {
-    private static void DispatchTradeShockEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    private void DispatchTradeShockEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
     {
         // Step 1b gap 1 — thin dispatch only. No state change, no Emit, no diff.
         // 维度入口（Step 2 可吃）：违约方所属聚落的 debt/distress/livelihood；家户 sponsor clan 救济余力；
@@ -31,7 +31,7 @@ public sealed partial class PopulationAndHouseholdsModule
         }
     }
 
-    private static void ApplyGrainPriceSubsistencePressure(
+    private void ApplyGrainPriceSubsistencePressure(
         ModuleEventHandlingScope<PopulationAndHouseholdsState> scope,
         IDomainEvent domainEvent)
     {
