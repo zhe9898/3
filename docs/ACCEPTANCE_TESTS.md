@@ -1241,3 +1241,9 @@ Acceptance evidence for V965-V972:
 Acceptance evidence for V973-V980:
 - Population tests `GrainPriceSpike_DefaultPriceJumpBandRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidPriceJumpBandRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior price-jump band behavior and malformed band config falls back deterministically.
 - Architecture guard `Population_households_grain_price_jump_band_extraction_v973_v980_must_remain_owner_consumed_and_schema_neutral` proves grain price jump bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+## PopulationAndHouseholds grain price market tightness band extraction v981-v988 acceptance - 2026-05-03
+
+Acceptance evidence for V981-V988:
+- Population tests `GrainPriceSpike_DefaultMarketTightnessBandRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidMarketTightnessBandRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior market-tightness band behavior and malformed band config falls back deterministically.
+- Architecture guard `Population_households_grain_price_market_tightness_band_extraction_v981_v988_must_remain_owner_consumed_and_schema_neutral` proves market tightness bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.

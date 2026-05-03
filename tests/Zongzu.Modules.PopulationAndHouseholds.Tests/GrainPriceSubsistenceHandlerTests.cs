@@ -353,6 +353,68 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistencePricePressure], Is.EqualTo("9"));
     }
 
+    [Test]
+    public void GrainPriceSpike_DefaultMarketTightnessBandRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                GrainPriceMarketTightnessPressureBands = new[]
+                {
+                    new PopulationHouseholdMobilityThresholdScoreBand(60, 4),
+                    new PopulationHouseholdMobilityThresholdScoreBand(40, 3),
+                    new PopulationHouseholdMobilityThresholdScoreBand(20, 2),
+                    new PopulationHouseholdMobilityThresholdScoreBand(8, 1),
+                },
+                GrainPriceMarketTightnessPressureFallbackScore = 0,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
+            RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultGrainPriceMarketTightnessPressureFallbackScore, Is.EqualTo(0));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultGrainPriceMarketTightnessPressureBands,
+            Is.EqualTo(new[]
+            {
+                new PopulationHouseholdMobilityThresholdScoreBand(60, 4),
+                new PopulationHouseholdMobilityThresholdScoreBand(40, 3),
+                new PopulationHouseholdMobilityThresholdScoreBand(20, 2),
+                new PopulationHouseholdMobilityThresholdScoreBand(8, 1),
+            }));
+        Assert.That(explicitPreviousBaseline.GetGrainPriceMarketTightnessPressureScoreOrDefault(20), Is.EqualTo(2));
+        Assert.That(explicitPreviousBaseline.GetGrainPriceMarketTightnessPressureScoreOrDefault(7), Is.EqualTo(0));
+        Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistencePricePressure], Is.EqualTo("9"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidMarketTightnessBandRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                GrainPriceMarketTightnessPressureBands = new[]
+                {
+                    new PopulationHouseholdMobilityThresholdScoreBand(20, 2),
+                    new PopulationHouseholdMobilityThresholdScoreBand(60, 4),
+                },
+                GrainPriceMarketTightnessPressureFallbackScore = 99,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(malformedRulesData.GetGrainPriceMarketTightnessPressureScoreOrDefault(20), Is.EqualTo(2));
+        Assert.That(malformedRulesData.GetGrainPriceMarketTightnessPressureFallbackScoreOrDefault(), Is.EqualTo(0));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistencePricePressure], Is.EqualTo("9"));
+    }
+
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunMissingMetadataGrainPriceSpike(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

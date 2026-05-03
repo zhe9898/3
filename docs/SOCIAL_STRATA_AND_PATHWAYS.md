@@ -788,3 +788,9 @@ The extraction is default-equivalent. It does not create a status rank, class ra
 V973-V980 moves the grain-price jump threshold/score bands into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values only classify one private subsistence pressure component inside `PopulationAndHouseholds`; they are not a class/status engine, rank ladder, social mobility path, route-history store, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not create a status rank, class rail, grain-price-jump ledger, pressure-profile state, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement, household pressure, or social status from config.
+
+### Current population households grain price market tightness band extraction: v981-v988
+
+V981-V988 moves the grain-price market tightness threshold/score bands into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values only classify one private subsistence pressure component inside `PopulationAndHouseholds`; they are not a class/status engine, rank ladder, social mobility path, route-history store, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not create a status rank, class rail, market-tightness ledger, pressure-profile state, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement, household pressure, or social status from config.
