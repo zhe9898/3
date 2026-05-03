@@ -803,4 +803,10 @@ V1005-V1012 extracts the dependent-count threshold-to-score portion of `ComputeS
 
 This is not a labor-clamp, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
 
+## V1013-V1020 PopulationAndHouseholds Subsistence Labor Clamp Extraction
+
+V1013-V1020 extracts the final subsistence labor pressure clamp from `ComputeSubsistenceLaborPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default clamp values preserve prior behavior: floor `-2`, ceiling `4`.
+
+This is not a grain-buffer, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
 The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate dependent-count pressure or household mobility outcomes.

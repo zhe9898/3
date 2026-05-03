@@ -1142,3 +1142,9 @@ No event pool, movement command, route-history path, subsistence-labor ledger, p
 V1005-V1012 changes dependent-count score ownership only. The grain-price subsistence path now reads dependent-count pressure bands from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, labor-capacity bands, final labor clamp, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, dependent-count ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households subsistence labor clamp extraction v1013-v1020 note
+
+V1013-V1020 changes final clamp ownership only. The grain-price subsistence path now reads subsistence labor pressure clamp floor/ceiling values from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, labor-capacity bands, dependent-count bands, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, subsistence-labor ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.

@@ -40,6 +40,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistenceLaborCapacityPressureFallbackScore,
     IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> SubsistenceDependentCountPressureBands,
     int SubsistenceDependentCountPressureFallbackScore,
+    int SubsistenceLaborPressureClampFloor,
+    int SubsistenceLaborPressureClampCeiling,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -101,6 +103,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultSubsistenceMarketDependencyPressureFallbackScore = 2;
     public const int DefaultSubsistenceLaborCapacityPressureFallbackScore = 2;
     public const int DefaultSubsistenceDependentCountPressureFallbackScore = 0;
+    public const int DefaultSubsistenceLaborPressureClampFloor = -2;
+    public const int DefaultSubsistenceLaborPressureClampCeiling = 4;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -266,6 +270,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceLaborCapacityPressureFallbackScore,
             DefaultSubsistenceDependentCountPressureBands,
             DefaultSubsistenceDependentCountPressureFallbackScore,
+            DefaultSubsistenceLaborPressureClampFloor,
+            DefaultSubsistenceLaborPressureClampCeiling,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -332,6 +338,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceLaborCapacityPressureFallbackScore,
             DefaultSubsistenceDependentCountPressureBands,
             DefaultSubsistenceDependentCountPressureFallbackScore,
+            DefaultSubsistenceLaborPressureClampFloor,
+            DefaultSubsistenceLaborPressureClampCeiling,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -749,6 +757,23 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"subsistence_dependent_count_pressure_fallback_score must be between 0 and {MaxSubsistenceDependentCountPressure}.");
+        }
+
+        if (SubsistenceLaborPressureClampFloor is < MinSubsistenceLaborPressure or > MaxSubsistenceLaborPressure)
+        {
+            errors.Add(
+                $"subsistence_labor_pressure_clamp_floor must be between {MinSubsistenceLaborPressure} and {MaxSubsistenceLaborPressure}.");
+        }
+
+        if (SubsistenceLaborPressureClampCeiling is < MinSubsistenceLaborPressure or > MaxSubsistenceLaborPressure)
+        {
+            errors.Add(
+                $"subsistence_labor_pressure_clamp_ceiling must be between {MinSubsistenceLaborPressure} and {MaxSubsistenceLaborPressure}.");
+        }
+
+        if (SubsistenceLaborPressureClampFloor > SubsistenceLaborPressureClampCeiling)
+        {
+            errors.Add("subsistence_labor_pressure_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1257,6 +1282,20 @@ public sealed record PopulationHouseholdMobilityRulesData(
         }
 
         return GetSubsistenceDependentCountPressureFallbackScoreOrDefault();
+    }
+
+    public int GetSubsistenceLaborPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceLaborPressureClampFloor
+            : DefaultSubsistenceLaborPressureClampFloor;
+    }
+
+    public int GetSubsistenceLaborPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceLaborPressureClampCeiling
+            : DefaultSubsistenceLaborPressureClampCeiling;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
