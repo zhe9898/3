@@ -841,3 +841,9 @@ The extraction is default-equivalent. It does not retune distress, migration-ris
 V1045-V1052 moves the subsistence fragility migration flag/risk contribution into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The existing `IsMigrating` and `MigrationRisk` fields remain private household pressure inputs, not a migration economy rule, class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune distress, debt, fragility-clamp, interaction, tax-season, or official-supply formulas, and it does not create fragility-migration state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence fragility clamp extraction: v1053-v1060
+
+V1053-V1060 moves the subsistence fragility final clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private pressure-boundary guard, not a migration economy rule, class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune distress, debt, migration-risk, interaction, tax-season, or official-supply formulas, and it does not create fragility-clamp state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.

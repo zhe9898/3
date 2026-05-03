@@ -1172,3 +1172,9 @@ No event pool, movement command, route-history path, fragility-debt ledger, pres
 V1045-V1052 changes fragility migration contribution ownership only. The grain-price subsistence path now reads the migration risk threshold, pressure score, and fallback score from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, distress/debt/fragility-clamp scoring, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, fragility-migration ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households subsistence fragility clamp extraction v1053-v1060 note
+
+V1053-V1060 changes fragility final-clamp ownership only. The grain-price subsistence path now reads clamp floor and ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, distress/debt/migration scoring, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, fragility-clamp ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.

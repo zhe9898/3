@@ -836,3 +836,11 @@ V1045-V1052 extracts the migration flag/risk contribution from `ComputeSubsisten
 This is not a migration engine, target selector, movement command, route-history, interaction, tax-season, official-supply, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
 
 The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate fragility migration pressure or household mobility outcomes.
+
+## V1053-V1060 PopulationAndHouseholds Subsistence Fragility Clamp Extraction
+
+V1053-V1060 extracts the final subsistence fragility clamp from `ComputeSubsistenceFragilityPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default floor/ceiling preserve prior behavior: fragility pressure is clamped to `0..7`.
+
+This is not a migration engine, target selector, movement command, route-history, interaction, tax-season, official-supply, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate fragility clamp pressure or household mobility outcomes.
