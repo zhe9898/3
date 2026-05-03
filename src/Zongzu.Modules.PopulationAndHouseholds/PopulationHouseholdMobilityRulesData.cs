@@ -36,6 +36,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int GrainPriceMarketTightnessPressureFallbackScore,
     IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> SubsistenceMarketDependencyPressureScoreWeights,
     int SubsistenceMarketDependencyPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> SubsistenceLaborCapacityPressureBands,
+    int SubsistenceLaborCapacityPressureFallbackScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -95,10 +97,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultGrainPriceJumpPressureFallbackScore = 0;
     public const int DefaultGrainPriceMarketTightnessPressureFallbackScore = 0;
     public const int DefaultSubsistenceMarketDependencyPressureFallbackScore = 2;
+    public const int DefaultSubsistenceLaborCapacityPressureFallbackScore = 2;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
     public const int MaxGrainPricePressure = 32;
+    public const int MinSubsistenceLaborPressure = -2;
+    public const int MaxSubsistenceLaborPressure = 4;
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskCeiling = 80;
@@ -202,6 +207,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Smallholder, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultSubsistenceLaborCapacityPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, -2),
+            new PopulationHouseholdMobilityThresholdScoreBand(60, -1),
+            new PopulationHouseholdMobilityThresholdScoreBand(40, 0),
+            new PopulationHouseholdMobilityThresholdScoreBand(25, 1),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -234,6 +249,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceMarketTightnessPressureFallbackScore,
             DefaultSubsistenceMarketDependencyPressureScoreWeights,
             DefaultSubsistenceMarketDependencyPressureFallbackScore,
+            DefaultSubsistenceLaborCapacityPressureBands,
+            DefaultSubsistenceLaborCapacityPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -296,6 +313,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceMarketTightnessPressureFallbackScore,
             DefaultSubsistenceMarketDependencyPressureScoreWeights,
             DefaultSubsistenceMarketDependencyPressureFallbackScore,
+            DefaultSubsistenceLaborCapacityPressureBands,
+            DefaultSubsistenceLaborCapacityPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -653,6 +672,36 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"subsistence_market_dependency_pressure_fallback_score must be between 0 and {MaxGrainPricePressure}.");
+        }
+
+        if (SubsistenceLaborCapacityPressureBands is null
+            || SubsistenceLaborCapacityPressureBands.Count == 0
+            || SubsistenceLaborCapacityPressureBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < MinSubsistenceLaborPressure or > MaxSubsistenceLaborPressure)
+            || SubsistenceLaborCapacityPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != SubsistenceLaborCapacityPressureBands.Count)
+        {
+            errors.Add(
+                $"subsistence_labor_capacity_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score {MinSubsistenceLaborPressure}..{MaxSubsistenceLaborPressure}.");
+        }
+
+        if (SubsistenceLaborCapacityPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < SubsistenceLaborCapacityPressureBands.Count; index++)
+            {
+                if (SubsistenceLaborCapacityPressureBands[index - 1].Threshold <= SubsistenceLaborCapacityPressureBands[index].Threshold)
+                {
+                    errors.Add("subsistence_labor_capacity_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (SubsistenceLaborCapacityPressureFallbackScore is < MinSubsistenceLaborPressure or > MaxSubsistenceLaborPressure)
+        {
+            errors.Add(
+                $"subsistence_labor_capacity_pressure_fallback_score must be between {MinSubsistenceLaborPressure} and {MaxSubsistenceLaborPressure}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1103,6 +1152,35 @@ public sealed record PopulationHouseholdMobilityRulesData(
         }
 
         return GetSubsistenceMarketDependencyPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetSubsistenceLaborCapacityPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceLaborCapacityPressureBands
+            : DefaultSubsistenceLaborCapacityPressureBands;
+    }
+
+    public int GetSubsistenceLaborCapacityPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceLaborCapacityPressureFallbackScore
+            : DefaultSubsistenceLaborCapacityPressureFallbackScore;
+    }
+
+    public int GetSubsistenceLaborCapacityPressureScoreOrDefault(int laborCapacity)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetSubsistenceLaborCapacityPressureBandsOrDefault())
+        {
+            if (laborCapacity >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetSubsistenceLaborCapacityPressureFallbackScoreOrDefault();
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()

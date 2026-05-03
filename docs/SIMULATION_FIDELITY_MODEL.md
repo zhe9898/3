@@ -1012,3 +1012,8 @@ V989-V996 changes parameter ownership only. Subsistence market dependency liveli
 No new household target store, movement ledger, route-history model, selector watermark, market-dependency state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, formula retune, metadata fallback change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+## V997-V1004 PopulationAndHouseholds Subsistence Labor Capacity Extraction
+
+V997-V1004 changes parameter ownership only. Subsistence labor-capacity pressure bands are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, dependent-count pressure, labor clamp, fragility/interaction formulas, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, subsistence-labor state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

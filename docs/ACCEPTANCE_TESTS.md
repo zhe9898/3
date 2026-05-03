@@ -1253,3 +1253,10 @@ Acceptance evidence for V981-V988:
 Acceptance evidence for V989-V996:
 - Population tests `GrainPriceSpike_DefaultMarketDependencyRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidMarketDependencyRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior market-dependency behavior and malformed config falls back deterministically.
 - Architecture guard `Population_households_subsistence_market_dependency_extraction_v989_v996_must_remain_owner_consumed_and_schema_neutral` proves market dependency weights moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+## PopulationAndHouseholds subsistence labor capacity extraction v997-v1004 acceptance - 2026-05-03
+
+Acceptance evidence for V997-V1004:
+- Population tests `GrainPriceSpike_DefaultLaborCapacityRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidLaborCapacityRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior labor-capacity behavior and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_labor_capacity_extraction_v997_v1004_must_remain_owner_consumed_and_schema_neutral` proves labor-capacity bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract dependent-count pressure or the final labor clamp.

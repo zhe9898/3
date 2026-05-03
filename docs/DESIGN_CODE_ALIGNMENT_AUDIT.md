@@ -998,3 +998,8 @@ Design alignment: this is behavior-neutral file organization after the runtime a
 Code alignment: the moved methods remain private members of the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
 
 Validation alignment: an architecture guard proves the moved helpers remain private owner code, call sites remain in the main module, no schema drift occurs, and Application/UI/Unity/`PersonRegistry` authority boundaries remain unchanged.
+## v997-v1004 population households subsistence labor capacity extraction audit - 2026-05-03
+
+The v997-v1004 pass moves the subsistence labor-capacity threshold-to-score mapping from `ComputeSubsistenceLaborPressure` literals into validated `PopulationHouseholdMobilityRulesData` default bands and fallback getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; dependent-count pressure and the final labor clamp remain unchanged; Application/UI/Unity do not calculate subsistence labor or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
