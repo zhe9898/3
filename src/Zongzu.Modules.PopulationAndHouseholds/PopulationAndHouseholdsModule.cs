@@ -1568,6 +1568,10 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeLandHoldingPressureDivisorOrDefault();
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
         int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
+        PopulationHouseholdMobilityPoolTieBreakPriority poolTieBreakPriority = _householdMobilityRulesData
+            .GetMonthlyRuntimePoolTieBreakPriorityOrDefault();
+        PopulationHouseholdMobilityHouseholdTieBreakPriority householdTieBreakPriority = _householdMobilityRulesData
+            .GetMonthlyRuntimeHouseholdTieBreakPriorityOrDefault();
         int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
         int migrationRiskClampFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskClampFloorOrDefault();
@@ -1587,17 +1591,19 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             return false;
         }
 
-        MigrationPoolEntryState[] activePools = scope.State.MigrationPools
+        IOrderedEnumerable<MigrationPoolEntryState> orderedPools = scope.State.MigrationPools
             .Where(pool => pool.OutflowPressure >= activePoolThreshold)
-            .OrderByDescending(static pool => pool.OutflowPressure)
-            .ThenBy(static pool => pool.SettlementId.Value)
+            .OrderByDescending(static pool => pool.OutflowPressure);
+        MigrationPoolEntryState[] activePools = ApplyMonthlyRuntimePoolTieBreak(
+                orderedPools,
+                poolTieBreakPriority)
             .Take(settlementCap)
             .ToArray();
 
         bool changed = false;
         foreach (MigrationPoolEntryState pool in activePools)
         {
-            PopulationHouseholdState[] candidates = scope.State.Households
+            IOrderedEnumerable<PopulationHouseholdState> orderedCandidates = scope.State.Households
                 .Where(household => household.SettlementId == pool.SettlementId
                     && IsMonthlyHouseholdMobilityRuntimeCandidate(
                         household,
@@ -1620,8 +1626,10 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         grainStorePressureDivisor,
                         landHoldingPressureFloor,
                         landHoldingPressureDivisor,
-                        livelihoodScoreWeights))
-                .ThenBy(static household => household.Id.Value)
+                        livelihoodScoreWeights));
+            PopulationHouseholdState[] candidates = ApplyMonthlyRuntimeHouseholdTieBreak(
+                    orderedCandidates,
+                    householdTieBreakPriority)
                 .Take(householdCap)
                 .ToArray();
 
@@ -1661,6 +1669,30 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         }
 
         return changed;
+    }
+
+    private static IOrderedEnumerable<MigrationPoolEntryState> ApplyMonthlyRuntimePoolTieBreak(
+        IOrderedEnumerable<MigrationPoolEntryState> orderedPools,
+        PopulationHouseholdMobilityPoolTieBreakPriority tieBreakPriority)
+    {
+        return tieBreakPriority switch
+        {
+            PopulationHouseholdMobilityPoolTieBreakPriority.SettlementIdAscending =>
+                orderedPools.ThenBy(static pool => pool.SettlementId.Value),
+            _ => orderedPools.ThenBy(static pool => pool.SettlementId.Value),
+        };
+    }
+
+    private static IOrderedEnumerable<PopulationHouseholdState> ApplyMonthlyRuntimeHouseholdTieBreak(
+        IOrderedEnumerable<PopulationHouseholdState> orderedCandidates,
+        PopulationHouseholdMobilityHouseholdTieBreakPriority tieBreakPriority)
+    {
+        return tieBreakPriority switch
+        {
+            PopulationHouseholdMobilityHouseholdTieBreakPriority.HouseholdIdAscending =>
+                orderedCandidates.ThenBy(static household => household.Id.Value),
+            _ => orderedCandidates.ThenBy(static household => household.Id.Value),
+        };
     }
 
     private static bool IsMonthlyHouseholdMobilityRuntimeCandidate(

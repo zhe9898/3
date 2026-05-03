@@ -662,3 +662,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V821-V828 extracts the first `PopulationAndHouseholds` household mobility runtime rule's post-nudge migration-risk clamp bounds into owner-consumed rules-data. The default clamp remains `0..100`, so a selected household nudged above the top band still caps at `100` under default rules-data.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, migration-risk retune, risk-delta retune, migration status retune, candidate filter retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V829-V836 Household Mobility Runtime Tie-Break Priority Extraction
+
+V829-V836 extracts the first `PopulationAndHouseholds` household mobility runtime rule's deterministic tie-break priorities into owner-consumed rules-data. The default active-pool tie-break remains settlement id ascending, and the default household tie-break remains household id ascending.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, ordering retune, score formula retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.

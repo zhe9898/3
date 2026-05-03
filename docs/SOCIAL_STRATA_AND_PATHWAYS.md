@@ -683,4 +683,8 @@ V813-V820 records that the first household mobility runtime rule's migration sta
 
 V821-V828 records that the first household mobility runtime rule's migration-risk clamp bounds have been moved into owner-consumed rules-data. The social meaning remains bounded: risk still lives inside the existing `0..100` household pressure band by default, but this is not a relocation command, route-history model, migration economy, class/status engine, or career rail.
 
+### Current household mobility runtime tie-break priority extraction: v829-v836
+
+V829-V836 records that the first household mobility runtime rule's deterministic active-pool and household tie-break priorities have been moved into owner-consumed rules-data. The social meaning remains bounded: equal-pressure choices still resolve by stable ids by default, not by status rank, player preference, route history, social class, or UI-side ordering.
+
 Default rules-data keeps the migration status threshold at `80`, malformed threshold data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
