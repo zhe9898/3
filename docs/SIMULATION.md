@@ -1005,3 +1005,9 @@ No scheduler cadence change, migration status retune, migration-started event th
 V821-V828 changes the first household mobility runtime rule's post-nudge migration-risk clamp from hardcoded `0..100` bounds to owner-consumed rules-data bounds. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default risk-band behavior remain unchanged.
 
 No scheduler cadence change, migration-risk retune, risk-delta retune, migration status retune, candidate filter retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime tie-break priority extraction v829-v836 note
+
+V829-V836 changes the first household mobility runtime rule's active-pool and household tie-break priorities from inline ordering to owner-consumed rules-data priorities. The monthly cadence, active-pool selection, candidate scoring, fanout caps, event type, and default settlement-id/household-id ordering remain unchanged.
+
+No scheduler cadence change, ordering retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

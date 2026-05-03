@@ -27,6 +27,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeLandHoldingPressureDivisor,
     int MonthlyRuntimeSettlementCap,
     int MonthlyRuntimeHouseholdCap,
+    PopulationHouseholdMobilityPoolTieBreakPriority MonthlyRuntimePoolTieBreakPriority,
+    PopulationHouseholdMobilityHouseholdTieBreakPriority MonthlyRuntimeHouseholdTieBreakPriority,
     int MonthlyRuntimeRiskDelta,
     int MonthlyRuntimeMigrationRiskClampFloor,
     int MonthlyRuntimeMigrationRiskClampCeiling,
@@ -53,6 +55,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeLandHoldingPressureDivisor = 2;
     public const int DefaultMonthlyRuntimeSettlementCap = 1;
     public const int DefaultMonthlyRuntimeHouseholdCap = 2;
+    public const PopulationHouseholdMobilityPoolTieBreakPriority DefaultMonthlyRuntimePoolTieBreakPriority =
+        PopulationHouseholdMobilityPoolTieBreakPriority.SettlementIdAscending;
+    public const PopulationHouseholdMobilityHouseholdTieBreakPriority DefaultMonthlyRuntimeHouseholdTieBreakPriority =
+        PopulationHouseholdMobilityHouseholdTieBreakPriority.HouseholdIdAscending;
     public const int DefaultMonthlyRuntimeRiskDelta = 1;
     public const int DefaultMonthlyRuntimeMigrationRiskClampFloor = 0;
     public const int DefaultMonthlyRuntimeMigrationRiskClampCeiling = 100;
@@ -107,6 +113,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeLandHoldingPressureDivisor,
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
+            DefaultMonthlyRuntimePoolTieBreakPriority,
+            DefaultMonthlyRuntimeHouseholdTieBreakPriority,
             DefaultMonthlyRuntimeRiskDelta,
             DefaultMonthlyRuntimeMigrationRiskClampFloor,
             DefaultMonthlyRuntimeMigrationRiskClampCeiling,
@@ -136,6 +144,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeLandHoldingPressureDivisor,
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
+            DefaultMonthlyRuntimePoolTieBreakPriority,
+            DefaultMonthlyRuntimeHouseholdTieBreakPriority,
             DefaultMonthlyRuntimeRiskDelta,
             DefaultMonthlyRuntimeMigrationRiskClampFloor,
             DefaultMonthlyRuntimeMigrationRiskClampCeiling,
@@ -272,6 +282,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"monthly_runtime_household_cap must be between 0 and {MaxMonthlyRuntimeHouseholdCap}.");
+        }
+
+        if (!Enum.IsDefined(MonthlyRuntimePoolTieBreakPriority))
+        {
+            errors.Add("monthly_runtime_pool_tie_break_priority must be defined.");
+        }
+
+        if (!Enum.IsDefined(MonthlyRuntimeHouseholdTieBreakPriority))
+        {
+            errors.Add("monthly_runtime_household_tie_break_priority must be defined.");
         }
 
         if (MonthlyRuntimeRiskDelta is < 0 or > MaxMonthlyRuntimeRiskDelta)
@@ -478,6 +498,20 @@ public sealed record PopulationHouseholdMobilityRulesData(
             : DefaultMonthlyRuntimeHouseholdCap;
     }
 
+    public PopulationHouseholdMobilityPoolTieBreakPriority GetMonthlyRuntimePoolTieBreakPriorityOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimePoolTieBreakPriority
+            : DefaultMonthlyRuntimePoolTieBreakPriority;
+    }
+
+    public PopulationHouseholdMobilityHouseholdTieBreakPriority GetMonthlyRuntimeHouseholdTieBreakPriorityOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeHouseholdTieBreakPriority
+            : DefaultMonthlyRuntimeHouseholdTieBreakPriority;
+    }
+
     public int GetMonthlyRuntimeRiskDeltaOrDefault()
     {
         return Validate().IsValid
@@ -525,3 +559,13 @@ public sealed record PopulationHouseholdMobilityRulesValidationResult(
 public readonly record struct PopulationHouseholdMobilityLivelihoodScoreWeight(
     LivelihoodType Livelihood,
     int Weight);
+
+public enum PopulationHouseholdMobilityPoolTieBreakPriority
+{
+    SettlementIdAscending = 0,
+}
+
+public enum PopulationHouseholdMobilityHouseholdTieBreakPriority
+{
+    HouseholdIdAscending = 0,
+}

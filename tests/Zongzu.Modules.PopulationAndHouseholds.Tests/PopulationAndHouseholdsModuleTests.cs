@@ -1143,6 +1143,82 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleDefaultTieBreakPrioritiesPreservePreviousOrdering()
+    {
+        static void ConfigureHouseholdTieBreakFixture(PopulationAndHouseholdsState state)
+        {
+            PopulationHouseholdState lowerId = GetHousehold(state, 1);
+            lowerId.Livelihood = LivelihoodType.Tenant;
+            lowerId.Distress = 62;
+            lowerId.DebtPressure = 64;
+            lowerId.LaborCapacity = 42;
+            lowerId.GrainStore = 22;
+            lowerId.LandHolding = 18;
+            lowerId.MigrationRisk = 76;
+
+            PopulationHouseholdState higherId = GetHousehold(state, 2);
+            higherId.Livelihood = LivelihoodType.Tenant;
+            higherId.Distress = 61;
+            higherId.DebtPressure = lowerId.DebtPressure;
+            higherId.LaborCapacity = lowerId.LaborCapacity;
+            higherId.GrainStore = lowerId.GrainStore;
+            higherId.LandHolding = lowerId.LandHolding;
+            higherId.MigrationRisk = lowerId.MigrationRisk;
+        }
+
+        static void ConfigurePoolTieBreakFixture(PopulationAndHouseholdsState state)
+        {
+            GetHousehold(state, 5).MigrationRisk = 64;
+            GetHousehold(state, 6).MigrationRisk = 64;
+        }
+
+        PopulationHouseholdMobilityRulesData householdCappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationHouseholdMobilityRulesData explicitDefaultHouseholdTieBreakRules =
+            householdCappedRules with
+            {
+                MonthlyRuntimeHouseholdTieBreakPriority =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeHouseholdTieBreakPriority,
+            };
+        PopulationHouseholdMobilityRulesData explicitDefaultPoolTieBreakRules =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimePoolTieBreakPriority =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimePoolTieBreakPriority,
+            };
+
+        PopulationMobilityRunResult defaultHouseholdTieBreakResult = RunFirstMobilityRuntimeScenario(
+            householdCappedRules,
+            ConfigureHouseholdTieBreakFixture);
+        PopulationMobilityRunResult explicitDefaultHouseholdTieBreakResult = RunFirstMobilityRuntimeScenario(
+            explicitDefaultHouseholdTieBreakRules,
+            ConfigureHouseholdTieBreakFixture);
+        PopulationMobilityRunResult defaultPoolTieBreakResult = RunFirstMobilityRuntimeScenario(
+            PopulationHouseholdMobilityRulesData.Default,
+            ConfigurePoolTieBreakFixture);
+        PopulationMobilityRunResult explicitDefaultPoolTieBreakResult = RunFirstMobilityRuntimeScenario(
+            explicitDefaultPoolTieBreakRules,
+            ConfigurePoolTieBreakFixture);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeHouseholdTieBreakPriority,
+            Is.EqualTo(PopulationHouseholdMobilityHouseholdTieBreakPriority.HouseholdIdAscending));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimePoolTieBreakPriority,
+            Is.EqualTo(PopulationHouseholdMobilityPoolTieBreakPriority.SettlementIdAscending));
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(explicitDefaultHouseholdTieBreakResult),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(defaultHouseholdTieBreakResult)));
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(explicitDefaultPoolTieBreakResult),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(defaultPoolTieBreakResult)));
+        Assert.That(GetHousehold(defaultHouseholdTieBreakResult.State, 1).MigrationRisk, Is.EqualTo(78));
+        Assert.That(GetHousehold(defaultHouseholdTieBreakResult.State, 2).MigrationRisk, Is.EqualTo(77));
+        Assert.That(GetHousehold(defaultPoolTieBreakResult.State, 1).MigrationRisk, Is.EqualTo(79));
+        Assert.That(GetHousehold(defaultPoolTieBreakResult.State, 5).MigrationRisk, Is.EqualTo(65));
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRuleScoreOrderingTouchesHigherScoreBeforeLowerHouseholdId()
     {
         PopulationHouseholdMobilityRulesData cappedRules =
@@ -1792,6 +1868,8 @@ public sealed class PopulationAndHouseholdsModuleTests
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLandHoldingPressureDivisor + 1,
                 MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
                 MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
+                MonthlyRuntimePoolTieBreakPriority = (PopulationHouseholdMobilityPoolTieBreakPriority)999,
+                MonthlyRuntimeHouseholdTieBreakPriority = (PopulationHouseholdMobilityHouseholdTieBreakPriority)999,
                 MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
                 MonthlyRuntimeMigrationRiskClampFloor =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationRiskClampFloor + 1,
@@ -1805,7 +1883,7 @@ public sealed class PopulationAndHouseholdsModuleTests
         PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
 
         Assert.That(validation.IsValid, Is.False);
-        Assert.That(validation.Errors, Has.Count.EqualTo(25));
+        Assert.That(validation.Errors, Has.Count.EqualTo(27));
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_active_pool_outflow_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_ceiling")), Is.True);
@@ -1826,6 +1904,8 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_land_holding_pressure_divisor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_settlement_cap")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_household_cap")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_pool_tie_break_priority")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_household_tie_break_priority")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_risk_delta")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_migration_risk_clamp_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_migration_risk_clamp_ceiling")), Is.True);
@@ -1893,6 +1973,12 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeHouseholdCapOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeHouseholdCap));
+        Assert.That(
+            rulesData.GetMonthlyRuntimePoolTieBreakPriorityOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimePoolTieBreakPriority));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeHouseholdTieBreakPriorityOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeHouseholdTieBreakPriority));
         Assert.That(
             rulesData.GetMonthlyRuntimeRiskDeltaOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeRiskDelta));
@@ -2186,6 +2272,30 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeTieBreakPrioritiesFallBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimePoolTieBreakPriority = (PopulationHouseholdMobilityPoolTieBreakPriority)999,
+                MonthlyRuntimeHouseholdTieBreakPriority = (PopulationHouseholdMobilityHouseholdTieBreakPriority)999,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors, Has.Count.EqualTo(2));
+        Assert.That(validation.Errors[0], Does.Contain("monthly_runtime_pool_tie_break_priority"));
+        Assert.That(validation.Errors[1], Does.Contain("monthly_runtime_household_tie_break_priority"));
+        Assert.That(
+            rulesData.GetMonthlyRuntimePoolTieBreakPriorityOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimePoolTieBreakPriority));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeHouseholdTieBreakPriorityOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeHouseholdTieBreakPriority));
+    }
+
+    [Test]
     public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationRiskClampFallsBackToDefault()
     {
         PopulationHouseholdMobilityRulesData rulesData =
@@ -2275,6 +2385,8 @@ public sealed class PopulationAndHouseholdsModuleTests
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLandHoldingPressureDivisor + 1,
                 MonthlyRuntimeSettlementCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeSettlementCap + 1,
                 MonthlyRuntimeHouseholdCap = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeHouseholdCap + 1,
+                MonthlyRuntimePoolTieBreakPriority = (PopulationHouseholdMobilityPoolTieBreakPriority)999,
+                MonthlyRuntimeHouseholdTieBreakPriority = (PopulationHouseholdMobilityHouseholdTieBreakPriority)999,
                 MonthlyRuntimeRiskDelta = PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeRiskDelta + 1,
                 MonthlyRuntimeMigrationRiskClampFloor =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeMigrationRiskClampFloor + 1,

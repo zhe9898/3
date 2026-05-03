@@ -886,3 +886,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, migration
 V821-V828 keeps household mobility fidelity bounded while extracting the first runtime rule's migration-risk clamp bounds into owner-consumed rules-data. Default clamp `0..100` preserves the previous pressure band, and malformed clamp data falls back instead of silently widening movement state.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, migration-risk retune, risk-delta retune, migration status retune, candidate filter retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V829-V836 Household Mobility Runtime Tie-Break Priority Extraction
+
+V829-V836 keeps household mobility fidelity bounded while extracting the first runtime rule's deterministic tie-break priorities into owner-consumed rules-data. Default settlement-id and household-id ascending priorities preserve the current near-detail/far-summary ordering behavior, and malformed priority data falls back instead of changing selected targets.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, ordering retune, score formula retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

@@ -1124,3 +1124,10 @@ Acceptance evidence for V821-V828:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultMigrationRiskClampPreservesPreviousClampBehavior` proves default migration-risk clamp `0..100` and explicit default bounds produce the same monthly runtime signature in a high-delta selected-household fixture.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationRiskClampFallsBackToDefault` proves malformed migration-risk clamp data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_migration_risk_clamp_extraction_v821_v828_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime tie-break priority extraction v829-v836 acceptance - 2026-05-03
+
+Acceptance evidence for V829-V836:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultTieBreakPrioritiesPreservePreviousOrdering` proves explicit default active-pool and household tie-break priorities produce the same monthly runtime signatures as the existing default ordering.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeTieBreakPrioritiesFallBackToDefault` proves malformed tie-break priority data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_tie_break_priority_extraction_v829_v836_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

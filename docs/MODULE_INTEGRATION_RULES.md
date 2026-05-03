@@ -1064,3 +1064,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V821-V828 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the migration-risk clamp bounds into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default clamp `0..100`.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate migration-risk clamp fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime tie-break priority extraction v829-v836 integration note
+
+V829-V836 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the active-pool and household tie-break priorities into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving settlement-id and household-id ascending defaults.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate tie-break fallback, fanout eligibility, target ordering, or household movement outcomes.

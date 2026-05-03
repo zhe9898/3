@@ -842,3 +842,13 @@ Design alignment: this is hardcoded clamp extraction, not a migration-risk retun
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the migration-risk clamp bounds or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default clamp equivalence and malformed migration-risk clamp fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v829-v836 household mobility runtime tie-break priority extraction audit - 2026-05-03
+
+The v829-v836 pass extracts the first `PopulationAndHouseholds` runtime rule's active-pool and household tie-break priorities into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded deterministic-order extraction, not an ordering retune, score formula retune, movement command, route-history model, fanout widening, or player-preference selector. Default priorities preserve prior settlement-id and household-id ordering under default rules-data, while malformed priority values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read tie-break priorities or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default tie-break equivalence and malformed priority fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
