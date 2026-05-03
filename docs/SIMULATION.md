@@ -993,3 +993,9 @@ No scheduler cadence change, livelihood engine retune, trigger extraction, migra
 V805-V812 changes the first household mobility runtime rule's distress/debt score pattern from implicit unit additions to owner-consumed rules-data weights. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default selected-household ordering remain unchanged.
 
 No scheduler cadence change, pressure formula retune, livelihood engine retune, trigger extraction, migration-risk score retune, livelihood score retune, pressure floor/divisor extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime migration-status extraction v813-v820 note
+
+V813-V820 changes the first household mobility runtime rule's migration status threshold from a hardcoded `80` helper value to an owner-consumed rules-data threshold. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default migrating-status behavior remain unchanged.
+
+No scheduler cadence change, migration status retune, migration-started event threshold retune, candidate ceiling retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

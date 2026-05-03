@@ -1052,3 +1052,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V805-V812 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the distress/debt pressure score weights into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default weights `Distress=1` and `DebtPressure=1`.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate pressure score weights, validation fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime migration-status extraction v813-v820 integration note
+
+V813-V820 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the migration status threshold into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default threshold `80`.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate migration status threshold fallback, fanout eligibility, target ordering, or household movement outcomes.

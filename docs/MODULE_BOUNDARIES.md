@@ -1539,3 +1539,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V805-V812 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's distress/debt score weights are now read from `PopulationHouseholdMobilityRulesData` with defaults `Distress=1` and `DebtPressure=1`.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-score state, event-routing ledger, validation ledger, cache, class/status engine, trigger retune, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime migration-status extraction v813-v820 boundary note
+
+V813-V820 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's migration status threshold is now read from `PopulationHouseholdMobilityRulesData` with default `80`.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, migration-status state, event-routing ledger, validation ledger, cache, class/status engine, event-threshold retune, fanout widening, or `PersonRegistry` expansion is introduced.

@@ -1297,7 +1297,14 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
 
     private static bool ResolveMigrationStatus(PopulationHouseholdState household)
     {
-        return household.MigrationRisk >= 80;
+        return ResolveMigrationStatus(
+            household,
+            PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeMigrationStatusThreshold);
+    }
+
+    private static bool ResolveMigrationStatus(PopulationHouseholdState household, int migrationStatusThreshold)
+    {
+        return household.MigrationRisk >= migrationStatusThreshold;
     }
 
     private static bool TryApplyMonthlyLivelihoodDrift(
@@ -1562,6 +1569,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
         int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
         int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
+        int migrationStatusThreshold = _householdMobilityRulesData
+            .GetMonthlyRuntimeMigrationStatusThresholdOrDefault();
         int migrationStartedEventThreshold = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationStartedEventThresholdOrDefault();
 
@@ -1616,7 +1625,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             {
                 int oldMigrationRisk = household.MigrationRisk;
                 household.MigrationRisk = Math.Clamp(household.MigrationRisk + riskDelta, 0, 100);
-                household.IsMigrating = ResolveMigrationStatus(household);
+                household.IsMigrating = ResolveMigrationStatus(household, migrationStatusThreshold);
                 if (household.MigrationRisk == oldMigrationRisk)
                 {
                     continue;

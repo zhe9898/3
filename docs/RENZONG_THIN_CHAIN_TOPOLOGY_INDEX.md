@@ -650,3 +650,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V805-V812 extracts the first `PopulationAndHouseholds` household mobility runtime rule's implicit distress/debt unit score weights into owner-consumed rules-data. The default weights remain `Distress=1` and `DebtPressure=1`, preserving ordering under default rules-data.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, pressure formula retune, livelihood engine retune, trigger extraction, migration-risk score retune, livelihood score retune, pressure floor/divisor extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V813-V820 Household Mobility Runtime Migration Status Threshold Extraction
+
+V813-V820 extracts the first `PopulationAndHouseholds` household mobility runtime rule's migration status threshold into owner-consumed rules-data. The default threshold remains `80`, so a household nudged from 79 to 80 still becomes migrating under default rules-data.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, migration status retune, migration-started event threshold retune, candidate ceiling retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.

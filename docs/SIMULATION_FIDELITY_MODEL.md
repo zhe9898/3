@@ -874,3 +874,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, livelihoo
 V805-V812 keeps household mobility fidelity bounded while extracting the first runtime rule's distress/debt unit score weights into owner-consumed rules-data. Default weights `Distress=1` and `DebtPressure=1` preserve candidate ordering under default rules-data, and malformed weights fall back instead of silently retuning household pressure.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, pressure formula retune, livelihood engine retune, trigger extraction, migration-risk score retune, livelihood score retune, pressure floor/divisor extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V813-V820 Household Mobility Runtime Migration Status Threshold Extraction
+
+V813-V820 keeps household mobility fidelity bounded while extracting the first runtime rule's migration status threshold into owner-consumed rules-data. Default threshold `80` preserves the previous migrating-status boundary, and malformed threshold data falls back instead of silently widening movement state.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, migration status retune, migration-started event threshold retune, candidate ceiling retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

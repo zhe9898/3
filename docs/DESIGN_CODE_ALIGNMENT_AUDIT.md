@@ -822,3 +822,13 @@ Design alignment: this is hardcoded pressure-score extraction, not a pressure fo
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the pressure score weights or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default ordering equivalence and malformed pressure-score fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v813-v820 household mobility runtime migration-status extraction audit - 2026-05-03
+
+The v813-v820 pass extracts the first `PopulationAndHouseholds` runtime rule's migration status threshold into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded status-threshold extraction, not a migration status retune, migration-started event threshold retune, candidate ceiling retune, movement command, or route-history model. Default threshold `80` preserves prior migrating-status behavior under default rules-data, while malformed threshold values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the migration status threshold or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default status equivalence and malformed migration-status fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
