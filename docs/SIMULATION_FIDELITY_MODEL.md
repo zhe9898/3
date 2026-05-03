@@ -951,4 +951,10 @@ V909-V916 changes file layout only. Monthly livelihood drift helpers stay inside
 
 No new household target store, movement ledger, route-history model, selector watermark, livelihood-drift ledger, class/status state, or distant-society detail promotion is added.
 
+## V917-V924 PopulationAndHouseholds Monthly Pulse File Split
+
+V917-V924 changes file layout only. Xun/month pulse helpers stay inside the same `PopulationAndHouseholds` owner lane, monthly and xun cadence remain unchanged, and near-detail/far-summary fidelity behavior is unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, monthly-pulse ledger, migration-status ledger, class/status state, or distant-society detail promotion is added.
+
 No persisted schema, loader, rules-data file, cache, diagnostic state, formula retune, metadata fallback change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
