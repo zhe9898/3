@@ -1136,3 +1136,9 @@ No scheduler cadence change, pressure formula change, metadata fallback change, 
 V997-V1004 changes labor-capacity score ownership only. The grain-price subsistence path now reads labor-capacity pressure bands from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, dependent-count pressure, final labor clamp, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, subsistence-labor ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households subsistence dependent count extraction v1005-v1012 note
+
+V1005-V1012 changes dependent-count score ownership only. The grain-price subsistence path now reads dependent-count pressure bands from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, labor-capacity bands, final labor clamp, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, dependent-count ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.

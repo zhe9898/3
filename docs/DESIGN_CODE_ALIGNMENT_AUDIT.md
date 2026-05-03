@@ -1003,3 +1003,9 @@ Validation alignment: an architecture guard proves the moved helpers remain priv
 The v997-v1004 pass moves the subsistence labor-capacity threshold-to-score mapping from `ComputeSubsistenceLaborPressure` literals into validated `PopulationHouseholdMobilityRulesData` default bands and fallback getters.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; dependent-count pressure and the final labor clamp remain unchanged; Application/UI/Unity do not calculate subsistence labor or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1005-v1012 population households subsistence dependent count extraction audit - 2026-05-03
+
+The v1005-v1012 pass moves the subsistence dependent-count threshold-to-score mapping from `ComputeSubsistenceLaborPressure` literals into validated `PopulationHouseholdMobilityRulesData` default bands and fallback getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; the final labor clamp remains unchanged; Application/UI/Unity do not calculate dependent-count pressure or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.

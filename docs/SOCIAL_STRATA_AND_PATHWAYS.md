@@ -805,3 +805,9 @@ The extraction is default-equivalent. It does not create a status rank, class ra
 V997-V1004 moves the subsistence labor-capacity threshold scoring into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The values remain a private `PopulationAndHouseholds` pressure component, not a labor class, rank ladder, class/status engine, social mobility path, route-history store, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not extract dependent-count pressure or the labor clamp, and it does not create a status rank, labor ledger, pressure-profile state, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence dependent count extraction: v1005-v1012
+
+V1005-V1012 moves the subsistence dependent-count threshold scoring into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The values remain a private `PopulationAndHouseholds` pressure component, not a family-size class, rank ladder, class/status engine, social mobility path, route-history store, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not extract the final labor clamp, and it does not create a dependent-count ledger, pressure-profile state, movement selector, route-history, migration economy, or UI-visible social position.

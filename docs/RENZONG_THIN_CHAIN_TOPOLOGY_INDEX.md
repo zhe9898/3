@@ -796,3 +796,11 @@ V997-V1004 extracts the labor-capacity threshold-to-score portion of `ComputeSub
 This is not a dependent-count, labor-clamp, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
 
 The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate subsistence labor or household mobility outcomes.
+
+## V1005-V1012 PopulationAndHouseholds Subsistence Dependent Count Extraction
+
+V1005-V1012 extracts the dependent-count threshold-to-score portion of `ComputeSubsistenceLaborPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bands preserve prior behavior for `>=5`, `>=3`, and fallback dependent-count scores.
+
+This is not a labor-clamp, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate dependent-count pressure or household mobility outcomes.
