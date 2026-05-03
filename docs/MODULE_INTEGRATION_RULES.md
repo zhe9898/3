@@ -1112,3 +1112,9 @@ The integration contract remains owner-owned pool rebuilds plus existing query r
 V885-V892 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves the private query implementation and clone helpers into a dedicated partial file inside the same owner module.
 
 The integration contract remains owner-owned query snapshots only. Application/UI/Unity may read projected/query fields through existing seams but must not calculate household movement outcomes, query snapshot results, or rule outputs from the moved query helpers.
+
+## PopulationAndHouseholds pressure profile file split v893-v900 integration note
+
+V893-V900 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves private pressure profile computation helpers into a dedicated partial file inside the same owner module.
+
+The integration contract remains owner-owned event handling plus private profile computation only. Application/UI/Unity may read projected/query fields through existing seams but must not calculate household movement outcomes, pressure profile results, or rule outputs from the moved helpers.

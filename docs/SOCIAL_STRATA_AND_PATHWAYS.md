@@ -730,3 +730,9 @@ The split is organizational only. It does not create a status rank, class rail, 
 V885-V892 moves the private `PopulationQueries` implementation and clone helpers into a dedicated partial file without changing social-strata behavior. Query snapshots still copy owner state; they do not classify households into new social ranks or expose a class/status engine.
 
 The split is organizational only. It does not create a status rank, class rail, query ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved query helpers.
+
+### Current population households pressure profile file split: v893-v900
+
+V893-V900 moves grain, tax, and official-supply pressure profile formulas into a dedicated partial file without changing social-strata behavior. The formulas remain owner-private pressure calculations, not a class/status engine or social rank track.
+
+The split is organizational only. It does not create a status rank, class rail, pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved helpers.

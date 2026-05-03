@@ -1053,3 +1053,9 @@ No scheduler cadence change, pool behavior change, labor/marriage/migration form
 V885-V892 changes file layout only. Query registration remains on the existing owner seam, and query snapshots still copy households, settlements, memberships, and pools with the same stable ordering.
 
 No scheduler cadence change, query behavior change, snapshot field expansion, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.
+
+## Current population households pressure profile file split v893-v900 note
+
+V893-V900 changes file layout only. Grain subsistence, tax-season, and official-supply pressure profile helpers move into a partial file while event dispatch, emitted receipts, and call-site ordering remain unchanged.
+
+No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

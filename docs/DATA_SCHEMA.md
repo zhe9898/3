@@ -1615,3 +1615,7 @@ V877-V884 moves private settlement summary and labor/marriage/migration pool reb
 Current population households query surface file split v885-v892 note:
 
 V885-V892 moves the private query implementation and clone helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted query-surface split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, query ledger, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households pressure profile file split v893-v900 note:
+
+V893-V900 moves private pressure profile computation helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted pressure-profile split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

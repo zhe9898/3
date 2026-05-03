@@ -1175,3 +1175,9 @@ Acceptance evidence for V877-V884:
 Acceptance evidence for V885-V892:
 - Architecture guard `Population_households_query_surface_file_split_v885_v892_must_preserve_owner_behavior_and_schema_neutrality` proves the private query implementation and clone helpers were moved into `PopulationAndHouseholdsModule.Queries.cs` without changing query registration, snapshot ordering, snapshot fields, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing population query/projection behavior tests; this split moves private owner query code only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds pressure profile file split v893-v900 acceptance - 2026-05-03
+
+Acceptance evidence for V893-V900:
+- Architecture guard `Population_households_pressure_profile_file_split_v893_v900_must_preserve_owner_behavior_and_schema_neutrality` proves grain, tax-season, and official-supply pressure profile helpers were moved into `PopulationAndHouseholdsModule.PressureProfiles.cs` without changing formulas, metadata fallbacks, event receipts, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing population pressure-chain behavior tests; this split moves private owner formula helpers only and adds no new owner rule or presentation field.
