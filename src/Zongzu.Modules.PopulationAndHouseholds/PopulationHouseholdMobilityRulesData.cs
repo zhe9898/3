@@ -17,6 +17,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeLandHoldingTriggerFloor,
     IReadOnlyList<LivelihoodType> MonthlyRuntimeTriggerLivelihoods,
     IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> MonthlyRuntimeLivelihoodScoreWeights,
+    int MonthlyRuntimeDistressScoreWeight,
+    int MonthlyRuntimeDebtPressureScoreWeight,
     int MonthlyRuntimeMigrationRiskScoreWeight,
     int MonthlyRuntimeLaborCapacityPressureFloor,
     int MonthlyRuntimeGrainStorePressureFloor,
@@ -38,6 +40,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeLaborCapacityTriggerCeiling = 45;
     public const int DefaultMonthlyRuntimeGrainStoreTriggerFloor = 25;
     public const int DefaultMonthlyRuntimeLandHoldingTriggerFloor = 15;
+    public const int DefaultMonthlyRuntimeDistressScoreWeight = 1;
+    public const int DefaultMonthlyRuntimeDebtPressureScoreWeight = 1;
     public const int DefaultMonthlyRuntimeMigrationRiskScoreWeight = 4;
     public const int DefaultMonthlyRuntimeLaborCapacityPressureFloor = 60;
     public const int DefaultMonthlyRuntimeGrainStorePressureFloor = 25;
@@ -53,6 +57,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxMonthlyRuntimeRiskDelta = 8;
     public const int MaxMonthlyRuntimeCandidateMigrationRiskCeiling = 100;
     public const int MaxMonthlyRuntimeLivelihoodScoreWeight = 32;
+    public const int MaxMonthlyRuntimePressureScoreWeight = 8;
     public const int MaxMonthlyRuntimeMigrationRiskScoreWeight = 16;
     public const int MaxMonthlyRuntimeGrainStorePressureDivisor = 16;
     public const int MaxMonthlyRuntimeLandHoldingPressureDivisor = 16;
@@ -83,6 +88,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeLandHoldingTriggerFloor,
             DefaultMonthlyRuntimeTriggerLivelihoods,
             DefaultMonthlyRuntimeLivelihoodScoreWeights,
+            DefaultMonthlyRuntimeDistressScoreWeight,
+            DefaultMonthlyRuntimeDebtPressureScoreWeight,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -107,6 +114,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeLandHoldingTriggerFloor,
             DefaultMonthlyRuntimeTriggerLivelihoods,
             DefaultMonthlyRuntimeLivelihoodScoreWeights,
+            DefaultMonthlyRuntimeDistressScoreWeight,
+            DefaultMonthlyRuntimeDebtPressureScoreWeight,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -191,6 +200,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"monthly_runtime_livelihood_score_weights must be non-empty, distinct, defined, and between 0 and {MaxMonthlyRuntimeLivelihoodScoreWeight}.");
+        }
+
+        if (MonthlyRuntimeDistressScoreWeight is < 0 or > MaxMonthlyRuntimePressureScoreWeight)
+        {
+            errors.Add(
+                $"monthly_runtime_distress_score_weight must be between 0 and {MaxMonthlyRuntimePressureScoreWeight}.");
+        }
+
+        if (MonthlyRuntimeDebtPressureScoreWeight is < 0 or > MaxMonthlyRuntimePressureScoreWeight)
+        {
+            errors.Add(
+                $"monthly_runtime_debt_pressure_score_weight must be between 0 and {MaxMonthlyRuntimePressureScoreWeight}.");
         }
 
         if (MonthlyRuntimeMigrationRiskScoreWeight is < 0 or > MaxMonthlyRuntimeMigrationRiskScoreWeight)
@@ -344,6 +365,20 @@ public sealed record PopulationHouseholdMobilityRulesData(
         }
 
         return 0;
+    }
+
+    public int GetMonthlyRuntimeDistressScoreWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeDistressScoreWeight
+            : DefaultMonthlyRuntimeDistressScoreWeight;
+    }
+
+    public int GetMonthlyRuntimeDebtPressureScoreWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeDebtPressureScoreWeight
+            : DefaultMonthlyRuntimeDebtPressureScoreWeight;
     }
 
     public int GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault()

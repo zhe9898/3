@@ -1545,6 +1545,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             .GetMonthlyRuntimeTriggerLivelihoodsOrDefault();
         IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> livelihoodScoreWeights =
             _householdMobilityRulesData.GetMonthlyRuntimeLivelihoodScoreWeightsOrDefault();
+        int distressScoreWeight = _householdMobilityRulesData.GetMonthlyRuntimeDistressScoreWeightOrDefault();
+        int debtPressureScoreWeight = _householdMobilityRulesData.GetMonthlyRuntimeDebtPressureScoreWeightOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
         int laborCapacityPressureFloor = _householdMobilityRulesData
@@ -1598,6 +1600,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                     ComputeMonthlyHouseholdMobilityRuntimeScore(
                         household,
                         migrationRiskScoreWeight,
+                        distressScoreWeight,
+                        debtPressureScoreWeight,
                         laborCapacityPressureFloor,
                         grainStorePressureFloor,
                         grainStorePressureDivisor,
@@ -1672,6 +1676,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
     private static int ComputeMonthlyHouseholdMobilityRuntimeScore(
         PopulationHouseholdState household,
         int migrationRiskScoreWeight,
+        int distressScoreWeight,
+        int debtPressureScoreWeight,
         int laborCapacityPressureFloor,
         int grainStorePressureFloor,
         int grainStorePressureDivisor,
@@ -1687,8 +1693,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             livelihoodScoreWeights);
 
         return (household.MigrationRisk * migrationRiskScoreWeight)
-            + household.Distress
-            + household.DebtPressure
+            + (household.Distress * distressScoreWeight)
+            + (household.DebtPressure * debtPressureScoreWeight)
             + laborPressure
             + grainPressure
             + landPressure

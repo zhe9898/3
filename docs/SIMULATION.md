@@ -987,3 +987,9 @@ No scheduler cadence change, livelihood engine retune, livelihood score weight e
 V797-V804 changes the first household mobility runtime rule's livelihood score pattern from a naked enum switch to an owner-consumed rules-data weight list. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default selected-household ordering remain unchanged.
 
 No scheduler cadence change, livelihood engine retune, trigger extraction, migration-risk score retune, pressure floor/divisor extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime pressure-score extraction v805-v812 note
+
+V805-V812 changes the first household mobility runtime rule's distress/debt score pattern from implicit unit additions to owner-consumed rules-data weights. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default selected-household ordering remain unchanged.
+
+No scheduler cadence change, pressure formula retune, livelihood engine retune, trigger extraction, migration-risk score retune, livelihood score retune, pressure floor/divisor extraction, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

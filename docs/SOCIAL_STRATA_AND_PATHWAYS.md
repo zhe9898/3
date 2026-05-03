@@ -668,3 +668,9 @@ Default rules-data keeps the trigger livelihood list at `[SeasonalMigrant, Hired
 V797-V804 records that the first household mobility runtime rule's livelihood score weights have been moved into owner-consumed rules-data. The social meaning remains bounded: seasonal migrant, hired-labor, and tenant livelihoods can change candidate ordering inside the already-windowed monthly pressure nudge, but this is not a livelihood engine, class/status engine, career rail, migration economy, or relocation command.
 
 Default rules-data keeps score weights at `SeasonalMigrant=18`, `HiredLabor=10`, and `Tenant=6`; unmatched livelihoods still score `0`, malformed weight data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.
+
+### Current household mobility runtime pressure-score extraction: v805-v812
+
+V805-V812 records that the first household mobility runtime rule's distress/debt score weights have been moved into owner-consumed rules-data. The social meaning remains bounded: distress and debt continue to affect candidate ordering as household pressure evidence, but this is not a pressure economy retune, class/status engine, career rail, migration economy, or relocation command.
+
+Default rules-data keeps pressure score weights at `Distress=1` and `DebtPressure=1`, malformed weight data falls back to those defaults, and Application/UI/Unity may not read the parameters to infer movement, choose targets, raise detail, or calculate household outcomes.
