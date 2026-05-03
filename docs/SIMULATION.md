@@ -1154,3 +1154,9 @@ No event pool, movement command, route-history path, subsistence-labor ledger, p
 V1021-V1028 changes grain-buffer score ownership only. The grain-price subsistence path now reads grain-store threshold bands from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, price/market/labor/fragility/interaction scoring, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, grain-buffer ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households subsistence fragility distress extraction v1029-v1036 note
+
+V1029-V1036 changes fragility distress score ownership only. The grain-price subsistence path now reads distress threshold bands from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, debt/migration/fragility-clamp scoring, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, fragility-distress ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.

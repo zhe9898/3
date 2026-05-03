@@ -815,4 +815,10 @@ V1021-V1028 extracts the subsistence grain-buffer threshold-to-score map from `C
 
 This is not a price-pressure, market-dependency, labor, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
 
+## V1029-V1036 PopulationAndHouseholds Subsistence Fragility Distress Extraction
+
+V1029-V1036 extracts the distress threshold-to-score map from `ComputeSubsistenceFragilityPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bands preserve prior behavior for `>=80`, `>=65`, `>=50`, and fallback distress scores.
+
+This is not a debt, migration-risk, fragility-clamp, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
 The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate dependent-count pressure or household mobility outcomes.

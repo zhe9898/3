@@ -823,3 +823,9 @@ The extraction is default-equivalent. It does not retune labor-capacity or depen
 V1021-V1028 moves the subsistence grain-buffer threshold scoring into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. Grain stores remain household livelihood/resource pressure inputs, not a class/status ladder, migration economy rule, route-history state, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune price, market, labor, fragility, or interaction scoring, and it does not create grain-buffer state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence fragility distress extraction: v1029-v1036
+
+V1029-V1036 moves the subsistence fragility distress threshold scoring into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. Household distress remains a private pressure signal, not a class/status ladder, migration economy rule, route-history state, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune debt, migration-risk, fragility-clamp, interaction, tax-season, or official-supply formulas, and it does not create fragility-distress state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.

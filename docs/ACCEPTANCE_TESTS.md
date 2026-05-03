@@ -1284,3 +1284,11 @@ Acceptance evidence for V1021-V1028:
 - Architecture guard `Population_households_subsistence_grain_buffer_extraction_v1021_v1028_must_remain_owner_consumed_and_schema_neutral` proves grain-buffer bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract fragility, interaction, tax-season, or official-supply formulas.
+
+## PopulationAndHouseholds subsistence fragility distress extraction v1029-v1036 acceptance - 2026-05-03
+
+Acceptance evidence for V1029-V1036:
+- Population tests `GrainPriceSpike_DefaultFragilityDistressRulesDataMatchesPreviousBaseline`, `GrainPriceSpike_CustomFragilityDistressRulesDataIsOwnerConsumed`, and `GrainPriceSpike_InvalidFragilityDistressRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior distress fragility behavior, owner custom bands are consumed deterministically, and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_fragility_distress_extraction_v1029_v1036_must_remain_owner_consumed_and_schema_neutral` proves fragility distress bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract fragility debt, migration, clamp, interaction, tax-season, or official-supply formulas.

@@ -108,15 +108,10 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetSubsistenceLaborPressureClampCeilingOrDefault());
     }
 
-    private static int ComputeSubsistenceFragilityPressure(PopulationHouseholdState household)
+    private int ComputeSubsistenceFragilityPressure(PopulationHouseholdState household)
     {
-        int distressPressure = household.Distress switch
-        {
-            >= 80 => 3,
-            >= 65 => 2,
-            >= 50 => 1,
-            _ => 0,
-        };
+        int distressPressure = _householdMobilityRulesData.GetSubsistenceFragilityDistressPressureScoreOrDefault(
+            household.Distress);
 
         int debtPressure = household.DebtPressure switch
         {
