@@ -1088,3 +1088,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V853-V860 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It closes the first household mobility runtime rule parameter extraction track and documents that remaining inline guards are not authored rules-data knobs.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate remaining guard behavior, fanout eligibility, target ordering, threshold crossings, or household movement outcomes.
+
+## PopulationAndHouseholds runtime rule file split v861-v868 integration note
+
+V861-V868 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves the first household mobility runtime rule into a dedicated partial file inside the same owner module.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate moved rule behavior, fanout eligibility, target ordering, threshold crossings, or household movement outcomes.

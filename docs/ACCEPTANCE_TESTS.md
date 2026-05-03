@@ -1151,3 +1151,9 @@ Acceptance evidence for V845-V852:
 Acceptance evidence for V853-V860:
 - Architecture guard `Household_mobility_runtime_extraction_closeout_v853_v860_must_classify_remaining_guards_without_schema_or_authority_drift` proves the first runtime rule extraction track is closed as docs/tests evidence: all extracted parameter families are represented in owner-consumed rules-data, remaining inline controls are classified as non-extraction targets, no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
 - Runtime behavior evidence is unchanged from V845-V852; this closeout changes no production source and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds runtime rule file split v861-v868 acceptance - 2026-05-03
+
+Acceptance evidence for V861-V868:
+- Architecture guard `Population_households_runtime_rule_file_split_v861_v868_must_preserve_owner_behavior_and_schema_neutrality` proves the first runtime rule was moved into `PopulationAndHouseholdsModule.MobilityRuntime.cs` without adding a duplicate runtime rule path, changing rules-data consumption, changing schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing first-rule test set; this split moves private owner methods only and adds no new owner rule or presentation field.

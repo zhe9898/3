@@ -1599,3 +1599,7 @@ V845-V852 extracts the runtime pressure contribution floor into owner-consumed i
 Current household mobility runtime extraction closeout v853-v860 note:
 
 V853-V860 closes the first household mobility runtime rule hardcoded extraction track with docs/tests evidence only. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted closeout field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, remaining-guard state, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, file-split schema, or save-manifest change is added.
+
+Current population households runtime rule file split v861-v868 note:
+
+V861-V868 moves private owner-rule methods into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted file-split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, split-state marker, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

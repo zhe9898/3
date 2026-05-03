@@ -1029,3 +1029,9 @@ No scheduler cadence change, pressure floor retune, divisor retune, score formul
 V853-V860 changes no runtime simulation code. It closes the first household mobility runtime rule hardcoded extraction track and records that remaining inline controls are owner-method control flow, not authored rules-data knobs.
 
 No scheduler cadence change, threshold retune, weight retune, floor/divisor retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, file split, or second household mobility runtime rule is added.
+
+## Current population households runtime rule file split v861-v868 note
+
+V861-V868 changes file layout only. The first household mobility runtime rule remains on the monthly owner cadence and uses the same candidate filters, score computation, deterministic tie-breaks, fanout caps, risk delta, clamps, and event threshold.
+
+No scheduler cadence change, threshold retune, weight retune, floor/divisor retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

@@ -1575,3 +1575,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V853-V860 closes the first `PopulationAndHouseholds` household mobility runtime rule hardcoded extraction track. The remaining inline guards are control-flow boundaries rather than rules-data authority: no-op cap/delta checks, empty-state checks, changed-flow, threshold crossing, and boolean candidate composition stay inside the owner method.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, closeout ledger, ordering ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, file split, or `PersonRegistry` expansion is introduced.
+
+## PopulationAndHouseholds runtime rule file split v861-v868 boundary note
+
+V861-V868 splits the first household mobility runtime rule into `PopulationAndHouseholdsModule.MobilityRuntime.cs` while keeping it inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, command/event/query seams, scheduler cadence, and rules-data consumption remain unchanged.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, file-split state, ordering ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
