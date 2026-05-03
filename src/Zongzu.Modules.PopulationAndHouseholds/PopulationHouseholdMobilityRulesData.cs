@@ -46,6 +46,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistenceLaborPressureClampCeiling,
     IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> SubsistenceFragilityDistressPressureBands,
     int SubsistenceFragilityDistressPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> SubsistenceFragilityDebtPressureBands,
+    int SubsistenceFragilityDebtPressureFallbackScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -111,6 +113,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultSubsistenceLaborPressureClampFloor = -2;
     public const int DefaultSubsistenceLaborPressureClampCeiling = 4;
     public const int DefaultSubsistenceFragilityDistressPressureFallbackScore = 0;
+    public const int DefaultSubsistenceFragilityDebtPressureFallbackScore = 0;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -264,6 +267,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultSubsistenceFragilityDebtPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, 3),
+            new PopulationHouseholdMobilityThresholdScoreBand(65, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -306,6 +318,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceLaborPressureClampCeiling,
             DefaultSubsistenceFragilityDistressPressureBands,
             DefaultSubsistenceFragilityDistressPressureFallbackScore,
+            DefaultSubsistenceFragilityDebtPressureBands,
+            DefaultSubsistenceFragilityDebtPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -378,6 +392,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceLaborPressureClampCeiling,
             DefaultSubsistenceFragilityDistressPressureBands,
             DefaultSubsistenceFragilityDistressPressureFallbackScore,
+            DefaultSubsistenceFragilityDebtPressureBands,
+            DefaultSubsistenceFragilityDebtPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -872,6 +888,36 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"subsistence_fragility_distress_pressure_fallback_score must be between 0 and {MaxSubsistenceFragilityPressureContribution}.");
+        }
+
+        if (SubsistenceFragilityDebtPressureBands is null
+            || SubsistenceFragilityDebtPressureBands.Count == 0
+            || SubsistenceFragilityDebtPressureBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < 0 or > MaxSubsistenceFragilityPressureContribution)
+            || SubsistenceFragilityDebtPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != SubsistenceFragilityDebtPressureBands.Count)
+        {
+            errors.Add(
+                $"subsistence_fragility_debt_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score 0..{MaxSubsistenceFragilityPressureContribution}.");
+        }
+
+        if (SubsistenceFragilityDebtPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < SubsistenceFragilityDebtPressureBands.Count; index++)
+            {
+                if (SubsistenceFragilityDebtPressureBands[index - 1].Threshold <= SubsistenceFragilityDebtPressureBands[index].Threshold)
+                {
+                    errors.Add("subsistence_fragility_debt_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (SubsistenceFragilityDebtPressureFallbackScore is < 0 or > MaxSubsistenceFragilityPressureContribution)
+        {
+            errors.Add(
+                $"subsistence_fragility_debt_pressure_fallback_score must be between 0 and {MaxSubsistenceFragilityPressureContribution}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1452,6 +1498,35 @@ public sealed record PopulationHouseholdMobilityRulesData(
         }
 
         return GetSubsistenceFragilityDistressPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetSubsistenceFragilityDebtPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceFragilityDebtPressureBands
+            : DefaultSubsistenceFragilityDebtPressureBands;
+    }
+
+    public int GetSubsistenceFragilityDebtPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceFragilityDebtPressureFallbackScore
+            : DefaultSubsistenceFragilityDebtPressureFallbackScore;
+    }
+
+    public int GetSubsistenceFragilityDebtPressureScoreOrDefault(int debtPressure)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetSubsistenceFragilityDebtPressureBandsOrDefault())
+        {
+            if (debtPressure >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetSubsistenceFragilityDebtPressureFallbackScoreOrDefault();
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
