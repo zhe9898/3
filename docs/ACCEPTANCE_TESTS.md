@@ -1138,3 +1138,10 @@ Acceptance evidence for V837-V844:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultUnmatchedLivelihoodScorePreservesPreviousFallback` proves explicit default unmatched-livelihood fallback produces the same monthly runtime signature as the existing default fallback and that non-default owner-consumed fallback affects only unmatched candidate scoring.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeUnmatchedLivelihoodScoreWeightFallsBackToDefault` proves malformed unmatched-livelihood fallback data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_unmatched_livelihood_score_extraction_v837_v844_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime pressure contribution floor extraction v845-v852 acceptance - 2026-05-03
+
+Acceptance evidence for V845-V852:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultPressureContributionFloorPreservesPreviousScoreContributions` proves explicit default pressure contribution floor produces the same monthly runtime signature as the existing default non-negative contribution behavior.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimePressureContributionFloorFallsBackToDefault` proves malformed pressure contribution floor data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_pressure_contribution_floor_extraction_v845_v852_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

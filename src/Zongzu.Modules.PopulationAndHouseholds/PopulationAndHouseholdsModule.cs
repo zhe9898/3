@@ -1558,6 +1558,8 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int debtPressureScoreWeight = _householdMobilityRulesData.GetMonthlyRuntimeDebtPressureScoreWeightOrDefault();
         int migrationRiskScoreWeight = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault();
+        int pressureContributionFloor = _householdMobilityRulesData
+            .GetMonthlyRuntimePressureContributionFloorOrDefault();
         int laborCapacityPressureFloor = _householdMobilityRulesData
             .GetMonthlyRuntimeLaborCapacityPressureFloorOrDefault();
         int grainStorePressureFloor = _householdMobilityRulesData
@@ -1623,6 +1625,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
                         migrationRiskScoreWeight,
                         distressScoreWeight,
                         debtPressureScoreWeight,
+                        pressureContributionFloor,
                         laborCapacityPressureFloor,
                         grainStorePressureFloor,
                         grainStorePressureDivisor,
@@ -1729,6 +1732,7 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int migrationRiskScoreWeight,
         int distressScoreWeight,
         int debtPressureScoreWeight,
+        int pressureContributionFloor,
         int laborCapacityPressureFloor,
         int grainStorePressureFloor,
         int grainStorePressureDivisor,
@@ -1737,9 +1741,11 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> livelihoodScoreWeights,
         int unmatchedLivelihoodScoreWeight)
     {
-        int laborPressure = Math.Max(0, laborCapacityPressureFloor - household.LaborCapacity);
-        int grainPressure = Math.Max(0, grainStorePressureFloor - household.GrainStore) / grainStorePressureDivisor;
-        int landPressure = Math.Max(0, landHoldingPressureFloor - household.LandHolding) / landHoldingPressureDivisor;
+        int laborPressure = Math.Max(pressureContributionFloor, laborCapacityPressureFloor - household.LaborCapacity);
+        int grainPressure =
+            Math.Max(pressureContributionFloor, grainStorePressureFloor - household.GrainStore) / grainStorePressureDivisor;
+        int landPressure =
+            Math.Max(pressureContributionFloor, landHoldingPressureFloor - household.LandHolding) / landHoldingPressureDivisor;
         int livelihoodPressure = ResolveMonthlyHouseholdMobilityLivelihoodScoreWeight(
             household.Livelihood,
             livelihoodScoreWeights,

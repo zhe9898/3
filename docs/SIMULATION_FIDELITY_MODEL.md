@@ -898,3 +898,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, ordering 
 V837-V844 keeps household mobility fidelity bounded while extracting the first runtime rule's unmatched-livelihood score fallback into owner-consumed rules-data. Default fallback `0` preserves the previous candidate score contribution for livelihoods not listed in the score-weight table, and malformed fallback data falls back instead of changing selected targets.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, livelihood weight retune, score formula retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V845-V852 Household Mobility Runtime Pressure Contribution Floor Extraction
+
+V845-V852 keeps household mobility fidelity bounded while extracting the first runtime rule's non-negative pressure contribution floor into owner-consumed rules-data. Default floor `0` preserves the previous labor/grain/land score contribution behavior, and malformed floor data falls back instead of changing selected targets.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, pressure floor retune, divisor retune, score formula retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

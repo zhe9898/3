@@ -674,3 +674,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V837-V844 extracts the first `PopulationAndHouseholds` household mobility runtime rule's unmatched-livelihood score fallback into owner-consumed rules-data. The default fallback remains `0`, so unmatched livelihoods still add no extra candidate score under default rules-data.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, livelihood weight retune, score formula retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V845-V852 Household Mobility Runtime Pressure Contribution Floor Extraction
+
+V845-V852 extracts the first `PopulationAndHouseholds` household mobility runtime rule's non-negative pressure contribution floor into owner-consumed rules-data. The default contribution floor remains `0`, so labor, grain, and land pressure contributions still cannot go negative under default rules-data.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, pressure floor retune, divisor retune, score formula retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.

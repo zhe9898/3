@@ -1076,3 +1076,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V837-V844 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the unmatched-livelihood score fallback into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default fallback `0`.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate unmatched-livelihood fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime pressure contribution floor extraction v845-v852 integration note
+
+V845-V852 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the pressure contribution floor into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default floor `0`.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate pressure contribution floors, fanout eligibility, target ordering, or household movement outcomes.

@@ -1563,3 +1563,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V837-V844 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's unmatched-livelihood score fallback is now read from `PopulationHouseholdMobilityRulesData` with default `0` behavior.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, unmatched-livelihood ledger, ordering ledger, event-routing ledger, validation ledger, cache, class/status engine, score formula retune, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime pressure contribution floor extraction v845-v852 boundary note
+
+V845-V852 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's non-negative labor/grain/land pressure contribution floor is now read from `PopulationHouseholdMobilityRulesData` with default `0` behavior.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-contribution ledger, ordering ledger, event-routing ledger, validation ledger, cache, class/status engine, score formula retune, fanout widening, or `PersonRegistry` expansion is introduced.
