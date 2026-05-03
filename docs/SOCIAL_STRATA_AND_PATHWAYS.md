@@ -758,3 +758,9 @@ The split is organizational only. It does not create a status rank, class rail, 
 V933-V940 moves private health lifecycle handling into a dedicated partial file without changing social-strata behavior. Illness and illness-death adjudication still belongs to `PopulationAndHouseholds` owner logic and uses the existing `PersonRegistry` command seam only to mark a person deceased; it is not a class/status engine, rank ladder, social mobility path, or `PersonRegistry` domain expansion.
 
 The split is organizational only. It does not create a status rank, class rail, health ledger, mortality ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement, health outcomes, or social status from the moved helper.
+
+### Current population households monthly pressure rules-data extraction: v941-v948
+
+V941-V948 moves monthly prosperity/security/clan-relief/drift thresholds into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The extracted values still drive household pressure inside `PopulationAndHouseholds`; they are not a class/status engine, rank ladder, social mobility path, route-history store, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not create a status rank, class rail, monthly-pressure ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement, monthly pressure, or social status from config.

@@ -527,6 +527,69 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_DefaultMonthlyPressureRulesDataMatchesExplicitPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitDefaults =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyPressureProsperityDistressThreshold =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureProsperityDistressThreshold,
+                MonthlyPressureProsperityReliefThreshold =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureProsperityReliefThreshold,
+                MonthlyPressureSecurityDistressThreshold =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureSecurityDistressThreshold,
+                MonthlyPressureSecurityReliefThreshold =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureSecurityReliefThreshold,
+                MonthlyPressureClanSupportReliefThreshold =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureClanSupportReliefThreshold,
+                MonthlyPressureDriftMinInclusive =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureDriftMinInclusive,
+                MonthlyPressureDriftMaxExclusive =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureDriftMaxExclusive,
+            };
+
+        PopulationHouseholdState defaultHousehold = RunSingleHouseholdMonth(LivelihoodType.Smallholder);
+        PopulationHouseholdState explicitDefaultHousehold = RunSingleHouseholdMonth(LivelihoodType.Smallholder, explicitDefaults);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureProsperityDistressThreshold, Is.EqualTo(50));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureProsperityReliefThreshold, Is.EqualTo(60));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureSecurityDistressThreshold, Is.EqualTo(45));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureSecurityReliefThreshold, Is.EqualTo(55));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureClanSupportReliefThreshold, Is.EqualTo(60));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureDriftMinInclusive, Is.EqualTo(-1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureDriftMaxExclusive, Is.EqualTo(2));
+        Assert.That(BuildHouseholdPressureSignature(explicitDefaultHousehold), Is.EqualTo(BuildHouseholdPressureSignature(defaultHousehold)));
+    }
+
+    [Test]
+    public void RunMonth_InvalidMonthlyPressureRulesDataFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyPressureProsperityDistressThreshold = 75,
+                MonthlyPressureProsperityReliefThreshold = 55,
+                MonthlyPressureDriftMinInclusive = 3,
+                MonthlyPressureDriftMaxExclusive = 3,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        PopulationHouseholdState defaultHousehold = RunSingleHouseholdMonth(LivelihoodType.Smallholder);
+        PopulationHouseholdState fallbackHousehold = RunSingleHouseholdMonth(LivelihoodType.Smallholder, malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_pressure_prosperity_distress_threshold")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_pressure_drift_min_inclusive")), Is.True);
+        Assert.That(
+            malformedRulesData.GetMonthlyPressureProsperityDistressThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureProsperityDistressThreshold));
+        Assert.That(
+            malformedRulesData.GetMonthlyPressureDriftMinInclusiveOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyPressureDriftMinInclusive));
+        Assert.That(BuildHouseholdPressureSignature(fallbackHousehold), Is.EqualTo(BuildHouseholdPressureSignature(defaultHousehold)));
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRuleTouchesOnlyCappedEligibleHouseholdsInActivePool()
     {
         PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
@@ -2654,7 +2717,9 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(populationState.MigrationPools.Single().OutflowPressure, Is.LessThan(40));
     }
 
-    private static PopulationHouseholdState RunSingleHouseholdMonth(LivelihoodType livelihood)
+    private static PopulationHouseholdState RunSingleHouseholdMonth(
+        LivelihoodType livelihood,
+        PopulationHouseholdMobilityRulesData? rulesData = null)
     {
         WorldSettlementsModule worldModule = new();
         WorldSettlementsState worldState = worldModule.CreateInitialState();
@@ -2670,7 +2735,7 @@ public sealed class PopulationAndHouseholdsModuleTests
         FamilyCoreModule familyModule = new();
         FamilyCoreState familyState = familyModule.CreateInitialState();
 
-        PopulationAndHouseholdsModule populationModule = new();
+        PopulationAndHouseholdsModule populationModule = new(rulesData ?? PopulationHouseholdMobilityRulesData.Default);
         PopulationAndHouseholdsState populationState = populationModule.CreateInitialState();
         populationState.Households.Add(new PopulationHouseholdState
         {
@@ -2699,6 +2764,18 @@ public sealed class PopulationAndHouseholdsModuleTests
 
         populationModule.RunMonth(new ModuleExecutionScope<PopulationAndHouseholdsState>(populationState, context));
         return populationState.Households[0];
+    }
+
+    private static string BuildHouseholdPressureSignature(PopulationHouseholdState household)
+    {
+        return string.Join(
+            "|",
+            household.Distress,
+            household.DebtPressure,
+            household.LaborCapacity,
+            household.MigrationRisk,
+            household.IsMigrating,
+            household.Livelihood);
     }
 
     private static PopulationMobilityRunResult RunFirstMobilityRuntimeScenario(

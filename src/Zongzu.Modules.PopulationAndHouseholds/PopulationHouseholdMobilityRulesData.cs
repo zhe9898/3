@@ -7,6 +7,13 @@ namespace Zongzu.Modules.PopulationAndHouseholds;
 
 public sealed record PopulationHouseholdMobilityRulesData(
     int FocusedMemberPromotionCap,
+    int MonthlyPressureProsperityDistressThreshold,
+    int MonthlyPressureProsperityReliefThreshold,
+    int MonthlyPressureSecurityDistressThreshold,
+    int MonthlyPressureSecurityReliefThreshold,
+    int MonthlyPressureClanSupportReliefThreshold,
+    int MonthlyPressureDriftMinInclusive,
+    int MonthlyPressureDriftMaxExclusive,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -39,6 +46,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
 {
     public const int DefaultFocusedMemberPromotionCap = 2;
     public const int MaxFocusedMemberPromotionCap = 8;
+    public const int DefaultMonthlyPressureProsperityDistressThreshold = 50;
+    public const int DefaultMonthlyPressureProsperityReliefThreshold = 60;
+    public const int DefaultMonthlyPressureSecurityDistressThreshold = 45;
+    public const int DefaultMonthlyPressureSecurityReliefThreshold = 55;
+    public const int DefaultMonthlyPressureClanSupportReliefThreshold = 60;
+    public const int DefaultMonthlyPressureDriftMinInclusive = -1;
+    public const int DefaultMonthlyPressureDriftMaxExclusive = 2;
+    public const int MinMonthlyPressureDriftBound = -8;
+    public const int MaxMonthlyPressureDriftBound = 9;
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskCeiling = 80;
@@ -98,6 +114,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
+            DefaultMonthlyPressureProsperityDistressThreshold,
+            DefaultMonthlyPressureProsperityReliefThreshold,
+            DefaultMonthlyPressureSecurityDistressThreshold,
+            DefaultMonthlyPressureSecurityReliefThreshold,
+            DefaultMonthlyPressureClanSupportReliefThreshold,
+            DefaultMonthlyPressureDriftMinInclusive,
+            DefaultMonthlyPressureDriftMaxExclusive,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -131,6 +154,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public PopulationHouseholdMobilityRulesData(int focusedMemberPromotionCap)
         : this(
             focusedMemberPromotionCap,
+            DefaultMonthlyPressureProsperityDistressThreshold,
+            DefaultMonthlyPressureProsperityReliefThreshold,
+            DefaultMonthlyPressureSecurityDistressThreshold,
+            DefaultMonthlyPressureSecurityReliefThreshold,
+            DefaultMonthlyPressureClanSupportReliefThreshold,
+            DefaultMonthlyPressureDriftMinInclusive,
+            DefaultMonthlyPressureDriftMaxExclusive,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -171,6 +201,66 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"focused_member_promotion_cap must be between 0 and {MaxFocusedMemberPromotionCap}.");
+        }
+
+        if (MonthlyPressureProsperityDistressThreshold is < 0 or > 100)
+        {
+            errors.Add("monthly_pressure_prosperity_distress_threshold must be between 0 and 100.");
+        }
+
+        if (MonthlyPressureProsperityReliefThreshold is < 0 or > 100)
+        {
+            errors.Add("monthly_pressure_prosperity_relief_threshold must be between 0 and 100.");
+        }
+
+        if (MonthlyPressureProsperityDistressThreshold is >= 0 and <= 100
+            && MonthlyPressureProsperityReliefThreshold is >= 0 and <= 100
+            && MonthlyPressureProsperityDistressThreshold > MonthlyPressureProsperityReliefThreshold)
+        {
+            errors.Add("monthly_pressure_prosperity_distress_threshold must not exceed monthly_pressure_prosperity_relief_threshold.");
+        }
+
+        if (MonthlyPressureSecurityDistressThreshold is < 0 or > 100)
+        {
+            errors.Add("monthly_pressure_security_distress_threshold must be between 0 and 100.");
+        }
+
+        if (MonthlyPressureSecurityReliefThreshold is < 0 or > 100)
+        {
+            errors.Add("monthly_pressure_security_relief_threshold must be between 0 and 100.");
+        }
+
+        if (MonthlyPressureSecurityDistressThreshold is >= 0 and <= 100
+            && MonthlyPressureSecurityReliefThreshold is >= 0 and <= 100
+            && MonthlyPressureSecurityDistressThreshold > MonthlyPressureSecurityReliefThreshold)
+        {
+            errors.Add("monthly_pressure_security_distress_threshold must not exceed monthly_pressure_security_relief_threshold.");
+        }
+
+        if (MonthlyPressureClanSupportReliefThreshold is < 0 or > 100)
+        {
+            errors.Add("monthly_pressure_clan_support_relief_threshold must be between 0 and 100.");
+        }
+
+        if (MonthlyPressureDriftMinInclusive is < MinMonthlyPressureDriftBound or > MaxMonthlyPressureDriftBound)
+        {
+            errors.Add(
+                $"monthly_pressure_drift_min_inclusive must be between {MinMonthlyPressureDriftBound} and {MaxMonthlyPressureDriftBound}.");
+        }
+
+        if (MonthlyPressureDriftMaxExclusive is < MinMonthlyPressureDriftBound or > MaxMonthlyPressureDriftBound)
+        {
+            errors.Add(
+                $"monthly_pressure_drift_max_exclusive must be between {MinMonthlyPressureDriftBound} and {MaxMonthlyPressureDriftBound}.");
+        }
+
+        if (MonthlyPressureDriftMinInclusive >= MinMonthlyPressureDriftBound
+            && MonthlyPressureDriftMinInclusive <= MaxMonthlyPressureDriftBound
+            && MonthlyPressureDriftMaxExclusive >= MinMonthlyPressureDriftBound
+            && MonthlyPressureDriftMaxExclusive <= MaxMonthlyPressureDriftBound
+            && MonthlyPressureDriftMinInclusive >= MonthlyPressureDriftMaxExclusive)
+        {
+            errors.Add("monthly_pressure_drift_min_inclusive must be less than monthly_pressure_drift_max_exclusive.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -363,6 +453,55 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? FocusedMemberPromotionCap
             : DefaultFocusedMemberPromotionCap;
+    }
+
+    public int GetMonthlyPressureProsperityDistressThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyPressureProsperityDistressThreshold
+            : DefaultMonthlyPressureProsperityDistressThreshold;
+    }
+
+    public int GetMonthlyPressureProsperityReliefThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyPressureProsperityReliefThreshold
+            : DefaultMonthlyPressureProsperityReliefThreshold;
+    }
+
+    public int GetMonthlyPressureSecurityDistressThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyPressureSecurityDistressThreshold
+            : DefaultMonthlyPressureSecurityDistressThreshold;
+    }
+
+    public int GetMonthlyPressureSecurityReliefThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyPressureSecurityReliefThreshold
+            : DefaultMonthlyPressureSecurityReliefThreshold;
+    }
+
+    public int GetMonthlyPressureClanSupportReliefThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyPressureClanSupportReliefThreshold
+            : DefaultMonthlyPressureClanSupportReliefThreshold;
+    }
+
+    public int GetMonthlyPressureDriftMinInclusiveOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyPressureDriftMinInclusive
+            : DefaultMonthlyPressureDriftMinInclusive;
+    }
+
+    public int GetMonthlyPressureDriftMaxExclusiveOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyPressureDriftMaxExclusive
+            : DefaultMonthlyPressureDriftMaxExclusive;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()

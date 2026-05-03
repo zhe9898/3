@@ -1211,3 +1211,9 @@ Acceptance evidence for V925-V932:
 Acceptance evidence for V933-V940:
 - Architecture guard `Population_households_health_lifecycle_file_split_v933_v940_must_preserve_owner_behavior_and_schema_neutrality` proves health lifecycle handling was moved into `PopulationAndHouseholdsModule.HealthLifecycle.cs` without changing monthly call order, person-id membership traversal, health thresholds, illness-month caps, emitted receipt text, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing population health/illness behavior tests; this split moves a private owner health lifecycle helper only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds monthly pressure rules-data extraction v941-v948 acceptance - 2026-05-03
+
+Acceptance evidence for V941-V948:
+- Population tests `RunMonth_DefaultMonthlyPressureRulesDataMatchesExplicitPreviousBaseline` and `RunMonth_InvalidMonthlyPressureRulesDataFallsBackToDefault` prove extracted defaults preserve prior monthly pressure behavior and malformed monthly pressure config falls back deterministically.
+- Architecture guard `Population_households_monthly_pressure_rules_data_extraction_v941_v948_must_remain_owner_consumed_and_schema_neutral` proves monthly pressure thresholds moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.

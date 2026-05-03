@@ -969,4 +969,10 @@ V933-V940 changes file layout only. Monthly health lifecycle handling stays insi
 
 No new household target store, movement ledger, route-history model, selector watermark, health-lifecycle ledger, illness ledger, mortality ledger, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
 
+## V941-V948 PopulationAndHouseholds Monthly Pressure Rules-Data Extraction
+
+V941-V948 changes parameter ownership only. Monthly prosperity/security/clan-relief/drift thresholds are validated and consumed by `PopulationAndHouseholds`, while household traversal, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, monthly-pressure ledger, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
 No persisted schema, loader, rules-data file, cache, diagnostic state, formula retune, metadata fallback change, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
