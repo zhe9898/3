@@ -829,3 +829,9 @@ The extraction is default-equivalent. It does not retune price, market, labor, f
 V1029-V1036 moves the subsistence fragility distress threshold scoring into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. Household distress remains a private pressure signal, not a class/status ladder, migration economy rule, route-history state, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune debt, migration-risk, fragility-clamp, interaction, tax-season, or official-supply formulas, and it does not create fragility-distress state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence fragility debt extraction: v1037-v1044
+
+V1037-V1044 moves the subsistence fragility debt threshold scoring into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. Household debt pressure remains a private pressure signal, not a class/status ladder, migration economy rule, route-history state, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune distress, migration-risk, fragility-clamp, interaction, tax-season, or official-supply formulas, and it does not create fragility-debt state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.

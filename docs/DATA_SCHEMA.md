@@ -1686,3 +1686,7 @@ V1021-V1028 extracts subsistence grain-buffer pressure bands into in-code owner-
 Current population households subsistence fragility distress extraction v1029-v1036 note:
 
 V1029-V1036 extracts subsistence fragility distress pressure bands into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted fragility-distress pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households subsistence fragility debt extraction v1037-v1044 note:
+
+V1037-V1044 extracts subsistence fragility debt pressure bands into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted fragility-debt pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
