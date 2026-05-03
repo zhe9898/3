@@ -1631,3 +1631,7 @@ V909-V916 moves private monthly livelihood drift helpers into a partial file. Sc
 Current population households monthly pulse file split v917-v924 note:
 
 V917-V924 moves private xun/month pulse helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted monthly-pulse split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, monthly-pulse ledger, migration-status ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households warfare aftermath file split v925-v932 note:
+
+V925-V932 moves private warfare aftermath handling into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted warfare-aftermath split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, warfare-aftermath ledger, campaign-aftermath ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

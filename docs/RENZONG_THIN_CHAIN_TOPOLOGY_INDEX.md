@@ -734,3 +734,9 @@ This is not a runtime behavior change, livelihood retune, rules-data extraction,
 V917-V924 continues the large-file split by moving private xun/month pulse helpers into `PopulationAndHouseholdsModule.MonthlyPulse.cs`. `RunXun`, `RunMonth`, event handlers, and the mobility runtime rule keep the same helper calls, delta thresholds, clan support lookup, and migration status fallback.
 
 This is not a runtime behavior change, monthly formula retune, rules-data extraction, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, or second household mobility rule. Schema/migration impact: none.
+
+## V925-V932 PopulationAndHouseholds Warfare Aftermath File Split
+
+V925-V932 continues the large-file split by moving private warfare-campaign aftermath handling into `PopulationAndHouseholdsModule.WarfareAftermath.cs`. `HandleEvents` keeps the same trade/world/family/office dispatch order before applying warfare aftermath, and campaign household selection, delta formulas, receipt text, and ordering remain unchanged.
+
+This is not a runtime behavior change, campaign formula retune, rules-data extraction, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, or second household mobility rule. Schema/migration impact: none.
