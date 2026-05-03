@@ -656,3 +656,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V813-V820 extracts the first `PopulationAndHouseholds` household mobility runtime rule's migration status threshold into owner-consumed rules-data. The default threshold remains `80`, so a household nudged from 79 to 80 still becomes migrating under default rules-data.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, migration status retune, migration-started event threshold retune, candidate ceiling retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V821-V828 Household Mobility Runtime Migration Risk Clamp Extraction
+
+V821-V828 extracts the first `PopulationAndHouseholds` household mobility runtime rule's post-nudge migration-risk clamp bounds into owner-consumed rules-data. The default clamp remains `0..100`, so a selected household nudged above the top band still caps at `100` under default rules-data.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, migration-risk retune, risk-delta retune, migration status retune, candidate filter retune, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.

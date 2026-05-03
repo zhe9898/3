@@ -1579,3 +1579,7 @@ V805-V812 extracts the runtime distress/debt pressure score weights into owner-c
 Current household mobility runtime migration-status extraction v813-v820 note:
 
 V813-V820 extracts the runtime migration status threshold into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted migration-status field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, migration-status state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime migration-risk clamp extraction v821-v828 note:
+
+V821-V828 extracts the runtime migration-risk clamp bounds into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted migration-risk clamp field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, risk-clamp state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

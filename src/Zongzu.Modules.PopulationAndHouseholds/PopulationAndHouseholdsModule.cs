@@ -1569,6 +1569,10 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
         int settlementCap = _householdMobilityRulesData.GetMonthlyRuntimeSettlementCapOrDefault();
         int householdCap = _householdMobilityRulesData.GetMonthlyRuntimeHouseholdCapOrDefault();
         int riskDelta = _householdMobilityRulesData.GetMonthlyRuntimeRiskDeltaOrDefault();
+        int migrationRiskClampFloor = _householdMobilityRulesData
+            .GetMonthlyRuntimeMigrationRiskClampFloorOrDefault();
+        int migrationRiskClampCeiling = _householdMobilityRulesData
+            .GetMonthlyRuntimeMigrationRiskClampCeilingOrDefault();
         int migrationStatusThreshold = _householdMobilityRulesData
             .GetMonthlyRuntimeMigrationStatusThresholdOrDefault();
         int migrationStartedEventThreshold = _householdMobilityRulesData
@@ -1624,7 +1628,10 @@ public sealed partial class PopulationAndHouseholdsModule : ModuleRunner<Populat
             foreach (PopulationHouseholdState household in candidates)
             {
                 int oldMigrationRisk = household.MigrationRisk;
-                household.MigrationRisk = Math.Clamp(household.MigrationRisk + riskDelta, 0, 100);
+                household.MigrationRisk = Math.Clamp(
+                    household.MigrationRisk + riskDelta,
+                    migrationRiskClampFloor,
+                    migrationRiskClampCeiling);
                 household.IsMigrating = ResolveMigrationStatus(household, migrationStatusThreshold);
                 if (household.MigrationRisk == oldMigrationRisk)
                 {

@@ -679,4 +679,8 @@ Default rules-data keeps pressure score weights at `Distress=1` and `DebtPressur
 
 V813-V820 records that the first household mobility runtime rule's migration status threshold has been moved into owner-consumed rules-data. The social meaning remains bounded: crossing the threshold still marks an existing household as migrating, but this is not a relocation command, route-history model, migration economy, class/status engine, or career rail.
 
+### Current household mobility runtime migration-risk clamp extraction: v821-v828
+
+V821-V828 records that the first household mobility runtime rule's migration-risk clamp bounds have been moved into owner-consumed rules-data. The social meaning remains bounded: risk still lives inside the existing `0..100` household pressure band by default, but this is not a relocation command, route-history model, migration economy, class/status engine, or career rail.
+
 Default rules-data keeps the migration status threshold at `80`, malformed threshold data falls back to that default, and Application/UI/Unity may not read the parameter to infer movement, choose targets, raise detail, or calculate household outcomes.

@@ -880,3 +880,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, pressure 
 V813-V820 keeps household mobility fidelity bounded while extracting the first runtime rule's migration status threshold into owner-consumed rules-data. Default threshold `80` preserves the previous migrating-status boundary, and malformed threshold data falls back instead of silently widening movement state.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, migration status retune, migration-started event threshold retune, candidate ceiling retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V821-V828 Household Mobility Runtime Migration Risk Clamp Extraction
+
+V821-V828 keeps household mobility fidelity bounded while extracting the first runtime rule's migration-risk clamp bounds into owner-consumed rules-data. Default clamp `0..100` preserves the previous pressure band, and malformed clamp data falls back instead of silently widening movement state.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, migration-risk retune, risk-delta retune, migration status retune, candidate filter retune, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
