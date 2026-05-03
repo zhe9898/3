@@ -1058,3 +1058,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V813-V820 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the migration status threshold into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default threshold `80`.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate migration status threshold fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime migration-risk clamp extraction v821-v828 integration note
+
+V821-V828 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the migration-risk clamp bounds into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default clamp `0..100`.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate migration-risk clamp fallback, fanout eligibility, target ordering, or household movement outcomes.

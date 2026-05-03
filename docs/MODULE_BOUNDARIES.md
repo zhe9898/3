@@ -1545,3 +1545,9 @@ Application, presentation, and Unity layers remain projection/copy surfaces only
 V813-V820 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's migration status threshold is now read from `PopulationHouseholdMobilityRulesData` with default `80`.
 
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, migration-status state, event-routing ledger, validation ledger, cache, class/status engine, event-threshold retune, fanout widening, or `PersonRegistry` expansion is introduced.
+
+## Household mobility runtime migration-risk clamp extraction v821-v828 boundary note
+
+V821-V828 is a `PopulationAndHouseholds` owner-lane hardcoded extraction: the first household mobility runtime rule's migration-risk clamp bounds are now read from `PopulationHouseholdMobilityRulesData` with default `0..100`.
+
+Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, risk-clamp state, event-routing ledger, validation ledger, cache, class/status engine, risk-delta retune, fanout widening, or `PersonRegistry` expansion is introduced.

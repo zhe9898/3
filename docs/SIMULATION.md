@@ -999,3 +999,9 @@ No scheduler cadence change, pressure formula retune, livelihood engine retune, 
 V813-V820 changes the first household mobility runtime rule's migration status threshold from a hardcoded `80` helper value to an owner-consumed rules-data threshold. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default migrating-status behavior remain unchanged.
 
 No scheduler cadence change, migration status retune, migration-started event threshold retune, candidate ceiling retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime migration-risk clamp extraction v821-v828 note
+
+V821-V828 changes the first household mobility runtime rule's post-nudge migration-risk clamp from hardcoded `0..100` bounds to owner-consumed rules-data bounds. The monthly cadence, active-pool selection, candidate floor/ceiling, deterministic ordering, fanout caps, event type, and default risk-band behavior remain unchanged.
+
+No scheduler cadence change, migration-risk retune, risk-delta retune, migration status retune, candidate filter retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

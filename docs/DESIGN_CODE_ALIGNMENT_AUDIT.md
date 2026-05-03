@@ -832,3 +832,13 @@ Design alignment: this is hardcoded status-threshold extraction, not a migration
 Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the migration status threshold or calculate household mobility outcomes.
 
 Validation alignment: focused owner tests cover default status equivalence and malformed migration-status fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.
+
+## v821-v828 household mobility runtime migration-risk clamp extraction audit - 2026-05-03
+
+The v821-v828 pass extracts the first `PopulationAndHouseholds` runtime rule's post-nudge migration-risk clamp bounds into `PopulationHouseholdMobilityRulesData`.
+
+Design alignment: this is hardcoded clamp extraction, not a migration-risk retune, risk-delta retune, migration status retune, candidate filter retune, movement command, or route-history model. Default clamp `0..100` preserves prior risk-band behavior under default rules-data, while malformed clamp values fall back deterministically.
+
+Code alignment: `PopulationAndHouseholds` remains the sole consumer; Application, presentation, Unity, persistence, and `PersonRegistry` do not read the migration-risk clamp bounds or calculate household mobility outcomes.
+
+Validation alignment: focused owner tests cover default clamp equivalence and malformed migration-risk clamp fallback, while an architecture guard proves no schema drift, loader/file, plugin marketplace, movement command, route-history state, fanout widening, or second runtime rule.

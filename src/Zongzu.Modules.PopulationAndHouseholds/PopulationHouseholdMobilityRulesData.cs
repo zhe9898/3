@@ -28,6 +28,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeSettlementCap,
     int MonthlyRuntimeHouseholdCap,
     int MonthlyRuntimeRiskDelta,
+    int MonthlyRuntimeMigrationRiskClampFloor,
+    int MonthlyRuntimeMigrationRiskClampCeiling,
     int MonthlyRuntimeMigrationStatusThreshold,
     int MonthlyRuntimeMigrationStartedEventThreshold)
 {
@@ -52,6 +54,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultMonthlyRuntimeSettlementCap = 1;
     public const int DefaultMonthlyRuntimeHouseholdCap = 2;
     public const int DefaultMonthlyRuntimeRiskDelta = 1;
+    public const int DefaultMonthlyRuntimeMigrationRiskClampFloor = 0;
+    public const int DefaultMonthlyRuntimeMigrationRiskClampCeiling = 100;
     public const int DefaultMonthlyRuntimeMigrationStatusThreshold = 80;
     public const int DefaultMonthlyRuntimeMigrationStartedEventThreshold = 80;
     public const int MaxMonthlyRuntimeSettlementCap = 8;
@@ -63,6 +67,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxMonthlyRuntimeMigrationRiskScoreWeight = 16;
     public const int MaxMonthlyRuntimeGrainStorePressureDivisor = 16;
     public const int MaxMonthlyRuntimeLandHoldingPressureDivisor = 16;
+    public const int MaxMonthlyRuntimeMigrationRiskClampFloor = 100;
+    public const int MaxMonthlyRuntimeMigrationRiskClampCeiling = 100;
     public const int MaxMonthlyRuntimeMigrationStatusThreshold = 100;
     public const int MaxMonthlyRuntimeMigrationStartedEventThreshold = 100;
 
@@ -102,6 +108,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
             DefaultMonthlyRuntimeRiskDelta,
+            DefaultMonthlyRuntimeMigrationRiskClampFloor,
+            DefaultMonthlyRuntimeMigrationRiskClampCeiling,
             DefaultMonthlyRuntimeMigrationStatusThreshold,
             DefaultMonthlyRuntimeMigrationStartedEventThreshold);
 
@@ -129,6 +137,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeSettlementCap,
             DefaultMonthlyRuntimeHouseholdCap,
             DefaultMonthlyRuntimeRiskDelta,
+            DefaultMonthlyRuntimeMigrationRiskClampFloor,
+            DefaultMonthlyRuntimeMigrationRiskClampCeiling,
             DefaultMonthlyRuntimeMigrationStatusThreshold,
             DefaultMonthlyRuntimeMigrationStartedEventThreshold)
     {
@@ -268,6 +278,26 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"monthly_runtime_risk_delta must be between 0 and {MaxMonthlyRuntimeRiskDelta}.");
+        }
+
+        if (MonthlyRuntimeMigrationRiskClampFloor is < 0 or > MaxMonthlyRuntimeMigrationRiskClampFloor)
+        {
+            errors.Add(
+                $"monthly_runtime_migration_risk_clamp_floor must be between 0 and {MaxMonthlyRuntimeMigrationRiskClampFloor}.");
+        }
+
+        if (MonthlyRuntimeMigrationRiskClampCeiling is < 1 or > MaxMonthlyRuntimeMigrationRiskClampCeiling)
+        {
+            errors.Add(
+                $"monthly_runtime_migration_risk_clamp_ceiling must be between 1 and {MaxMonthlyRuntimeMigrationRiskClampCeiling}.");
+        }
+
+        if (MonthlyRuntimeMigrationRiskClampFloor <= MaxMonthlyRuntimeMigrationRiskClampFloor
+            && MonthlyRuntimeMigrationRiskClampCeiling is >= 1 and <= MaxMonthlyRuntimeMigrationRiskClampCeiling
+            && MonthlyRuntimeMigrationRiskClampFloor > MonthlyRuntimeMigrationRiskClampCeiling)
+        {
+            errors.Add(
+                "monthly_runtime_migration_risk_clamp_floor must not exceed monthly_runtime_migration_risk_clamp_ceiling.");
         }
 
         if (MonthlyRuntimeMigrationStatusThreshold is < 1 or > MaxMonthlyRuntimeMigrationStatusThreshold)
@@ -453,6 +483,20 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeRiskDelta
             : DefaultMonthlyRuntimeRiskDelta;
+    }
+
+    public int GetMonthlyRuntimeMigrationRiskClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeMigrationRiskClampFloor
+            : DefaultMonthlyRuntimeMigrationRiskClampFloor;
+    }
+
+    public int GetMonthlyRuntimeMigrationRiskClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeMigrationRiskClampCeiling
+            : DefaultMonthlyRuntimeMigrationRiskClampCeiling;
     }
 
     public int GetMonthlyRuntimeMigrationStatusThresholdOrDefault()

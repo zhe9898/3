@@ -1117,3 +1117,10 @@ Acceptance evidence for V813-V820:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultMigrationStatusThresholdPreservesPreviousStatusBehavior` proves default migration status threshold `80` and explicit default threshold produce the same monthly runtime signature and migrating status after a selected household crosses to `80`.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationStatusThresholdFallsBackToDefault` proves malformed migration-status threshold data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_migration_status_threshold_extraction_v813_v820_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime migration-risk clamp extraction v821-v828 acceptance - 2026-05-03
+
+Acceptance evidence for V821-V828:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultMigrationRiskClampPreservesPreviousClampBehavior` proves default migration-risk clamp `0..100` and explicit default bounds produce the same monthly runtime signature in a high-delta selected-household fixture.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeMigrationRiskClampFallsBackToDefault` proves malformed migration-risk clamp data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_migration_risk_clamp_extraction_v821_v828_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
