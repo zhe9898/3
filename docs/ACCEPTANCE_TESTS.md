@@ -1131,3 +1131,10 @@ Acceptance evidence for V829-V836:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultTieBreakPrioritiesPreservePreviousOrdering` proves explicit default active-pool and household tie-break priorities produce the same monthly runtime signatures as the existing default ordering.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeTieBreakPrioritiesFallBackToDefault` proves malformed tie-break priority data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_tie_break_priority_extraction_v829_v836_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime unmatched livelihood score extraction v837-v844 acceptance - 2026-05-03
+
+Acceptance evidence for V837-V844:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultUnmatchedLivelihoodScorePreservesPreviousFallback` proves explicit default unmatched-livelihood fallback produces the same monthly runtime signature as the existing default fallback and that non-default owner-consumed fallback affects only unmatched candidate scoring.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeUnmatchedLivelihoodScoreWeightFallsBackToDefault` proves malformed unmatched-livelihood fallback data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_unmatched_livelihood_score_extraction_v837_v844_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

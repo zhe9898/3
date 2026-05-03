@@ -1011,3 +1011,9 @@ No scheduler cadence change, migration-risk retune, risk-delta retune, migration
 V829-V836 changes the first household mobility runtime rule's active-pool and household tie-break priorities from inline ordering to owner-consumed rules-data priorities. The monthly cadence, active-pool selection, candidate scoring, fanout caps, event type, and default settlement-id/household-id ordering remain unchanged.
 
 No scheduler cadence change, ordering retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.
+
+## Current household mobility runtime unmatched livelihood score extraction v837-v844 note
+
+V837-V844 changes the first household mobility runtime rule's unmatched-livelihood score fallback from inline `0` behavior to owner-consumed rules-data. The monthly cadence, active-pool selection, matched livelihood weights, candidate filters, fanout caps, event type, and default unmatched fallback remain unchanged.
+
+No scheduler cadence change, livelihood weight retune, score formula retune, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, or rules-data file is added.

@@ -1070,3 +1070,9 @@ The integration contract remains owner-consumed rules-data only. Application/UI/
 V829-V836 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the active-pool and household tie-break priorities into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving settlement-id and household-id ascending defaults.
 
 The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate tie-break fallback, fanout eligibility, target ordering, or household movement outcomes.
+
+## Household mobility runtime unmatched livelihood score extraction v837-v844 integration note
+
+V837-V844 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, or scheduler path. It extracts the unmatched-livelihood score fallback into owner-consumed `PopulationHouseholdMobilityRulesData` while preserving default fallback `0`.
+
+The integration contract remains owner-consumed rules-data only. Application/UI/Unity must not calculate unmatched-livelihood fallback, fanout eligibility, target ordering, or household movement outcomes.

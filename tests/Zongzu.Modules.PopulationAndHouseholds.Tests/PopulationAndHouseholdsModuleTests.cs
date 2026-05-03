@@ -1219,6 +1219,90 @@ public sealed class PopulationAndHouseholdsModuleTests
     }
 
     [Test]
+    public void RunMonth_FirstMobilityRuntimeRuleDefaultUnmatchedLivelihoodScorePreservesPreviousFallback()
+    {
+        static void ConfigureUnmatchedCandidate(PopulationAndHouseholdsState state)
+        {
+            PopulationHouseholdState matchedHousehold = GetHousehold(state, 1);
+            matchedHousehold.Livelihood = LivelihoodType.Tenant;
+            matchedHousehold.MigrationRisk = 76;
+            matchedHousehold.Distress = 60;
+            matchedHousehold.DebtPressure = 60;
+            matchedHousehold.LaborCapacity = 44;
+            matchedHousehold.LandHolding = 11;
+            matchedHousehold.GrainStore = 22;
+
+            PopulationHouseholdState quietSecondHousehold = GetHousehold(state, 2);
+            quietSecondHousehold.Livelihood = LivelihoodType.Smallholder;
+            quietSecondHousehold.MigrationRisk = 60;
+            quietSecondHousehold.Distress = 30;
+            quietSecondHousehold.DebtPressure = 20;
+            quietSecondHousehold.LaborCapacity = 70;
+            quietSecondHousehold.LandHolding = 35;
+            quietSecondHousehold.GrainStore = 70;
+
+            GetHousehold(state, 4).MigrationRisk = 60;
+            GetHousehold(state, 5).MigrationRisk = 40;
+            GetHousehold(state, 6).MigrationRisk = 40;
+
+            PopulationHouseholdState household = GetHousehold(state, 3);
+            household.HouseholdName = "Smallholder Sun";
+            household.Livelihood = LivelihoodType.Smallholder;
+            household.MigrationRisk = 75;
+            household.Distress = 60;
+            household.DebtPressure = 60;
+            household.LaborCapacity = 44;
+            household.LandHolding = 11;
+            household.GrainStore = 22;
+        }
+
+        PopulationHouseholdMobilityRulesData cappedRules =
+            PopulationHouseholdMobilityRulesData.Default with { MonthlyRuntimeHouseholdCap = 1 };
+        PopulationMobilityRunResult baseline = RunFirstMobilityRuntimeScenario(
+            cappedRules with { MonthlyRuntimeRiskDelta = 0 },
+            ConfigureUnmatchedCandidate);
+        PopulationMobilityRunResult defaultResult = RunFirstMobilityRuntimeScenario(
+            cappedRules,
+            ConfigureUnmatchedCandidate);
+        PopulationMobilityRunResult explicitDefaultResult = RunFirstMobilityRuntimeScenario(
+            cappedRules with
+            {
+                MonthlyRuntimeUnmatchedLivelihoodScoreWeight =
+                    PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight,
+            },
+            ConfigureUnmatchedCandidate);
+        PopulationMobilityRunResult weightedResult = RunFirstMobilityRuntimeScenario(
+            cappedRules with
+            {
+                MonthlyRuntimeUnmatchedLivelihoodScoreWeight =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLivelihoodScoreWeight,
+            },
+            ConfigureUnmatchedCandidate);
+
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.Default.GetMonthlyRuntimeLivelihoodScoreWeightOrDefault(
+                LivelihoodType.Smallholder),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight));
+        Assert.That(
+            BuildFirstMobilityRuntimeSignature(explicitDefaultResult),
+            Is.EqualTo(BuildFirstMobilityRuntimeSignature(defaultResult)));
+        Assert.That(
+            GetHousehold(defaultResult.State, 3).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 3).MigrationRisk),
+            "Default unmatched livelihood score remains 0, preserving the previous no-touch fallback for this candidate.");
+        Assert.That(
+            GetHousehold(defaultResult.State, 1).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 1).MigrationRisk + 1));
+        Assert.That(
+            GetHousehold(weightedResult.State, 3).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 3).MigrationRisk + 1),
+            "A non-default owner-consumed unmatched livelihood score can affect only unmatched candidate ordering.");
+        Assert.That(
+            GetHousehold(weightedResult.State, 1).MigrationRisk,
+            Is.EqualTo(GetHousehold(baseline.State, 1).MigrationRisk));
+    }
+
+    [Test]
     public void RunMonth_FirstMobilityRuntimeRuleScoreOrderingTouchesHigherScoreBeforeLowerHouseholdId()
     {
         PopulationHouseholdMobilityRulesData cappedRules =
@@ -1853,6 +1937,8 @@ public sealed class PopulationAndHouseholdsModuleTests
                             (LivelihoodType)999,
                             PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLivelihoodScoreWeight + 1),
                     },
+                MonthlyRuntimeUnmatchedLivelihoodScoreWeight =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLivelihoodScoreWeight + 1,
                 MonthlyRuntimeDistressScoreWeight =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimePressureScoreWeight + 1,
                 MonthlyRuntimeDebtPressureScoreWeight =
@@ -1883,7 +1969,7 @@ public sealed class PopulationAndHouseholdsModuleTests
         PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
 
         Assert.That(validation.IsValid, Is.False);
-        Assert.That(validation.Errors, Has.Count.EqualTo(27));
+        Assert.That(validation.Errors, Has.Count.EqualTo(28));
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_active_pool_outflow_threshold")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_candidate_migration_risk_ceiling")), Is.True);
@@ -1894,6 +1980,7 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_land_holding_trigger_floor")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_trigger_livelihoods")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_livelihood_score_weights")), Is.True);
+        Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_unmatched_livelihood_score_weight")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_distress_score_weight")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_debt_pressure_score_weight")), Is.True);
         Assert.That(validation.Errors.Any(static error => error.Contains("monthly_runtime_migration_risk_score_weight")), Is.True);
@@ -1943,6 +2030,9 @@ public sealed class PopulationAndHouseholdsModuleTests
         Assert.That(
             rulesData.GetMonthlyRuntimeLivelihoodScoreWeightsOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeLivelihoodScoreWeights));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeUnmatchedLivelihoodScoreWeightOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight));
         Assert.That(
             rulesData.GetMonthlyRuntimeDistressScoreWeightOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeDistressScoreWeight));
@@ -2152,7 +2242,29 @@ public sealed class PopulationAndHouseholdsModuleTests
             Is.EqualTo(6));
         Assert.That(
             rulesData.GetMonthlyRuntimeLivelihoodScoreWeightOrDefault(LivelihoodType.Smallholder),
-            Is.EqualTo(0));
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight));
+    }
+
+    [Test]
+    public void PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeUnmatchedLivelihoodScoreWeightFallsBackToDefault()
+    {
+        PopulationHouseholdMobilityRulesData rulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                MonthlyRuntimeUnmatchedLivelihoodScoreWeight =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLivelihoodScoreWeight + 1,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = rulesData.Validate();
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(validation.Errors.Single(), Does.Contain("monthly_runtime_unmatched_livelihood_score_weight"));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeUnmatchedLivelihoodScoreWeightOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight));
+        Assert.That(
+            rulesData.GetMonthlyRuntimeLivelihoodScoreWeightOrDefault(LivelihoodType.Smallholder),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultMonthlyRuntimeUnmatchedLivelihoodScoreWeight));
     }
 
     [Test]
@@ -2370,6 +2482,8 @@ public sealed class PopulationAndHouseholdsModuleTests
                             (LivelihoodType)999,
                             PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLivelihoodScoreWeight + 1),
                     },
+                MonthlyRuntimeUnmatchedLivelihoodScoreWeight =
+                    PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimeLivelihoodScoreWeight + 1,
                 MonthlyRuntimeDistressScoreWeight =
                     PopulationHouseholdMobilityRulesData.MaxMonthlyRuntimePressureScoreWeight + 1,
                 MonthlyRuntimeDebtPressureScoreWeight =
