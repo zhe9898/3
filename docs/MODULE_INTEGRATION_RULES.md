@@ -1225,3 +1225,9 @@ The existing grain-price event path remains the integration seam: it reads fragi
 V1037-V1044 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts `ComputeSubsistenceFragilityPressure` debt bands into validated owner-consumed rules-data.
 
 The existing grain-price event path remains the integration seam: it reads fragility debt bands through `PopulationHouseholdMobilityRulesData` fallback getters and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer fragility debt pressure or household pressure outcomes.
+
+## PopulationAndHouseholds subsistence fragility migration extraction v1045-v1052 integration note
+
+V1045-V1052 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts the `ComputeSubsistenceFragilityPressure` migration flag/risk contribution into validated owner-consumed rules-data.
+
+The existing grain-price event path remains the integration seam: it reads fragility migration threshold/score/fallback values through `PopulationHouseholdMobilityRulesData` fallback getters and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer fragility migration pressure or household pressure outcomes.

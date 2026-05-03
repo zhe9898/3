@@ -828,3 +828,11 @@ V1037-V1044 extracts the debt threshold-to-score map from `ComputeSubsistenceFra
 This is not a distress, migration-risk, fragility-clamp, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
 
 The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate dependent-count pressure or household mobility outcomes.
+
+## V1045-V1052 PopulationAndHouseholds Subsistence Fragility Migration Extraction
+
+V1045-V1052 extracts the migration flag/risk contribution from `ComputeSubsistenceFragilityPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default threshold/score/fallback preserve prior behavior: existing `IsMigrating` or `MigrationRisk >= 70` contributes `1`; otherwise the contribution is `0`.
+
+This is not a migration engine, target selector, movement command, route-history, interaction, tax-season, official-supply, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+The path remains a private `PopulationAndHouseholds` subsistence pressure component read by owner code only; Application/UI/Unity do not calculate fragility migration pressure or household mobility outcomes.

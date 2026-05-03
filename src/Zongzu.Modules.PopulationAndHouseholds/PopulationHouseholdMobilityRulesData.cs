@@ -48,6 +48,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistenceFragilityDistressPressureFallbackScore,
     IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> SubsistenceFragilityDebtPressureBands,
     int SubsistenceFragilityDebtPressureFallbackScore,
+    int SubsistenceFragilityMigrationRiskThreshold,
+    int SubsistenceFragilityMigrationPressureScore,
+    int SubsistenceFragilityMigrationPressureFallbackScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -114,6 +117,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultSubsistenceLaborPressureClampCeiling = 4;
     public const int DefaultSubsistenceFragilityDistressPressureFallbackScore = 0;
     public const int DefaultSubsistenceFragilityDebtPressureFallbackScore = 0;
+    public const int DefaultSubsistenceFragilityMigrationRiskThreshold = 70;
+    public const int DefaultSubsistenceFragilityMigrationPressureScore = 1;
+    public const int DefaultSubsistenceFragilityMigrationPressureFallbackScore = 0;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -320,6 +326,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceFragilityDistressPressureFallbackScore,
             DefaultSubsistenceFragilityDebtPressureBands,
             DefaultSubsistenceFragilityDebtPressureFallbackScore,
+            DefaultSubsistenceFragilityMigrationRiskThreshold,
+            DefaultSubsistenceFragilityMigrationPressureScore,
+            DefaultSubsistenceFragilityMigrationPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -394,6 +403,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceFragilityDistressPressureFallbackScore,
             DefaultSubsistenceFragilityDebtPressureBands,
             DefaultSubsistenceFragilityDebtPressureFallbackScore,
+            DefaultSubsistenceFragilityMigrationRiskThreshold,
+            DefaultSubsistenceFragilityMigrationPressureScore,
+            DefaultSubsistenceFragilityMigrationPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -918,6 +930,23 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"subsistence_fragility_debt_pressure_fallback_score must be between 0 and {MaxSubsistenceFragilityPressureContribution}.");
+        }
+
+        if (SubsistenceFragilityMigrationRiskThreshold is < 0 or > 100)
+        {
+            errors.Add("subsistence_fragility_migration_risk_threshold must be between 0 and 100.");
+        }
+
+        if (SubsistenceFragilityMigrationPressureScore is < 0 or > MaxSubsistenceFragilityPressureContribution)
+        {
+            errors.Add(
+                $"subsistence_fragility_migration_pressure_score must be between 0 and {MaxSubsistenceFragilityPressureContribution}.");
+        }
+
+        if (SubsistenceFragilityMigrationPressureFallbackScore is < 0 or > MaxSubsistenceFragilityPressureContribution)
+        {
+            errors.Add(
+                $"subsistence_fragility_migration_pressure_fallback_score must be between 0 and {MaxSubsistenceFragilityPressureContribution}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1527,6 +1556,36 @@ public sealed record PopulationHouseholdMobilityRulesData(
         }
 
         return GetSubsistenceFragilityDebtPressureFallbackScoreOrDefault();
+    }
+
+    public int GetSubsistenceFragilityMigrationRiskThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceFragilityMigrationRiskThreshold
+            : DefaultSubsistenceFragilityMigrationRiskThreshold;
+    }
+
+    public int GetSubsistenceFragilityMigrationPressureScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceFragilityMigrationPressureScore
+            : DefaultSubsistenceFragilityMigrationPressureScore;
+    }
+
+    public int GetSubsistenceFragilityMigrationPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceFragilityMigrationPressureFallbackScore
+            : DefaultSubsistenceFragilityMigrationPressureFallbackScore;
+    }
+
+    public int GetSubsistenceFragilityMigrationPressureScoreOrDefault(
+        bool isMigrating,
+        int migrationRisk)
+    {
+        return isMigrating || migrationRisk >= GetSubsistenceFragilityMigrationRiskThresholdOrDefault()
+            ? GetSubsistenceFragilityMigrationPressureScoreOrDefault()
+            : GetSubsistenceFragilityMigrationPressureFallbackScoreOrDefault();
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
