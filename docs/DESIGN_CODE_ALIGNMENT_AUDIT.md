@@ -919,6 +919,12 @@ The v901-v908 pass moves private event-dispatch and event-application helpers fr
 
 Alignment check: this remains a behavior-neutral modular-monolith file split. `PopulationAndHouseholds` still owns household pressure mutation and event emission; Application/UI/Unity do not calculate event dispatch outcomes; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
 
+## v909-v916 population households livelihood drift file split audit - 2026-05-03
+
+The v909-v916 pass moves private monthly livelihood drift helpers from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.LivelihoodDrift.cs`.
+
+Alignment check: this remains a behavior-neutral modular-monolith file split. `PopulationAndHouseholds` still owns livelihood drift interpretation during its monthly household pass; Application/UI/Unity do not calculate livelihood drift outcomes; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
 Design alignment: this is behavior-neutral file organization and hardcoded-formula isolation after the query split, not a formula retune, rules-data extraction, movement command, route-history model, or class/status selector.
 
 Code alignment: dispatch/emit receipt code remains in the owner module call sites while private profile formulas move into the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.

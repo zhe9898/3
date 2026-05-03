@@ -15018,6 +15018,194 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_livelihood_drift_file_split_v909_v916_must_preserve_owner_behavior_and_schema_neutrality()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-livelihood-drift-file-split-v909-v916.md"));
+        string mainModuleFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string livelihoodDriftFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.LivelihoodDrift.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V909-V916 PopulationAndHouseholds Livelihood Drift File Split"));
+        Assert.That(socialStrata, Does.Contain("Current population households livelihood drift file split: v909-v916"));
+        Assert.That(designAudit, Does.Contain("v909-v916 population households livelihood drift file split audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds livelihood drift file split v909-v916 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds livelihood drift file split v909-v916 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households livelihood drift file split v909-v916 note"));
+        Assert.That(uiPresentation, Does.Contain("v909-v916 population households livelihood drift file split"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds livelihood drift file split v909-v916 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V909-V916 PopulationAndHouseholds Livelihood Drift File Split"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Livelihood Drift File Split Through V916"));
+        Assert.That(schemaRules, Does.Contain("population households livelihood drift file split v909-v916 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households livelihood drift file split v909-v916 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-neutral file split",
+                     "Runtime behavior change: none",
+                     "Target schema/migration impact: none",
+                     "PopulationAndHouseholdsModule.LivelihoodDrift.cs",
+                     "No monthly behavior change",
+                     "No livelihood threshold change",
+                     "No baseline distress mapping change",
+                     "No drift reason or receipt/projection text rewrite",
+                     "No event behavior change",
+                     "No rules-data parameter change",
+                     "No fanout widening",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes, livelihood drift outcomes, or household pressure results",
+                     "No authored rules-data externalization in this split",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string movedDefinition in new[]
+                 {
+                     "private readonly record struct LivelihoodDriftResult",
+                     "private static bool TryApplyMonthlyLivelihoodDrift",
+                     "private static LivelihoodType ResolveMonthlyLivelihood",
+                     "private static string BuildLivelihoodDriftReason",
+                     "private static bool IsLivelihoodCollapseDrift",
+                     "private static string RenderLivelihoodForDiff",
+                     "private static int ComputeLivelihoodDistressBaseline",
+                 })
+        {
+            Assert.That(mainModuleFile, Does.Not.Contain(movedDefinition), movedDefinition);
+            Assert.That(livelihoodDriftFile, Does.Contain(movedDefinition), movedDefinition);
+        }
+
+        Assert.That(livelihoodDriftFile, Does.Contain("public sealed partial class PopulationAndHouseholdsModule"));
+        Assert.That(livelihoodDriftFile, Does.Contain("household.Distress >= 85 && household.DebtPressure >= 80 && household.LaborCapacity < 35"));
+        Assert.That(livelihoodDriftFile, Does.Contain("household.IsMigrating || household.MigrationRisk >= 80"));
+        Assert.That(livelihoodDriftFile, Does.Contain("household.Livelihood == LivelihoodType.Smallholder"));
+        Assert.That(livelihoodDriftFile, Does.Contain("LivelihoodType.Vagrant => 3"));
+        Assert.That(livelihoodDriftFile, Does.Contain("LivelihoodType.Artisan => -1"));
+        Assert.That(mainModuleFile, Does.Contain("ComputeLivelihoodDistressBaseline(household.Livelihood)"));
+        Assert.That(mainModuleFile, Does.Contain("TryApplyMonthlyLivelihoodDrift(household, settlement, out LivelihoodDriftResult livelihoodDrift)"));
+        Assert.That(mainModuleFile, Does.Contain("IsLivelihoodCollapseDrift(livelihoodDrift)"));
+        Assert.That(mainModuleFile, Does.Contain("AdvanceIllnessAndAdjudicateDeaths(scope);"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("LivelihoodDrift"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationAndHouseholdsModule.LivelihoodDrift",
+                     "PopulationAndHouseholdsLivelihoodDriftFileSplit",
+                     "LivelihoodDriftFormulaAuthority",
+                     "HouseholdMobilityLivelihoodInterpreter",
+                     "LivelihoodDriftOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "LivelihoodDrift",
+                     "HouseholdMobilityLivelihoodInterpreter",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "PopulationAndHouseholdsLivelihoodDriftFileSplit",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "PopulationAndHouseholdsLivelihoodDriftFileSplitState",
+                     "LivelihoodDriftLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
@@ -15333,7 +15521,8 @@ public class ProjectReferenceTests
                     "PopulationAndHouseholdsModule.PressureProfiles.cs" => 4,
                     "PopulationAndHouseholdsModule.EventDispatch.cs" => 5,
                     "PopulationAndHouseholdsModule.cs" => 6,
-                    _ => 7,
+                    "PopulationAndHouseholdsModule.LivelihoodDrift.cs" => 7,
+                    _ => 8,
                 })
                 .ThenBy(static file => file, StringComparer.Ordinal)
                 .Select(File.ReadAllText));

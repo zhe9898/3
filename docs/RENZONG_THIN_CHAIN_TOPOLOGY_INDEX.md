@@ -722,3 +722,9 @@ This is not a runtime behavior change, rules-data extraction, formula retune, me
 V901-V908 continues the large-file split by moving private trade-shock, world-pulse, family-branch, grain-price, tax-season, and official-supply event-dispatch/application methods into `PopulationAndHouseholdsModule.EventDispatch.cs`. `HandleEvents` keeps the same call order, event metadata, receipt text, deterministic household ordering, and owner authority.
 
 This is not a runtime behavior change, event-router rewrite, rules-data extraction, formula retune, metadata fallback change, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V909-V916 PopulationAndHouseholds Livelihood Drift File Split
+
+V909-V916 continues the large-file split by moving private monthly livelihood drift helpers into `PopulationAndHouseholdsModule.LivelihoodDrift.cs`. `RunMonth` keeps the same ordered household pass, drift helper calls, threshold checks, baseline mapping, and event call sites.
+
+This is not a runtime behavior change, livelihood retune, rules-data extraction, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, or second household mobility rule. Schema/migration impact: none.

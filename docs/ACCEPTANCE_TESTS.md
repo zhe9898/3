@@ -1187,3 +1187,9 @@ Acceptance evidence for V893-V900:
 Acceptance evidence for V901-V908:
 - Architecture guard `Population_households_event_dispatch_file_split_v901_v908_must_preserve_owner_behavior_and_schema_neutrality` proves trade-shock, grain-price, world-pulse, tax-season, family-branch, and official-supply event-dispatch/application helpers were moved into `PopulationAndHouseholdsModule.EventDispatch.cs` without changing event order, emitted metadata, receipt text, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing population pressure-chain behavior tests; this split moves private owner event-dispatch/application methods only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds livelihood drift file split v909-v916 acceptance - 2026-05-03
+
+Acceptance evidence for V909-V916:
+- Architecture guard `Population_households_livelihood_drift_file_split_v909_v916_must_preserve_owner_behavior_and_schema_neutrality` proves monthly livelihood drift helpers were moved into `PopulationAndHouseholdsModule.LivelihoodDrift.cs` without changing monthly call sites, thresholds, baseline mapping, receipt text, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing population monthly behavior tests; this split moves private owner livelihood drift helpers only and adds no new owner rule or presentation field.

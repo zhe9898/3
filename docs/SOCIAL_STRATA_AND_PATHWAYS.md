@@ -739,4 +739,8 @@ V893-V900 moves grain, tax, and official-supply pressure profile formulas into a
 
 V901-V908 moves private event dispatch/application methods into a dedicated partial file without changing social-strata behavior. Trade, world, family, and office-supply events still affect households only through existing `PopulationAndHouseholds` owner logic; no status engine, class ladder, route-history state, movement command, or `PersonRegistry` expansion is introduced.
 
+### Current population households livelihood drift file split: v909-v916
+
+V909-V916 moves private monthly livelihood drift helpers into a dedicated partial file without changing social-strata behavior. Livelihood labels remain `PopulationAndHouseholds` household-state interpretation, not a universal class/status engine, rank ladder, `PersonRegistry` expansion, or UI-owned social position calculation.
+
 The split is organizational only. It does not create a status rank, class rail, pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved helpers.

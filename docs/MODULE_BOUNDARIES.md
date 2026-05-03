@@ -1610,4 +1610,10 @@ V901-V908 splits private trade-shock, world-pulse, family-branch, grain-price, t
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains event-dispatch authority.
 
+## PopulationAndHouseholds livelihood drift file split v909-v916 boundary note
+
+V909-V916 splits private monthly livelihood drift helpers into `PopulationAndHouseholdsModule.LivelihoodDrift.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, monthly cadence, household traversal, livelihood thresholds, emitted receipts at call sites, and household pressure authority remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains livelihood-drift authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
