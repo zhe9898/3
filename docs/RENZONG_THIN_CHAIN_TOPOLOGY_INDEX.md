@@ -632,3 +632,9 @@ This is not a migration engine, route-history model, movement command, runtime l
 V781-V788 extracts the first `PopulationAndHouseholds` household mobility runtime rule's land-holding trigger floor into owner-consumed rules-data. The default land-holding trigger floor remains 15, so candidate eligibility and no-touch behavior remain equivalent under default rules-data while malformed threshold input falls back deterministically.
 
 This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, land economy retune, grain/labor/debt/distress/livelihood trigger extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V789-V796 Household Mobility Runtime Livelihood Trigger Extraction
+
+V789-V796 extracts the first `PopulationAndHouseholds` household mobility runtime rule's trigger livelihood list into owner-consumed rules-data. The default list remains `[SeasonalMigrant, HiredLabor]`, so candidate eligibility remains equivalent under default rules-data while malformed list input falls back deterministically.
+
+This is not a migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, livelihood engine retune, livelihood score weight extraction, score formula retune beyond literal extraction, fanout widening, filter expansion, or second household mobility rule. Schema/migration impact: none.

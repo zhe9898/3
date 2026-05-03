@@ -1563,3 +1563,7 @@ V773-V780 extracts the runtime grain-store trigger floor into owner-consumed in-
 Current household mobility runtime land-trigger extraction v781-v788 note:
 
 V781-V788 extracts the runtime land-holding trigger floor into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted land-trigger field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, land-trigger state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current household mobility runtime livelihood-trigger extraction v789-v796 note:
+
+V789-V796 extracts the runtime trigger livelihood list into owner-consumed in-code rules-data. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted livelihood-trigger field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, livelihood-trigger state, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

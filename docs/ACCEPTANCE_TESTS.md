@@ -1089,3 +1089,10 @@ Acceptance evidence for V781-V788:
 - `RunMonth_FirstMobilityRuntimeRuleDefaultLandHoldingTriggerFloorPreservesPreviousNoTouchBehavior` proves default land-holding trigger floor 15 and explicit default floor produce the same monthly runtime signature while a household at the floor remains no-touch when no other trigger qualifies it.
 - `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeLandHoldingTriggerFloorFallsBackToDefault` proves malformed land-trigger data is rejected and falls back to default.
 - Architecture guard `Household_mobility_runtime_land_trigger_extraction_v781_v788_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.
+
+## Household mobility runtime livelihood-trigger extraction v789-v796 acceptance - 2026-05-03
+
+Acceptance evidence for V789-V796:
+- `RunMonth_FirstMobilityRuntimeRuleDefaultTriggerLivelihoodsPreservePreviousCandidateBehavior` proves default trigger livelihood list `[SeasonalMigrant, HiredLabor]` and explicit default list produce the same monthly runtime signature for the livelihood-trigger fixture.
+- `PopulationHouseholdMobilityRulesData_InvalidMonthlyRuntimeTriggerLivelihoodsFallBackToDefault` proves malformed livelihood-trigger data is rejected and falls back to default.
+- Architecture guard `Household_mobility_runtime_livelihood_trigger_extraction_v789_v796_must_remain_owner_consumed_rules_data_without_schema_or_authority_drift` proves this remains owner-consumed rules-data extraction: no loader, no rules-data file, no plugin marketplace, no movement authority, no second runtime rule, no schema drift, no `PersonRegistry` expansion, no `DomainEvent.Summary` parsing, and no Application/UI/Unity authority drift.

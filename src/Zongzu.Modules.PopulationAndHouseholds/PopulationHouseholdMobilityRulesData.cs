@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Zongzu.Contracts;
 
 namespace Zongzu.Modules.PopulationAndHouseholds;
 
@@ -13,6 +15,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int MonthlyRuntimeLaborCapacityTriggerCeiling,
     int MonthlyRuntimeGrainStoreTriggerFloor,
     int MonthlyRuntimeLandHoldingTriggerFloor,
+    IReadOnlyList<LivelihoodType> MonthlyRuntimeTriggerLivelihoods,
     int MonthlyRuntimeMigrationRiskScoreWeight,
     int MonthlyRuntimeLaborCapacityPressureFloor,
     int MonthlyRuntimeGrainStorePressureFloor,
@@ -53,6 +56,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxMonthlyRuntimeLandHoldingPressureDivisor = 16;
     public const int MaxMonthlyRuntimeMigrationStartedEventThreshold = 100;
 
+    public static IReadOnlyList<LivelihoodType> DefaultMonthlyRuntimeTriggerLivelihoods { get; } =
+        new[] { LivelihoodType.SeasonalMigrant, LivelihoodType.HiredLabor };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -64,6 +70,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeLaborCapacityTriggerCeiling,
             DefaultMonthlyRuntimeGrainStoreTriggerFloor,
             DefaultMonthlyRuntimeLandHoldingTriggerFloor,
+            DefaultMonthlyRuntimeTriggerLivelihoods,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -86,6 +93,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultMonthlyRuntimeLaborCapacityTriggerCeiling,
             DefaultMonthlyRuntimeGrainStoreTriggerFloor,
             DefaultMonthlyRuntimeLandHoldingTriggerFloor,
+            DefaultMonthlyRuntimeTriggerLivelihoods,
             DefaultMonthlyRuntimeMigrationRiskScoreWeight,
             DefaultMonthlyRuntimeLaborCapacityPressureFloor,
             DefaultMonthlyRuntimeGrainStorePressureFloor,
@@ -148,6 +156,14 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (MonthlyRuntimeLandHoldingTriggerFloor is < 0 or > 100)
         {
             errors.Add("monthly_runtime_land_holding_trigger_floor must be between 0 and 100.");
+        }
+
+        if (MonthlyRuntimeTriggerLivelihoods is null
+            || MonthlyRuntimeTriggerLivelihoods.Count == 0
+            || MonthlyRuntimeTriggerLivelihoods.Any(static livelihood => !Enum.IsDefined(livelihood))
+            || MonthlyRuntimeTriggerLivelihoods.Distinct().Count() != MonthlyRuntimeTriggerLivelihoods.Count)
+        {
+            errors.Add("monthly_runtime_trigger_livelihoods must be non-empty, distinct, and defined.");
         }
 
         if (MonthlyRuntimeMigrationRiskScoreWeight is < 0 or > MaxMonthlyRuntimeMigrationRiskScoreWeight)
@@ -273,6 +289,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? MonthlyRuntimeLandHoldingTriggerFloor
             : DefaultMonthlyRuntimeLandHoldingTriggerFloor;
+    }
+
+    public IReadOnlyList<LivelihoodType> GetMonthlyRuntimeTriggerLivelihoodsOrDefault()
+    {
+        return Validate().IsValid
+            ? MonthlyRuntimeTriggerLivelihoods
+            : DefaultMonthlyRuntimeTriggerLivelihoods;
     }
 
     public int GetMonthlyRuntimeMigrationRiskScoreWeightOrDefault()
