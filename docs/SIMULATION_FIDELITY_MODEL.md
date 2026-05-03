@@ -928,3 +928,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, fidelity-
 V877-V884 changes file layout only. Settlement summary, labor pool, marriage pool, and migration pool rebuilds stay in the same `PopulationAndHouseholds` fidelity lane, still bounded by existing household and membership lists, stable settlement/household/member ordering, and the same pool formulas.
 
 No persisted schema, loader, rules-data file, cache, diagnostic state, pool formula retune, pool limit extraction, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.
+
+## V885-V892 PopulationAndHouseholds Query Surface File Split
+
+V885-V892 changes file layout only. The private query surface stays in the same `PopulationAndHouseholds` fidelity lane, still copying owner state into snapshots with the same stable ordering and without presentation-side calculation.
+
+No persisted schema, loader, rules-data file, cache, diagnostic state, snapshot field expansion, fanout widening, filter expansion, second runtime rule, movement authority, route-history model, migration economy, class/status engine, or performance claim is added.

@@ -1169,3 +1169,9 @@ Acceptance evidence for V869-V876:
 Acceptance evidence for V877-V884:
 - Architecture guard `Population_households_pool_rebuild_file_split_v877_v884_must_preserve_owner_behavior_and_schema_neutrality` proves settlement summary and labor/marriage/migration pool rebuild helpers were moved into `PopulationAndHouseholdsModule.PoolRebuild.cs` without changing call sites, changing formulas, changing schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing population/pool behavior tests; this split moves private owner methods only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds query surface file split v885-v892 acceptance - 2026-05-03
+
+Acceptance evidence for V885-V892:
+- Architecture guard `Population_households_query_surface_file_split_v885_v892_must_preserve_owner_behavior_and_schema_neutrality` proves the private query implementation and clone helpers were moved into `PopulationAndHouseholdsModule.Queries.cs` without changing query registration, snapshot ordering, snapshot fields, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing population query/projection behavior tests; this split moves private owner query code only and adds no new owner rule or presentation field.

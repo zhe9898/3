@@ -704,3 +704,9 @@ This is not a runtime behavior change, migration engine, route-history model, mo
 V877-V884 continues the large-file split by moving settlement summary rebuild, labor pool rebuild, marriage pool rebuild, migration pool rebuild, and their private helper methods into `PopulationAndHouseholdsModule.PoolRebuild.cs`. The helpers remain private `PopulationAndHouseholds` owner code in the same partial class and still use the existing stable settlement, household, and membership ordering.
 
 This is not a runtime behavior change, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, pool formula retune, pool limit extraction, fanout widening, target filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V885-V892 PopulationAndHouseholds Query Surface File Split
+
+V885-V892 continues the large-file split by moving the private `PopulationQueries` implementation and clone helpers into `PopulationAndHouseholdsModule.Queries.cs`. The query surface remains owner-owned, read-only, deterministically ordered, and downstream of `PopulationAndHouseholds` state.
+
+This is not a runtime behavior change, projection authority shift, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, snapshot field expansion, fanout widening, target filter expansion, or second household mobility rule. Schema/migration impact: none.
