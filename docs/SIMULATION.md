@@ -1094,4 +1094,10 @@ V941-V948 changes monthly pressure parameter ownership only. `RunMonth` now read
 
 No event pool, movement command, route-history path, monthly-pressure ledger, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
 
+## Current population households grain price signal rules-data extraction v949-v956 note
+
+V949-V956 changes grain-price signal parameter ownership only. The grain-price event path now reads metadata fallback and clamp values from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, grain-shock ledger, pressure-profile state, class/status engine, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

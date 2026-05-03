@@ -13,22 +13,42 @@ public sealed partial class PopulationAndHouseholdsModule
             : null;
     }
 
-    private static GrainPriceShockSignal ResolveGrainPriceShockSignal(IDomainEvent domainEvent)
+    private GrainPriceShockSignal ResolveGrainPriceShockSignal(IDomainEvent domainEvent)
     {
-        int currentPrice = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.GrainCurrentPrice, 130);
-        int oldPrice = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.GrainOldPrice, 100);
+        int currentPriceClampFloor = _householdMobilityRulesData.GetGrainPriceShockCurrentPriceClampFloorOrDefault();
+        int currentPriceClampCeiling = _householdMobilityRulesData.GetGrainPriceShockCurrentPriceClampCeilingOrDefault();
+        int priceDeltaClampFloor = _householdMobilityRulesData.GetGrainPriceShockPriceDeltaClampFloorOrDefault();
+        int priceDeltaClampCeiling = _householdMobilityRulesData.GetGrainPriceShockPriceDeltaClampCeilingOrDefault();
+        int supplyClampFloor = _householdMobilityRulesData.GetGrainPriceShockSupplyClampFloorOrDefault();
+        int supplyClampCeiling = _householdMobilityRulesData.GetGrainPriceShockSupplyClampCeilingOrDefault();
+        int demandClampFloor = _householdMobilityRulesData.GetGrainPriceShockDemandClampFloorOrDefault();
+        int demandClampCeiling = _householdMobilityRulesData.GetGrainPriceShockDemandClampCeilingOrDefault();
+        int currentPrice = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.GrainCurrentPrice,
+            _householdMobilityRulesData.GetGrainPriceShockDefaultCurrentPriceOrDefault());
+        int oldPrice = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.GrainOldPrice,
+            _householdMobilityRulesData.GetGrainPriceShockDefaultOldPriceOrDefault());
         int priceDelta = ReadMetadataInt(
             domainEvent,
             DomainEventMetadataKeys.GrainPriceDelta,
             Math.Max(0, currentPrice - oldPrice));
-        int supply = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.GrainSupply, 50);
-        int demand = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.GrainDemand, 70);
+        int supply = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.GrainSupply,
+            _householdMobilityRulesData.GetGrainPriceShockDefaultSupplyOrDefault());
+        int demand = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.GrainDemand,
+            _householdMobilityRulesData.GetGrainPriceShockDefaultDemandOrDefault());
 
         return new GrainPriceShockSignal(
-            Math.Clamp(currentPrice, 50, 200),
-            Math.Clamp(Math.Max(0, priceDelta), 0, 150),
-            Math.Clamp(supply, 0, 100),
-            Math.Clamp(demand, 0, 100));
+            Math.Clamp(currentPrice, currentPriceClampFloor, currentPriceClampCeiling),
+            Math.Clamp(Math.Max(0, priceDelta), priceDeltaClampFloor, priceDeltaClampCeiling),
+            Math.Clamp(supply, supplyClampFloor, supplyClampCeiling),
+            Math.Clamp(demand, demandClampFloor, demandClampCeiling));
     }
 
     private static int ReadMetadataInt(IDomainEvent domainEvent, string key, int fallback)

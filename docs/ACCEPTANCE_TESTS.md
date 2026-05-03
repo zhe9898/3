@@ -1217,3 +1217,9 @@ Acceptance evidence for V933-V940:
 Acceptance evidence for V941-V948:
 - Population tests `RunMonth_DefaultMonthlyPressureRulesDataMatchesExplicitPreviousBaseline` and `RunMonth_InvalidMonthlyPressureRulesDataFallsBackToDefault` prove extracted defaults preserve prior monthly pressure behavior and malformed monthly pressure config falls back deterministically.
 - Architecture guard `Population_households_monthly_pressure_rules_data_extraction_v941_v948_must_remain_owner_consumed_and_schema_neutral` proves monthly pressure thresholds moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+## PopulationAndHouseholds grain price signal rules-data extraction v949-v956 acceptance - 2026-05-03
+
+Acceptance evidence for V949-V956:
+- Population tests `GrainPriceSpike_DefaultSignalRulesDataMatchesExplicitPreviousFallbackBaseline` and `GrainPriceSpike_InvalidSignalRulesDataFallsBackToPreviousFallbackBaseline` prove extracted defaults preserve prior missing-metadata grain shock fallback behavior and malformed grain shock config falls back deterministically.
+- Architecture guard `Population_households_grain_price_signal_rules_data_extraction_v949_v956_must_remain_owner_consumed_and_schema_neutral` proves grain shock fallback/clamp values moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.

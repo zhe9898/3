@@ -949,6 +949,12 @@ The v941-v948 pass moves monthly prosperity/security/clan-relief/drift threshold
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns monthly household pressure outcomes; Application/UI/Unity do not calculate monthly pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
 
+## v949-v956 population households grain price signal rules-data extraction audit - 2026-05-03
+
+The v949-v956 pass moves grain-price shock metadata fallback and clamp constants from `PopulationAndHouseholdsModule.PressureProfiles.cs` literals into validated `PopulationHouseholdMobilityRulesData` defaults and fallback getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns grain-shock normalization and household subsistence pressure outcomes; Application/UI/Unity do not calculate grain shock or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
 Design alignment: this is behavior-neutral file organization and hardcoded-formula isolation after the query split, not a formula retune, rules-data extraction, movement command, route-history model, or class/status selector.
 
 Code alignment: dispatch/emit receipt code remains in the owner module call sites while private profile formulas move into the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.

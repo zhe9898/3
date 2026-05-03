@@ -752,3 +752,9 @@ This is not a runtime behavior change, mortality formula retune, rules-data extr
 V941-V948 extracts the `RunMonth` monthly prosperity/security/clan-relief/drift thresholds from C# literals into owner-consumed `PopulationHouseholdMobilityRulesData`. Default values preserve the previous behavior: prosperity `< 50`, prosperity `>= 60`, security `< 45`, security `>= 55`, clan support `>= 60`, and drift `NextInt(-1, 2)`.
 
 This is not a runtime behavior retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V949-V956 PopulationAndHouseholds Grain Price Signal Rules-Data Extraction
+
+V949-V956 extracts grain-price shock metadata fallback and clamp constants from `PopulationAndHouseholdsModule.PressureProfiles.cs` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default values preserve the previous behavior: current price fallback `130`, old price fallback `100`, supply fallback `50`, demand fallback `70`, current price clamp `50..200`, price delta clamp `0..150`, supply clamp `0..100`, and demand clamp `0..100`.
+
+This is not a grain price formula retune, subsistence pressure retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.
