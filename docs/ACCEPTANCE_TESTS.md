@@ -1247,3 +1247,9 @@ Acceptance evidence for V973-V980:
 Acceptance evidence for V981-V988:
 - Population tests `GrainPriceSpike_DefaultMarketTightnessBandRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidMarketTightnessBandRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior market-tightness band behavior and malformed band config falls back deterministically.
 - Architecture guard `Population_households_grain_price_market_tightness_band_extraction_v981_v988_must_remain_owner_consumed_and_schema_neutral` proves market tightness bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+## PopulationAndHouseholds subsistence market dependency extraction v989-v996 acceptance - 2026-05-03
+
+Acceptance evidence for V989-V996:
+- Population tests `GrainPriceSpike_DefaultMarketDependencyRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidMarketDependencyRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior market-dependency behavior and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_market_dependency_extraction_v989_v996_must_remain_owner_consumed_and_schema_neutral` proves market dependency weights moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.

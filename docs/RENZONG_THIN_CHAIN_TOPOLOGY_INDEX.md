@@ -782,3 +782,9 @@ This is not a market tightness extraction, subsistence pressure retune, migratio
 V981-V988 extracts the `ComputePricePressure` market-tightness threshold/score bands into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bands preserve the previous behavior: `>= 60 => 4`, `>= 40 => 3`, `>= 20 => 2`, `>= 8 => 1`, fallback `0`.
 
 This is not a subsistence pressure retune, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, `PersonRegistry` expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V989-V996 PopulationAndHouseholds Subsistence Market Dependency Extraction
+
+V989-V996 extracts the `ComputeMarketDependencyPressure` livelihood-to-score mapping into owner-consumed `PopulationHouseholdMobilityRulesData`. Default weights preserve prior behavior for petty trader/boatman, artisan/hired labor/seasonal migrant, service/tenant/unknown, smallholder, and fallback scores.
+
+This is not a labor, fragility, interaction, tax-season, official-supply, movement, route-history, migration-economy, class/status, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

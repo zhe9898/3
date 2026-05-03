@@ -981,6 +981,12 @@ The v981-v988 pass moves grain-price market tightness threshold/score bands from
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns grain-price pressure and household subsistence outcomes; Application/UI/Unity do not calculate market tightness bands or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
 
+## v989-v996 population households subsistence market dependency extraction audit - 2026-05-03
+
+The v989-v996 pass moves the subsistence market dependency livelihood-to-score mapping from `ComputeMarketDependencyPressure` literals into validated `PopulationHouseholdMobilityRulesData` defaults and fallback getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes; Application/UI/Unity do not calculate market dependency or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
 Code alignment: dispatch/emit receipt code remains in the owner module call sites while private profile formulas move into the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.
 
 ## v877-v884 population households pool rebuild file split audit - 2026-05-03

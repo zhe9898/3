@@ -415,6 +415,69 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistencePricePressure], Is.EqualTo("9"));
     }
 
+    [Test]
+    public void GrainPriceSpike_DefaultMarketDependencyRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceMarketDependencyPressureScoreWeights = new[]
+                {
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.PettyTrader, 4),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Boatman, 4),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Artisan, 3),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.HiredLabor, 3),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.SeasonalMigrant, 3),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.DomesticServant, 2),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.YamenRunner, 2),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Vagrant, 2),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Tenant, 2),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Unknown, 2),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Smallholder, 1),
+                },
+                SubsistenceMarketDependencyPressureFallbackScore = 2,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
+            RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistenceMarketDependencyPressureFallbackScore, Is.EqualTo(2));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultSubsistenceMarketDependencyPressureScoreWeights,
+            Is.EqualTo(explicitPreviousBaseline.SubsistenceMarketDependencyPressureScoreWeights));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceMarketDependencyPressureScoreOrDefault(LivelihoodType.PettyTrader), Is.EqualTo(4));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceMarketDependencyPressureScoreOrDefault(LivelihoodType.Smallholder), Is.EqualTo(1));
+        Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceMarketDependencyPressure], Is.EqualTo("4"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidMarketDependencyRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceMarketDependencyPressureScoreWeights = new[]
+                {
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.PettyTrader, 4),
+                    new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.PettyTrader, 3),
+                },
+                SubsistenceMarketDependencyPressureFallbackScore = 99,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(malformedRulesData.GetSubsistenceMarketDependencyPressureScoreOrDefault(LivelihoodType.PettyTrader), Is.EqualTo(4));
+        Assert.That(malformedRulesData.GetSubsistenceMarketDependencyPressureFallbackScoreOrDefault(), Is.EqualTo(2));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceMarketDependencyPressure], Is.EqualTo("4"));
+    }
+
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunMissingMetadataGrainPriceSpike(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

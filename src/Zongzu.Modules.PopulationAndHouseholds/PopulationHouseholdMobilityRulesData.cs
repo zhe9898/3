@@ -34,6 +34,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int GrainPriceJumpPressureFallbackScore,
     IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> GrainPriceMarketTightnessPressureBands,
     int GrainPriceMarketTightnessPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> SubsistenceMarketDependencyPressureScoreWeights,
+    int SubsistenceMarketDependencyPressureFallbackScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -92,6 +94,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultGrainPriceLevelPressureFallbackScore = 1;
     public const int DefaultGrainPriceJumpPressureFallbackScore = 0;
     public const int DefaultGrainPriceMarketTightnessPressureFallbackScore = 0;
+    public const int DefaultSubsistenceMarketDependencyPressureFallbackScore = 2;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -182,6 +185,23 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(8, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        DefaultSubsistenceMarketDependencyPressureScoreWeights { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.PettyTrader, 4),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Boatman, 4),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Artisan, 3),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.HiredLabor, 3),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.SeasonalMigrant, 3),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.DomesticServant, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.YamenRunner, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Vagrant, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Tenant, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Unknown, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Smallholder, 1),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -212,6 +232,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceJumpPressureFallbackScore,
             DefaultGrainPriceMarketTightnessPressureBands,
             DefaultGrainPriceMarketTightnessPressureFallbackScore,
+            DefaultSubsistenceMarketDependencyPressureScoreWeights,
+            DefaultSubsistenceMarketDependencyPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -272,6 +294,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultGrainPriceJumpPressureFallbackScore,
             DefaultGrainPriceMarketTightnessPressureBands,
             DefaultGrainPriceMarketTightnessPressureFallbackScore,
+            DefaultSubsistenceMarketDependencyPressureScoreWeights,
+            DefaultSubsistenceMarketDependencyPressureFallbackScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -609,6 +633,26 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"grain_price_market_tightness_pressure_fallback_score must be between 0 and {MaxGrainPricePressure}.");
+        }
+
+        if (SubsistenceMarketDependencyPressureScoreWeights is null
+            || SubsistenceMarketDependencyPressureScoreWeights.Count == 0
+            || SubsistenceMarketDependencyPressureScoreWeights.Any(static entry =>
+                !Enum.IsDefined(entry.Livelihood)
+                || entry.Weight is < 0 or > MaxGrainPricePressure)
+            || SubsistenceMarketDependencyPressureScoreWeights
+                .Select(static entry => entry.Livelihood)
+                .Distinct()
+                .Count() != SubsistenceMarketDependencyPressureScoreWeights.Count)
+        {
+            errors.Add(
+                $"subsistence_market_dependency_pressure_score_weights must be non-empty, distinct, defined, and between 0 and {MaxGrainPricePressure}.");
+        }
+
+        if (SubsistenceMarketDependencyPressureFallbackScore is < 0 or > MaxGrainPricePressure)
+        {
+            errors.Add(
+                $"subsistence_market_dependency_pressure_fallback_score must be between 0 and {MaxGrainPricePressure}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1030,6 +1074,35 @@ public sealed record PopulationHouseholdMobilityRulesData(
         }
 
         return GetGrainPriceMarketTightnessPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        GetSubsistenceMarketDependencyPressureScoreWeightsOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceMarketDependencyPressureScoreWeights
+            : DefaultSubsistenceMarketDependencyPressureScoreWeights;
+    }
+
+    public int GetSubsistenceMarketDependencyPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceMarketDependencyPressureFallbackScore
+            : DefaultSubsistenceMarketDependencyPressureFallbackScore;
+    }
+
+    public int GetSubsistenceMarketDependencyPressureScoreOrDefault(LivelihoodType livelihood)
+    {
+        foreach (PopulationHouseholdMobilityLivelihoodScoreWeight entry in
+                 GetSubsistenceMarketDependencyPressureScoreWeightsOrDefault())
+        {
+            if (entry.Livelihood == livelihood)
+            {
+                return entry.Weight;
+            }
+        }
+
+        return GetSubsistenceMarketDependencyPressureFallbackScoreOrDefault();
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
