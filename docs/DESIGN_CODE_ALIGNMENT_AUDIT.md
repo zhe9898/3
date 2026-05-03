@@ -925,6 +925,12 @@ The v909-v916 pass moves private monthly livelihood drift helpers from `Populati
 
 Alignment check: this remains a behavior-neutral modular-monolith file split. `PopulationAndHouseholds` still owns livelihood drift interpretation during its monthly household pass; Application/UI/Unity do not calculate livelihood drift outcomes; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
 
+## v917-v924 population households monthly pulse file split audit - 2026-05-03
+
+The v917-v924 pass moves private xun/month pulse helpers from `PopulationAndHouseholdsModule.cs` into `PopulationAndHouseholdsModule.MonthlyPulse.cs`.
+
+Alignment check: this remains a behavior-neutral modular-monolith file split. `PopulationAndHouseholds` still owns household debt, labor, migration, and migration-status helper logic during its cadence passes and owner handlers; Application/UI/Unity do not calculate monthly pulse outcomes; no schema, migration, rules-data loader, plugin surface, route history, movement command, class/status engine, or `PersonRegistry` expansion is added.
+
 Design alignment: this is behavior-neutral file organization and hardcoded-formula isolation after the query split, not a formula retune, rules-data extraction, movement command, route-history model, or class/status selector.
 
 Code alignment: dispatch/emit receipt code remains in the owner module call sites while private profile formulas move into the same partial `PopulationAndHouseholdsModule` class. Aggregate-source architecture guards continue to cover split files instead of depending on one oversized file.

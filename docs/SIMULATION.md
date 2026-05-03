@@ -1070,4 +1070,10 @@ V909-V916 changes file layout only. Monthly livelihood drift helpers move into a
 
 No event pool, movement command, route-history path, livelihood-drift ledger, class/status engine, plugin loading, or schema state is introduced.
 
+## Current population households monthly pulse file split v917-v924 note
+
+V917-V924 changes file layout only. Xun/month pulse helpers move into a partial file while `RunXun`, `RunMonth`, scheduler cadence, household traversal order, delta thresholds, migration status fallback, emitted receipts, and metadata remain unchanged.
+
+No event pool, movement command, route-history path, monthly-pulse ledger, migration-status ledger, class/status engine, plugin loading, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

@@ -728,3 +728,9 @@ This is not a runtime behavior change, event-router rewrite, rules-data extracti
 V909-V916 continues the large-file split by moving private monthly livelihood drift helpers into `PopulationAndHouseholdsModule.LivelihoodDrift.cs`. `RunMonth` keeps the same ordered household pass, drift helper calls, threshold checks, baseline mapping, and event call sites.
 
 This is not a runtime behavior change, livelihood retune, rules-data extraction, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, or second household mobility rule. Schema/migration impact: none.
+
+## V917-V924 PopulationAndHouseholds Monthly Pulse File Split
+
+V917-V924 continues the large-file split by moving private xun/month pulse helpers into `PopulationAndHouseholdsModule.MonthlyPulse.cs`. `RunXun`, `RunMonth`, event handlers, and the mobility runtime rule keep the same helper calls, delta thresholds, clan support lookup, and migration status fallback.
+
+This is not a runtime behavior change, monthly formula retune, rules-data extraction, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, class/status engine, or second household mobility rule. Schema/migration impact: none.

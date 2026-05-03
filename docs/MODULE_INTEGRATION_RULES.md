@@ -1129,4 +1129,10 @@ V909-V916 adds no new cross-module command, event consumer, projection parser, e
 
 The existing `RunMonth` method remains the integration seam: it calls livelihood drift helpers inside the same ordered household traversal. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer livelihood drift.
 
+## PopulationAndHouseholds monthly pulse file split v917-v924 integration note
+
+V917-V924 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves private xun/month pulse helpers into a dedicated partial file inside the same owner module.
+
+The existing `RunXun` and `RunMonth` methods remain the integration seams: they call monthly pulse helpers inside the same ordered household traversal. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer monthly pulse outcomes.
+
 The integration contract remains owner-owned event handling plus private profile computation only. Application/UI/Unity may read projected/query fields through existing seams but must not calculate household movement outcomes, pressure profile results, or rule outputs from the moved helpers.

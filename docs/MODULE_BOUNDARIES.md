@@ -1616,4 +1616,10 @@ V909-V916 splits private monthly livelihood drift helpers into `PopulationAndHou
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains livelihood-drift authority.
 
+## PopulationAndHouseholds monthly pulse file split v917-v924 boundary note
+
+V917-V924 splits private xun/month pulse helpers into `PopulationAndHouseholdsModule.MonthlyPulse.cs` while keeping them inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, xun/month cadence, household traversal, debt/labor/migration delta thresholds, migration status fallback, and household pressure authority remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains monthly-pulse or migration-status authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.
