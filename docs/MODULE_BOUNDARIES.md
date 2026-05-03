@@ -1688,3 +1688,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1005-V1012 extracts subsistence dependent-count threshold score bands into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, final labor clamp, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains dependent-count, pressure-profile, rules-data, or household mobility outcome authority.
+
+## PopulationAndHouseholds subsistence labor clamp extraction v1013-v1020 boundary note
+
+V1013-V1020 extracts the final subsistence labor pressure clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, labor-capacity/dependent-count scoring, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains subsistence-labor, pressure-profile, rules-data, or household mobility outcome authority.

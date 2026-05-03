@@ -17265,8 +17265,10 @@ public class ProjectReferenceTests
 
         Assert.That(pressureProfilesFile, Does.Not.Contain("private static int ComputeSubsistenceLaborPressure"));
         Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceLaborCapacityPressureScoreOrDefault("));
-        Assert.That(pressureProfilesFile, Does.Contain("household.DependentCount switch"));
-        Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(laborPressure + dependentPressure, -2, 4)"));
+        Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceDependentCountPressureScoreOrDefault("));
+        Assert.That(pressureProfilesFile, Does.Contain("laborPressure + dependentPressure"));
+        Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceLaborPressureClampFloorOrDefault"));
+        Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceLaborPressureClampCeilingOrDefault"));
         Assert.That(rulesData, Does.Contain("DefaultSubsistenceLaborCapacityPressureFallbackScore = 2"));
         Assert.That(rulesData, Does.Contain("MinSubsistenceLaborPressure = -2"));
         Assert.That(rulesData, Does.Contain("MaxSubsistenceLaborPressure = 4"));
@@ -17452,7 +17454,9 @@ public class ProjectReferenceTests
         }
 
         Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceDependentCountPressureScoreOrDefault("));
-        Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(laborPressure + dependentPressure, -2, 4)"));
+        Assert.That(pressureProfilesFile, Does.Contain("laborPressure + dependentPressure"));
+        Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceLaborPressureClampFloorOrDefault"));
+        Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceLaborPressureClampCeilingOrDefault"));
         Assert.That(rulesData, Does.Contain("DefaultSubsistenceDependentCountPressureFallbackScore = 0"));
         Assert.That(rulesData, Does.Contain("MaxSubsistenceDependentCountPressure = 4"));
         Assert.That(rulesData, Does.Contain("MaxSubsistenceDependentCountThreshold = 32"));
@@ -17510,6 +17514,190 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "DependentCountLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_subsistence_labor_clamp_extraction_v1013_v1020_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-subsistence-labor-clamp-extraction-v1013-v1020.md"));
+        string pressureProfilesFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "GrainPriceSubsistenceHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V1013-V1020 PopulationAndHouseholds Subsistence Labor Clamp Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households subsistence labor clamp extraction: v1013-v1020"));
+        Assert.That(designAudit, Does.Contain("v1013-v1020 population households subsistence labor clamp extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds subsistence labor clamp extraction v1013-v1020 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds subsistence labor clamp extraction v1013-v1020 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households subsistence labor clamp extraction v1013-v1020 note"));
+        Assert.That(uiPresentation, Does.Contain("v1013-v1020 population households subsistence labor clamp extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds subsistence labor clamp extraction v1013-v1020 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1013-V1020 PopulationAndHouseholds Subsistence Labor Clamp Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Subsistence Labor Clamp Extraction Through V1020"));
+        Assert.That(schemaRules, Does.Contain("population households subsistence labor clamp extraction v1013-v1020 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households subsistence labor clamp extraction v1013-v1020 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "subsistence labor pressure clamp floor",
+                     "subsistence labor pressure clamp ceiling",
+                     "only removes the literal final `-2..4` clamp",
+                     "No grain-buffer band extraction",
+                     "No labor-capacity pressure extraction",
+                     "No dependent-count pressure extraction",
+                     "No subsistence fragility extraction",
+                     "No subsistence interaction extraction",
+                     "No tax-season pressure extraction",
+                     "No official-supply pressure extraction",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No content/config namespace",
+                     "No runtime plugin marketplace",
+                     "No second household mobility runtime rule",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate subsistence labor pressure, household pressure, or household mobility outcomes",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceLaborPressureClampFloorOrDefault("));
+        Assert.That(pressureProfilesFile, Does.Contain("GetSubsistenceLaborPressureClampCeilingOrDefault("));
+        Assert.That(pressureProfilesFile, Does.Not.Contain("Math.Clamp(laborPressure + dependentPressure, -2, 4)"));
+        Assert.That(rulesData, Does.Contain("DefaultSubsistenceLaborPressureClampFloor = -2"));
+        Assert.That(rulesData, Does.Contain("DefaultSubsistenceLaborPressureClampCeiling = 4"));
+        Assert.That(rulesData, Does.Contain("subsistence_labor_pressure_clamp_floor must be between"));
+        Assert.That(rulesData, Does.Contain("subsistence_labor_pressure_clamp_ceiling must be between"));
+        Assert.That(rulesData, Does.Contain("subsistence_labor_pressure_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(rulesData, Does.Contain("GetSubsistenceLaborPressureClampFloorOrDefault"));
+        Assert.That(rulesData, Does.Contain("GetSubsistenceLaborPressureClampCeilingOrDefault"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_DefaultLaborClampRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_CustomLaborClampRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_InvalidLaborClampRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("SubsistenceLaborPressureClamp"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "SubsistenceLaborPressureClamp",
+                     "PopulationAndHouseholdsLaborClampRules",
+                     "SubsistenceLaborOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "SubsistenceLaborPressureClamp",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "SubsistenceLaborLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

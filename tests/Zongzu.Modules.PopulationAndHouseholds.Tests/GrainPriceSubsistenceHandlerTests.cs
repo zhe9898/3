@@ -588,6 +588,72 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceLaborPressure], Is.EqualTo("2"));
     }
 
+    [Test]
+    public void GrainPriceSpike_DefaultLaborClampRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceLaborPressureClampFloor = -2,
+                SubsistenceLaborPressureClampCeiling = 4,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
+            RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistenceLaborPressureClampFloor, Is.EqualTo(-2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistenceLaborPressureClampCeiling, Is.EqualTo(4));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceLaborPressureClampFloorOrDefault(), Is.EqualTo(-2));
+        Assert.That(explicitPreviousBaseline.GetSubsistenceLaborPressureClampCeilingOrDefault(), Is.EqualTo(4));
+        Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceLaborPressure], Is.EqualTo("2"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_CustomLaborClampRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceLaborPressureClampFloor = 0,
+                SubsistenceLaborPressureClampCeiling = 1,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState customHousehold, IDomainEvent customEvent) =
+            RunMissingMetadataGrainPriceSpike(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.SubsistenceLaborPressure], Is.EqualTo("1"));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta]),
+            Is.EqualTo(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta]) - 1));
+        Assert.That(customHousehold.Distress, Is.EqualTo(defaultHousehold.Distress - 1));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidLaborClampRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceLaborPressureClampFloor = 3,
+                SubsistenceLaborPressureClampCeiling = 2,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(malformedRulesData.GetSubsistenceLaborPressureClampFloorOrDefault(), Is.EqualTo(-2));
+        Assert.That(malformedRulesData.GetSubsistenceLaborPressureClampCeilingOrDefault(), Is.EqualTo(4));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceLaborPressure], Is.EqualTo("2"));
+    }
+
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunMissingMetadataGrainPriceSpike(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

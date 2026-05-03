@@ -1023,3 +1023,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1005-V1012 changes parameter ownership only. Subsistence dependent-count pressure bands are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, labor-capacity bands, final labor clamp, fragility/interaction formulas, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, dependent-count state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1013-V1020 PopulationAndHouseholds Subsistence Labor Clamp Extraction
+
+V1013-V1020 changes parameter ownership only. The final subsistence labor clamp is validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, labor-capacity bands, dependent-count bands, fragility/interaction formulas, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, subsistence-labor state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
