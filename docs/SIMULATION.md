@@ -1058,4 +1058,10 @@ No scheduler cadence change, query behavior change, snapshot field expansion, fa
 
 V893-V900 changes file layout only. Grain subsistence, tax-season, and official-supply pressure profile helpers move into a partial file while event dispatch, emitted receipts, and call-site ordering remain unchanged.
 
+## Current population households event dispatch file split v901-v908 note
+
+V901-V908 changes file layout only. Trade-shock, grain-price, world-pulse, tax-season, family-branch, and official-supply event-dispatch/application helpers move into a partial file while `HandleEvents`, scheduler cadence, emitted receipts, metadata, and deterministic household ordering remain unchanged.
+
+No event pool, movement command, route-history path, event-routing ledger, plugin loading, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

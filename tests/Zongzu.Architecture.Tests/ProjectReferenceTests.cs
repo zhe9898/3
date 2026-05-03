@@ -14649,6 +14649,10 @@ public class ProjectReferenceTests
             SrcDir,
             "Zongzu.Modules.PopulationAndHouseholds",
             "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string eventDispatchFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.EventDispatch.cs"));
         string populationModule = ReadPopulationAndHouseholdsModuleSource();
         string populationState = File.ReadAllText(Path.Combine(
             SrcDir,
@@ -14733,11 +14737,15 @@ public class ProjectReferenceTests
         Assert.That(pressureProfilesFile, Does.Contain("14 + VisibilityPressure + LiquidityPressure + LaborPressure + FragilityPressure + InteractionPressure"));
         Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(frontierPressure, 0, 100)"));
         Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(interaction, -3, 5)"));
-        Assert.That(mainModuleFile, Does.Contain("scope.Emit("));
-        Assert.That(mainModuleFile, Does.Contain("ApplyGrainPriceSubsistencePressure(scope, domainEvent)"));
-        Assert.That(mainModuleFile, Does.Contain("ApplyTaxSeasonPressure(scope, domainEvent)"));
-        Assert.That(mainModuleFile, Does.Contain("private static void DispatchOfficeSupplyEvents"));
-        Assert.That(mainModuleFile, Does.Contain("OfficialSupplySignal signal = ResolveOfficialSupplySignal(domainEvent)"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchTradeShockEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchWorldPulseEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchFamilyBranchEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchOfficeSupplyEvents(scope);"));
+        Assert.That(eventDispatchFile, Does.Contain("scope.Emit("));
+        Assert.That(eventDispatchFile, Does.Contain("ApplyGrainPriceSubsistencePressure(scope, domainEvent)"));
+        Assert.That(eventDispatchFile, Does.Contain("ApplyTaxSeasonPressure(scope, domainEvent)"));
+        Assert.That(eventDispatchFile, Does.Contain("private static void DispatchOfficeSupplyEvents"));
+        Assert.That(eventDispatchFile, Does.Contain("OfficialSupplySignal signal = ResolveOfficialSupplySignal(domainEvent)"));
         Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
         Assert.That(populationState, Does.Not.Contain("PressureProfile"));
         Assert.That(populationState, Does.Not.Contain("RouteHistory"));
@@ -14782,6 +14790,204 @@ public class ProjectReferenceTests
                      "SocialClassEngine",
                      "PopulationAndHouseholdsPressureProfileFileSplitState",
                      "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_event_dispatch_file_split_v901_v908_must_preserve_owner_behavior_and_schema_neutrality()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-event-dispatch-file-split-v901-v908.md"));
+        string mainModuleFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string eventDispatchFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.EventDispatch.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V901-V908 PopulationAndHouseholds Event Dispatch File Split"));
+        Assert.That(socialStrata, Does.Contain("Current population households event dispatch file split: v901-v908"));
+        Assert.That(designAudit, Does.Contain("v901-v908 population households event dispatch file split audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds event dispatch file split v901-v908 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds event dispatch file split v901-v908 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households event dispatch file split v901-v908 note"));
+        Assert.That(uiPresentation, Does.Contain("v901-v908 population households event dispatch file split"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds event dispatch file split v901-v908 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V901-V908 PopulationAndHouseholds Event Dispatch File Split"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Event Dispatch File Split Through V908"));
+        Assert.That(schemaRules, Does.Contain("population households event dispatch file split v901-v908 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households event dispatch file split v901-v908 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-neutral file split",
+                     "Runtime behavior change: none",
+                     "Target schema/migration impact: none",
+                     "PopulationAndHouseholdsModule.EventDispatch.cs",
+                     "No event behavior change",
+                     "No emitted metadata change",
+                     "No receipt/projection text rewrite",
+                     "No pressure formula change",
+                     "No metadata fallback change",
+                     "No rules-data parameter change",
+                     "No fanout widening",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes, event dispatch outcomes, or household pressure results",
+                     "No authored rules-data externalization in this split",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string movedDefinition in new[]
+                 {
+                     "private static void DispatchTradeShockEvents",
+                     "private static void ApplyGrainPriceSubsistencePressure",
+                     "private static void DispatchWorldPulseEvents",
+                     "private static void ApplyTaxSeasonPressure",
+                     "private static void DispatchFamilyBranchEvents",
+                     "private static void DispatchOfficeSupplyEvents",
+                 })
+        {
+            Assert.That(mainModuleFile, Does.Not.Contain(movedDefinition), movedDefinition);
+            Assert.That(eventDispatchFile, Does.Contain(movedDefinition), movedDefinition);
+        }
+
+        Assert.That(eventDispatchFile, Does.Contain("public sealed partial class PopulationAndHouseholdsModule"));
+        Assert.That(eventDispatchFile, Does.Contain("TradeAndIndustryEventNames.GrainPriceSpike"));
+        Assert.That(eventDispatchFile, Does.Contain("WorldSettlementsEventNames.TaxSeasonOpened"));
+        Assert.That(eventDispatchFile, Does.Contain("OfficeAndCareerEventNames.OfficialSupplyRequisition"));
+        Assert.That(eventDispatchFile, Does.Contain("scope.Emit("));
+        Assert.That(eventDispatchFile, Does.Contain("new Dictionary<string, string>"));
+        Assert.That(eventDispatchFile, Does.Contain("OrderBy(static household => household.Id.Value)"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchTradeShockEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchWorldPulseEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchFamilyBranchEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchOfficeSupplyEvents(scope);"));
+        Assert.That(
+            mainModuleFile.IndexOf("DispatchTradeShockEvents(scope);", StringComparison.Ordinal),
+            Is.LessThan(mainModuleFile.IndexOf("DispatchWorldPulseEvents(scope);", StringComparison.Ordinal)));
+        Assert.That(
+            mainModuleFile.IndexOf("DispatchWorldPulseEvents(scope);", StringComparison.Ordinal),
+            Is.LessThan(mainModuleFile.IndexOf("DispatchFamilyBranchEvents(scope);", StringComparison.Ordinal)));
+        Assert.That(
+            mainModuleFile.IndexOf("DispatchFamilyBranchEvents(scope);", StringComparison.Ordinal),
+            Is.LessThan(mainModuleFile.IndexOf("DispatchOfficeSupplyEvents(scope);", StringComparison.Ordinal)));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("EventDispatch"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationAndHouseholdsModule.EventDispatch",
+                     "PopulationAndHouseholdsEventDispatchFileSplit",
+                     "EventDispatchFormulaAuthority",
+                     "HouseholdMobilityEventInterpreter",
+                     "EventDispatchOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "EventDispatch",
+                     "HouseholdMobilityEventInterpreter",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "PopulationAndHouseholdsEventDispatchFileSplit",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "PopulationAndHouseholdsEventDispatchFileSplitState",
+                     "EventDispatchLedger",
+                     "EventRoutingLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",
                      "OwnerLaneLedger",
@@ -15125,8 +15331,9 @@ public class ProjectReferenceTests
                     "PopulationAndHouseholdsModule.PoolRebuild.cs" => 2,
                     "PopulationAndHouseholdsModule.Queries.cs" => 3,
                     "PopulationAndHouseholdsModule.PressureProfiles.cs" => 4,
-                    "PopulationAndHouseholdsModule.cs" => 5,
-                    _ => 6,
+                    "PopulationAndHouseholdsModule.EventDispatch.cs" => 5,
+                    "PopulationAndHouseholdsModule.cs" => 6,
+                    _ => 7,
                 })
                 .ThenBy(static file => file, StringComparer.Ordinal)
                 .Select(File.ReadAllText));

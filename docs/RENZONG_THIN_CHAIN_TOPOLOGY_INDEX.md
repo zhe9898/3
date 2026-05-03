@@ -716,3 +716,9 @@ This is not a runtime behavior change, projection authority shift, migration eng
 V893-V900 continues the large-file split by moving grain subsistence, tax-season, and official-supply pressure profile helpers into `PopulationAndHouseholdsModule.PressureProfiles.cs`. Event dispatch, receipts, and projection-facing text remain in the owner module call sites; only pure private formula helpers and record structs move.
 
 This is not a runtime behavior change, rules-data extraction, formula retune, metadata fallback change, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, or second household mobility rule. Schema/migration impact: none.
+
+## V901-V908 PopulationAndHouseholds Event Dispatch File Split
+
+V901-V908 continues the large-file split by moving private trade-shock, world-pulse, family-branch, grain-price, tax-season, and official-supply event-dispatch/application methods into `PopulationAndHouseholdsModule.EventDispatch.cs`. `HandleEvents` keeps the same call order, event metadata, receipt text, deterministic household ordering, and owner authority.
+
+This is not a runtime behavior change, event-router rewrite, rules-data extraction, formula retune, metadata fallback change, migration engine, route-history model, movement command, runtime loader, rules-data file, runtime plugin marketplace, fanout widening, target filter expansion, or second household mobility rule. Schema/migration impact: none.

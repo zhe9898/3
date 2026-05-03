@@ -1619,3 +1619,7 @@ V885-V892 moves the private query implementation and clone helpers into a partia
 Current population households pressure profile file split v893-v900 note:
 
 V893-V900 moves private pressure profile computation helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted pressure-profile split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, event-routing ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households event dispatch file split v901-v908 note:
+
+V901-V908 moves private event-dispatch/application helpers into a partial file. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted event-dispatch split field, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, event-dispatch ledger, event-routing ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
