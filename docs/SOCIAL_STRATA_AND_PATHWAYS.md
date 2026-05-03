@@ -747,4 +747,8 @@ V909-V916 moves private monthly livelihood drift helpers into a dedicated partia
 
 V917-V924 moves private xun/month pulse helpers into a dedicated partial file without changing social-strata behavior. Debt, labor, migration, and migration-status calculations remain `PopulationAndHouseholds` household pressure helpers, not a class/status engine, rank ladder, `PersonRegistry` expansion, or UI-owned social position calculation.
 
+### Current population households warfare aftermath file split: v925-v932
+
+V925-V932 moves private warfare aftermath handling into a dedicated partial file without changing social-strata behavior. Campaign pressure still affects households only through `PopulationAndHouseholds` owner logic; it is not a migration economy, class/status engine, rank ladder, route-history store, or `PersonRegistry` expansion.
+
 The split is organizational only. It does not create a status rank, class rail, pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position, and Application/UI/Unity still may not infer household movement or social status from the moved helpers.

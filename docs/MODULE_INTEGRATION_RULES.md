@@ -1135,4 +1135,10 @@ V917-V924 adds no new cross-module command, event consumer, projection parser, e
 
 The existing `RunXun` and `RunMonth` methods remain the integration seams: they call monthly pulse helpers inside the same ordered household traversal. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer monthly pulse outcomes.
 
+## PopulationAndHouseholds warfare aftermath file split v925-v932 integration note
+
+V925-V932 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior. It moves private warfare aftermath handling into a dedicated partial file inside the same owner module.
+
+The existing `HandleEvents` method remains the integration seam: it calls trade-shock, world-pulse, family-branch, office-supply, and warfare aftermath handling in the same order. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer warfare aftermath outcomes.
+
 The integration contract remains owner-owned event handling plus private profile computation only. Application/UI/Unity may read projected/query fields through existing seams but must not calculate household movement outcomes, pressure profile results, or rule outputs from the moved helpers.

@@ -1076,4 +1076,10 @@ V917-V924 changes file layout only. Xun/month pulse helpers move into a partial 
 
 No event pool, movement command, route-history path, monthly-pulse ledger, migration-status ledger, class/status engine, plugin loading, or schema state is introduced.
 
+## Current population households warfare aftermath file split v925-v932 note
+
+V925-V932 changes file layout only. Warfare aftermath handling moves into a partial file while `HandleEvents`, scheduler cadence, event handling order, settlement-scoped household traversal, campaign delta formulas, emitted receipts, and metadata remain unchanged.
+
+No event pool, movement command, route-history path, warfare-aftermath ledger, campaign-aftermath ledger, class/status engine, plugin loading, or schema state is introduced.
+
 No scheduler cadence change, pressure formula change, metadata fallback change, fanout widening, new event type, event routing change, save schema, route-history model, movement command, loader, rules-data file, or second household mobility runtime rule is added.

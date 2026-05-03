@@ -1622,4 +1622,10 @@ V917-V924 splits private xun/month pulse helpers into `PopulationAndHouseholdsMo
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains monthly-pulse or migration-status authority.
 
+## PopulationAndHouseholds warfare aftermath file split v925-v932 boundary note
+
+V925-V932 splits private warfare-campaign aftermath handling into `PopulationAndHouseholdsModule.WarfareAftermath.cs` while keeping it inside the same private `PopulationAndHouseholdsModule` partial class. Module ownership, event handling order, settlement-scoped household traversal, campaign delta formulas, emitted receipts, and household pressure authority remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains warfare-aftermath or campaign-delta authority.
+
 Application, presentation, and Unity layers remain projection/copy surfaces only. No migration engine, movement command, route-history state, runtime plugin loader, rules-data file, schema field, pressure-profile split state, pressure-profile ledger, event-routing ledger, validation ledger, cache, class/status engine, fanout widening, or `PersonRegistry` expansion is introduced.

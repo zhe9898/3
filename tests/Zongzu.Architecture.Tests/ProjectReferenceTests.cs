@@ -15400,6 +15400,200 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_warfare_aftermath_file_split_v925_v932_must_preserve_owner_behavior_and_schema_neutrality()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-warfare-aftermath-file-split-v925-v932.md"));
+        string mainModuleFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.cs"));
+        string warfareAftermathFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.WarfareAftermath.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        Assert.That(topologyIndex, Does.Contain("V925-V932 PopulationAndHouseholds Warfare Aftermath File Split"));
+        Assert.That(socialStrata, Does.Contain("Current population households warfare aftermath file split: v925-v932"));
+        Assert.That(designAudit, Does.Contain("v925-v932 population households warfare aftermath file split audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds warfare aftermath file split v925-v932 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds warfare aftermath file split v925-v932 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households warfare aftermath file split v925-v932 note"));
+        Assert.That(uiPresentation, Does.Contain("v925-v932 population households warfare aftermath file split"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds warfare aftermath file split v925-v932 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V925-V932 PopulationAndHouseholds Warfare Aftermath File Split"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Warfare Aftermath File Split Through V932"));
+        Assert.That(schemaRules, Does.Contain("population households warfare aftermath file split v925-v932 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households warfare aftermath file split v925-v932 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-neutral file split",
+                     "Runtime behavior change: none",
+                     "Target schema/migration impact: none",
+                     "PopulationAndHouseholdsModule.WarfareAftermath.cs",
+                     "No warfare aftermath behavior change",
+                     "No campaign delta formula change",
+                     "No event behavior change",
+                     "No emitted metadata change",
+                     "No receipt/projection text rewrite",
+                     "No rules-data parameter change",
+                     "No fanout widening",
+                     "No second household mobility runtime rule",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "Application/UI/Unity do not calculate household mobility outcomes, warfare aftermath outcomes, campaign delta outcomes, or household pressure results",
+                     "No authored rules-data externalization in this split",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string movedDefinition in new[]
+                 {
+                     "private static void ApplyWarfareCampaignAftermathEvents",
+                     "private static int ComputeCampaignDistressDelta",
+                     "private static int ComputeCampaignDebtDelta",
+                     "private static int ComputeCampaignMigrationDelta",
+                     "private static int ComputeCampaignLaborDrop",
+                 })
+        {
+            Assert.That(mainModuleFile, Does.Not.Contain(movedDefinition), movedDefinition);
+            Assert.That(warfareAftermathFile, Does.Contain(movedDefinition), movedDefinition);
+        }
+
+        Assert.That(warfareAftermathFile, Does.Contain("public sealed partial class PopulationAndHouseholdsModule"));
+        Assert.That(warfareAftermathFile, Does.Contain("WarfareCampaignEventBundler.Build(scope.Events)"));
+        Assert.That(warfareAftermathFile, Does.Contain(".OrderBy(static household => household.Id.Value)"));
+        Assert.That(warfareAftermathFile, Does.Contain("ComputeCampaignDistressDelta(bundle, campaign)"));
+        Assert.That(warfareAftermathFile, Does.Contain("PopulationEventNames.MigrationStarted"));
+        Assert.That(warfareAftermathFile, Does.Contain("PopulationEventNames.LivelihoodCollapsed"));
+        Assert.That(warfareAftermathFile, Does.Contain("RebuildSettlementSummaries(scope.State, scope.TryGetQuery<IPersonRegistryQueries>())"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchTradeShockEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchWorldPulseEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchFamilyBranchEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("DispatchOfficeSupplyEvents(scope);"));
+        Assert.That(mainModuleFile, Does.Contain("ApplyWarfareCampaignAftermathEvents(scope);"));
+        Assert.That(
+            mainModuleFile.IndexOf("DispatchOfficeSupplyEvents(scope);", StringComparison.Ordinal),
+            Is.LessThan(mainModuleFile.IndexOf("ApplyWarfareCampaignAftermathEvents(scope);", StringComparison.Ordinal)));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("WarfareAftermath"));
+        Assert.That(populationState, Does.Not.Contain("CampaignAftermath"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "PopulationAndHouseholdsModule.WarfareAftermath",
+                     "PopulationAndHouseholdsWarfareAftermathFileSplit",
+                     "WarfareAftermathFormulaAuthority",
+                     "HouseholdMobilityWarfareInterpreter",
+                     "CampaignDeltaOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "WarfareAftermath",
+                     "CampaignDelta",
+                     "HouseholdMobilityWarfareInterpreter",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                     "PopulationAndHouseholdsWarfareAftermathFileSplit",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "PopulationAndHouseholdsWarfareAftermathFileSplitState",
+                     "WarfareAftermathLedger",
+                     "CampaignAftermathLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(
@@ -15716,8 +15910,9 @@ public class ProjectReferenceTests
                     "PopulationAndHouseholdsModule.EventDispatch.cs" => 5,
                     "PopulationAndHouseholdsModule.MonthlyPulse.cs" => 6,
                     "PopulationAndHouseholdsModule.LivelihoodDrift.cs" => 7,
-                    "PopulationAndHouseholdsModule.cs" => 8,
-                    _ => 9,
+                    "PopulationAndHouseholdsModule.WarfareAftermath.cs" => 8,
+                    "PopulationAndHouseholdsModule.cs" => 9,
+                    _ => 10,
                 })
                 .ThenBy(static file => file, StringComparer.Ordinal)
                 .Select(File.ReadAllText));

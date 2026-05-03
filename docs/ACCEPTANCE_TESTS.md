@@ -1199,3 +1199,9 @@ Acceptance evidence for V909-V916:
 Acceptance evidence for V917-V924:
 - Architecture guard `Population_households_monthly_pulse_file_split_v917_v924_must_preserve_owner_behavior_and_schema_neutrality` proves xun/month pulse and migration-status helpers were moved into `PopulationAndHouseholdsModule.MonthlyPulse.cs` without changing cadence call sites, delta thresholds, migration status fallback, receipt text, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
 - Runtime behavior evidence remains the existing population xun/month behavior tests; this split moves private owner monthly pulse helpers only and adds no new owner rule or presentation field.
+
+## PopulationAndHouseholds warfare aftermath file split v925-v932 acceptance - 2026-05-03
+
+Acceptance evidence for V925-V932:
+- Architecture guard `Population_households_warfare_aftermath_file_split_v925_v932_must_preserve_owner_behavior_and_schema_neutrality` proves warfare aftermath handling was moved into `PopulationAndHouseholdsModule.WarfareAftermath.cs` without changing event handling order, settlement-scoped household traversal, campaign delta formulas, receipt text, schema, expanding `PersonRegistry`, adding loader/plugin authority, or giving Application/UI/Unity outcome authority.
+- Runtime behavior evidence remains the existing population warfare/campaign behavior tests; this split moves private owner warfare aftermath helpers only and adds no new owner rule or presentation field.
