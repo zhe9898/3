@@ -1260,3 +1260,11 @@ Acceptance evidence for V997-V1004:
 - Architecture guard `Population_households_subsistence_labor_capacity_extraction_v997_v1004_must_remain_owner_consumed_and_schema_neutral` proves labor-capacity bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract dependent-count pressure or the final labor clamp.
+
+## PopulationAndHouseholds subsistence dependent count extraction v1005-v1012 acceptance - 2026-05-03
+
+Acceptance evidence for V1005-V1012:
+- Population tests `GrainPriceSpike_DefaultDependentCountRulesDataMatchesPreviousBaseline` and `GrainPriceSpike_InvalidDependentCountRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior dependent-count behavior and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_dependent_count_extraction_v1005_v1012_must_remain_owner_consumed_and_schema_neutral` proves dependent-count bands moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract the final labor clamp.

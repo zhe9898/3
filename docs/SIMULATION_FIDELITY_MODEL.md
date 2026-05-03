@@ -1017,3 +1017,9 @@ No persisted schema, loader, rules-data file, cache, diagnostic state, formula r
 V997-V1004 changes parameter ownership only. Subsistence labor-capacity pressure bands are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, dependent-count pressure, labor clamp, fragility/interaction formulas, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, subsistence-labor state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1005-V1012 PopulationAndHouseholds Subsistence Dependent Count Extraction
+
+V1005-V1012 changes parameter ownership only. Subsistence dependent-count pressure bands are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, labor-capacity bands, final labor clamp, fragility/interaction formulas, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, dependent-count state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

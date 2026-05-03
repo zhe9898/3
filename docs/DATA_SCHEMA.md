@@ -1670,3 +1670,7 @@ V989-V996 extracts subsistence market dependency livelihood score weights into i
 Current population households subsistence labor capacity extraction v997-v1004 note:
 
 V997-V1004 extracts subsistence labor-capacity pressure bands into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted subsistence-labor field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households subsistence dependent count extraction v1005-v1012 note:
+
+V1005-V1012 extracts subsistence dependent-count pressure bands into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted dependent-count pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

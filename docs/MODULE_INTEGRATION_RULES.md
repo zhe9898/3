@@ -1195,3 +1195,9 @@ The integration contract remains owner-owned event handling plus private profile
 V997-V1004 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts `ComputeSubsistenceLaborPressure` labor-capacity score bands into validated owner-consumed rules-data.
 
 The existing grain-price event path remains the integration seam: it reads labor-capacity bands through `PopulationHouseholdMobilityRulesData` fallback getters and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer subsistence labor or household pressure outcomes.
+
+## PopulationAndHouseholds subsistence dependent count extraction v1005-v1012 integration note
+
+V1005-V1012 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts `ComputeSubsistenceLaborPressure` dependent-count score bands into validated owner-consumed rules-data.
+
+The existing grain-price event path remains the integration seam: it reads dependent-count bands through `PopulationHouseholdMobilityRulesData` fallback getters and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer dependent-count pressure or household pressure outcomes.
