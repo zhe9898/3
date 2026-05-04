@@ -1748,3 +1748,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1085-V1092 extracts the subsistence interaction resilience relief thresholds and score into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, grain-shortage window, cash-need interaction scoring, debt interaction scoring, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains interaction-resilience, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
+
+## PopulationAndHouseholds subsistence interaction clamp extraction v1093-v1100 boundary note
+
+V1093-V1100 extracts the subsistence interaction pressure clamp floor/ceiling into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` subsistence pressure helper. Module ownership, event scope, household traversal, subsistence pressure mutation, event emission, grain-shortage window, cash-need interaction scoring, debt interaction scoring, resilience interaction scoring, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains interaction-clamp, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
