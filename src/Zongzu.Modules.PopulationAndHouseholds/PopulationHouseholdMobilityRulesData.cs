@@ -176,6 +176,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyDebtDeltaResourceBufferDivisor,
     int OfficialSupplyDebtDeltaClampFloor,
     int OfficialSupplyDebtDeltaClampCeiling,
+    int OfficialSupplyLaborDropSupplyPressureDivisor,
+    int OfficialSupplyLaborDropLaborPressureFloor,
+    int OfficialSupplyLaborDropLaborPressureWeight,
+    int OfficialSupplyLaborDropDocketPressureDivisor,
+    int OfficialSupplyLaborDropResourceBufferDivisor,
     int OfficialSupplyLaborDropClampFloor,
     int OfficialSupplyLaborDropClampCeiling,
     int OfficialSupplyMigrationDeltaClampFloor,
@@ -365,6 +370,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyDebtDeltaResourceBufferDivisor = 2;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDebtDeltaClampCeiling = 18;
+    public const int DefaultOfficialSupplyLaborDropSupplyPressureDivisor = 8;
+    public const int DefaultOfficialSupplyLaborDropLaborPressureFloor = 0;
+    public const int DefaultOfficialSupplyLaborDropLaborPressureWeight = 1;
+    public const int DefaultOfficialSupplyLaborDropDocketPressureDivisor = 6;
+    public const int DefaultOfficialSupplyLaborDropResourceBufferDivisor = 4;
     public const int DefaultOfficialSupplyLaborDropClampFloor = 0;
     public const int DefaultOfficialSupplyLaborDropClampCeiling = 8;
     public const int DefaultOfficialSupplyMigrationDeltaClampFloor = 0;
@@ -845,6 +855,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyDebtDeltaResourceBufferDivisor,
             DefaultOfficialSupplyDebtDeltaClampFloor,
             DefaultOfficialSupplyDebtDeltaClampCeiling,
+            DefaultOfficialSupplyLaborDropSupplyPressureDivisor,
+            DefaultOfficialSupplyLaborDropLaborPressureFloor,
+            DefaultOfficialSupplyLaborDropLaborPressureWeight,
+            DefaultOfficialSupplyLaborDropDocketPressureDivisor,
+            DefaultOfficialSupplyLaborDropResourceBufferDivisor,
             DefaultOfficialSupplyLaborDropClampFloor,
             DefaultOfficialSupplyLaborDropClampCeiling,
             DefaultOfficialSupplyMigrationDeltaClampFloor,
@@ -1052,6 +1067,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyDebtDeltaResourceBufferDivisor,
             DefaultOfficialSupplyDebtDeltaClampFloor,
             DefaultOfficialSupplyDebtDeltaClampCeiling,
+            DefaultOfficialSupplyLaborDropSupplyPressureDivisor,
+            DefaultOfficialSupplyLaborDropLaborPressureFloor,
+            DefaultOfficialSupplyLaborDropLaborPressureWeight,
+            DefaultOfficialSupplyLaborDropDocketPressureDivisor,
+            DefaultOfficialSupplyLaborDropResourceBufferDivisor,
             DefaultOfficialSupplyLaborDropClampFloor,
             DefaultOfficialSupplyLaborDropClampCeiling,
             DefaultOfficialSupplyMigrationDeltaClampFloor,
@@ -2569,6 +2589,36 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyDebtDeltaClampFloor > OfficialSupplyDebtDeltaClampCeiling)
         {
             errors.Add("official_supply_debt_delta_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyLaborDropSupplyPressureDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_labor_drop_supply_pressure_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
+        }
+
+        if (OfficialSupplyLaborDropLaborPressureFloor is < MinOfficialSupplyLaborPressure or > MaxOfficialSupplyLaborPressure)
+        {
+            errors.Add(
+                $"official_supply_labor_drop_labor_pressure_floor must be between {MinOfficialSupplyLaborPressure} and {MaxOfficialSupplyLaborPressure}.");
+        }
+
+        if (OfficialSupplyLaborDropLaborPressureWeight is < 0 or > MaxOfficialSupplyDeltaFormulaWeight)
+        {
+            errors.Add(
+                $"official_supply_labor_drop_labor_pressure_weight must be between 0 and {MaxOfficialSupplyDeltaFormulaWeight}.");
+        }
+
+        if (OfficialSupplyLaborDropDocketPressureDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_labor_drop_docket_pressure_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
+        }
+
+        if (OfficialSupplyLaborDropResourceBufferDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_labor_drop_resource_buffer_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
         }
 
         if (OfficialSupplyLaborDropClampFloor is < MinOfficialSupplyLaborDrop or > MaxOfficialSupplyLaborDrop)
@@ -4369,6 +4419,41 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyDebtDeltaClampCeiling
             : DefaultOfficialSupplyDebtDeltaClampCeiling;
+    }
+
+    public int GetOfficialSupplyLaborDropSupplyPressureDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborDropSupplyPressureDivisor
+            : DefaultOfficialSupplyLaborDropSupplyPressureDivisor;
+    }
+
+    public int GetOfficialSupplyLaborDropLaborPressureFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborDropLaborPressureFloor
+            : DefaultOfficialSupplyLaborDropLaborPressureFloor;
+    }
+
+    public int GetOfficialSupplyLaborDropLaborPressureWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborDropLaborPressureWeight
+            : DefaultOfficialSupplyLaborDropLaborPressureWeight;
+    }
+
+    public int GetOfficialSupplyLaborDropDocketPressureDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborDropDocketPressureDivisor
+            : DefaultOfficialSupplyLaborDropDocketPressureDivisor;
+    }
+
+    public int GetOfficialSupplyLaborDropResourceBufferDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborDropResourceBufferDivisor
+            : DefaultOfficialSupplyLaborDropResourceBufferDivisor;
     }
 
     public int GetOfficialSupplyLaborDropClampFloorOrDefault()

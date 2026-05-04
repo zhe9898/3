@@ -454,3 +454,7 @@ The UI and Unity shell remain downstream-only. V1237-V1244 changes where `Popula
 ### v1245-v1252 population households official supply debt delta formula extraction
 
 The UI and Unity shell remain downstream-only. V1245-V1252 changes where `PopulationAndHouseholds` owns official-supply debt delta formula divisors, interaction floor, and component weights; presentation surfaces may only copy projected fields/events and must not calculate debt deltas, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1253-v1260 population households official supply labor drop formula extraction
+
+The UI and Unity shell remain downstream-only. V1253-V1260 changes where `PopulationAndHouseholds` owns official-supply labor drop formula divisors, labor-pressure floor, and component weight; presentation surfaces may only copy projected fields/events and must not calculate labor drops, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.
