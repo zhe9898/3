@@ -910,3 +910,9 @@ This is not an official-supply debt/labor/migration clamp extraction, official-s
 V1141-V1148 extracts the official-supply debt delta clamp from `OfficialSupplyBurdenProfile.DebtDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: official-supply debt delta is clamped to `0..18`.
 
 This is not an official-supply labor/migration clamp extraction, official-supply event threshold extraction, official-supply signal extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1149-V1156 PopulationAndHouseholds Official Supply Labor Drop Clamp Extraction
+
+V1149-V1156 extracts the official-supply labor drop clamp from `OfficialSupplyBurdenProfile.LaborDrop` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: official-supply labor drop is clamped to `0..8`.
+
+This is not an official-supply migration clamp extraction, official-supply event threshold extraction, official-supply signal extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

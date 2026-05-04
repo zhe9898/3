@@ -405,6 +405,91 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackHousehold.DebtPressure, Is.EqualTo(35));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultLaborDropClampRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborDropClampFloor = 0,
+                OfficialSupplyLaborDropClampCeiling = 8,
+            };
+
+        (PopulationHouseholdState defaultHousehold, _) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState explicitHousehold, _) = RunCrossingOfficialSupply(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropClampFloor, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropClampCeiling, Is.EqualTo(8));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyLaborDropClampFloorOrDefault(), Is.EqualTo(0));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyLaborDropClampCeilingOrDefault(), Is.EqualTo(8));
+        Assert.That(explicitHousehold.LaborCapacity, Is.EqualTo(defaultHousehold.LaborCapacity));
+        Assert.That(defaultHousehold.LaborCapacity, Is.EqualTo(79));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomLaborDropClampFloorRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborDropClampFloor = 4,
+                OfficialSupplyLaborDropClampCeiling = 8,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunBufferedOfficialSupply();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunBufferedOfficialSupply(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.LaborCapacity, Is.EqualTo(88));
+        Assert.That(customHousehold.LaborCapacity, Is.EqualTo(86));
+        Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+        Assert.That(customEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomLaborDropClampCeilingRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborDropClampFloor = 0,
+                OfficialSupplyLaborDropClampCeiling = 5,
+            };
+
+        (PopulationHouseholdState defaultHousehold, _) = RunLaborHeavyOfficialSupply();
+        (PopulationHouseholdState customHousehold, _) = RunLaborHeavyOfficialSupply(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.LaborCapacity, Is.EqualTo(17));
+        Assert.That(customHousehold.LaborCapacity, Is.EqualTo(20));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidLaborDropClampRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborDropClampFloor = 9,
+                OfficialSupplyLaborDropClampCeiling = 8,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, _) = RunLaborHeavyOfficialSupply();
+        (PopulationHouseholdState fallbackHousehold, _) = RunLaborHeavyOfficialSupply(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyLaborDropClampFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropClampFloor));
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyLaborDropClampCeilingOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropClampCeiling));
+        Assert.That(fallbackHousehold.LaborCapacity, Is.EqualTo(defaultHousehold.LaborCapacity));
+        Assert.That(fallbackHousehold.LaborCapacity, Is.EqualTo(17));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -452,6 +537,40 @@ public sealed class OfficialSupplyBurdenHandlerTests
             ShelterQuality = 80,
             DependentCount = 1,
             LaborerCount = 3,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "76",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "16",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "6",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "2",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunLaborHeavyOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Labor-scarce tenant",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.Tenant,
+            Distress = 40,
+            DebtPressure = 60,
+            LaborCapacity = 25,
+            MigrationRisk = 20,
+            LandHolding = 5,
+            GrainStore = 10,
+            ToolCondition = 20,
+            ShelterQuality = 20,
+            DependentCount = 5,
+            LaborerCount = 1,
         });
 
         return RunOfficialSupply(state, new Dictionary<string, string>
