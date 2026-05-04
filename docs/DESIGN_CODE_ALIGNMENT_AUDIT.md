@@ -1123,3 +1123,8 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1157-v1164 pass moves the `OfficialSupplyBurdenProfile.MigrationDelta` clamp from C# literals `0..8` into validated `PopulationHouseholdMobilityRulesData` default getters.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household official-supply burden outcomes and event emission; distress/debt/labor deltas and event threshold remain unchanged; Application/UI/Unity do not calculate official-supply migration delta or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
+### v1165-v1172 population households official supply burden event threshold extraction audit
+
+`PopulationAndHouseholds` now owns the official-supply burden event distress threshold through validated rules-data with default `80`. This preserves the existing receipt boundary while moving another hardcoded rule out of the event dispatch branch.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.

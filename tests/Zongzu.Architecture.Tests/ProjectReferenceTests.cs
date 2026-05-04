@@ -20538,7 +20538,8 @@ public class ProjectReferenceTests
         }
 
         Assert.That(dispatchSupplyBody, Does.Contain("ComputeOfficialSupplyBurdenProfile(household, signal)"));
-        Assert.That(dispatchSupplyBody, Does.Contain("oldDistress < 80 && household.Distress >= 80"));
+        Assert.That(dispatchSupplyBody, Does.Contain("GetOfficialSupplyBurdenEventDistressThresholdOrDefault"));
+        Assert.That(dispatchSupplyBody, Does.Not.Contain("oldDistress < 80 && household.Distress >= 80"));
         Assert.That(computeSupplyProfileBody, Does.Contain("GetOfficialSupplyDistressDeltaClampFloorOrDefault"));
         Assert.That(computeSupplyProfileBody, Does.Contain("GetOfficialSupplyDistressDeltaClampCeilingOrDefault"));
         Assert.That(supplyProfileBody, Does.Contain("int DistressDeltaClampFloor"));
@@ -20764,7 +20765,8 @@ public class ProjectReferenceTests
         }
 
         Assert.That(dispatchSupplyBody, Does.Contain("ComputeOfficialSupplyBurdenProfile(household, signal)"));
-        Assert.That(dispatchSupplyBody, Does.Contain("oldDistress < 80 && household.Distress >= 80"));
+        Assert.That(dispatchSupplyBody, Does.Contain("GetOfficialSupplyBurdenEventDistressThresholdOrDefault"));
+        Assert.That(dispatchSupplyBody, Does.Not.Contain("oldDistress < 80 && household.Distress >= 80"));
         Assert.That(computeSupplyProfileBody, Does.Contain("GetOfficialSupplyDistressDeltaClampFloorOrDefault"));
         Assert.That(computeSupplyProfileBody, Does.Contain("GetOfficialSupplyDistressDeltaClampCeilingOrDefault"));
         Assert.That(computeSupplyProfileBody, Does.Contain("GetOfficialSupplyDebtDeltaClampFloorOrDefault"));
@@ -21232,6 +21234,188 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "OfficialSupplyMigrationDeltaClampLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_official_supply_burden_event_threshold_extraction_v1165_v1172_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-official-supply-burden-event-threshold-extraction-v1165-v1172.md"));
+        string eventDispatch = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.EventDispatch.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "OfficialSupplyBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int dispatchStart = eventDispatch.IndexOf(
+            "private void DispatchOfficeSupplyEvents",
+            StringComparison.Ordinal);
+        Assert.That(dispatchStart, Is.GreaterThanOrEqualTo(0));
+        string dispatchBody = eventDispatch.Substring(dispatchStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1165-V1172 PopulationAndHouseholds Official Supply Burden Event Threshold Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households official supply burden event threshold extraction: v1165-v1172"));
+        Assert.That(designAudit, Does.Contain("v1165-v1172 population households official supply burden event threshold extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds official supply burden event threshold extraction v1165-v1172 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds official supply burden event threshold extraction v1165-v1172 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households official supply burden event threshold extraction v1165-v1172 note"));
+        Assert.That(uiPresentation, Does.Contain("v1165-v1172 population households official supply burden event threshold extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds official supply burden event threshold extraction v1165-v1172 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1165-V1172 PopulationAndHouseholds Official Supply Burden Event Threshold Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Official Supply Burden Event Threshold Extraction Through V1172"));
+        Assert.That(schemaRules, Does.Contain("population households official supply burden event threshold extraction v1165-v1172 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households official supply burden event threshold extraction v1165-v1172 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded official-supply burden event distress threshold: `80`",
+                     "DefaultOfficialSupplyBurdenEventDistressThreshold = 80",
+                     "No official-supply distress delta retune.",
+                     "No official-supply debt delta retune.",
+                     "No official-supply labor drop retune.",
+                     "No official-supply migration delta retune.",
+                     "No official-supply signal fallback/clamp extraction.",
+                     "No official-supply livelihood/resource/labor/liquidity/fragility/interaction formula extraction.",
+                     "No tax-season formula extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(dispatchBody, Does.Contain("GetOfficialSupplyBurdenEventDistressThresholdOrDefault"));
+        Assert.That(dispatchBody, Does.Not.Contain("oldDistress < 80 && household.Distress >= 80"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyBurdenEventDistressThreshold = 80"));
+        Assert.That(rulesData, Does.Contain("official_supply_burden_event_distress_threshold must be between 0 and 100"));
+        Assert.That(rulesData, Does.Contain("GetOfficialSupplyBurdenEventDistressThresholdOrDefault"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_DefaultBurdenEventDistressThresholdRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_CustomBurdenEventDistressThresholdRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_InvalidBurdenEventDistressThresholdRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyBurdenEventDistressThreshold"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "OfficialSupplyBurdenEventDistressThreshold",
+                     "OfficialSupplyBurdenOutcomeCalculator",
+                     "PopulationAndHouseholdsOfficialSupplyBurdenRules",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "OfficialSupplyBurdenEventDistressThreshold",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "OfficialSupplyBurdenEventThresholdLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

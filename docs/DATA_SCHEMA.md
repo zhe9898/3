@@ -1750,3 +1750,8 @@ V1149-V1156 extracts the official-supply labor drop clamp floor/ceiling into in-
 Current population households official supply migration delta clamp extraction v1157-v1164 note:
 
 V1157-V1164 extracts the official-supply migration delta clamp floor/ceiling into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted official-supply-migration-delta-clamp field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+### Current population households official supply burden event threshold extraction v1165-v1172 note
+
+Schema/migration impact: none. V1165-V1172 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply burden event threshold is an in-memory `PopulationHouseholdMobilityRulesData` default/validation parameter consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

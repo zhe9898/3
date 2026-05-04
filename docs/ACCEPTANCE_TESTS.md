@@ -1414,3 +1414,6 @@ Acceptance evidence for V1157-V1164:
 - Architecture guard `Population_households_official_supply_migration_delta_clamp_extraction_v1157_v1164_must_remain_owner_consumed_and_schema_neutral` proves the official-supply migration delta clamp moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract official-supply debt/labor/migration delta clamps, official-supply event threshold, official-supply signal formulas, or tax-season formulas.
+### PopulationAndHouseholds official supply burden event threshold extraction v1165-v1172 acceptance
+
+Acceptance requires default-equivalent behavior for the official-supply burden event threshold, deterministic fallback for malformed threshold rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

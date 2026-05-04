@@ -78,6 +78,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyLaborDropClampCeiling,
     int OfficialSupplyMigrationDeltaClampFloor,
     int OfficialSupplyMigrationDeltaClampCeiling,
+    int OfficialSupplyBurdenEventDistressThreshold,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -174,6 +175,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyLaborDropClampCeiling = 8;
     public const int DefaultOfficialSupplyMigrationDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyMigrationDeltaClampCeiling = 8;
+    public const int DefaultOfficialSupplyBurdenEventDistressThreshold = 80;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -428,6 +430,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLaborDropClampCeiling,
             DefaultOfficialSupplyMigrationDeltaClampFloor,
             DefaultOfficialSupplyMigrationDeltaClampCeiling,
+            DefaultOfficialSupplyBurdenEventDistressThreshold,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -532,6 +535,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLaborDropClampCeiling,
             DefaultOfficialSupplyMigrationDeltaClampFloor,
             DefaultOfficialSupplyMigrationDeltaClampCeiling,
+            DefaultOfficialSupplyBurdenEventDistressThreshold,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -1275,6 +1279,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyMigrationDeltaClampFloor > OfficialSupplyMigrationDeltaClampCeiling)
         {
             errors.Add("official_supply_migration_delta_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyBurdenEventDistressThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_burden_event_distress_threshold must be between 0 and 100.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -2124,6 +2133,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyMigrationDeltaClampCeiling
             : DefaultOfficialSupplyMigrationDeltaClampCeiling;
+    }
+
+    public int GetOfficialSupplyBurdenEventDistressThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyBurdenEventDistressThreshold
+            : DefaultOfficialSupplyBurdenEventDistressThreshold;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()

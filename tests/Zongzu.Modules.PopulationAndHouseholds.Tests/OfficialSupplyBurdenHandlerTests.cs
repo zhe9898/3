@@ -575,6 +575,75 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackHousehold.MigrationRisk, Is.EqualTo(24));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultBurdenEventDistressThresholdRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyBurdenEventDistressThreshold = 80,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) = RunCrossingOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyBurdenEventDistressThreshold, Is.EqualTo(80));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyBurdenEventDistressThresholdOrDefault(), Is.EqualTo(80));
+        Assert.That(explicitEvent.EntityKey, Is.EqualTo(defaultEvent.EntityKey));
+        Assert.That(
+            explicitEvent.Metadata[DomainEventMetadataKeys.DistressAfter],
+            Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.DistressAfter]));
+        Assert.That(
+            explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta],
+            Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomBurdenEventDistressThresholdRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyBurdenEventDistressThreshold = 58,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLowThresholdOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunLowThresholdOfficialSupply(customRulesData);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+        Assert.That(customEvent.EntityKey, Is.EqualTo("1"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.DistressBefore], Is.EqualTo("54"));
+        Assert.That(int.Parse(customEvent.Metadata[DomainEventMetadataKeys.DistressAfter]), Is.GreaterThanOrEqualTo(58));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.Not.Empty);
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidBurdenEventDistressThresholdRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyBurdenEventDistressThreshold = 101,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLowThresholdOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunLowThresholdOfficialSupply(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyBurdenEventDistressThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyBurdenEventDistressThreshold));
+        Assert.That(
+            fallbackEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased),
+            Is.EqualTo(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased)));
+        Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -585,6 +654,33 @@ public sealed class OfficialSupplyBurdenHandlerTests
             HouseholdName = "Zhang household",
             SettlementId = new SettlementId(1),
             Distress = 78,
+            DebtPressure = 30,
+            LaborCapacity = 80,
+            MigrationRisk = 20,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "70",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "9",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "2",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "3",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunLowThresholdOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Threshold smallholder",
+            SettlementId = new SettlementId(1),
+            Distress = 54,
             DebtPressure = 30,
             LaborCapacity = 80,
             MigrationRisk = 20,

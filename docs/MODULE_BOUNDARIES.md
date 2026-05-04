@@ -1802,3 +1802,8 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1157-V1164 extracts the official-supply migration delta clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` official-supply pressure profile helper. Module ownership, event scope, deterministic household traversal, burden mutation, metadata emission, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains official-supply-migration-delta-clamp, pressure-profile, rules-data, movement, route-history, or household mobility outcome authority.
+### PopulationAndHouseholds official supply burden event threshold extraction v1165-v1172 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of the official-supply burden event distress threshold. The extracted `DefaultOfficialSupplyBurdenEventDistressThreshold = 80` is a schema-neutral rules-data parameter, not module state, not public presentation authority, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply burden outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.
