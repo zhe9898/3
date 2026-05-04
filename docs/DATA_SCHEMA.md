@@ -1722,3 +1722,7 @@ V1093-V1100 extracts the subsistence interaction clamp floor/ceiling into in-cod
 Current population households subsistence event threshold extraction v1101-v1108 note:
 
 V1101-V1108 extracts the grain-price subsistence event distress crossing threshold into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted event-threshold field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households subsistence distress delta clamp extraction v1109-v1116 note:
+
+V1109-V1116 extracts the grain-price subsistence distress delta clamp floor/ceiling into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted delta-clamp field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

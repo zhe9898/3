@@ -68,7 +68,9 @@ public sealed partial class PopulationAndHouseholdsModule
             ComputeMarketDependencyPressure(household),
             ComputeSubsistenceLaborPressure(household),
             ComputeSubsistenceFragilityPressure(household),
-            ComputeSubsistenceInteractionPressure(household));
+            ComputeSubsistenceInteractionPressure(household),
+            _householdMobilityRulesData.GetSubsistencePressureDistressDeltaClampFloorOrDefault(),
+            _householdMobilityRulesData.GetSubsistencePressureDistressDeltaClampCeilingOrDefault());
     }
 
     private int ComputePricePressure(GrainPriceShockSignal signal)
@@ -518,12 +520,14 @@ public sealed partial class PopulationAndHouseholdsModule
         int MarketDependencyPressure,
         int LaborPressure,
         int FragilityPressure,
-        int InteractionPressure)
+        int InteractionPressure,
+        int DistressDeltaClampFloor,
+        int DistressDeltaClampCeiling)
     {
         public int DistressDelta => Math.Clamp(
             PricePressure + GrainBufferPressure + MarketDependencyPressure + LaborPressure + FragilityPressure + InteractionPressure,
-            4,
-            30);
+            DistressDeltaClampFloor,
+            DistressDeltaClampCeiling);
     }
 
     private readonly record struct TaxSeasonBurdenProfile(
