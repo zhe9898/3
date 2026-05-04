@@ -342,3 +342,7 @@ The V1189-V1196 extraction keeps official-supply livelihood exposure scores, lan
 ### population households official supply resource buffer extraction v1197-v1204 adds no persisted fields
 
 The V1197-V1204 extraction keeps official-supply resource buffer grain/tool/shelter bands, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.
+
+### population households official supply labor pressure extraction v1205-v1212 adds no persisted fields
+
+The V1205-V1212 extraction keeps official-supply labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.

@@ -105,6 +105,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyResourceShelterBufferFallbackScore,
     int OfficialSupplyResourceBufferClampFloor,
     int OfficialSupplyResourceBufferClampCeiling,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> OfficialSupplyLaborCapacityPressureBands,
+    int OfficialSupplyLaborCapacityPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> OfficialSupplyDependentCountPressureBands,
+    int OfficialSupplyDependentCountPressureFallbackScore,
+    int OfficialSupplyDependentToLaborRatioMultiplier,
+    int OfficialSupplyDependentToLaborRatioBonusScore,
+    int OfficialSupplyDependentToLaborRatioFallbackScore,
+    int OfficialSupplyLaborPressureClampFloor,
+    int OfficialSupplyLaborPressureClampCeiling,
     int OfficialSupplyDistressDeltaClampFloor,
     int OfficialSupplyDistressDeltaClampCeiling,
     int OfficialSupplyDebtDeltaClampFloor,
@@ -234,6 +243,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyResourceShelterBufferFallbackScore = 0;
     public const int DefaultOfficialSupplyResourceBufferClampFloor = 0;
     public const int DefaultOfficialSupplyResourceBufferClampCeiling = 7;
+    public const int DefaultOfficialSupplyLaborCapacityPressureFallbackScore = 4;
+    public const int DefaultOfficialSupplyDependentCountPressureFallbackScore = 0;
+    public const int DefaultOfficialSupplyDependentToLaborRatioMultiplier = 2;
+    public const int DefaultOfficialSupplyDependentToLaborRatioBonusScore = 1;
+    public const int DefaultOfficialSupplyDependentToLaborRatioFallbackScore = 0;
+    public const int DefaultOfficialSupplyLaborPressureClampFloor = -1;
+    public const int DefaultOfficialSupplyLaborPressureClampCeiling = 7;
     public const int DefaultOfficialSupplyDistressDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
@@ -278,6 +294,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxOfficialSupplyResourceBufferContribution = 8;
     public const int MinOfficialSupplyResourceBufferPressure = 0;
     public const int MaxOfficialSupplyResourceBufferPressure = 16;
+    public const int MinOfficialSupplyLaborPressureContribution = -4;
+    public const int MaxOfficialSupplyLaborPressureContribution = 8;
+    public const int MaxOfficialSupplyDependentCountThreshold = 32;
+    public const int MinOfficialSupplyLaborPressure = -4;
+    public const int MaxOfficialSupplyLaborPressure = 16;
     public const int MinOfficialSupplyDistressDelta = 0;
     public const int MaxOfficialSupplyDistressDelta = 64;
     public const int MinOfficialSupplyDebtDelta = 0;
@@ -471,6 +492,24 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(25, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultOfficialSupplyLaborCapacityPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, -1),
+            new PopulationHouseholdMobilityThresholdScoreBand(60, 0),
+            new PopulationHouseholdMobilityThresholdScoreBand(40, 1),
+            new PopulationHouseholdMobilityThresholdScoreBand(25, 3),
+        };
+
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultOfficialSupplyDependentCountPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(5, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(3, 1),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -572,6 +611,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyResourceShelterBufferFallbackScore,
             DefaultOfficialSupplyResourceBufferClampFloor,
             DefaultOfficialSupplyResourceBufferClampCeiling,
+            DefaultOfficialSupplyLaborCapacityPressureBands,
+            DefaultOfficialSupplyLaborCapacityPressureFallbackScore,
+            DefaultOfficialSupplyDependentCountPressureBands,
+            DefaultOfficialSupplyDependentCountPressureFallbackScore,
+            DefaultOfficialSupplyDependentToLaborRatioMultiplier,
+            DefaultOfficialSupplyDependentToLaborRatioBonusScore,
+            DefaultOfficialSupplyDependentToLaborRatioFallbackScore,
+            DefaultOfficialSupplyLaborPressureClampFloor,
+            DefaultOfficialSupplyLaborPressureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -712,6 +760,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyResourceShelterBufferFallbackScore,
             DefaultOfficialSupplyResourceBufferClampFloor,
             DefaultOfficialSupplyResourceBufferClampCeiling,
+            DefaultOfficialSupplyLaborCapacityPressureBands,
+            DefaultOfficialSupplyLaborCapacityPressureFallbackScore,
+            DefaultOfficialSupplyDependentCountPressureBands,
+            DefaultOfficialSupplyDependentCountPressureFallbackScore,
+            DefaultOfficialSupplyDependentToLaborRatioMultiplier,
+            DefaultOfficialSupplyDependentToLaborRatioBonusScore,
+            DefaultOfficialSupplyDependentToLaborRatioFallbackScore,
+            DefaultOfficialSupplyLaborPressureClampFloor,
+            DefaultOfficialSupplyLaborPressureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -1674,6 +1731,101 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyResourceBufferClampFloor > OfficialSupplyResourceBufferClampCeiling)
         {
             errors.Add("official_supply_resource_buffer_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyLaborCapacityPressureBands is null
+            || OfficialSupplyLaborCapacityPressureBands.Count == 0
+            || OfficialSupplyLaborCapacityPressureBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < MinOfficialSupplyLaborPressureContribution or > MaxOfficialSupplyLaborPressureContribution)
+            || OfficialSupplyLaborCapacityPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != OfficialSupplyLaborCapacityPressureBands.Count)
+        {
+            errors.Add(
+                $"official_supply_labor_capacity_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score {MinOfficialSupplyLaborPressureContribution}..{MaxOfficialSupplyLaborPressureContribution}.");
+        }
+
+        if (OfficialSupplyLaborCapacityPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < OfficialSupplyLaborCapacityPressureBands.Count; index++)
+            {
+                if (OfficialSupplyLaborCapacityPressureBands[index - 1].Threshold <= OfficialSupplyLaborCapacityPressureBands[index].Threshold)
+                {
+                    errors.Add("official_supply_labor_capacity_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (OfficialSupplyLaborCapacityPressureFallbackScore is < MinOfficialSupplyLaborPressureContribution or > MaxOfficialSupplyLaborPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_labor_capacity_pressure_fallback_score must be between {MinOfficialSupplyLaborPressureContribution} and {MaxOfficialSupplyLaborPressureContribution}.");
+        }
+
+        if (OfficialSupplyDependentCountPressureBands is null
+            || OfficialSupplyDependentCountPressureBands.Count == 0
+            || OfficialSupplyDependentCountPressureBands.Any(static band =>
+                band.Threshold is < 0 or > MaxOfficialSupplyDependentCountThreshold
+                || band.Score is < 0 or > MaxOfficialSupplyLaborPressureContribution)
+            || OfficialSupplyDependentCountPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != OfficialSupplyDependentCountPressureBands.Count)
+        {
+            errors.Add(
+                $"official_supply_dependent_count_pressure_bands must be non-empty, distinct, and between threshold 0..{MaxOfficialSupplyDependentCountThreshold} and score 0..{MaxOfficialSupplyLaborPressureContribution}.");
+        }
+
+        if (OfficialSupplyDependentCountPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < OfficialSupplyDependentCountPressureBands.Count; index++)
+            {
+                if (OfficialSupplyDependentCountPressureBands[index - 1].Threshold <= OfficialSupplyDependentCountPressureBands[index].Threshold)
+                {
+                    errors.Add("official_supply_dependent_count_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (OfficialSupplyDependentCountPressureFallbackScore is < 0 or > MaxOfficialSupplyLaborPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_dependent_count_pressure_fallback_score must be between 0 and {MaxOfficialSupplyLaborPressureContribution}.");
+        }
+
+        if (OfficialSupplyDependentToLaborRatioMultiplier is < 1 or > MaxOfficialSupplyDependentCountThreshold)
+        {
+            errors.Add(
+                $"official_supply_dependent_to_labor_ratio_multiplier must be between 1 and {MaxOfficialSupplyDependentCountThreshold}.");
+        }
+
+        if (OfficialSupplyDependentToLaborRatioBonusScore is < 0 or > MaxOfficialSupplyLaborPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_dependent_to_labor_ratio_bonus_score must be between 0 and {MaxOfficialSupplyLaborPressureContribution}.");
+        }
+
+        if (OfficialSupplyDependentToLaborRatioFallbackScore is < 0 or > MaxOfficialSupplyLaborPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_dependent_to_labor_ratio_fallback_score must be between 0 and {MaxOfficialSupplyLaborPressureContribution}.");
+        }
+
+        if (OfficialSupplyLaborPressureClampFloor is < MinOfficialSupplyLaborPressure or > MaxOfficialSupplyLaborPressure)
+        {
+            errors.Add(
+                $"official_supply_labor_pressure_clamp_floor must be between {MinOfficialSupplyLaborPressure} and {MaxOfficialSupplyLaborPressure}.");
+        }
+
+        if (OfficialSupplyLaborPressureClampCeiling is < MinOfficialSupplyLaborPressure or > MaxOfficialSupplyLaborPressure)
+        {
+            errors.Add(
+                $"official_supply_labor_pressure_clamp_ceiling must be between {MinOfficialSupplyLaborPressure} and {MaxOfficialSupplyLaborPressure}.");
+        }
+
+        if (OfficialSupplyLaborPressureClampFloor > OfficialSupplyLaborPressureClampCeiling)
+        {
+            errors.Add("official_supply_labor_pressure_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (OfficialSupplyDistressDeltaClampFloor is < MinOfficialSupplyDistressDelta or > MaxOfficialSupplyDistressDelta)
@@ -2844,6 +2996,107 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyResourceBufferClampCeiling
             : DefaultOfficialSupplyResourceBufferClampCeiling;
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetOfficialSupplyLaborCapacityPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborCapacityPressureBands
+            : DefaultOfficialSupplyLaborCapacityPressureBands;
+    }
+
+    public int GetOfficialSupplyLaborCapacityPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborCapacityPressureFallbackScore
+            : DefaultOfficialSupplyLaborCapacityPressureFallbackScore;
+    }
+
+    public int GetOfficialSupplyLaborCapacityPressureScoreOrDefault(int laborCapacity)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetOfficialSupplyLaborCapacityPressureBandsOrDefault())
+        {
+            if (laborCapacity >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetOfficialSupplyLaborCapacityPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetOfficialSupplyDependentCountPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDependentCountPressureBands
+            : DefaultOfficialSupplyDependentCountPressureBands;
+    }
+
+    public int GetOfficialSupplyDependentCountPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDependentCountPressureFallbackScore
+            : DefaultOfficialSupplyDependentCountPressureFallbackScore;
+    }
+
+    public int GetOfficialSupplyDependentCountPressureScoreOrDefault(int dependentCount)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetOfficialSupplyDependentCountPressureBandsOrDefault())
+        {
+            if (dependentCount >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetOfficialSupplyDependentCountPressureFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyDependentToLaborRatioMultiplierOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDependentToLaborRatioMultiplier
+            : DefaultOfficialSupplyDependentToLaborRatioMultiplier;
+    }
+
+    public int GetOfficialSupplyDependentToLaborRatioBonusScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDependentToLaborRatioBonusScore
+            : DefaultOfficialSupplyDependentToLaborRatioBonusScore;
+    }
+
+    public int GetOfficialSupplyDependentToLaborRatioFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDependentToLaborRatioFallbackScore
+            : DefaultOfficialSupplyDependentToLaborRatioFallbackScore;
+    }
+
+    public int GetOfficialSupplyDependentToLaborRatioScoreOrDefault(int laborerCount, int dependentCount)
+    {
+        return laborerCount > 0
+            && dependentCount > laborerCount * GetOfficialSupplyDependentToLaborRatioMultiplierOrDefault()
+                ? GetOfficialSupplyDependentToLaborRatioBonusScoreOrDefault()
+                : GetOfficialSupplyDependentToLaborRatioFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyLaborPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborPressureClampFloor
+            : DefaultOfficialSupplyLaborPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyLaborPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborPressureClampCeiling
+            : DefaultOfficialSupplyLaborPressureClampCeiling;
     }
 
     public int GetOfficialSupplyDistressDeltaClampFloorOrDefault()

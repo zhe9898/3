@@ -443,30 +443,20 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetOfficialSupplyResourceBufferClampCeilingOrDefault());
     }
 
-    private static int ComputeOfficialSupplyLaborPressure(PopulationHouseholdState household)
+    private int ComputeOfficialSupplyLaborPressure(PopulationHouseholdState household)
     {
-        int laborPressure = household.LaborCapacity switch
-        {
-            >= 80 => -1,
-            >= 60 => 0,
-            >= 40 => 1,
-            >= 25 => 3,
-            _ => 4,
-        };
+        int laborPressure = _householdMobilityRulesData.GetOfficialSupplyLaborCapacityPressureScoreOrDefault(
+            household.LaborCapacity);
+        int dependentPressure = _householdMobilityRulesData.GetOfficialSupplyDependentCountPressureScoreOrDefault(
+            household.DependentCount);
+        dependentPressure += _householdMobilityRulesData.GetOfficialSupplyDependentToLaborRatioScoreOrDefault(
+            household.LaborerCount,
+            household.DependentCount);
 
-        int dependentPressure = household.DependentCount switch
-        {
-            >= 5 => 2,
-            >= 3 => 1,
-            _ => 0,
-        };
-
-        if (household.LaborerCount > 0 && household.DependentCount > household.LaborerCount * 2)
-        {
-            dependentPressure += 1;
-        }
-
-        return Math.Clamp(laborPressure + dependentPressure, -1, 7);
+        return Math.Clamp(
+            laborPressure + dependentPressure,
+            _householdMobilityRulesData.GetOfficialSupplyLaborPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyLaborPressureClampCeilingOrDefault());
     }
 
     private static int ComputeOfficialSupplyLiquidityPressure(PopulationHouseholdState household)

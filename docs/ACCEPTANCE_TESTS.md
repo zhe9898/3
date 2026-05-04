@@ -1433,3 +1433,7 @@ Acceptance requires default-equivalent behavior for official-supply livelihood e
 ### PopulationAndHouseholds official supply resource buffer extraction v1197-v1204 acceptance
 
 Acceptance requires default-equivalent behavior for official-supply resource buffer grain/tool/shelter bands, fallback scores, and clamp, deterministic fallback for malformed resource buffer rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds official supply labor pressure extraction v1205-v1212 acceptance
+
+Acceptance requires default-equivalent behavior for official-supply labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp, deterministic fallback for malformed labor pressure rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

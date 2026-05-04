@@ -430,3 +430,7 @@ The UI and Unity shell remain downstream-only. V1189-V1196 changes where `Popula
 ### v1197-v1204 population households official supply resource buffer extraction
 
 The UI and Unity shell remain downstream-only. V1197-V1204 changes where `PopulationAndHouseholds` owns official-supply resource buffer grain/tool/shelter bands; presentation surfaces may only copy projected fields/events and must not calculate resource buffers, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1205-v1212 population households official supply labor pressure extraction
+
+The UI and Unity shell remain downstream-only. V1205-V1212 changes where `PopulationAndHouseholds` owns official-supply labor capacity bands, dependent count bands, and dependent/labor ratio bonus; presentation surfaces may only copy projected fields/events and must not calculate labor pressure, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.
