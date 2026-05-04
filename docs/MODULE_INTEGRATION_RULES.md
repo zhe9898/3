@@ -1397,4 +1397,10 @@ Tax-season registration visibility ownership is internal to `PopulationAndHouseh
 
 No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate tax-season registration visibility outcomes, and no prose parsing or loader/plugin system is introduced.
 
+### PopulationAndHouseholds tax season liquidity pressure extraction v1277-v1284 integration note
+
+Tax-season liquidity ownership is internal to `PopulationAndHouseholds`. Upstream `WorldSettlements` still emits structured tax-season events; `PopulationAndHouseholds` applies owner-owned grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback scores, and clamp while computing the household tax burden profile.
+
+No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate tax-season liquidity outcomes, and no prose parsing or loader/plugin system is introduced.
+
 No integration path may route these liquidity pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist liquidity pressure state, retune the shared cash-need livelihood predicate, or create migration/route-history/class-status authority.

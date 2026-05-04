@@ -73,6 +73,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int TaxSeasonRegistrationVisibilityLandVisibilityFallbackScore,
     int TaxSeasonRegistrationVisibilityClampFloor,
     int TaxSeasonRegistrationVisibilityClampCeiling,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> TaxSeasonLiquidityGrainPressureBands,
+    int TaxSeasonLiquidityGrainPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> TaxSeasonLiquidityCashNeedScoreWeights,
+    int TaxSeasonLiquidityCashNeedFallbackScore,
+    int TaxSeasonLiquidityToolDragConditionThreshold,
+    int TaxSeasonLiquidityToolDragScore,
+    int TaxSeasonLiquidityToolDragFallbackScore,
+    int TaxSeasonLiquidityPressureClampFloor,
+    int TaxSeasonLiquidityPressureClampCeiling,
     int TaxSeasonDebtDeltaClampFloor,
     int TaxSeasonDebtDeltaClampCeiling,
     int TaxSeasonDebtSpikeEventThreshold,
@@ -285,6 +294,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore = 0;
     public const int DefaultTaxSeasonRegistrationVisibilityClampFloor = 1;
     public const int DefaultTaxSeasonRegistrationVisibilityClampCeiling = 7;
+    public const int DefaultTaxSeasonLiquidityGrainPressureFallbackScore = 0;
+    public const int DefaultTaxSeasonLiquidityCashNeedFallbackScore = 0;
+    public const int DefaultTaxSeasonLiquidityToolDragConditionThreshold = 35;
+    public const int DefaultTaxSeasonLiquidityToolDragScore = 1;
+    public const int DefaultTaxSeasonLiquidityToolDragFallbackScore = 0;
+    public const int DefaultTaxSeasonLiquidityPressureClampFloor = -3;
+    public const int DefaultTaxSeasonLiquidityPressureClampCeiling = 5;
     public const int DefaultTaxSeasonDebtDeltaClampFloor = 8;
     public const int DefaultTaxSeasonDebtDeltaClampCeiling = 28;
     public const int DefaultTaxSeasonDebtSpikeEventThreshold = 70;
@@ -422,6 +438,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxTaxSeasonRegistrationVisibilityLandVisibilityScore = 8;
     public const int MinTaxSeasonRegistrationVisibilityPressure = 0;
     public const int MaxTaxSeasonRegistrationVisibilityPressure = 16;
+    public const int MinTaxSeasonLiquidityPressureContribution = -8;
+    public const int MaxTaxSeasonLiquidityPressureContribution = 8;
+    public const int MinTaxSeasonLiquidityPressure = -8;
+    public const int MaxTaxSeasonLiquidityPressure = 16;
     public const int MinTaxSeasonDebtDelta = 0;
     public const int MaxTaxSeasonDebtDelta = 64;
     public const int MaxOfficialSupplyFallbackFrontierPressure = 100;
@@ -640,6 +660,30 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(1, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultTaxSeasonLiquidityGrainPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, -3),
+            new PopulationHouseholdMobilityThresholdScoreBand(60, -2),
+            new PopulationHouseholdMobilityThresholdScoreBand(40, -1),
+            new PopulationHouseholdMobilityThresholdScoreBand(20, 1),
+            new PopulationHouseholdMobilityThresholdScoreBand(1, 3),
+        };
+
+    public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        DefaultTaxSeasonLiquidityCashNeedScoreWeights { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.PettyTrader, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Boatman, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Artisan, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.SeasonalMigrant, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.HiredLabor, 1),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Vagrant, 1),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Tenant, 1),
+        };
+
     public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
         DefaultOfficialSupplyLivelihoodExposureScoreWeights { get; } =
         new[]
@@ -801,6 +845,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore,
             DefaultTaxSeasonRegistrationVisibilityClampFloor,
             DefaultTaxSeasonRegistrationVisibilityClampCeiling,
+            DefaultTaxSeasonLiquidityGrainPressureBands,
+            DefaultTaxSeasonLiquidityGrainPressureFallbackScore,
+            DefaultTaxSeasonLiquidityCashNeedScoreWeights,
+            DefaultTaxSeasonLiquidityCashNeedFallbackScore,
+            DefaultTaxSeasonLiquidityToolDragConditionThreshold,
+            DefaultTaxSeasonLiquidityToolDragScore,
+            DefaultTaxSeasonLiquidityToolDragFallbackScore,
+            DefaultTaxSeasonLiquidityPressureClampFloor,
+            DefaultTaxSeasonLiquidityPressureClampCeiling,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
@@ -1023,6 +1076,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore,
             DefaultTaxSeasonRegistrationVisibilityClampFloor,
             DefaultTaxSeasonRegistrationVisibilityClampCeiling,
+            DefaultTaxSeasonLiquidityGrainPressureBands,
+            DefaultTaxSeasonLiquidityGrainPressureFallbackScore,
+            DefaultTaxSeasonLiquidityCashNeedScoreWeights,
+            DefaultTaxSeasonLiquidityCashNeedFallbackScore,
+            DefaultTaxSeasonLiquidityToolDragConditionThreshold,
+            DefaultTaxSeasonLiquidityToolDragScore,
+            DefaultTaxSeasonLiquidityToolDragFallbackScore,
+            DefaultTaxSeasonLiquidityPressureClampFloor,
+            DefaultTaxSeasonLiquidityPressureClampCeiling,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
@@ -1872,6 +1934,92 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (TaxSeasonRegistrationVisibilityClampFloor > TaxSeasonRegistrationVisibilityClampCeiling)
         {
             errors.Add("tax_season_registration_visibility_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (TaxSeasonLiquidityGrainPressureBands is null
+            || TaxSeasonLiquidityGrainPressureBands.Count == 0
+            || TaxSeasonLiquidityGrainPressureBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < MinTaxSeasonLiquidityPressureContribution
+                    or > MaxTaxSeasonLiquidityPressureContribution)
+            || TaxSeasonLiquidityGrainPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != TaxSeasonLiquidityGrainPressureBands.Count)
+        {
+            errors.Add(
+                $"tax_season_liquidity_grain_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score {MinTaxSeasonLiquidityPressureContribution}..{MaxTaxSeasonLiquidityPressureContribution}.");
+        }
+
+        if (TaxSeasonLiquidityGrainPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < TaxSeasonLiquidityGrainPressureBands.Count; index++)
+            {
+                if (TaxSeasonLiquidityGrainPressureBands[index - 1].Threshold <= TaxSeasonLiquidityGrainPressureBands[index].Threshold)
+                {
+                    errors.Add("tax_season_liquidity_grain_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (TaxSeasonLiquidityGrainPressureFallbackScore is < MinTaxSeasonLiquidityPressureContribution
+            or > MaxTaxSeasonLiquidityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_liquidity_grain_pressure_fallback_score must be between {MinTaxSeasonLiquidityPressureContribution} and {MaxTaxSeasonLiquidityPressureContribution}.");
+        }
+
+        if (TaxSeasonLiquidityCashNeedScoreWeights is null
+            || TaxSeasonLiquidityCashNeedScoreWeights.Count == 0
+            || TaxSeasonLiquidityCashNeedScoreWeights.Any(static entry =>
+                !Enum.IsDefined(entry.Livelihood)
+                || entry.Weight is < 0 or > MaxTaxSeasonLiquidityPressureContribution)
+            || TaxSeasonLiquidityCashNeedScoreWeights
+                .Select(static entry => entry.Livelihood)
+                .Distinct()
+                .Count() != TaxSeasonLiquidityCashNeedScoreWeights.Count)
+        {
+            errors.Add(
+                $"tax_season_liquidity_cash_need_score_weights must be non-empty, distinct, defined, and between 0 and {MaxTaxSeasonLiquidityPressureContribution}.");
+        }
+
+        if (TaxSeasonLiquidityCashNeedFallbackScore is < 0 or > MaxTaxSeasonLiquidityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_liquidity_cash_need_fallback_score must be between 0 and {MaxTaxSeasonLiquidityPressureContribution}.");
+        }
+
+        if (TaxSeasonLiquidityToolDragConditionThreshold is < 0 or > 100)
+        {
+            errors.Add("tax_season_liquidity_tool_drag_condition_threshold must be between 0 and 100.");
+        }
+
+        if (TaxSeasonLiquidityToolDragScore is < 0 or > MaxTaxSeasonLiquidityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_liquidity_tool_drag_score must be between 0 and {MaxTaxSeasonLiquidityPressureContribution}.");
+        }
+
+        if (TaxSeasonLiquidityToolDragFallbackScore is < 0 or > MaxTaxSeasonLiquidityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_liquidity_tool_drag_fallback_score must be between 0 and {MaxTaxSeasonLiquidityPressureContribution}.");
+        }
+
+        if (TaxSeasonLiquidityPressureClampFloor is < MinTaxSeasonLiquidityPressure or > MaxTaxSeasonLiquidityPressure)
+        {
+            errors.Add(
+                $"tax_season_liquidity_pressure_clamp_floor must be between {MinTaxSeasonLiquidityPressure} and {MaxTaxSeasonLiquidityPressure}.");
+        }
+
+        if (TaxSeasonLiquidityPressureClampCeiling is < MinTaxSeasonLiquidityPressure or > MaxTaxSeasonLiquidityPressure)
+        {
+            errors.Add(
+                $"tax_season_liquidity_pressure_clamp_ceiling must be between {MinTaxSeasonLiquidityPressure} and {MaxTaxSeasonLiquidityPressure}.");
+        }
+
+        if (TaxSeasonLiquidityPressureClampFloor > TaxSeasonLiquidityPressureClampCeiling)
+        {
+            errors.Add("tax_season_liquidity_pressure_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (TaxSeasonDebtDeltaClampFloor is < MinTaxSeasonDebtDelta or > MaxTaxSeasonDebtDelta)
@@ -3668,6 +3816,107 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? TaxSeasonRegistrationVisibilityClampCeiling
             : DefaultTaxSeasonRegistrationVisibilityClampCeiling;
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetTaxSeasonLiquidityGrainPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityGrainPressureBands
+            : DefaultTaxSeasonLiquidityGrainPressureBands;
+    }
+
+    public int GetTaxSeasonLiquidityGrainPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityGrainPressureFallbackScore
+            : DefaultTaxSeasonLiquidityGrainPressureFallbackScore;
+    }
+
+    public int GetTaxSeasonLiquidityGrainPressureScoreOrDefault(int grainStore)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetTaxSeasonLiquidityGrainPressureBandsOrDefault())
+        {
+            if (grainStore >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetTaxSeasonLiquidityGrainPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        GetTaxSeasonLiquidityCashNeedScoreWeightsOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityCashNeedScoreWeights
+            : DefaultTaxSeasonLiquidityCashNeedScoreWeights;
+    }
+
+    public int GetTaxSeasonLiquidityCashNeedFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityCashNeedFallbackScore
+            : DefaultTaxSeasonLiquidityCashNeedFallbackScore;
+    }
+
+    public int GetTaxSeasonLiquidityCashNeedScoreOrDefault(LivelihoodType livelihood)
+    {
+        foreach (PopulationHouseholdMobilityLivelihoodScoreWeight entry in
+                 GetTaxSeasonLiquidityCashNeedScoreWeightsOrDefault())
+        {
+            if (entry.Livelihood == livelihood)
+            {
+                return entry.Weight;
+            }
+        }
+
+        return GetTaxSeasonLiquidityCashNeedFallbackScoreOrDefault();
+    }
+
+    public int GetTaxSeasonLiquidityToolDragConditionThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityToolDragConditionThreshold
+            : DefaultTaxSeasonLiquidityToolDragConditionThreshold;
+    }
+
+    public int GetTaxSeasonLiquidityToolDragScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityToolDragScore
+            : DefaultTaxSeasonLiquidityToolDragScore;
+    }
+
+    public int GetTaxSeasonLiquidityToolDragFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityToolDragFallbackScore
+            : DefaultTaxSeasonLiquidityToolDragFallbackScore;
+    }
+
+    public int GetTaxSeasonLiquidityToolDragScoreOrDefault(int toolCondition)
+    {
+        return toolCondition is > 0
+            && toolCondition < GetTaxSeasonLiquidityToolDragConditionThresholdOrDefault()
+                ? GetTaxSeasonLiquidityToolDragScoreOrDefault()
+                : GetTaxSeasonLiquidityToolDragFallbackScoreOrDefault();
+    }
+
+    public int GetTaxSeasonLiquidityPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityPressureClampFloor
+            : DefaultTaxSeasonLiquidityPressureClampFloor;
+    }
+
+    public int GetTaxSeasonLiquidityPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonLiquidityPressureClampCeiling
+            : DefaultTaxSeasonLiquidityPressureClampCeiling;
     }
 
     public int GetTaxSeasonDebtDeltaClampFloorOrDefault()
