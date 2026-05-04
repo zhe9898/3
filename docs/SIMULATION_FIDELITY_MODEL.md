@@ -1197,3 +1197,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1237-V1244 changes parameter ownership only. The official-supply distress delta formula divisors and component weights are validated and consumed by `PopulationAndHouseholds`, while official-supply component pressure scoring, interaction pressure, debt/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-distress-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1245-V1252 PopulationAndHouseholds Official Supply Debt Delta Formula Extraction
+
+V1245-V1252 changes parameter ownership only. The official-supply debt delta formula divisors, interaction floor, and component weights are validated and consumed by `PopulationAndHouseholds`, while official-supply component pressure scoring, distress/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-debt-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

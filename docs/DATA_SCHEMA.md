@@ -1809,3 +1809,9 @@ The official-supply interaction livelihood conditions, thresholds, boost scores,
 Schema/migration impact: none. V1237-V1244 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply distress delta formula divisors and component weights are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply debt delta formula extraction v1245-v1252 note
+
+Schema/migration impact: none. V1245-V1252 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply debt delta formula divisors, interaction floor, and component weights are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

@@ -362,3 +362,7 @@ The V1229-V1236 extraction keeps official-supply interaction livelihood conditio
 ### population households official supply distress delta formula extraction v1237-v1244 adds no persisted fields
 
 The V1237-V1244 extraction keeps official-supply distress delta formula divisors and component weights in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
+
+### population households official supply debt delta formula extraction v1245-v1252 adds no persisted fields
+
+The V1245-V1252 extraction keeps official-supply debt delta formula divisors, interaction floor, and component weights in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
