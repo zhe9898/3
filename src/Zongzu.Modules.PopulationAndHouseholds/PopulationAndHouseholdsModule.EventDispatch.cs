@@ -89,7 +89,7 @@ public sealed partial class PopulationAndHouseholdsModule
         }
     }
 
-    private static void DispatchWorldPulseEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    private void DispatchWorldPulseEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
     {
         // Step 1b gap 3 — thin dispatch only. No state change, no Emit, no diff.
         // 维度入口：洪灾 / 徭役窗口落在哪个聚落；家户 sponsor clan 支撑力；家底 ratio；季节带。
@@ -109,7 +109,7 @@ public sealed partial class PopulationAndHouseholdsModule
         }
     }
 
-    private static void ApplyTaxSeasonPressure(
+    private void ApplyTaxSeasonPressure(
         ModuleEventHandlingScope<PopulationAndHouseholdsState> scope,
         IDomainEvent domainEvent)
     {

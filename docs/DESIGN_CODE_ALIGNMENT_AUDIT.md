@@ -1087,3 +1087,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1109-v1116 pass moves the `SubsistencePressureProfile.DistressDelta` clamp from C# literals `4..30` into validated `PopulationHouseholdMobilityRulesData` default getters.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes and event emission; event threshold remains unchanged; Application/UI/Unity do not calculate subsistence distress delta or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1117-v1124 population households tax season debt delta clamp extraction audit - 2026-05-03
+
+The v1117-v1124 pass moves the `TaxSeasonBurdenProfile.DebtDelta` clamp from C# literals `8..28` into validated `PopulationHouseholdMobilityRulesData` default getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household tax-season debt outcomes and event emission; debt spike event threshold and tax component formulas remain unchanged; Application/UI/Unity do not calculate tax debt delta or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
