@@ -477,27 +477,22 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetOfficialSupplyLiquidityPressureClampCeilingOrDefault());
     }
 
-    private static int ComputeOfficialSupplyFragilityPressure(PopulationHouseholdState household)
+    private int ComputeOfficialSupplyFragilityPressure(PopulationHouseholdState household)
     {
-        int distressPressure = household.Distress switch
-        {
-            >= 80 => 3,
-            >= 65 => 2,
-            >= 50 => 1,
-            _ => 0,
-        };
+        int distressPressure = _householdMobilityRulesData.GetOfficialSupplyFragilityDistressPressureScoreOrDefault(
+            household.Distress);
+        int debtPressure = _householdMobilityRulesData.GetOfficialSupplyFragilityDebtPressureScoreOrDefault(
+            household.DebtPressure);
+        int migrationPressure = _householdMobilityRulesData.GetOfficialSupplyFragilityMigrationPressureScoreOrDefault(
+            household.IsMigrating,
+            household.MigrationRisk);
+        int shelterDrag = _householdMobilityRulesData.GetOfficialSupplyFragilityShelterDragPressureScoreOrDefault(
+            household.ShelterQuality);
 
-        int debtPressure = household.DebtPressure switch
-        {
-            >= 80 => 3,
-            >= 65 => 2,
-            >= 50 => 1,
-            _ => 0,
-        };
-
-        int migrationPressure = household.IsMigrating || household.MigrationRisk >= 70 ? 1 : 0;
-        int shelterDrag = household.ShelterQuality is > 0 and < 35 ? 1 : 0;
-        return Math.Clamp(distressPressure + debtPressure + migrationPressure + shelterDrag, 0, 8);
+        return Math.Clamp(
+            distressPressure + debtPressure + migrationPressure + shelterDrag,
+            _householdMobilityRulesData.GetOfficialSupplyFragilityPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyFragilityPressureClampCeilingOrDefault());
     }
 
     private static int ComputeOfficialSupplyInteractionPressure(

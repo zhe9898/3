@@ -125,6 +125,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyLiquidityDebtDragPressureFallbackScore,
     int OfficialSupplyLiquidityPressureClampFloor,
     int OfficialSupplyLiquidityPressureClampCeiling,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> OfficialSupplyFragilityDistressPressureBands,
+    int OfficialSupplyFragilityDistressPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> OfficialSupplyFragilityDebtPressureBands,
+    int OfficialSupplyFragilityDebtPressureFallbackScore,
+    int OfficialSupplyFragilityMigrationRiskThreshold,
+    int OfficialSupplyFragilityMigrationPressureScore,
+    int OfficialSupplyFragilityMigrationPressureFallbackScore,
+    int OfficialSupplyFragilityShelterDragQualityThreshold,
+    int OfficialSupplyFragilityShelterDragPressureScore,
+    int OfficialSupplyFragilityShelterDragPressureFallbackScore,
+    int OfficialSupplyFragilityPressureClampFloor,
+    int OfficialSupplyFragilityPressureClampCeiling,
     int OfficialSupplyDistressDeltaClampFloor,
     int OfficialSupplyDistressDeltaClampCeiling,
     int OfficialSupplyDebtDeltaClampFloor,
@@ -270,6 +282,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyLiquidityDebtDragPressureFallbackScore = 0;
     public const int DefaultOfficialSupplyLiquidityPressureClampFloor = -2;
     public const int DefaultOfficialSupplyLiquidityPressureClampCeiling = 7;
+    public const int DefaultOfficialSupplyFragilityDistressPressureFallbackScore = 0;
+    public const int DefaultOfficialSupplyFragilityDebtPressureFallbackScore = 0;
+    public const int DefaultOfficialSupplyFragilityMigrationRiskThreshold = 70;
+    public const int DefaultOfficialSupplyFragilityMigrationPressureScore = 1;
+    public const int DefaultOfficialSupplyFragilityMigrationPressureFallbackScore = 0;
+    public const int DefaultOfficialSupplyFragilityShelterDragQualityThreshold = 35;
+    public const int DefaultOfficialSupplyFragilityShelterDragPressureScore = 1;
+    public const int DefaultOfficialSupplyFragilityShelterDragPressureFallbackScore = 0;
+    public const int DefaultOfficialSupplyFragilityPressureClampFloor = 0;
+    public const int DefaultOfficialSupplyFragilityPressureClampCeiling = 8;
     public const int DefaultOfficialSupplyDistressDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
@@ -323,6 +345,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxOfficialSupplyLiquidityPressureContribution = 8;
     public const int MinOfficialSupplyLiquidityPressure = -8;
     public const int MaxOfficialSupplyLiquidityPressure = 16;
+    public const int MaxOfficialSupplyFragilityPressureContribution = 8;
+    public const int MinOfficialSupplyFragilityPressure = 0;
+    public const int MaxOfficialSupplyFragilityPressure = 16;
     public const int MinOfficialSupplyDistressDelta = 0;
     public const int MaxOfficialSupplyDistressDelta = 64;
     public const int MinOfficialSupplyDebtDelta = 0;
@@ -552,6 +577,24 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultOfficialSupplyFragilityDistressPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, 3),
+            new PopulationHouseholdMobilityThresholdScoreBand(65, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
+        };
+
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultOfficialSupplyFragilityDebtPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, 3),
+            new PopulationHouseholdMobilityThresholdScoreBand(65, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -673,6 +716,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLiquidityDebtDragPressureFallbackScore,
             DefaultOfficialSupplyLiquidityPressureClampFloor,
             DefaultOfficialSupplyLiquidityPressureClampCeiling,
+            DefaultOfficialSupplyFragilityDistressPressureBands,
+            DefaultOfficialSupplyFragilityDistressPressureFallbackScore,
+            DefaultOfficialSupplyFragilityDebtPressureBands,
+            DefaultOfficialSupplyFragilityDebtPressureFallbackScore,
+            DefaultOfficialSupplyFragilityMigrationRiskThreshold,
+            DefaultOfficialSupplyFragilityMigrationPressureScore,
+            DefaultOfficialSupplyFragilityMigrationPressureFallbackScore,
+            DefaultOfficialSupplyFragilityShelterDragQualityThreshold,
+            DefaultOfficialSupplyFragilityShelterDragPressureScore,
+            DefaultOfficialSupplyFragilityShelterDragPressureFallbackScore,
+            DefaultOfficialSupplyFragilityPressureClampFloor,
+            DefaultOfficialSupplyFragilityPressureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -833,6 +888,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLiquidityDebtDragPressureFallbackScore,
             DefaultOfficialSupplyLiquidityPressureClampFloor,
             DefaultOfficialSupplyLiquidityPressureClampCeiling,
+            DefaultOfficialSupplyFragilityDistressPressureBands,
+            DefaultOfficialSupplyFragilityDistressPressureFallbackScore,
+            DefaultOfficialSupplyFragilityDebtPressureBands,
+            DefaultOfficialSupplyFragilityDebtPressureFallbackScore,
+            DefaultOfficialSupplyFragilityMigrationRiskThreshold,
+            DefaultOfficialSupplyFragilityMigrationPressureScore,
+            DefaultOfficialSupplyFragilityMigrationPressureFallbackScore,
+            DefaultOfficialSupplyFragilityShelterDragQualityThreshold,
+            DefaultOfficialSupplyFragilityShelterDragPressureScore,
+            DefaultOfficialSupplyFragilityShelterDragPressureFallbackScore,
+            DefaultOfficialSupplyFragilityPressureClampFloor,
+            DefaultOfficialSupplyFragilityPressureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -1996,6 +2063,117 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyLiquidityPressureClampFloor > OfficialSupplyLiquidityPressureClampCeiling)
         {
             errors.Add("official_supply_liquidity_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyFragilityDistressPressureBands is null
+            || OfficialSupplyFragilityDistressPressureBands.Count == 0
+            || OfficialSupplyFragilityDistressPressureBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < 0 or > MaxOfficialSupplyFragilityPressureContribution)
+            || OfficialSupplyFragilityDistressPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != OfficialSupplyFragilityDistressPressureBands.Count)
+        {
+            errors.Add(
+                $"official_supply_fragility_distress_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score 0..{MaxOfficialSupplyFragilityPressureContribution}.");
+        }
+
+        if (OfficialSupplyFragilityDistressPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < OfficialSupplyFragilityDistressPressureBands.Count; index++)
+            {
+                if (OfficialSupplyFragilityDistressPressureBands[index - 1].Threshold <= OfficialSupplyFragilityDistressPressureBands[index].Threshold)
+                {
+                    errors.Add("official_supply_fragility_distress_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (OfficialSupplyFragilityDistressPressureFallbackScore is < 0 or > MaxOfficialSupplyFragilityPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_fragility_distress_pressure_fallback_score must be between 0 and {MaxOfficialSupplyFragilityPressureContribution}.");
+        }
+
+        if (OfficialSupplyFragilityDebtPressureBands is null
+            || OfficialSupplyFragilityDebtPressureBands.Count == 0
+            || OfficialSupplyFragilityDebtPressureBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < 0 or > MaxOfficialSupplyFragilityPressureContribution)
+            || OfficialSupplyFragilityDebtPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != OfficialSupplyFragilityDebtPressureBands.Count)
+        {
+            errors.Add(
+                $"official_supply_fragility_debt_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score 0..{MaxOfficialSupplyFragilityPressureContribution}.");
+        }
+
+        if (OfficialSupplyFragilityDebtPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < OfficialSupplyFragilityDebtPressureBands.Count; index++)
+            {
+                if (OfficialSupplyFragilityDebtPressureBands[index - 1].Threshold <= OfficialSupplyFragilityDebtPressureBands[index].Threshold)
+                {
+                    errors.Add("official_supply_fragility_debt_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (OfficialSupplyFragilityDebtPressureFallbackScore is < 0 or > MaxOfficialSupplyFragilityPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_fragility_debt_pressure_fallback_score must be between 0 and {MaxOfficialSupplyFragilityPressureContribution}.");
+        }
+
+        if (OfficialSupplyFragilityMigrationRiskThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_fragility_migration_risk_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyFragilityMigrationPressureScore is < 0 or > MaxOfficialSupplyFragilityPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_fragility_migration_pressure_score must be between 0 and {MaxOfficialSupplyFragilityPressureContribution}.");
+        }
+
+        if (OfficialSupplyFragilityMigrationPressureFallbackScore is < 0 or > MaxOfficialSupplyFragilityPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_fragility_migration_pressure_fallback_score must be between 0 and {MaxOfficialSupplyFragilityPressureContribution}.");
+        }
+
+        if (OfficialSupplyFragilityShelterDragQualityThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_fragility_shelter_drag_quality_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyFragilityShelterDragPressureScore is < 0 or > MaxOfficialSupplyFragilityPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_fragility_shelter_drag_pressure_score must be between 0 and {MaxOfficialSupplyFragilityPressureContribution}.");
+        }
+
+        if (OfficialSupplyFragilityShelterDragPressureFallbackScore is < 0 or > MaxOfficialSupplyFragilityPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_fragility_shelter_drag_pressure_fallback_score must be between 0 and {MaxOfficialSupplyFragilityPressureContribution}.");
+        }
+
+        if (OfficialSupplyFragilityPressureClampFloor is < MinOfficialSupplyFragilityPressure or > MaxOfficialSupplyFragilityPressure)
+        {
+            errors.Add(
+                $"official_supply_fragility_pressure_clamp_floor must be between {MinOfficialSupplyFragilityPressure} and {MaxOfficialSupplyFragilityPressure}.");
+        }
+
+        if (OfficialSupplyFragilityPressureClampCeiling is < MinOfficialSupplyFragilityPressure or > MaxOfficialSupplyFragilityPressure)
+        {
+            errors.Add(
+                $"official_supply_fragility_pressure_clamp_ceiling must be between {MinOfficialSupplyFragilityPressure} and {MaxOfficialSupplyFragilityPressure}.");
+        }
+
+        if (OfficialSupplyFragilityPressureClampFloor > OfficialSupplyFragilityPressureClampCeiling)
+        {
+            errors.Add("official_supply_fragility_pressure_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (OfficialSupplyDistressDeltaClampFloor is < MinOfficialSupplyDistressDelta or > MaxOfficialSupplyDistressDelta)
@@ -3382,6 +3560,137 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyLiquidityPressureClampCeiling
             : DefaultOfficialSupplyLiquidityPressureClampCeiling;
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetOfficialSupplyFragilityDistressPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityDistressPressureBands
+            : DefaultOfficialSupplyFragilityDistressPressureBands;
+    }
+
+    public int GetOfficialSupplyFragilityDistressPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityDistressPressureFallbackScore
+            : DefaultOfficialSupplyFragilityDistressPressureFallbackScore;
+    }
+
+    public int GetOfficialSupplyFragilityDistressPressureScoreOrDefault(int distress)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetOfficialSupplyFragilityDistressPressureBandsOrDefault())
+        {
+            if (distress >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetOfficialSupplyFragilityDistressPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetOfficialSupplyFragilityDebtPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityDebtPressureBands
+            : DefaultOfficialSupplyFragilityDebtPressureBands;
+    }
+
+    public int GetOfficialSupplyFragilityDebtPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityDebtPressureFallbackScore
+            : DefaultOfficialSupplyFragilityDebtPressureFallbackScore;
+    }
+
+    public int GetOfficialSupplyFragilityDebtPressureScoreOrDefault(int debtPressure)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetOfficialSupplyFragilityDebtPressureBandsOrDefault())
+        {
+            if (debtPressure >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetOfficialSupplyFragilityDebtPressureFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyFragilityMigrationRiskThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityMigrationRiskThreshold
+            : DefaultOfficialSupplyFragilityMigrationRiskThreshold;
+    }
+
+    public int GetOfficialSupplyFragilityMigrationPressureScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityMigrationPressureScore
+            : DefaultOfficialSupplyFragilityMigrationPressureScore;
+    }
+
+    public int GetOfficialSupplyFragilityMigrationPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityMigrationPressureFallbackScore
+            : DefaultOfficialSupplyFragilityMigrationPressureFallbackScore;
+    }
+
+    public int GetOfficialSupplyFragilityMigrationPressureScoreOrDefault(
+        bool isMigrating,
+        int migrationRisk)
+    {
+        return isMigrating || migrationRisk >= GetOfficialSupplyFragilityMigrationRiskThresholdOrDefault()
+            ? GetOfficialSupplyFragilityMigrationPressureScoreOrDefault()
+            : GetOfficialSupplyFragilityMigrationPressureFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyFragilityShelterDragQualityThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityShelterDragQualityThreshold
+            : DefaultOfficialSupplyFragilityShelterDragQualityThreshold;
+    }
+
+    public int GetOfficialSupplyFragilityShelterDragPressureScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityShelterDragPressureScore
+            : DefaultOfficialSupplyFragilityShelterDragPressureScore;
+    }
+
+    public int GetOfficialSupplyFragilityShelterDragPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityShelterDragPressureFallbackScore
+            : DefaultOfficialSupplyFragilityShelterDragPressureFallbackScore;
+    }
+
+    public int GetOfficialSupplyFragilityShelterDragPressureScoreOrDefault(int shelterQuality)
+    {
+        return shelterQuality is > 0
+            && shelterQuality < GetOfficialSupplyFragilityShelterDragQualityThresholdOrDefault()
+                ? GetOfficialSupplyFragilityShelterDragPressureScoreOrDefault()
+                : GetOfficialSupplyFragilityShelterDragPressureFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyFragilityPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityPressureClampFloor
+            : DefaultOfficialSupplyFragilityPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyFragilityPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFragilityPressureClampCeiling
+            : DefaultOfficialSupplyFragilityPressureClampCeiling;
     }
 
     public int GetOfficialSupplyDistressDeltaClampFloorOrDefault()

@@ -1441,3 +1441,7 @@ Acceptance requires default-equivalent behavior for official-supply labor capaci
 ### PopulationAndHouseholds official supply liquidity pressure extraction v1213-v1220 acceptance
 
 Acceptance requires default-equivalent behavior for official-supply liquidity grain strain bands, cash-need score, tool drag threshold, debt drag bands, fallback scores, and clamp, deterministic fallback for malformed liquidity pressure rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no shared cash-need predicate retune, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds official supply fragility pressure extraction v1221-v1228 acceptance
+
+Acceptance requires default-equivalent behavior for official-supply fragility distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback scores, and clamp, deterministic fallback for malformed fragility pressure rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

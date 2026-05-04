@@ -967,3 +967,9 @@ The extraction is default-equivalent. It does not retune official-supply livelih
 V1213-V1220 moves official-supply liquidity grain strain bands, cash-need score, tool drag threshold, and debt drag bands into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned liquidity pressure inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune official-supply livelihood exposure, resource buffer, labor pressure, fragility, interaction, delta formulas, event threshold, signal fallback, tax-season formulas, shared cash-need livelihood predicates, or household mobility rules, and it does not create official-supply-liquidity-pressure state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households official supply fragility pressure extraction: v1221-v1228
+
+V1221-V1228 moves official-supply fragility distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback scores, and clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned fragility pressure inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, interaction, delta formulas, event threshold, tax-season formulas, household movement rules, or UI-visible social position.

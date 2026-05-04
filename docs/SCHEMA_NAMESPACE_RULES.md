@@ -350,3 +350,7 @@ The V1205-V1212 extraction keeps official-supply labor capacity bands, dependent
 ### population households official supply liquidity pressure extraction v1213-v1220 adds no persisted fields
 
 The V1213-V1220 extraction keeps official-supply liquidity grain strain bands, cash-need score, tool drag threshold, debt drag bands, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.
+
+### population households official supply fragility pressure extraction v1221-v1228 adds no persisted fields
+
+The V1221-V1228 extraction keeps official-supply fragility distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
