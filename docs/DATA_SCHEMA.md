@@ -1710,3 +1710,7 @@ V1069-V1076 extracts the subsistence interaction cash-need boost score into in-c
 Current population households subsistence interaction debt-boost extraction v1077-v1084 note:
 
 V1077-V1084 extracts the subsistence interaction debt pressure threshold and boost score into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted interaction-debt pressure field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households subsistence interaction resilience relief extraction v1085-v1092 note:
+
+V1085-V1092 extracts the subsistence interaction resilience relief thresholds and score into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted interaction-resilience relief field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

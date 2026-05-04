@@ -58,6 +58,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistenceInteractionCashNeedBoostScore,
     int SubsistenceInteractionDebtPressureThreshold,
     int SubsistenceInteractionDebtPressureBoostScore,
+    int SubsistenceInteractionResilienceReliefGrainStoreThreshold,
+    int SubsistenceInteractionResilienceReliefLandHoldingThreshold,
+    int SubsistenceInteractionResilienceReliefLaborCapacityThreshold,
+    int SubsistenceInteractionResilienceReliefScore,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -134,6 +138,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultSubsistenceInteractionCashNeedBoostScore = 2;
     public const int DefaultSubsistenceInteractionDebtPressureThreshold = 60;
     public const int DefaultSubsistenceInteractionDebtPressureBoostScore = 1;
+    public const int DefaultSubsistenceInteractionResilienceReliefGrainStoreThreshold = 75;
+    public const int DefaultSubsistenceInteractionResilienceReliefLandHoldingThreshold = 35;
+    public const int DefaultSubsistenceInteractionResilienceReliefLaborCapacityThreshold = 60;
+    public const int DefaultSubsistenceInteractionResilienceReliefScore = 2;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -354,6 +362,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceInteractionCashNeedBoostScore,
             DefaultSubsistenceInteractionDebtPressureThreshold,
             DefaultSubsistenceInteractionDebtPressureBoostScore,
+            DefaultSubsistenceInteractionResilienceReliefGrainStoreThreshold,
+            DefaultSubsistenceInteractionResilienceReliefLandHoldingThreshold,
+            DefaultSubsistenceInteractionResilienceReliefLaborCapacityThreshold,
+            DefaultSubsistenceInteractionResilienceReliefScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -438,6 +450,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceInteractionCashNeedBoostScore,
             DefaultSubsistenceInteractionDebtPressureThreshold,
             DefaultSubsistenceInteractionDebtPressureBoostScore,
+            DefaultSubsistenceInteractionResilienceReliefGrainStoreThreshold,
+            DefaultSubsistenceInteractionResilienceReliefLandHoldingThreshold,
+            DefaultSubsistenceInteractionResilienceReliefLaborCapacityThreshold,
+            DefaultSubsistenceInteractionResilienceReliefScore,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -1031,6 +1047,27 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"subsistence_interaction_debt_pressure_boost_score must be between 0 and {MaxSubsistenceInteractionPressureContribution}.");
+        }
+
+        if (SubsistenceInteractionResilienceReliefGrainStoreThreshold is < 0 or > 100)
+        {
+            errors.Add("subsistence_interaction_resilience_relief_grain_store_threshold must be between 0 and 100.");
+        }
+
+        if (SubsistenceInteractionResilienceReliefLandHoldingThreshold is < 0 or > 100)
+        {
+            errors.Add("subsistence_interaction_resilience_relief_land_holding_threshold must be between 0 and 100.");
+        }
+
+        if (SubsistenceInteractionResilienceReliefLaborCapacityThreshold is < 0 or > 100)
+        {
+            errors.Add("subsistence_interaction_resilience_relief_labor_capacity_threshold must be between 0 and 100.");
+        }
+
+        if (SubsistenceInteractionResilienceReliefScore is < 0 or > MaxSubsistenceInteractionPressureContribution)
+        {
+            errors.Add(
+                $"subsistence_interaction_resilience_relief_score must be between 0 and {MaxSubsistenceInteractionPressureContribution}.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1730,6 +1767,44 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? SubsistenceInteractionDebtPressureBoostScore
             : DefaultSubsistenceInteractionDebtPressureBoostScore;
+    }
+
+    public int GetSubsistenceInteractionResilienceReliefGrainStoreThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceInteractionResilienceReliefGrainStoreThreshold
+            : DefaultSubsistenceInteractionResilienceReliefGrainStoreThreshold;
+    }
+
+    public int GetSubsistenceInteractionResilienceReliefLandHoldingThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceInteractionResilienceReliefLandHoldingThreshold
+            : DefaultSubsistenceInteractionResilienceReliefLandHoldingThreshold;
+    }
+
+    public int GetSubsistenceInteractionResilienceReliefLaborCapacityThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceInteractionResilienceReliefLaborCapacityThreshold
+            : DefaultSubsistenceInteractionResilienceReliefLaborCapacityThreshold;
+    }
+
+    public bool IsSubsistenceInteractionResilienceReliefOrDefault(
+        int grainStore,
+        int landHolding,
+        int laborCapacity)
+    {
+        return grainStore >= GetSubsistenceInteractionResilienceReliefGrainStoreThresholdOrDefault()
+            && landHolding >= GetSubsistenceInteractionResilienceReliefLandHoldingThresholdOrDefault()
+            && laborCapacity >= GetSubsistenceInteractionResilienceReliefLaborCapacityThresholdOrDefault();
+    }
+
+    public int GetSubsistenceInteractionResilienceReliefScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceInteractionResilienceReliefScore
+            : DefaultSubsistenceInteractionResilienceReliefScore;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
