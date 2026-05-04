@@ -1644,6 +1644,84 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta]));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultLaborDropFormulaRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborDropSupplyPressureDivisor = 8,
+                OfficialSupplyLaborDropLaborPressureFloor = 0,
+                OfficialSupplyLaborDropLaborPressureWeight = 1,
+                OfficialSupplyLaborDropDocketPressureDivisor = 6,
+                OfficialSupplyLaborDropResourceBufferDivisor = 4,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState explicitHousehold, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunCrossingOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropSupplyPressureDivisor, Is.EqualTo(8));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropLaborPressureFloor, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropLaborPressureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropDocketPressureDivisor, Is.EqualTo(6));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborDropResourceBufferDivisor, Is.EqualTo(4));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop], Is.EqualTo("1"));
+        Assert.That(explicitHousehold.LaborCapacity, Is.EqualTo(defaultHousehold.LaborCapacity));
+        Assert.That(defaultHousehold.LaborCapacity, Is.EqualTo(79));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomLaborDropFormulaRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborDropSupplyPressureDivisor = 1,
+                OfficialSupplyLaborDropResourceBufferDivisor = 16,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunCrossingOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop]),
+            Is.GreaterThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop])));
+        Assert.That(customHousehold.LaborCapacity, Is.LessThan(defaultHousehold.LaborCapacity));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidLaborDropFormulaRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborDropSupplyPressureDivisor = 0,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState fallbackHousehold, IReadOnlyList<IDomainEvent> fallbackEvents) =
+            RunCrossingOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_labor_drop_supply_pressure_divisor must be between 1 and 16."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop]));
+        Assert.That(fallbackHousehold.LaborCapacity, Is.EqualTo(defaultHousehold.LaborCapacity));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

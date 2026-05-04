@@ -424,6 +424,11 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetOfficialSupplyDebtDeltaResourceBufferDivisorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyDebtDeltaClampFloorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyDebtDeltaClampCeilingOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyLaborDropSupplyPressureDivisorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyLaborDropLaborPressureFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyLaborDropLaborPressureWeightOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyLaborDropDocketPressureDivisorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyLaborDropResourceBufferDivisorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyLaborDropClampFloorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyLaborDropClampCeilingOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyMigrationDeltaClampFloorOrDefault(),
@@ -609,6 +614,11 @@ public sealed partial class PopulationAndHouseholdsModule
         int DebtDeltaResourceBufferDivisor,
         int DebtDeltaClampFloor,
         int DebtDeltaClampCeiling,
+        int LaborDropSupplyPressureDivisor,
+        int LaborDropLaborPressureFloor,
+        int LaborDropLaborPressureWeight,
+        int LaborDropDocketPressureDivisor,
+        int LaborDropResourceBufferDivisor,
         int LaborDropClampFloor,
         int LaborDropClampCeiling,
         int MigrationDeltaClampFloor,
@@ -637,10 +647,10 @@ public sealed partial class PopulationAndHouseholdsModule
             DebtDeltaClampCeiling);
 
         public int LaborDrop => Math.Clamp(
-            (SupplyPressure / 8)
-            + Math.Max(0, LaborPressure)
-            + (DocketPressure / 6)
-            - (ResourceBuffer / 4),
+            (SupplyPressure / LaborDropSupplyPressureDivisor)
+            + (Math.Max(LaborDropLaborPressureFloor, LaborPressure) * LaborDropLaborPressureWeight)
+            + (DocketPressure / LaborDropDocketPressureDivisor)
+            - (ResourceBuffer / LaborDropResourceBufferDivisor),
             LaborDropClampFloor,
             LaborDropClampCeiling);
 

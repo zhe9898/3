@@ -1292,6 +1292,12 @@ V1245-V1252 extracts official-supply debt delta formula divisors, interaction fl
 
 This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, distress/labor/migration delta retuning, or UI/Application authority.
 
+### Current population households official supply labor drop formula extraction v1253-v1260 note
+
+V1253-V1260 extracts official-supply labor drop formula divisors, labor-pressure floor, and component weight into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.
+
+This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, distress/debt/migration delta retuning, or UI/Application authority.
+
 ### Current population households official supply labor pressure extraction v1205-v1212 note
 
 V1205-V1212 extracts official-supply labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.
