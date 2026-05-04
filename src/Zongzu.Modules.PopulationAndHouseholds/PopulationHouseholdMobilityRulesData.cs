@@ -77,6 +77,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyFallbackAuthorityBuffer,
     int OfficialSupplyFallbackDerivedPressureClampFloor,
     int OfficialSupplyFallbackDerivedPressureClampCeiling,
+    int OfficialSupplyFrontierPressureClampFloor,
+    int OfficialSupplyFrontierPressureClampCeiling,
+    int OfficialSupplyPressureClampFloor,
+    int OfficialSupplyPressureClampCeiling,
+    int OfficialSupplyQuotaPressureClampFloor,
+    int OfficialSupplyQuotaPressureClampCeiling,
+    int OfficialSupplyDocketPressureClampFloor,
+    int OfficialSupplyDocketPressureClampCeiling,
+    int OfficialSupplyClerkDistortionPressureClampFloor,
+    int OfficialSupplyClerkDistortionPressureClampCeiling,
+    int OfficialSupplyAuthorityBufferClampFloor,
+    int OfficialSupplyAuthorityBufferClampCeiling,
     int OfficialSupplyDistressDeltaClampFloor,
     int OfficialSupplyDistressDeltaClampCeiling,
     int OfficialSupplyDebtDeltaClampFloor,
@@ -181,6 +193,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyFallbackAuthorityBuffer = 4;
     public const int DefaultOfficialSupplyFallbackDerivedPressureClampFloor = 4;
     public const int DefaultOfficialSupplyFallbackDerivedPressureClampCeiling = 26;
+    public const int DefaultOfficialSupplyFrontierPressureClampFloor = 0;
+    public const int DefaultOfficialSupplyFrontierPressureClampCeiling = 100;
+    public const int DefaultOfficialSupplyPressureClampFloor = 0;
+    public const int DefaultOfficialSupplyPressureClampCeiling = 30;
+    public const int DefaultOfficialSupplyQuotaPressureClampFloor = 0;
+    public const int DefaultOfficialSupplyQuotaPressureClampCeiling = 20;
+    public const int DefaultOfficialSupplyDocketPressureClampFloor = 0;
+    public const int DefaultOfficialSupplyDocketPressureClampCeiling = 20;
+    public const int DefaultOfficialSupplyClerkDistortionPressureClampFloor = 0;
+    public const int DefaultOfficialSupplyClerkDistortionPressureClampCeiling = 15;
+    public const int DefaultOfficialSupplyAuthorityBufferClampFloor = 0;
+    public const int DefaultOfficialSupplyAuthorityBufferClampCeiling = 12;
     public const int DefaultOfficialSupplyDistressDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
@@ -449,6 +473,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyFallbackAuthorityBuffer,
             DefaultOfficialSupplyFallbackDerivedPressureClampFloor,
             DefaultOfficialSupplyFallbackDerivedPressureClampCeiling,
+            DefaultOfficialSupplyFrontierPressureClampFloor,
+            DefaultOfficialSupplyFrontierPressureClampCeiling,
+            DefaultOfficialSupplyPressureClampFloor,
+            DefaultOfficialSupplyPressureClampCeiling,
+            DefaultOfficialSupplyQuotaPressureClampFloor,
+            DefaultOfficialSupplyQuotaPressureClampCeiling,
+            DefaultOfficialSupplyDocketPressureClampFloor,
+            DefaultOfficialSupplyDocketPressureClampCeiling,
+            DefaultOfficialSupplyClerkDistortionPressureClampFloor,
+            DefaultOfficialSupplyClerkDistortionPressureClampCeiling,
+            DefaultOfficialSupplyAuthorityBufferClampFloor,
+            DefaultOfficialSupplyAuthorityBufferClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -561,6 +597,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyFallbackAuthorityBuffer,
             DefaultOfficialSupplyFallbackDerivedPressureClampFloor,
             DefaultOfficialSupplyFallbackDerivedPressureClampCeiling,
+            DefaultOfficialSupplyFrontierPressureClampFloor,
+            DefaultOfficialSupplyFrontierPressureClampCeiling,
+            DefaultOfficialSupplyPressureClampFloor,
+            DefaultOfficialSupplyPressureClampCeiling,
+            DefaultOfficialSupplyQuotaPressureClampFloor,
+            DefaultOfficialSupplyQuotaPressureClampCeiling,
+            DefaultOfficialSupplyDocketPressureClampFloor,
+            DefaultOfficialSupplyDocketPressureClampCeiling,
+            DefaultOfficialSupplyClerkDistortionPressureClampFloor,
+            DefaultOfficialSupplyClerkDistortionPressureClampCeiling,
+            DefaultOfficialSupplyAuthorityBufferClampFloor,
+            DefaultOfficialSupplyAuthorityBufferClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -1285,6 +1333,96 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyFallbackDerivedPressureClampFloor > OfficialSupplyFallbackDerivedPressureClampCeiling)
         {
             errors.Add("official_supply_fallback_derived_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyFrontierPressureClampFloor is < 0 or > MaxOfficialSupplyFallbackFrontierPressure)
+        {
+            errors.Add($"official_supply_frontier_pressure_clamp_floor must be between 0 and {MaxOfficialSupplyFallbackFrontierPressure}.");
+        }
+
+        if (OfficialSupplyFrontierPressureClampCeiling is < 0 or > MaxOfficialSupplyFallbackFrontierPressure)
+        {
+            errors.Add($"official_supply_frontier_pressure_clamp_ceiling must be between 0 and {MaxOfficialSupplyFallbackFrontierPressure}.");
+        }
+
+        if (OfficialSupplyFrontierPressureClampFloor > OfficialSupplyFrontierPressureClampCeiling)
+        {
+            errors.Add("official_supply_frontier_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyPressureClampFloor is < 0 or > MaxOfficialSupplyFallbackSupplyPressure)
+        {
+            errors.Add($"official_supply_pressure_clamp_floor must be between 0 and {MaxOfficialSupplyFallbackSupplyPressure}.");
+        }
+
+        if (OfficialSupplyPressureClampCeiling is < 0 or > MaxOfficialSupplyFallbackSupplyPressure)
+        {
+            errors.Add($"official_supply_pressure_clamp_ceiling must be between 0 and {MaxOfficialSupplyFallbackSupplyPressure}.");
+        }
+
+        if (OfficialSupplyPressureClampFloor > OfficialSupplyPressureClampCeiling)
+        {
+            errors.Add("official_supply_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyQuotaPressureClampFloor is < 0 or > MaxOfficialSupplyFallbackQuotaPressure)
+        {
+            errors.Add($"official_supply_quota_pressure_clamp_floor must be between 0 and {MaxOfficialSupplyFallbackQuotaPressure}.");
+        }
+
+        if (OfficialSupplyQuotaPressureClampCeiling is < 0 or > MaxOfficialSupplyFallbackQuotaPressure)
+        {
+            errors.Add($"official_supply_quota_pressure_clamp_ceiling must be between 0 and {MaxOfficialSupplyFallbackQuotaPressure}.");
+        }
+
+        if (OfficialSupplyQuotaPressureClampFloor > OfficialSupplyQuotaPressureClampCeiling)
+        {
+            errors.Add("official_supply_quota_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyDocketPressureClampFloor is < 0 or > MaxOfficialSupplyFallbackDocketPressure)
+        {
+            errors.Add($"official_supply_docket_pressure_clamp_floor must be between 0 and {MaxOfficialSupplyFallbackDocketPressure}.");
+        }
+
+        if (OfficialSupplyDocketPressureClampCeiling is < 0 or > MaxOfficialSupplyFallbackDocketPressure)
+        {
+            errors.Add($"official_supply_docket_pressure_clamp_ceiling must be between 0 and {MaxOfficialSupplyFallbackDocketPressure}.");
+        }
+
+        if (OfficialSupplyDocketPressureClampFloor > OfficialSupplyDocketPressureClampCeiling)
+        {
+            errors.Add("official_supply_docket_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyClerkDistortionPressureClampFloor is < 0 or > MaxOfficialSupplyFallbackClerkDistortionPressure)
+        {
+            errors.Add($"official_supply_clerk_distortion_pressure_clamp_floor must be between 0 and {MaxOfficialSupplyFallbackClerkDistortionPressure}.");
+        }
+
+        if (OfficialSupplyClerkDistortionPressureClampCeiling is < 0 or > MaxOfficialSupplyFallbackClerkDistortionPressure)
+        {
+            errors.Add($"official_supply_clerk_distortion_pressure_clamp_ceiling must be between 0 and {MaxOfficialSupplyFallbackClerkDistortionPressure}.");
+        }
+
+        if (OfficialSupplyClerkDistortionPressureClampFloor > OfficialSupplyClerkDistortionPressureClampCeiling)
+        {
+            errors.Add("official_supply_clerk_distortion_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyAuthorityBufferClampFloor is < 0 or > MaxOfficialSupplyFallbackAuthorityBuffer)
+        {
+            errors.Add($"official_supply_authority_buffer_clamp_floor must be between 0 and {MaxOfficialSupplyFallbackAuthorityBuffer}.");
+        }
+
+        if (OfficialSupplyAuthorityBufferClampCeiling is < 0 or > MaxOfficialSupplyFallbackAuthorityBuffer)
+        {
+            errors.Add($"official_supply_authority_buffer_clamp_ceiling must be between 0 and {MaxOfficialSupplyFallbackAuthorityBuffer}.");
+        }
+
+        if (OfficialSupplyAuthorityBufferClampFloor > OfficialSupplyAuthorityBufferClampCeiling)
+        {
+            errors.Add("official_supply_authority_buffer_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (OfficialSupplyDistressDeltaClampFloor is < MinOfficialSupplyDistressDelta or > MaxOfficialSupplyDistressDelta)
@@ -2200,6 +2338,90 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyFallbackDerivedPressureClampCeiling
             : DefaultOfficialSupplyFallbackDerivedPressureClampCeiling;
+    }
+
+    public int GetOfficialSupplyFrontierPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFrontierPressureClampFloor
+            : DefaultOfficialSupplyFrontierPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyFrontierPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFrontierPressureClampCeiling
+            : DefaultOfficialSupplyFrontierPressureClampCeiling;
+    }
+
+    public int GetOfficialSupplyPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyPressureClampFloor
+            : DefaultOfficialSupplyPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyPressureClampCeiling
+            : DefaultOfficialSupplyPressureClampCeiling;
+    }
+
+    public int GetOfficialSupplyQuotaPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyQuotaPressureClampFloor
+            : DefaultOfficialSupplyQuotaPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyQuotaPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyQuotaPressureClampCeiling
+            : DefaultOfficialSupplyQuotaPressureClampCeiling;
+    }
+
+    public int GetOfficialSupplyDocketPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDocketPressureClampFloor
+            : DefaultOfficialSupplyDocketPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyDocketPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDocketPressureClampCeiling
+            : DefaultOfficialSupplyDocketPressureClampCeiling;
+    }
+
+    public int GetOfficialSupplyClerkDistortionPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyClerkDistortionPressureClampFloor
+            : DefaultOfficialSupplyClerkDistortionPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyClerkDistortionPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyClerkDistortionPressureClampCeiling
+            : DefaultOfficialSupplyClerkDistortionPressureClampCeiling;
+    }
+
+    public int GetOfficialSupplyAuthorityBufferClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyAuthorityBufferClampFloor
+            : DefaultOfficialSupplyAuthorityBufferClampFloor;
+    }
+
+    public int GetOfficialSupplyAuthorityBufferClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyAuthorityBufferClampCeiling
+            : DefaultOfficialSupplyAuthorityBufferClampCeiling;
     }
 
     public int GetOfficialSupplyDistressDeltaClampFloorOrDefault()

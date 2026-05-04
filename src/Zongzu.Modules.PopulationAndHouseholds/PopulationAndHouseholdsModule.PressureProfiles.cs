@@ -363,12 +363,30 @@ public sealed partial class PopulationAndHouseholdsModule
                 _householdMobilityRulesData.GetOfficialSupplyFallbackDerivedPressureClampCeilingOrDefault()));
 
         return new OfficialSupplySignal(
-            Math.Clamp(frontierPressure, 0, 100),
-            Math.Clamp(supplyPressure, 0, 30),
-            Math.Clamp(quotaPressure, 0, 20),
-            Math.Clamp(docketPressure, 0, 20),
-            Math.Clamp(clerkDistortionPressure, 0, 15),
-            Math.Clamp(authorityBuffer, 0, 12));
+            Math.Clamp(
+                frontierPressure,
+                _householdMobilityRulesData.GetOfficialSupplyFrontierPressureClampFloorOrDefault(),
+                _householdMobilityRulesData.GetOfficialSupplyFrontierPressureClampCeilingOrDefault()),
+            Math.Clamp(
+                supplyPressure,
+                _householdMobilityRulesData.GetOfficialSupplyPressureClampFloorOrDefault(),
+                _householdMobilityRulesData.GetOfficialSupplyPressureClampCeilingOrDefault()),
+            Math.Clamp(
+                quotaPressure,
+                _householdMobilityRulesData.GetOfficialSupplyQuotaPressureClampFloorOrDefault(),
+                _householdMobilityRulesData.GetOfficialSupplyQuotaPressureClampCeilingOrDefault()),
+            Math.Clamp(
+                docketPressure,
+                _householdMobilityRulesData.GetOfficialSupplyDocketPressureClampFloorOrDefault(),
+                _householdMobilityRulesData.GetOfficialSupplyDocketPressureClampCeilingOrDefault()),
+            Math.Clamp(
+                clerkDistortionPressure,
+                _householdMobilityRulesData.GetOfficialSupplyClerkDistortionPressureClampFloorOrDefault(),
+                _householdMobilityRulesData.GetOfficialSupplyClerkDistortionPressureClampCeilingOrDefault()),
+            Math.Clamp(
+                authorityBuffer,
+                _householdMobilityRulesData.GetOfficialSupplyAuthorityBufferClampFloorOrDefault(),
+                _householdMobilityRulesData.GetOfficialSupplyAuthorityBufferClampCeilingOrDefault()));
     }
 
     private OfficialSupplyBurdenProfile ComputeOfficialSupplyBurdenProfile(

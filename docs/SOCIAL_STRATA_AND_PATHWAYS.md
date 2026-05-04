@@ -937,3 +937,9 @@ The extraction is default-equivalent. It does not retune official-supply distres
 V1173-V1180 moves official-supply metadata fallback values and the derived supply-pressure fallback clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These fallbacks remain private household-owned interpretation of missing structured Office metadata, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune official-supply deltas, event threshold, normalization clamps, formula divisors, tax-season formulas, or household mobility rules, and it does not create official-supply-signal state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households official supply signal normalization clamp extraction: v1181-v1188
+
+V1181-V1188 moves official-supply signal normalization clamps into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These clamps remain private household-owned signal bounds, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply deltas, fallback values, event threshold, formula divisors, tax-season formulas, or household mobility rules, and it does not create official-supply-signal-normalization state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.

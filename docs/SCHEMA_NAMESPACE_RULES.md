@@ -330,3 +330,7 @@ The V1165-V1172 extraction keeps the official-supply burden event threshold in o
 ### population households official supply signal fallback clamp extraction v1173-v1180 adds no persisted fields
 
 The V1173-V1180 extraction keeps official-supply signal fallback values in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.
+
+### population households official supply signal normalization clamp extraction v1181-v1188 adds no persisted fields
+
+The V1181-V1188 extraction keeps official-supply signal normalization clamps in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.

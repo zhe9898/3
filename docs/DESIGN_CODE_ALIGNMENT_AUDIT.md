@@ -1134,3 +1134,9 @@ The pass does not add movement authority, route history, migration economy, clas
 `PopulationAndHouseholds` now owns the official-supply metadata fallback values and derived supply fallback clamp through validated rules-data. Defaults preserve the existing missing-metadata behavior while moving another hardcoded signal rule out of `ResolveOfficialSupplySignal`.
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
+### v1181-v1188 population households official supply signal normalization clamp extraction audit
+
+`PopulationAndHouseholds` now owns the official-supply signal normalization clamps through validated rules-data. Defaults preserve the existing structured-signal bounds while moving another hardcoded signal rule out of `ResolveOfficialSupplySignal`.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
