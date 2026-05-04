@@ -1250,3 +1250,9 @@ No event pool, movement command, route-history path, official-supply-debt-delta 
 V1149-V1156 changes the official-supply labor drop clamp ownership only. The official-supply path now reads labor drop clamp floor/ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, deterministic household traversal, distress/debt/migration deltas, event threshold, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, official-supply-labor-drop ledger, pressure-profile state, labor-market engine, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households official supply migration delta clamp extraction v1157-v1164 note
+
+V1157-V1164 changes the official-supply migration delta clamp ownership only. The official-supply path now reads migration delta clamp floor/ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, deterministic household traversal, distress/debt/labor deltas, event threshold, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, official-supply-migration-delta ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.

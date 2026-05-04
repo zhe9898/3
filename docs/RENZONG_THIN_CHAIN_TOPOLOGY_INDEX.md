@@ -916,3 +916,9 @@ This is not an official-supply labor/migration clamp extraction, official-supply
 V1149-V1156 extracts the official-supply labor drop clamp from `OfficialSupplyBurdenProfile.LaborDrop` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: official-supply labor drop is clamped to `0..8`.
 
 This is not an official-supply migration clamp extraction, official-supply event threshold extraction, official-supply signal extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1157-V1164 PopulationAndHouseholds Official Supply Migration Delta Clamp Extraction
+
+V1157-V1164 extracts the official-supply migration delta clamp from `OfficialSupplyBurdenProfile.MigrationDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: official-supply migration delta is clamped to `0..8`.
+
+This is not an official-supply event threshold extraction, official-supply signal extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
