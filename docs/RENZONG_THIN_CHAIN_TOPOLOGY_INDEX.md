@@ -1018,3 +1018,9 @@ This is not tax-season labor/fragility/interaction/debt-delta extraction, migrat
 V1285-V1292 extracts tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and labor pressure clamp from `ComputeTaxLaborPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: labor capacity `80=>-2`, `60=>-1`, `40=>0`, `30=>1`, `20=>2`, fallback `3`; dependent count `5=>2`, `3=>1`, fallback `0`; dependent/labor ratio `dependents > laborers * 2 => +1`; final clamp `-2..5`.
 
 This is not tax-season fragility/interaction/debt-delta extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.
+
+## V1293-V1300 PopulationAndHouseholds Tax Season Fragility Pressure Extraction
+
+V1293-V1300 extracts tax-season fragility distress bands, debt bands, shelter-drag threshold/score, migration-risk threshold/score, fallback scores, and fragility pressure clamp from `ComputeTaxSeasonFragility` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: distress `80=>3`, `65=>2`, `50=>1`; debt `80=>3`, `65=>2`, `55=>1`; shelter drag `0<shelter<35=>1`; migration drag `IsMigrating || risk>=70 => 1`; final clamp `0..7`.
+
+This is not tax-season interaction/debt-delta extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.

@@ -227,27 +227,22 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetTaxSeasonLaborPressureClampCeilingOrDefault());
     }
 
-    private static int ComputeTaxSeasonFragility(PopulationHouseholdState household)
+    private int ComputeTaxSeasonFragility(PopulationHouseholdState household)
     {
-        int distressPressure = household.Distress switch
-        {
-            >= 80 => 3,
-            >= 65 => 2,
-            >= 50 => 1,
-            _ => 0,
-        };
+        int distressPressure = _householdMobilityRulesData.GetTaxSeasonFragilityDistressPressureScoreOrDefault(
+            household.Distress);
+        int debtPressure = _householdMobilityRulesData.GetTaxSeasonFragilityDebtPressureScoreOrDefault(
+            household.DebtPressure);
+        int shelterDrag = _householdMobilityRulesData.GetTaxSeasonFragilityShelterDragPressureScoreOrDefault(
+            household.ShelterQuality);
+        int migrationDrag = _householdMobilityRulesData.GetTaxSeasonFragilityMigrationPressureScoreOrDefault(
+            household.IsMigrating,
+            household.MigrationRisk);
 
-        int debtPressure = household.DebtPressure switch
-        {
-            >= 80 => 3,
-            >= 65 => 2,
-            >= 55 => 1,
-            _ => 0,
-        };
-
-        int shelterDrag = household.ShelterQuality is > 0 and < 35 ? 1 : 0;
-        int migrationDrag = household.IsMigrating || household.MigrationRisk >= 70 ? 1 : 0;
-        return Math.Clamp(distressPressure + debtPressure + shelterDrag + migrationDrag, 0, 7);
+        return Math.Clamp(
+            distressPressure + debtPressure + shelterDrag + migrationDrag,
+            _householdMobilityRulesData.GetTaxSeasonFragilityPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonFragilityPressureClampCeilingOrDefault());
     }
 
     private static int ComputeTaxInteractionPressure(PopulationHouseholdState household)
