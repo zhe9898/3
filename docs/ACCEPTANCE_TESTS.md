@@ -1453,3 +1453,7 @@ Acceptance requires default-equivalent behavior for official-supply interaction 
 ### PopulationAndHouseholds official supply distress delta formula extraction v1237-v1244 acceptance
 
 Acceptance requires default-equivalent behavior for official-supply distress delta formula divisors and component weights, deterministic fallback for malformed formula rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds official supply debt delta formula extraction v1245-v1252 acceptance
+
+Acceptance requires default-equivalent behavior for official-supply debt delta formula divisors, interaction floor, and component weights, deterministic fallback for malformed formula rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

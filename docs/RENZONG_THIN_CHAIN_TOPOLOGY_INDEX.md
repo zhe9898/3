@@ -982,3 +982,9 @@ This is not official-supply formula-divisor extraction, tax-season extraction, m
 V1237-V1244 extracts official-supply distress delta formula divisors and component weights from `OfficialSupplyBurdenProfile.DistressDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: `SupplyPressure / 4`, `+ LivelihoodExposurePressure`, `+ LaborPressure`, `+ FragilityPressure`, `ClerkDistortionPressure / 3`, `+ InteractionPressure`, `- ResourceBuffer`, `AuthorityBuffer / 3`, and the existing distress delta clamp.
 
 This is not official-supply debt/labor/migration delta extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1245-V1252 PopulationAndHouseholds Official Supply Debt Delta Formula Extraction
+
+V1245-V1252 extracts official-supply debt delta formula divisors, interaction floor, and component weights from `OfficialSupplyBurdenProfile.DebtDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: `QuotaPressure / 4`, `+ LiquidityPressure`, `FragilityPressure / 2`, `Math.Max(0, InteractionPressure)`, `ClerkDistortionPressure / 4`, `ResourceBuffer / 2`, and the existing debt delta clamp.
+
+This is not official-supply distress/labor/migration delta extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

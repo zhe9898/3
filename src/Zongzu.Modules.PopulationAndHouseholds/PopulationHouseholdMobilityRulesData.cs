@@ -167,6 +167,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyDistressDeltaAuthorityBufferDivisor,
     int OfficialSupplyDistressDeltaClampFloor,
     int OfficialSupplyDistressDeltaClampCeiling,
+    int OfficialSupplyDebtDeltaQuotaPressureDivisor,
+    int OfficialSupplyDebtDeltaLiquidityPressureWeight,
+    int OfficialSupplyDebtDeltaFragilityPressureDivisor,
+    int OfficialSupplyDebtDeltaInteractionPressureFloor,
+    int OfficialSupplyDebtDeltaInteractionPressureWeight,
+    int OfficialSupplyDebtDeltaClerkDistortionPressureDivisor,
+    int OfficialSupplyDebtDeltaResourceBufferDivisor,
     int OfficialSupplyDebtDeltaClampFloor,
     int OfficialSupplyDebtDeltaClampCeiling,
     int OfficialSupplyLaborDropClampFloor,
@@ -349,6 +356,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyDistressDeltaAuthorityBufferDivisor = 3;
     public const int DefaultOfficialSupplyDistressDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
+    public const int DefaultOfficialSupplyDebtDeltaQuotaPressureDivisor = 4;
+    public const int DefaultOfficialSupplyDebtDeltaLiquidityPressureWeight = 1;
+    public const int DefaultOfficialSupplyDebtDeltaFragilityPressureDivisor = 2;
+    public const int DefaultOfficialSupplyDebtDeltaInteractionPressureFloor = 0;
+    public const int DefaultOfficialSupplyDebtDeltaInteractionPressureWeight = 1;
+    public const int DefaultOfficialSupplyDebtDeltaClerkDistortionPressureDivisor = 4;
+    public const int DefaultOfficialSupplyDebtDeltaResourceBufferDivisor = 2;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDebtDeltaClampCeiling = 18;
     public const int DefaultOfficialSupplyLaborDropClampFloor = 0;
@@ -822,6 +836,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyDistressDeltaAuthorityBufferDivisor,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
+            DefaultOfficialSupplyDebtDeltaQuotaPressureDivisor,
+            DefaultOfficialSupplyDebtDeltaLiquidityPressureWeight,
+            DefaultOfficialSupplyDebtDeltaFragilityPressureDivisor,
+            DefaultOfficialSupplyDebtDeltaInteractionPressureFloor,
+            DefaultOfficialSupplyDebtDeltaInteractionPressureWeight,
+            DefaultOfficialSupplyDebtDeltaClerkDistortionPressureDivisor,
+            DefaultOfficialSupplyDebtDeltaResourceBufferDivisor,
             DefaultOfficialSupplyDebtDeltaClampFloor,
             DefaultOfficialSupplyDebtDeltaClampCeiling,
             DefaultOfficialSupplyLaborDropClampFloor,
@@ -1022,6 +1043,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyDistressDeltaAuthorityBufferDivisor,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
+            DefaultOfficialSupplyDebtDeltaQuotaPressureDivisor,
+            DefaultOfficialSupplyDebtDeltaLiquidityPressureWeight,
+            DefaultOfficialSupplyDebtDeltaFragilityPressureDivisor,
+            DefaultOfficialSupplyDebtDeltaInteractionPressureFloor,
+            DefaultOfficialSupplyDebtDeltaInteractionPressureWeight,
+            DefaultOfficialSupplyDebtDeltaClerkDistortionPressureDivisor,
+            DefaultOfficialSupplyDebtDeltaResourceBufferDivisor,
             DefaultOfficialSupplyDebtDeltaClampFloor,
             DefaultOfficialSupplyDebtDeltaClampCeiling,
             DefaultOfficialSupplyLaborDropClampFloor,
@@ -2482,6 +2510,48 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyDistressDeltaClampFloor > OfficialSupplyDistressDeltaClampCeiling)
         {
             errors.Add("official_supply_distress_delta_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyDebtDeltaQuotaPressureDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_debt_delta_quota_pressure_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
+        }
+
+        if (OfficialSupplyDebtDeltaLiquidityPressureWeight is < 0 or > MaxOfficialSupplyDeltaFormulaWeight)
+        {
+            errors.Add(
+                $"official_supply_debt_delta_liquidity_pressure_weight must be between 0 and {MaxOfficialSupplyDeltaFormulaWeight}.");
+        }
+
+        if (OfficialSupplyDebtDeltaFragilityPressureDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_debt_delta_fragility_pressure_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
+        }
+
+        if (OfficialSupplyDebtDeltaInteractionPressureFloor is < MinOfficialSupplyInteractionPressure or > MaxOfficialSupplyInteractionPressure)
+        {
+            errors.Add(
+                $"official_supply_debt_delta_interaction_pressure_floor must be between {MinOfficialSupplyInteractionPressure} and {MaxOfficialSupplyInteractionPressure}.");
+        }
+
+        if (OfficialSupplyDebtDeltaInteractionPressureWeight is < 0 or > MaxOfficialSupplyDeltaFormulaWeight)
+        {
+            errors.Add(
+                $"official_supply_debt_delta_interaction_pressure_weight must be between 0 and {MaxOfficialSupplyDeltaFormulaWeight}.");
+        }
+
+        if (OfficialSupplyDebtDeltaClerkDistortionPressureDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_debt_delta_clerk_distortion_pressure_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
+        }
+
+        if (OfficialSupplyDebtDeltaResourceBufferDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_debt_delta_resource_buffer_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
         }
 
         if (OfficialSupplyDebtDeltaClampFloor is < MinOfficialSupplyDebtDelta or > MaxOfficialSupplyDebtDelta)
@@ -4236,6 +4306,55 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyDistressDeltaClampCeiling
             : DefaultOfficialSupplyDistressDeltaClampCeiling;
+    }
+
+    public int GetOfficialSupplyDebtDeltaQuotaPressureDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDebtDeltaQuotaPressureDivisor
+            : DefaultOfficialSupplyDebtDeltaQuotaPressureDivisor;
+    }
+
+    public int GetOfficialSupplyDebtDeltaLiquidityPressureWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDebtDeltaLiquidityPressureWeight
+            : DefaultOfficialSupplyDebtDeltaLiquidityPressureWeight;
+    }
+
+    public int GetOfficialSupplyDebtDeltaFragilityPressureDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDebtDeltaFragilityPressureDivisor
+            : DefaultOfficialSupplyDebtDeltaFragilityPressureDivisor;
+    }
+
+    public int GetOfficialSupplyDebtDeltaInteractionPressureFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDebtDeltaInteractionPressureFloor
+            : DefaultOfficialSupplyDebtDeltaInteractionPressureFloor;
+    }
+
+    public int GetOfficialSupplyDebtDeltaInteractionPressureWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDebtDeltaInteractionPressureWeight
+            : DefaultOfficialSupplyDebtDeltaInteractionPressureWeight;
+    }
+
+    public int GetOfficialSupplyDebtDeltaClerkDistortionPressureDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDebtDeltaClerkDistortionPressureDivisor
+            : DefaultOfficialSupplyDebtDeltaClerkDistortionPressureDivisor;
+    }
+
+    public int GetOfficialSupplyDebtDeltaResourceBufferDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyDebtDeltaResourceBufferDivisor
+            : DefaultOfficialSupplyDebtDeltaResourceBufferDivisor;
     }
 
     public int GetOfficialSupplyDebtDeltaClampFloorOrDefault()

@@ -450,3 +450,7 @@ The UI and Unity shell remain downstream-only. V1229-V1236 changes where `Popula
 ### v1237-v1244 population households official supply distress delta formula extraction
 
 The UI and Unity shell remain downstream-only. V1237-V1244 changes where `PopulationAndHouseholds` owns official-supply distress delta formula divisors and component weights; presentation surfaces may only copy projected fields/events and must not calculate distress deltas, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1245-v1252 population households official supply debt delta formula extraction
+
+The UI and Unity shell remain downstream-only. V1245-V1252 changes where `PopulationAndHouseholds` owns official-supply debt delta formula divisors, interaction floor, and component weights; presentation surfaces may only copy projected fields/events and must not calculate debt deltas, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.

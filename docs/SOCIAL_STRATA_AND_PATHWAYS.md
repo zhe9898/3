@@ -985,3 +985,9 @@ The extraction is default-equivalent. It does not retune official-supply livelih
 V1237-V1244 moves official-supply distress delta formula divisors and component weights into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned burden-profile inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, fragility pressure, interaction pressure, debt/labor/migration deltas, event threshold, tax-season formulas, household movement rules, or UI-visible social position.
+
+### Current population households official supply debt delta formula extraction: v1245-v1252
+
+V1245-V1252 moves official-supply debt delta formula divisors, interaction floor, and component weights into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned burden-profile inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, fragility pressure, interaction pressure, distress/labor/migration deltas, event threshold, tax-season formulas, household movement rules, or UI-visible social position.
