@@ -14737,7 +14737,9 @@ public class ProjectReferenceTests
         Assert.That(pressureProfilesFile, Does.Contain("GetOfficialSupplyFallbackFrontierPressureOrDefault"));
         Assert.That(pressureProfilesFile, Does.Contain("GetOfficialSupplyFrontierPressureClampFloorOrDefault"));
         Assert.That(pressureProfilesFile, Does.Contain("14 + VisibilityPressure + LiquidityPressure + LaborPressure + FragilityPressure + InteractionPressure"));
-        Assert.That(pressureProfilesFile, Does.Contain("Math.Clamp(interaction, -3, 5)"));
+        Assert.That(pressureProfilesFile, Does.Contain("GetOfficialSupplyInteractionPressureClampFloorOrDefault"));
+        Assert.That(pressureProfilesFile, Does.Contain("GetOfficialSupplyInteractionPressureClampCeilingOrDefault"));
+        Assert.That(pressureProfilesFile, Does.Not.Contain("Math.Clamp(interaction, -3, 5)"));
         Assert.That(mainModuleFile, Does.Contain("DispatchTradeShockEvents(scope);"));
         Assert.That(mainModuleFile, Does.Contain("DispatchWorldPulseEvents(scope);"));
         Assert.That(mainModuleFile, Does.Contain("DispatchFamilyBranchEvents(scope);"));
@@ -22856,7 +22858,7 @@ public class ProjectReferenceTests
             "private int ComputeOfficialSupplyFragilityPressure",
             StringComparison.Ordinal);
         int interactionStart = pressureProfiles.IndexOf(
-            "private static int ComputeOfficialSupplyInteractionPressure",
+            "private int ComputeOfficialSupplyInteractionPressure",
             fragilityStart,
             StringComparison.Ordinal);
         Assert.That(fragilityStart, Is.GreaterThanOrEqualTo(0));
@@ -22999,6 +23001,233 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "OfficialSupplyFragilityPressureLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_official_supply_interaction_pressure_extraction_v1229_v1236_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-official-supply-interaction-pressure-extraction-v1229-v1236.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "OfficialSupplyBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int interactionStart = pressureProfiles.IndexOf(
+            "private int ComputeOfficialSupplyInteractionPressure",
+            StringComparison.Ordinal);
+        int nextTypeStart = pressureProfiles.IndexOf(
+            "private readonly record struct GrainPriceShockSignal",
+            interactionStart,
+            StringComparison.Ordinal);
+        Assert.That(interactionStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(nextTypeStart, Is.GreaterThan(interactionStart));
+        string interactionBody = pressureProfiles.Substring(interactionStart, nextTypeStart - interactionStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1229-V1236 PopulationAndHouseholds Official Supply Interaction Pressure Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households official supply interaction pressure extraction: v1229-v1236"));
+        Assert.That(designAudit, Does.Contain("v1229-v1236 population households official supply interaction pressure extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds official supply interaction pressure extraction v1229-v1236 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds official supply interaction pressure extraction v1229-v1236 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households official supply interaction pressure extraction v1229-v1236 note"));
+        Assert.That(uiPresentation, Does.Contain("v1229-v1236 population households official supply interaction pressure extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds official supply interaction pressure extraction v1229-v1236 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1229-V1236 PopulationAndHouseholds Official Supply Interaction Pressure Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Official Supply Interaction Pressure Extraction Through V1236"));
+        Assert.That(schemaRules, Does.Contain("population households official supply interaction pressure extraction v1229-v1236 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households official supply interaction pressure extraction v1229-v1236 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded official-supply interaction boatman boost: `Boatman && supply>=12 => +2`, fallback `0`",
+                     "previous hardcoded official-supply interaction labor fragility boost: `HiredLabor|SeasonalMigrant && labor<40 => +2`, fallback `0`",
+                     "previous hardcoded official-supply interaction tenant debt boost: `Tenant && debt>=60 => +1`, fallback `0`",
+                     "previous hardcoded official-supply interaction resilience relief: `grain>=75 && labor>=75 && debt<55 && distress<55 => -3`, fallback `0`",
+                     "previous hardcoded official-supply interaction pressure clamp: `-3..5`",
+                     "DefaultOfficialSupplyInteractionBoatmanSupplyPressureThreshold = 12",
+                     "DefaultOfficialSupplyInteractionBoatmanBoostScore = 2",
+                     "DefaultOfficialSupplyInteractionLaborFragilityLivelihoods",
+                     "DefaultOfficialSupplyInteractionLaborCapacityThreshold = 40",
+                     "DefaultOfficialSupplyInteractionTenantDebtPressureThreshold = 60",
+                     "DefaultOfficialSupplyInteractionResilienceReliefGrainStoreThreshold = 75",
+                     "DefaultOfficialSupplyInteractionResilienceReliefScore = -3",
+                     "DefaultOfficialSupplyInteractionPressureClampFloor = -3",
+                     "DefaultOfficialSupplyInteractionPressureClampCeiling = 5",
+                     "No official-supply formula divisor extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetOfficialSupplyInteractionBoatmanScoreOrDefault",
+                     "GetOfficialSupplyInteractionLaborFragilityScoreOrDefault",
+                     "GetOfficialSupplyInteractionTenantDebtScoreOrDefault",
+                     "GetOfficialSupplyInteractionResilienceScoreOrDefault",
+                     "GetOfficialSupplyInteractionPressureClampFloorOrDefault",
+                     "GetOfficialSupplyInteractionPressureClampCeilingOrDefault",
+                 })
+        {
+            Assert.That(interactionBody, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     "household.Livelihood == LivelihoodType.Boatman && signal.SupplyPressure >= 12",
+                     "household.Livelihood is LivelihoodType.HiredLabor or LivelihoodType.SeasonalMigrant",
+                     "household.LaborCapacity < 40",
+                     "household.Livelihood == LivelihoodType.Tenant && household.DebtPressure >= 60",
+                     "household.GrainStore >= 75",
+                     "household.DebtPressure < 55",
+                     "interaction -= 3",
+                     "Math.Clamp(interaction, -3, 5)",
+                 })
+        {
+            Assert.That(interactionBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyInteractionBoatmanSupplyPressureThreshold = 12"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyInteractionLaborCapacityThreshold = 40"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyInteractionTenantDebtPressureThreshold = 60"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyInteractionResilienceReliefScore = -3"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyInteractionPressureClampCeiling = 5"));
+        Assert.That(rulesData, Does.Contain("official_supply_interaction_labor_fragility_livelihoods must be non-empty"));
+        Assert.That(rulesData, Does.Contain("official_supply_interaction_pressure_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_DefaultInteractionPressureRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_CustomInteractionPressureRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_InvalidInteractionPressureRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyInteractionPressure"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "OfficialSupplyInteractionPressureOutcomeCalculator",
+                     "PopulationAndHouseholdsOfficialSupplyInteractionRules",
+                     "OfficialSupplyInteractionPressureState",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "OfficialSupplyInteractionPressure",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "OfficialSupplyInteractionPressureLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

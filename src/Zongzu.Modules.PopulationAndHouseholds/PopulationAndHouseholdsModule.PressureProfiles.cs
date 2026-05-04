@@ -495,37 +495,31 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetOfficialSupplyFragilityPressureClampCeilingOrDefault());
     }
 
-    private static int ComputeOfficialSupplyInteractionPressure(
+    private int ComputeOfficialSupplyInteractionPressure(
         PopulationHouseholdState household,
         OfficialSupplySignal signal)
     {
         int interaction = 0;
 
-        if (household.Livelihood == LivelihoodType.Boatman && signal.SupplyPressure >= 12)
-        {
-            interaction += 2;
-        }
+        interaction += _householdMobilityRulesData.GetOfficialSupplyInteractionBoatmanScoreOrDefault(
+            household.Livelihood,
+            signal.SupplyPressure);
+        interaction += _householdMobilityRulesData.GetOfficialSupplyInteractionLaborFragilityScoreOrDefault(
+            household.Livelihood,
+            household.LaborCapacity);
+        interaction += _householdMobilityRulesData.GetOfficialSupplyInteractionTenantDebtScoreOrDefault(
+            household.Livelihood,
+            household.DebtPressure);
+        interaction += _householdMobilityRulesData.GetOfficialSupplyInteractionResilienceScoreOrDefault(
+            household.GrainStore,
+            household.LaborCapacity,
+            household.DebtPressure,
+            household.Distress);
 
-        if (household.Livelihood is LivelihoodType.HiredLabor or LivelihoodType.SeasonalMigrant
-            && household.LaborCapacity < 40)
-        {
-            interaction += 2;
-        }
-
-        if (household.Livelihood == LivelihoodType.Tenant && household.DebtPressure >= 60)
-        {
-            interaction += 1;
-        }
-
-        if (household.GrainStore >= 75
-            && household.LaborCapacity >= 75
-            && household.DebtPressure < 55
-            && household.Distress < 55)
-        {
-            interaction -= 3;
-        }
-
-        return Math.Clamp(interaction, -3, 5);
+        return Math.Clamp(
+            interaction,
+            _householdMobilityRulesData.GetOfficialSupplyInteractionPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyInteractionPressureClampCeilingOrDefault());
     }
 
     private readonly record struct GrainPriceShockSignal(int CurrentPrice, int PriceDelta, int Supply, int Demand);

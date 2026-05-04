@@ -973,3 +973,9 @@ The extraction is default-equivalent. It does not retune official-supply livelih
 V1221-V1228 moves official-supply fragility distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback scores, and clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned fragility pressure inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, interaction, delta formulas, event threshold, tax-season formulas, household movement rules, or UI-visible social position.
+
+### Current population households official supply interaction pressure extraction: v1229-v1236
+
+V1229-V1236 moves official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief, fallback scores, and clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned interaction pressure inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, fragility pressure, delta formulas, event threshold, tax-season formulas, household movement rules, or UI-visible social position.

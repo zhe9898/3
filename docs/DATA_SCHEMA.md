@@ -1797,3 +1797,9 @@ The official-supply liquidity grain strain bands, cash-need score, tool drag thr
 Schema/migration impact: none. V1221-V1228 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply fragility distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply interaction pressure extraction v1229-v1236 note
+
+Schema/migration impact: none. V1229-V1236 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief score, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
