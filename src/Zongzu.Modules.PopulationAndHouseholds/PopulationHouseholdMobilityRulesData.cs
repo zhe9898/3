@@ -74,6 +74,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyDistressDeltaClampCeiling,
     int OfficialSupplyDebtDeltaClampFloor,
     int OfficialSupplyDebtDeltaClampCeiling,
+    int OfficialSupplyLaborDropClampFloor,
+    int OfficialSupplyLaborDropClampCeiling,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -166,6 +168,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDebtDeltaClampCeiling = 18;
+    public const int DefaultOfficialSupplyLaborDropClampFloor = 0;
+    public const int DefaultOfficialSupplyLaborDropClampCeiling = 8;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -192,6 +196,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxOfficialSupplyDistressDelta = 64;
     public const int MinOfficialSupplyDebtDelta = 0;
     public const int MaxOfficialSupplyDebtDelta = 64;
+    public const int MinOfficialSupplyLaborDrop = 0;
+    public const int MaxOfficialSupplyLaborDrop = 64;
     public const int DefaultMonthlyRuntimeActivePoolOutflowThreshold = 60;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskFloor = 55;
     public const int DefaultMonthlyRuntimeCandidateMigrationRiskCeiling = 80;
@@ -412,6 +418,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
             DefaultOfficialSupplyDebtDeltaClampCeiling,
+            DefaultOfficialSupplyLaborDropClampFloor,
+            DefaultOfficialSupplyLaborDropClampCeiling,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -512,6 +520,8 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
             DefaultOfficialSupplyDebtDeltaClampCeiling,
+            DefaultOfficialSupplyLaborDropClampFloor,
+            DefaultOfficialSupplyLaborDropClampCeiling,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -1221,6 +1231,23 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyDebtDeltaClampFloor > OfficialSupplyDebtDeltaClampCeiling)
         {
             errors.Add("official_supply_debt_delta_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyLaborDropClampFloor is < MinOfficialSupplyLaborDrop or > MaxOfficialSupplyLaborDrop)
+        {
+            errors.Add(
+                $"official_supply_labor_drop_clamp_floor must be between {MinOfficialSupplyLaborDrop} and {MaxOfficialSupplyLaborDrop}.");
+        }
+
+        if (OfficialSupplyLaborDropClampCeiling is < MinOfficialSupplyLaborDrop or > MaxOfficialSupplyLaborDrop)
+        {
+            errors.Add(
+                $"official_supply_labor_drop_clamp_ceiling must be between {MinOfficialSupplyLaborDrop} and {MaxOfficialSupplyLaborDrop}.");
+        }
+
+        if (OfficialSupplyLaborDropClampFloor > OfficialSupplyLaborDropClampCeiling)
+        {
+            errors.Add("official_supply_labor_drop_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -2042,6 +2069,20 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyDebtDeltaClampCeiling
             : DefaultOfficialSupplyDebtDeltaClampCeiling;
+    }
+
+    public int GetOfficialSupplyLaborDropClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborDropClampFloor
+            : DefaultOfficialSupplyLaborDropClampFloor;
+    }
+
+    public int GetOfficialSupplyLaborDropClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLaborDropClampCeiling
+            : DefaultOfficialSupplyLaborDropClampCeiling;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()
