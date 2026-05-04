@@ -320,6 +320,91 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo("6"));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultDebtDeltaClampRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDebtDeltaClampFloor = 0,
+                OfficialSupplyDebtDeltaClampCeiling = 18,
+            };
+
+        (PopulationHouseholdState defaultHousehold, _) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState explicitHousehold, _) = RunCrossingOfficialSupply(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDebtDeltaClampFloor, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDebtDeltaClampCeiling, Is.EqualTo(18));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyDebtDeltaClampFloorOrDefault(), Is.EqualTo(0));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyDebtDeltaClampCeilingOrDefault(), Is.EqualTo(18));
+        Assert.That(explicitHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(defaultHousehold.DebtPressure, Is.EqualTo(35));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomDebtDeltaClampFloorRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDebtDeltaClampFloor = 2,
+                OfficialSupplyDebtDeltaClampCeiling = 18,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunBufferedOfficialSupply();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunBufferedOfficialSupply(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.DebtPressure, Is.EqualTo(30));
+        Assert.That(customHousehold.DebtPressure, Is.EqualTo(32));
+        Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+        Assert.That(customEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomDebtDeltaClampCeilingRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDebtDeltaClampFloor = 0,
+                OfficialSupplyDebtDeltaClampCeiling = 4,
+            };
+
+        (PopulationHouseholdState defaultHousehold, _) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState customHousehold, _) = RunCrossingOfficialSupply(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.DebtPressure, Is.EqualTo(35));
+        Assert.That(customHousehold.DebtPressure, Is.EqualTo(34));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidDebtDeltaClampRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDebtDeltaClampFloor = 19,
+                OfficialSupplyDebtDeltaClampCeiling = 18,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, _) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState fallbackHousehold, _) = RunCrossingOfficialSupply(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyDebtDeltaClampFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDebtDeltaClampFloor));
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyDebtDeltaClampCeilingOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDebtDeltaClampCeiling));
+        Assert.That(fallbackHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(fallbackHousehold.DebtPressure, Is.EqualTo(35));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

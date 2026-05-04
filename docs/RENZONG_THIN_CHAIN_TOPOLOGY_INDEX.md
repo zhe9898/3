@@ -904,3 +904,9 @@ This is not a tax debt delta clamp extraction, tax registration/liquidity/labor/
 V1133-V1140 extracts the official-supply distress delta clamp from `OfficialSupplyBurdenProfile.DistressDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: official-supply distress delta is clamped to `0..24`.
 
 This is not an official-supply debt/labor/migration clamp extraction, official-supply event threshold extraction, official-supply signal extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1141-V1148 PopulationAndHouseholds Official Supply Debt Delta Clamp Extraction
+
+V1141-V1148 extracts the official-supply debt delta clamp from `OfficialSupplyBurdenProfile.DebtDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: official-supply debt delta is clamped to `0..18`.
+
+This is not an official-supply labor/migration clamp extraction, official-supply event threshold extraction, official-supply signal extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

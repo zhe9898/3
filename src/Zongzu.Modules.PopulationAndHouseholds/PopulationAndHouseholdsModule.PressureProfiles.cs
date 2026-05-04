@@ -370,7 +370,9 @@ public sealed partial class PopulationAndHouseholdsModule
             ComputeOfficialSupplyFragilityPressure(household),
             ComputeOfficialSupplyInteractionPressure(household, signal),
             _householdMobilityRulesData.GetOfficialSupplyDistressDeltaClampFloorOrDefault(),
-            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaClampCeilingOrDefault());
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaClampCeilingOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDebtDeltaClampFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDebtDeltaClampCeilingOrDefault());
     }
 
     private static int ComputeOfficialSupplyLivelihoodExposurePressure(PopulationHouseholdState household)
@@ -570,7 +572,9 @@ public sealed partial class PopulationAndHouseholdsModule
         int FragilityPressure,
         int InteractionPressure,
         int DistressDeltaClampFloor,
-        int DistressDeltaClampCeiling)
+        int DistressDeltaClampCeiling,
+        int DebtDeltaClampFloor,
+        int DebtDeltaClampCeiling)
     {
         public int DistressDelta => Math.Clamp(
             (SupplyPressure / 4)
@@ -591,8 +595,8 @@ public sealed partial class PopulationAndHouseholdsModule
             + Math.Max(0, InteractionPressure)
             + (ClerkDistortionPressure / 4)
             - (ResourceBuffer / 2),
-            0,
-            18);
+            DebtDeltaClampFloor,
+            DebtDeltaClampCeiling);
 
         public int LaborDrop => Math.Clamp(
             (SupplyPressure / 8)

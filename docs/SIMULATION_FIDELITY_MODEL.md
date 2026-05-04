@@ -1119,3 +1119,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1133-V1140 changes parameter ownership only. The official-supply distress delta clamp floor/ceiling are validated and consumed by `PopulationAndHouseholds`, while official-supply debt/labor/migration deltas, event threshold, signal fallback, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1141-V1148 PopulationAndHouseholds Official Supply Debt Delta Clamp Extraction
+
+V1141-V1148 changes parameter ownership only. The official-supply debt delta clamp floor/ceiling are validated and consumed by `PopulationAndHouseholds`, while official-supply distress/labor/migration deltas, event threshold, signal fallback, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-debt-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

@@ -907,3 +907,9 @@ The extraction is default-equivalent. It does not retune the tax debt delta clam
 V1133-V1140 moves the official-supply distress delta clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private household-owned supply burden bound, not a class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune official-supply debt/labor/migration deltas, event threshold, signal fallback, tax-season formulas, or household mobility rules, and it does not create official-supply-delta state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households official supply debt delta clamp extraction: v1141-v1148
+
+V1141-V1148 moves the official-supply debt delta clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private household-owned supply burden bound, not a class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply distress/labor/migration deltas, event threshold, signal fallback, tax-season formulas, or household mobility rules, and it does not create official-supply-debt-delta state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
