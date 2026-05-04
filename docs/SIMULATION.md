@@ -1238,3 +1238,9 @@ No event pool, movement command, route-history path, debt-threshold ledger, pres
 V1133-V1140 changes the official-supply distress delta clamp ownership only. The official-supply path now reads distress delta clamp floor/ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, deterministic household traversal, debt/labor/migration deltas, event threshold, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, official-supply-delta ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households official supply debt delta clamp extraction v1141-v1148 note
+
+V1141-V1148 changes the official-supply debt delta clamp ownership only. The official-supply path now reads debt delta clamp floor/ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, deterministic household traversal, distress/labor/migration deltas, event threshold, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, official-supply-debt-delta ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.

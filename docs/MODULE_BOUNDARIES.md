@@ -1784,3 +1784,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1133-V1140 extracts the official-supply distress delta clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` official-supply pressure profile helper. Module ownership, event scope, deterministic household traversal, burden mutation, metadata emission, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains official-supply-distress-delta-clamp, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
+
+## PopulationAndHouseholds official supply debt delta clamp extraction v1141-v1148 boundary note
+
+V1141-V1148 extracts the official-supply debt delta clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` official-supply pressure profile helper. Module ownership, event scope, deterministic household traversal, burden mutation, metadata emission, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains official-supply-debt-delta-clamp, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
