@@ -1000,3 +1000,9 @@ This is not official-supply distress/debt/migration delta extraction, tax-season
 V1261-V1268 extracts official-supply migration delta formula divisors and fragility threshold/boost from `OfficialSupplyBurdenProfile.MigrationDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: `DistressDelta / 5`, `DebtDelta / 6`, `FragilityPressure >= 5 ? 1 : 0`, and the existing migration delta clamp.
 
 This is not tax-season extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.
+
+## V1269-V1276 PopulationAndHouseholds Tax Season Registration Visibility Extraction
+
+V1269-V1276 extracts tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and visibility clamp from `ComputeRegistrationVisibilityPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: tenant `4`, boatman/petty-trader/smallholder `3`, artisan/hired-labor/seasonal-migrant/unknown `2`, domestic-servant/yamen-runner/vagrant `1`, land bands `80=>4`, `40=>3`, `15=>2`, `1=>1`, and final clamp `1..7`.
+
+This is not tax-season liquidity/labor/fragility/interaction/debt-delta extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.

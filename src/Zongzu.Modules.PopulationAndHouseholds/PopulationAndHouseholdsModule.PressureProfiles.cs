@@ -181,34 +181,19 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetTaxSeasonDebtDeltaClampCeilingOrDefault());
     }
 
-    private static int ComputeRegistrationVisibilityPressure(PopulationHouseholdState household)
+    private int ComputeRegistrationVisibilityPressure(PopulationHouseholdState household)
     {
-        int livelihoodExposure = household.Livelihood switch
-        {
-            LivelihoodType.Tenant => 4,
-            LivelihoodType.Boatman => 3,
-            LivelihoodType.PettyTrader => 3,
-            LivelihoodType.Artisan => 2,
-            LivelihoodType.Smallholder => 3,
-            LivelihoodType.HiredLabor => 2,
-            LivelihoodType.SeasonalMigrant => 2,
-            LivelihoodType.Unknown => 2,
-            LivelihoodType.DomesticServant => 1,
-            LivelihoodType.YamenRunner => 1,
-            LivelihoodType.Vagrant => 1,
-            _ => 2,
-        };
+        int livelihoodExposure =
+            _householdMobilityRulesData.GetTaxSeasonRegistrationVisibilityLivelihoodExposureScoreOrDefault(
+                household.Livelihood);
+        int landVisibility =
+            _householdMobilityRulesData.GetTaxSeasonRegistrationVisibilityLandVisibilityScoreOrDefault(
+                household.LandHolding);
 
-        int landVisibility = household.LandHolding switch
-        {
-            >= 80 => 4,
-            >= 40 => 3,
-            >= 15 => 2,
-            > 0 => 1,
-            _ => 0,
-        };
-
-        return Math.Clamp(livelihoodExposure + landVisibility, 1, 7);
+        return Math.Clamp(
+            livelihoodExposure + landVisibility,
+            _householdMobilityRulesData.GetTaxSeasonRegistrationVisibilityClampFloorOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonRegistrationVisibilityClampCeilingOrDefault());
     }
 
     private static int ComputeTaxLiquidityPressure(PopulationHouseholdState household)

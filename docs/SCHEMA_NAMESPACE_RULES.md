@@ -374,3 +374,7 @@ The V1253-V1260 extraction keeps official-supply labor drop formula divisors, la
 ### population households official supply migration delta formula extraction v1261-v1268 adds no persisted fields
 
 The V1261-V1268 extraction keeps official-supply migration delta formula divisors and fragility threshold/boost in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
+
+### population households tax season registration visibility extraction v1269-v1276 adds no persisted fields
+
+The V1269-V1276 extraction keeps tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.

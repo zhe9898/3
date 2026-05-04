@@ -1827,3 +1827,9 @@ The official-supply labor drop formula divisors, labor-pressure floor, and compo
 Schema/migration impact: none. V1261-V1268 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply migration delta formula divisors and fragility threshold/boost are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households tax season registration visibility extraction v1269-v1276 note
+
+Schema/migration impact: none. V1269-V1276 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

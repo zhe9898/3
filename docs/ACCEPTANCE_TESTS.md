@@ -1465,3 +1465,7 @@ Acceptance requires default-equivalent behavior for official-supply labor drop f
 ### PopulationAndHouseholds official supply migration delta formula extraction v1261-v1268 acceptance
 
 Acceptance requires default-equivalent behavior for official-supply migration delta formula divisors and fragility threshold/boost, deterministic fallback for malformed formula rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds tax season registration visibility extraction v1269-v1276 acceptance
+
+Acceptance requires default-equivalent behavior for tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp, deterministic fallback for malformed registration visibility rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
