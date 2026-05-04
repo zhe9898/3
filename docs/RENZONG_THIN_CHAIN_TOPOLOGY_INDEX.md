@@ -922,3 +922,9 @@ This is not an official-supply migration clamp extraction, official-supply event
 V1157-V1164 extracts the official-supply migration delta clamp from `OfficialSupplyBurdenProfile.MigrationDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: official-supply migration delta is clamped to `0..8`.
 
 This is not an official-supply event threshold extraction, official-supply signal extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1165-V1172 PopulationAndHouseholds Official Supply Burden Event Threshold Extraction
+
+V1165-V1172 extracts the official-supply burden event distress threshold from `DispatchOfficeSupplyEvents` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default threshold preserves prior behavior: the structured `HouseholdBurdenIncreased` receipt emits when distress crosses `80`.
+
+This is not an official-supply signal extraction, official-supply delta retune, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

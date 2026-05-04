@@ -1137,3 +1137,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1157-V1164 changes parameter ownership only. The official-supply migration delta clamp floor/ceiling are validated and consumed by `PopulationAndHouseholds`, while official-supply distress/debt/labor deltas, event threshold, signal fallback, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-migration-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1165-V1172 PopulationAndHouseholds Official Supply Burden Event Threshold Extraction
+
+V1165-V1172 changes parameter ownership only. The official-supply burden event distress threshold is validated and consumed by `PopulationAndHouseholds`, while official-supply distress/debt/labor/migration deltas, signal fallback, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-event-threshold state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

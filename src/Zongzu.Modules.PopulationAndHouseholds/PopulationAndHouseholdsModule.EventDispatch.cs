@@ -188,6 +188,8 @@ public sealed partial class PopulationAndHouseholdsModule
 
             SettlementId settlementId = scopedSettlementId.Value;
             OfficialSupplySignal signal = ResolveOfficialSupplySignal(domainEvent);
+            int burdenEventDistressThreshold =
+                _householdMobilityRulesData.GetOfficialSupplyBurdenEventDistressThresholdOrDefault();
             bool anyHouseholdChanged = false;
 
             foreach (PopulationHouseholdState household in scope.State.Households
@@ -211,7 +213,7 @@ public sealed partial class PopulationAndHouseholdsModule
                     || oldLabor != household.LaborCapacity
                     || oldMigration != household.MigrationRisk;
 
-                if (oldDistress < 80 && household.Distress >= 80)
+                if (oldDistress < burdenEventDistressThreshold && household.Distress >= burdenEventDistressThreshold)
                 {
                     scope.Emit(
                         PopulationEventNames.HouseholdBurdenIncreased,

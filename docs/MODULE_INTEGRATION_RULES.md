@@ -1315,3 +1315,8 @@ The existing `OfficeAndCareer.OfficialSupplyRequisition` event path remains the 
 V1157-V1164 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts the `OfficialSupplyBurdenProfile.MigrationDelta` clamp bounds into validated owner-consumed rules-data.
 
 The existing `OfficeAndCareer.OfficialSupplyRequisition` event path remains the integration seam: it computes the official-supply migration delta with owner-consumed clamp bounds and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer official-supply migration delta, household movement, route history, or household pressure outcomes.
+### PopulationAndHouseholds official supply burden event threshold extraction v1165-v1172 integration note
+
+Official-supply burden event threshold ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` reads that metadata, applies its owner-owned rules-data threshold, and emits structured household burden events only when the threshold is crossed.
+
+No integration path may route this threshold through Application/UI/Unity, parse prose, load external rule assemblies, or create migration/route-history/class-status authority.

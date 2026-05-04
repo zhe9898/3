@@ -925,3 +925,9 @@ The extraction is default-equivalent. It does not retune official-supply distres
 V1157-V1164 moves the official-supply migration delta clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private household-owned supply burden bound, not a route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune official-supply distress/debt/labor deltas, event threshold, signal fallback, tax-season formulas, or household mobility rules, and it does not create official-supply-migration-delta state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households official supply burden event threshold extraction: v1165-v1172
+
+V1165-V1172 moves the official-supply burden event distress threshold into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The threshold remains a private household-owned receipt gate, not a route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply distress/debt/labor/migration deltas, signal fallback, tax-season formulas, or household mobility rules, and it does not create official-supply-event-threshold state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
