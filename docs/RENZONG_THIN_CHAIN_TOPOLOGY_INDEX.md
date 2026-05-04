@@ -934,3 +934,9 @@ This is not an official-supply signal extraction, official-supply delta retune, 
 V1173-V1180 extracts the official-supply signal metadata fallback values and derived supply-pressure fallback clamp from `ResolveOfficialSupplySignal` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default values preserve prior behavior: frontier `60`, quota `7`, docket `1`, clerk distortion `0`, authority buffer `4`, and derived supply fallback clamp `4..26`.
 
 This is not an official-supply normalization clamp extraction, official-supply formula extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1181-V1188 PopulationAndHouseholds Official Supply Signal Normalization Clamp Extraction
+
+V1181-V1188 extracts the official-supply signal normalization clamps from `ResolveOfficialSupplySignal` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: frontier `0..100`, supply `0..30`, quota `0..20`, docket `0..20`, clerk distortion `0..15`, and authority buffer `0..12`.
+
+This is not an official-supply formula extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

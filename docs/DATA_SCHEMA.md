@@ -1761,3 +1761,9 @@ The official-supply burden event threshold is an in-memory `PopulationHouseholdM
 Schema/migration impact: none. V1173-V1180 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply signal fallback values and derived fallback clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply signal normalization clamp extraction v1181-v1188 note
+
+Schema/migration impact: none. V1181-V1188 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply signal normalization clamps are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

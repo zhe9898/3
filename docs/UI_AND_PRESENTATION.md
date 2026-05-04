@@ -418,3 +418,7 @@ The UI and Unity shell remain downstream-only. V1165-V1172 changes where `Popula
 ### v1173-v1180 population households official supply signal fallback clamp extraction
 
 The UI and Unity shell remain downstream-only. V1173-V1180 changes where `PopulationAndHouseholds` owns official-supply signal fallbacks; presentation surfaces may only copy projected fields/events and must not calculate signal fallbacks, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1181-v1188 population households official supply signal normalization clamp extraction
+
+The UI and Unity shell remain downstream-only. V1181-V1188 changes where `PopulationAndHouseholds` owns official-supply signal normalization clamps; presentation surfaces may only copy projected fields/events and must not calculate signal clamps, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.

@@ -1326,3 +1326,9 @@ No integration path may route this threshold through Application/UI/Unity, parse
 Official-supply signal fallback ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata when available; if metadata is absent or partial, `PopulationAndHouseholds` applies its owner-owned rules-data fallbacks before computing household burden.
 
 No integration path may route these fallbacks through Application/UI/Unity, parse prose, load external rule assemblies, persist fallback state, or create migration/route-history/class-status authority.
+
+### PopulationAndHouseholds official supply signal normalization clamp extraction v1181-v1188 integration note
+
+Official-supply signal normalization ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned normalization clamps before computing household burden.
+
+No integration path may route these clamps through Application/UI/Unity, parse prose, load external rule assemblies, persist normalization state, or create migration/route-history/class-status authority.

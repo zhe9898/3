@@ -742,6 +742,116 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultSignalNormalizationClampRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyFrontierPressureClampFloor = 0,
+                OfficialSupplyFrontierPressureClampCeiling = 100,
+                OfficialSupplyPressureClampFloor = 0,
+                OfficialSupplyPressureClampCeiling = 30,
+                OfficialSupplyQuotaPressureClampFloor = 0,
+                OfficialSupplyQuotaPressureClampCeiling = 20,
+                OfficialSupplyDocketPressureClampFloor = 0,
+                OfficialSupplyDocketPressureClampCeiling = 20,
+                OfficialSupplyClerkDistortionPressureClampFloor = 0,
+                OfficialSupplyClerkDistortionPressureClampCeiling = 15,
+                OfficialSupplyAuthorityBufferClampFloor = 0,
+                OfficialSupplyAuthorityBufferClampCeiling = 12,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunOutOfRangeSignalOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) = RunOutOfRangeSignalOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFrontierPressureClampCeiling, Is.EqualTo(100));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyPressureClampCeiling, Is.EqualTo(30));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyQuotaPressureClampCeiling, Is.EqualTo(20));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDocketPressureClampCeiling, Is.EqualTo(20));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyClerkDistortionPressureClampCeiling, Is.EqualTo(15));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyAuthorityBufferClampCeiling, Is.EqualTo(12));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.FrontierPressure]));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo("100"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo("30"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyQuotaPressure], Is.EqualTo("20"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDocketPressure], Is.EqualTo("20"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure], Is.EqualTo("15"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer], Is.EqualTo("12"));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomSignalNormalizationClampRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyFrontierPressureClampFloor = 11,
+                OfficialSupplyFrontierPressureClampCeiling = 50,
+                OfficialSupplyPressureClampFloor = 6,
+                OfficialSupplyPressureClampCeiling = 10,
+                OfficialSupplyQuotaPressureClampFloor = 5,
+                OfficialSupplyQuotaPressureClampCeiling = 8,
+                OfficialSupplyDocketPressureClampFloor = 4,
+                OfficialSupplyDocketPressureClampCeiling = 6,
+                OfficialSupplyClerkDistortionPressureClampFloor = 3,
+                OfficialSupplyClerkDistortionPressureClampCeiling = 4,
+                OfficialSupplyAuthorityBufferClampFloor = 2,
+                OfficialSupplyAuthorityBufferClampCeiling = 3,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunOutOfRangeSignalOfficialSupply(customRulesData);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo("50"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo("10"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyQuotaPressure], Is.EqualTo("8"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDocketPressure], Is.EqualTo("6"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure], Is.EqualTo("4"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer], Is.EqualTo("3"));
+
+        (_, IReadOnlyList<IDomainEvent> floorEvents) = RunNegativeSignalOfficialSupply(customRulesData);
+        IDomainEvent floorEvent = SingleBurdenEvent(floorEvents);
+        Assert.That(floorEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo("11"));
+        Assert.That(floorEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo("6"));
+        Assert.That(floorEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyQuotaPressure], Is.EqualTo("5"));
+        Assert.That(floorEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDocketPressure], Is.EqualTo("4"));
+        Assert.That(floorEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure], Is.EqualTo("3"));
+        Assert.That(floorEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer], Is.EqualTo("2"));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidSignalNormalizationClampRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyPressureClampFloor = 31,
+                OfficialSupplyPressureClampCeiling = 30,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunOutOfRangeSignalOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunOutOfRangeSignalOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyPressureClampFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyPressureClampFloor));
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyPressureClampCeilingOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyPressureClampCeiling));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.FrontierPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -767,6 +877,55 @@ public sealed class OfficialSupplyBurdenHandlerTests
             [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "2",
             [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "3",
         }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunOutOfRangeSignalOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        return RunSignalNormalizationOfficialSupply(new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "120",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "40",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "30",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "25",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "20",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "15",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunNegativeSignalOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        return RunSignalNormalizationOfficialSupply(new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "-5",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "-5",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "-5",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "-5",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "-5",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "-5",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunSignalNormalizationOfficialSupply(
+        IReadOnlyDictionary<string, string> metadata,
+        PopulationHouseholdMobilityRulesData? rulesData)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Signal clamp household",
+            SettlementId = new SettlementId(1),
+            Distress = 78,
+            DebtPressure = 30,
+            LaborCapacity = 80,
+            MigrationRisk = 20,
+        });
+
+        return RunOfficialSupply(state, metadata, rulesData);
     }
 
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunFallbackOfficialSupply(
