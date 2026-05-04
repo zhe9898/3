@@ -14717,7 +14717,7 @@ public class ProjectReferenceTests
                      "private GrainPriceShockSignal ResolveGrainPriceShockSignal",
                      "private static int ReadMetadataInt",
                      "private SubsistencePressureProfile ComputeSubsistencePressureProfile",
-                     "private static TaxSeasonBurdenProfile ComputeTaxSeasonBurdenProfile",
+                     "private TaxSeasonBurdenProfile ComputeTaxSeasonBurdenProfile",
                      "private static OfficialSupplySignal ResolveOfficialSupplySignal",
                      "private static OfficialSupplyBurdenProfile ComputeOfficialSupplyBurdenProfile",
                      "private readonly record struct GrainPriceShockSignal",
@@ -14912,8 +14912,8 @@ public class ProjectReferenceTests
                  {
                      "private void DispatchTradeShockEvents",
                      "private void ApplyGrainPriceSubsistencePressure",
-                     "private static void DispatchWorldPulseEvents",
-                     "private static void ApplyTaxSeasonPressure",
+                     "private void DispatchWorldPulseEvents",
+                     "private void ApplyTaxSeasonPressure",
                      "private static void DispatchFamilyBranchEvents",
                      "private static void DispatchOfficeSupplyEvents",
                  })
@@ -19678,7 +19678,7 @@ public class ProjectReferenceTests
             "private void ApplyGrainPriceSubsistencePressure",
             StringComparison.Ordinal);
         int dispatchWorldStart = eventDispatchFile.IndexOf(
-            "private static void DispatchWorldPulseEvents",
+            "private void DispatchWorldPulseEvents",
             StringComparison.Ordinal);
         Assert.That(applyStart, Is.GreaterThanOrEqualTo(0));
         Assert.That(dispatchWorldStart, Is.GreaterThan(applyStart));
@@ -19977,6 +19977,229 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "SubsistenceDistressDeltaClampLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_tax_season_debt_delta_clamp_extraction_v1117_v1124_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-tax-season-debt-delta-clamp-extraction-v1117-v1124.md"));
+        string eventDispatchFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.EventDispatch.cs"));
+        string pressureProfilesFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "TaxSeasonBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int applyTaxStart = eventDispatchFile.IndexOf(
+            "private void ApplyTaxSeasonPressure",
+            StringComparison.Ordinal);
+        int dispatchFamilyStart = eventDispatchFile.IndexOf(
+            "private static void DispatchFamilyBranchEvents",
+            StringComparison.Ordinal);
+        Assert.That(applyTaxStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(dispatchFamilyStart, Is.GreaterThan(applyTaxStart));
+        string applyTaxBody = eventDispatchFile.Substring(applyTaxStart, dispatchFamilyStart - applyTaxStart);
+
+        int computeTaxStart = pressureProfilesFile.IndexOf(
+            "private TaxSeasonBurdenProfile ComputeTaxSeasonBurdenProfile",
+            StringComparison.Ordinal);
+        int registrationStart = pressureProfilesFile.IndexOf(
+            "private static int ComputeRegistrationVisibilityPressure",
+            StringComparison.Ordinal);
+        Assert.That(computeTaxStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(registrationStart, Is.GreaterThan(computeTaxStart));
+        string computeTaxProfileBody = pressureProfilesFile.Substring(computeTaxStart, registrationStart - computeTaxStart);
+
+        int taxProfileStart = pressureProfilesFile.IndexOf(
+            "private readonly record struct TaxSeasonBurdenProfile",
+            StringComparison.Ordinal);
+        int officialSignalStart = pressureProfilesFile.IndexOf(
+            "private readonly record struct OfficialSupplySignal",
+            StringComparison.Ordinal);
+        Assert.That(taxProfileStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(officialSignalStart, Is.GreaterThan(taxProfileStart));
+        string taxProfileBody = pressureProfilesFile.Substring(taxProfileStart, officialSignalStart - taxProfileStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1117-V1124 PopulationAndHouseholds Tax Season Debt Delta Clamp Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households tax season debt delta clamp extraction: v1117-v1124"));
+        Assert.That(designAudit, Does.Contain("v1117-v1124 population households tax season debt delta clamp extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds tax season debt delta clamp extraction v1117-v1124 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds tax season debt delta clamp extraction v1117-v1124 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households tax season debt delta clamp extraction v1117-v1124 note"));
+        Assert.That(uiPresentation, Does.Contain("v1117-v1124 population households tax season debt delta clamp extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds tax season debt delta clamp extraction v1117-v1124 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1117-V1124 PopulationAndHouseholds Tax Season Debt Delta Clamp Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Tax Season Debt Delta Clamp Extraction Through V1124"));
+        Assert.That(schemaRules, Does.Contain("population households tax season debt delta clamp extraction v1117-v1124 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households tax season debt delta clamp extraction v1117-v1124 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded tax debt delta clamp: `Math.Clamp(..., 8, 28)`",
+                     "DefaultTaxSeasonDebtDeltaClampFloor = 8",
+                     "DefaultTaxSeasonDebtDeltaClampCeiling = 28",
+                     "No tax-season debt spike threshold extraction.",
+                     "No tax registration visibility formula extraction.",
+                     "No tax liquidity formula extraction.",
+                     "No tax labor formula extraction.",
+                     "No tax fragility formula extraction.",
+                     "No tax interaction formula extraction.",
+                     "No official-supply formula extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(applyTaxBody, Does.Contain("ComputeTaxSeasonBurdenProfile(household)"));
+        Assert.That(applyTaxBody, Does.Contain("oldDebt < 70 && household.DebtPressure >= 70"));
+        Assert.That(computeTaxProfileBody, Does.Contain("GetTaxSeasonDebtDeltaClampFloorOrDefault"));
+        Assert.That(computeTaxProfileBody, Does.Contain("GetTaxSeasonDebtDeltaClampCeilingOrDefault"));
+        Assert.That(taxProfileBody, Does.Contain("int DebtDeltaClampFloor"));
+        Assert.That(taxProfileBody, Does.Contain("int DebtDeltaClampCeiling"));
+        Assert.That(taxProfileBody, Does.Contain("DebtDeltaClampFloor"));
+        Assert.That(taxProfileBody, Does.Contain("DebtDeltaClampCeiling"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonDebtDeltaClampFloor = 8"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonDebtDeltaClampCeiling = 28"));
+        Assert.That(rulesData, Does.Contain("tax_season_debt_delta_clamp_floor must be between"));
+        Assert.That(rulesData, Does.Contain("tax_season_debt_delta_clamp_ceiling must be between"));
+        Assert.That(rulesData, Does.Contain("tax_season_debt_delta_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(rulesData, Does.Contain("GetTaxSeasonDebtDeltaClampFloorOrDefault"));
+        Assert.That(rulesData, Does.Contain("GetTaxSeasonDebtDeltaClampCeilingOrDefault"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_DefaultTaxDebtDeltaClampRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_CustomTaxDebtDeltaClampFloorRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_CustomTaxDebtDeltaClampCeilingRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_InvalidTaxDebtDeltaClampRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("TaxSeasonDebtDeltaClamp"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "TaxSeasonDebtDeltaClamp",
+                     "TaxDebtDeltaOutcomeCalculator",
+                     "PopulationAndHouseholdsTaxDebtDeltaRules",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "TaxSeasonDebtDeltaClamp",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "TaxSeasonDebtDeltaClampLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

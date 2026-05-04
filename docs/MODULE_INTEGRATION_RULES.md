@@ -1279,3 +1279,9 @@ The existing grain-price event path remains the integration seam: it reads the e
 V1109-V1116 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts the `SubsistencePressureProfile.DistressDelta` clamp bounds into validated owner-consumed rules-data.
 
 The existing grain-price event path remains the integration seam: it computes the distress delta with owner-consumed clamp bounds and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer distress delta or household pressure outcomes.
+
+## PopulationAndHouseholds tax season debt delta clamp extraction v1117-v1124 integration note
+
+V1117-V1124 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts the `TaxSeasonBurdenProfile.DebtDelta` clamp bounds into validated owner-consumed rules-data.
+
+The existing `WorldSettlements.TaxSeasonOpened` event path remains the integration seam: it computes the tax debt delta with owner-consumed clamp bounds and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer tax debt delta or household pressure outcomes.

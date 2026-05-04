@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Zongzu.Contracts;
 using Zongzu.Kernel;
@@ -146,5 +147,181 @@ public sealed class TaxSeasonBurdenHandlerTests
             buffer.Events.Count(static e => e.EventType == PopulationEventNames.HouseholdDebtSpiked),
             Is.EqualTo(2),
             "Current WorldSettlements emits symbolic tax-season, so this remains a global thin signal until settlement-scoped tax events land.");
+    }
+
+    [Test]
+    public void TaxSeasonOpened_DefaultTaxDebtDeltaClampRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtDeltaClampFloor = 8,
+                TaxSeasonDebtDeltaClampCeiling = 28,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState explicitHousehold, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunPressedTaxSeason(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleDebtSpikeEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaClampFloor, Is.EqualTo(8));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaClampCeiling, Is.EqualTo(28));
+        Assert.That(explicitPreviousBaseline.GetTaxSeasonDebtDeltaClampFloorOrDefault(), Is.EqualTo(8));
+        Assert.That(explicitPreviousBaseline.GetTaxSeasonDebtDeltaClampCeilingOrDefault(), Is.EqualTo(28));
+        Assert.That(explicitHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_CustomTaxDebtDeltaClampFloorRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtDeltaClampFloor = 20,
+                TaxSeasonDebtDeltaClampCeiling = 28,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunResilientTaxSeason();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunResilientTaxSeason(customRulesData);
+        IDomainEvent customEvent = SingleDebtSpikeEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.DebtPressure, Is.EqualTo(65));
+        Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdDebtSpiked), Is.EqualTo(0));
+        Assert.That(customHousehold.DebtPressure, Is.EqualTo(72));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("20"));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_CustomTaxDebtDeltaClampCeilingRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtDeltaClampFloor = 8,
+                TaxSeasonDebtDeltaClampCeiling = 20,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunPressedTaxSeason(customRulesData);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent customEvent = SingleDebtSpikeEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("20"));
+        Assert.That(customHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure - 8));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_InvalidTaxDebtDeltaClampRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtDeltaClampFloor = 29,
+                TaxSeasonDebtDeltaClampCeiling = 28,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState fallbackHousehold, IReadOnlyList<IDomainEvent> fallbackEvents) =
+            RunPressedTaxSeason(malformedRulesData);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleDebtSpikeEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetTaxSeasonDebtDeltaClampFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaClampFloor));
+        Assert.That(
+            malformedRulesData.GetTaxSeasonDebtDeltaClampCeilingOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaClampCeiling));
+        Assert.That(fallbackHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunPressedTaxSeason(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Pressed tenant",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.Tenant,
+            DebtPressure = 50,
+            Distress = 76,
+            LaborCapacity = 25,
+            LandHolding = 0,
+            GrainStore = 10,
+            DependentCount = 4,
+        });
+
+        return RunTaxSeason(state, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunResilientTaxSeason(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Buffered smallholder",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.Smallholder,
+            DebtPressure = 52,
+            Distress = 35,
+            LaborCapacity = 85,
+            LandHolding = 70,
+            GrainStore = 90,
+        });
+
+        return RunTaxSeason(state, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunTaxSeason(
+        PopulationAndHouseholdsState state,
+        PopulationHouseholdMobilityRulesData? rulesData)
+    {
+        PopulationAndHouseholdsModule module = rulesData is null
+            ? new PopulationAndHouseholdsModule()
+            : new PopulationAndHouseholdsModule(rulesData);
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer buffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 5),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            queries,
+            buffer,
+            new WorldDiff());
+
+        buffer.Emit(new DomainEventRecord(
+            KnownModuleKeys.WorldSettlements,
+            WorldSettlementsEventNames.TaxSeasonOpened,
+            "Settlement 1 enters tax season.",
+            "1"));
+
+        module.HandleEvents(new ModuleEventHandlingScope<PopulationAndHouseholdsState>(
+            state, context, buffer.Events.ToList()));
+
+        return (state.Households.Single(static household => household.Id == new HouseholdId(1)), buffer.Events.ToList());
+    }
+
+    private static IDomainEvent SingleDebtSpikeEvent(IReadOnlyList<IDomainEvent> events)
+    {
+        return events.Single(static e => e.EventType == PopulationEventNames.HouseholdDebtSpiked);
     }
 }

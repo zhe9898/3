@@ -169,14 +169,16 @@ public sealed partial class PopulationAndHouseholdsModule
         return TryParseSettlementId(domainEvent.EntityKey);
     }
 
-    private static TaxSeasonBurdenProfile ComputeTaxSeasonBurdenProfile(PopulationHouseholdState household)
+    private TaxSeasonBurdenProfile ComputeTaxSeasonBurdenProfile(PopulationHouseholdState household)
     {
         return new TaxSeasonBurdenProfile(
             ComputeRegistrationVisibilityPressure(household),
             ComputeTaxLiquidityPressure(household),
             ComputeTaxLaborPressure(household),
             ComputeTaxSeasonFragility(household),
-            ComputeTaxInteractionPressure(household));
+            ComputeTaxInteractionPressure(household),
+            _householdMobilityRulesData.GetTaxSeasonDebtDeltaClampFloorOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonDebtDeltaClampCeilingOrDefault());
     }
 
     private static int ComputeRegistrationVisibilityPressure(PopulationHouseholdState household)
@@ -535,12 +537,14 @@ public sealed partial class PopulationAndHouseholdsModule
         int LiquidityPressure,
         int LaborPressure,
         int FragilityPressure,
-        int InteractionPressure)
+        int InteractionPressure,
+        int DebtDeltaClampFloor,
+        int DebtDeltaClampCeiling)
     {
         public int DebtDelta => Math.Clamp(
             14 + VisibilityPressure + LiquidityPressure + LaborPressure + FragilityPressure + InteractionPressure,
-            8,
-            28);
+            DebtDeltaClampFloor,
+            DebtDeltaClampCeiling);
     }
 
     private readonly record struct OfficialSupplySignal(

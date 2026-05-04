@@ -889,3 +889,9 @@ The extraction is default-equivalent. It does not retune subsistence distress de
 V1109-V1116 moves the grain-price subsistence distress delta clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private household-owned pressure bound, not a class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune event threshold, interaction scoring, tax-season, or official-supply formulas, and it does not create delta-clamp state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households tax season debt delta clamp extraction: v1117-v1124
+
+V1117-V1124 moves the tax-season debt delta clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private household-owned tax pressure bound, not a class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune the tax debt spike threshold, tax component formulas, official-supply formulas, or household mobility rules, and it does not create tax-debt-clamp state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
