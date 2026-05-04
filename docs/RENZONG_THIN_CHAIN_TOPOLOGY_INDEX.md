@@ -958,3 +958,9 @@ This is not an official-supply labor/liquidity/fragility/interaction extraction,
 V1205-V1212 extracts official-supply labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and labor pressure clamp from `ComputeOfficialSupplyLaborPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: labor `80=>-1`, `60=>0`, `40=>1`, `25=>3`, fallback `4`; dependents `5=>2`, `3=>1`, fallback `0`; ratio bonus `laborers>0` and `dependents>laborers*2 => 1`; final clamp `-1..7`.
 
 This is not an official-supply liquidity/fragility/interaction extraction, formula-divisor extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1213-V1220 PopulationAndHouseholds Official Supply Liquidity Pressure Extraction
+
+V1213-V1220 extracts official-supply liquidity grain strain bands, cash-need score, tool drag threshold, debt drag bands, fallback scores, and liquidity pressure clamp from `ComputeOfficialSupplyLiquidityPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: grain `80=>-2`, `55=>-1`, `25=>1`, `>0=>3`, fallback `2`; cash-need livelihood score `2`; tool drag `0<tool<35=>1`; debt `65=>2`, `50=>1`; final clamp `-2..7`.
+
+This is not a shared cash-need livelihood predicate extraction, official-supply fragility/interaction extraction, formula-divisor extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

@@ -1350,3 +1350,9 @@ No integration path may route these buffer values through Application/UI/Unity, 
 Official-supply labor pressure ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned labor capacity bands, dependent bands, and ratio bonus while computing the household burden profile.
 
 No integration path may route these labor pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist labor pressure state, or create migration/route-history/class-status authority.
+
+### PopulationAndHouseholds official supply liquidity pressure extraction v1213-v1220 integration note
+
+Official-supply liquidity pressure ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned grain strain bands, cash-need score, tool drag threshold, and debt drag bands while computing the household burden profile.
+
+No integration path may route these liquidity pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist liquidity pressure state, retune the shared cash-need livelihood predicate, or create migration/route-history/class-status authority.

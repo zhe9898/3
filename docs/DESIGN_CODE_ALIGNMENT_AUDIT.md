@@ -1129,6 +1129,12 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
 
+### v1213-v1220 population households official supply liquidity pressure extraction audit
+
+`PopulationAndHouseholds` now owns the official-supply liquidity grain strain bands, cash-need score, tool drag threshold, debt drag bands, fallback values, and clamp through validated rules-data. Defaults preserve the existing household liquidity pressure profile while moving another hardcoded helper out of `ComputeOfficialSupplyLiquidityPressure`.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, shared cash-need predicate retuning, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
 ### v1205-v1212 population households official supply labor pressure extraction audit
 
 `PopulationAndHouseholds` now owns the official-supply labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback values, and clamp through validated rules-data. Defaults preserve the existing household labor pressure profile while moving another hardcoded helper out of `ComputeOfficialSupplyLaborPressure`.

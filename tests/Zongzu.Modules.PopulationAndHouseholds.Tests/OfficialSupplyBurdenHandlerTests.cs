@@ -1165,6 +1165,117 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop]));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultLiquidityPressureRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLiquidityGrainStrainPressureBands =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityGrainStrainPressureBands,
+                OfficialSupplyLiquidityGrainStrainPressureFallbackScore = 2,
+                OfficialSupplyLiquidityCashNeedPressureScore = 2,
+                OfficialSupplyLiquidityCashNeedPressureFallbackScore = 0,
+                OfficialSupplyLiquidityToolDragConditionThreshold = 35,
+                OfficialSupplyLiquidityToolDragPressureScore = 1,
+                OfficialSupplyLiquidityToolDragPressureFallbackScore = 0,
+                OfficialSupplyLiquidityDebtDragPressureBands =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityDebtDragPressureBands,
+                OfficialSupplyLiquidityDebtDragPressureFallbackScore = 0,
+                OfficialSupplyLiquidityPressureClampFloor = -2,
+                OfficialSupplyLiquidityPressureClampCeiling = 7,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLiquidityPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunLiquidityPressureOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityGrainStrainPressureFallbackScore, Is.EqualTo(2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityCashNeedPressureScore, Is.EqualTo(2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityToolDragConditionThreshold, Is.EqualTo(35));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityToolDragPressureScore, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityDebtDragPressureFallbackScore, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityPressureClampFloor, Is.EqualTo(-2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityPressureClampCeiling, Is.EqualTo(7));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityGrainStrainPressureBands
+                .Single(static band => band.Threshold == 55).Score,
+            Is.EqualTo(-1));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo("4"));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta]));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomLiquidityPressureRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLiquidityGrainStrainPressureBands =
+                    new[]
+                    {
+                        new PopulationHouseholdMobilityThresholdScoreBand(80, -2),
+                        new PopulationHouseholdMobilityThresholdScoreBand(55, -2),
+                        new PopulationHouseholdMobilityThresholdScoreBand(25, -2),
+                        new PopulationHouseholdMobilityThresholdScoreBand(1, -2),
+                    },
+                OfficialSupplyLiquidityGrainStrainPressureFallbackScore = -2,
+                OfficialSupplyLiquidityCashNeedPressureScore = 0,
+                OfficialSupplyLiquidityCashNeedPressureFallbackScore = 0,
+                OfficialSupplyLiquidityToolDragConditionThreshold = 35,
+                OfficialSupplyLiquidityToolDragPressureScore = 0,
+                OfficialSupplyLiquidityToolDragPressureFallbackScore = 0,
+                OfficialSupplyLiquidityDebtDragPressureBands =
+                    new[]
+                    {
+                        new PopulationHouseholdMobilityThresholdScoreBand(65, 0),
+                        new PopulationHouseholdMobilityThresholdScoreBand(50, 0),
+                    },
+                OfficialSupplyLiquidityDebtDragPressureFallbackScore = 0,
+                OfficialSupplyLiquidityPressureClampFloor = -2,
+                OfficialSupplyLiquidityPressureClampCeiling = 7,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLiquidityPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunLiquidityPressureOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo("-2"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta]),
+            Is.LessThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta])));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidLiquidityPressureRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLiquidityGrainStrainPressureBands =
+                    new PopulationHouseholdMobilityThresholdScoreBand[] { },
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLiquidityPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunLiquidityPressureOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_liquidity_grain_strain_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score -4..8."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta]));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -1337,6 +1448,44 @@ public sealed class OfficialSupplyBurdenHandlerTests
             ShelterQuality = 80,
             DependentCount = dependentCount,
             LaborerCount = laborerCount,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "76",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "16",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "6",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "2",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunLiquidityPressureOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null,
+        int grainStore = 55,
+        LivelihoodType livelihood = LivelihoodType.Boatman,
+        int toolCondition = 20,
+        int debtPressure = 65)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Liquidity pressure household",
+            SettlementId = new SettlementId(1),
+            Livelihood = livelihood,
+            Distress = 78,
+            DebtPressure = debtPressure,
+            LaborCapacity = 80,
+            MigrationRisk = 20,
+            LandHolding = 50,
+            GrainStore = grainStore,
+            ToolCondition = toolCondition,
+            ShelterQuality = 80,
+            DependentCount = 1,
+            LaborerCount = 3,
         });
 
         return RunOfficialSupply(state, new Dictionary<string, string>
