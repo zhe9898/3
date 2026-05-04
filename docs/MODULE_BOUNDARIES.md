@@ -1879,3 +1879,9 @@ Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, o
 Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, or retune official-supply migration delta outcomes. No movement command, route-history state, migration economy, class/status engine, runtime plugin loader, content/config namespace, prose parser, pressure-profile ledger, or persisted field is introduced.
 
 Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply liquidity pressure outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, shared cash-need predicate retune, or persisted ledger is introduced.
+
+### PopulationAndHouseholds tax season registration visibility extraction v1269-v1276 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp. The extracted values are schema-neutral in-memory `PopulationHouseholdMobilityRulesData` defaults, not module state, not public presentation authority, not a runtime rules-data file, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, or retune tax-season registration visibility outcomes. No movement command, route-history state, migration economy, class/status engine, runtime plugin loader, content/config namespace, prose parser, pressure-profile ledger, or persisted field is introduced.

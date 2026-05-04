@@ -1200,3 +1200,9 @@ The pass does not add movement authority, route history, migration economy, clas
 `PopulationAndHouseholds` now owns the official-supply debt delta quota/fragility/clerk/resource divisors, interaction floor, and component weights through validated rules-data. Defaults preserve the existing `OfficialSupplyBurdenProfile.DebtDelta` formula while moving another hardcoded formula slice out of C# literals.
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
+### v1269-v1276 population households tax season registration visibility extraction audit
+
+`PopulationAndHouseholds` now owns the tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp through validated rules-data. Defaults preserve the existing `ComputeRegistrationVisibilityPressure` result while moving another hardcoded tax-season helper out of C# literals.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.

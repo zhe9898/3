@@ -1003,3 +1003,9 @@ The extraction is default-equivalent. It does not retune official-supply livelih
 V1261-V1268 moves official-supply migration delta formula divisors and fragility threshold/boost into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned burden-profile inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, fragility pressure, interaction pressure, distress/debt/labor deltas, event threshold, tax-season formulas, household movement rules, or UI-visible social position.
+
+### Current population households tax season registration visibility extraction: v1269-v1276
+
+V1269-V1276 moves tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned tax burden inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune tax-season liquidity, labor, fragility, interaction, debt-delta formula, event threshold, official-supply rules, household movement rules, or UI-visible social position.

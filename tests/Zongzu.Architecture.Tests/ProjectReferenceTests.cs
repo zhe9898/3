@@ -20079,7 +20079,7 @@ public class ProjectReferenceTests
             "private TaxSeasonBurdenProfile ComputeTaxSeasonBurdenProfile",
             StringComparison.Ordinal);
         int registrationStart = pressureProfilesFile.IndexOf(
-            "private static int ComputeRegistrationVisibilityPressure",
+            "private int ComputeRegistrationVisibilityPressure",
             StringComparison.Ordinal);
         Assert.That(computeTaxStart, Is.GreaterThanOrEqualTo(0));
         Assert.That(registrationStart, Is.GreaterThan(computeTaxStart));
@@ -24094,6 +24094,218 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "OfficialSupplyMigrationDeltaLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+    }
+
+    [Test]
+    public void Population_households_tax_season_registration_visibility_extraction_v1269_v1276_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-tax-season-registration-visibility-extraction-v1269-v1276.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "TaxSeasonBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int registrationStart = pressureProfiles.IndexOf(
+            "private int ComputeRegistrationVisibilityPressure",
+            StringComparison.Ordinal);
+        int liquidityStart = pressureProfiles.IndexOf(
+            "private static int ComputeTaxLiquidityPressure",
+            registrationStart,
+            StringComparison.Ordinal);
+        Assert.That(registrationStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(liquidityStart, Is.GreaterThan(registrationStart));
+        string registrationBody = pressureProfiles.Substring(registrationStart, liquidityStart - registrationStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1269-V1276 PopulationAndHouseholds Tax Season Registration Visibility Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households tax season registration visibility extraction: v1269-v1276"));
+        Assert.That(fidelityModel, Does.Contain("V1269-V1276 PopulationAndHouseholds Tax Season Registration Visibility Extraction"));
+        Assert.That(designAudit, Does.Contain("v1269-v1276 population households tax season registration visibility extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds tax season registration visibility extraction v1269-v1276 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds tax season registration visibility extraction v1269-v1276 integration note"));
+        Assert.That(dataSchema, Does.Contain("Current population households tax season registration visibility extraction v1269-v1276 note"));
+        Assert.That(schemaRules, Does.Contain("population households tax season registration visibility extraction v1269-v1276 adds no persisted fields"));
+        Assert.That(simulation, Does.Contain("Current population households tax season registration visibility extraction v1269-v1276 note"));
+        Assert.That(uiPresentation, Does.Contain("v1269-v1276 population households tax season registration visibility extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds tax season registration visibility extraction v1269-v1276 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Tax Season Registration Visibility Extraction Through V1276"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "Previous hardcoded tax-season registration visibility livelihood exposure scores",
+                     "Previous hardcoded tax-season registration visibility land visibility bands",
+                     "Previous hardcoded tax-season registration visibility clamp",
+                     "DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore = 2",
+                     "DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore = 0",
+                     "DefaultTaxSeasonRegistrationVisibilityClampFloor = 1",
+                     "DefaultTaxSeasonRegistrationVisibilityClampCeiling = 7",
+                     "No tax-season liquidity/labor/fragility/interaction/debt-delta formula extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetTaxSeasonRegistrationVisibilityLivelihoodExposureScoreOrDefault",
+                     "GetTaxSeasonRegistrationVisibilityLandVisibilityScoreOrDefault",
+                     "GetTaxSeasonRegistrationVisibilityClampFloorOrDefault",
+                     "GetTaxSeasonRegistrationVisibilityClampCeilingOrDefault",
+                 })
+        {
+            Assert.That(pressureProfiles, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     "LivelihoodType.Tenant => 4",
+                     "LivelihoodType.Boatman => 3",
+                     "LivelihoodType.PettyTrader => 3",
+                     "LivelihoodType.Smallholder => 3",
+                     "LivelihoodType.DomesticServant => 1",
+                     ">= 80 => 4",
+                     ">= 40 => 3",
+                     ">= 15 => 2",
+                     "Math.Clamp(livelihoodExposure + landVisibility, 1, 7)",
+                 })
+        {
+            Assert.That(registrationBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore = 2"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore = 0"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonRegistrationVisibilityClampFloor = 1"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonRegistrationVisibilityClampCeiling = 7"));
+        Assert.That(rulesData, Does.Contain("tax_season_registration_visibility_livelihood_exposure_score_weights must be non-empty"));
+        Assert.That(rulesData, Does.Contain("tax_season_registration_visibility_land_visibility_score_bands must be non-empty"));
+        Assert.That(rulesData, Does.Contain("tax_season_registration_visibility_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_DefaultRegistrationVisibilityRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_CustomRegistrationVisibilityRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_InvalidRegistrationVisibilityRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("TaxSeasonRegistrationVisibility"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "TaxSeasonRegistrationVisibilityOutcomeCalculator",
+                     "PopulationAndHouseholdsTaxSeasonRegistrationVisibilityRules",
+                     "TaxSeasonRegistrationVisibilityState",
+                     "TaxSeasonOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "TaxSeasonRegistrationVisibility",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "TaxSeasonRegistrationVisibilityLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

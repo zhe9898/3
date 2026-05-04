@@ -462,3 +462,7 @@ The UI and Unity shell remain downstream-only. V1253-V1260 changes where `Popula
 ### v1261-v1268 population households official supply migration delta formula extraction
 
 The UI and Unity shell remain downstream-only. V1261-V1268 changes where `PopulationAndHouseholds` owns official-supply migration delta formula divisors and fragility threshold/boost; presentation surfaces may only copy projected fields/events and must not calculate migration deltas, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1269-v1276 population households tax season registration visibility extraction
+
+The UI and Unity shell remain downstream-only. V1269-V1276 changes where `PopulationAndHouseholds` owns tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp; presentation surfaces may only copy projected fields/events and must not calculate tax registration visibility, movement outcomes, route history, migration economy, or class/status changes.

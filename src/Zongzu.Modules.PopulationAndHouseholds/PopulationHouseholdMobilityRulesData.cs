@@ -67,6 +67,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistencePressureEventDistressThreshold,
     int SubsistencePressureDistressDeltaClampFloor,
     int SubsistencePressureDistressDeltaClampCeiling,
+    IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> TaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights,
+    int TaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> TaxSeasonRegistrationVisibilityLandVisibilityScoreBands,
+    int TaxSeasonRegistrationVisibilityLandVisibilityFallbackScore,
+    int TaxSeasonRegistrationVisibilityClampFloor,
+    int TaxSeasonRegistrationVisibilityClampCeiling,
     int TaxSeasonDebtDeltaClampFloor,
     int TaxSeasonDebtDeltaClampCeiling,
     int TaxSeasonDebtSpikeEventThreshold,
@@ -275,6 +281,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultSubsistencePressureEventDistressThreshold = 60;
     public const int DefaultSubsistencePressureDistressDeltaClampFloor = 4;
     public const int DefaultSubsistencePressureDistressDeltaClampCeiling = 30;
+    public const int DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore = 2;
+    public const int DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore = 0;
+    public const int DefaultTaxSeasonRegistrationVisibilityClampFloor = 1;
+    public const int DefaultTaxSeasonRegistrationVisibilityClampCeiling = 7;
     public const int DefaultTaxSeasonDebtDeltaClampFloor = 8;
     public const int DefaultTaxSeasonDebtDeltaClampCeiling = 28;
     public const int DefaultTaxSeasonDebtSpikeEventThreshold = 70;
@@ -408,6 +418,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxSubsistenceInteractionPressureContribution = 8;
     public const int MinSubsistencePressureDistressDelta = 0;
     public const int MaxSubsistencePressureDistressDelta = 64;
+    public const int MaxTaxSeasonRegistrationVisibilityLivelihoodExposureContribution = 8;
+    public const int MaxTaxSeasonRegistrationVisibilityLandVisibilityScore = 8;
+    public const int MinTaxSeasonRegistrationVisibilityPressure = 0;
+    public const int MaxTaxSeasonRegistrationVisibilityPressure = 16;
     public const int MinTaxSeasonDebtDelta = 0;
     public const int MaxTaxSeasonDebtDelta = 64;
     public const int MaxOfficialSupplyFallbackFrontierPressure = 100;
@@ -600,6 +614,33 @@ public sealed record PopulationHouseholdMobilityRulesData(
         };
 
     public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Tenant, 4),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Boatman, 3),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.PettyTrader, 3),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Smallholder, 3),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Artisan, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.HiredLabor, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.SeasonalMigrant, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Unknown, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.DomesticServant, 1),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.YamenRunner, 1),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Vagrant, 1),
+        };
+
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultTaxSeasonRegistrationVisibilityLandVisibilityScoreBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, 4),
+            new PopulationHouseholdMobilityThresholdScoreBand(40, 3),
+            new PopulationHouseholdMobilityThresholdScoreBand(15, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(1, 1),
+        };
+
+    public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
         DefaultOfficialSupplyLivelihoodExposureScoreWeights { get; } =
         new[]
         {
@@ -754,6 +795,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistencePressureEventDistressThreshold,
             DefaultSubsistencePressureDistressDeltaClampFloor,
             DefaultSubsistencePressureDistressDeltaClampCeiling,
+            DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights,
+            DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore,
+            DefaultTaxSeasonRegistrationVisibilityLandVisibilityScoreBands,
+            DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore,
+            DefaultTaxSeasonRegistrationVisibilityClampFloor,
+            DefaultTaxSeasonRegistrationVisibilityClampCeiling,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
@@ -970,6 +1017,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistencePressureEventDistressThreshold,
             DefaultSubsistencePressureDistressDeltaClampFloor,
             DefaultSubsistencePressureDistressDeltaClampCeiling,
+            DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights,
+            DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore,
+            DefaultTaxSeasonRegistrationVisibilityLandVisibilityScoreBands,
+            DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore,
+            DefaultTaxSeasonRegistrationVisibilityClampFloor,
+            DefaultTaxSeasonRegistrationVisibilityClampCeiling,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
@@ -1746,6 +1799,79 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (SubsistencePressureDistressDeltaClampFloor > SubsistencePressureDistressDeltaClampCeiling)
         {
             errors.Add("subsistence_pressure_distress_delta_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (TaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights is null
+            || TaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights.Count == 0
+            || TaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights.Any(static entry =>
+                !Enum.IsDefined(entry.Livelihood)
+                || entry.Weight is < 0 or > MaxTaxSeasonRegistrationVisibilityLivelihoodExposureContribution)
+            || TaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights
+                .Select(static entry => entry.Livelihood)
+                .Distinct()
+                .Count() != TaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights.Count)
+        {
+            errors.Add(
+                $"tax_season_registration_visibility_livelihood_exposure_score_weights must be non-empty, distinct, defined, and between 0 and {MaxTaxSeasonRegistrationVisibilityLivelihoodExposureContribution}.");
+        }
+
+        if (TaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore is < 0
+            or > MaxTaxSeasonRegistrationVisibilityLivelihoodExposureContribution)
+        {
+            errors.Add(
+                $"tax_season_registration_visibility_livelihood_exposure_fallback_score must be between 0 and {MaxTaxSeasonRegistrationVisibilityLivelihoodExposureContribution}.");
+        }
+
+        if (TaxSeasonRegistrationVisibilityLandVisibilityScoreBands is null
+            || TaxSeasonRegistrationVisibilityLandVisibilityScoreBands.Count == 0
+            || TaxSeasonRegistrationVisibilityLandVisibilityScoreBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < 0 or > MaxTaxSeasonRegistrationVisibilityLandVisibilityScore)
+            || TaxSeasonRegistrationVisibilityLandVisibilityScoreBands.Select(static band => band.Threshold).Distinct().Count()
+                != TaxSeasonRegistrationVisibilityLandVisibilityScoreBands.Count)
+        {
+            errors.Add(
+                $"tax_season_registration_visibility_land_visibility_score_bands must be non-empty, distinct, and between threshold 0..100 and score 0..{MaxTaxSeasonRegistrationVisibilityLandVisibilityScore}.");
+        }
+
+        if (TaxSeasonRegistrationVisibilityLandVisibilityScoreBands is { Count: > 1 })
+        {
+            for (int index = 1; index < TaxSeasonRegistrationVisibilityLandVisibilityScoreBands.Count; index++)
+            {
+                if (TaxSeasonRegistrationVisibilityLandVisibilityScoreBands[index - 1].Threshold
+                    <= TaxSeasonRegistrationVisibilityLandVisibilityScoreBands[index].Threshold)
+                {
+                    errors.Add(
+                        "tax_season_registration_visibility_land_visibility_score_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (TaxSeasonRegistrationVisibilityLandVisibilityFallbackScore is < 0
+            or > MaxTaxSeasonRegistrationVisibilityLandVisibilityScore)
+        {
+            errors.Add(
+                $"tax_season_registration_visibility_land_visibility_fallback_score must be between 0 and {MaxTaxSeasonRegistrationVisibilityLandVisibilityScore}.");
+        }
+
+        if (TaxSeasonRegistrationVisibilityClampFloor is < MinTaxSeasonRegistrationVisibilityPressure
+            or > MaxTaxSeasonRegistrationVisibilityPressure)
+        {
+            errors.Add(
+                $"tax_season_registration_visibility_clamp_floor must be between {MinTaxSeasonRegistrationVisibilityPressure} and {MaxTaxSeasonRegistrationVisibilityPressure}.");
+        }
+
+        if (TaxSeasonRegistrationVisibilityClampCeiling is < MinTaxSeasonRegistrationVisibilityPressure
+            or > MaxTaxSeasonRegistrationVisibilityPressure)
+        {
+            errors.Add(
+                $"tax_season_registration_visibility_clamp_ceiling must be between {MinTaxSeasonRegistrationVisibilityPressure} and {MaxTaxSeasonRegistrationVisibilityPressure}.");
+        }
+
+        if (TaxSeasonRegistrationVisibilityClampFloor > TaxSeasonRegistrationVisibilityClampCeiling)
+        {
+            errors.Add("tax_season_registration_visibility_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (TaxSeasonDebtDeltaClampFloor is < MinTaxSeasonDebtDelta or > MaxTaxSeasonDebtDelta)
@@ -3470,6 +3596,78 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? SubsistencePressureDistressDeltaClampCeiling
             : DefaultSubsistencePressureDistressDeltaClampCeiling;
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        GetTaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeightsOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights
+            : DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights;
+    }
+
+    public int GetTaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore
+            : DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScore;
+    }
+
+    public int GetTaxSeasonRegistrationVisibilityLivelihoodExposureScoreOrDefault(LivelihoodType livelihood)
+    {
+        foreach (PopulationHouseholdMobilityLivelihoodScoreWeight entry in
+                 GetTaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeightsOrDefault())
+        {
+            if (entry.Livelihood == livelihood)
+            {
+                return entry.Weight;
+            }
+        }
+
+        return GetTaxSeasonRegistrationVisibilityLivelihoodExposureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetTaxSeasonRegistrationVisibilityLandVisibilityScoreBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonRegistrationVisibilityLandVisibilityScoreBands
+            : DefaultTaxSeasonRegistrationVisibilityLandVisibilityScoreBands;
+    }
+
+    public int GetTaxSeasonRegistrationVisibilityLandVisibilityFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonRegistrationVisibilityLandVisibilityFallbackScore
+            : DefaultTaxSeasonRegistrationVisibilityLandVisibilityFallbackScore;
+    }
+
+    public int GetTaxSeasonRegistrationVisibilityLandVisibilityScoreOrDefault(int landHolding)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetTaxSeasonRegistrationVisibilityLandVisibilityScoreBandsOrDefault())
+        {
+            if (landHolding >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetTaxSeasonRegistrationVisibilityLandVisibilityFallbackScoreOrDefault();
+    }
+
+    public int GetTaxSeasonRegistrationVisibilityClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonRegistrationVisibilityClampFloor
+            : DefaultTaxSeasonRegistrationVisibilityClampFloor;
+    }
+
+    public int GetTaxSeasonRegistrationVisibilityClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonRegistrationVisibilityClampCeiling
+            : DefaultTaxSeasonRegistrationVisibilityClampCeiling;
     }
 
     public int GetTaxSeasonDebtDeltaClampFloorOrDefault()

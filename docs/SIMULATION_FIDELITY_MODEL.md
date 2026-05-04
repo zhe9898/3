@@ -1215,3 +1215,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1245-V1252 changes parameter ownership only. The official-supply debt delta formula divisors, interaction floor, and component weights are validated and consumed by `PopulationAndHouseholds`, while official-supply component pressure scoring, distress/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-debt-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1269-V1276 PopulationAndHouseholds Tax Season Registration Visibility Extraction
+
+V1269-V1276 changes parameter ownership only. The tax-season registration visibility livelihood exposure scores, land visibility bands, fallback values, and clamp are validated and consumed by `PopulationAndHouseholds`, while tax-season liquidity/labor/fragility/interaction scoring, debt delta formula, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, tax-season-registration-visibility state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
