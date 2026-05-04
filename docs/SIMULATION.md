@@ -1316,6 +1316,12 @@ V1277-V1284 extracts tax-season liquidity grain pressure bands, cash-need liveli
 
 This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, tax registration-visibility/labor/fragility/interaction/debt-delta retuning, or UI/Application authority.
 
+### Current population households tax season labor pressure extraction v1285-v1292 note
+
+V1285-V1292 extracts tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured tax-season handling.
+
+This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, tax registration-visibility/liquidity/fragility/interaction/debt-delta retuning, or UI/Application authority.
+
 ### Current population households official supply labor pressure extraction v1205-v1212 note
 
 V1205-V1212 extracts official-supply labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.

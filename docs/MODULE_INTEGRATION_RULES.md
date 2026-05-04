@@ -1404,3 +1404,11 @@ Tax-season liquidity ownership is internal to `PopulationAndHouseholds`. Upstrea
 No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate tax-season liquidity outcomes, and no prose parsing or loader/plugin system is introduced.
 
 No integration path may route these liquidity pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist liquidity pressure state, retune the shared cash-need livelihood predicate, or create migration/route-history/class-status authority.
+
+### PopulationAndHouseholds tax season labor pressure extraction v1285-v1292 integration note
+
+Tax-season labor pressure ownership is internal to `PopulationAndHouseholds`. Upstream `WorldSettlements` still emits structured tax-season events; `PopulationAndHouseholds` applies owner-owned labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp while computing the household tax burden profile.
+
+No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate tax-season labor outcomes, and no prose parsing or loader/plugin system is introduced.
+
+No integration path may route these labor pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist labor pressure state, or create migration/route-history/class-status authority.

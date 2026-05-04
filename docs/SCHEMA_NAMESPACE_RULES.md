@@ -382,3 +382,7 @@ The V1269-V1276 extraction keeps tax-season registration visibility livelihood e
 ### population households tax season liquidity pressure extraction v1277-v1284 adds no persisted fields
 
 The V1277-V1284 extraction keeps tax-season liquidity grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
+
+### population households tax season labor pressure extraction v1285-v1292 adds no persisted fields
+
+The V1285-V1292 extraction keeps tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.

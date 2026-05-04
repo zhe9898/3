@@ -211,31 +211,20 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetTaxSeasonLiquidityPressureClampCeilingOrDefault());
     }
 
-    private static int ComputeTaxLaborPressure(PopulationHouseholdState household)
+    private int ComputeTaxLaborPressure(PopulationHouseholdState household)
     {
-        int laborPressure = household.LaborCapacity switch
-        {
-            >= 80 => -2,
-            >= 60 => -1,
-            >= 40 => 0,
-            >= 30 => 1,
-            >= 20 => 2,
-            _ => 3,
-        };
+        int laborPressure = _householdMobilityRulesData.GetTaxSeasonLaborCapacityPressureScoreOrDefault(
+            household.LaborCapacity);
+        int dependencyPressure = _householdMobilityRulesData.GetTaxSeasonDependentCountPressureScoreOrDefault(
+            household.DependentCount);
+        dependencyPressure += _householdMobilityRulesData.GetTaxSeasonDependentToLaborRatioScoreOrDefault(
+            household.LaborerCount,
+            household.DependentCount);
 
-        int dependencyPressure = household.DependentCount switch
-        {
-            >= 5 => 2,
-            >= 3 => 1,
-            _ => 0,
-        };
-
-        if (household.DependentCount > 0 && household.LaborerCount > 0 && household.DependentCount > household.LaborerCount * 2)
-        {
-            dependencyPressure += 1;
-        }
-
-        return Math.Clamp(laborPressure + dependencyPressure, -2, 5);
+        return Math.Clamp(
+            laborPressure + dependencyPressure,
+            _householdMobilityRulesData.GetTaxSeasonLaborPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonLaborPressureClampCeilingOrDefault());
     }
 
     private static int ComputeTaxSeasonFragility(PopulationHouseholdState household)
