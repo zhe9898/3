@@ -137,6 +137,26 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyFragilityShelterDragPressureFallbackScore,
     int OfficialSupplyFragilityPressureClampFloor,
     int OfficialSupplyFragilityPressureClampCeiling,
+    LivelihoodType OfficialSupplyInteractionBoatmanLivelihood,
+    int OfficialSupplyInteractionBoatmanSupplyPressureThreshold,
+    int OfficialSupplyInteractionBoatmanBoostScore,
+    int OfficialSupplyInteractionBoatmanFallbackScore,
+    IReadOnlyList<LivelihoodType> OfficialSupplyInteractionLaborFragilityLivelihoods,
+    int OfficialSupplyInteractionLaborCapacityThreshold,
+    int OfficialSupplyInteractionLaborFragilityBoostScore,
+    int OfficialSupplyInteractionLaborFragilityFallbackScore,
+    LivelihoodType OfficialSupplyInteractionTenantLivelihood,
+    int OfficialSupplyInteractionTenantDebtPressureThreshold,
+    int OfficialSupplyInteractionTenantDebtBoostScore,
+    int OfficialSupplyInteractionTenantDebtFallbackScore,
+    int OfficialSupplyInteractionResilienceReliefGrainStoreThreshold,
+    int OfficialSupplyInteractionResilienceReliefLaborCapacityThreshold,
+    int OfficialSupplyInteractionResilienceReliefDebtPressureThreshold,
+    int OfficialSupplyInteractionResilienceReliefDistressThreshold,
+    int OfficialSupplyInteractionResilienceReliefScore,
+    int OfficialSupplyInteractionResilienceFallbackScore,
+    int OfficialSupplyInteractionPressureClampFloor,
+    int OfficialSupplyInteractionPressureClampCeiling,
     int OfficialSupplyDistressDeltaClampFloor,
     int OfficialSupplyDistressDeltaClampCeiling,
     int OfficialSupplyDebtDeltaClampFloor,
@@ -292,6 +312,25 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyFragilityShelterDragPressureFallbackScore = 0;
     public const int DefaultOfficialSupplyFragilityPressureClampFloor = 0;
     public const int DefaultOfficialSupplyFragilityPressureClampCeiling = 8;
+    public const LivelihoodType DefaultOfficialSupplyInteractionBoatmanLivelihood = LivelihoodType.Boatman;
+    public const int DefaultOfficialSupplyInteractionBoatmanSupplyPressureThreshold = 12;
+    public const int DefaultOfficialSupplyInteractionBoatmanBoostScore = 2;
+    public const int DefaultOfficialSupplyInteractionBoatmanFallbackScore = 0;
+    public const int DefaultOfficialSupplyInteractionLaborCapacityThreshold = 40;
+    public const int DefaultOfficialSupplyInteractionLaborFragilityBoostScore = 2;
+    public const int DefaultOfficialSupplyInteractionLaborFragilityFallbackScore = 0;
+    public const LivelihoodType DefaultOfficialSupplyInteractionTenantLivelihood = LivelihoodType.Tenant;
+    public const int DefaultOfficialSupplyInteractionTenantDebtPressureThreshold = 60;
+    public const int DefaultOfficialSupplyInteractionTenantDebtBoostScore = 1;
+    public const int DefaultOfficialSupplyInteractionTenantDebtFallbackScore = 0;
+    public const int DefaultOfficialSupplyInteractionResilienceReliefGrainStoreThreshold = 75;
+    public const int DefaultOfficialSupplyInteractionResilienceReliefLaborCapacityThreshold = 75;
+    public const int DefaultOfficialSupplyInteractionResilienceReliefDebtPressureThreshold = 55;
+    public const int DefaultOfficialSupplyInteractionResilienceReliefDistressThreshold = 55;
+    public const int DefaultOfficialSupplyInteractionResilienceReliefScore = -3;
+    public const int DefaultOfficialSupplyInteractionResilienceFallbackScore = 0;
+    public const int DefaultOfficialSupplyInteractionPressureClampFloor = -3;
+    public const int DefaultOfficialSupplyInteractionPressureClampCeiling = 5;
     public const int DefaultOfficialSupplyDistressDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
@@ -348,6 +387,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxOfficialSupplyFragilityPressureContribution = 8;
     public const int MinOfficialSupplyFragilityPressure = 0;
     public const int MaxOfficialSupplyFragilityPressure = 16;
+    public const int MinOfficialSupplyInteractionPressureContribution = -8;
+    public const int MaxOfficialSupplyInteractionPressureContribution = 8;
+    public const int MinOfficialSupplyInteractionPressure = -16;
+    public const int MaxOfficialSupplyInteractionPressure = 16;
     public const int MinOfficialSupplyDistressDelta = 0;
     public const int MaxOfficialSupplyDistressDelta = 64;
     public const int MinOfficialSupplyDebtDelta = 0;
@@ -595,6 +638,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
         };
 
+    public static IReadOnlyList<LivelihoodType> DefaultOfficialSupplyInteractionLaborFragilityLivelihoods { get; } =
+        new[] { LivelihoodType.HiredLabor, LivelihoodType.SeasonalMigrant };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -728,6 +774,26 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyFragilityShelterDragPressureFallbackScore,
             DefaultOfficialSupplyFragilityPressureClampFloor,
             DefaultOfficialSupplyFragilityPressureClampCeiling,
+            DefaultOfficialSupplyInteractionBoatmanLivelihood,
+            DefaultOfficialSupplyInteractionBoatmanSupplyPressureThreshold,
+            DefaultOfficialSupplyInteractionBoatmanBoostScore,
+            DefaultOfficialSupplyInteractionBoatmanFallbackScore,
+            DefaultOfficialSupplyInteractionLaborFragilityLivelihoods,
+            DefaultOfficialSupplyInteractionLaborCapacityThreshold,
+            DefaultOfficialSupplyInteractionLaborFragilityBoostScore,
+            DefaultOfficialSupplyInteractionLaborFragilityFallbackScore,
+            DefaultOfficialSupplyInteractionTenantLivelihood,
+            DefaultOfficialSupplyInteractionTenantDebtPressureThreshold,
+            DefaultOfficialSupplyInteractionTenantDebtBoostScore,
+            DefaultOfficialSupplyInteractionTenantDebtFallbackScore,
+            DefaultOfficialSupplyInteractionResilienceReliefGrainStoreThreshold,
+            DefaultOfficialSupplyInteractionResilienceReliefLaborCapacityThreshold,
+            DefaultOfficialSupplyInteractionResilienceReliefDebtPressureThreshold,
+            DefaultOfficialSupplyInteractionResilienceReliefDistressThreshold,
+            DefaultOfficialSupplyInteractionResilienceReliefScore,
+            DefaultOfficialSupplyInteractionResilienceFallbackScore,
+            DefaultOfficialSupplyInteractionPressureClampFloor,
+            DefaultOfficialSupplyInteractionPressureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -900,6 +966,26 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyFragilityShelterDragPressureFallbackScore,
             DefaultOfficialSupplyFragilityPressureClampFloor,
             DefaultOfficialSupplyFragilityPressureClampCeiling,
+            DefaultOfficialSupplyInteractionBoatmanLivelihood,
+            DefaultOfficialSupplyInteractionBoatmanSupplyPressureThreshold,
+            DefaultOfficialSupplyInteractionBoatmanBoostScore,
+            DefaultOfficialSupplyInteractionBoatmanFallbackScore,
+            DefaultOfficialSupplyInteractionLaborFragilityLivelihoods,
+            DefaultOfficialSupplyInteractionLaborCapacityThreshold,
+            DefaultOfficialSupplyInteractionLaborFragilityBoostScore,
+            DefaultOfficialSupplyInteractionLaborFragilityFallbackScore,
+            DefaultOfficialSupplyInteractionTenantLivelihood,
+            DefaultOfficialSupplyInteractionTenantDebtPressureThreshold,
+            DefaultOfficialSupplyInteractionTenantDebtBoostScore,
+            DefaultOfficialSupplyInteractionTenantDebtFallbackScore,
+            DefaultOfficialSupplyInteractionResilienceReliefGrainStoreThreshold,
+            DefaultOfficialSupplyInteractionResilienceReliefLaborCapacityThreshold,
+            DefaultOfficialSupplyInteractionResilienceReliefDebtPressureThreshold,
+            DefaultOfficialSupplyInteractionResilienceReliefDistressThreshold,
+            DefaultOfficialSupplyInteractionResilienceReliefScore,
+            DefaultOfficialSupplyInteractionResilienceFallbackScore,
+            DefaultOfficialSupplyInteractionPressureClampFloor,
+            DefaultOfficialSupplyInteractionPressureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -2174,6 +2260,129 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyFragilityPressureClampFloor > OfficialSupplyFragilityPressureClampCeiling)
         {
             errors.Add("official_supply_fragility_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (!Enum.IsDefined(typeof(LivelihoodType), OfficialSupplyInteractionBoatmanLivelihood))
+        {
+            errors.Add("official_supply_interaction_boatman_livelihood must be a defined livelihood.");
+        }
+
+        if (OfficialSupplyInteractionBoatmanSupplyPressureThreshold is < 0 or > MaxOfficialSupplyFallbackSupplyPressure)
+        {
+            errors.Add(
+                $"official_supply_interaction_boatman_supply_pressure_threshold must be between 0 and {MaxOfficialSupplyFallbackSupplyPressure}.");
+        }
+
+        if (OfficialSupplyInteractionBoatmanBoostScore is < 0 or > MaxOfficialSupplyInteractionPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_interaction_boatman_boost_score must be between 0 and {MaxOfficialSupplyInteractionPressureContribution}.");
+        }
+
+        if (OfficialSupplyInteractionBoatmanFallbackScore is < 0 or > MaxOfficialSupplyInteractionPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_interaction_boatman_fallback_score must be between 0 and {MaxOfficialSupplyInteractionPressureContribution}.");
+        }
+
+        if (OfficialSupplyInteractionLaborFragilityLivelihoods is null
+            || OfficialSupplyInteractionLaborFragilityLivelihoods.Count == 0
+            || OfficialSupplyInteractionLaborFragilityLivelihoods.Any(static livelihood =>
+                !Enum.IsDefined(typeof(LivelihoodType), livelihood))
+            || OfficialSupplyInteractionLaborFragilityLivelihoods.Distinct().Count()
+                != OfficialSupplyInteractionLaborFragilityLivelihoods.Count)
+        {
+            errors.Add("official_supply_interaction_labor_fragility_livelihoods must be non-empty, defined, and distinct.");
+        }
+
+        if (OfficialSupplyInteractionLaborCapacityThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_interaction_labor_capacity_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyInteractionLaborFragilityBoostScore is < 0 or > MaxOfficialSupplyInteractionPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_interaction_labor_fragility_boost_score must be between 0 and {MaxOfficialSupplyInteractionPressureContribution}.");
+        }
+
+        if (OfficialSupplyInteractionLaborFragilityFallbackScore is < 0 or > MaxOfficialSupplyInteractionPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_interaction_labor_fragility_fallback_score must be between 0 and {MaxOfficialSupplyInteractionPressureContribution}.");
+        }
+
+        if (!Enum.IsDefined(typeof(LivelihoodType), OfficialSupplyInteractionTenantLivelihood))
+        {
+            errors.Add("official_supply_interaction_tenant_livelihood must be a defined livelihood.");
+        }
+
+        if (OfficialSupplyInteractionTenantDebtPressureThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_interaction_tenant_debt_pressure_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyInteractionTenantDebtBoostScore is < 0 or > MaxOfficialSupplyInteractionPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_interaction_tenant_debt_boost_score must be between 0 and {MaxOfficialSupplyInteractionPressureContribution}.");
+        }
+
+        if (OfficialSupplyInteractionTenantDebtFallbackScore is < 0 or > MaxOfficialSupplyInteractionPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_interaction_tenant_debt_fallback_score must be between 0 and {MaxOfficialSupplyInteractionPressureContribution}.");
+        }
+
+        if (OfficialSupplyInteractionResilienceReliefGrainStoreThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_interaction_resilience_relief_grain_store_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyInteractionResilienceReliefLaborCapacityThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_interaction_resilience_relief_labor_capacity_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyInteractionResilienceReliefDebtPressureThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_interaction_resilience_relief_debt_pressure_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyInteractionResilienceReliefDistressThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_interaction_resilience_relief_distress_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyInteractionResilienceReliefScore is < MinOfficialSupplyInteractionPressureContribution
+            or > MaxOfficialSupplyInteractionPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_interaction_resilience_relief_score must be between {MinOfficialSupplyInteractionPressureContribution} and {MaxOfficialSupplyInteractionPressureContribution}.");
+        }
+
+        if (OfficialSupplyInteractionResilienceFallbackScore is < MinOfficialSupplyInteractionPressureContribution
+            or > MaxOfficialSupplyInteractionPressureContribution)
+        {
+            errors.Add(
+                $"official_supply_interaction_resilience_fallback_score must be between {MinOfficialSupplyInteractionPressureContribution} and {MaxOfficialSupplyInteractionPressureContribution}.");
+        }
+
+        if (OfficialSupplyInteractionPressureClampFloor is < MinOfficialSupplyInteractionPressure or > MaxOfficialSupplyInteractionPressure)
+        {
+            errors.Add(
+                $"official_supply_interaction_pressure_clamp_floor must be between {MinOfficialSupplyInteractionPressure} and {MaxOfficialSupplyInteractionPressure}.");
+        }
+
+        if (OfficialSupplyInteractionPressureClampCeiling is < MinOfficialSupplyInteractionPressure or > MaxOfficialSupplyInteractionPressure)
+        {
+            errors.Add(
+                $"official_supply_interaction_pressure_clamp_ceiling must be between {MinOfficialSupplyInteractionPressure} and {MaxOfficialSupplyInteractionPressure}.");
+        }
+
+        if (OfficialSupplyInteractionPressureClampFloor > OfficialSupplyInteractionPressureClampCeiling)
+        {
+            errors.Add("official_supply_interaction_pressure_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (OfficialSupplyDistressDeltaClampFloor is < MinOfficialSupplyDistressDelta or > MaxOfficialSupplyDistressDelta)
@@ -3691,6 +3900,190 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyFragilityPressureClampCeiling
             : DefaultOfficialSupplyFragilityPressureClampCeiling;
+    }
+
+    public LivelihoodType GetOfficialSupplyInteractionBoatmanLivelihoodOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionBoatmanLivelihood
+            : DefaultOfficialSupplyInteractionBoatmanLivelihood;
+    }
+
+    public int GetOfficialSupplyInteractionBoatmanSupplyPressureThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionBoatmanSupplyPressureThreshold
+            : DefaultOfficialSupplyInteractionBoatmanSupplyPressureThreshold;
+    }
+
+    public int GetOfficialSupplyInteractionBoatmanBoostScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionBoatmanBoostScore
+            : DefaultOfficialSupplyInteractionBoatmanBoostScore;
+    }
+
+    public int GetOfficialSupplyInteractionBoatmanFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionBoatmanFallbackScore
+            : DefaultOfficialSupplyInteractionBoatmanFallbackScore;
+    }
+
+    public int GetOfficialSupplyInteractionBoatmanScoreOrDefault(
+        LivelihoodType livelihood,
+        int supplyPressure)
+    {
+        return livelihood == GetOfficialSupplyInteractionBoatmanLivelihoodOrDefault()
+            && supplyPressure >= GetOfficialSupplyInteractionBoatmanSupplyPressureThresholdOrDefault()
+                ? GetOfficialSupplyInteractionBoatmanBoostScoreOrDefault()
+                : GetOfficialSupplyInteractionBoatmanFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<LivelihoodType> GetOfficialSupplyInteractionLaborFragilityLivelihoodsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionLaborFragilityLivelihoods
+            : DefaultOfficialSupplyInteractionLaborFragilityLivelihoods;
+    }
+
+    public int GetOfficialSupplyInteractionLaborCapacityThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionLaborCapacityThreshold
+            : DefaultOfficialSupplyInteractionLaborCapacityThreshold;
+    }
+
+    public int GetOfficialSupplyInteractionLaborFragilityBoostScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionLaborFragilityBoostScore
+            : DefaultOfficialSupplyInteractionLaborFragilityBoostScore;
+    }
+
+    public int GetOfficialSupplyInteractionLaborFragilityFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionLaborFragilityFallbackScore
+            : DefaultOfficialSupplyInteractionLaborFragilityFallbackScore;
+    }
+
+    public int GetOfficialSupplyInteractionLaborFragilityScoreOrDefault(
+        LivelihoodType livelihood,
+        int laborCapacity)
+    {
+        return GetOfficialSupplyInteractionLaborFragilityLivelihoodsOrDefault().Contains(livelihood)
+            && laborCapacity < GetOfficialSupplyInteractionLaborCapacityThresholdOrDefault()
+                ? GetOfficialSupplyInteractionLaborFragilityBoostScoreOrDefault()
+                : GetOfficialSupplyInteractionLaborFragilityFallbackScoreOrDefault();
+    }
+
+    public LivelihoodType GetOfficialSupplyInteractionTenantLivelihoodOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionTenantLivelihood
+            : DefaultOfficialSupplyInteractionTenantLivelihood;
+    }
+
+    public int GetOfficialSupplyInteractionTenantDebtPressureThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionTenantDebtPressureThreshold
+            : DefaultOfficialSupplyInteractionTenantDebtPressureThreshold;
+    }
+
+    public int GetOfficialSupplyInteractionTenantDebtBoostScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionTenantDebtBoostScore
+            : DefaultOfficialSupplyInteractionTenantDebtBoostScore;
+    }
+
+    public int GetOfficialSupplyInteractionTenantDebtFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionTenantDebtFallbackScore
+            : DefaultOfficialSupplyInteractionTenantDebtFallbackScore;
+    }
+
+    public int GetOfficialSupplyInteractionTenantDebtScoreOrDefault(
+        LivelihoodType livelihood,
+        int debtPressure)
+    {
+        return livelihood == GetOfficialSupplyInteractionTenantLivelihoodOrDefault()
+            && debtPressure >= GetOfficialSupplyInteractionTenantDebtPressureThresholdOrDefault()
+                ? GetOfficialSupplyInteractionTenantDebtBoostScoreOrDefault()
+                : GetOfficialSupplyInteractionTenantDebtFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyInteractionResilienceReliefGrainStoreThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionResilienceReliefGrainStoreThreshold
+            : DefaultOfficialSupplyInteractionResilienceReliefGrainStoreThreshold;
+    }
+
+    public int GetOfficialSupplyInteractionResilienceReliefLaborCapacityThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionResilienceReliefLaborCapacityThreshold
+            : DefaultOfficialSupplyInteractionResilienceReliefLaborCapacityThreshold;
+    }
+
+    public int GetOfficialSupplyInteractionResilienceReliefDebtPressureThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionResilienceReliefDebtPressureThreshold
+            : DefaultOfficialSupplyInteractionResilienceReliefDebtPressureThreshold;
+    }
+
+    public int GetOfficialSupplyInteractionResilienceReliefDistressThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionResilienceReliefDistressThreshold
+            : DefaultOfficialSupplyInteractionResilienceReliefDistressThreshold;
+    }
+
+    public int GetOfficialSupplyInteractionResilienceReliefScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionResilienceReliefScore
+            : DefaultOfficialSupplyInteractionResilienceReliefScore;
+    }
+
+    public int GetOfficialSupplyInteractionResilienceFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionResilienceFallbackScore
+            : DefaultOfficialSupplyInteractionResilienceFallbackScore;
+    }
+
+    public int GetOfficialSupplyInteractionResilienceScoreOrDefault(
+        int grainStore,
+        int laborCapacity,
+        int debtPressure,
+        int distress)
+    {
+        return grainStore >= GetOfficialSupplyInteractionResilienceReliefGrainStoreThresholdOrDefault()
+            && laborCapacity >= GetOfficialSupplyInteractionResilienceReliefLaborCapacityThresholdOrDefault()
+            && debtPressure < GetOfficialSupplyInteractionResilienceReliefDebtPressureThresholdOrDefault()
+            && distress < GetOfficialSupplyInteractionResilienceReliefDistressThresholdOrDefault()
+                ? GetOfficialSupplyInteractionResilienceReliefScoreOrDefault()
+                : GetOfficialSupplyInteractionResilienceFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyInteractionPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionPressureClampFloor
+            : DefaultOfficialSupplyInteractionPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyInteractionPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyInteractionPressureClampCeiling
+            : DefaultOfficialSupplyInteractionPressureClampCeiling;
     }
 
     public int GetOfficialSupplyDistressDeltaClampFloorOrDefault()

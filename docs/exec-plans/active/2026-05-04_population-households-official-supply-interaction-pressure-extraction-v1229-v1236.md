@@ -1,0 +1,117 @@
+# PopulationAndHouseholds Official Supply Interaction Pressure Extraction V1229-V1236
+
+## Purpose
+
+This ExecPlan covers a behavior-equivalent hardcoded-rule extraction for official-supply interaction pressure in `PopulationAndHouseholds`.
+
+Runtime behavior change: default behavior unchanged.
+
+Target schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`.
+
+No persisted field, module schema version bump, root save version change, migration step, save-manifest membership change, route-history state, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, official-supply-interaction-pressure state, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or serialized projection cache is added.
+
+## Scope
+
+This is a behavior-equivalent hardcoded-rule extraction for `ComputeOfficialSupplyInteractionPressure`:
+
+- previous hardcoded official-supply interaction boatman boost: `Boatman && supply>=12 => +2`, fallback `0`
+- previous hardcoded official-supply interaction labor fragility boost: `HiredLabor|SeasonalMigrant && labor<40 => +2`, fallback `0`
+- previous hardcoded official-supply interaction tenant debt boost: `Tenant && debt>=60 => +1`, fallback `0`
+- previous hardcoded official-supply interaction resilience relief: `grain>=75 && labor>=75 && debt<55 && distress<55 => -3`, fallback `0`
+- previous hardcoded official-supply interaction pressure clamp: `-3..5`
+- new owner-consumed rules-data defaults:
+  - `DefaultOfficialSupplyInteractionBoatmanLivelihood = LivelihoodType.Boatman`
+  - `DefaultOfficialSupplyInteractionBoatmanSupplyPressureThreshold = 12`
+  - `DefaultOfficialSupplyInteractionBoatmanBoostScore = 2`
+  - `DefaultOfficialSupplyInteractionBoatmanFallbackScore = 0`
+  - `DefaultOfficialSupplyInteractionLaborFragilityLivelihoods`
+  - `DefaultOfficialSupplyInteractionLaborCapacityThreshold = 40`
+  - `DefaultOfficialSupplyInteractionLaborFragilityBoostScore = 2`
+  - `DefaultOfficialSupplyInteractionLaborFragilityFallbackScore = 0`
+  - `DefaultOfficialSupplyInteractionTenantLivelihood = LivelihoodType.Tenant`
+  - `DefaultOfficialSupplyInteractionTenantDebtPressureThreshold = 60`
+  - `DefaultOfficialSupplyInteractionTenantDebtBoostScore = 1`
+  - `DefaultOfficialSupplyInteractionTenantDebtFallbackScore = 0`
+  - `DefaultOfficialSupplyInteractionResilienceReliefGrainStoreThreshold = 75`
+  - `DefaultOfficialSupplyInteractionResilienceReliefLaborCapacityThreshold = 75`
+  - `DefaultOfficialSupplyInteractionResilienceReliefDebtPressureThreshold = 55`
+  - `DefaultOfficialSupplyInteractionResilienceReliefDistressThreshold = 55`
+  - `DefaultOfficialSupplyInteractionResilienceReliefScore = -3`
+  - `DefaultOfficialSupplyInteractionPressureClampFloor = -3`
+  - `DefaultOfficialSupplyInteractionPressureClampCeiling = 5`
+
+PopulationAndHouseholds remains the sole owner and consumer. The extracted interaction pressure values are validated by `PopulationHouseholdMobilityRulesData` and read only by the owner module when building the structured official-supply burden profile.
+
+## Explicit Non-Goals
+
+- No official-supply livelihood exposure retune.
+- No official-supply resource buffer retune.
+- No official-supply labor pressure retune.
+- No official-supply liquidity pressure retune.
+- No official-supply fragility pressure retune.
+- No official-supply formula divisor extraction.
+- No official-supply distress/debt/labor/migration delta retune.
+- No official-supply event threshold retune.
+- No tax-season formula extraction.
+- No runtime rules-data loader.
+- No rules-data loader.
+- No rules-data file.
+- No content/config namespace.
+- No runtime plugin marketplace.
+- No arbitrary script rules.
+- No runtime assemblies.
+- No reflection-heavy rule loading.
+- No household movement command.
+- No direct route-history.
+- No migration economy.
+- No class/status engine.
+- No persisted state.
+- No schema bump.
+- No movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, or pressure-profile ledger.
+- No `PersonRegistry` expansion.
+- No Application/UI/Unity authority.
+- No prose parsing from `DomainEvent.Summary`, projection prose, receipt text, public-life lines, or docs text.
+
+## Determinism Risk
+
+Runtime determinism risk is unchanged under default rules-data because the extracted livelihood conditions, thresholds, boost scores, relief score, fallback values, and clamp preserve the old bounds. Validation is deterministic; malformed interaction pressure config falls back through owner getters to the same defaults.
+
+No unordered authority traversal, IO, prose parsing, reflection, runtime assembly loading, external data reads, counters, caches, persisted split state, or plugin loading are introduced.
+
+## Milestones
+
+1. Add V1229-V1236 official-supply interaction pressure extraction ExecPlan.
+2. Add default official-supply interaction livelihood conditions, thresholds, boost scores, relief score, clamp validation, and fallback getters to `PopulationHouseholdMobilityRulesData`.
+3. Replace the `ComputeOfficialSupplyInteractionPressure` hardcoded literals with owner-consumed deterministic values.
+4. Add focused tests proving explicit defaults preserve previous behavior, custom interaction pressure rules-data is consumed, and malformed config falls back deterministically.
+5. Add architecture guard proving no schema drift, no authority drift, no loader/plugin drift, no prose parsing, no `PersonRegistry` expansion, and no Application/UI/Unity authority.
+6. Update required docs.
+7. Run focused module/architecture tests, full architecture test, build, diff check, encoding scan, and full no-build test.
+
+## Validation Plan
+
+- `dotnet build Zongzu.sln --no-restore`
+- `dotnet test tests\Zongzu.Modules.PopulationAndHouseholds.Tests\Zongzu.Modules.PopulationAndHouseholds.Tests.csproj --no-build --filter "Name=OfficialSupplyRequisition_DefaultInteractionPressureRulesDataMatchesPreviousBaseline|Name=OfficialSupplyRequisition_CustomInteractionPressureRulesDataIsOwnerConsumed|Name=OfficialSupplyRequisition_InvalidInteractionPressureRulesDataFallsBackToPreviousBaseline"`
+- `dotnet test tests\Zongzu.Architecture.Tests\Zongzu.Architecture.Tests.csproj --no-build --filter "Name=Population_households_official_supply_interaction_pressure_extraction_v1229_v1236_must_remain_owner_consumed_and_schema_neutral"`
+- `dotnet test tests\Zongzu.Modules.PopulationAndHouseholds.Tests\Zongzu.Modules.PopulationAndHouseholds.Tests.csproj --no-build`
+- `dotnet test tests\Zongzu.Architecture.Tests\Zongzu.Architecture.Tests.csproj --no-build`
+- `git diff --check`
+- touched-file replacement-character scan
+- `dotnet test Zongzu.sln --no-build`
+
+## Rollback
+
+Revert the code/docs/tests commit. No save migration, content migration, rules-data file rollback, official-supply-interaction-pressure state rollback, or production data rollback is required.
+
+## Evidence log
+
+- `dotnet build Zongzu.sln --no-restore` passed with 0 warnings and 0 errors.
+- Focused owner tests passed 3/3: default interaction pressure rules-data matches previous baseline, custom interaction pressure rules-data is owner-consumed, and malformed interaction pressure rules-data falls back deterministically.
+- Focused architecture guards passed 2/2 after updating the older v893 file-split guard to expect owner-consumed interaction clamp getters instead of the retired `Math.Clamp(interaction, -3, 5)` literal.
+- `dotnet test tests\Zongzu.Modules.PopulationAndHouseholds.Tests\Zongzu.Modules.PopulationAndHouseholds.Tests.csproj --no-build` passed 190/190.
+- `dotnet test tests\Zongzu.Presentation.Unity.Tests\Zongzu.Presentation.Unity.Tests.csproj --no-build` passed 40/40.
+- Focused integration health lane passed 6/6 with replay hash `F9823C1020EFDE3BF55825CB65D27F161BFE2F40107BC77050311A2E3EA04FD4`.
+- `dotnet test tests\Zongzu.Architecture.Tests\Zongzu.Architecture.Tests.csproj --no-build` passed 176/176.
+- `git diff --check` passed.
+- Touched-file replacement-character scan passed across 17 files.
+- `dotnet test Zongzu.sln --no-build` passed, including PopulationAndHouseholds 190/190, Presentation.Unity 40/40, Integration 137/137, Architecture 176/176, and replay hash `F9823C1020EFDE3BF55825CB65D27F161BFE2F40107BC77050311A2E3EA04FD4`.

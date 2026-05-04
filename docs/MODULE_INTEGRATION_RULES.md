@@ -1361,4 +1361,10 @@ Official-supply fragility pressure ownership is internal to `PopulationAndHouseh
 
 No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate official-supply fragility outcomes, and no prose parsing or loader/plugin system is introduced.
 
+### PopulationAndHouseholds official supply interaction pressure extraction v1229-v1236 integration note
+
+Official-supply interaction pressure ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned livelihood conditions, thresholds, boost scores, resilience relief score, fallback scores, and clamp while computing the household burden profile.
+
+No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate official-supply interaction outcomes, and no prose parsing or loader/plugin system is introduced.
+
 No integration path may route these liquidity pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist liquidity pressure state, retune the shared cash-need livelihood predicate, or create migration/route-history/class-status authority.

@@ -1390,6 +1390,104 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultInteractionPressureRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyInteractionBoatmanLivelihood = LivelihoodType.Boatman,
+                OfficialSupplyInteractionBoatmanSupplyPressureThreshold = 12,
+                OfficialSupplyInteractionBoatmanBoostScore = 2,
+                OfficialSupplyInteractionBoatmanFallbackScore = 0,
+                OfficialSupplyInteractionLaborFragilityLivelihoods =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionLaborFragilityLivelihoods,
+                OfficialSupplyInteractionLaborCapacityThreshold = 40,
+                OfficialSupplyInteractionLaborFragilityBoostScore = 2,
+                OfficialSupplyInteractionLaborFragilityFallbackScore = 0,
+                OfficialSupplyInteractionTenantLivelihood = LivelihoodType.Tenant,
+                OfficialSupplyInteractionTenantDebtPressureThreshold = 60,
+                OfficialSupplyInteractionTenantDebtBoostScore = 1,
+                OfficialSupplyInteractionTenantDebtFallbackScore = 0,
+                OfficialSupplyInteractionResilienceReliefGrainStoreThreshold = 75,
+                OfficialSupplyInteractionResilienceReliefLaborCapacityThreshold = 75,
+                OfficialSupplyInteractionResilienceReliefDebtPressureThreshold = 55,
+                OfficialSupplyInteractionResilienceReliefDistressThreshold = 55,
+                OfficialSupplyInteractionResilienceReliefScore = -3,
+                OfficialSupplyInteractionResilienceFallbackScore = 0,
+                OfficialSupplyInteractionPressureClampFloor = -3,
+                OfficialSupplyInteractionPressureClampCeiling = 5,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunInteractionPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunInteractionPressureOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionBoatmanLivelihood, Is.EqualTo(LivelihoodType.Boatman));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionBoatmanSupplyPressureThreshold, Is.EqualTo(12));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionBoatmanBoostScore, Is.EqualTo(2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionLaborCapacityThreshold, Is.EqualTo(40));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionTenantDebtPressureThreshold, Is.EqualTo(60));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionResilienceReliefScore, Is.EqualTo(-3));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionPressureClampFloor, Is.EqualTo(-3));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyInteractionPressureClampCeiling, Is.EqualTo(5));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyInteractionPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyInteractionPressure]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyInteractionPressure], Is.EqualTo("2"));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomInteractionPressureRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyInteractionBoatmanBoostScore = 0,
+                OfficialSupplyInteractionLaborFragilityBoostScore = 0,
+                OfficialSupplyInteractionTenantDebtBoostScore = 0,
+                OfficialSupplyInteractionResilienceReliefScore = 0,
+                OfficialSupplyInteractionPressureClampFloor = -3,
+                OfficialSupplyInteractionPressureClampCeiling = 5,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunInteractionPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunInteractionPressureOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyInteractionPressure], Is.EqualTo("0"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyInteractionPressure], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyInteractionPressure]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]),
+            Is.LessThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta])));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidInteractionPressureRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyInteractionLaborFragilityLivelihoods = new LivelihoodType[] { },
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunInteractionPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunInteractionPressureOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_interaction_labor_fragility_livelihoods must be non-empty, defined, and distinct."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyInteractionPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyInteractionPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -1647,6 +1745,46 @@ public sealed class OfficialSupplyBurdenHandlerTests
             [DomainEventMetadataKeys.SettlementId] = "1",
             [DomainEventMetadataKeys.FrontierPressure] = "76",
             [DomainEventMetadataKeys.OfficialSupplyPressure] = "16",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "6",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "2",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunInteractionPressureOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null,
+        LivelihoodType livelihood = LivelihoodType.Boatman,
+        int supplyPressure = 16,
+        int laborCapacity = 80,
+        int debtPressure = 30,
+        int distress = 78,
+        int grainStore = 85)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Interaction pressure household",
+            SettlementId = new SettlementId(1),
+            Livelihood = livelihood,
+            Distress = distress,
+            DebtPressure = debtPressure,
+            LaborCapacity = laborCapacity,
+            MigrationRisk = 20,
+            LandHolding = 50,
+            GrainStore = grainStore,
+            ToolCondition = 80,
+            ShelterQuality = 80,
+            DependentCount = 1,
+            LaborerCount = 3,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "76",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = supplyPressure.ToString(),
             [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "12",
             [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "6",
             [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "4",

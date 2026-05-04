@@ -970,3 +970,9 @@ This is not a shared cash-need livelihood predicate extraction, official-supply 
 V1221-V1228 extracts official-supply fragility distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback scores, and fragility pressure clamp from `ComputeOfficialSupplyFragilityPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: distress `80=>3`, `65=>2`, `50=>1`; debt `80=>3`, `65=>2`, `50=>1`; migration `IsMigrating || risk>=70 => 1`; shelter drag `0<shelter<35=>1`; final clamp `0..8`.
 
 This is not official-supply interaction extraction, formula-divisor extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1229-V1236 PopulationAndHouseholds Official Supply Interaction Pressure Extraction
+
+V1229-V1236 extracts official-supply interaction boatman boost, labor-fragility livelihood set, tenant debt boost, resilience relief thresholds, fallback scores, and interaction pressure clamp from `ComputeOfficialSupplyInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: `Boatman && supply>=12 => +2`, `HiredLabor|SeasonalMigrant && labor<40 => +2`, `Tenant && debt>=60 => +1`, `grain>=75 && labor>=75 && debt<55 && distress<55 => -3`, and final clamp `-3..5`.
+
+This is not official-supply formula-divisor extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

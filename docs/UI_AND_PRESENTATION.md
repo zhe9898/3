@@ -442,3 +442,7 @@ The UI and Unity shell remain downstream-only. V1213-V1220 changes where `Popula
 ### v1221-v1228 population households official supply fragility pressure extraction
 
 The UI and Unity shell remain downstream-only. V1221-V1228 changes where `PopulationAndHouseholds` owns official-supply fragility distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback scores, and clamp; presentation surfaces may only copy projected fields/events and must not calculate fragility pressure, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1229-v1236 population households official supply interaction pressure extraction
+
+The UI and Unity shell remain downstream-only. V1229-V1236 changes where `PopulationAndHouseholds` owns official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief score, fallback scores, and clamp; presentation surfaces may only copy projected fields/events and must not calculate interaction pressure, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.

@@ -1139,6 +1139,12 @@ The pass does not add movement authority, route history, migration economy, clas
 
 No movement command, route history, migration economy, class/status engine, `PersonRegistry` expansion, schema drift, loader/plugin system, prose parser, or UI/Application/Unity authority is introduced.
 
+### v1229-v1236 population households official supply interaction pressure extraction audit
+
+`PopulationAndHouseholds` now owns the official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief score, fallback values, and clamp through validated rules-data. Defaults preserve the existing household interaction pressure profile while moving another hardcoded helper out of `ComputeOfficialSupplyInteractionPressure`.
+
+No movement command, route history, migration economy, class/status engine, `PersonRegistry` expansion, schema drift, loader/plugin system, prose parser, or UI/Application/Unity authority is introduced.
+
 The pass does not add movement authority, route history, migration economy, class/status behavior, shared cash-need predicate retuning, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
 
 ### v1205-v1212 population households official supply labor pressure extraction audit

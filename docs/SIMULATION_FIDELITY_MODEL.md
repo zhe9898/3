@@ -1185,3 +1185,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1221-V1228 changes parameter ownership only. The official-supply fragility distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback values, and clamp are validated and consumed by `PopulationAndHouseholds`, while official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, interaction helper, distress/debt/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-fragility-pressure state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1229-V1236 PopulationAndHouseholds Official Supply Interaction Pressure Extraction
+
+V1229-V1236 changes parameter ownership only. The official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief score, fallback values, and clamp are validated and consumed by `PopulationAndHouseholds`, while official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, fragility pressure, distress/debt/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-interaction-pressure state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
