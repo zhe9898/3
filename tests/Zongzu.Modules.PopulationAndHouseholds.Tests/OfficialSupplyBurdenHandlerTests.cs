@@ -1488,6 +1488,85 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultDistressDeltaFormulaRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDistressDeltaSupplyPressureDivisor = 4,
+                OfficialSupplyDistressDeltaLivelihoodExposureWeight = 1,
+                OfficialSupplyDistressDeltaLaborPressureWeight = 1,
+                OfficialSupplyDistressDeltaFragilityPressureWeight = 1,
+                OfficialSupplyDistressDeltaClerkDistortionPressureDivisor = 3,
+                OfficialSupplyDistressDeltaInteractionPressureWeight = 1,
+                OfficialSupplyDistressDeltaResourceBufferWeight = 1,
+                OfficialSupplyDistressDeltaAuthorityBufferDivisor = 3,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunInteractionPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunInteractionPressureOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaSupplyPressureDivisor, Is.EqualTo(4));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaLivelihoodExposureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaLaborPressureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaFragilityPressureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaClerkDistortionPressureDivisor, Is.EqualTo(3));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaInteractionPressureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaResourceBufferWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaAuthorityBufferDivisor, Is.EqualTo(3));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo("7"));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomDistressDeltaFormulaRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDistressDeltaSupplyPressureDivisor = 1,
+                OfficialSupplyDistressDeltaResourceBufferWeight = 0,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunInteractionPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunInteractionPressureOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo("24"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]),
+            Is.GreaterThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta])));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidDistressDeltaFormulaRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDistressDeltaSupplyPressureDivisor = 0,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunInteractionPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunInteractionPressureOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_distress_delta_supply_pressure_divisor must be between 1 and 16."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

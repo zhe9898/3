@@ -1176,3 +1176,9 @@ The pass does not add movement authority, route history, migration economy, clas
 `PopulationAndHouseholds` now owns the official-supply resource buffer grain/tool/shelter bands, fallback scores, and clamp through validated rules-data. Defaults preserve the existing household buffer profile while moving another hardcoded helper out of `ComputeOfficialSupplyResourceBuffer`.
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
+### v1237-v1244 population households official supply distress delta formula extraction audit
+
+`PopulationAndHouseholds` now owns the official-supply distress delta supply/clerk/authority divisors and component weights through validated rules-data. Defaults preserve the existing `OfficialSupplyBurdenProfile.DistressDelta` formula while moving another hardcoded formula slice out of C# literals.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.

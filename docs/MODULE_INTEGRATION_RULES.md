@@ -1367,4 +1367,10 @@ Official-supply interaction pressure ownership is internal to `PopulationAndHous
 
 No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate official-supply interaction outcomes, and no prose parsing or loader/plugin system is introduced.
 
+### PopulationAndHouseholds official supply distress delta formula extraction v1237-v1244 integration note
+
+Official-supply distress delta formula ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned formula divisors and component weights while computing the household burden profile.
+
+No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate official-supply distress delta outcomes, and no prose parsing or loader/plugin system is introduced.
+
 No integration path may route these liquidity pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist liquidity pressure state, retune the shared cash-need livelihood predicate, or create migration/route-history/class-status authority.

@@ -1449,3 +1449,7 @@ Acceptance requires default-equivalent behavior for official-supply fragility di
 ### PopulationAndHouseholds official supply interaction pressure extraction v1229-v1236 acceptance
 
 Acceptance requires default-equivalent behavior for official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief score, fallback scores, and clamp, deterministic fallback for malformed interaction pressure rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds official supply distress delta formula extraction v1237-v1244 acceptance
+
+Acceptance requires default-equivalent behavior for official-supply distress delta formula divisors and component weights, deterministic fallback for malformed formula rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

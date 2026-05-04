@@ -358,3 +358,7 @@ The V1221-V1228 extraction keeps official-supply fragility distress bands, debt 
 ### population households official supply interaction pressure extraction v1229-v1236 adds no persisted fields
 
 The V1229-V1236 extraction keeps official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief score, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
+
+### population households official supply distress delta formula extraction v1237-v1244 adds no persisted fields
+
+The V1237-V1244 extraction keeps official-supply distress delta formula divisors and component weights in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.

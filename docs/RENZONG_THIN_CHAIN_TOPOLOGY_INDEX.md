@@ -976,3 +976,9 @@ This is not official-supply interaction extraction, formula-divisor extraction, 
 V1229-V1236 extracts official-supply interaction boatman boost, labor-fragility livelihood set, tenant debt boost, resilience relief thresholds, fallback scores, and interaction pressure clamp from `ComputeOfficialSupplyInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: `Boatman && supply>=12 => +2`, `HiredLabor|SeasonalMigrant && labor<40 => +2`, `Tenant && debt>=60 => +1`, `grain>=75 && labor>=75 && debt<55 && distress<55 => -3`, and final clamp `-3..5`.
 
 This is not official-supply formula-divisor extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1237-V1244 PopulationAndHouseholds Official Supply Distress Delta Formula Extraction
+
+V1237-V1244 extracts official-supply distress delta formula divisors and component weights from `OfficialSupplyBurdenProfile.DistressDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: `SupplyPressure / 4`, `+ LivelihoodExposurePressure`, `+ LaborPressure`, `+ FragilityPressure`, `ClerkDistortionPressure / 3`, `+ InteractionPressure`, `- ResourceBuffer`, `AuthorityBuffer / 3`, and the existing distress delta clamp.
+
+This is not official-supply debt/labor/migration delta extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

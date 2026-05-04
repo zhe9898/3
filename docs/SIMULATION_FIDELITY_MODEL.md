@@ -1191,3 +1191,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1229-V1236 changes parameter ownership only. The official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief score, fallback values, and clamp are validated and consumed by `PopulationAndHouseholds`, while official-supply livelihood exposure, resource buffer, labor pressure, liquidity pressure, fragility pressure, distress/debt/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-interaction-pressure state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1237-V1244 PopulationAndHouseholds Official Supply Distress Delta Formula Extraction
+
+V1237-V1244 changes parameter ownership only. The official-supply distress delta formula divisors and component weights are validated and consumed by `PopulationAndHouseholds`, while official-supply component pressure scoring, interaction pressure, debt/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-distress-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

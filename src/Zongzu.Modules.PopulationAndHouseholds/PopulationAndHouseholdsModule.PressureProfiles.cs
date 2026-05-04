@@ -405,6 +405,14 @@ public sealed partial class PopulationAndHouseholdsModule
             ComputeOfficialSupplyLiquidityPressure(household),
             ComputeOfficialSupplyFragilityPressure(household),
             ComputeOfficialSupplyInteractionPressure(household, signal),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaSupplyPressureDivisorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaLivelihoodExposureWeightOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaLaborPressureWeightOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaFragilityPressureWeightOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaClerkDistortionPressureDivisorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaInteractionPressureWeightOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaResourceBufferWeightOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaAuthorityBufferDivisorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyDistressDeltaClampFloorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyDistressDeltaClampCeilingOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyDebtDeltaClampFloorOrDefault(),
@@ -575,6 +583,14 @@ public sealed partial class PopulationAndHouseholdsModule
         int LiquidityPressure,
         int FragilityPressure,
         int InteractionPressure,
+        int DistressDeltaSupplyPressureDivisor,
+        int DistressDeltaLivelihoodExposureWeight,
+        int DistressDeltaLaborPressureWeight,
+        int DistressDeltaFragilityPressureWeight,
+        int DistressDeltaClerkDistortionPressureDivisor,
+        int DistressDeltaInteractionPressureWeight,
+        int DistressDeltaResourceBufferWeight,
+        int DistressDeltaAuthorityBufferDivisor,
         int DistressDeltaClampFloor,
         int DistressDeltaClampCeiling,
         int DebtDeltaClampFloor,
@@ -585,14 +601,14 @@ public sealed partial class PopulationAndHouseholdsModule
         int MigrationDeltaClampCeiling)
     {
         public int DistressDelta => Math.Clamp(
-            (SupplyPressure / 4)
-            + LivelihoodExposurePressure
-            + LaborPressure
-            + FragilityPressure
-            + (ClerkDistortionPressure / 3)
-            + InteractionPressure
-            - ResourceBuffer
-            - (AuthorityBuffer / 3),
+            (SupplyPressure / DistressDeltaSupplyPressureDivisor)
+            + (LivelihoodExposurePressure * DistressDeltaLivelihoodExposureWeight)
+            + (LaborPressure * DistressDeltaLaborPressureWeight)
+            + (FragilityPressure * DistressDeltaFragilityPressureWeight)
+            + (ClerkDistortionPressure / DistressDeltaClerkDistortionPressureDivisor)
+            + (InteractionPressure * DistressDeltaInteractionPressureWeight)
+            - (ResourceBuffer * DistressDeltaResourceBufferWeight)
+            - (AuthorityBuffer / DistressDeltaAuthorityBufferDivisor),
             DistressDeltaClampFloor,
             DistressDeltaClampCeiling);
 
