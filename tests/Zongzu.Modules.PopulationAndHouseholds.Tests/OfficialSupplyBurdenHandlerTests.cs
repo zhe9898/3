@@ -223,6 +223,198 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(state.Households[0].DebtPressure, Is.EqualTo(30), "Invalid EntityKey should be a no-op.");
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultDistressDeltaClampRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDistressDeltaClampFloor = 0,
+                OfficialSupplyDistressDeltaClampCeiling = 24,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState explicitHousehold, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunCrossingOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaClampFloor, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaClampCeiling, Is.EqualTo(24));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyDistressDeltaClampFloorOrDefault(), Is.EqualTo(0));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyDistressDeltaClampCeilingOrDefault(), Is.EqualTo(24));
+        Assert.That(explicitHousehold.Distress, Is.EqualTo(defaultHousehold.Distress));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo("6"));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomDistressDeltaClampFloorRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDistressDeltaClampFloor = 2,
+                OfficialSupplyDistressDeltaClampCeiling = 24,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunBufferedOfficialSupply();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunBufferedOfficialSupply(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.Distress, Is.EqualTo(40));
+        Assert.That(customHousehold.Distress, Is.EqualTo(42));
+        Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+        Assert.That(customEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomDistressDeltaClampCeilingRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDistressDeltaClampFloor = 0,
+                OfficialSupplyDistressDeltaClampCeiling = 4,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunCrossingOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo("6"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo("4"));
+        Assert.That(customHousehold.Distress, Is.EqualTo(defaultHousehold.Distress - 2));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidDistressDeltaClampRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyDistressDeltaClampFloor = 25,
+                OfficialSupplyDistressDeltaClampCeiling = 24,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState fallbackHousehold, IReadOnlyList<IDomainEvent> fallbackEvents) =
+            RunCrossingOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyDistressDeltaClampFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaClampFloor));
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyDistressDeltaClampCeilingOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDistressDeltaClampCeiling));
+        Assert.That(fallbackHousehold.Distress, Is.EqualTo(defaultHousehold.Distress));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo("6"));
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Zhang household",
+            SettlementId = new SettlementId(1),
+            Distress = 78,
+            DebtPressure = 30,
+            LaborCapacity = 80,
+            MigrationRisk = 20,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "70",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "9",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "2",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "3",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunBufferedOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Buffered smallholder",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.Smallholder,
+            Distress = 40,
+            DebtPressure = 30,
+            LaborCapacity = 90,
+            MigrationRisk = 20,
+            LandHolding = 50,
+            GrainStore = 85,
+            ToolCondition = 80,
+            ShelterQuality = 80,
+            DependentCount = 1,
+            LaborerCount = 3,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "76",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "16",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "6",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "2",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunOfficialSupply(
+        PopulationAndHouseholdsState state,
+        IReadOnlyDictionary<string, string> metadata,
+        PopulationHouseholdMobilityRulesData? rulesData)
+    {
+        PopulationAndHouseholdsModule module = rulesData is null
+            ? new PopulationAndHouseholdsModule()
+            : new PopulationAndHouseholdsModule(rulesData);
+
+        QueryRegistry queries = new();
+        module.RegisterQueries(state, queries);
+
+        DomainEventBuffer buffer = new();
+        ModuleExecutionContext context = new(
+            new GameDate(1022, 10),
+            new FeatureManifest(),
+            new DeterministicRandom(KernelState.Create(42)),
+            queries,
+            buffer,
+            new WorldDiff());
+
+        buffer.Emit(MakeSupplyEvent(new SettlementId(1), metadata));
+
+        module.HandleEvents(new ModuleEventHandlingScope<PopulationAndHouseholdsState>(
+            state, context, buffer.Events.ToList()));
+
+        return (state.Households.Single(static household => household.Id == new HouseholdId(1)), buffer.Events.ToList());
+    }
+
+    private static IDomainEvent SingleBurdenEvent(IReadOnlyList<IDomainEvent> events)
+    {
+        return events.Single(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased);
+    }
+
     private static DomainEventRecord MakeSupplyEvent(
         SettlementId settlementId,
         IReadOnlyDictionary<string, string> metadata)

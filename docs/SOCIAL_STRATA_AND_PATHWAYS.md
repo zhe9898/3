@@ -901,3 +901,9 @@ The extraction is default-equivalent. It does not retune the tax debt spike thre
 V1125-V1132 moves the tax-season debt spike event threshold into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The threshold remains a private household-owned receipt gate, not a class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune the tax debt delta clamp, tax component formulas, official-supply formulas, or household mobility rules, and it does not create debt-threshold state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households official supply distress delta clamp extraction: v1133-v1140
+
+V1133-V1140 moves the official-supply distress delta clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private household-owned supply burden bound, not a class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply debt/labor/migration deltas, event threshold, signal fallback, tax-season formulas, or household mobility rules, and it does not create official-supply-delta state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.

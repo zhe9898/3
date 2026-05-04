@@ -1113,3 +1113,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1125-V1132 changes parameter ownership only. The tax-season debt spike event threshold is validated and consumed by `PopulationAndHouseholds`, while tax debt delta clamp, tax component scoring, official-supply pressure, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, debt-threshold state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1133-V1140 PopulationAndHouseholds Official Supply Distress Delta Clamp Extraction
+
+V1133-V1140 changes parameter ownership only. The official-supply distress delta clamp floor/ceiling are validated and consumed by `PopulationAndHouseholds`, while official-supply debt/labor/migration deltas, event threshold, signal fallback, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

@@ -1099,3 +1099,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1125-v1132 pass moves the `ApplyTaxSeasonPressure` debt crossing threshold from C# literal `70` into a validated `PopulationHouseholdMobilityRulesData` default getter.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household tax-season debt mutation and event emission; tax debt delta clamp and tax component formulas remain unchanged; Application/UI/Unity do not calculate debt spike eligibility or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1133-v1140 population households official supply distress delta clamp extraction audit - 2026-05-03
+
+The v1133-v1140 pass moves the `OfficialSupplyBurdenProfile.DistressDelta` clamp from C# literals `0..24` into validated `PopulationHouseholdMobilityRulesData` default getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household official-supply burden outcomes and event emission; debt/labor/migration deltas and event threshold remain unchanged; Application/UI/Unity do not calculate official-supply distress delta or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.

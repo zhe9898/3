@@ -353,7 +353,7 @@ public sealed partial class PopulationAndHouseholdsModule
             Math.Clamp(authorityBuffer, 0, 12));
     }
 
-    private static OfficialSupplyBurdenProfile ComputeOfficialSupplyBurdenProfile(
+    private OfficialSupplyBurdenProfile ComputeOfficialSupplyBurdenProfile(
         PopulationHouseholdState household,
         OfficialSupplySignal signal)
     {
@@ -368,7 +368,9 @@ public sealed partial class PopulationAndHouseholdsModule
             ComputeOfficialSupplyLaborPressure(household),
             ComputeOfficialSupplyLiquidityPressure(household),
             ComputeOfficialSupplyFragilityPressure(household),
-            ComputeOfficialSupplyInteractionPressure(household, signal));
+            ComputeOfficialSupplyInteractionPressure(household, signal),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaClampFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyDistressDeltaClampCeilingOrDefault());
     }
 
     private static int ComputeOfficialSupplyLivelihoodExposurePressure(PopulationHouseholdState household)
@@ -566,7 +568,9 @@ public sealed partial class PopulationAndHouseholdsModule
         int LaborPressure,
         int LiquidityPressure,
         int FragilityPressure,
-        int InteractionPressure)
+        int InteractionPressure,
+        int DistressDeltaClampFloor,
+        int DistressDeltaClampCeiling)
     {
         public int DistressDelta => Math.Clamp(
             (SupplyPressure / 4)
@@ -577,8 +581,8 @@ public sealed partial class PopulationAndHouseholdsModule
             + InteractionPressure
             - ResourceBuffer
             - (AuthorityBuffer / 3),
-            0,
-            24);
+            DistressDeltaClampFloor,
+            DistressDeltaClampCeiling);
 
         public int DebtDelta => Math.Clamp(
             (QuotaPressure / 4)

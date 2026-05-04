@@ -170,7 +170,7 @@ public sealed partial class PopulationAndHouseholdsModule
         }
     }
 
-    private static void DispatchOfficeSupplyEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
+    private void DispatchOfficeSupplyEvents(ModuleEventHandlingScope<PopulationAndHouseholdsState> scope)
     {
         // Chain 5: official supply requisition becomes household-owned burden.
         foreach (IDomainEvent domainEvent in scope.Events)
