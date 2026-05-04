@@ -20136,7 +20136,6 @@ public class ProjectReferenceTests
         }
 
         Assert.That(applyTaxBody, Does.Contain("ComputeTaxSeasonBurdenProfile(household)"));
-        Assert.That(applyTaxBody, Does.Contain("oldDebt < 70 && household.DebtPressure >= 70"));
         Assert.That(computeTaxProfileBody, Does.Contain("GetTaxSeasonDebtDeltaClampFloorOrDefault"));
         Assert.That(computeTaxProfileBody, Does.Contain("GetTaxSeasonDebtDeltaClampCeilingOrDefault"));
         Assert.That(taxProfileBody, Does.Contain("int DebtDeltaClampFloor"));
@@ -20200,6 +20199,194 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "TaxSeasonDebtDeltaClampLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_tax_season_debt_spike_threshold_extraction_v1125_v1132_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-tax-season-debt-spike-threshold-extraction-v1125-v1132.md"));
+        string eventDispatchFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.EventDispatch.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "TaxSeasonBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int applyTaxStart = eventDispatchFile.IndexOf(
+            "private void ApplyTaxSeasonPressure",
+            StringComparison.Ordinal);
+        int dispatchFamilyStart = eventDispatchFile.IndexOf(
+            "private static void DispatchFamilyBranchEvents",
+            StringComparison.Ordinal);
+        Assert.That(applyTaxStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(dispatchFamilyStart, Is.GreaterThan(applyTaxStart));
+        string applyTaxBody = eventDispatchFile.Substring(applyTaxStart, dispatchFamilyStart - applyTaxStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1125-V1132 PopulationAndHouseholds Tax Season Debt Spike Threshold Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households tax season debt spike threshold extraction: v1125-v1132"));
+        Assert.That(designAudit, Does.Contain("v1125-v1132 population households tax season debt spike threshold extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds tax season debt spike threshold extraction v1125-v1132 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds tax season debt spike threshold extraction v1125-v1132 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households tax season debt spike threshold extraction v1125-v1132 note"));
+        Assert.That(uiPresentation, Does.Contain("v1125-v1132 population households tax season debt spike threshold extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds tax season debt spike threshold extraction v1125-v1132 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1125-V1132 PopulationAndHouseholds Tax Season Debt Spike Threshold Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Tax Season Debt Spike Threshold Extraction Through V1132"));
+        Assert.That(schemaRules, Does.Contain("population households tax season debt spike threshold extraction v1125-v1132 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households tax season debt spike threshold extraction v1125-v1132 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded tax debt spike threshold: `oldDebt < 70 && household.DebtPressure >= 70`",
+                     "DefaultTaxSeasonDebtSpikeEventThreshold = 70",
+                     "No tax-season debt delta clamp extraction; already closed in V1117-V1124.",
+                     "No tax registration visibility formula extraction.",
+                     "No tax liquidity formula extraction.",
+                     "No tax labor formula extraction.",
+                     "No tax fragility formula extraction.",
+                     "No tax interaction formula extraction.",
+                     "No official-supply formula extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(applyTaxBody, Does.Contain("GetTaxSeasonDebtSpikeEventThresholdOrDefault"));
+        Assert.That(applyTaxBody, Does.Contain("oldDebt < debtSpikeEventThreshold && household.DebtPressure >= debtSpikeEventThreshold"));
+        Assert.That(applyTaxBody, Does.Not.Contain("oldDebt < 70 && household.DebtPressure >= 70"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonDebtSpikeEventThreshold = 70"));
+        Assert.That(rulesData, Does.Contain("tax_season_debt_spike_event_threshold must be between 0 and 100"));
+        Assert.That(rulesData, Does.Contain("GetTaxSeasonDebtSpikeEventThresholdOrDefault"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_DefaultDebtSpikeEventThresholdRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_CustomDebtSpikeEventThresholdRulesDataIsOwnerConsumedWithoutChangingDebt"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_InvalidDebtSpikeEventThresholdRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("TaxSeasonDebtSpikeEventThreshold"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "TaxSeasonDebtSpikeEventThreshold",
+                     "DebtSpikeEligibilityOutcomeCalculator",
+                     "PopulationAndHouseholdsTaxDebtSpikeRules",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "TaxSeasonDebtSpikeEventThreshold",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "TaxSeasonDebtSpikeThresholdLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

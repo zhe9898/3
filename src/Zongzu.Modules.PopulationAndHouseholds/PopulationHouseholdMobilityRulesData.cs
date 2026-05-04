@@ -69,6 +69,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistencePressureDistressDeltaClampCeiling,
     int TaxSeasonDebtDeltaClampFloor,
     int TaxSeasonDebtDeltaClampCeiling,
+    int TaxSeasonDebtSpikeEventThreshold,
     int MonthlyRuntimeActivePoolOutflowThreshold,
     int MonthlyRuntimeCandidateMigrationRiskFloor,
     int MonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -156,6 +157,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultSubsistencePressureDistressDeltaClampCeiling = 30;
     public const int DefaultTaxSeasonDebtDeltaClampFloor = 8;
     public const int DefaultTaxSeasonDebtDeltaClampCeiling = 28;
+    public const int DefaultTaxSeasonDebtSpikeEventThreshold = 70;
     public const int MaxGrainPriceShockPrice = 500;
     public const int MaxGrainPriceShockPriceDelta = 500;
     public const int MaxGrainPriceShockPercentage = 100;
@@ -393,6 +395,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistencePressureDistressDeltaClampCeiling,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
+            DefaultTaxSeasonDebtSpikeEventThreshold,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -488,6 +491,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistencePressureDistressDeltaClampCeiling,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
+            DefaultTaxSeasonDebtSpikeEventThreshold,
             DefaultMonthlyRuntimeActivePoolOutflowThreshold,
             DefaultMonthlyRuntimeCandidateMigrationRiskFloor,
             DefaultMonthlyRuntimeCandidateMigrationRiskCeiling,
@@ -1158,6 +1162,11 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (TaxSeasonDebtDeltaClampFloor > TaxSeasonDebtDeltaClampCeiling)
         {
             errors.Add("tax_season_debt_delta_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (TaxSeasonDebtSpikeEventThreshold is < 0 or > 100)
+        {
+            errors.Add("tax_season_debt_spike_event_threshold must be between 0 and 100.");
         }
 
         if (MonthlyRuntimeActivePoolOutflowThreshold is < 0 or > 100)
@@ -1944,6 +1953,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? TaxSeasonDebtDeltaClampCeiling
             : DefaultTaxSeasonDebtDeltaClampCeiling;
+    }
+
+    public int GetTaxSeasonDebtSpikeEventThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonDebtSpikeEventThreshold
+            : DefaultTaxSeasonDebtSpikeEventThreshold;
     }
 
     public int GetMonthlyRuntimeActivePoolOutflowThresholdOrDefault()

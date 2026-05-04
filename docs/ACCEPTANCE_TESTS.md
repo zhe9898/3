@@ -1380,3 +1380,11 @@ Acceptance evidence for V1117-V1124:
 - Architecture guard `Population_households_tax_season_debt_delta_clamp_extraction_v1117_v1124_must_remain_owner_consumed_and_schema_neutral` proves the tax debt delta clamp moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract the tax debt spike threshold, other tax component formulas, or official-supply formulas.
+
+## PopulationAndHouseholds tax season debt spike threshold extraction v1125-v1132 acceptance - 2026-05-03
+
+Acceptance evidence for V1125-V1132:
+- Population tests `TaxSeasonOpened_DefaultDebtSpikeEventThresholdRulesDataMatchesPreviousBaseline`, `TaxSeasonOpened_CustomDebtSpikeEventThresholdRulesDataIsOwnerConsumedWithoutChangingDebt`, and `TaxSeasonOpened_InvalidDebtSpikeEventThresholdRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior debt spike event behavior, owner custom threshold is consumed deterministically without changing debt mutation, and malformed config falls back deterministically.
+- Architecture guard `Population_households_tax_season_debt_spike_threshold_extraction_v1125_v1132_must_remain_owner_consumed_and_schema_neutral` proves the debt spike threshold moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract the tax debt delta clamp, other tax component formulas, or official-supply formulas.

@@ -247,6 +247,73 @@ public sealed class TaxSeasonBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
     }
 
+    [Test]
+    public void TaxSeasonOpened_DefaultDebtSpikeEventThresholdRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtSpikeEventThreshold = 70,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState explicitHousehold, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunPressedTaxSeason(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleDebtSpikeEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtSpikeEventThreshold, Is.EqualTo(70));
+        Assert.That(explicitPreviousBaseline.GetTaxSeasonDebtSpikeEventThresholdOrDefault(), Is.EqualTo(70));
+        Assert.That(explicitHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.DebtAfter], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.DebtAfter]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.DebtAfter], Is.EqualTo("78"));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_CustomDebtSpikeEventThresholdRulesDataIsOwnerConsumedWithoutChangingDebt()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtSpikeEventThreshold = 80,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunPressedTaxSeason(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.DebtPressure, Is.EqualTo(78));
+        Assert.That(customHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdDebtSpiked), Is.EqualTo(1));
+        Assert.That(customEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdDebtSpiked), Is.EqualTo(0));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_InvalidDebtSpikeEventThresholdRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtSpikeEventThreshold = 101,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState fallbackHousehold, IReadOnlyList<IDomainEvent> fallbackEvents) =
+            RunPressedTaxSeason(malformedRulesData);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleDebtSpikeEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetTaxSeasonDebtSpikeEventThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtSpikeEventThreshold));
+        Assert.That(fallbackHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.DebtAfter], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.DebtAfter]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.DebtAfter], Is.EqualTo("78"));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunPressedTaxSeason(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
