@@ -1831,3 +1831,9 @@ Application, UI, Unity, and `PersonRegistry` must not calculate or store officia
 `PopulationAndHouseholds` remains the owner and sole consumer of official-supply resource buffer grain/tool/shelter bands. The extracted values are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
 
 Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply resource buffer outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.
+
+### PopulationAndHouseholds official supply labor pressure extraction v1205-v1212 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of official-supply labor capacity bands, dependent count bands, and dependent/labor ratio bonus. The extracted values are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply labor pressure outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.

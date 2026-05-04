@@ -1344,3 +1344,9 @@ No integration path may route these exposure values through Application/UI/Unity
 Official-supply resource buffer ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned grain/tool/shelter buffer bands while computing the household burden profile.
 
 No integration path may route these buffer values through Application/UI/Unity, parse prose, load external rule assemblies, persist buffer state, or create migration/route-history/class-status authority.
+
+### PopulationAndHouseholds official supply labor pressure extraction v1205-v1212 integration note
+
+Official-supply labor pressure ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned labor capacity bands, dependent bands, and ratio bonus while computing the household burden profile.
+
+No integration path may route these labor pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist labor pressure state, or create migration/route-history/class-status authority.

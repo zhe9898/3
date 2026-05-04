@@ -1059,6 +1059,112 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultLaborPressureRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborCapacityPressureBands =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborCapacityPressureBands,
+                OfficialSupplyLaborCapacityPressureFallbackScore = 4,
+                OfficialSupplyDependentCountPressureBands =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDependentCountPressureBands,
+                OfficialSupplyDependentCountPressureFallbackScore = 0,
+                OfficialSupplyDependentToLaborRatioMultiplier = 2,
+                OfficialSupplyDependentToLaborRatioBonusScore = 1,
+                OfficialSupplyDependentToLaborRatioFallbackScore = 0,
+                OfficialSupplyLaborPressureClampFloor = -1,
+                OfficialSupplyLaborPressureClampCeiling = 7,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLaborPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunLaborPressureOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborCapacityPressureFallbackScore, Is.EqualTo(4));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDependentCountPressureFallbackScore, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDependentToLaborRatioMultiplier, Is.EqualTo(2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyDependentToLaborRatioBonusScore, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborPressureClampFloor, Is.EqualTo(-1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborPressureClampCeiling, Is.EqualTo(7));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLaborCapacityPressureBands
+                .Single(static band => band.Threshold == 80).Score,
+            Is.EqualTo(-1));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborPressure]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborPressure], Is.EqualTo("2"));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop]));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomLaborPressureRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborCapacityPressureBands =
+                    new[]
+                    {
+                        new PopulationHouseholdMobilityThresholdScoreBand(80, 4),
+                        new PopulationHouseholdMobilityThresholdScoreBand(60, 4),
+                        new PopulationHouseholdMobilityThresholdScoreBand(40, 4),
+                        new PopulationHouseholdMobilityThresholdScoreBand(25, 4),
+                    },
+                OfficialSupplyLaborCapacityPressureFallbackScore = 4,
+                OfficialSupplyDependentCountPressureBands =
+                    new[]
+                    {
+                        new PopulationHouseholdMobilityThresholdScoreBand(5, 0),
+                        new PopulationHouseholdMobilityThresholdScoreBand(3, 0),
+                    },
+                OfficialSupplyDependentCountPressureFallbackScore = 0,
+                OfficialSupplyDependentToLaborRatioMultiplier = 2,
+                OfficialSupplyDependentToLaborRatioBonusScore = 0,
+                OfficialSupplyDependentToLaborRatioFallbackScore = 0,
+                OfficialSupplyLaborPressureClampFloor = -1,
+                OfficialSupplyLaborPressureClampCeiling = 7,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLaborPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunLaborPressureOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborPressure], Is.EqualTo("4"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborPressure], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborPressure]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop]),
+            Is.GreaterThanOrEqualTo(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop])));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidLaborPressureRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLaborCapacityPressureBands =
+                    new PopulationHouseholdMobilityThresholdScoreBand[] { },
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLaborPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunLaborPressureOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_labor_capacity_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score -4..8."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLaborDrop]));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -1194,6 +1300,43 @@ public sealed class OfficialSupplyBurdenHandlerTests
             ShelterQuality = shelterQuality,
             DependentCount = 1,
             LaborerCount = 3,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "76",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "16",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "6",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "2",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunLaborPressureOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null,
+        int laborCapacity = 80,
+        int dependentCount = 5,
+        int laborerCount = 2)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Labor pressure household",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.HiredLabor,
+            Distress = 78,
+            DebtPressure = 30,
+            LaborCapacity = laborCapacity,
+            MigrationRisk = 20,
+            LandHolding = 50,
+            GrainStore = 85,
+            ToolCondition = 80,
+            ShelterQuality = 80,
+            DependentCount = dependentCount,
+            LaborerCount = laborerCount,
         });
 
         return RunOfficialSupply(state, new Dictionary<string, string>

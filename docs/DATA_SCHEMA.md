@@ -1779,3 +1779,9 @@ The official-supply livelihood exposure scores, land visibility bands, fallback 
 Schema/migration impact: none. V1197-V1204 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply resource buffer grain/tool/shelter bands, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply labor pressure extraction v1205-v1212 note
+
+Schema/migration impact: none. V1205-V1212 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

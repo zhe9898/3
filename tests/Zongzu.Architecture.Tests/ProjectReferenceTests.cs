@@ -22162,7 +22162,7 @@ public class ProjectReferenceTests
             "private int ComputeOfficialSupplyResourceBuffer",
             StringComparison.Ordinal);
         int laborStart = pressureProfiles.IndexOf(
-            "private static int ComputeOfficialSupplyLaborPressure",
+            "private int ComputeOfficialSupplyLaborPressure",
             resourceStart,
             StringComparison.Ordinal);
         Assert.That(resourceStart, Is.GreaterThanOrEqualTo(0));
@@ -22307,6 +22307,236 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "OfficialSupplyResourceBufferLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_official_supply_labor_pressure_extraction_v1205_v1212_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-official-supply-labor-pressure-extraction-v1205-v1212.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "OfficialSupplyBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int laborStart = pressureProfiles.IndexOf(
+            "private int ComputeOfficialSupplyLaborPressure",
+            StringComparison.Ordinal);
+        int liquidityStart = pressureProfiles.IndexOf(
+            "private static int ComputeOfficialSupplyLiquidityPressure",
+            laborStart,
+            StringComparison.Ordinal);
+        Assert.That(laborStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(liquidityStart, Is.GreaterThan(laborStart));
+        string laborBody = pressureProfiles.Substring(laborStart, liquidityStart - laborStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1205-V1212 PopulationAndHouseholds Official Supply Labor Pressure Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households official supply labor pressure extraction: v1205-v1212"));
+        Assert.That(designAudit, Does.Contain("v1205-v1212 population households official supply labor pressure extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds official supply labor pressure extraction v1205-v1212 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds official supply labor pressure extraction v1205-v1212 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households official supply labor pressure extraction v1205-v1212 note"));
+        Assert.That(uiPresentation, Does.Contain("v1205-v1212 population households official supply labor pressure extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds official supply labor pressure extraction v1205-v1212 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1205-V1212 PopulationAndHouseholds Official Supply Labor Pressure Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Official Supply Labor Pressure Extraction Through V1212"));
+        Assert.That(schemaRules, Does.Contain("population households official supply labor pressure extraction v1205-v1212 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households official supply labor pressure extraction v1205-v1212 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded official-supply labor capacity bands: `labor>=80 => -1`, `labor>=60 => 0`, `labor>=40 => 1`, `labor>=25 => 3`, fallback `4`",
+                     "previous hardcoded official-supply dependent count bands: `dependents>=5 => 2`, `dependents>=3 => 1`, fallback `0`",
+                     "previous hardcoded official-supply dependent/labor ratio bonus: when `laborers>0` and `dependents>laborers*2`, add `1`, fallback `0`",
+                     "previous hardcoded official-supply labor pressure clamp: `-1..7`",
+                     "DefaultOfficialSupplyLaborCapacityPressureBands",
+                     "DefaultOfficialSupplyLaborCapacityPressureFallbackScore = 4",
+                     "DefaultOfficialSupplyDependentCountPressureBands",
+                     "DefaultOfficialSupplyDependentCountPressureFallbackScore = 0",
+                     "DefaultOfficialSupplyDependentToLaborRatioMultiplier = 2",
+                     "DefaultOfficialSupplyDependentToLaborRatioBonusScore = 1",
+                     "DefaultOfficialSupplyDependentToLaborRatioFallbackScore = 0",
+                     "DefaultOfficialSupplyLaborPressureClampFloor = -1",
+                     "DefaultOfficialSupplyLaborPressureClampCeiling = 7",
+                     "No official-supply liquidity extraction.",
+                     "No official-supply fragility extraction.",
+                     "No official-supply interaction extraction.",
+                     "No official-supply formula divisor extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetOfficialSupplyLaborCapacityPressureScoreOrDefault",
+                     "GetOfficialSupplyDependentCountPressureScoreOrDefault",
+                     "GetOfficialSupplyDependentToLaborRatioScoreOrDefault",
+                     "GetOfficialSupplyLaborPressureClampFloorOrDefault",
+                     "GetOfficialSupplyLaborPressureClampCeilingOrDefault",
+                 })
+        {
+            Assert.That(laborBody, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     ">= 80 => -1",
+                     ">= 60 => 0",
+                     ">= 40 => 1",
+                     ">= 25 => 3",
+                     ">= 5 => 2",
+                     ">= 3 => 1",
+                     "household.DependentCount > household.LaborerCount * 2",
+                     "Math.Clamp(laborPressure + dependentPressure, -1, 7)",
+                 })
+        {
+            Assert.That(laborBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLaborCapacityPressureBands"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLaborCapacityPressureFallbackScore = 4"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyDependentCountPressureBands"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyDependentToLaborRatioMultiplier = 2"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyDependentToLaborRatioBonusScore = 1"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLaborPressureClampCeiling = 7"));
+        Assert.That(rulesData, Does.Contain("official_supply_labor_capacity_pressure_bands must be non-empty"));
+        Assert.That(rulesData, Does.Contain("official_supply_dependent_count_pressure_bands must be non-empty"));
+        Assert.That(rulesData, Does.Contain("official_supply_labor_pressure_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_DefaultLaborPressureRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_CustomLaborPressureRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_InvalidLaborPressureRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyLaborPressure"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "OfficialSupplyLaborPressureOutcomeCalculator",
+                     "PopulationAndHouseholdsOfficialSupplyLaborRules",
+                     "OfficialSupplyLaborPressureState",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "OfficialSupplyLaborPressure",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "OfficialSupplyLaborPressureLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",
