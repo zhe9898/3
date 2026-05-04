@@ -1417,6 +1417,12 @@ No integration path may route these labor pressure values through Application/UI
 
 Tax-season fragility ownership is internal to `PopulationAndHouseholds`. Upstream `WorldSettlements` still emits structured tax-season events; `PopulationAndHouseholds` applies owner-owned distress bands, debt bands, shelter-drag threshold/score, migration-risk threshold/score, fallback scores, and clamp while computing the household tax burden profile.
 
+### PopulationAndHouseholds tax season interaction pressure extraction v1301-v1308 integration note
+
+Tax-season interaction ownership is internal to `PopulationAndHouseholds`. Upstream `WorldSettlements` still emits structured tax-season events; `PopulationAndHouseholds` applies owner-owned tenant, land/labor, cash-need, resilience, fallback, and clamp rules while computing the household tax burden profile.
+
+No integration path is added for Application/UI/Unity authority, runtime loader/plugin execution, `PersonRegistry` state, movement commands, route history, or prose parsing.
+
 No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate tax-season fragility outcomes, and no prose parsing or loader/plugin system is introduced.
 
 No integration path may route these fragility pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist fragility pressure state, or create migration/route-history/class-status authority.

@@ -1481,3 +1481,7 @@ Acceptance requires default-equivalent behavior for tax-season labor capacity ba
 ### PopulationAndHouseholds tax season fragility pressure extraction v1293-v1300 acceptance
 
 Acceptance requires default-equivalent behavior for tax-season fragility distress bands, debt bands, shelter-drag threshold/score, migration-risk threshold/score, fallback scores, and clamp, deterministic fallback for malformed fragility rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds tax season interaction pressure extraction v1301-v1308 acceptance
+
+Acceptance requires default-equivalent behavior for tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback scores, and clamp, deterministic fallback for malformed interaction rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

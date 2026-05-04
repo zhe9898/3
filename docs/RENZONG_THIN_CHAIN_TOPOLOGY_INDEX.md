@@ -1024,3 +1024,9 @@ This is not tax-season fragility/interaction/debt-delta extraction, migration en
 V1293-V1300 extracts tax-season fragility distress bands, debt bands, shelter-drag threshold/score, migration-risk threshold/score, fallback scores, and fragility pressure clamp from `ComputeTaxSeasonFragility` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: distress `80=>3`, `65=>2`, `50=>1`; debt `80=>3`, `65=>2`, `55=>1`; shelter drag `0<shelter<35=>1`; migration drag `IsMigrating || risk>=70 => 1`; final clamp `0..7`.
 
 This is not tax-season interaction/debt-delta extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.
+
+## V1301-V1308 PopulationAndHouseholds Tax Season Interaction Pressure Extraction
+
+V1301-V1308 extracts tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback scores, and interaction clamp from `ComputeTaxInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: tenant distress/grain `Tenant && distress>=65 && 0<grain<25 => +2`; land/labor `land>=40 && labor<35 => +1`; cash-need `PettyTrader|Boatman|Artisan|SeasonalMigrant|HiredLabor && 0<grain<30 && debt>=60 => +1`; resilience `grain>=70 && labor>=70 && debt<55 && distress<45 => -2`; final clamp `-2..4`.
+
+This is not tax-season debt-delta extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.
