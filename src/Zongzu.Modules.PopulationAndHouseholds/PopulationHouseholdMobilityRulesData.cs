@@ -183,6 +183,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyLaborDropResourceBufferDivisor,
     int OfficialSupplyLaborDropClampFloor,
     int OfficialSupplyLaborDropClampCeiling,
+    int OfficialSupplyMigrationDeltaDistressDeltaDivisor,
+    int OfficialSupplyMigrationDeltaDebtDeltaDivisor,
+    int OfficialSupplyMigrationDeltaFragilityPressureThreshold,
+    int OfficialSupplyMigrationDeltaFragilityBoostScore,
     int OfficialSupplyMigrationDeltaClampFloor,
     int OfficialSupplyMigrationDeltaClampCeiling,
     int OfficialSupplyBurdenEventDistressThreshold,
@@ -377,6 +381,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyLaborDropResourceBufferDivisor = 4;
     public const int DefaultOfficialSupplyLaborDropClampFloor = 0;
     public const int DefaultOfficialSupplyLaborDropClampCeiling = 8;
+    public const int DefaultOfficialSupplyMigrationDeltaDistressDeltaDivisor = 5;
+    public const int DefaultOfficialSupplyMigrationDeltaDebtDeltaDivisor = 6;
+    public const int DefaultOfficialSupplyMigrationDeltaFragilityPressureThreshold = 5;
+    public const int DefaultOfficialSupplyMigrationDeltaFragilityBoostScore = 1;
     public const int DefaultOfficialSupplyMigrationDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyMigrationDeltaClampCeiling = 8;
     public const int DefaultOfficialSupplyBurdenEventDistressThreshold = 80;
@@ -862,6 +870,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLaborDropResourceBufferDivisor,
             DefaultOfficialSupplyLaborDropClampFloor,
             DefaultOfficialSupplyLaborDropClampCeiling,
+            DefaultOfficialSupplyMigrationDeltaDistressDeltaDivisor,
+            DefaultOfficialSupplyMigrationDeltaDebtDeltaDivisor,
+            DefaultOfficialSupplyMigrationDeltaFragilityPressureThreshold,
+            DefaultOfficialSupplyMigrationDeltaFragilityBoostScore,
             DefaultOfficialSupplyMigrationDeltaClampFloor,
             DefaultOfficialSupplyMigrationDeltaClampCeiling,
             DefaultOfficialSupplyBurdenEventDistressThreshold,
@@ -1074,6 +1086,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLaborDropResourceBufferDivisor,
             DefaultOfficialSupplyLaborDropClampFloor,
             DefaultOfficialSupplyLaborDropClampCeiling,
+            DefaultOfficialSupplyMigrationDeltaDistressDeltaDivisor,
+            DefaultOfficialSupplyMigrationDeltaDebtDeltaDivisor,
+            DefaultOfficialSupplyMigrationDeltaFragilityPressureThreshold,
+            DefaultOfficialSupplyMigrationDeltaFragilityBoostScore,
             DefaultOfficialSupplyMigrationDeltaClampFloor,
             DefaultOfficialSupplyMigrationDeltaClampCeiling,
             DefaultOfficialSupplyBurdenEventDistressThreshold,
@@ -2636,6 +2652,30 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyLaborDropClampFloor > OfficialSupplyLaborDropClampCeiling)
         {
             errors.Add("official_supply_labor_drop_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyMigrationDeltaDistressDeltaDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_migration_delta_distress_delta_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
+        }
+
+        if (OfficialSupplyMigrationDeltaDebtDeltaDivisor is < 1 or > MaxOfficialSupplyDeltaFormulaDivisor)
+        {
+            errors.Add(
+                $"official_supply_migration_delta_debt_delta_divisor must be between 1 and {MaxOfficialSupplyDeltaFormulaDivisor}.");
+        }
+
+        if (OfficialSupplyMigrationDeltaFragilityPressureThreshold is < MinOfficialSupplyFragilityPressure or > MaxOfficialSupplyFragilityPressure)
+        {
+            errors.Add(
+                $"official_supply_migration_delta_fragility_pressure_threshold must be between {MinOfficialSupplyFragilityPressure} and {MaxOfficialSupplyFragilityPressure}.");
+        }
+
+        if (OfficialSupplyMigrationDeltaFragilityBoostScore is < 0 or > MaxOfficialSupplyDeltaFormulaWeight)
+        {
+            errors.Add(
+                $"official_supply_migration_delta_fragility_boost_score must be between 0 and {MaxOfficialSupplyDeltaFormulaWeight}.");
         }
 
         if (OfficialSupplyMigrationDeltaClampFloor is < MinOfficialSupplyMigrationDelta or > MaxOfficialSupplyMigrationDelta)
@@ -4468,6 +4508,34 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyLaborDropClampCeiling
             : DefaultOfficialSupplyLaborDropClampCeiling;
+    }
+
+    public int GetOfficialSupplyMigrationDeltaDistressDeltaDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyMigrationDeltaDistressDeltaDivisor
+            : DefaultOfficialSupplyMigrationDeltaDistressDeltaDivisor;
+    }
+
+    public int GetOfficialSupplyMigrationDeltaDebtDeltaDivisorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyMigrationDeltaDebtDeltaDivisor
+            : DefaultOfficialSupplyMigrationDeltaDebtDeltaDivisor;
+    }
+
+    public int GetOfficialSupplyMigrationDeltaFragilityPressureThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyMigrationDeltaFragilityPressureThreshold
+            : DefaultOfficialSupplyMigrationDeltaFragilityPressureThreshold;
+    }
+
+    public int GetOfficialSupplyMigrationDeltaFragilityBoostScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyMigrationDeltaFragilityBoostScore
+            : DefaultOfficialSupplyMigrationDeltaFragilityBoostScore;
     }
 
     public int GetOfficialSupplyMigrationDeltaClampFloorOrDefault()

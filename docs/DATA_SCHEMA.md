@@ -1821,3 +1821,9 @@ The official-supply debt delta formula divisors, interaction floor, and componen
 Schema/migration impact: none. V1253-V1260 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply labor drop formula divisors, labor-pressure floor, and component weight are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply migration delta formula extraction v1261-v1268 note
+
+Schema/migration impact: none. V1261-V1268 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply migration delta formula divisors and fragility threshold/boost are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

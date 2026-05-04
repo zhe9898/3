@@ -1461,3 +1461,7 @@ Acceptance requires default-equivalent behavior for official-supply debt delta f
 ### PopulationAndHouseholds official supply labor drop formula extraction v1253-v1260 acceptance
 
 Acceptance requires default-equivalent behavior for official-supply labor drop formula divisors, labor-pressure floor, and component weight, deterministic fallback for malformed formula rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds official supply migration delta formula extraction v1261-v1268 acceptance
+
+Acceptance requires default-equivalent behavior for official-supply migration delta formula divisors and fragility threshold/boost, deterministic fallback for malformed formula rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

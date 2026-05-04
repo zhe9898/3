@@ -1129,6 +1129,12 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
 
+### v1261-v1268 population households official supply migration delta formula extraction audit
+
+`PopulationAndHouseholds` now owns the official-supply migration delta distress/debt divisors and fragility threshold/boost through validated rules-data. Defaults preserve the existing `OfficialSupplyBurdenProfile.MigrationDelta` formula while moving another hardcoded formula slice out of C# literals.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
 ### v1253-v1260 population households official supply labor drop formula extraction audit
 
 `PopulationAndHouseholds` now owns the official-supply labor drop supply/docket/resource divisors, labor-pressure floor, and component weight through validated rules-data. Defaults preserve the existing `OfficialSupplyBurdenProfile.LaborDrop` formula while moving another hardcoded formula slice out of C# literals.

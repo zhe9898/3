@@ -431,6 +431,10 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetOfficialSupplyLaborDropResourceBufferDivisorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyLaborDropClampFloorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyLaborDropClampCeilingOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyMigrationDeltaDistressDeltaDivisorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyMigrationDeltaDebtDeltaDivisorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyMigrationDeltaFragilityPressureThresholdOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyMigrationDeltaFragilityBoostScoreOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyMigrationDeltaClampFloorOrDefault(),
             _householdMobilityRulesData.GetOfficialSupplyMigrationDeltaClampCeilingOrDefault());
     }
@@ -621,6 +625,10 @@ public sealed partial class PopulationAndHouseholdsModule
         int LaborDropResourceBufferDivisor,
         int LaborDropClampFloor,
         int LaborDropClampCeiling,
+        int MigrationDeltaDistressDeltaDivisor,
+        int MigrationDeltaDebtDeltaDivisor,
+        int MigrationDeltaFragilityPressureThreshold,
+        int MigrationDeltaFragilityBoostScore,
         int MigrationDeltaClampFloor,
         int MigrationDeltaClampCeiling)
     {
@@ -655,9 +663,9 @@ public sealed partial class PopulationAndHouseholdsModule
             LaborDropClampCeiling);
 
         public int MigrationDelta => Math.Clamp(
-            (DistressDelta / 5)
-            + (DebtDelta / 6)
-            + (FragilityPressure >= 5 ? 1 : 0),
+            (DistressDelta / MigrationDeltaDistressDeltaDivisor)
+            + (DebtDelta / MigrationDeltaDebtDeltaDivisor)
+            + (FragilityPressure >= MigrationDeltaFragilityPressureThreshold ? MigrationDeltaFragilityBoostScore : 0),
             MigrationDeltaClampFloor,
             MigrationDeltaClampCeiling);
     }
