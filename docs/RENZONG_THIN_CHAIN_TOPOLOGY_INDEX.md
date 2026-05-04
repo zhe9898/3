@@ -868,3 +868,9 @@ This is not a resilience relief extraction, interaction clamp extraction, tax-se
 V1085-V1092 extracts the resilient household relief gate and score from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default thresholds and score preserve prior behavior: `GrainStore >= 75`, `LandHolding >= 35`, and `LaborCapacity >= 60` contribute `-2`.
 
 This is not an interaction clamp extraction, tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1093-V1100 PopulationAndHouseholds Subsistence Interaction Clamp Extraction
+
+V1093-V1100 extracts the final subsistence interaction pressure clamp from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default floor/ceiling preserve prior behavior: interaction pressure is clamped to `-2..4`.
+
+This is not a tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

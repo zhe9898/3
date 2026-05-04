@@ -1202,3 +1202,9 @@ No event pool, movement command, route-history path, interaction-debt ledger, pr
 V1085-V1092 changes interaction resilience relief ownership only. The grain-price subsistence path now reads resilience relief thresholds and score from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, grain-shortage window, cash-need boost, debt boost, interaction clamp, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, interaction-resilience ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households subsistence interaction clamp extraction v1093-v1100 note
+
+V1093-V1100 changes interaction clamp ownership only. The grain-price subsistence path now reads final interaction pressure clamp floor/ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, grain-shortage window, cash-need boost, debt boost, resilience relief, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, interaction-clamp ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.

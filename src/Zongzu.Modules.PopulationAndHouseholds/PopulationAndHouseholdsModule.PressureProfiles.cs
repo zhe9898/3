@@ -150,7 +150,10 @@ public sealed partial class PopulationAndHouseholdsModule
             interaction -= _householdMobilityRulesData.GetSubsistenceInteractionResilienceReliefScoreOrDefault();
         }
 
-        return Math.Clamp(interaction, -2, 4);
+        return Math.Clamp(
+            interaction,
+            _householdMobilityRulesData.GetSubsistenceInteractionPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetSubsistenceInteractionPressureClampCeilingOrDefault());
     }
 
     private static SettlementId? ResolveSettlementScope(IDomainEvent domainEvent)
