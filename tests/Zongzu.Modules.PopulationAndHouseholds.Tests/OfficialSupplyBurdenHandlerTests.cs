@@ -490,6 +490,91 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackHousehold.LaborCapacity, Is.EqualTo(17));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultMigrationDeltaClampRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyMigrationDeltaClampFloor = 0,
+                OfficialSupplyMigrationDeltaClampCeiling = 8,
+            };
+
+        (PopulationHouseholdState defaultHousehold, _) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState explicitHousehold, _) = RunCrossingOfficialSupply(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyMigrationDeltaClampFloor, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyMigrationDeltaClampCeiling, Is.EqualTo(8));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyMigrationDeltaClampFloorOrDefault(), Is.EqualTo(0));
+        Assert.That(explicitPreviousBaseline.GetOfficialSupplyMigrationDeltaClampCeilingOrDefault(), Is.EqualTo(8));
+        Assert.That(explicitHousehold.MigrationRisk, Is.EqualTo(defaultHousehold.MigrationRisk));
+        Assert.That(defaultHousehold.MigrationRisk, Is.EqualTo(21));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomMigrationDeltaClampFloorRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyMigrationDeltaClampFloor = 2,
+                OfficialSupplyMigrationDeltaClampCeiling = 8,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunBufferedOfficialSupply();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunBufferedOfficialSupply(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.MigrationRisk, Is.EqualTo(20));
+        Assert.That(customHousehold.MigrationRisk, Is.EqualTo(22));
+        Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+        Assert.That(customEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomMigrationDeltaClampCeilingRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyMigrationDeltaClampFloor = 0,
+                OfficialSupplyMigrationDeltaClampCeiling = 2,
+            };
+
+        (PopulationHouseholdState defaultHousehold, _) = RunLaborHeavyOfficialSupply();
+        (PopulationHouseholdState customHousehold, _) = RunLaborHeavyOfficialSupply(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultHousehold.MigrationRisk, Is.EqualTo(24));
+        Assert.That(customHousehold.MigrationRisk, Is.EqualTo(22));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidMigrationDeltaClampRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyMigrationDeltaClampFloor = 9,
+                OfficialSupplyMigrationDeltaClampCeiling = 8,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, _) = RunLaborHeavyOfficialSupply();
+        (PopulationHouseholdState fallbackHousehold, _) = RunLaborHeavyOfficialSupply(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyMigrationDeltaClampFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyMigrationDeltaClampFloor));
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyMigrationDeltaClampCeilingOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyMigrationDeltaClampCeiling));
+        Assert.That(fallbackHousehold.MigrationRisk, Is.EqualTo(defaultHousehold.MigrationRisk));
+        Assert.That(fallbackHousehold.MigrationRisk, Is.EqualTo(24));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

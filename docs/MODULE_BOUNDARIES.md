@@ -1796,3 +1796,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1149-V1156 extracts the official-supply labor drop clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` official-supply pressure profile helper. Module ownership, event scope, deterministic household traversal, burden mutation, metadata emission, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains official-supply-labor-drop-clamp, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
+
+## PopulationAndHouseholds official supply migration delta clamp extraction v1157-v1164 boundary note
+
+V1157-V1164 extracts the official-supply migration delta clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` official-supply pressure profile helper. Module ownership, event scope, deterministic household traversal, burden mutation, metadata emission, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains official-supply-migration-delta-clamp, pressure-profile, rules-data, movement, route-history, or household mobility outcome authority.
