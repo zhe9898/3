@@ -1356,3 +1356,11 @@ Acceptance evidence for V1093-V1100:
 - Architecture guard `Population_households_subsistence_interaction_clamp_extraction_v1093_v1100_must_remain_owner_consumed_and_schema_neutral` proves interaction clamp floor/ceiling moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract tax-season or official-supply formulas.
+
+## PopulationAndHouseholds subsistence event threshold extraction v1101-v1108 acceptance - 2026-05-03
+
+Acceptance evidence for V1101-V1108:
+- Population tests `GrainPriceSpike_DefaultSubsistenceEventThresholdRulesDataMatchesPreviousBaseline`, `GrainPriceSpike_CustomSubsistenceEventThresholdRulesDataIsOwnerConsumed`, and `GrainPriceSpike_InvalidSubsistenceEventThresholdRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior event threshold behavior, owner custom threshold is consumed deterministically, and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_event_threshold_extraction_v1101_v1108_must_remain_owner_consumed_and_schema_neutral` proves the event threshold moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract distress-delta clamp, tax-season, or official-supply formulas.

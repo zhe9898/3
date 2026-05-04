@@ -19624,6 +19624,188 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_subsistence_event_threshold_extraction_v1101_v1108_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-03_population-households-subsistence-event-threshold-extraction-v1101-v1108.md"));
+        string eventDispatchFile = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.EventDispatch.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "GrainPriceSubsistenceHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int applyStart = eventDispatchFile.IndexOf(
+            "private void ApplyGrainPriceSubsistencePressure",
+            StringComparison.Ordinal);
+        int dispatchWorldStart = eventDispatchFile.IndexOf(
+            "private static void DispatchWorldPulseEvents",
+            StringComparison.Ordinal);
+        Assert.That(applyStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(dispatchWorldStart, Is.GreaterThan(applyStart));
+        string grainPriceDispatchBody = eventDispatchFile.Substring(applyStart, dispatchWorldStart - applyStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1101-V1108 PopulationAndHouseholds Subsistence Event Threshold Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households subsistence event threshold extraction: v1101-v1108"));
+        Assert.That(designAudit, Does.Contain("v1101-v1108 population households subsistence event threshold extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds subsistence event threshold extraction v1101-v1108 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds subsistence event threshold extraction v1101-v1108 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households subsistence event threshold extraction v1101-v1108 note"));
+        Assert.That(uiPresentation, Does.Contain("v1101-v1108 population households subsistence event threshold extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds subsistence event threshold extraction v1101-v1108 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1101-V1108 PopulationAndHouseholds Subsistence Event Threshold Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Subsistence Event Threshold Extraction Through V1108"));
+        Assert.That(schemaRules, Does.Contain("population households subsistence event threshold extraction v1101-v1108 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households subsistence event threshold extraction v1101-v1108 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded event threshold: `oldDistress < 60 && household.Distress >= 60`",
+                     "DefaultSubsistencePressureEventDistressThreshold = 60",
+                     "No subsistence distress delta clamp extraction",
+                     "No tax-season or official-supply formula extraction",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(grainPriceDispatchBody, Does.Contain("GetSubsistencePressureEventDistressThresholdOrDefault"));
+        Assert.That(grainPriceDispatchBody, Does.Not.Contain("oldDistress < 60 && household.Distress >= 60"));
+        Assert.That(rulesData, Does.Contain("DefaultSubsistencePressureEventDistressThreshold = 60"));
+        Assert.That(rulesData, Does.Contain("subsistence_pressure_event_distress_threshold must be between 0 and 100"));
+        Assert.That(rulesData, Does.Contain("GetSubsistencePressureEventDistressThresholdOrDefault"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_DefaultSubsistenceEventThresholdRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_CustomSubsistenceEventThresholdRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("GrainPriceSpike_InvalidSubsistenceEventThresholdRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("SubsistenceEventThreshold"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "SubsistencePressureEventDistressThreshold",
+                     "SubsistenceEventThresholdOutcomeCalculator",
+                     "PopulationAndHouseholdsEventThresholdRules",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "SubsistenceEventThreshold",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "SecondHouseholdMobilityRuntimeRule",
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "SubsistenceEventThresholdLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

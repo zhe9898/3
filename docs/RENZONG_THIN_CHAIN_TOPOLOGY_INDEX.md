@@ -874,3 +874,9 @@ This is not an interaction clamp extraction, tax-season extraction, official-sup
 V1093-V1100 extracts the final subsistence interaction pressure clamp from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default floor/ceiling preserve prior behavior: interaction pressure is clamped to `-2..4`.
 
 This is not a tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1101-V1108 PopulationAndHouseholds Subsistence Event Threshold Extraction
+
+V1101-V1108 extracts the grain-price subsistence event distress crossing threshold from `ApplyGrainPriceSubsistencePressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default threshold preserves prior behavior: the structured `HouseholdSubsistencePressureChanged` receipt emits when distress crosses `60`.
+
+This is not a distress-delta clamp extraction, tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

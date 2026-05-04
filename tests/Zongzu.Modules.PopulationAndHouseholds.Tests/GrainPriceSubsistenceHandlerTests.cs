@@ -1478,7 +1478,80 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceInteractionPressure], Is.EqualTo("3"));
     }
 
+    [Test]
+    public void GrainPriceSpike_DefaultSubsistenceEventThresholdRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistencePressureEventDistressThreshold = 60,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
+            RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistencePressureEventDistressThreshold, Is.EqualTo(60));
+        Assert.That(explicitPreviousBaseline.GetSubsistencePressureEventDistressThresholdOrDefault(), Is.EqualTo(60));
+        Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.DistressBefore], Is.EqualTo("50"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.DistressAfter], Is.EqualTo("77"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_CustomSubsistenceEventThresholdRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistencePressureEventDistressThreshold = 80,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) =
+            RunMissingMetadataGrainPriceSpikeWithEvents();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunMissingMetadataGrainPriceSpikeWithEvents(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customRulesData.GetSubsistencePressureEventDistressThresholdOrDefault(), Is.EqualTo(80));
+        Assert.That(defaultEvents.Count(e => e.EventType == PopulationEventNames.HouseholdSubsistencePressureChanged), Is.EqualTo(1));
+        Assert.That(customEvents.Count(e => e.EventType == PopulationEventNames.HouseholdSubsistencePressureChanged), Is.Zero);
+        Assert.That(customHousehold.Distress, Is.EqualTo(defaultHousehold.Distress));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidSubsistenceEventThresholdRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistencePressureEventDistressThreshold = 101,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetSubsistencePressureEventDistressThresholdOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultSubsistencePressureEventDistressThreshold));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.DistressBefore], Is.EqualTo("50"));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.DistressAfter], Is.EqualTo("77"));
+    }
+
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunMissingMetadataGrainPriceSpike(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        (PopulationHouseholdState household, IReadOnlyList<IDomainEvent> events) =
+            RunMissingMetadataGrainPriceSpikeWithEvents(rulesData);
+        IDomainEvent subsistenceEvent = events.Single(e => e.EventType == PopulationEventNames.HouseholdSubsistencePressureChanged);
+        return (household, subsistenceEvent);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunMissingMetadataGrainPriceSpikeWithEvents(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
         PopulationAndHouseholdsModule module = rulesData is null
@@ -1525,8 +1598,7 @@ public sealed class GrainPriceSubsistenceHandlerTests
             state, context, buffer.Events.ToList()));
 
         PopulationHouseholdState household = state.Households.Single(static h => h.Id == new HouseholdId(10));
-        IDomainEvent subsistenceEvent = buffer.Events.Single(e => e.EventType == PopulationEventNames.HouseholdSubsistencePressureChanged);
-        return (household, subsistenceEvent);
+        return (household, buffer.Events.ToList());
     }
 
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunResilientGrainPriceSpike(

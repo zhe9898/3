@@ -1089,3 +1089,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1093-V1100 changes parameter ownership only. The subsistence interaction clamp floor and ceiling are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, grain-shortage window, cash-need interaction boost, debt interaction boost, resilience interaction relief, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, interaction-clamp state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1101-V1108 PopulationAndHouseholds Subsistence Event Threshold Extraction
+
+V1101-V1108 changes parameter ownership only. The grain-price subsistence event threshold is validated and consumed by `PopulationAndHouseholds`, while subsistence pressure calculation, grain-price event scope, deterministic household ordering, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, event-threshold state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
