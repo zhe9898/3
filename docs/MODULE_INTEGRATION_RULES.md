@@ -1291,3 +1291,9 @@ The existing `WorldSettlements.TaxSeasonOpened` event path remains the integrati
 V1125-V1132 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts the `ApplyTaxSeasonPressure` debt spike event threshold into validated owner-consumed rules-data.
 
 The existing `WorldSettlements.TaxSeasonOpened` event path remains the integration seam: it gates the `HouseholdDebtSpiked` receipt with an owner-consumed threshold and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer debt spike eligibility or household pressure outcomes.
+
+## PopulationAndHouseholds official supply distress delta clamp extraction v1133-v1140 integration note
+
+V1133-V1140 adds no new cross-module command, event consumer, projection parser, event router, rules-data loader, rules-data file, scheduler path, or runtime behavior under default rules-data. It extracts the `OfficialSupplyBurdenProfile.DistressDelta` clamp bounds into validated owner-consumed rules-data.
+
+The existing `OfficeAndCareer.OfficialSupplyRequisition` event path remains the integration seam: it computes the official-supply distress delta with owner-consumed clamp bounds and mutates only `PopulationAndHouseholds` owner state. No downstream layer parses `DomainEvent.Summary`, receipt text, projection prose, public-life lines, or docs text to infer official-supply distress delta or household pressure outcomes.

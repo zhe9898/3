@@ -1388,3 +1388,11 @@ Acceptance evidence for V1125-V1132:
 - Architecture guard `Population_households_tax_season_debt_spike_threshold_extraction_v1125_v1132_must_remain_owner_consumed_and_schema_neutral` proves the debt spike threshold moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract the tax debt delta clamp, other tax component formulas, or official-supply formulas.
+
+## PopulationAndHouseholds official supply distress delta clamp extraction v1133-v1140 acceptance - 2026-05-03
+
+Acceptance evidence for V1133-V1140:
+- Population tests `OfficialSupplyRequisition_DefaultDistressDeltaClampRulesDataMatchesPreviousBaseline`, `OfficialSupplyRequisition_CustomDistressDeltaClampFloorRulesDataIsOwnerConsumed`, `OfficialSupplyRequisition_CustomDistressDeltaClampCeilingRulesDataIsOwnerConsumed`, and `OfficialSupplyRequisition_InvalidDistressDeltaClampRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior official-supply distress delta clamp behavior, owner custom floor/ceiling are consumed deterministically, and malformed config falls back deterministically.
+- Architecture guard `Population_households_official_supply_distress_delta_clamp_extraction_v1133_v1140_must_remain_owner_consumed_and_schema_neutral` proves the official-supply distress delta clamp moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract official-supply debt/labor/migration delta clamps, official-supply event threshold, official-supply signal formulas, or tax-season formulas.

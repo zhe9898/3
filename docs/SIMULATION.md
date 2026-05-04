@@ -1232,3 +1232,9 @@ No event pool, movement command, route-history path, tax-debt-clamp ledger, pres
 V1125-V1132 changes the tax-season debt spike event threshold ownership only. The tax-season path now reads the debt crossing threshold from a validated `PopulationHouseholdMobilityRulesData` getter, while scheduler cadence, event scope, deterministic household traversal, tax debt delta clamp, tax component scoring, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, debt-threshold ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households official supply distress delta clamp extraction v1133-v1140 note
+
+V1133-V1140 changes the official-supply distress delta clamp ownership only. The official-supply path now reads distress delta clamp floor/ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, deterministic household traversal, debt/labor/migration deltas, event threshold, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, official-supply-delta ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
