@@ -23914,6 +23914,210 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_official_supply_migration_delta_formula_extraction_v1261_v1268_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-official-supply-migration-delta-formula-extraction-v1261-v1268.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "OfficialSupplyBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int profileStart = pressureProfiles.IndexOf(
+            "private readonly record struct OfficialSupplyBurdenProfile",
+            StringComparison.Ordinal);
+        int migrationDeltaStart = pressureProfiles.IndexOf("public int MigrationDelta", profileStart, StringComparison.Ordinal);
+        int profileEnd = pressureProfiles.IndexOf("    }", migrationDeltaStart, StringComparison.Ordinal);
+        Assert.That(profileStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(migrationDeltaStart, Is.GreaterThan(profileStart));
+        Assert.That(profileEnd, Is.GreaterThan(migrationDeltaStart));
+        string migrationDeltaFormulaBody = pressureProfiles.Substring(migrationDeltaStart, profileEnd - migrationDeltaStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1261-V1268 PopulationAndHouseholds Official Supply Migration Delta Formula Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households official supply migration delta formula extraction: v1261-v1268"));
+        Assert.That(fidelityModel, Does.Contain("V1261-V1268 PopulationAndHouseholds Official Supply Migration Delta Formula Extraction"));
+        Assert.That(designAudit, Does.Contain("v1261-v1268 population households official supply migration delta formula extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds official supply migration delta formula extraction v1261-v1268 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds official supply migration delta formula extraction v1261-v1268 integration note"));
+        Assert.That(dataSchema, Does.Contain("Current population households official supply migration delta formula extraction v1261-v1268 note"));
+        Assert.That(schemaRules, Does.Contain("population households official supply migration delta formula extraction v1261-v1268 adds no persisted fields"));
+        Assert.That(simulation, Does.Contain("Current population households official supply migration delta formula extraction v1261-v1268 note"));
+        Assert.That(uiPresentation, Does.Contain("v1261-v1268 population households official supply migration delta formula extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds official supply migration delta formula extraction v1261-v1268 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Official Supply Migration Delta Formula Extraction Through V1268"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded official-supply migration delta distress delta divisor: `DistressDelta / 5`",
+                     "previous hardcoded official-supply migration delta debt delta divisor: `DebtDelta / 6`",
+                     "previous hardcoded official-supply migration delta fragility pressure threshold and boost: `FragilityPressure >= 5 ? 1 : 0`",
+                     "DefaultOfficialSupplyMigrationDeltaDistressDeltaDivisor = 5",
+                     "DefaultOfficialSupplyMigrationDeltaDebtDeltaDivisor = 6",
+                     "DefaultOfficialSupplyMigrationDeltaFragilityPressureThreshold = 5",
+                     "DefaultOfficialSupplyMigrationDeltaFragilityBoostScore = 1",
+                     "No official-supply distress/debt/labor delta formula extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetOfficialSupplyMigrationDeltaDistressDeltaDivisorOrDefault",
+                     "GetOfficialSupplyMigrationDeltaDebtDeltaDivisorOrDefault",
+                     "GetOfficialSupplyMigrationDeltaFragilityPressureThresholdOrDefault",
+                     "GetOfficialSupplyMigrationDeltaFragilityBoostScoreOrDefault",
+                 })
+        {
+            Assert.That(pressureProfiles, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     "DistressDelta / 5",
+                     "DebtDelta / 6",
+                     "FragilityPressure >= 5",
+                 })
+        {
+            Assert.That(migrationDeltaFormulaBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyMigrationDeltaDistressDeltaDivisor = 5"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyMigrationDeltaDebtDeltaDivisor = 6"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyMigrationDeltaFragilityPressureThreshold = 5"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyMigrationDeltaFragilityBoostScore = 1"));
+        Assert.That(rulesData, Does.Contain("official_supply_migration_delta_distress_delta_divisor must be between 1 and"));
+        Assert.That(rulesData, Does.Contain("official_supply_migration_delta_fragility_pressure_threshold must be between"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_DefaultMigrationDeltaFormulaRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_CustomMigrationDeltaFormulaRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_InvalidMigrationDeltaFormulaRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyMigrationDeltaFormula"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "OfficialSupplyMigrationDeltaOutcomeCalculator",
+                     "PopulationAndHouseholdsOfficialSupplyMigrationDeltaRules",
+                     "OfficialSupplyMigrationDeltaState",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "OfficialSupplyMigrationDelta",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "OfficialSupplyMigrationDeltaLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

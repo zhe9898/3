@@ -1722,6 +1722,84 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackHousehold.LaborCapacity, Is.EqualTo(defaultHousehold.LaborCapacity));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultMigrationDeltaFormulaRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyMigrationDeltaDistressDeltaDivisor = 5,
+                OfficialSupplyMigrationDeltaDebtDeltaDivisor = 6,
+                OfficialSupplyMigrationDeltaFragilityPressureThreshold = 5,
+                OfficialSupplyMigrationDeltaFragilityBoostScore = 1,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState explicitHousehold, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunCrossingOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyMigrationDeltaDistressDeltaDivisor, Is.EqualTo(5));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyMigrationDeltaDebtDeltaDivisor, Is.EqualTo(6));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyMigrationDeltaFragilityPressureThreshold, Is.EqualTo(5));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyMigrationDeltaFragilityBoostScore, Is.EqualTo(1));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta], Is.EqualTo("1"));
+        Assert.That(explicitHousehold.MigrationRisk, Is.EqualTo(defaultHousehold.MigrationRisk));
+        Assert.That(defaultHousehold.MigrationRisk, Is.EqualTo(21));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomMigrationDeltaFormulaRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyMigrationDeltaDistressDeltaDivisor = 1,
+                OfficialSupplyMigrationDeltaDebtDeltaDivisor = 1,
+                OfficialSupplyMigrationDeltaFragilityPressureThreshold = 1,
+                OfficialSupplyMigrationDeltaFragilityBoostScore = 4,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunCrossingOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta]),
+            Is.GreaterThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta])));
+        Assert.That(customHousehold.MigrationRisk, Is.GreaterThan(defaultHousehold.MigrationRisk));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidMigrationDeltaFormulaRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyMigrationDeltaDistressDeltaDivisor = 0,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunCrossingOfficialSupply();
+        (PopulationHouseholdState fallbackHousehold, IReadOnlyList<IDomainEvent> fallbackEvents) =
+            RunCrossingOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_migration_delta_distress_delta_divisor must be between 1 and 16."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyMigrationDelta]));
+        Assert.That(fallbackHousehold.MigrationRisk, Is.EqualTo(defaultHousehold.MigrationRisk));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
