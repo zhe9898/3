@@ -892,3 +892,9 @@ This is not a tax-season extraction, official-supply extraction, migration engin
 V1117-V1124 extracts the tax-season debt delta clamp from `TaxSeasonBurdenProfile.DebtDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: tax debt delta is clamped to `8..28`.
 
 This is not a tax-season event threshold extraction, tax registration/liquidity/labor/fragility/interaction formula extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1125-V1132 PopulationAndHouseholds Tax Season Debt Spike Threshold Extraction
+
+V1125-V1132 extracts the tax-season debt spike event threshold from `ApplyTaxSeasonPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default threshold preserves prior behavior: the structured `HouseholdDebtSpiked` receipt emits when debt crosses `70`.
+
+This is not a tax debt delta clamp extraction, tax registration/liquidity/labor/fragility/interaction formula extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

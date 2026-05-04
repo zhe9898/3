@@ -1730,3 +1730,7 @@ V1109-V1116 extracts the grain-price subsistence distress delta clamp floor/ceil
 Current population households tax season debt delta clamp extraction v1117-v1124 note:
 
 V1117-V1124 extracts the tax-season debt delta clamp floor/ceiling into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted tax-debt-clamp field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.
+
+Current population households tax season debt spike threshold extraction v1125-v1132 note:
+
+V1125-V1132 extracts the tax-season debt spike event threshold into in-code owner-consumed rules-data defaults and validation. Schema/migration impact: none. `PopulationAndHouseholds` remains schema `3`; no persisted debt-threshold field, pressure-profile state, household mobility state, route history, movement ledger, selector watermark, target-cardinality state, owner-lane ledger, cooldown ledger, pressure-profile ledger, ordering ledger, validation ledger, diagnostic state, performance cache, rules-data file, loader, content/config namespace, or save-manifest change is added.

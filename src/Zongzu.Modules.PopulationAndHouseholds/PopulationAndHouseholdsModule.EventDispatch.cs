@@ -125,9 +125,10 @@ public sealed partial class PopulationAndHouseholdsModule
             int oldDebt = household.DebtPressure;
             TaxSeasonBurdenProfile taxProfile = ComputeTaxSeasonBurdenProfile(household);
             int taxDebtDelta = taxProfile.DebtDelta;
+            int debtSpikeEventThreshold = _householdMobilityRulesData.GetTaxSeasonDebtSpikeEventThresholdOrDefault();
             household.DebtPressure = Math.Clamp(household.DebtPressure + taxDebtDelta, 0, 100);
 
-            if (oldDebt < 70 && household.DebtPressure >= 70)
+            if (oldDebt < debtSpikeEventThreshold && household.DebtPressure >= debtSpikeEventThreshold)
             {
                 scope.Emit(
                     PopulationEventNames.HouseholdDebtSpiked,

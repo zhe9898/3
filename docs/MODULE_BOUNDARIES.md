@@ -1772,3 +1772,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1117-V1124 extracts the tax-season debt delta clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` tax-season pressure profile helper. Module ownership, event scope, deterministic household traversal, debt-pressure mutation, metadata emission, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains tax-debt-delta-clamp, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
+
+## PopulationAndHouseholds tax season debt spike threshold extraction v1125-v1132 boundary note
+
+V1125-V1132 extracts the tax-season debt spike event threshold into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` event dispatch helper. Module ownership, event scope, deterministic household traversal, debt-pressure mutation, metadata emission, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains tax-debt-spike-threshold, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
