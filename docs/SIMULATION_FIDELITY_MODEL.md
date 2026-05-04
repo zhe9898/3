@@ -1155,3 +1155,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1181-V1188 changes parameter ownership only. The official-supply signal normalization clamps are validated and consumed by `PopulationAndHouseholds`, while official-supply fallback values, distress/debt/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-signal-normalization state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1189-V1196 PopulationAndHouseholds Official Supply Livelihood Exposure Extraction
+
+V1189-V1196 changes parameter ownership only. The official-supply livelihood exposure weights, land visibility bands, fallback values, and exposure clamp are validated and consumed by `PopulationAndHouseholds`, while official-supply resource/labor/liquidity/fragility/interaction helpers, distress/debt/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-livelihood-exposure state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

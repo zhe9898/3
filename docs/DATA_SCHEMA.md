@@ -1767,3 +1767,9 @@ The official-supply signal fallback values and derived fallback clamp are in-mem
 Schema/migration impact: none. V1181-V1188 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply signal normalization clamps are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply livelihood exposure extraction v1189-v1196 note
+
+Schema/migration impact: none. V1189-V1196 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply livelihood exposure scores, land visibility bands, fallback scores, and exposure clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

@@ -20483,7 +20483,7 @@ public class ProjectReferenceTests
             "private OfficialSupplyBurdenProfile ComputeOfficialSupplyBurdenProfile",
             StringComparison.Ordinal);
         int livelihoodStart = pressureProfilesFile.IndexOf(
-            "private static int ComputeOfficialSupplyLivelihoodExposurePressure",
+            "private int ComputeOfficialSupplyLivelihoodExposurePressure",
             StringComparison.Ordinal);
         Assert.That(computeSupplyStart, Is.GreaterThanOrEqualTo(0));
         Assert.That(livelihoodStart, Is.GreaterThan(computeSupplyStart));
@@ -20699,7 +20699,7 @@ public class ProjectReferenceTests
             "private OfficialSupplyBurdenProfile ComputeOfficialSupplyBurdenProfile",
             StringComparison.Ordinal);
         int livelihoodStart = pressureProfilesFile.IndexOf(
-            "private static int ComputeOfficialSupplyLivelihoodExposurePressure",
+            "private int ComputeOfficialSupplyLivelihoodExposurePressure",
             StringComparison.Ordinal);
         Assert.That(computeSupplyStart, Is.GreaterThanOrEqualTo(0));
         Assert.That(livelihoodStart, Is.GreaterThan(computeSupplyStart));
@@ -21848,6 +21848,235 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "OfficialSupplySignalNormalizationLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_official_supply_livelihood_exposure_extraction_v1189_v1196_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-official-supply-livelihood-exposure-extraction-v1189-v1196.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "OfficialSupplyBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int exposureStart = pressureProfiles.IndexOf(
+            "private int ComputeOfficialSupplyLivelihoodExposurePressure",
+            StringComparison.Ordinal);
+        int resourceStart = pressureProfiles.IndexOf(
+            "private static int ComputeOfficialSupplyResourceBuffer",
+            exposureStart,
+            StringComparison.Ordinal);
+        Assert.That(exposureStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(resourceStart, Is.GreaterThan(exposureStart));
+        string exposureBody = pressureProfiles.Substring(exposureStart, resourceStart - exposureStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1189-V1196 PopulationAndHouseholds Official Supply Livelihood Exposure Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households official supply livelihood exposure extraction: v1189-v1196"));
+        Assert.That(designAudit, Does.Contain("v1189-v1196 population households official supply livelihood exposure extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds official supply livelihood exposure extraction v1189-v1196 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds official supply livelihood exposure extraction v1189-v1196 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households official supply livelihood exposure extraction v1189-v1196 note"));
+        Assert.That(uiPresentation, Does.Contain("v1189-v1196 population households official supply livelihood exposure extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds official supply livelihood exposure extraction v1189-v1196 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1189-V1196 PopulationAndHouseholds Official Supply Livelihood Exposure Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Official Supply Livelihood Exposure Extraction Through V1196"));
+        Assert.That(schemaRules, Does.Contain("population households official supply livelihood exposure extraction v1189-v1196 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households official supply livelihood exposure extraction v1189-v1196 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded official-supply livelihood exposure scores: `Boatman=5`, `HiredLabor=4`, `SeasonalMigrant=4`, `Smallholder=3`, `Tenant=3`, `Artisan=2`, `PettyTrader=2`, `YamenRunner=2`, `Unknown=2`, `DomesticServant=1`, `Vagrant=1`, unmatched `2`",
+                     "previous hardcoded official-supply land visibility bands: `land>=70 => 2`, `land>=35 => 1`, fallback `0`",
+                     "previous hardcoded official-supply livelihood exposure clamp: `1..7`",
+                     "DefaultOfficialSupplyLivelihoodExposureScoreWeights",
+                     "DefaultOfficialSupplyLivelihoodExposureFallbackScore = 2",
+                     "DefaultOfficialSupplyLandVisibilityScoreBands",
+                     "DefaultOfficialSupplyLandVisibilityFallbackScore = 0",
+                     "DefaultOfficialSupplyLivelihoodExposureClampFloor = 1",
+                     "DefaultOfficialSupplyLivelihoodExposureClampCeiling = 7",
+                     "No official-supply resource buffer extraction.",
+                     "No official-supply labor extraction.",
+                     "No official-supply liquidity extraction.",
+                     "No official-supply fragility extraction.",
+                     "No official-supply interaction extraction.",
+                     "No official-supply formula divisor extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetOfficialSupplyLivelihoodExposureScoreOrDefault",
+                     "GetOfficialSupplyLandVisibilityScoreOrDefault",
+                     "GetOfficialSupplyLivelihoodExposureClampFloorOrDefault",
+                     "GetOfficialSupplyLivelihoodExposureClampCeilingOrDefault",
+                 })
+        {
+            Assert.That(exposureBody, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     "LivelihoodType.Boatman => 5",
+                     "LivelihoodType.HiredLabor => 4",
+                     "LivelihoodType.SeasonalMigrant => 4",
+                     "LivelihoodType.Smallholder => 3",
+                     "LivelihoodType.Tenant => 3",
+                     ">= 70 => 2",
+                     ">= 35 => 1",
+                     "Math.Clamp(livelihoodExposure + landVisibility, 1, 7)",
+                 })
+        {
+            Assert.That(exposureBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLivelihoodExposureFallbackScore = 2"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLandVisibilityFallbackScore = 0"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLivelihoodExposureClampFloor = 1"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLivelihoodExposureClampCeiling = 7"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLivelihoodExposureScoreWeights"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLandVisibilityScoreBands"));
+        Assert.That(rulesData, Does.Contain("official_supply_livelihood_exposure_score_weights must be non-empty"));
+        Assert.That(rulesData, Does.Contain("official_supply_land_visibility_score_bands must be non-empty"));
+        Assert.That(rulesData, Does.Contain("official_supply_livelihood_exposure_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_DefaultLivelihoodExposureRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_CustomLivelihoodExposureRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_InvalidLivelihoodExposureRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyLivelihoodExposure"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyLandVisibility"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "OfficialSupplyLivelihoodExposureOutcomeCalculator",
+                     "PopulationAndHouseholdsOfficialSupplyExposureRules",
+                     "OfficialSupplyLivelihoodExposureState",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "OfficialSupplyLivelihoodExposure",
+                     "OfficialSupplyLandVisibility",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "OfficialSupplyLivelihoodExposureLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

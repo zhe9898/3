@@ -1819,3 +1819,9 @@ Application, UI, Unity, and `PersonRegistry` must not calculate or store officia
 `PopulationAndHouseholds` remains the owner and sole consumer of official-supply signal normalization clamps. The extracted bounds are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
 
 Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply signal normalization outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.
+
+### PopulationAndHouseholds official supply livelihood exposure extraction v1189-v1196 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of official-supply livelihood exposure scores and land visibility bands. The extracted values are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply livelihood exposure outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.

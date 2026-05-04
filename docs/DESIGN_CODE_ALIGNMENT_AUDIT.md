@@ -1140,3 +1140,9 @@ The pass does not add movement authority, route history, migration economy, clas
 `PopulationAndHouseholds` now owns the official-supply signal normalization clamps through validated rules-data. Defaults preserve the existing structured-signal bounds while moving another hardcoded signal rule out of `ResolveOfficialSupplySignal`.
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
+### v1189-v1196 population households official supply livelihood exposure extraction audit
+
+`PopulationAndHouseholds` now owns the official-supply livelihood exposure scores, land visibility bands, fallback scores, and exposure clamp through validated rules-data. Defaults preserve the existing household exposure profile while moving another hardcoded helper out of `ComputeOfficialSupplyLivelihoodExposurePressure`.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.

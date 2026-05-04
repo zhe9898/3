@@ -334,3 +334,7 @@ The V1173-V1180 extraction keeps official-supply signal fallback values in owner
 ### population households official supply signal normalization clamp extraction v1181-v1188 adds no persisted fields
 
 The V1181-V1188 extraction keeps official-supply signal normalization clamps in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.
+
+### population households official supply livelihood exposure extraction v1189-v1196 adds no persisted fields
+
+The V1189-V1196 extraction keeps official-supply livelihood exposure scores, land visibility bands, fallback scores, and exposure clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.

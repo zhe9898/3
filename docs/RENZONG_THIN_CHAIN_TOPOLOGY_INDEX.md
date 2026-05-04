@@ -940,3 +940,9 @@ This is not an official-supply normalization clamp extraction, official-supply f
 V1181-V1188 extracts the official-supply signal normalization clamps from `ResolveOfficialSupplySignal` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: frontier `0..100`, supply `0..30`, quota `0..20`, docket `0..20`, clerk distortion `0..15`, and authority buffer `0..12`.
 
 This is not an official-supply formula extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1189-V1196 PopulationAndHouseholds Official Supply Livelihood Exposure Extraction
+
+V1189-V1196 extracts official-supply livelihood exposure scores, land visibility bands, fallback scores, and exposure clamp from `ComputeOfficialSupplyLivelihoodExposurePressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: `Boatman=5`, `HiredLabor=4`, `SeasonalMigrant=4`, `Smallholder=3`, `Tenant=3`, middle-livelihood/unknown `2`, servant/vagrant `1`, land visibility `70=>2`, `35=>1`, and final clamp `1..7`.
+
+This is not an official-supply resource/labor/liquidity/fragility/interaction extraction, formula-divisor extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
