@@ -1803,3 +1803,9 @@ The official-supply fragility distress bands, debt bands, migration-risk thresho
 Schema/migration impact: none. V1229-V1236 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply interaction livelihood conditions, thresholds, boost scores, resilience relief score, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply distress delta formula extraction v1237-v1244 note
+
+Schema/migration impact: none. V1237-V1244 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply distress delta formula divisors and component weights are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
