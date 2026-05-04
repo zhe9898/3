@@ -1542,6 +1542,94 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.DistressAfter], Is.EqualTo("77"));
     }
 
+    [Test]
+    public void GrainPriceSpike_DefaultSubsistenceDistressDeltaClampRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistencePressureDistressDeltaClampFloor = 4,
+                SubsistencePressureDistressDeltaClampCeiling = 30,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
+            RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistencePressureDistressDeltaClampFloor, Is.EqualTo(4));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistencePressureDistressDeltaClampCeiling, Is.EqualTo(30));
+        Assert.That(explicitPreviousBaseline.GetSubsistencePressureDistressDeltaClampFloorOrDefault(), Is.EqualTo(4));
+        Assert.That(explicitPreviousBaseline.GetSubsistencePressureDistressDeltaClampCeilingOrDefault(), Is.EqualTo(30));
+        Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta], Is.EqualTo("27"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_CustomSubsistenceDistressDeltaClampFloorRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistencePressureDistressDeltaClampFloor = 6,
+                SubsistencePressureDistressDeltaClampCeiling = 30,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunResilientGrainPriceSpike();
+        (PopulationHouseholdState customHousehold, IDomainEvent customEvent) =
+            RunResilientGrainPriceSpike(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta], Is.EqualTo("4"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta], Is.EqualTo("6"));
+        Assert.That(customHousehold.Distress, Is.EqualTo(defaultHousehold.Distress + 2));
+    }
+
+    [Test]
+    public void GrainPriceSpike_CustomSubsistenceDistressDeltaClampCeilingRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistencePressureDistressDeltaClampFloor = 4,
+                SubsistencePressureDistressDeltaClampCeiling = 20,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState customHousehold, IDomainEvent customEvent) =
+            RunMissingMetadataGrainPriceSpike(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta], Is.EqualTo("27"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta], Is.EqualTo("20"));
+        Assert.That(customHousehold.Distress, Is.EqualTo(defaultHousehold.Distress - 7));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidSubsistenceDistressDeltaClampRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistencePressureDistressDeltaClampFloor = 31,
+                SubsistencePressureDistressDeltaClampCeiling = 30,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetSubsistencePressureDistressDeltaClampFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultSubsistencePressureDistressDeltaClampFloor));
+        Assert.That(
+            malformedRulesData.GetSubsistencePressureDistressDeltaClampCeilingOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultSubsistencePressureDistressDeltaClampCeiling));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta], Is.EqualTo("27"));
+    }
+
     private static (PopulationHouseholdState Household, IDomainEvent SubsistenceEvent) RunMissingMetadataGrainPriceSpike(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {

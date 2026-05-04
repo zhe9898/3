@@ -1214,3 +1214,9 @@ No event pool, movement command, route-history path, interaction-clamp ledger, p
 V1101-V1108 changes the grain-price subsistence event threshold ownership only. The grain-price subsistence path now reads the distress crossing threshold from a validated `PopulationHouseholdMobilityRulesData` getter, while scheduler cadence, event scope, household traversal, subsistence pressure calculation, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
 
 No event pool, movement command, route-history path, event-threshold ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.
+
+## Current population households subsistence distress delta clamp extraction v1109-v1116 note
+
+V1109-V1116 changes the grain-price subsistence distress delta clamp ownership only. The grain-price subsistence path now reads distress delta clamp floor/ceiling from validated `PopulationHouseholdMobilityRulesData` getters, while scheduler cadence, event scope, household traversal, event threshold, owner-state mutation, emitted metadata, and default outcomes remain unchanged.
+
+No event pool, movement command, route-history path, delta-clamp ledger, pressure-profile state, class/status engine, migration economy, plugin loading, `PersonRegistry` expansion, or schema state is introduced.

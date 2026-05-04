@@ -883,3 +883,9 @@ The extraction is default-equivalent. It does not retune grain-shortage window, 
 V1101-V1108 moves the grain-price subsistence event distress crossing threshold into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The threshold remains a private receipt gate for structured household pressure metadata, not a class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune subsistence distress delta, interaction scoring, tax-season, or official-supply formulas, and it does not create event-threshold state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence distress delta clamp extraction: v1109-v1116
+
+V1109-V1116 moves the grain-price subsistence distress delta clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The clamp remains a private household-owned pressure bound, not a class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune event threshold, interaction scoring, tax-season, or official-supply formulas, and it does not create delta-clamp state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.

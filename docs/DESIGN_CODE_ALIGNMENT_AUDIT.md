@@ -1081,3 +1081,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 The v1101-v1108 pass moves the `ApplyGrainPriceSubsistencePressure` distress crossing threshold from C# literal `60` into a validated `PopulationHouseholdMobilityRulesData` default getter.
 
 Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes and event emission; subsistence pressure calculation remains unchanged; Application/UI/Unity do not calculate subsistence event eligibility or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.
+
+## v1109-v1116 population households subsistence distress delta clamp extraction audit - 2026-05-03
+
+The v1109-v1116 pass moves the `SubsistencePressureProfile.DistressDelta` clamp from C# literals `4..30` into validated `PopulationHouseholdMobilityRulesData` default getters.
+
+Alignment check: this is a default-equivalent hardcoded-rule extraction. `PopulationAndHouseholds` still owns household subsistence outcomes and event emission; event threshold remains unchanged; Application/UI/Unity do not calculate subsistence distress delta or household pressure; no schema, migration, rules-data loader, plugin surface, route history, movement command, migration economy, class/status engine, or `PersonRegistry` expansion is added.

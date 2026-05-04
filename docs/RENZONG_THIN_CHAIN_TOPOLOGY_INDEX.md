@@ -880,3 +880,9 @@ This is not a tax-season extraction, official-supply extraction, migration engin
 V1101-V1108 extracts the grain-price subsistence event distress crossing threshold from `ApplyGrainPriceSubsistencePressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default threshold preserves prior behavior: the structured `HouseholdSubsistencePressureChanged` receipt emits when distress crosses `60`.
 
 This is not a distress-delta clamp extraction, tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1109-V1116 PopulationAndHouseholds Subsistence Distress Delta Clamp Extraction
+
+V1109-V1116 extracts the grain-price subsistence distress delta clamp from `SubsistencePressureProfile.DistressDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default bounds preserve prior behavior: subsistence distress delta is clamped to `4..30`.
+
+This is not a tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

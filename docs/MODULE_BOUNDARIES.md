@@ -1760,3 +1760,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 V1101-V1108 extracts the grain-price subsistence event distress crossing threshold into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` event dispatch helper. Module ownership, event scope, household traversal, subsistence pressure mutation, metadata emission, and projection downstream behavior remain unchanged.
 
 No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains subsistence-event-threshold, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
+
+## PopulationAndHouseholds subsistence distress delta clamp extraction v1109-v1116 boundary note
+
+V1109-V1116 extracts the grain-price subsistence distress delta clamp into `PopulationHouseholdMobilityRulesData` while keeping consumption inside the private `PopulationAndHouseholdsModule` pressure profile helper. Module ownership, event scope, household traversal, subsistence pressure mutation, metadata emission, and projection downstream behavior remain unchanged.
+
+No Application, presentation, Unity, persistence, or `PersonRegistry` boundary gains subsistence-delta-clamp, pressure-profile, rules-data, migration outcome, or household mobility outcome authority.
