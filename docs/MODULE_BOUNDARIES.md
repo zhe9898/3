@@ -1842,4 +1842,10 @@ Application, UI, Unity, and `PersonRegistry` must not calculate or store officia
 
 `PopulationAndHouseholds` remains the owner and sole consumer of official-supply liquidity grain strain bands, cash-need score, tool drag threshold, and debt drag bands. The extracted values are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
 
+### PopulationAndHouseholds official supply fragility pressure extraction v1221-v1228 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of official-supply fragility pressure distress bands, debt bands, migration-risk threshold, shelter-drag threshold, fallback scores, and clamp. The extracted values are schema-neutral in-memory `PopulationHouseholdMobilityRulesData` defaults, not module state, not public presentation authority, not a runtime rules-data file, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, or retune official-supply fragility outcomes. No movement command, route-history state, migration economy, class/status engine, runtime plugin loader, content/config namespace, prose parser, pressure-profile ledger, or persisted field is introduced.
+
 Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply liquidity pressure outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, shared cash-need predicate retune, or persisted ledger is introduced.
