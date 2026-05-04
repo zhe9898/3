@@ -1206,3 +1206,9 @@ The pass does not add movement authority, route history, migration economy, clas
 `PopulationAndHouseholds` now owns the tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp through validated rules-data. Defaults preserve the existing `ComputeRegistrationVisibilityPressure` result while moving another hardcoded tax-season helper out of C# literals.
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
+### v1277-v1284 population households tax season liquidity pressure extraction audit
+
+`PopulationAndHouseholds` now owns the tax-season liquidity grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback scores, and clamp through validated rules-data. Defaults preserve the existing `ComputeTaxLiquidityPressure` result while moving another hardcoded tax-season helper out of C# literals.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.

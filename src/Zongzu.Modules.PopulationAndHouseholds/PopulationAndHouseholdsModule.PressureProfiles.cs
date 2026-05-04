@@ -196,32 +196,19 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetTaxSeasonRegistrationVisibilityClampCeilingOrDefault());
     }
 
-    private static int ComputeTaxLiquidityPressure(PopulationHouseholdState household)
+    private int ComputeTaxLiquidityPressure(PopulationHouseholdState household)
     {
-        int grainPressure = household.GrainStore switch
-        {
-            >= 80 => -3,
-            >= 60 => -2,
-            >= 40 => -1,
-            >= 20 => 1,
-            > 0 => 3,
-            _ => 0,
-        };
+        int grainPressure = _householdMobilityRulesData.GetTaxSeasonLiquidityGrainPressureScoreOrDefault(
+            household.GrainStore);
+        int cashNeed = _householdMobilityRulesData.GetTaxSeasonLiquidityCashNeedScoreOrDefault(
+            household.Livelihood);
+        int toolDrag = _householdMobilityRulesData.GetTaxSeasonLiquidityToolDragScoreOrDefault(
+            household.ToolCondition);
 
-        int cashNeed = household.Livelihood switch
-        {
-            LivelihoodType.PettyTrader => 2,
-            LivelihoodType.Boatman => 2,
-            LivelihoodType.Artisan => 2,
-            LivelihoodType.SeasonalMigrant => 2,
-            LivelihoodType.HiredLabor => 1,
-            LivelihoodType.Vagrant => 1,
-            LivelihoodType.Tenant => 1,
-            _ => 0,
-        };
-
-        int toolDrag = household.ToolCondition is > 0 and < 35 ? 1 : 0;
-        return Math.Clamp(grainPressure + cashNeed + toolDrag, -3, 5);
+        return Math.Clamp(
+            grainPressure + cashNeed + toolDrag,
+            _householdMobilityRulesData.GetTaxSeasonLiquidityPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonLiquidityPressureClampCeilingOrDefault());
     }
 
     private static int ComputeTaxLaborPressure(PopulationHouseholdState household)

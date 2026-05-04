@@ -1833,3 +1833,9 @@ The official-supply migration delta formula divisors and fragility threshold/boo
 Schema/migration impact: none. V1269-V1276 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households tax season liquidity pressure extraction v1277-v1284 note
+
+Schema/migration impact: none. V1277-V1284 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The tax-season liquidity grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

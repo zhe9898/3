@@ -24172,7 +24172,7 @@ public class ProjectReferenceTests
             "private int ComputeRegistrationVisibilityPressure",
             StringComparison.Ordinal);
         int liquidityStart = pressureProfiles.IndexOf(
-            "private static int ComputeTaxLiquidityPressure",
+            "private int ComputeTaxLiquidityPressure",
             registrationStart,
             StringComparison.Ordinal);
         Assert.That(registrationStart, Is.GreaterThanOrEqualTo(0));
@@ -24306,6 +24306,229 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "TaxSeasonRegistrationVisibilityLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+    }
+
+    [Test]
+    public void Population_households_tax_season_liquidity_pressure_extraction_v1277_v1284_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-tax-season-liquidity-pressure-extraction-v1277-v1284.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "TaxSeasonBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int liquidityStart = pressureProfiles.IndexOf(
+            "private int ComputeTaxLiquidityPressure",
+            StringComparison.Ordinal);
+        int laborStart = pressureProfiles.IndexOf(
+            "private static int ComputeTaxLaborPressure",
+            liquidityStart,
+            StringComparison.Ordinal);
+        Assert.That(liquidityStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(laborStart, Is.GreaterThan(liquidityStart));
+        string liquidityBody = pressureProfiles.Substring(liquidityStart, laborStart - liquidityStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1277-V1284 PopulationAndHouseholds Tax Season Liquidity Pressure Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households tax season liquidity pressure extraction: v1277-v1284"));
+        Assert.That(fidelityModel, Does.Contain("V1277-V1284 PopulationAndHouseholds Tax Season Liquidity Pressure Extraction"));
+        Assert.That(designAudit, Does.Contain("v1277-v1284 population households tax season liquidity pressure extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds tax season liquidity pressure extraction v1277-v1284 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds tax season liquidity pressure extraction v1277-v1284 integration note"));
+        Assert.That(dataSchema, Does.Contain("Current population households tax season liquidity pressure extraction v1277-v1284 note"));
+        Assert.That(schemaRules, Does.Contain("population households tax season liquidity pressure extraction v1277-v1284 adds no persisted fields"));
+        Assert.That(simulation, Does.Contain("Current population households tax season liquidity pressure extraction v1277-v1284 note"));
+        Assert.That(uiPresentation, Does.Contain("v1277-v1284 population households tax season liquidity pressure extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds tax season liquidity pressure extraction v1277-v1284 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Tax Season Liquidity Pressure Extraction Through V1284"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "Previous hardcoded tax-season liquidity grain pressure bands",
+                     "Previous hardcoded tax-season liquidity cash-need scores",
+                     "Previous hardcoded tax-season liquidity tool drag",
+                     "Previous hardcoded tax-season liquidity clamp",
+                     "DefaultTaxSeasonLiquidityGrainPressureFallbackScore = 0",
+                     "DefaultTaxSeasonLiquidityCashNeedFallbackScore = 0",
+                     "DefaultTaxSeasonLiquidityToolDragConditionThreshold = 35",
+                     "DefaultTaxSeasonLiquidityToolDragScore = 1",
+                     "DefaultTaxSeasonLiquidityPressureClampFloor = -3",
+                     "DefaultTaxSeasonLiquidityPressureClampCeiling = 5",
+                     "No tax-season labor/fragility/interaction/debt-delta formula extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetTaxSeasonLiquidityGrainPressureScoreOrDefault",
+                     "GetTaxSeasonLiquidityCashNeedScoreOrDefault",
+                     "GetTaxSeasonLiquidityToolDragScoreOrDefault",
+                     "GetTaxSeasonLiquidityPressureClampFloorOrDefault",
+                     "GetTaxSeasonLiquidityPressureClampCeilingOrDefault",
+                 })
+        {
+            Assert.That(pressureProfiles, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     ">= 80 => -3",
+                     ">= 60 => -2",
+                     ">= 40 => -1",
+                     ">= 20 => 1",
+                     "> 0 => 3",
+                     "LivelihoodType.PettyTrader => 2",
+                     "LivelihoodType.Boatman => 2",
+                     "LivelihoodType.Artisan => 2",
+                     "LivelihoodType.SeasonalMigrant => 2",
+                     "LivelihoodType.HiredLabor => 1",
+                     "LivelihoodType.Vagrant => 1",
+                     "LivelihoodType.Tenant => 1",
+                     "household.ToolCondition is > 0 and < 35 ? 1 : 0",
+                     "Math.Clamp(grainPressure + cashNeed + toolDrag, -3, 5)",
+                 })
+        {
+            Assert.That(liquidityBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonLiquidityGrainPressureFallbackScore = 0"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonLiquidityCashNeedFallbackScore = 0"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonLiquidityToolDragConditionThreshold = 35"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonLiquidityToolDragScore = 1"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonLiquidityPressureClampFloor = -3"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonLiquidityPressureClampCeiling = 5"));
+        Assert.That(rulesData, Does.Contain("tax_season_liquidity_grain_pressure_bands must be non-empty"));
+        Assert.That(rulesData, Does.Contain("tax_season_liquidity_cash_need_score_weights must be non-empty"));
+        Assert.That(rulesData, Does.Contain("tax_season_liquidity_pressure_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_DefaultLiquidityRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_CustomLiquidityRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_InvalidLiquidityRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("TaxSeasonLiquidityPressure"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "TaxSeasonLiquidityOutcomeCalculator",
+                     "PopulationAndHouseholdsTaxSeasonLiquidityRules",
+                     "TaxSeasonLiquidityPressureState",
+                     "TaxSeasonOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "TaxSeasonLiquidityPressure",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "TaxSeasonLiquidityPressureLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

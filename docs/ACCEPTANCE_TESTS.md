@@ -1469,3 +1469,7 @@ Acceptance requires default-equivalent behavior for official-supply migration de
 ### PopulationAndHouseholds tax season registration visibility extraction v1269-v1276 acceptance
 
 Acceptance requires default-equivalent behavior for tax-season registration visibility livelihood exposure scores, land visibility bands, fallback scores, and clamp, deterministic fallback for malformed registration visibility rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds tax season liquidity pressure extraction v1277-v1284 acceptance
+
+Acceptance requires default-equivalent behavior for tax-season liquidity grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback scores, and clamp, deterministic fallback for malformed liquidity rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
