@@ -949,3 +949,9 @@ The extraction is default-equivalent. It does not retune official-supply deltas,
 V1189-V1196 moves official-supply livelihood exposure scores and land visibility bands into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The values remain private household-owned pressure-profile inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune official-supply resource, labor, liquidity, fragility, interaction, delta formulas, event threshold, signal fallback, tax-season formulas, or household mobility rules, and it does not create official-supply-livelihood-exposure state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households official supply resource buffer extraction: v1197-v1204
+
+V1197-V1204 moves official-supply grain/tool/shelter resource buffer bands into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned burden dampeners, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply livelihood exposure, labor, liquidity, fragility, interaction, delta formulas, event threshold, signal fallback, tax-season formulas, or household mobility rules, and it does not create official-supply-resource-buffer state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.

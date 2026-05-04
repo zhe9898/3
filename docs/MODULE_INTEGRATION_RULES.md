@@ -1338,3 +1338,9 @@ No integration path may route these clamps through Application/UI/Unity, parse p
 Official-supply livelihood exposure ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned livelihood exposure weights and land visibility bands while computing the household burden profile.
 
 No integration path may route these exposure values through Application/UI/Unity, parse prose, load external rule assemblies, persist exposure state, or create migration/route-history/class-status authority.
+
+### PopulationAndHouseholds official supply resource buffer extraction v1197-v1204 integration note
+
+Official-supply resource buffer ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned grain/tool/shelter buffer bands while computing the household burden profile.
+
+No integration path may route these buffer values through Application/UI/Unity, parse prose, load external rule assemblies, persist buffer state, or create migration/route-history/class-status authority.

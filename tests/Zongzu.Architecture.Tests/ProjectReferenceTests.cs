@@ -21933,7 +21933,7 @@ public class ProjectReferenceTests
             "private int ComputeOfficialSupplyLivelihoodExposurePressure",
             StringComparison.Ordinal);
         int resourceStart = pressureProfiles.IndexOf(
-            "private static int ComputeOfficialSupplyResourceBuffer",
+            "private int ComputeOfficialSupplyResourceBuffer",
             exposureStart,
             StringComparison.Ordinal);
         Assert.That(exposureStart, Is.GreaterThanOrEqualTo(0));
@@ -22077,6 +22077,236 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "OfficialSupplyLivelihoodExposureLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_official_supply_resource_buffer_extraction_v1197_v1204_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-official-supply-resource-buffer-extraction-v1197-v1204.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "OfficialSupplyBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int resourceStart = pressureProfiles.IndexOf(
+            "private int ComputeOfficialSupplyResourceBuffer",
+            StringComparison.Ordinal);
+        int laborStart = pressureProfiles.IndexOf(
+            "private static int ComputeOfficialSupplyLaborPressure",
+            resourceStart,
+            StringComparison.Ordinal);
+        Assert.That(resourceStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(laborStart, Is.GreaterThan(resourceStart));
+        string resourceBody = pressureProfiles.Substring(resourceStart, laborStart - resourceStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1197-V1204 PopulationAndHouseholds Official Supply Resource Buffer Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households official supply resource buffer extraction: v1197-v1204"));
+        Assert.That(designAudit, Does.Contain("v1197-v1204 population households official supply resource buffer extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds official supply resource buffer extraction v1197-v1204 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds official supply resource buffer extraction v1197-v1204 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households official supply resource buffer extraction v1197-v1204 note"));
+        Assert.That(uiPresentation, Does.Contain("v1197-v1204 population households official supply resource buffer extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds official supply resource buffer extraction v1197-v1204 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1197-V1204 PopulationAndHouseholds Official Supply Resource Buffer Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Official Supply Resource Buffer Extraction Through V1204"));
+        Assert.That(schemaRules, Does.Contain("population households official supply resource buffer extraction v1197-v1204 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households official supply resource buffer extraction v1197-v1204 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded official-supply grain buffer bands: `grain>=85 => 5`, `grain>=65 => 4`, `grain>=45 => 2`, `grain>=25 => 1`, fallback `0`",
+                     "previous hardcoded official-supply tool buffer threshold: `tool>=70 => 1`, fallback `0`",
+                     "previous hardcoded official-supply shelter buffer threshold: `shelter>=60 => 1`, fallback `0`",
+                     "previous hardcoded official-supply resource buffer clamp: `0..7`",
+                     "DefaultOfficialSupplyResourceGrainBufferScoreBands",
+                     "DefaultOfficialSupplyResourceGrainBufferFallbackScore = 0",
+                     "DefaultOfficialSupplyResourceToolConditionThreshold = 70",
+                     "DefaultOfficialSupplyResourceToolBufferScore = 1",
+                     "DefaultOfficialSupplyResourceToolBufferFallbackScore = 0",
+                     "DefaultOfficialSupplyResourceShelterQualityThreshold = 60",
+                     "DefaultOfficialSupplyResourceShelterBufferScore = 1",
+                     "DefaultOfficialSupplyResourceShelterBufferFallbackScore = 0",
+                     "DefaultOfficialSupplyResourceBufferClampFloor = 0",
+                     "DefaultOfficialSupplyResourceBufferClampCeiling = 7",
+                     "No official-supply labor extraction.",
+                     "No official-supply liquidity extraction.",
+                     "No official-supply fragility extraction.",
+                     "No official-supply interaction extraction.",
+                     "No official-supply formula divisor extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetOfficialSupplyResourceGrainBufferScoreOrDefault",
+                     "GetOfficialSupplyResourceToolBufferScoreOrDefault",
+                     "GetOfficialSupplyResourceShelterBufferScoreOrDefault",
+                     "GetOfficialSupplyResourceBufferClampFloorOrDefault",
+                     "GetOfficialSupplyResourceBufferClampCeilingOrDefault",
+                 })
+        {
+            Assert.That(resourceBody, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     ">= 85 => 5",
+                     ">= 65 => 4",
+                     ">= 45 => 2",
+                     ">= 25 => 1",
+                     "household.ToolCondition >= 70 ? 1 : 0",
+                     "household.ShelterQuality >= 60 ? 1 : 0",
+                     "Math.Clamp(grainBuffer + toolBuffer + shelterBuffer, 0, 7)",
+                 })
+        {
+            Assert.That(resourceBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyResourceGrainBufferScoreBands"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyResourceToolConditionThreshold = 70"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyResourceToolBufferScore = 1"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyResourceShelterQualityThreshold = 60"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyResourceShelterBufferScore = 1"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyResourceBufferClampCeiling = 7"));
+        Assert.That(rulesData, Does.Contain("official_supply_resource_grain_buffer_score_bands must be non-empty"));
+        Assert.That(rulesData, Does.Contain("official_supply_resource_buffer_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_DefaultResourceBufferRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_CustomResourceBufferRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_InvalidResourceBufferRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyResourceBuffer"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "OfficialSupplyResourceBufferOutcomeCalculator",
+                     "PopulationAndHouseholdsOfficialSupplyResourceRules",
+                     "OfficialSupplyResourceBufferState",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "OfficialSupplyResourceBuffer",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "OfficialSupplyResourceBufferLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

@@ -1429,3 +1429,7 @@ Acceptance requires default-equivalent behavior for official-supply signal norma
 ### PopulationAndHouseholds official supply livelihood exposure extraction v1189-v1196 acceptance
 
 Acceptance requires default-equivalent behavior for official-supply livelihood exposure scores, land visibility bands, fallback scores, and exposure clamp, deterministic fallback for malformed livelihood exposure rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds official supply resource buffer extraction v1197-v1204 acceptance
+
+Acceptance requires default-equivalent behavior for official-supply resource buffer grain/tool/shelter bands, fallback scores, and clamp, deterministic fallback for malformed resource buffer rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

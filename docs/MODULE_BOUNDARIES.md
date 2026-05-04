@@ -1825,3 +1825,9 @@ Application, UI, Unity, and `PersonRegistry` must not calculate or store officia
 `PopulationAndHouseholds` remains the owner and sole consumer of official-supply livelihood exposure scores and land visibility bands. The extracted values are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
 
 Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply livelihood exposure outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.
+
+### PopulationAndHouseholds official supply resource buffer extraction v1197-v1204 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of official-supply resource buffer grain/tool/shelter bands. The extracted values are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply resource buffer outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.

@@ -946,3 +946,9 @@ This is not an official-supply formula extraction, tax-season extraction, migrat
 V1189-V1196 extracts official-supply livelihood exposure scores, land visibility bands, fallback scores, and exposure clamp from `ComputeOfficialSupplyLivelihoodExposurePressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: `Boatman=5`, `HiredLabor=4`, `SeasonalMigrant=4`, `Smallholder=3`, `Tenant=3`, middle-livelihood/unknown `2`, servant/vagrant `1`, land visibility `70=>2`, `35=>1`, and final clamp `1..7`.
 
 This is not an official-supply resource/labor/liquidity/fragility/interaction extraction, formula-divisor extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1197-V1204 PopulationAndHouseholds Official Supply Resource Buffer Extraction
+
+V1197-V1204 extracts official-supply grain/tool/shelter resource buffer bands, fallback scores, and resource buffer clamp from `ComputeOfficialSupplyResourceBuffer` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: grain `85=>5`, `65=>4`, `45=>2`, `25=>1`, tool `70=>1`, shelter `60=>1`, and final clamp `0..7`.
+
+This is not an official-supply labor/liquidity/fragility/interaction extraction, formula-divisor extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
