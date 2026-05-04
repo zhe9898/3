@@ -49,10 +49,11 @@ public sealed partial class PopulationAndHouseholdsModule
             int oldDistress = household.Distress;
             SubsistencePressureProfile subsistenceProfile = ComputeSubsistencePressureProfile(household, signal);
             int distressDelta = subsistenceProfile.DistressDelta;
+            int eventDistressThreshold = _householdMobilityRulesData.GetSubsistencePressureEventDistressThresholdOrDefault();
             household.Distress = Math.Clamp(household.Distress + distressDelta, 0, 100);
             anyHouseholdChanged = true;
 
-            if (oldDistress < 60 && household.Distress >= 60)
+            if (oldDistress < eventDistressThreshold && household.Distress >= eventDistressThreshold)
             {
                 scope.Emit(
                     PopulationEventNames.HouseholdSubsistencePressureChanged,
