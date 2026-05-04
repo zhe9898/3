@@ -1807,3 +1807,9 @@ No Application, presentation, Unity, persistence, or `PersonRegistry` boundary g
 `PopulationAndHouseholds` remains the owner and sole consumer of the official-supply burden event distress threshold. The extracted `DefaultOfficialSupplyBurdenEventDistressThreshold = 80` is a schema-neutral rules-data parameter, not module state, not public presentation authority, and not a cross-module command surface.
 
 Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply burden outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.
+
+### PopulationAndHouseholds official supply signal fallback clamp extraction v1173-v1180 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of official-supply signal fallback values. The extracted defaults are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply signal fallback outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.

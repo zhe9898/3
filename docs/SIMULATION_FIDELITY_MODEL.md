@@ -1143,3 +1143,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1165-V1172 changes parameter ownership only. The official-supply burden event distress threshold is validated and consumed by `PopulationAndHouseholds`, while official-supply distress/debt/labor/migration deltas, signal fallback, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-event-threshold state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1173-V1180 PopulationAndHouseholds Official Supply Signal Fallback Clamp Extraction
+
+V1173-V1180 changes parameter ownership only. The official-supply signal fallback values and derived supply fallback clamp are validated and consumed by `PopulationAndHouseholds`, while official-supply normalization clamps, distress/debt/labor/migration deltas, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-signal state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

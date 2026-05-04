@@ -644,6 +644,104 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(defaultEvents.Count(static e => e.EventType == PopulationEventNames.HouseholdBurdenIncreased), Is.EqualTo(0));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultSignalFallbackRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyFallbackFrontierPressure = 60,
+                OfficialSupplyFallbackQuotaPressure = 7,
+                OfficialSupplyFallbackDocketPressure = 1,
+                OfficialSupplyFallbackClerkDistortionPressure = 0,
+                OfficialSupplyFallbackAuthorityBuffer = 4,
+                OfficialSupplyFallbackDerivedPressureClampFloor = 4,
+                OfficialSupplyFallbackDerivedPressureClampCeiling = 26,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunFallbackOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) = RunFallbackOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackFrontierPressure, Is.EqualTo(60));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackQuotaPressure, Is.EqualTo(7));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackDocketPressure, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackClerkDistortionPressure, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackAuthorityBuffer, Is.EqualTo(4));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackDerivedPressureClampFloor, Is.EqualTo(4));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackDerivedPressureClampCeiling, Is.EqualTo(26));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.FrontierPressure]));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure]));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyQuotaPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyQuotaPressure]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo("60"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo("4"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyQuotaPressure], Is.EqualTo("7"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDocketPressure], Is.EqualTo("1"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure], Is.EqualTo("0"));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer], Is.EqualTo("4"));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomSignalFallbackRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyFallbackFrontierPressure = 88,
+                OfficialSupplyFallbackQuotaPressure = 14,
+                OfficialSupplyFallbackDocketPressure = 5,
+                OfficialSupplyFallbackClerkDistortionPressure = 3,
+                OfficialSupplyFallbackAuthorityBuffer = 2,
+                OfficialSupplyFallbackDerivedPressureClampFloor = 4,
+                OfficialSupplyFallbackDerivedPressureClampCeiling = 26,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunFallbackOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunFallbackOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo("88"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo("20"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyQuotaPressure], Is.EqualTo("14"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDocketPressure], Is.EqualTo("5"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure], Is.EqualTo("3"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer], Is.EqualTo("2"));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]),
+            Is.GreaterThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta])));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidSignalFallbackRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyFallbackDerivedPressureClampFloor = 27,
+                OfficialSupplyFallbackDerivedPressureClampCeiling = 26,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunFallbackOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunFallbackOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyFallbackDerivedPressureClampFloorOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackDerivedPressureClampFloor));
+        Assert.That(
+            malformedRulesData.GetOfficialSupplyFallbackDerivedPressureClampCeilingOrDefault(),
+            Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyFallbackDerivedPressureClampCeiling));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.FrontierPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.FrontierPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -668,6 +766,27 @@ public sealed class OfficialSupplyBurdenHandlerTests
             [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "4",
             [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "2",
             [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "3",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunFallbackOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Fallback signal household",
+            SettlementId = new SettlementId(1),
+            Distress = 78,
+            DebtPressure = 30,
+            LaborCapacity = 80,
+            MigrationRisk = 20,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
         }, rulesData);
     }
 

@@ -332,17 +332,35 @@ public sealed partial class PopulationAndHouseholdsModule
             or LivelihoodType.HiredLabor;
     }
 
-    private static OfficialSupplySignal ResolveOfficialSupplySignal(IDomainEvent domainEvent)
+    private OfficialSupplySignal ResolveOfficialSupplySignal(IDomainEvent domainEvent)
     {
-        int frontierPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.FrontierPressure, 60);
-        int quotaPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.OfficialSupplyQuotaPressure, 7);
-        int docketPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.OfficialSupplyDocketPressure, 1);
-        int clerkDistortionPressure = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure, 0);
-        int authorityBuffer = ReadMetadataInt(domainEvent, DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer, 4);
+        int frontierPressure = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.FrontierPressure,
+            _householdMobilityRulesData.GetOfficialSupplyFallbackFrontierPressureOrDefault());
+        int quotaPressure = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.OfficialSupplyQuotaPressure,
+            _householdMobilityRulesData.GetOfficialSupplyFallbackQuotaPressureOrDefault());
+        int docketPressure = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.OfficialSupplyDocketPressure,
+            _householdMobilityRulesData.GetOfficialSupplyFallbackDocketPressureOrDefault());
+        int clerkDistortionPressure = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure,
+            _householdMobilityRulesData.GetOfficialSupplyFallbackClerkDistortionPressureOrDefault());
+        int authorityBuffer = ReadMetadataInt(
+            domainEvent,
+            DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer,
+            _householdMobilityRulesData.GetOfficialSupplyFallbackAuthorityBufferOrDefault());
         int supplyPressure = ReadMetadataInt(
             domainEvent,
             DomainEventMetadataKeys.OfficialSupplyPressure,
-            Math.Clamp(quotaPressure + docketPressure + clerkDistortionPressure - authorityBuffer, 4, 26));
+            Math.Clamp(
+                quotaPressure + docketPressure + clerkDistortionPressure - authorityBuffer,
+                _householdMobilityRulesData.GetOfficialSupplyFallbackDerivedPressureClampFloorOrDefault(),
+                _householdMobilityRulesData.GetOfficialSupplyFallbackDerivedPressureClampCeilingOrDefault()));
 
         return new OfficialSupplySignal(
             Math.Clamp(frontierPressure, 0, 100),

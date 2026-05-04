@@ -1261,3 +1261,9 @@ No event pool, movement command, route-history path, official-supply-migration-d
 V1165-V1172 extracts the official-supply burden event distress threshold into deterministic owner-consumed rules-data. Default behavior remains unchanged: `HouseholdBurdenIncreased` still emits at the prior distress crossing threshold of `80`.
 
 This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.
+
+### Current population households official supply signal fallback clamp extraction v1173-v1180 note
+
+V1173-V1180 extracts official-supply signal metadata fallback values and the derived supply-pressure fallback clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for missing/partial structured Office metadata.
+
+This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.

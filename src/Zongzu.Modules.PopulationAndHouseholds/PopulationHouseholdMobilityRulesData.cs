@@ -70,6 +70,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int TaxSeasonDebtDeltaClampFloor,
     int TaxSeasonDebtDeltaClampCeiling,
     int TaxSeasonDebtSpikeEventThreshold,
+    int OfficialSupplyFallbackFrontierPressure,
+    int OfficialSupplyFallbackQuotaPressure,
+    int OfficialSupplyFallbackDocketPressure,
+    int OfficialSupplyFallbackClerkDistortionPressure,
+    int OfficialSupplyFallbackAuthorityBuffer,
+    int OfficialSupplyFallbackDerivedPressureClampFloor,
+    int OfficialSupplyFallbackDerivedPressureClampCeiling,
     int OfficialSupplyDistressDeltaClampFloor,
     int OfficialSupplyDistressDeltaClampCeiling,
     int OfficialSupplyDebtDeltaClampFloor,
@@ -167,6 +174,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultTaxSeasonDebtDeltaClampFloor = 8;
     public const int DefaultTaxSeasonDebtDeltaClampCeiling = 28;
     public const int DefaultTaxSeasonDebtSpikeEventThreshold = 70;
+    public const int DefaultOfficialSupplyFallbackFrontierPressure = 60;
+    public const int DefaultOfficialSupplyFallbackQuotaPressure = 7;
+    public const int DefaultOfficialSupplyFallbackDocketPressure = 1;
+    public const int DefaultOfficialSupplyFallbackClerkDistortionPressure = 0;
+    public const int DefaultOfficialSupplyFallbackAuthorityBuffer = 4;
+    public const int DefaultOfficialSupplyFallbackDerivedPressureClampFloor = 4;
+    public const int DefaultOfficialSupplyFallbackDerivedPressureClampCeiling = 26;
     public const int DefaultOfficialSupplyDistressDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
@@ -198,6 +212,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxSubsistencePressureDistressDelta = 64;
     public const int MinTaxSeasonDebtDelta = 0;
     public const int MaxTaxSeasonDebtDelta = 64;
+    public const int MaxOfficialSupplyFallbackFrontierPressure = 100;
+    public const int MaxOfficialSupplyFallbackSupplyPressure = 30;
+    public const int MaxOfficialSupplyFallbackQuotaPressure = 20;
+    public const int MaxOfficialSupplyFallbackDocketPressure = 20;
+    public const int MaxOfficialSupplyFallbackClerkDistortionPressure = 15;
+    public const int MaxOfficialSupplyFallbackAuthorityBuffer = 12;
     public const int MinOfficialSupplyDistressDelta = 0;
     public const int MaxOfficialSupplyDistressDelta = 64;
     public const int MinOfficialSupplyDebtDelta = 0;
@@ -422,6 +442,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
+            DefaultOfficialSupplyFallbackFrontierPressure,
+            DefaultOfficialSupplyFallbackQuotaPressure,
+            DefaultOfficialSupplyFallbackDocketPressure,
+            DefaultOfficialSupplyFallbackClerkDistortionPressure,
+            DefaultOfficialSupplyFallbackAuthorityBuffer,
+            DefaultOfficialSupplyFallbackDerivedPressureClampFloor,
+            DefaultOfficialSupplyFallbackDerivedPressureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -527,6 +554,13 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
+            DefaultOfficialSupplyFallbackFrontierPressure,
+            DefaultOfficialSupplyFallbackQuotaPressure,
+            DefaultOfficialSupplyFallbackDocketPressure,
+            DefaultOfficialSupplyFallbackClerkDistortionPressure,
+            DefaultOfficialSupplyFallbackAuthorityBuffer,
+            DefaultOfficialSupplyFallbackDerivedPressureClampFloor,
+            DefaultOfficialSupplyFallbackDerivedPressureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -1211,6 +1245,46 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (TaxSeasonDebtSpikeEventThreshold is < 0 or > 100)
         {
             errors.Add("tax_season_debt_spike_event_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyFallbackFrontierPressure is < 0 or > MaxOfficialSupplyFallbackFrontierPressure)
+        {
+            errors.Add($"official_supply_fallback_frontier_pressure must be between 0 and {MaxOfficialSupplyFallbackFrontierPressure}.");
+        }
+
+        if (OfficialSupplyFallbackQuotaPressure is < 0 or > MaxOfficialSupplyFallbackQuotaPressure)
+        {
+            errors.Add($"official_supply_fallback_quota_pressure must be between 0 and {MaxOfficialSupplyFallbackQuotaPressure}.");
+        }
+
+        if (OfficialSupplyFallbackDocketPressure is < 0 or > MaxOfficialSupplyFallbackDocketPressure)
+        {
+            errors.Add($"official_supply_fallback_docket_pressure must be between 0 and {MaxOfficialSupplyFallbackDocketPressure}.");
+        }
+
+        if (OfficialSupplyFallbackClerkDistortionPressure is < 0 or > MaxOfficialSupplyFallbackClerkDistortionPressure)
+        {
+            errors.Add($"official_supply_fallback_clerk_distortion_pressure must be between 0 and {MaxOfficialSupplyFallbackClerkDistortionPressure}.");
+        }
+
+        if (OfficialSupplyFallbackAuthorityBuffer is < 0 or > MaxOfficialSupplyFallbackAuthorityBuffer)
+        {
+            errors.Add($"official_supply_fallback_authority_buffer must be between 0 and {MaxOfficialSupplyFallbackAuthorityBuffer}.");
+        }
+
+        if (OfficialSupplyFallbackDerivedPressureClampFloor is < 0 or > MaxOfficialSupplyFallbackSupplyPressure)
+        {
+            errors.Add($"official_supply_fallback_derived_pressure_clamp_floor must be between 0 and {MaxOfficialSupplyFallbackSupplyPressure}.");
+        }
+
+        if (OfficialSupplyFallbackDerivedPressureClampCeiling is < 0 or > MaxOfficialSupplyFallbackSupplyPressure)
+        {
+            errors.Add($"official_supply_fallback_derived_pressure_clamp_ceiling must be between 0 and {MaxOfficialSupplyFallbackSupplyPressure}.");
+        }
+
+        if (OfficialSupplyFallbackDerivedPressureClampFloor > OfficialSupplyFallbackDerivedPressureClampCeiling)
+        {
+            errors.Add("official_supply_fallback_derived_pressure_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (OfficialSupplyDistressDeltaClampFloor is < MinOfficialSupplyDistressDelta or > MaxOfficialSupplyDistressDelta)
@@ -2077,6 +2151,55 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? TaxSeasonDebtSpikeEventThreshold
             : DefaultTaxSeasonDebtSpikeEventThreshold;
+    }
+
+    public int GetOfficialSupplyFallbackFrontierPressureOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFallbackFrontierPressure
+            : DefaultOfficialSupplyFallbackFrontierPressure;
+    }
+
+    public int GetOfficialSupplyFallbackQuotaPressureOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFallbackQuotaPressure
+            : DefaultOfficialSupplyFallbackQuotaPressure;
+    }
+
+    public int GetOfficialSupplyFallbackDocketPressureOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFallbackDocketPressure
+            : DefaultOfficialSupplyFallbackDocketPressure;
+    }
+
+    public int GetOfficialSupplyFallbackClerkDistortionPressureOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFallbackClerkDistortionPressure
+            : DefaultOfficialSupplyFallbackClerkDistortionPressure;
+    }
+
+    public int GetOfficialSupplyFallbackAuthorityBufferOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFallbackAuthorityBuffer
+            : DefaultOfficialSupplyFallbackAuthorityBuffer;
+    }
+
+    public int GetOfficialSupplyFallbackDerivedPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFallbackDerivedPressureClampFloor
+            : DefaultOfficialSupplyFallbackDerivedPressureClampFloor;
+    }
+
+    public int GetOfficialSupplyFallbackDerivedPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyFallbackDerivedPressureClampCeiling
+            : DefaultOfficialSupplyFallbackDerivedPressureClampCeiling;
     }
 
     public int GetOfficialSupplyDistressDeltaClampFloorOrDefault()
