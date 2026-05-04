@@ -1128,3 +1128,9 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 `PopulationAndHouseholds` now owns the official-supply burden event distress threshold through validated rules-data with default `80`. This preserves the existing receipt boundary while moving another hardcoded rule out of the event dispatch branch.
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
+### v1173-v1180 population households official supply signal fallback clamp extraction audit
+
+`PopulationAndHouseholds` now owns the official-supply metadata fallback values and derived supply fallback clamp through validated rules-data. Defaults preserve the existing missing-metadata behavior while moving another hardcoded signal rule out of `ResolveOfficialSupplySignal`.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.

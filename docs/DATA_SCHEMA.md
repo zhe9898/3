@@ -1755,3 +1755,9 @@ V1157-V1164 extracts the official-supply migration delta clamp floor/ceiling int
 Schema/migration impact: none. V1165-V1172 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply burden event threshold is an in-memory `PopulationHouseholdMobilityRulesData` default/validation parameter consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply signal fallback clamp extraction v1173-v1180 note
+
+Schema/migration impact: none. V1173-V1180 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply signal fallback values and derived fallback clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

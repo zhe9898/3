@@ -414,3 +414,7 @@ Current repository note:
 ### v1165-v1172 population households official supply burden event threshold extraction
 
 The UI and Unity shell remain downstream-only. V1165-V1172 changes where `PopulationAndHouseholds` owns the official-supply burden event threshold; presentation surfaces may only copy projected fields/events and must not calculate burden thresholds, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1173-v1180 population households official supply signal fallback clamp extraction
+
+The UI and Unity shell remain downstream-only. V1173-V1180 changes where `PopulationAndHouseholds` owns official-supply signal fallbacks; presentation surfaces may only copy projected fields/events and must not calculate signal fallbacks, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.

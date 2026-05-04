@@ -1417,3 +1417,7 @@ Schema/migration impact: none. This pass does not extract official-supply debt/l
 ### PopulationAndHouseholds official supply burden event threshold extraction v1165-v1172 acceptance
 
 Acceptance requires default-equivalent behavior for the official-supply burden event threshold, deterministic fallback for malformed threshold rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds official supply signal fallback clamp extraction v1173-v1180 acceptance
+
+Acceptance requires default-equivalent behavior for official-supply signal fallbacks and derived supply fallback clamp, deterministic fallback for malformed fallback rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

@@ -326,3 +326,7 @@ A new module is schema-ready only if:
 ### population households official supply burden event threshold extraction v1165-v1172 adds no persisted fields
 
 The V1165-V1172 extraction keeps the official-supply burden event threshold in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.
+
+### population households official supply signal fallback clamp extraction v1173-v1180 adds no persisted fields
+
+The V1173-V1180 extraction keeps official-supply signal fallback values in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, or loader/config file.

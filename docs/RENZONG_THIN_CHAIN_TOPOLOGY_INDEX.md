@@ -928,3 +928,9 @@ This is not an official-supply event threshold extraction, official-supply signa
 V1165-V1172 extracts the official-supply burden event distress threshold from `DispatchOfficeSupplyEvents` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default threshold preserves prior behavior: the structured `HouseholdBurdenIncreased` receipt emits when distress crosses `80`.
 
 This is not an official-supply signal extraction, official-supply delta retune, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1173-V1180 PopulationAndHouseholds Official Supply Signal Fallback Clamp Extraction
+
+V1173-V1180 extracts the official-supply signal metadata fallback values and derived supply-pressure fallback clamp from `ResolveOfficialSupplySignal` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default values preserve prior behavior: frontier `60`, quota `7`, docket `1`, clerk distortion `0`, authority buffer `4`, and derived supply fallback clamp `4..26`.
+
+This is not an official-supply normalization clamp extraction, official-supply formula extraction, tax-season extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

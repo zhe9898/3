@@ -1320,3 +1320,9 @@ The existing `OfficeAndCareer.OfficialSupplyRequisition` event path remains the 
 Official-supply burden event threshold ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` reads that metadata, applies its owner-owned rules-data threshold, and emits structured household burden events only when the threshold is crossed.
 
 No integration path may route this threshold through Application/UI/Unity, parse prose, load external rule assemblies, or create migration/route-history/class-status authority.
+
+### PopulationAndHouseholds official supply signal fallback clamp extraction v1173-v1180 integration note
+
+Official-supply signal fallback ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata when available; if metadata is absent or partial, `PopulationAndHouseholds` applies its owner-owned rules-data fallbacks before computing household burden.
+
+No integration path may route these fallbacks through Application/UI/Unity, parse prose, load external rule assemblies, persist fallback state, or create migration/route-history/class-status authority.
