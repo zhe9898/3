@@ -862,3 +862,9 @@ This is not a debt-threshold extraction, resilience relief extraction, interacti
 V1077-V1084 extracts the grain-shortage debt pressure gate and boost from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default threshold and score preserve prior behavior: grain shortage plus `DebtPressure >= 60` contributes `+1`.
 
 This is not a resilience relief extraction, interaction clamp extraction, tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.
+
+## V1085-V1092 PopulationAndHouseholds Subsistence Interaction Resilience Relief Extraction
+
+V1085-V1092 extracts the resilient household relief gate and score from `ComputeSubsistenceInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Default thresholds and score preserve prior behavior: `GrainStore >= 75`, `LandHolding >= 35`, and `LaborCapacity >= 60` contribute `-2`.
+
+This is not an interaction clamp extraction, tax-season extraction, official-supply extraction, migration engine, movement command, route-history, loader/plugin, `PersonRegistry`, or schema expansion. Schema/migration impact: none.

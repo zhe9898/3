@@ -1340,3 +1340,11 @@ Acceptance evidence for V1077-V1084:
 - Architecture guard `Population_households_subsistence_interaction_debt_boost_extraction_v1077_v1084_must_remain_owner_consumed_and_schema_neutral` proves interaction debt threshold/boost moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
 
 Schema/migration impact: none. This pass does not extract resilience relief, interaction clamp, tax-season, or official-supply formulas.
+
+## PopulationAndHouseholds subsistence interaction resilience relief extraction v1085-v1092 acceptance - 2026-05-03
+
+Acceptance evidence for V1085-V1092:
+- Population tests `GrainPriceSpike_DefaultInteractionResilienceReliefRulesDataMatchesPreviousBaseline`, `GrainPriceSpike_CustomInteractionResilienceThresholdRulesDataIsOwnerConsumed`, `GrainPriceSpike_CustomInteractionResilienceReliefScoreRulesDataIsOwnerConsumed`, and `GrainPriceSpike_InvalidInteractionResilienceReliefRulesDataFallsBackToPreviousBaseline` prove extracted defaults preserve prior interaction resilience relief behavior, owner custom thresholds/relief score are consumed deterministically, and malformed config falls back deterministically.
+- Architecture guard `Population_households_subsistence_interaction_resilience_relief_extraction_v1085_v1092_must_remain_owner_consumed_and_schema_neutral` proves interaction resilience thresholds/score moved into owner-consumed rules-data without schema drift, expanding `PersonRegistry`, adding loader/plugin authority, parsing prose, or giving Application/UI/Unity outcome authority.
+
+Schema/migration impact: none. This pass does not extract interaction clamp, tax-season, or official-supply formulas.

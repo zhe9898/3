@@ -865,3 +865,9 @@ The extraction is default-equivalent. It does not retune grain-shortage window, 
 V1077-V1084 moves the subsistence interaction debt threshold and boost into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. Debt pressure remains one household-owned subsistence pressure signal inside PopulationAndHouseholds, not a migration economy rule, class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune grain-shortage window, cash-need boost, resilience relief, interaction clamp, tax-season, or official-supply formulas, and it does not create interaction-debt state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.
+
+### Current population households subsistence interaction resilience relief extraction: v1085-v1092
+
+V1085-V1092 moves the subsistence interaction resilient-household relief thresholds and score into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. Grain, land, and labor resilience remains a private household-owned pressure buffer inside PopulationAndHouseholds, not a migration recovery system, class/status ladder, route-history state, movement command, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune grain-shortage window, cash-need boost, debt boost, interaction clamp, tax-season, or official-supply formulas, and it does not create interaction-resilience state, a pressure-profile ledger, movement selector, route-history, migration economy, or UI-visible social position.

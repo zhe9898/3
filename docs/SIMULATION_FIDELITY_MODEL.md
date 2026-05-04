@@ -1077,3 +1077,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1077-V1084 changes parameter ownership only. The subsistence interaction debt pressure threshold and boost score are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, grain-shortage window, cash-need interaction boost, resilience interaction relief, interaction clamp, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, interaction-debt state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1085-V1092 PopulationAndHouseholds Subsistence Interaction Resilience Relief Extraction
+
+V1085-V1092 changes parameter ownership only. The subsistence interaction resilience relief thresholds and score are validated and consumed by `PopulationAndHouseholds`, while grain-price event scope, deterministic household ordering, grain-shortage window, cash-need interaction boost, debt interaction boost, interaction clamp, tax-season pressure, official-supply pressure, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, interaction-resilience state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

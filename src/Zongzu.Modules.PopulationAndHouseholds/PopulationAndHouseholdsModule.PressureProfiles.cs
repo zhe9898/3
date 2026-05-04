@@ -142,9 +142,12 @@ public sealed partial class PopulationAndHouseholdsModule
             interaction += _householdMobilityRulesData.GetSubsistenceInteractionDebtPressureBoostScoreOrDefault();
         }
 
-        if (household.GrainStore >= 75 && household.LandHolding >= 35 && household.LaborCapacity >= 60)
+        if (_householdMobilityRulesData.IsSubsistenceInteractionResilienceReliefOrDefault(
+                household.GrainStore,
+                household.LandHolding,
+                household.LaborCapacity))
         {
-            interaction -= 2;
+            interaction -= _householdMobilityRulesData.GetSubsistenceInteractionResilienceReliefScoreOrDefault();
         }
 
         return Math.Clamp(interaction, -2, 4);
