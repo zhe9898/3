@@ -459,21 +459,22 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetOfficialSupplyLaborPressureClampCeilingOrDefault());
     }
 
-    private static int ComputeOfficialSupplyLiquidityPressure(PopulationHouseholdState household)
+    private int ComputeOfficialSupplyLiquidityPressure(PopulationHouseholdState household)
     {
-        int grainStrain = household.GrainStore switch
-        {
-            >= 80 => -2,
-            >= 55 => -1,
-            >= 25 => 1,
-            > 0 => 3,
-            _ => 2,
-        };
+        int grainStrain = _householdMobilityRulesData.GetOfficialSupplyLiquidityGrainStrainPressureScoreOrDefault(
+            household.GrainStore);
+        int cashNeed = IsCashNeedLivelihood(household.Livelihood)
+            ? _householdMobilityRulesData.GetOfficialSupplyLiquidityCashNeedPressureScoreOrDefault()
+            : _householdMobilityRulesData.GetOfficialSupplyLiquidityCashNeedPressureFallbackScoreOrDefault();
+        int toolDrag = _householdMobilityRulesData.GetOfficialSupplyLiquidityToolDragPressureScoreOrDefault(
+            household.ToolCondition);
+        int debtDrag = _householdMobilityRulesData.GetOfficialSupplyLiquidityDebtDragPressureScoreOrDefault(
+            household.DebtPressure);
 
-        int cashNeed = IsCashNeedLivelihood(household.Livelihood) ? 2 : 0;
-        int toolDrag = household.ToolCondition is > 0 and < 35 ? 1 : 0;
-        int debtDrag = household.DebtPressure >= 65 ? 2 : household.DebtPressure >= 50 ? 1 : 0;
-        return Math.Clamp(grainStrain + cashNeed + toolDrag + debtDrag, -2, 7);
+        return Math.Clamp(
+            grainStrain + cashNeed + toolDrag + debtDrag,
+            _householdMobilityRulesData.GetOfficialSupplyLiquidityPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyLiquidityPressureClampCeilingOrDefault());
     }
 
     private static int ComputeOfficialSupplyFragilityPressure(PopulationHouseholdState household)

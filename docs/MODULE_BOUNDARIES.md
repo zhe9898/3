@@ -1837,3 +1837,9 @@ Application, UI, Unity, and `PersonRegistry` must not calculate or store officia
 `PopulationAndHouseholds` remains the owner and sole consumer of official-supply labor capacity bands, dependent count bands, and dependent/labor ratio bonus. The extracted values are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
 
 Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply labor pressure outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, or persisted ledger is introduced.
+
+### PopulationAndHouseholds official supply liquidity pressure extraction v1213-v1220 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of official-supply liquidity grain strain bands, cash-need score, tool drag threshold, and debt drag bands. The extracted values are schema-neutral rules-data parameters, not module state, not public presentation authority, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate or store official-supply liquidity pressure outcomes. No movement command, route-history module, migration economy, class/status engine, loader, runtime plugin marketplace, shared cash-need predicate retune, or persisted ledger is introduced.

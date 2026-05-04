@@ -22392,7 +22392,7 @@ public class ProjectReferenceTests
             "private int ComputeOfficialSupplyLaborPressure",
             StringComparison.Ordinal);
         int liquidityStart = pressureProfiles.IndexOf(
-            "private static int ComputeOfficialSupplyLiquidityPressure",
+            "private int ComputeOfficialSupplyLiquidityPressure",
             laborStart,
             StringComparison.Ordinal);
         Assert.That(laborStart, Is.GreaterThanOrEqualTo(0));
@@ -22537,6 +22537,240 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "OfficialSupplyLaborPressureLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMobility*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.HouseholdMovement*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.MigrationEconomy*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.RouteHistory*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.CommonerStatus*", SearchOption.TopDirectoryOnly), Is.Empty);
+        Assert.That(Directory.GetDirectories(SrcDir, "Zongzu.Modules.SocialClass*", SearchOption.TopDirectoryOnly), Is.Empty);
+    }
+
+    [Test]
+    public void Population_households_official_supply_liquidity_pressure_extraction_v1213_v1220_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-official-supply-liquidity-pressure-extraction-v1213-v1220.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "OfficialSupplyBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int liquidityStart = pressureProfiles.IndexOf(
+            "private int ComputeOfficialSupplyLiquidityPressure",
+            StringComparison.Ordinal);
+        int fragilityStart = pressureProfiles.IndexOf(
+            "private static int ComputeOfficialSupplyFragilityPressure",
+            liquidityStart,
+            StringComparison.Ordinal);
+        Assert.That(liquidityStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(fragilityStart, Is.GreaterThan(liquidityStart));
+        string liquidityBody = pressureProfiles.Substring(liquidityStart, fragilityStart - liquidityStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1213-V1220 PopulationAndHouseholds Official Supply Liquidity Pressure Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households official supply liquidity pressure extraction: v1213-v1220"));
+        Assert.That(designAudit, Does.Contain("v1213-v1220 population households official supply liquidity pressure extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds official supply liquidity pressure extraction v1213-v1220 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds official supply liquidity pressure extraction v1213-v1220 integration note"));
+        Assert.That(simulation, Does.Contain("Current population households official supply liquidity pressure extraction v1213-v1220 note"));
+        Assert.That(uiPresentation, Does.Contain("v1213-v1220 population households official supply liquidity pressure extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds official supply liquidity pressure extraction v1213-v1220 acceptance"));
+        Assert.That(fidelityModel, Does.Contain("V1213-V1220 PopulationAndHouseholds Official Supply Liquidity Pressure Extraction"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Official Supply Liquidity Pressure Extraction Through V1220"));
+        Assert.That(schemaRules, Does.Contain("population households official supply liquidity pressure extraction v1213-v1220 adds no persisted fields"));
+        Assert.That(dataSchema, Does.Contain("Current population households official supply liquidity pressure extraction v1213-v1220 note"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "previous hardcoded official-supply liquidity grain strain bands: `grain>=80 => -2`, `grain>=55 => -1`, `grain>=25 => 1`, `grain>0 => 3`, fallback `2`",
+                     "previous hardcoded official-supply cash-need score: cash-need livelihood `2`, fallback `0`; the shared cash-need livelihood predicate is not retuned in this pass",
+                     "previous hardcoded official-supply tool drag threshold: `tool>0 && tool<35 => 1`, fallback `0`",
+                     "previous hardcoded official-supply debt drag bands: `debt>=65 => 2`, `debt>=50 => 1`, fallback `0`",
+                     "previous hardcoded official-supply liquidity pressure clamp: `-2..7`",
+                     "DefaultOfficialSupplyLiquidityGrainStrainPressureBands",
+                     "DefaultOfficialSupplyLiquidityGrainStrainPressureFallbackScore = 2",
+                     "DefaultOfficialSupplyLiquidityCashNeedPressureScore = 2",
+                     "DefaultOfficialSupplyLiquidityCashNeedPressureFallbackScore = 0",
+                     "DefaultOfficialSupplyLiquidityToolDragConditionThreshold = 35",
+                     "DefaultOfficialSupplyLiquidityToolDragPressureScore = 1",
+                     "DefaultOfficialSupplyLiquidityToolDragPressureFallbackScore = 0",
+                     "DefaultOfficialSupplyLiquidityDebtDragPressureBands",
+                     "DefaultOfficialSupplyLiquidityDebtDragPressureFallbackScore = 0",
+                     "DefaultOfficialSupplyLiquidityPressureClampFloor = -2",
+                     "DefaultOfficialSupplyLiquidityPressureClampCeiling = 7",
+                     "No shared cash-need livelihood predicate extraction.",
+                     "No official-supply fragility extraction.",
+                     "No official-supply interaction extraction.",
+                     "No official-supply formula divisor extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetOfficialSupplyLiquidityGrainStrainPressureScoreOrDefault",
+                     "GetOfficialSupplyLiquidityCashNeedPressureScoreOrDefault",
+                     "GetOfficialSupplyLiquidityToolDragPressureScoreOrDefault",
+                     "GetOfficialSupplyLiquidityDebtDragPressureScoreOrDefault",
+                     "GetOfficialSupplyLiquidityPressureClampFloorOrDefault",
+                     "GetOfficialSupplyLiquidityPressureClampCeilingOrDefault",
+                 })
+        {
+            Assert.That(liquidityBody, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     ">= 80 => -2",
+                     ">= 55 => -1",
+                     ">= 25 => 1",
+                     "> 0 => 3",
+                     "IsCashNeedLivelihood(household.Livelihood) ? 2 : 0",
+                     "household.ToolCondition is > 0 and < 35 ? 1 : 0",
+                     "household.DebtPressure >= 65 ? 2 : household.DebtPressure >= 50 ? 1 : 0",
+                     "Math.Clamp(grainStrain + cashNeed + toolDrag + debtDrag, -2, 7)",
+                 })
+        {
+            Assert.That(liquidityBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLiquidityGrainStrainPressureBands"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLiquidityGrainStrainPressureFallbackScore = 2"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLiquidityCashNeedPressureScore = 2"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLiquidityToolDragConditionThreshold = 35"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLiquidityDebtDragPressureBands"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLiquidityPressureClampCeiling = 7"));
+        Assert.That(rulesData, Does.Contain("official_supply_liquidity_grain_strain_pressure_bands must be non-empty"));
+        Assert.That(rulesData, Does.Contain("official_supply_liquidity_debt_drag_pressure_bands must be non-empty"));
+        Assert.That(rulesData, Does.Contain("official_supply_liquidity_pressure_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_DefaultLiquidityPressureRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_CustomLiquidityPressureRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_InvalidLiquidityPressureRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyLiquidityPressure"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "OfficialSupplyLiquidityPressureOutcomeCalculator",
+                     "PopulationAndHouseholdsOfficialSupplyLiquidityRules",
+                     "OfficialSupplyLiquidityPressureState",
+                     "MigrationOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "OfficialSupplyLiquidityPressure",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "OfficialSupplyLiquidityPressureLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",

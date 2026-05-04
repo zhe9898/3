@@ -1785,3 +1785,9 @@ The official-supply resource buffer grain/tool/shelter bands, fallback scores, a
 Schema/migration impact: none. V1205-V1212 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply liquidity pressure extraction v1213-v1220 note
+
+Schema/migration impact: none. V1213-V1220 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply liquidity grain strain bands, cash-need score, tool drag threshold, debt drag bands, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
