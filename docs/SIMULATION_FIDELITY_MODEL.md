@@ -1227,3 +1227,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1277-V1284 changes parameter ownership only. The tax-season liquidity grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback values, and clamp are validated and consumed by `PopulationAndHouseholds`, while tax-season registration visibility, labor/fragility/interaction scoring, debt delta formula, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, tax-season-liquidity-pressure state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1285-V1292 PopulationAndHouseholds Tax Season Labor Pressure Extraction
+
+V1285-V1292 changes parameter ownership only. The tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback values, and clamp are validated and consumed by `PopulationAndHouseholds`, while tax-season registration visibility, liquidity, fragility/interaction scoring, debt delta formula, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, tax-season-labor-pressure state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

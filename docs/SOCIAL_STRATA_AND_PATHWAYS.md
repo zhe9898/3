@@ -1015,3 +1015,9 @@ The extraction is default-equivalent. It does not retune tax-season liquidity, l
 V1277-V1284 moves tax-season liquidity grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback scores, and clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned tax burden inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune tax-season registration visibility, labor, fragility, interaction, debt-delta formula, event threshold, official-supply rules, household movement rules, or UI-visible social position.
+
+### Current population households tax season labor pressure extraction: v1285-v1292
+
+V1285-V1292 moves tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned tax burden inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune tax-season registration visibility, liquidity, fragility, interaction, debt-delta formula, event threshold, official-supply rules, household movement rules, or UI-visible social position.

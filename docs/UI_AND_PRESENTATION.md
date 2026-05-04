@@ -470,3 +470,7 @@ The UI and Unity shell remain downstream-only. V1269-V1276 changes where `Popula
 ### v1277-v1284 population households tax season liquidity pressure extraction
 
 The UI and Unity shell remain downstream-only. V1277-V1284 changes where `PopulationAndHouseholds` owns tax-season liquidity grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback scores, and clamp; presentation surfaces may only copy projected fields/events and must not calculate tax liquidity, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1285-v1292 population households tax season labor pressure extraction
+
+The UI and Unity shell remain downstream-only. V1285-V1292 changes where `PopulationAndHouseholds` owns tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp; presentation surfaces may only copy projected fields/events and must not calculate tax labor pressure, movement outcomes, route history, migration economy, or class/status changes.

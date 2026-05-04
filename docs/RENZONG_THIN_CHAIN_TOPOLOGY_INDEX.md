@@ -1012,3 +1012,9 @@ This is not tax-season liquidity/labor/fragility/interaction/debt-delta extracti
 V1277-V1284 extracts tax-season liquidity grain pressure bands, cash-need livelihood scores, tool-drag threshold/score, fallback scores, and liquidity clamp from `ComputeTaxLiquidityPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: grain `80=>-3`, `60=>-2`, `40=>-1`, `20=>1`, `1=>3`; cash-need petty-trader/boatman/artisan/seasonal-migrant `2`, hired-labor/vagrant/tenant `1`; tool drag `0<tool<35=>1`; final clamp `-3..5`.
 
 This is not tax-season labor/fragility/interaction/debt-delta extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.
+
+## V1285-V1292 PopulationAndHouseholds Tax Season Labor Pressure Extraction
+
+V1285-V1292 extracts tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and labor pressure clamp from `ComputeTaxLaborPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: labor capacity `80=>-2`, `60=>-1`, `40=>0`, `30=>1`, `20=>2`, fallback `3`; dependent count `5=>2`, `3=>1`, fallback `0`; dependent/labor ratio `dependents > laborers * 2 => +1`; final clamp `-2..5`.
+
+This is not tax-season fragility/interaction/debt-delta extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.

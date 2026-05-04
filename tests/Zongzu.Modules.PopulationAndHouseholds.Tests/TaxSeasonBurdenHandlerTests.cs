@@ -345,6 +345,105 @@ public sealed class TaxSeasonBurdenHandlerTests
     }
 
     [Test]
+    public void TaxSeasonOpened_DefaultLaborRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonLaborCapacityPressureBands =
+                    PopulationHouseholdMobilityRulesData.DefaultTaxSeasonLaborCapacityPressureBands,
+                TaxSeasonLaborCapacityPressureFallbackScore = 3,
+                TaxSeasonDependentCountPressureBands =
+                    PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDependentCountPressureBands,
+                TaxSeasonDependentCountPressureFallbackScore = 0,
+                TaxSeasonDependentToLaborRatioMultiplier = 2,
+                TaxSeasonDependentToLaborRatioBonusScore = 1,
+                TaxSeasonDependentToLaborRatioFallbackScore = 0,
+                TaxSeasonLaborPressureClampFloor = -2,
+                TaxSeasonLaborPressureClampCeiling = 5,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState explicitHousehold, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunPressedTaxSeason(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleDebtSpikeEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonLaborCapacityPressureFallbackScore, Is.EqualTo(3));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDependentCountPressureFallbackScore, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDependentToLaborRatioMultiplier, Is.EqualTo(2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDependentToLaborRatioBonusScore, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonLaborPressureClampFloor, Is.EqualTo(-2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonLaborPressureClampCeiling, Is.EqualTo(5));
+        Assert.That(explicitPreviousBaseline.GetTaxSeasonLaborCapacityPressureScoreOrDefault(25), Is.EqualTo(2));
+        Assert.That(explicitPreviousBaseline.GetTaxSeasonDependentCountPressureScoreOrDefault(4), Is.EqualTo(1));
+        Assert.That(explicitHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(
+            explicitEvent.Metadata[DomainEventMetadataKeys.TaxLaborPressure],
+            Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.TaxLaborPressure]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.TaxLaborPressure], Is.EqualTo("3"));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_CustomLaborRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonLaborCapacityPressureBands =
+                    new[] { new PopulationHouseholdMobilityThresholdScoreBand(1, 0) },
+                TaxSeasonLaborCapacityPressureFallbackScore = 0,
+                TaxSeasonDependentCountPressureBands =
+                    new[] { new PopulationHouseholdMobilityThresholdScoreBand(1, 0) },
+                TaxSeasonDependentCountPressureFallbackScore = 0,
+                TaxSeasonDependentToLaborRatioMultiplier = 2,
+                TaxSeasonDependentToLaborRatioBonusScore = 0,
+                TaxSeasonDependentToLaborRatioFallbackScore = 0,
+                TaxSeasonLaborPressureClampFloor = -2,
+                TaxSeasonLaborPressureClampCeiling = 5,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunPressedTaxSeason(customRulesData);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent customEvent = SingleDebtSpikeEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.TaxLaborPressure], Is.EqualTo("3"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.TaxLaborPressure], Is.EqualTo("0"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("26"));
+        Assert.That(customHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure - 2));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_InvalidLaborRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonLaborCapacityPressureBands =
+                    new[] { new PopulationHouseholdMobilityThresholdScoreBand(1, -9) },
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState fallbackHousehold, IReadOnlyList<IDomainEvent> fallbackEvents) =
+            RunPressedTaxSeason(malformedRulesData);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleDebtSpikeEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(malformedRulesData.GetTaxSeasonLaborCapacityPressureScoreOrDefault(25), Is.EqualTo(2));
+        Assert.That(fallbackHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(
+            fallbackEvent.Metadata[DomainEventMetadataKeys.TaxLaborPressure],
+            Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.TaxLaborPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
+    }
+
+    [Test]
     public void TaxSeasonOpened_DefaultTaxDebtDeltaClampRulesDataMatchesPreviousBaseline()
     {
         PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
