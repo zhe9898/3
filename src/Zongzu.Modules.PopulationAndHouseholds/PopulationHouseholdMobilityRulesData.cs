@@ -91,6 +91,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int TaxSeasonDependentToLaborRatioFallbackScore,
     int TaxSeasonLaborPressureClampFloor,
     int TaxSeasonLaborPressureClampCeiling,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> TaxSeasonFragilityDistressPressureBands,
+    int TaxSeasonFragilityDistressPressureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> TaxSeasonFragilityDebtPressureBands,
+    int TaxSeasonFragilityDebtPressureFallbackScore,
+    int TaxSeasonFragilityShelterDragQualityThreshold,
+    int TaxSeasonFragilityShelterDragPressureScore,
+    int TaxSeasonFragilityShelterDragPressureFallbackScore,
+    int TaxSeasonFragilityMigrationRiskThreshold,
+    int TaxSeasonFragilityMigrationPressureScore,
+    int TaxSeasonFragilityMigrationPressureFallbackScore,
+    int TaxSeasonFragilityPressureClampFloor,
+    int TaxSeasonFragilityPressureClampCeiling,
     int TaxSeasonDebtDeltaClampFloor,
     int TaxSeasonDebtDeltaClampCeiling,
     int TaxSeasonDebtSpikeEventThreshold,
@@ -317,6 +329,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultTaxSeasonDependentToLaborRatioFallbackScore = 0;
     public const int DefaultTaxSeasonLaborPressureClampFloor = -2;
     public const int DefaultTaxSeasonLaborPressureClampCeiling = 5;
+    public const int DefaultTaxSeasonFragilityDistressPressureFallbackScore = 0;
+    public const int DefaultTaxSeasonFragilityDebtPressureFallbackScore = 0;
+    public const int DefaultTaxSeasonFragilityShelterDragQualityThreshold = 35;
+    public const int DefaultTaxSeasonFragilityShelterDragPressureScore = 1;
+    public const int DefaultTaxSeasonFragilityShelterDragPressureFallbackScore = 0;
+    public const int DefaultTaxSeasonFragilityMigrationRiskThreshold = 70;
+    public const int DefaultTaxSeasonFragilityMigrationPressureScore = 1;
+    public const int DefaultTaxSeasonFragilityMigrationPressureFallbackScore = 0;
+    public const int DefaultTaxSeasonFragilityPressureClampFloor = 0;
+    public const int DefaultTaxSeasonFragilityPressureClampCeiling = 7;
     public const int DefaultTaxSeasonDebtDeltaClampFloor = 8;
     public const int DefaultTaxSeasonDebtDeltaClampCeiling = 28;
     public const int DefaultTaxSeasonDebtSpikeEventThreshold = 70;
@@ -463,6 +485,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxTaxSeasonDependentCountThreshold = 32;
     public const int MinTaxSeasonLaborPressure = -8;
     public const int MaxTaxSeasonLaborPressure = 16;
+    public const int MaxTaxSeasonFragilityPressureContribution = 8;
+    public const int MinTaxSeasonFragilityPressure = 0;
+    public const int MaxTaxSeasonFragilityPressure = 16;
     public const int MinTaxSeasonDebtDelta = 0;
     public const int MaxTaxSeasonDebtDelta = 64;
     public const int MaxOfficialSupplyFallbackFrontierPressure = 100;
@@ -724,6 +749,24 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(3, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultTaxSeasonFragilityDistressPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, 3),
+            new PopulationHouseholdMobilityThresholdScoreBand(65, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
+        };
+
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultTaxSeasonFragilityDebtPressureBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(80, 3),
+            new PopulationHouseholdMobilityThresholdScoreBand(65, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(55, 1),
+        };
+
     public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
         DefaultOfficialSupplyLivelihoodExposureScoreWeights { get; } =
         new[]
@@ -903,6 +946,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultTaxSeasonDependentToLaborRatioFallbackScore,
             DefaultTaxSeasonLaborPressureClampFloor,
             DefaultTaxSeasonLaborPressureClampCeiling,
+            DefaultTaxSeasonFragilityDistressPressureBands,
+            DefaultTaxSeasonFragilityDistressPressureFallbackScore,
+            DefaultTaxSeasonFragilityDebtPressureBands,
+            DefaultTaxSeasonFragilityDebtPressureFallbackScore,
+            DefaultTaxSeasonFragilityShelterDragQualityThreshold,
+            DefaultTaxSeasonFragilityShelterDragPressureScore,
+            DefaultTaxSeasonFragilityShelterDragPressureFallbackScore,
+            DefaultTaxSeasonFragilityMigrationRiskThreshold,
+            DefaultTaxSeasonFragilityMigrationPressureScore,
+            DefaultTaxSeasonFragilityMigrationPressureFallbackScore,
+            DefaultTaxSeasonFragilityPressureClampFloor,
+            DefaultTaxSeasonFragilityPressureClampCeiling,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
@@ -1143,6 +1198,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultTaxSeasonDependentToLaborRatioFallbackScore,
             DefaultTaxSeasonLaborPressureClampFloor,
             DefaultTaxSeasonLaborPressureClampCeiling,
+            DefaultTaxSeasonFragilityDistressPressureBands,
+            DefaultTaxSeasonFragilityDistressPressureFallbackScore,
+            DefaultTaxSeasonFragilityDebtPressureBands,
+            DefaultTaxSeasonFragilityDebtPressureFallbackScore,
+            DefaultTaxSeasonFragilityShelterDragQualityThreshold,
+            DefaultTaxSeasonFragilityShelterDragPressureScore,
+            DefaultTaxSeasonFragilityShelterDragPressureFallbackScore,
+            DefaultTaxSeasonFragilityMigrationRiskThreshold,
+            DefaultTaxSeasonFragilityMigrationPressureScore,
+            DefaultTaxSeasonFragilityMigrationPressureFallbackScore,
+            DefaultTaxSeasonFragilityPressureClampFloor,
+            DefaultTaxSeasonFragilityPressureClampCeiling,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
@@ -2175,6 +2242,119 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (TaxSeasonLaborPressureClampFloor > TaxSeasonLaborPressureClampCeiling)
         {
             errors.Add("tax_season_labor_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (TaxSeasonFragilityDistressPressureBands is null
+            || TaxSeasonFragilityDistressPressureBands.Count == 0
+            || TaxSeasonFragilityDistressPressureBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < 0 or > MaxTaxSeasonFragilityPressureContribution)
+            || TaxSeasonFragilityDistressPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != TaxSeasonFragilityDistressPressureBands.Count)
+        {
+            errors.Add(
+                $"tax_season_fragility_distress_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score 0..{MaxTaxSeasonFragilityPressureContribution}.");
+        }
+
+        if (TaxSeasonFragilityDistressPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < TaxSeasonFragilityDistressPressureBands.Count; index++)
+            {
+                if (TaxSeasonFragilityDistressPressureBands[index - 1].Threshold <= TaxSeasonFragilityDistressPressureBands[index].Threshold)
+                {
+                    errors.Add("tax_season_fragility_distress_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (TaxSeasonFragilityDistressPressureFallbackScore is < 0 or > MaxTaxSeasonFragilityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_fragility_distress_pressure_fallback_score must be between 0 and {MaxTaxSeasonFragilityPressureContribution}.");
+        }
+
+        if (TaxSeasonFragilityDebtPressureBands is null
+            || TaxSeasonFragilityDebtPressureBands.Count == 0
+            || TaxSeasonFragilityDebtPressureBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < 0 or > MaxTaxSeasonFragilityPressureContribution)
+            || TaxSeasonFragilityDebtPressureBands.Select(static band => band.Threshold).Distinct().Count()
+                != TaxSeasonFragilityDebtPressureBands.Count)
+        {
+            errors.Add(
+                $"tax_season_fragility_debt_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score 0..{MaxTaxSeasonFragilityPressureContribution}.");
+        }
+
+        if (TaxSeasonFragilityDebtPressureBands is { Count: > 1 })
+        {
+            for (int index = 1; index < TaxSeasonFragilityDebtPressureBands.Count; index++)
+            {
+                if (TaxSeasonFragilityDebtPressureBands[index - 1].Threshold <= TaxSeasonFragilityDebtPressureBands[index].Threshold)
+                {
+                    errors.Add("tax_season_fragility_debt_pressure_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (TaxSeasonFragilityDebtPressureFallbackScore is < 0 or > MaxTaxSeasonFragilityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_fragility_debt_pressure_fallback_score must be between 0 and {MaxTaxSeasonFragilityPressureContribution}.");
+        }
+
+        if (TaxSeasonFragilityShelterDragQualityThreshold is < 0 or > 100)
+        {
+            errors.Add("tax_season_fragility_shelter_drag_quality_threshold must be between 0 and 100.");
+        }
+
+        if (TaxSeasonFragilityShelterDragPressureScore is < 0 or > MaxTaxSeasonFragilityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_fragility_shelter_drag_pressure_score must be between 0 and {MaxTaxSeasonFragilityPressureContribution}.");
+        }
+
+        if (TaxSeasonFragilityShelterDragPressureFallbackScore is < 0 or > MaxTaxSeasonFragilityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_fragility_shelter_drag_pressure_fallback_score must be between 0 and {MaxTaxSeasonFragilityPressureContribution}.");
+        }
+
+        if (TaxSeasonFragilityMigrationRiskThreshold is < 0 or > 100)
+        {
+            errors.Add("tax_season_fragility_migration_risk_threshold must be between 0 and 100.");
+        }
+
+        if (TaxSeasonFragilityMigrationPressureScore is < 0 or > MaxTaxSeasonFragilityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_fragility_migration_pressure_score must be between 0 and {MaxTaxSeasonFragilityPressureContribution}.");
+        }
+
+        if (TaxSeasonFragilityMigrationPressureFallbackScore is < 0 or > MaxTaxSeasonFragilityPressureContribution)
+        {
+            errors.Add(
+                $"tax_season_fragility_migration_pressure_fallback_score must be between 0 and {MaxTaxSeasonFragilityPressureContribution}.");
+        }
+
+        if (TaxSeasonFragilityPressureClampFloor is < MinTaxSeasonFragilityPressure
+            or > MaxTaxSeasonFragilityPressure)
+        {
+            errors.Add(
+                $"tax_season_fragility_pressure_clamp_floor must be between {MinTaxSeasonFragilityPressure} and {MaxTaxSeasonFragilityPressure}.");
+        }
+
+        if (TaxSeasonFragilityPressureClampCeiling is < MinTaxSeasonFragilityPressure
+            or > MaxTaxSeasonFragilityPressure)
+        {
+            errors.Add(
+                $"tax_season_fragility_pressure_clamp_ceiling must be between {MinTaxSeasonFragilityPressure} and {MaxTaxSeasonFragilityPressure}.");
+        }
+
+        if (TaxSeasonFragilityPressureClampFloor > TaxSeasonFragilityPressureClampCeiling)
+        {
+            errors.Add("tax_season_fragility_pressure_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (TaxSeasonDebtDeltaClampFloor is < MinTaxSeasonDebtDelta or > MaxTaxSeasonDebtDelta)
@@ -4173,6 +4353,135 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? TaxSeasonLaborPressureClampCeiling
             : DefaultTaxSeasonLaborPressureClampCeiling;
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetTaxSeasonFragilityDistressPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityDistressPressureBands
+            : DefaultTaxSeasonFragilityDistressPressureBands;
+    }
+
+    public int GetTaxSeasonFragilityDistressPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityDistressPressureFallbackScore
+            : DefaultTaxSeasonFragilityDistressPressureFallbackScore;
+    }
+
+    public int GetTaxSeasonFragilityDistressPressureScoreOrDefault(int distress)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetTaxSeasonFragilityDistressPressureBandsOrDefault())
+        {
+            if (distress >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetTaxSeasonFragilityDistressPressureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetTaxSeasonFragilityDebtPressureBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityDebtPressureBands
+            : DefaultTaxSeasonFragilityDebtPressureBands;
+    }
+
+    public int GetTaxSeasonFragilityDebtPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityDebtPressureFallbackScore
+            : DefaultTaxSeasonFragilityDebtPressureFallbackScore;
+    }
+
+    public int GetTaxSeasonFragilityDebtPressureScoreOrDefault(int debtPressure)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetTaxSeasonFragilityDebtPressureBandsOrDefault())
+        {
+            if (debtPressure >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetTaxSeasonFragilityDebtPressureFallbackScoreOrDefault();
+    }
+
+    public int GetTaxSeasonFragilityShelterDragQualityThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityShelterDragQualityThreshold
+            : DefaultTaxSeasonFragilityShelterDragQualityThreshold;
+    }
+
+    public int GetTaxSeasonFragilityShelterDragPressureScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityShelterDragPressureScore
+            : DefaultTaxSeasonFragilityShelterDragPressureScore;
+    }
+
+    public int GetTaxSeasonFragilityShelterDragPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityShelterDragPressureFallbackScore
+            : DefaultTaxSeasonFragilityShelterDragPressureFallbackScore;
+    }
+
+    public int GetTaxSeasonFragilityShelterDragPressureScoreOrDefault(int shelterQuality)
+    {
+        return shelterQuality is > 0
+            && shelterQuality < GetTaxSeasonFragilityShelterDragQualityThresholdOrDefault()
+                ? GetTaxSeasonFragilityShelterDragPressureScoreOrDefault()
+                : GetTaxSeasonFragilityShelterDragPressureFallbackScoreOrDefault();
+    }
+
+    public int GetTaxSeasonFragilityMigrationRiskThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityMigrationRiskThreshold
+            : DefaultTaxSeasonFragilityMigrationRiskThreshold;
+    }
+
+    public int GetTaxSeasonFragilityMigrationPressureScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityMigrationPressureScore
+            : DefaultTaxSeasonFragilityMigrationPressureScore;
+    }
+
+    public int GetTaxSeasonFragilityMigrationPressureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityMigrationPressureFallbackScore
+            : DefaultTaxSeasonFragilityMigrationPressureFallbackScore;
+    }
+
+    public int GetTaxSeasonFragilityMigrationPressureScoreOrDefault(bool isMigrating, int migrationRisk)
+    {
+        return isMigrating || migrationRisk >= GetTaxSeasonFragilityMigrationRiskThresholdOrDefault()
+            ? GetTaxSeasonFragilityMigrationPressureScoreOrDefault()
+            : GetTaxSeasonFragilityMigrationPressureFallbackScoreOrDefault();
+    }
+
+    public int GetTaxSeasonFragilityPressureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityPressureClampFloor
+            : DefaultTaxSeasonFragilityPressureClampFloor;
+    }
+
+    public int GetTaxSeasonFragilityPressureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonFragilityPressureClampCeiling
+            : DefaultTaxSeasonFragilityPressureClampCeiling;
     }
 
     public int GetTaxSeasonDebtDeltaClampFloorOrDefault()

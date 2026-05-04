@@ -1218,3 +1218,9 @@ The pass does not add movement authority, route history, migration economy, clas
 `PopulationAndHouseholds` now owns the tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp through validated rules-data. Defaults preserve the existing `ComputeTaxLaborPressure` result while moving another hardcoded tax-season helper out of C# literals.
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
+### v1293-v1300 population households tax season fragility pressure extraction audit
+
+`PopulationAndHouseholds` now owns the tax-season fragility distress bands, debt bands, shelter-drag threshold/score, migration-risk threshold/score, fallback scores, and clamp through validated rules-data. Defaults preserve the existing `ComputeTaxSeasonFragility` result while moving another hardcoded tax-season helper out of C# literals.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.

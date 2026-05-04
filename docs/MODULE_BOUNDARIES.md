@@ -1897,3 +1897,9 @@ Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, o
 `PopulationAndHouseholds` remains the owner and sole consumer of tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp. The extracted values are schema-neutral in-memory `PopulationHouseholdMobilityRulesData` defaults, not module state, not public presentation authority, not a runtime rules-data file, and not a cross-module command surface.
 
 Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, or retune tax-season labor outcomes. No movement command, route-history state, migration economy, class/status engine, runtime plugin loader, content/config namespace, prose parser, pressure-profile ledger, or persisted field is introduced.
+
+### PopulationAndHouseholds tax season fragility pressure extraction v1293-v1300 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of tax-season fragility distress bands, debt bands, shelter-drag threshold/score, migration-risk threshold/score, fallback scores, and clamp. The extracted values are schema-neutral in-memory `PopulationHouseholdMobilityRulesData` defaults, not module state, not public presentation authority, not a runtime rules-data file, and not a cross-module command surface.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, or retune tax-season fragility outcomes. No movement command, route-history state, migration economy, class/status engine, runtime plugin loader, content/config namespace, prose parser, pressure-profile ledger, or persisted field is introduced.

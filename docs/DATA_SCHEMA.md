@@ -1845,3 +1845,9 @@ The tax-season liquidity grain pressure bands, cash-need livelihood scores, tool
 Schema/migration impact: none. V1285-V1292 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The tax-season labor capacity bands, dependent count bands, dependent/labor ratio bonus, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households tax season fragility pressure extraction v1293-v1300 note
+
+Schema/migration impact: none. V1293-V1300 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The tax-season fragility distress bands, debt bands, shelter-drag threshold/score, migration-risk threshold/score, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
