@@ -245,38 +245,29 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetTaxSeasonFragilityPressureClampCeilingOrDefault());
     }
 
-    private static int ComputeTaxInteractionPressure(PopulationHouseholdState household)
+    private int ComputeTaxInteractionPressure(PopulationHouseholdState household)
     {
-        int interaction = 0;
+        int tenantPressure = _householdMobilityRulesData.GetTaxSeasonInteractionTenantPressureScoreOrDefault(
+            household.Livelihood,
+            household.Distress,
+            household.GrainStore);
+        int landLaborPressure = _householdMobilityRulesData.GetTaxSeasonInteractionLandLaborPressureScoreOrDefault(
+            household.LandHolding,
+            household.LaborCapacity);
+        int cashNeedPressure = _householdMobilityRulesData.GetTaxSeasonInteractionCashNeedPressureScoreOrDefault(
+            household.Livelihood,
+            household.GrainStore,
+            household.DebtPressure);
+        int resilienceRelief = _householdMobilityRulesData.GetTaxSeasonInteractionResilienceReliefScoreOrDefault(
+            household.GrainStore,
+            household.LaborCapacity,
+            household.DebtPressure,
+            household.Distress);
 
-        if (household.Livelihood == LivelihoodType.Tenant
-            && household.Distress >= 65
-            && household.GrainStore is > 0 and < 25)
-        {
-            interaction += 2;
-        }
-
-        if (household.LandHolding >= 40 && household.LaborCapacity < 35)
-        {
-            interaction += 1;
-        }
-
-        if (IsCashNeedLivelihood(household.Livelihood)
-            && household.GrainStore is > 0 and < 30
-            && household.DebtPressure >= 60)
-        {
-            interaction += 1;
-        }
-
-        if (household.GrainStore >= 70
-            && household.LaborCapacity >= 70
-            && household.DebtPressure < 55
-            && household.Distress < 45)
-        {
-            interaction -= 2;
-        }
-
-        return Math.Clamp(interaction, -2, 4);
+        return Math.Clamp(
+            tenantPressure + landLaborPressure + cashNeedPressure + resilienceRelief,
+            _householdMobilityRulesData.GetTaxSeasonInteractionPressureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonInteractionPressureClampCeilingOrDefault());
     }
 
     private static bool IsCashNeedLivelihood(LivelihoodType livelihood)

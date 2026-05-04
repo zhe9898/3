@@ -24826,7 +24826,7 @@ public class ProjectReferenceTests
             "private int ComputeTaxSeasonFragility",
             StringComparison.Ordinal);
         int interactionStart = pressureProfiles.IndexOf(
-            "private static int ComputeTaxInteractionPressure",
+            "private int ComputeTaxInteractionPressure",
             fragilityStart,
             StringComparison.Ordinal);
         Assert.That(fragilityStart, Is.GreaterThanOrEqualTo(0));
@@ -24970,6 +24970,235 @@ public class ProjectReferenceTests
                      "CommonerStatusEngine",
                      "SocialClassEngine",
                      "TaxSeasonFragilityPressureLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+    }
+
+    [Test]
+    public void Population_households_tax_season_interaction_pressure_extraction_v1301_v1308_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-tax-season-interaction-pressure-extraction-v1301-v1308.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "TaxSeasonBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int interactionStart = pressureProfiles.IndexOf(
+            "private int ComputeTaxInteractionPressure",
+            StringComparison.Ordinal);
+        int helperStart = pressureProfiles.IndexOf(
+            "private static bool IsCashNeedLivelihood",
+            interactionStart,
+            StringComparison.Ordinal);
+        Assert.That(interactionStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(helperStart, Is.GreaterThan(interactionStart));
+        string interactionBody = pressureProfiles.Substring(interactionStart, helperStart - interactionStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1301-V1308 PopulationAndHouseholds Tax Season Interaction Pressure Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households tax season interaction pressure extraction: v1301-v1308"));
+        Assert.That(fidelityModel, Does.Contain("V1301-V1308 PopulationAndHouseholds Tax Season Interaction Pressure Extraction"));
+        Assert.That(designAudit, Does.Contain("v1301-v1308 population households tax season interaction pressure extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds tax season interaction pressure extraction v1301-v1308 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds tax season interaction pressure extraction v1301-v1308 integration note"));
+        Assert.That(dataSchema, Does.Contain("Current population households tax season interaction pressure extraction v1301-v1308 note"));
+        Assert.That(schemaRules, Does.Contain("population households tax season interaction pressure extraction v1301-v1308 adds no persisted fields"));
+        Assert.That(simulation, Does.Contain("Current population households tax season interaction pressure extraction v1301-v1308 note"));
+        Assert.That(uiPresentation, Does.Contain("v1301-v1308 population households tax season interaction pressure extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds tax season interaction pressure extraction v1301-v1308 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Tax Season Interaction Pressure Extraction Through V1308"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "Previous hardcoded tax-season interaction tenant pressure",
+                     "Previous hardcoded tax-season interaction land/labor pressure",
+                     "Previous hardcoded tax-season interaction cash-need pressure",
+                     "Previous hardcoded tax-season interaction resilience relief",
+                     "Previous hardcoded tax-season interaction clamp",
+                     "DefaultTaxSeasonInteractionTenantLivelihood = LivelihoodType.Tenant",
+                     "DefaultTaxSeasonInteractionTenantDistressThreshold = 65",
+                     "DefaultTaxSeasonInteractionTenantPressureScore = 2",
+                     "DefaultTaxSeasonInteractionLandHoldingThreshold = 40",
+                     "DefaultTaxSeasonInteractionLaborCapacityThreshold = 35",
+                     "DefaultTaxSeasonInteractionLandLaborPressureScore = 1",
+                     "DefaultTaxSeasonInteractionCashNeedDebtPressureThreshold = 60",
+                     "DefaultTaxSeasonInteractionResilienceReliefScore = -2",
+                     "DefaultTaxSeasonInteractionPressureClampFloor = -2",
+                     "DefaultTaxSeasonInteractionPressureClampCeiling = 4",
+                     "No tax-season debt-delta formula extraction.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        foreach (string getter in new[]
+                 {
+                     "GetTaxSeasonInteractionTenantPressureScoreOrDefault",
+                     "GetTaxSeasonInteractionLandLaborPressureScoreOrDefault",
+                     "GetTaxSeasonInteractionCashNeedPressureScoreOrDefault",
+                     "GetTaxSeasonInteractionResilienceReliefScoreOrDefault",
+                     "GetTaxSeasonInteractionPressureClampFloorOrDefault",
+                     "GetTaxSeasonInteractionPressureClampCeilingOrDefault",
+                 })
+        {
+            Assert.That(interactionBody, Does.Contain(getter), getter);
+            Assert.That(rulesData, Does.Contain(getter), getter);
+        }
+
+        foreach (string removedHardcodedLiteral in new[]
+                 {
+                     "household.Livelihood == LivelihoodType.Tenant",
+                     "household.Distress >= 65",
+                     "household.GrainStore is > 0 and < 25",
+                     "household.LandHolding >= 40 && household.LaborCapacity < 35",
+                     "IsCashNeedLivelihood(household.Livelihood)",
+                     "household.GrainStore is > 0 and < 30",
+                     "household.DebtPressure >= 60",
+                     "household.GrainStore >= 70",
+                     "household.LaborCapacity >= 70",
+                     "household.DebtPressure < 55",
+                     "household.Distress < 45",
+                     "Math.Clamp(interaction, -2, 4)",
+                 })
+        {
+            Assert.That(interactionBody, Does.Not.Contain(removedHardcodedLiteral), removedHardcodedLiteral);
+        }
+
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionTenantLivelihood = LivelihoodType.Tenant"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionTenantDistressThreshold = 65"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionTenantGrainStoreCeilingExclusive = 25"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionLandHoldingThreshold = 40"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionLaborCapacityThreshold = 35"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionCashNeedDebtPressureThreshold = 60"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionResilienceReliefScore = -2"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionPressureClampFloor = -2"));
+        Assert.That(rulesData, Does.Contain("DefaultTaxSeasonInteractionPressureClampCeiling = 4"));
+        Assert.That(rulesData, Does.Contain("tax_season_interaction_cash_need_livelihood_pressure_score_weights must be non-empty"));
+        Assert.That(rulesData, Does.Contain("tax_season_interaction_pressure_clamp_floor must be less than or equal to ceiling"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_DefaultInteractionRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_CustomInteractionRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("TaxSeasonOpened_InvalidInteractionRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("TaxSeasonInteractionPressure"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "TaxSeasonInteractionOutcomeCalculator",
+                     "PopulationAndHouseholdsTaxSeasonInteractionRules",
+                     "TaxSeasonInteractionPressureState",
+                     "TaxSeasonOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "TaxSeasonInteractionPressure",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "TaxSeasonInteractionPressureLedger",
                      "PressureProfileLedger",
                      "MobilitySelectorWatermark",
                      "TargetCardinalityState",
