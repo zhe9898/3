@@ -1332,3 +1332,9 @@ No integration path may route these fallbacks through Application/UI/Unity, pars
 Official-supply signal normalization ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned normalization clamps before computing household burden.
 
 No integration path may route these clamps through Application/UI/Unity, parse prose, load external rule assemblies, persist normalization state, or create migration/route-history/class-status authority.
+
+### PopulationAndHouseholds official supply livelihood exposure extraction v1189-v1196 integration note
+
+Official-supply livelihood exposure ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply requisition metadata; `PopulationAndHouseholds` applies owner-owned livelihood exposure weights and land visibility bands while computing the household burden profile.
+
+No integration path may route these exposure values through Application/UI/Unity, parse prose, load external rule assemblies, persist exposure state, or create migration/route-history/class-status authority.

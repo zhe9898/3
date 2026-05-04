@@ -415,32 +415,17 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetOfficialSupplyMigrationDeltaClampCeilingOrDefault());
     }
 
-    private static int ComputeOfficialSupplyLivelihoodExposurePressure(PopulationHouseholdState household)
+    private int ComputeOfficialSupplyLivelihoodExposurePressure(PopulationHouseholdState household)
     {
-        int livelihoodExposure = household.Livelihood switch
-        {
-            LivelihoodType.Boatman => 5,
-            LivelihoodType.HiredLabor => 4,
-            LivelihoodType.SeasonalMigrant => 4,
-            LivelihoodType.Smallholder => 3,
-            LivelihoodType.Tenant => 3,
-            LivelihoodType.Artisan => 2,
-            LivelihoodType.PettyTrader => 2,
-            LivelihoodType.YamenRunner => 2,
-            LivelihoodType.Unknown => 2,
-            LivelihoodType.DomesticServant => 1,
-            LivelihoodType.Vagrant => 1,
-            _ => 2,
-        };
+        int livelihoodExposure = _householdMobilityRulesData.GetOfficialSupplyLivelihoodExposureScoreOrDefault(
+            household.Livelihood);
+        int landVisibility = _householdMobilityRulesData.GetOfficialSupplyLandVisibilityScoreOrDefault(
+            household.LandHolding);
 
-        int landVisibility = household.LandHolding switch
-        {
-            >= 70 => 2,
-            >= 35 => 1,
-            _ => 0,
-        };
-
-        return Math.Clamp(livelihoodExposure + landVisibility, 1, 7);
+        return Math.Clamp(
+            livelihoodExposure + landVisibility,
+            _householdMobilityRulesData.GetOfficialSupplyLivelihoodExposureClampFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyLivelihoodExposureClampCeilingOrDefault());
     }
 
     private static int ComputeOfficialSupplyResourceBuffer(PopulationHouseholdState household)

@@ -1273,3 +1273,9 @@ This does not add household movement, route history, migration economy, class/st
 V1173-V1180 extracts official-supply signal metadata fallback values and the derived supply-pressure fallback clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for missing/partial structured Office metadata.
 
 This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.
+
+### Current population households official supply livelihood exposure extraction v1189-v1196 note
+
+V1189-V1196 extracts official-supply livelihood exposure scores, land visibility bands, fallback scores, and exposure clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.
+
+This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.

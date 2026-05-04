@@ -89,6 +89,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyClerkDistortionPressureClampCeiling,
     int OfficialSupplyAuthorityBufferClampFloor,
     int OfficialSupplyAuthorityBufferClampCeiling,
+    IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight> OfficialSupplyLivelihoodExposureScoreWeights,
+    int OfficialSupplyLivelihoodExposureFallbackScore,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> OfficialSupplyLandVisibilityScoreBands,
+    int OfficialSupplyLandVisibilityFallbackScore,
+    int OfficialSupplyLivelihoodExposureClampFloor,
+    int OfficialSupplyLivelihoodExposureClampCeiling,
     int OfficialSupplyDistressDeltaClampFloor,
     int OfficialSupplyDistressDeltaClampCeiling,
     int OfficialSupplyDebtDeltaClampFloor,
@@ -205,6 +211,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyClerkDistortionPressureClampCeiling = 15;
     public const int DefaultOfficialSupplyAuthorityBufferClampFloor = 0;
     public const int DefaultOfficialSupplyAuthorityBufferClampCeiling = 12;
+    public const int DefaultOfficialSupplyLivelihoodExposureFallbackScore = 2;
+    public const int DefaultOfficialSupplyLandVisibilityFallbackScore = 0;
+    public const int DefaultOfficialSupplyLivelihoodExposureClampFloor = 1;
+    public const int DefaultOfficialSupplyLivelihoodExposureClampCeiling = 7;
     public const int DefaultOfficialSupplyDistressDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
@@ -242,6 +252,10 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxOfficialSupplyFallbackDocketPressure = 20;
     public const int MaxOfficialSupplyFallbackClerkDistortionPressure = 15;
     public const int MaxOfficialSupplyFallbackAuthorityBuffer = 12;
+    public const int MaxOfficialSupplyLivelihoodExposureContribution = 8;
+    public const int MaxOfficialSupplyLandVisibilityScore = 4;
+    public const int MinOfficialSupplyLivelihoodExposurePressure = 0;
+    public const int MaxOfficialSupplyLivelihoodExposurePressure = 16;
     public const int MinOfficialSupplyDistressDelta = 0;
     public const int MaxOfficialSupplyDistressDelta = 64;
     public const int MinOfficialSupplyDebtDelta = 0;
@@ -400,6 +414,31 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        DefaultOfficialSupplyLivelihoodExposureScoreWeights { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Boatman, 5),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.HiredLabor, 4),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.SeasonalMigrant, 4),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Smallholder, 3),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Tenant, 3),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Artisan, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.PettyTrader, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.YamenRunner, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Unknown, 2),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.DomesticServant, 1),
+            new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Vagrant, 1),
+        };
+
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultOfficialSupplyLandVisibilityScoreBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(70, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(35, 1),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -485,6 +524,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyClerkDistortionPressureClampCeiling,
             DefaultOfficialSupplyAuthorityBufferClampFloor,
             DefaultOfficialSupplyAuthorityBufferClampCeiling,
+            DefaultOfficialSupplyLivelihoodExposureScoreWeights,
+            DefaultOfficialSupplyLivelihoodExposureFallbackScore,
+            DefaultOfficialSupplyLandVisibilityScoreBands,
+            DefaultOfficialSupplyLandVisibilityFallbackScore,
+            DefaultOfficialSupplyLivelihoodExposureClampFloor,
+            DefaultOfficialSupplyLivelihoodExposureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -609,6 +654,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyClerkDistortionPressureClampCeiling,
             DefaultOfficialSupplyAuthorityBufferClampFloor,
             DefaultOfficialSupplyAuthorityBufferClampCeiling,
+            DefaultOfficialSupplyLivelihoodExposureScoreWeights,
+            DefaultOfficialSupplyLivelihoodExposureFallbackScore,
+            DefaultOfficialSupplyLandVisibilityScoreBands,
+            DefaultOfficialSupplyLandVisibilityFallbackScore,
+            DefaultOfficialSupplyLivelihoodExposureClampFloor,
+            DefaultOfficialSupplyLivelihoodExposureClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -1423,6 +1474,73 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyAuthorityBufferClampFloor > OfficialSupplyAuthorityBufferClampCeiling)
         {
             errors.Add("official_supply_authority_buffer_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyLivelihoodExposureScoreWeights is null
+            || OfficialSupplyLivelihoodExposureScoreWeights.Count == 0
+            || OfficialSupplyLivelihoodExposureScoreWeights.Any(static entry =>
+                !Enum.IsDefined(entry.Livelihood)
+                || entry.Weight is < 0 or > MaxOfficialSupplyLivelihoodExposureContribution)
+            || OfficialSupplyLivelihoodExposureScoreWeights
+                .Select(static entry => entry.Livelihood)
+                .Distinct()
+                .Count() != OfficialSupplyLivelihoodExposureScoreWeights.Count)
+        {
+            errors.Add(
+                $"official_supply_livelihood_exposure_score_weights must be non-empty, distinct, defined, and between 0 and {MaxOfficialSupplyLivelihoodExposureContribution}.");
+        }
+
+        if (OfficialSupplyLivelihoodExposureFallbackScore is < 0 or > MaxOfficialSupplyLivelihoodExposureContribution)
+        {
+            errors.Add(
+                $"official_supply_livelihood_exposure_fallback_score must be between 0 and {MaxOfficialSupplyLivelihoodExposureContribution}.");
+        }
+
+        if (OfficialSupplyLandVisibilityScoreBands is null
+            || OfficialSupplyLandVisibilityScoreBands.Count == 0
+            || OfficialSupplyLandVisibilityScoreBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < 0 or > MaxOfficialSupplyLandVisibilityScore)
+            || OfficialSupplyLandVisibilityScoreBands.Select(static band => band.Threshold).Distinct().Count()
+                != OfficialSupplyLandVisibilityScoreBands.Count)
+        {
+            errors.Add(
+                $"official_supply_land_visibility_score_bands must be non-empty, distinct, and between threshold 0..100 and score 0..{MaxOfficialSupplyLandVisibilityScore}.");
+        }
+
+        if (OfficialSupplyLandVisibilityScoreBands is { Count: > 1 })
+        {
+            for (int index = 1; index < OfficialSupplyLandVisibilityScoreBands.Count; index++)
+            {
+                if (OfficialSupplyLandVisibilityScoreBands[index - 1].Threshold <= OfficialSupplyLandVisibilityScoreBands[index].Threshold)
+                {
+                    errors.Add("official_supply_land_visibility_score_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (OfficialSupplyLandVisibilityFallbackScore is < 0 or > MaxOfficialSupplyLandVisibilityScore)
+        {
+            errors.Add(
+                $"official_supply_land_visibility_fallback_score must be between 0 and {MaxOfficialSupplyLandVisibilityScore}.");
+        }
+
+        if (OfficialSupplyLivelihoodExposureClampFloor is < MinOfficialSupplyLivelihoodExposurePressure or > MaxOfficialSupplyLivelihoodExposurePressure)
+        {
+            errors.Add(
+                $"official_supply_livelihood_exposure_clamp_floor must be between {MinOfficialSupplyLivelihoodExposurePressure} and {MaxOfficialSupplyLivelihoodExposurePressure}.");
+        }
+
+        if (OfficialSupplyLivelihoodExposureClampCeiling is < MinOfficialSupplyLivelihoodExposurePressure or > MaxOfficialSupplyLivelihoodExposurePressure)
+        {
+            errors.Add(
+                $"official_supply_livelihood_exposure_clamp_ceiling must be between {MinOfficialSupplyLivelihoodExposurePressure} and {MaxOfficialSupplyLivelihoodExposurePressure}.");
+        }
+
+        if (OfficialSupplyLivelihoodExposureClampFloor > OfficialSupplyLivelihoodExposureClampCeiling)
+        {
+            errors.Add("official_supply_livelihood_exposure_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (OfficialSupplyDistressDeltaClampFloor is < MinOfficialSupplyDistressDelta or > MaxOfficialSupplyDistressDelta)
@@ -2422,6 +2540,78 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyAuthorityBufferClampCeiling
             : DefaultOfficialSupplyAuthorityBufferClampCeiling;
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
+        GetOfficialSupplyLivelihoodExposureScoreWeightsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLivelihoodExposureScoreWeights
+            : DefaultOfficialSupplyLivelihoodExposureScoreWeights;
+    }
+
+    public int GetOfficialSupplyLivelihoodExposureFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLivelihoodExposureFallbackScore
+            : DefaultOfficialSupplyLivelihoodExposureFallbackScore;
+    }
+
+    public int GetOfficialSupplyLivelihoodExposureScoreOrDefault(LivelihoodType livelihood)
+    {
+        foreach (PopulationHouseholdMobilityLivelihoodScoreWeight entry in
+                 GetOfficialSupplyLivelihoodExposureScoreWeightsOrDefault())
+        {
+            if (entry.Livelihood == livelihood)
+            {
+                return entry.Weight;
+            }
+        }
+
+        return GetOfficialSupplyLivelihoodExposureFallbackScoreOrDefault();
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetOfficialSupplyLandVisibilityScoreBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLandVisibilityScoreBands
+            : DefaultOfficialSupplyLandVisibilityScoreBands;
+    }
+
+    public int GetOfficialSupplyLandVisibilityFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLandVisibilityFallbackScore
+            : DefaultOfficialSupplyLandVisibilityFallbackScore;
+    }
+
+    public int GetOfficialSupplyLandVisibilityScoreOrDefault(int landHolding)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetOfficialSupplyLandVisibilityScoreBandsOrDefault())
+        {
+            if (landHolding >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetOfficialSupplyLandVisibilityFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyLivelihoodExposureClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLivelihoodExposureClampFloor
+            : DefaultOfficialSupplyLivelihoodExposureClampFloor;
+    }
+
+    public int GetOfficialSupplyLivelihoodExposureClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLivelihoodExposureClampCeiling
+            : DefaultOfficialSupplyLivelihoodExposureClampCeiling;
     }
 
     public int GetOfficialSupplyDistressDeltaClampFloorOrDefault()

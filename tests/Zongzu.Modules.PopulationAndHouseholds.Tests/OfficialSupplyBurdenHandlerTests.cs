@@ -852,6 +852,106 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultLivelihoodExposureRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLivelihoodExposureScoreWeights =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLivelihoodExposureScoreWeights,
+                OfficialSupplyLivelihoodExposureFallbackScore = 2,
+                OfficialSupplyLandVisibilityScoreBands =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLandVisibilityScoreBands,
+                OfficialSupplyLandVisibilityFallbackScore = 0,
+                OfficialSupplyLivelihoodExposureClampFloor = 1,
+                OfficialSupplyLivelihoodExposureClampCeiling = 7,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLivelihoodExposureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunLivelihoodExposureOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLivelihoodExposureFallbackScore, Is.EqualTo(2));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLandVisibilityFallbackScore, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLivelihoodExposureClampFloor, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLivelihoodExposureClampCeiling, Is.EqualTo(7));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLivelihoodExposureScoreWeights
+                .Single(static entry => entry.Livelihood == LivelihoodType.Boatman).Weight,
+            Is.EqualTo(5));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLandVisibilityScoreBands
+                .Single(static band => band.Threshold == 70).Score,
+            Is.EqualTo(2));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure], Is.EqualTo("7"));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomLivelihoodExposureRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLivelihoodExposureScoreWeights =
+                    new[] { new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Boatman, 1) },
+                OfficialSupplyLivelihoodExposureFallbackScore = 2,
+                OfficialSupplyLandVisibilityScoreBands =
+                    new[]
+                    {
+                        new PopulationHouseholdMobilityThresholdScoreBand(70, 0),
+                        new PopulationHouseholdMobilityThresholdScoreBand(35, 0),
+                    },
+                OfficialSupplyLandVisibilityFallbackScore = 0,
+                OfficialSupplyLivelihoodExposureClampFloor = 1,
+                OfficialSupplyLivelihoodExposureClampCeiling = 7,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLivelihoodExposureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunLivelihoodExposureOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure], Is.EqualTo("1"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]),
+            Is.LessThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta])));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidLivelihoodExposureRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLivelihoodExposureScoreWeights =
+                    new[]
+                    {
+                        new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Boatman, 5),
+                        new PopulationHouseholdMobilityLivelihoodScoreWeight(LivelihoodType.Boatman, 4),
+                    },
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLivelihoodExposureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunLivelihoodExposureOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_livelihood_exposure_score_weights must be non-empty, distinct, defined, and between 0 and 8."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLivelihoodExposurePressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -926,6 +1026,42 @@ public sealed class OfficialSupplyBurdenHandlerTests
         });
 
         return RunOfficialSupply(state, metadata, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunLivelihoodExposureOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null,
+        LivelihoodType livelihood = LivelihoodType.Boatman,
+        int landHolding = 70)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Livelihood exposure household",
+            SettlementId = new SettlementId(1),
+            Livelihood = livelihood,
+            Distress = 78,
+            DebtPressure = 30,
+            LaborCapacity = 80,
+            MigrationRisk = 20,
+            LandHolding = landHolding,
+            GrainStore = 10,
+            ToolCondition = 20,
+            ShelterQuality = 80,
+            DependentCount = 1,
+            LaborerCount = 3,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "76",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "16",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "6",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "2",
+        }, rulesData);
     }
 
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunFallbackOfficialSupply(
