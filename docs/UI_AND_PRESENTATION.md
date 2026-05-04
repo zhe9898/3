@@ -426,3 +426,7 @@ The UI and Unity shell remain downstream-only. V1181-V1188 changes where `Popula
 ### v1189-v1196 population households official supply livelihood exposure extraction
 
 The UI and Unity shell remain downstream-only. V1189-V1196 changes where `PopulationAndHouseholds` owns official-supply livelihood exposure scores and land visibility bands; presentation surfaces may only copy projected fields/events and must not calculate exposure scores, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1197-v1204 population households official supply resource buffer extraction
+
+The UI and Unity shell remain downstream-only. V1197-V1204 changes where `PopulationAndHouseholds` owns official-supply resource buffer grain/tool/shelter bands; presentation surfaces may only copy projected fields/events and must not calculate resource buffers, burden outcomes, movement outcomes, route history, migration economy, or class/status changes.

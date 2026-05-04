@@ -95,6 +95,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyLandVisibilityFallbackScore,
     int OfficialSupplyLivelihoodExposureClampFloor,
     int OfficialSupplyLivelihoodExposureClampCeiling,
+    IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> OfficialSupplyResourceGrainBufferScoreBands,
+    int OfficialSupplyResourceGrainBufferFallbackScore,
+    int OfficialSupplyResourceToolConditionThreshold,
+    int OfficialSupplyResourceToolBufferScore,
+    int OfficialSupplyResourceToolBufferFallbackScore,
+    int OfficialSupplyResourceShelterQualityThreshold,
+    int OfficialSupplyResourceShelterBufferScore,
+    int OfficialSupplyResourceShelterBufferFallbackScore,
+    int OfficialSupplyResourceBufferClampFloor,
+    int OfficialSupplyResourceBufferClampCeiling,
     int OfficialSupplyDistressDeltaClampFloor,
     int OfficialSupplyDistressDeltaClampCeiling,
     int OfficialSupplyDebtDeltaClampFloor,
@@ -215,6 +225,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultOfficialSupplyLandVisibilityFallbackScore = 0;
     public const int DefaultOfficialSupplyLivelihoodExposureClampFloor = 1;
     public const int DefaultOfficialSupplyLivelihoodExposureClampCeiling = 7;
+    public const int DefaultOfficialSupplyResourceGrainBufferFallbackScore = 0;
+    public const int DefaultOfficialSupplyResourceToolConditionThreshold = 70;
+    public const int DefaultOfficialSupplyResourceToolBufferScore = 1;
+    public const int DefaultOfficialSupplyResourceToolBufferFallbackScore = 0;
+    public const int DefaultOfficialSupplyResourceShelterQualityThreshold = 60;
+    public const int DefaultOfficialSupplyResourceShelterBufferScore = 1;
+    public const int DefaultOfficialSupplyResourceShelterBufferFallbackScore = 0;
+    public const int DefaultOfficialSupplyResourceBufferClampFloor = 0;
+    public const int DefaultOfficialSupplyResourceBufferClampCeiling = 7;
     public const int DefaultOfficialSupplyDistressDeltaClampFloor = 0;
     public const int DefaultOfficialSupplyDistressDeltaClampCeiling = 24;
     public const int DefaultOfficialSupplyDebtDeltaClampFloor = 0;
@@ -256,6 +275,9 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxOfficialSupplyLandVisibilityScore = 4;
     public const int MinOfficialSupplyLivelihoodExposurePressure = 0;
     public const int MaxOfficialSupplyLivelihoodExposurePressure = 16;
+    public const int MaxOfficialSupplyResourceBufferContribution = 8;
+    public const int MinOfficialSupplyResourceBufferPressure = 0;
+    public const int MaxOfficialSupplyResourceBufferPressure = 16;
     public const int MinOfficialSupplyDistressDelta = 0;
     public const int MaxOfficialSupplyDistressDelta = 64;
     public const int MinOfficialSupplyDebtDelta = 0;
@@ -439,6 +461,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(35, 1),
         };
 
+    public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        DefaultOfficialSupplyResourceGrainBufferScoreBands { get; } =
+        new[]
+        {
+            new PopulationHouseholdMobilityThresholdScoreBand(85, 5),
+            new PopulationHouseholdMobilityThresholdScoreBand(65, 4),
+            new PopulationHouseholdMobilityThresholdScoreBand(45, 2),
+            new PopulationHouseholdMobilityThresholdScoreBand(25, 1),
+        };
+
     public static PopulationHouseholdMobilityRulesData Default { get; } =
         new(
             DefaultFocusedMemberPromotionCap,
@@ -530,6 +562,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLandVisibilityFallbackScore,
             DefaultOfficialSupplyLivelihoodExposureClampFloor,
             DefaultOfficialSupplyLivelihoodExposureClampCeiling,
+            DefaultOfficialSupplyResourceGrainBufferScoreBands,
+            DefaultOfficialSupplyResourceGrainBufferFallbackScore,
+            DefaultOfficialSupplyResourceToolConditionThreshold,
+            DefaultOfficialSupplyResourceToolBufferScore,
+            DefaultOfficialSupplyResourceToolBufferFallbackScore,
+            DefaultOfficialSupplyResourceShelterQualityThreshold,
+            DefaultOfficialSupplyResourceShelterBufferScore,
+            DefaultOfficialSupplyResourceShelterBufferFallbackScore,
+            DefaultOfficialSupplyResourceBufferClampFloor,
+            DefaultOfficialSupplyResourceBufferClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -660,6 +702,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLandVisibilityFallbackScore,
             DefaultOfficialSupplyLivelihoodExposureClampFloor,
             DefaultOfficialSupplyLivelihoodExposureClampCeiling,
+            DefaultOfficialSupplyResourceGrainBufferScoreBands,
+            DefaultOfficialSupplyResourceGrainBufferFallbackScore,
+            DefaultOfficialSupplyResourceToolConditionThreshold,
+            DefaultOfficialSupplyResourceToolBufferScore,
+            DefaultOfficialSupplyResourceToolBufferFallbackScore,
+            DefaultOfficialSupplyResourceShelterQualityThreshold,
+            DefaultOfficialSupplyResourceShelterBufferScore,
+            DefaultOfficialSupplyResourceShelterBufferFallbackScore,
+            DefaultOfficialSupplyResourceBufferClampFloor,
+            DefaultOfficialSupplyResourceBufferClampCeiling,
             DefaultOfficialSupplyDistressDeltaClampFloor,
             DefaultOfficialSupplyDistressDeltaClampCeiling,
             DefaultOfficialSupplyDebtDeltaClampFloor,
@@ -1541,6 +1593,87 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (OfficialSupplyLivelihoodExposureClampFloor > OfficialSupplyLivelihoodExposureClampCeiling)
         {
             errors.Add("official_supply_livelihood_exposure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (OfficialSupplyResourceGrainBufferScoreBands is null
+            || OfficialSupplyResourceGrainBufferScoreBands.Count == 0
+            || OfficialSupplyResourceGrainBufferScoreBands.Any(static band =>
+                band.Threshold is < 0 or > 100
+                || band.Score is < 0 or > MaxOfficialSupplyResourceBufferContribution)
+            || OfficialSupplyResourceGrainBufferScoreBands.Select(static band => band.Threshold).Distinct().Count()
+                != OfficialSupplyResourceGrainBufferScoreBands.Count)
+        {
+            errors.Add(
+                $"official_supply_resource_grain_buffer_score_bands must be non-empty, distinct, and between threshold 0..100 and score 0..{MaxOfficialSupplyResourceBufferContribution}.");
+        }
+
+        if (OfficialSupplyResourceGrainBufferScoreBands is { Count: > 1 })
+        {
+            for (int index = 1; index < OfficialSupplyResourceGrainBufferScoreBands.Count; index++)
+            {
+                if (OfficialSupplyResourceGrainBufferScoreBands[index - 1].Threshold <= OfficialSupplyResourceGrainBufferScoreBands[index].Threshold)
+                {
+                    errors.Add("official_supply_resource_grain_buffer_score_bands must be ordered by descending threshold.");
+                    break;
+                }
+            }
+        }
+
+        if (OfficialSupplyResourceGrainBufferFallbackScore is < 0 or > MaxOfficialSupplyResourceBufferContribution)
+        {
+            errors.Add(
+                $"official_supply_resource_grain_buffer_fallback_score must be between 0 and {MaxOfficialSupplyResourceBufferContribution}.");
+        }
+
+        if (OfficialSupplyResourceToolConditionThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_resource_tool_condition_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyResourceToolBufferScore is < 0 or > MaxOfficialSupplyResourceBufferContribution)
+        {
+            errors.Add(
+                $"official_supply_resource_tool_buffer_score must be between 0 and {MaxOfficialSupplyResourceBufferContribution}.");
+        }
+
+        if (OfficialSupplyResourceToolBufferFallbackScore is < 0 or > MaxOfficialSupplyResourceBufferContribution)
+        {
+            errors.Add(
+                $"official_supply_resource_tool_buffer_fallback_score must be between 0 and {MaxOfficialSupplyResourceBufferContribution}.");
+        }
+
+        if (OfficialSupplyResourceShelterQualityThreshold is < 0 or > 100)
+        {
+            errors.Add("official_supply_resource_shelter_quality_threshold must be between 0 and 100.");
+        }
+
+        if (OfficialSupplyResourceShelterBufferScore is < 0 or > MaxOfficialSupplyResourceBufferContribution)
+        {
+            errors.Add(
+                $"official_supply_resource_shelter_buffer_score must be between 0 and {MaxOfficialSupplyResourceBufferContribution}.");
+        }
+
+        if (OfficialSupplyResourceShelterBufferFallbackScore is < 0 or > MaxOfficialSupplyResourceBufferContribution)
+        {
+            errors.Add(
+                $"official_supply_resource_shelter_buffer_fallback_score must be between 0 and {MaxOfficialSupplyResourceBufferContribution}.");
+        }
+
+        if (OfficialSupplyResourceBufferClampFloor is < MinOfficialSupplyResourceBufferPressure or > MaxOfficialSupplyResourceBufferPressure)
+        {
+            errors.Add(
+                $"official_supply_resource_buffer_clamp_floor must be between {MinOfficialSupplyResourceBufferPressure} and {MaxOfficialSupplyResourceBufferPressure}.");
+        }
+
+        if (OfficialSupplyResourceBufferClampCeiling is < MinOfficialSupplyResourceBufferPressure or > MaxOfficialSupplyResourceBufferPressure)
+        {
+            errors.Add(
+                $"official_supply_resource_buffer_clamp_ceiling must be between {MinOfficialSupplyResourceBufferPressure} and {MaxOfficialSupplyResourceBufferPressure}.");
+        }
+
+        if (OfficialSupplyResourceBufferClampFloor > OfficialSupplyResourceBufferClampCeiling)
+        {
+            errors.Add("official_supply_resource_buffer_clamp_floor must be less than or equal to ceiling.");
         }
 
         if (OfficialSupplyDistressDeltaClampFloor is < MinOfficialSupplyDistressDelta or > MaxOfficialSupplyDistressDelta)
@@ -2612,6 +2745,105 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyLivelihoodExposureClampCeiling
             : DefaultOfficialSupplyLivelihoodExposureClampCeiling;
+    }
+
+    public IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
+        GetOfficialSupplyResourceGrainBufferScoreBandsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceGrainBufferScoreBands
+            : DefaultOfficialSupplyResourceGrainBufferScoreBands;
+    }
+
+    public int GetOfficialSupplyResourceGrainBufferFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceGrainBufferFallbackScore
+            : DefaultOfficialSupplyResourceGrainBufferFallbackScore;
+    }
+
+    public int GetOfficialSupplyResourceGrainBufferScoreOrDefault(int grainStore)
+    {
+        foreach (PopulationHouseholdMobilityThresholdScoreBand band in
+                 GetOfficialSupplyResourceGrainBufferScoreBandsOrDefault())
+        {
+            if (grainStore >= band.Threshold)
+            {
+                return band.Score;
+            }
+        }
+
+        return GetOfficialSupplyResourceGrainBufferFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyResourceToolConditionThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceToolConditionThreshold
+            : DefaultOfficialSupplyResourceToolConditionThreshold;
+    }
+
+    public int GetOfficialSupplyResourceToolBufferScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceToolBufferScore
+            : DefaultOfficialSupplyResourceToolBufferScore;
+    }
+
+    public int GetOfficialSupplyResourceToolBufferFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceToolBufferFallbackScore
+            : DefaultOfficialSupplyResourceToolBufferFallbackScore;
+    }
+
+    public int GetOfficialSupplyResourceToolBufferScoreOrDefault(int toolCondition)
+    {
+        return toolCondition >= GetOfficialSupplyResourceToolConditionThresholdOrDefault()
+            ? GetOfficialSupplyResourceToolBufferScoreOrDefault()
+            : GetOfficialSupplyResourceToolBufferFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyResourceShelterQualityThresholdOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceShelterQualityThreshold
+            : DefaultOfficialSupplyResourceShelterQualityThreshold;
+    }
+
+    public int GetOfficialSupplyResourceShelterBufferScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceShelterBufferScore
+            : DefaultOfficialSupplyResourceShelterBufferScore;
+    }
+
+    public int GetOfficialSupplyResourceShelterBufferFallbackScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceShelterBufferFallbackScore
+            : DefaultOfficialSupplyResourceShelterBufferFallbackScore;
+    }
+
+    public int GetOfficialSupplyResourceShelterBufferScoreOrDefault(int shelterQuality)
+    {
+        return shelterQuality >= GetOfficialSupplyResourceShelterQualityThresholdOrDefault()
+            ? GetOfficialSupplyResourceShelterBufferScoreOrDefault()
+            : GetOfficialSupplyResourceShelterBufferFallbackScoreOrDefault();
+    }
+
+    public int GetOfficialSupplyResourceBufferClampFloorOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceBufferClampFloor
+            : DefaultOfficialSupplyResourceBufferClampFloor;
+    }
+
+    public int GetOfficialSupplyResourceBufferClampCeilingOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyResourceBufferClampCeiling
+            : DefaultOfficialSupplyResourceBufferClampCeiling;
     }
 
     public int GetOfficialSupplyDistressDeltaClampFloorOrDefault()

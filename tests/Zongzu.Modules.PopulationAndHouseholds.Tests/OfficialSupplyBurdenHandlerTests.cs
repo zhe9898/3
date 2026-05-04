@@ -952,6 +952,113 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
     }
 
+    [Test]
+    public void OfficialSupplyRequisition_DefaultResourceBufferRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyResourceGrainBufferScoreBands =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceGrainBufferScoreBands,
+                OfficialSupplyResourceGrainBufferFallbackScore = 0,
+                OfficialSupplyResourceToolConditionThreshold = 70,
+                OfficialSupplyResourceToolBufferScore = 1,
+                OfficialSupplyResourceToolBufferFallbackScore = 0,
+                OfficialSupplyResourceShelterQualityThreshold = 60,
+                OfficialSupplyResourceShelterBufferScore = 1,
+                OfficialSupplyResourceShelterBufferFallbackScore = 0,
+                OfficialSupplyResourceBufferClampFloor = 0,
+                OfficialSupplyResourceBufferClampCeiling = 7,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunResourceBufferOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunResourceBufferOfficialSupply(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceGrainBufferFallbackScore, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceToolConditionThreshold, Is.EqualTo(70));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceToolBufferScore, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceShelterQualityThreshold, Is.EqualTo(60));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceShelterBufferScore, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceBufferClampFloor, Is.EqualTo(0));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceBufferClampCeiling, Is.EqualTo(7));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyResourceGrainBufferScoreBands
+                .Single(static band => band.Threshold == 85).Score,
+            Is.EqualTo(5));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyResourceBuffer], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyResourceBuffer]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyResourceBuffer], Is.EqualTo("7"));
+        Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomResourceBufferRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyResourceGrainBufferScoreBands =
+                    new[]
+                    {
+                        new PopulationHouseholdMobilityThresholdScoreBand(85, 0),
+                        new PopulationHouseholdMobilityThresholdScoreBand(65, 0),
+                        new PopulationHouseholdMobilityThresholdScoreBand(45, 0),
+                        new PopulationHouseholdMobilityThresholdScoreBand(25, 0),
+                    },
+                OfficialSupplyResourceGrainBufferFallbackScore = 0,
+                OfficialSupplyResourceToolConditionThreshold = 70,
+                OfficialSupplyResourceToolBufferScore = 0,
+                OfficialSupplyResourceToolBufferFallbackScore = 0,
+                OfficialSupplyResourceShelterQualityThreshold = 60,
+                OfficialSupplyResourceShelterBufferScore = 0,
+                OfficialSupplyResourceShelterBufferFallbackScore = 0,
+                OfficialSupplyResourceBufferClampFloor = 0,
+                OfficialSupplyResourceBufferClampCeiling = 7,
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunResourceBufferOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunResourceBufferOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyResourceBuffer], Is.EqualTo("0"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyResourceBuffer], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyResourceBuffer]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]),
+            Is.GreaterThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta])));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidResourceBufferRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyResourceGrainBufferScoreBands =
+                    new[]
+                    {
+                        new PopulationHouseholdMobilityThresholdScoreBand(85, 5),
+                        new PopulationHouseholdMobilityThresholdScoreBand(85, 4),
+                    },
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunResourceBufferOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunResourceBufferOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_resource_grain_buffer_score_bands must be non-empty, distinct, and between threshold 0..100 and score 0..8."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyResourceBuffer], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyResourceBuffer]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDistressDelta]));
+    }
+
     private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunCrossingOfficialSupply(
         PopulationHouseholdMobilityRulesData? rulesData = null)
     {
@@ -1048,6 +1155,43 @@ public sealed class OfficialSupplyBurdenHandlerTests
             GrainStore = 10,
             ToolCondition = 20,
             ShelterQuality = 80,
+            DependentCount = 1,
+            LaborerCount = 3,
+        });
+
+        return RunOfficialSupply(state, new Dictionary<string, string>
+        {
+            [DomainEventMetadataKeys.SettlementId] = "1",
+            [DomainEventMetadataKeys.FrontierPressure] = "76",
+            [DomainEventMetadataKeys.OfficialSupplyPressure] = "16",
+            [DomainEventMetadataKeys.OfficialSupplyQuotaPressure] = "12",
+            [DomainEventMetadataKeys.OfficialSupplyDocketPressure] = "6",
+            [DomainEventMetadataKeys.OfficialSupplyClerkDistortionPressure] = "4",
+            [DomainEventMetadataKeys.OfficialSupplyAuthorityBuffer] = "2",
+        }, rulesData);
+    }
+
+    private static (PopulationHouseholdState Household, IReadOnlyList<IDomainEvent> Events) RunResourceBufferOfficialSupply(
+        PopulationHouseholdMobilityRulesData? rulesData = null,
+        int grainStore = 85,
+        int toolCondition = 80,
+        int shelterQuality = 80)
+    {
+        PopulationAndHouseholdsState state = new();
+        state.Households.Add(new PopulationHouseholdState
+        {
+            Id = new HouseholdId(1),
+            HouseholdName = "Resource buffer household",
+            SettlementId = new SettlementId(1),
+            Livelihood = LivelihoodType.Smallholder,
+            Distress = 78,
+            DebtPressure = 30,
+            LaborCapacity = 80,
+            MigrationRisk = 20,
+            LandHolding = 50,
+            GrainStore = grainStore,
+            ToolCondition = toolCondition,
+            ShelterQuality = shelterQuality,
             DependentCount = 1,
             LaborerCount = 3,
         });

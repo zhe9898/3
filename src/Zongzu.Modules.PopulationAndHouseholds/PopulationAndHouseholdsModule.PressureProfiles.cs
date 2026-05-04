@@ -428,20 +428,19 @@ public sealed partial class PopulationAndHouseholdsModule
             _householdMobilityRulesData.GetOfficialSupplyLivelihoodExposureClampCeilingOrDefault());
     }
 
-    private static int ComputeOfficialSupplyResourceBuffer(PopulationHouseholdState household)
+    private int ComputeOfficialSupplyResourceBuffer(PopulationHouseholdState household)
     {
-        int grainBuffer = household.GrainStore switch
-        {
-            >= 85 => 5,
-            >= 65 => 4,
-            >= 45 => 2,
-            >= 25 => 1,
-            _ => 0,
-        };
+        int grainBuffer = _householdMobilityRulesData.GetOfficialSupplyResourceGrainBufferScoreOrDefault(
+            household.GrainStore);
+        int toolBuffer = _householdMobilityRulesData.GetOfficialSupplyResourceToolBufferScoreOrDefault(
+            household.ToolCondition);
+        int shelterBuffer = _householdMobilityRulesData.GetOfficialSupplyResourceShelterBufferScoreOrDefault(
+            household.ShelterQuality);
 
-        int toolBuffer = household.ToolCondition >= 70 ? 1 : 0;
-        int shelterBuffer = household.ShelterQuality >= 60 ? 1 : 0;
-        return Math.Clamp(grainBuffer + toolBuffer + shelterBuffer, 0, 7);
+        return Math.Clamp(
+            grainBuffer + toolBuffer + shelterBuffer,
+            _householdMobilityRulesData.GetOfficialSupplyResourceBufferClampFloorOrDefault(),
+            _householdMobilityRulesData.GetOfficialSupplyResourceBufferClampCeilingOrDefault());
     }
 
     private static int ComputeOfficialSupplyLaborPressure(PopulationHouseholdState household)

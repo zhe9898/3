@@ -1279,3 +1279,9 @@ This does not add household movement, route history, migration economy, class/st
 V1189-V1196 extracts official-supply livelihood exposure scores, land visibility bands, fallback scores, and exposure clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.
 
 This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.
+
+### Current population households official supply resource buffer extraction v1197-v1204 note
+
+V1197-V1204 extracts official-supply resource buffer grain/tool/shelter bands, fallback scores, and clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.
+
+This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.
