@@ -1485,3 +1485,7 @@ Acceptance requires default-equivalent behavior for tax-season fragility distres
 ### PopulationAndHouseholds tax season interaction pressure extraction v1301-v1308 acceptance
 
 Acceptance requires default-equivalent behavior for tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback scores, and clamp, deterministic fallback for malformed interaction rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds tax season debt delta formula extraction v1309-v1316 acceptance
+
+Acceptance requires default-equivalent behavior for tax-season debt-delta base score and pressure weights, deterministic fallback for malformed debt-delta formula rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

@@ -658,6 +658,88 @@ public sealed class TaxSeasonBurdenHandlerTests
     }
 
     [Test]
+    public void TaxSeasonOpened_DefaultTaxDebtDeltaFormulaRulesDataMatchesPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtDeltaBaseScore = 14,
+                TaxSeasonDebtDeltaVisibilityPressureWeight = 1,
+                TaxSeasonDebtDeltaLiquidityPressureWeight = 1,
+                TaxSeasonDebtDeltaLaborPressureWeight = 1,
+                TaxSeasonDebtDeltaFragilityPressureWeight = 1,
+                TaxSeasonDebtDeltaInteractionPressureWeight = 1,
+                TaxSeasonDebtDeltaClampFloor = 8,
+                TaxSeasonDebtDeltaClampCeiling = 28,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState explicitHousehold, IReadOnlyList<IDomainEvent> explicitEvents) =
+            RunPressedTaxSeason(explicitPreviousBaseline);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent explicitEvent = SingleDebtSpikeEvent(explicitEvents);
+
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaBaseScore, Is.EqualTo(14));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaVisibilityPressureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaLiquidityPressureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaLaborPressureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaFragilityPressureWeight, Is.EqualTo(1));
+        Assert.That(PopulationHouseholdMobilityRulesData.DefaultTaxSeasonDebtDeltaInteractionPressureWeight, Is.EqualTo(1));
+        Assert.That(explicitPreviousBaseline.GetTaxSeasonDebtDeltaBaseScoreOrDefault(), Is.EqualTo(14));
+        Assert.That(explicitHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(
+            explicitEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta],
+            Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta]));
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_CustomTaxDebtDeltaFormulaRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtDeltaBaseScore = 10,
+            };
+
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState customHousehold, IReadOnlyList<IDomainEvent> customEvents) =
+            RunPressedTaxSeason(customRulesData);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent customEvent = SingleDebtSpikeEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("25"));
+        Assert.That(customHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure - 3));
+    }
+
+    [Test]
+    public void TaxSeasonOpened_InvalidTaxDebtDeltaFormulaRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                TaxSeasonDebtDeltaBaseScore = 65,
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IReadOnlyList<IDomainEvent> defaultEvents) = RunPressedTaxSeason();
+        (PopulationHouseholdState fallbackHousehold, IReadOnlyList<IDomainEvent> fallbackEvents) =
+            RunPressedTaxSeason(malformedRulesData);
+        IDomainEvent defaultEvent = SingleDebtSpikeEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleDebtSpikeEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(malformedRulesData.GetTaxSeasonDebtDeltaBaseScoreOrDefault(), Is.EqualTo(14));
+        Assert.That(fallbackHousehold.DebtPressure, Is.EqualTo(defaultHousehold.DebtPressure));
+        Assert.That(
+            fallbackEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta],
+            Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.TaxDebtDelta], Is.EqualTo("28"));
+    }
+
+    [Test]
     public void TaxSeasonOpened_DefaultTaxDebtDeltaClampRulesDataMatchesPreviousBaseline()
     {
         PopulationHouseholdMobilityRulesData explicitPreviousBaseline =

@@ -1908,4 +1908,10 @@ Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, o
 
 Application services, UI, Unity, `PersonRegistry`, and distant summary/projection code must not calculate interaction pressure or infer movement outcomes from these parameters.
 
+### PopulationAndHouseholds tax season debt delta formula extraction v1309-v1316 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of tax-season debt-delta base score and pressure weights. The extracted values are schema-neutral in-memory `PopulationHouseholdMobilityRulesData` defaults, not module state, not public presentation authority, not a runtime rules-data file, and not a cross-module command surface.
+
+Application services, UI, Unity, `PersonRegistry`, and distant summary/projection code must not calculate tax debt delta or infer movement outcomes from these parameters.
+
 Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, or retune tax-season fragility outcomes. No movement command, route-history state, migration economy, class/status engine, runtime plugin loader, content/config namespace, prose parser, pressure-profile ledger, or persisted field is introduced.

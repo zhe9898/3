@@ -1229,4 +1229,10 @@ The pass does not add movement authority, route history, migration economy, clas
 
 The audit boundary remains unchanged: no save schema drift, no rules-data loader or plugin marketplace, no household movement command, no migration economy, no class/status engine, no `PersonRegistry` expansion, and no Application/UI/Unity authority.
 
+### v1309-v1316 population households tax season debt delta formula extraction audit
+
+`PopulationAndHouseholds` now owns the tax-season debt-delta base score and pressure weights through validated rules-data. Defaults preserve the existing `TaxSeasonBurdenProfile.DebtDelta` result while moving another hardcoded tax-season formula out of C# literals.
+
+The audit boundary remains unchanged: no save schema drift, no rules-data loader or plugin marketplace, no household movement command, no migration economy, no class/status engine, no `PersonRegistry` expansion, and no Application/UI/Unity authority.
+
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.

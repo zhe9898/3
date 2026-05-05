@@ -1245,3 +1245,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1301-V1308 changes parameter ownership only. The tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback values, and clamp are validated and consumed by `PopulationAndHouseholds`, while tax-season registration visibility, liquidity, labor, fragility, debt delta formula, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, tax-season-interaction-pressure state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1309-V1316 PopulationAndHouseholds Tax Season Debt Delta Formula Extraction
+
+V1309-V1316 changes parameter ownership only. The tax-season debt-delta base score and visibility/liquidity/labor/fragility/interaction weights are validated and consumed by `PopulationAndHouseholds`, while tax-season registration visibility, liquidity, labor, fragility, interaction scoring, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, tax-season-debt-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

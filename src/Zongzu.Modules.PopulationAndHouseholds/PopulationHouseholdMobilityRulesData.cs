@@ -127,6 +127,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int TaxSeasonInteractionResilienceReliefFallbackScore,
     int TaxSeasonInteractionPressureClampFloor,
     int TaxSeasonInteractionPressureClampCeiling,
+    int TaxSeasonDebtDeltaBaseScore,
+    int TaxSeasonDebtDeltaVisibilityPressureWeight,
+    int TaxSeasonDebtDeltaLiquidityPressureWeight,
+    int TaxSeasonDebtDeltaLaborPressureWeight,
+    int TaxSeasonDebtDeltaFragilityPressureWeight,
+    int TaxSeasonDebtDeltaInteractionPressureWeight,
     int TaxSeasonDebtDeltaClampFloor,
     int TaxSeasonDebtDeltaClampCeiling,
     int TaxSeasonDebtSpikeEventThreshold,
@@ -386,6 +392,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int DefaultTaxSeasonInteractionResilienceReliefFallbackScore = 0;
     public const int DefaultTaxSeasonInteractionPressureClampFloor = -2;
     public const int DefaultTaxSeasonInteractionPressureClampCeiling = 4;
+    public const int DefaultTaxSeasonDebtDeltaBaseScore = 14;
+    public const int DefaultTaxSeasonDebtDeltaVisibilityPressureWeight = 1;
+    public const int DefaultTaxSeasonDebtDeltaLiquidityPressureWeight = 1;
+    public const int DefaultTaxSeasonDebtDeltaLaborPressureWeight = 1;
+    public const int DefaultTaxSeasonDebtDeltaFragilityPressureWeight = 1;
+    public const int DefaultTaxSeasonDebtDeltaInteractionPressureWeight = 1;
     public const int DefaultTaxSeasonDebtDeltaClampFloor = 8;
     public const int DefaultTaxSeasonDebtDeltaClampCeiling = 28;
     public const int DefaultTaxSeasonDebtSpikeEventThreshold = 70;
@@ -541,6 +553,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     public const int MaxTaxSeasonInteractionPressure = 8;
     public const int MinTaxSeasonDebtDelta = 0;
     public const int MaxTaxSeasonDebtDelta = 64;
+    public const int MaxTaxSeasonDebtDeltaWeight = 8;
     public const int MaxOfficialSupplyFallbackFrontierPressure = 100;
     public const int MaxOfficialSupplyFallbackSupplyPressure = 30;
     public const int MaxOfficialSupplyFallbackQuotaPressure = 20;
@@ -1044,6 +1057,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultTaxSeasonInteractionResilienceReliefFallbackScore,
             DefaultTaxSeasonInteractionPressureClampFloor,
             DefaultTaxSeasonInteractionPressureClampCeiling,
+            DefaultTaxSeasonDebtDeltaBaseScore,
+            DefaultTaxSeasonDebtDeltaVisibilityPressureWeight,
+            DefaultTaxSeasonDebtDeltaLiquidityPressureWeight,
+            DefaultTaxSeasonDebtDeltaLaborPressureWeight,
+            DefaultTaxSeasonDebtDeltaFragilityPressureWeight,
+            DefaultTaxSeasonDebtDeltaInteractionPressureWeight,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
@@ -1320,6 +1339,12 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultTaxSeasonInteractionResilienceReliefFallbackScore,
             DefaultTaxSeasonInteractionPressureClampFloor,
             DefaultTaxSeasonInteractionPressureClampCeiling,
+            DefaultTaxSeasonDebtDeltaBaseScore,
+            DefaultTaxSeasonDebtDeltaVisibilityPressureWeight,
+            DefaultTaxSeasonDebtDeltaLiquidityPressureWeight,
+            DefaultTaxSeasonDebtDeltaLaborPressureWeight,
+            DefaultTaxSeasonDebtDeltaFragilityPressureWeight,
+            DefaultTaxSeasonDebtDeltaInteractionPressureWeight,
             DefaultTaxSeasonDebtDeltaClampFloor,
             DefaultTaxSeasonDebtDeltaClampCeiling,
             DefaultTaxSeasonDebtSpikeEventThreshold,
@@ -2626,6 +2651,37 @@ public sealed record PopulationHouseholdMobilityRulesData(
         if (TaxSeasonInteractionPressureClampFloor > TaxSeasonInteractionPressureClampCeiling)
         {
             errors.Add("tax_season_interaction_pressure_clamp_floor must be less than or equal to ceiling.");
+        }
+
+        if (TaxSeasonDebtDeltaBaseScore is < MinTaxSeasonDebtDelta or > MaxTaxSeasonDebtDelta)
+        {
+            errors.Add(
+                $"tax_season_debt_delta_base_score must be between {MinTaxSeasonDebtDelta} and {MaxTaxSeasonDebtDelta}.");
+        }
+
+        if (TaxSeasonDebtDeltaVisibilityPressureWeight is < 0 or > MaxTaxSeasonDebtDeltaWeight)
+        {
+            errors.Add($"tax_season_debt_delta_visibility_pressure_weight must be between 0 and {MaxTaxSeasonDebtDeltaWeight}.");
+        }
+
+        if (TaxSeasonDebtDeltaLiquidityPressureWeight is < 0 or > MaxTaxSeasonDebtDeltaWeight)
+        {
+            errors.Add($"tax_season_debt_delta_liquidity_pressure_weight must be between 0 and {MaxTaxSeasonDebtDeltaWeight}.");
+        }
+
+        if (TaxSeasonDebtDeltaLaborPressureWeight is < 0 or > MaxTaxSeasonDebtDeltaWeight)
+        {
+            errors.Add($"tax_season_debt_delta_labor_pressure_weight must be between 0 and {MaxTaxSeasonDebtDeltaWeight}.");
+        }
+
+        if (TaxSeasonDebtDeltaFragilityPressureWeight is < 0 or > MaxTaxSeasonDebtDeltaWeight)
+        {
+            errors.Add($"tax_season_debt_delta_fragility_pressure_weight must be between 0 and {MaxTaxSeasonDebtDeltaWeight}.");
+        }
+
+        if (TaxSeasonDebtDeltaInteractionPressureWeight is < 0 or > MaxTaxSeasonDebtDeltaWeight)
+        {
+            errors.Add($"tax_season_debt_delta_interaction_pressure_weight must be between 0 and {MaxTaxSeasonDebtDeltaWeight}.");
         }
 
         if (TaxSeasonDebtDeltaClampFloor is < MinTaxSeasonDebtDelta or > MaxTaxSeasonDebtDelta)
@@ -4981,6 +5037,48 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? TaxSeasonInteractionPressureClampCeiling
             : DefaultTaxSeasonInteractionPressureClampCeiling;
+    }
+
+    public int GetTaxSeasonDebtDeltaBaseScoreOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonDebtDeltaBaseScore
+            : DefaultTaxSeasonDebtDeltaBaseScore;
+    }
+
+    public int GetTaxSeasonDebtDeltaVisibilityPressureWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonDebtDeltaVisibilityPressureWeight
+            : DefaultTaxSeasonDebtDeltaVisibilityPressureWeight;
+    }
+
+    public int GetTaxSeasonDebtDeltaLiquidityPressureWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonDebtDeltaLiquidityPressureWeight
+            : DefaultTaxSeasonDebtDeltaLiquidityPressureWeight;
+    }
+
+    public int GetTaxSeasonDebtDeltaLaborPressureWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonDebtDeltaLaborPressureWeight
+            : DefaultTaxSeasonDebtDeltaLaborPressureWeight;
+    }
+
+    public int GetTaxSeasonDebtDeltaFragilityPressureWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonDebtDeltaFragilityPressureWeight
+            : DefaultTaxSeasonDebtDeltaFragilityPressureWeight;
+    }
+
+    public int GetTaxSeasonDebtDeltaInteractionPressureWeightOrDefault()
+    {
+        return Validate().IsValid
+            ? TaxSeasonDebtDeltaInteractionPressureWeight
+            : DefaultTaxSeasonDebtDeltaInteractionPressureWeight;
     }
 
     public int GetTaxSeasonDebtDeltaClampFloorOrDefault()

@@ -1033,3 +1033,9 @@ The extraction is default-equivalent. It does not retune tax-season registration
 V1301-V1308 moves tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback scores, and clamp into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned tax burden inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune tax-season registration visibility, liquidity, labor, fragility, debt-delta formula, event threshold, official-supply rules, household movement rules, or UI-visible social position.
+
+### Current population households tax season debt delta formula extraction: v1309-v1316
+
+V1309-V1316 moves the tax-season debt-delta base score and pressure weights into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned tax burden inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune tax-season registration visibility, liquidity, labor, fragility, interaction, clamp, event threshold, official-supply rules, household movement rules, or UI-visible social position.

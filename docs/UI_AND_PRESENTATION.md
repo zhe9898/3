@@ -482,3 +482,7 @@ The UI and Unity shell remain downstream-only. V1293-V1300 changes where `Popula
 ### v1301-v1308 population households tax season interaction pressure extraction
 
 The UI and Unity shell remain downstream-only. V1301-V1308 changes where `PopulationAndHouseholds` owns tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback scores, and clamp; presentation surfaces may only copy projected fields/events and must not calculate tax interaction pressure, movement outcomes, route history, migration economy, or class/status changes.
+
+### v1309-v1316 population households tax season debt delta formula extraction
+
+The UI and Unity shell remain downstream-only. V1309-V1316 changes where `PopulationAndHouseholds` owns tax-season debt-delta base score and pressure weights; presentation surfaces may only copy projected fields/events and must not calculate tax debt delta, movement outcomes, route history, migration economy, or class/status changes.
