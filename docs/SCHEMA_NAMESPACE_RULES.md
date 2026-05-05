@@ -402,3 +402,7 @@ The V1309-V1316 extraction keeps tax-season debt-delta base score and pressure w
 ### population households official supply liquidity cash-need extraction v1317-v1324 adds no persisted fields
 
 The V1317-V1324 extraction keeps the official-supply liquidity cash-need livelihood list in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
+
+### population households subsistence cash-need extraction v1325-v1332 adds no persisted fields
+
+The V1325-V1332 extraction keeps the subsistence interaction cash-need livelihood list in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.

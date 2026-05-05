@@ -133,7 +133,8 @@ public sealed partial class PopulationAndHouseholdsModule
         bool isGrainShortage =
             _householdMobilityRulesData.IsSubsistenceInteractionGrainShortageStoreOrDefault(household.GrainStore);
 
-        if (isGrainShortage && IsCashNeedLivelihood(household.Livelihood))
+        if (isGrainShortage
+            && _householdMobilityRulesData.IsSubsistenceInteractionCashNeedLivelihoodOrDefault(household.Livelihood))
         {
             interaction += _householdMobilityRulesData.GetSubsistenceInteractionCashNeedBoostScoreOrDefault();
         }
@@ -274,15 +275,6 @@ public sealed partial class PopulationAndHouseholdsModule
             tenantPressure + landLaborPressure + cashNeedPressure + resilienceRelief,
             _householdMobilityRulesData.GetTaxSeasonInteractionPressureClampFloorOrDefault(),
             _householdMobilityRulesData.GetTaxSeasonInteractionPressureClampCeilingOrDefault());
-    }
-
-    private static bool IsCashNeedLivelihood(LivelihoodType livelihood)
-    {
-        return livelihood is LivelihoodType.PettyTrader
-            or LivelihoodType.Boatman
-            or LivelihoodType.Artisan
-            or LivelihoodType.SeasonalMigrant
-            or LivelihoodType.HiredLabor;
     }
 
     private OfficialSupplySignal ResolveOfficialSupplySignal(IDomainEvent domainEvent)

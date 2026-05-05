@@ -1262,6 +1262,12 @@ V1165-V1172 extracts the official-supply burden event distress threshold into de
 
 This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.
 
+### Current population households subsistence cash-need extraction v1325-v1332 note
+
+V1325-V1332 extracts the subsistence interaction cash-need livelihood list into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured grain-price shock handling.
+
+This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.
+
 ### Current population households official supply liquidity cash-need extraction v1317-v1324 note
 
 V1317-V1324 extracts the official-supply liquidity cash-need livelihood list into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.

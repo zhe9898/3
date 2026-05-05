@@ -1493,3 +1493,7 @@ Acceptance requires default-equivalent behavior for tax-season debt-delta base s
 ### PopulationAndHouseholds official supply liquidity cash-need extraction v1317-v1324 acceptance
 
 Acceptance requires default-equivalent behavior for the official-supply liquidity cash-need livelihood list, deterministic fallback for malformed livelihood rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds subsistence cash-need extraction v1325-v1332 acceptance
+
+Acceptance requires default-equivalent behavior for the subsistence interaction cash-need livelihood list, deterministic fallback for malformed livelihood rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.

@@ -1129,6 +1129,14 @@ Alignment check: this is a default-equivalent hardcoded-rule extraction. `Popula
 
 The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
 
+### v1325-v1332 population households subsistence cash-need extraction audit
+
+`PopulationAndHouseholds` now owns the subsistence interaction cash-need livelihood list through validated rules-data. Defaults preserve the existing grain-price subsistence cash-need predicate while removing the shared hardcoded C# helper from `PressureProfiles`.
+
+The audit boundary remains unchanged: no save schema drift, no rules-data loader or plugin marketplace, no household movement command, no migration economy, no class/status engine, no `PersonRegistry` expansion, and no Application/UI/Unity authority.
+
+The pass does not add movement authority, route history, migration economy, class/status behavior, `PersonRegistry` fields, save schema, loader/plugin execution, prose parsing, or Application/UI/Unity calculation.
+
 ### v1317-v1324 population households official supply liquidity cash-need extraction audit
 
 `PopulationAndHouseholds` now owns the official-supply liquidity cash-need livelihood list through validated rules-data. Defaults preserve the existing official-supply liquidity cash-need predicate while moving another hardcoded livelihood classification out of the official-supply C# path.

@@ -1440,3 +1440,11 @@ Official-supply liquidity cash-need livelihood ownership is internal to `Populat
 No integration path is added for Application/UI/Unity authority, runtime loader/plugin execution, `PersonRegistry` state, movement commands, route history, or prose parsing.
 
 No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate official-supply liquidity outcomes, and no prose parsing or loader/plugin system is introduced.
+
+### PopulationAndHouseholds subsistence cash-need extraction v1325-v1332 integration note
+
+Subsistence cash-need livelihood ownership is internal to `PopulationAndHouseholds`. Upstream `TradeAndIndustry` still emits structured grain-price events; `PopulationAndHouseholds` applies owner-owned cash-need livelihood matching, cash-need boost score, and existing subsistence interaction clamp while computing the household subsistence pressure profile.
+
+No integration path is added for Application/UI/Unity authority, runtime loader/plugin execution, `PersonRegistry` state, movement commands, route history, or prose parsing.
+
+No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate subsistence outcomes, and no prose parsing or loader/plugin system is introduced.

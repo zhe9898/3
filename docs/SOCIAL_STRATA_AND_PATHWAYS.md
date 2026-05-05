@@ -1045,3 +1045,9 @@ The extraction is default-equivalent. It does not retune tax-season registration
 V1317-V1324 moves the official-supply liquidity cash-need livelihood list into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The list remains a household-owned pressure input for Office supply requisition handling, not a route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune subsistence cash-need, tax-season cash-need, official-supply liquidity scores, household movement rules, or UI-visible social position.
+
+### Current population households subsistence cash-need extraction: v1325-v1332
+
+V1325-V1332 moves the subsistence interaction cash-need livelihood list into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The list remains a household-owned subsistence pressure input for grain-price shock handling, not a route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune official-supply, tax-season, cash-need boost score, household movement rules, or UI-visible social position.

@@ -55,6 +55,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int SubsistenceFragilityPressureClampCeiling,
     int SubsistenceInteractionGrainShortageStoreFloorExclusive,
     int SubsistenceInteractionGrainShortageStoreCeilingExclusive,
+    IReadOnlyList<LivelihoodType> SubsistenceInteractionCashNeedLivelihoods,
     int SubsistenceInteractionCashNeedBoostScore,
     int SubsistenceInteractionDebtPressureThreshold,
     int SubsistenceInteractionDebtPressureBoostScore,
@@ -744,6 +745,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(50, 1),
         };
 
+    public static IReadOnlyList<LivelihoodType> DefaultSubsistenceInteractionCashNeedLivelihoods { get; } =
+        new[]
+        {
+            LivelihoodType.PettyTrader,
+            LivelihoodType.Boatman,
+            LivelihoodType.Artisan,
+            LivelihoodType.SeasonalMigrant,
+            LivelihoodType.HiredLabor,
+        };
+
     public static IReadOnlyList<PopulationHouseholdMobilityLivelihoodScoreWeight>
         DefaultTaxSeasonRegistrationVisibilityLivelihoodExposureScoreWeights { get; } =
         new[]
@@ -996,6 +1007,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceFragilityPressureClampCeiling,
             DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive,
             DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive,
+            DefaultSubsistenceInteractionCashNeedLivelihoods,
             DefaultSubsistenceInteractionCashNeedBoostScore,
             DefaultSubsistenceInteractionDebtPressureThreshold,
             DefaultSubsistenceInteractionDebtPressureBoostScore,
@@ -1279,6 +1291,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultSubsistenceFragilityPressureClampCeiling,
             DefaultSubsistenceInteractionGrainShortageStoreFloorExclusive,
             DefaultSubsistenceInteractionGrainShortageStoreCeilingExclusive,
+            DefaultSubsistenceInteractionCashNeedLivelihoods,
             DefaultSubsistenceInteractionCashNeedBoostScore,
             DefaultSubsistenceInteractionDebtPressureThreshold,
             DefaultSubsistenceInteractionDebtPressureBoostScore,
@@ -2057,6 +2070,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 "subsistence_interaction_grain_shortage_store_floor_exclusive must be less than ceiling_exclusive.");
+        }
+
+        if (SubsistenceInteractionCashNeedLivelihoods is null
+            || SubsistenceInteractionCashNeedLivelihoods.Count == 0
+            || SubsistenceInteractionCashNeedLivelihoods.Any(static livelihood => !Enum.IsDefined(livelihood))
+            || SubsistenceInteractionCashNeedLivelihoods.Distinct().Count()
+                != SubsistenceInteractionCashNeedLivelihoods.Count)
+        {
+            errors.Add("subsistence_interaction_cash_need_livelihoods must be non-empty, distinct, and defined.");
         }
 
         if (SubsistenceInteractionCashNeedBoostScore is < 0 or > MaxSubsistenceInteractionPressureContribution)
@@ -4336,6 +4358,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? SubsistenceInteractionCashNeedBoostScore
             : DefaultSubsistenceInteractionCashNeedBoostScore;
+    }
+
+    public IReadOnlyList<LivelihoodType> GetSubsistenceInteractionCashNeedLivelihoodsOrDefault()
+    {
+        return Validate().IsValid
+            ? SubsistenceInteractionCashNeedLivelihoods
+            : DefaultSubsistenceInteractionCashNeedLivelihoods;
+    }
+
+    public bool IsSubsistenceInteractionCashNeedLivelihoodOrDefault(LivelihoodType livelihood)
+    {
+        return GetSubsistenceInteractionCashNeedLivelihoodsOrDefault().Contains(livelihood);
     }
 
     public int GetSubsistenceInteractionDebtPressureThresholdOrDefault()
