@@ -1257,3 +1257,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1317-V1324 changes parameter ownership only. The official-supply liquidity cash-need livelihood list is validated and consumed by `PopulationAndHouseholds`, while official-supply scoring, event cadence, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, official-supply-liquidity state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1325-V1332 PopulationAndHouseholds Subsistence Cash-Need Extraction
+
+V1325-V1332 changes parameter ownership only. The subsistence interaction cash-need livelihood list is validated and consumed by `PopulationAndHouseholds`, while grain-price shock scoring, event cadence, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, subsistence-cash-need state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

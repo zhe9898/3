@@ -1869,3 +1869,9 @@ The tax-season debt-delta base score and pressure weights are in-memory `Populat
 Schema/migration impact: none. V1317-V1324 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The official-supply liquidity cash-need livelihood list is an in-memory `PopulationHouseholdMobilityRulesData` default/validation parameter consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households subsistence cash-need extraction v1325-v1332 note
+
+Schema/migration impact: none. V1325-V1332 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The subsistence interaction cash-need livelihood list is an in-memory `PopulationHouseholdMobilityRulesData` default/validation parameter consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

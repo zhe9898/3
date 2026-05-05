@@ -1042,3 +1042,9 @@ This is not tax-season clamp or event-threshold retune, migration engine, househ
 V1317-V1324 extracts the official-supply liquidity cash-need livelihood predicate into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve the prior cash-need livelihoods: petty trader, boatman, artisan, seasonal migrant, and hired labor; the cash-need score and fallback remain unchanged.
 
 This is not subsistence cash-need extraction, official-supply liquidity score retune, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.
+
+## V1325-V1332 PopulationAndHouseholds Subsistence Cash-Need Extraction
+
+V1325-V1332 extracts the subsistence interaction cash-need livelihood predicate into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve the prior cash-need livelihoods: petty trader, boatman, artisan, seasonal migrant, and hired labor; the cash-need boost score remains unchanged.
+
+This is not official-supply retune, tax-season retune, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.

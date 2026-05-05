@@ -1146,6 +1146,8 @@ public sealed class GrainPriceSubsistenceHandlerTests
         PopulationHouseholdMobilityRulesData explicitPreviousBaseline =
             PopulationHouseholdMobilityRulesData.Default with
             {
+                SubsistenceInteractionCashNeedLivelihoods =
+                    PopulationHouseholdMobilityRulesData.DefaultSubsistenceInteractionCashNeedLivelihoods,
                 SubsistenceInteractionCashNeedBoostScore = 2,
             };
 
@@ -1153,10 +1155,44 @@ public sealed class GrainPriceSubsistenceHandlerTests
         (PopulationHouseholdState explicitHousehold, IDomainEvent explicitEvent) =
             RunMissingMetadataGrainPriceSpike(explicitPreviousBaseline);
 
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultSubsistenceInteractionCashNeedLivelihoods,
+            Is.EqualTo(new[]
+            {
+                LivelihoodType.PettyTrader,
+                LivelihoodType.Boatman,
+                LivelihoodType.Artisan,
+                LivelihoodType.SeasonalMigrant,
+                LivelihoodType.HiredLabor,
+            }));
         Assert.That(PopulationHouseholdMobilityRulesData.DefaultSubsistenceInteractionCashNeedBoostScore, Is.EqualTo(2));
+        Assert.That(explicitPreviousBaseline.IsSubsistenceInteractionCashNeedLivelihoodOrDefault(LivelihoodType.PettyTrader), Is.True);
+        Assert.That(explicitPreviousBaseline.IsSubsistenceInteractionCashNeedLivelihoodOrDefault(LivelihoodType.Smallholder), Is.False);
         Assert.That(explicitPreviousBaseline.GetSubsistenceInteractionCashNeedBoostScoreOrDefault(), Is.EqualTo(2));
         Assert.That(BuildGrainShockSignature(explicitHousehold, explicitEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
         Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceInteractionPressure], Is.EqualTo("3"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_CustomInteractionCashNeedLivelihoodRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceInteractionCashNeedLivelihoods = new[] { LivelihoodType.Boatman },
+            };
+
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState customHousehold, IDomainEvent customEvent) =
+            RunMissingMetadataGrainPriceSpike(customRulesData);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customRulesData.IsSubsistenceInteractionCashNeedLivelihoodOrDefault(LivelihoodType.PettyTrader), Is.False);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.SubsistenceInteractionPressure], Is.EqualTo("1"));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta]),
+            Is.EqualTo(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.SubsistenceDistressDelta]) - 2));
+        Assert.That(customHousehold.Livelihood, Is.EqualTo(defaultHousehold.Livelihood));
     }
 
     [Test]
@@ -1198,6 +1234,29 @@ public sealed class GrainPriceSubsistenceHandlerTests
         Assert.That(
             malformedRulesData.GetSubsistenceInteractionCashNeedBoostScoreOrDefault(),
             Is.EqualTo(PopulationHouseholdMobilityRulesData.DefaultSubsistenceInteractionCashNeedBoostScore));
+        Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceInteractionPressure], Is.EqualTo("3"));
+    }
+
+    [Test]
+    public void GrainPriceSpike_InvalidInteractionCashNeedLivelihoodRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                SubsistenceInteractionCashNeedLivelihoods = new[] { LivelihoodType.PettyTrader, LivelihoodType.PettyTrader },
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (PopulationHouseholdState defaultHousehold, IDomainEvent defaultEvent) = RunMissingMetadataGrainPriceSpike();
+        (PopulationHouseholdState fallbackHousehold, IDomainEvent fallbackEvent) =
+            RunMissingMetadataGrainPriceSpike(malformedRulesData);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("subsistence_interaction_cash_need_livelihoods must be non-empty, distinct, and defined."));
+        Assert.That(malformedRulesData.IsSubsistenceInteractionCashNeedLivelihoodOrDefault(LivelihoodType.PettyTrader), Is.True);
         Assert.That(BuildGrainShockSignature(fallbackHousehold, fallbackEvent), Is.EqualTo(BuildGrainShockSignature(defaultHousehold, defaultEvent)));
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.SubsistenceInteractionPressure], Is.EqualTo("3"));
     }
