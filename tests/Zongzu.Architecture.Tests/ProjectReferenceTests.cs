@@ -25439,6 +25439,201 @@ public class ProjectReferenceTests
     }
 
     [Test]
+    public void Population_households_official_supply_liquidity_cash_need_extraction_v1317_v1324_must_remain_owner_consumed_and_schema_neutral()
+    {
+        string topologyIndex = File.ReadAllText(Path.Combine(RepoRoot, "docs", "RENZONG_THIN_CHAIN_TOPOLOGY_INDEX.md"));
+        string socialStrata = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SOCIAL_STRATA_AND_PATHWAYS.md"));
+        string schemaRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SCHEMA_NAMESPACE_RULES.md"));
+        string dataSchema = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DATA_SCHEMA.md"));
+        string simulation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION.md"));
+        string integrationRules = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_INTEGRATION_RULES.md"));
+        string moduleBoundaries = File.ReadAllText(Path.Combine(RepoRoot, "docs", "MODULE_BOUNDARIES.md"));
+        string uiPresentation = File.ReadAllText(Path.Combine(RepoRoot, "docs", "UI_AND_PRESENTATION.md"));
+        string acceptance = File.ReadAllText(Path.Combine(RepoRoot, "docs", "ACCEPTANCE_TESTS.md"));
+        string fidelityModel = File.ReadAllText(Path.Combine(RepoRoot, "docs", "SIMULATION_FIDELITY_MODEL.md"));
+        string designAudit = File.ReadAllText(Path.Combine(RepoRoot, "docs", "DESIGN_CODE_ALIGNMENT_AUDIT.md"));
+        string skillMatrix = File.ReadAllText(Path.Combine(RepoRoot, "docs", "CODEX_SKILL_RATIONALIZATION_MATRIX.md"));
+        string execPlan = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "docs",
+            "exec-plans",
+            "active",
+            "2026-05-04_population-households-official-supply-liquidity-cash-need-extraction-v1317-v1324.md"));
+        string pressureProfiles = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsModule.PressureProfiles.cs"));
+        string rulesData = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationHouseholdMobilityRulesData.cs"));
+        string populationModule = ReadPopulationAndHouseholdsModuleSource();
+        string populationState = File.ReadAllText(Path.Combine(
+            SrcDir,
+            "Zongzu.Modules.PopulationAndHouseholds",
+            "PopulationAndHouseholdsState.cs"));
+        string populationTests = File.ReadAllText(Path.Combine(
+            RepoRoot,
+            "tests",
+            "Zongzu.Modules.PopulationAndHouseholds.Tests",
+            "OfficialSupplyBurdenHandlerTests.cs"));
+        string personRegistrySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Modules.PersonRegistry")).Select(File.ReadAllText));
+        string applicationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(SrcDir, "Zongzu.Application")).Select(File.ReadAllText));
+        string presentationSource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity"),
+                Path.Combine(SrcDir, "Zongzu.Presentation.Unity.ViewModels")).Select(File.ReadAllText));
+        string unitySource = string.Join(Environment.NewLine,
+            EnumerateSourceFiles(Path.Combine(RepoRoot, "unity")).Select(File.ReadAllText));
+        string productionSource = string.Join(Environment.NewLine, EnumerateSourceFiles(SrcDir).Select(File.ReadAllText));
+
+        int liquidityStart = pressureProfiles.IndexOf(
+            "private int ComputeOfficialSupplyLiquidityPressure",
+            StringComparison.Ordinal);
+        int fragilityStart = pressureProfiles.IndexOf(
+            "private int ComputeOfficialSupplyFragilityPressure",
+            liquidityStart,
+            StringComparison.Ordinal);
+        Assert.That(liquidityStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(fragilityStart, Is.GreaterThan(liquidityStart));
+        string liquidityBody = pressureProfiles.Substring(liquidityStart, fragilityStart - liquidityStart);
+
+        Assert.That(topologyIndex, Does.Contain("V1317-V1324 PopulationAndHouseholds Official Supply Liquidity Cash-Need Extraction"));
+        Assert.That(socialStrata, Does.Contain("Current population households official supply liquidity cash-need extraction: v1317-v1324"));
+        Assert.That(fidelityModel, Does.Contain("V1317-V1324 PopulationAndHouseholds Official Supply Liquidity Cash-Need Extraction"));
+        Assert.That(designAudit, Does.Contain("v1317-v1324 population households official supply liquidity cash-need extraction audit"));
+        Assert.That(moduleBoundaries, Does.Contain("PopulationAndHouseholds official supply liquidity cash-need extraction v1317-v1324 boundary note"));
+        Assert.That(integrationRules, Does.Contain("PopulationAndHouseholds official supply liquidity cash-need extraction v1317-v1324 integration note"));
+        Assert.That(dataSchema, Does.Contain("Current population households official supply liquidity cash-need extraction v1317-v1324 note"));
+        Assert.That(schemaRules, Does.Contain("population households official supply liquidity cash-need extraction v1317-v1324 adds no persisted fields"));
+        Assert.That(simulation, Does.Contain("Current population households official supply liquidity cash-need extraction v1317-v1324 note"));
+        Assert.That(uiPresentation, Does.Contain("v1317-v1324 population households official supply liquidity cash-need extraction"));
+        Assert.That(acceptance, Does.Contain("PopulationAndHouseholds official supply liquidity cash-need extraction v1317-v1324 acceptance"));
+        Assert.That(skillMatrix, Does.Contain("PopulationAndHouseholds Official Supply Liquidity Cash-Need Extraction Through V1324"));
+
+        foreach (string requiredPlanText in new[]
+                 {
+                     "behavior-equivalent hardcoded-rule extraction",
+                     "Runtime behavior change: default behavior unchanged",
+                     "Target schema/migration impact: none",
+                     "Previous hardcoded official-supply liquidity cash-need livelihood predicate",
+                     "`PettyTrader`",
+                     "`Boatman`",
+                     "`Artisan`",
+                     "`SeasonalMigrant`",
+                     "`HiredLabor`",
+                     "cash-need livelihood score `2`",
+                     "fallback score `0`",
+                     "DefaultOfficialSupplyLiquidityCashNeedLivelihoods",
+                     "GetOfficialSupplyLiquidityCashNeedLivelihoodsOrDefault",
+                     "IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault",
+                     "The shared subsistence `IsCashNeedLivelihood` helper is not retuned in this pass.",
+                     "No subsistence cash-need livelihood predicate extraction.",
+                     "No official-supply liquidity score retune.",
+                     "No rules-data loader",
+                     "No rules-data file",
+                     "No runtime plugin marketplace",
+                     "No arbitrary script rules",
+                     "No runtime assemblies",
+                     "No reflection-heavy rule loading",
+                     "No household movement command",
+                     "No migration economy",
+                     "No class/status engine",
+                     "No persisted state",
+                     "No schema bump",
+                     "No `PersonRegistry` expansion",
+                     "No Application/UI/Unity authority",
+                 })
+        {
+            Assert.That(execPlan, Does.Contain(requiredPlanText), requiredPlanText);
+        }
+
+        Assert.That(liquidityBody, Does.Contain("IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault"));
+        Assert.That(liquidityBody, Does.Not.Contain("IsCashNeedLivelihood(household.Livelihood)"));
+        Assert.That(rulesData, Does.Contain("IReadOnlyList<LivelihoodType> OfficialSupplyLiquidityCashNeedLivelihoods"));
+        Assert.That(rulesData, Does.Contain("DefaultOfficialSupplyLiquidityCashNeedLivelihoods"));
+        Assert.That(rulesData, Does.Contain("LivelihoodType.PettyTrader"));
+        Assert.That(rulesData, Does.Contain("LivelihoodType.Boatman"));
+        Assert.That(rulesData, Does.Contain("LivelihoodType.Artisan"));
+        Assert.That(rulesData, Does.Contain("LivelihoodType.SeasonalMigrant"));
+        Assert.That(rulesData, Does.Contain("LivelihoodType.HiredLabor"));
+        Assert.That(rulesData, Does.Contain("official_supply_liquidity_cash_need_livelihoods must be non-empty, distinct, and defined."));
+        Assert.That(rulesData, Does.Contain("GetOfficialSupplyLiquidityCashNeedLivelihoodsOrDefault"));
+        Assert.That(rulesData, Does.Contain("IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_DefaultLiquidityPressureRulesDataMatchesPreviousBaseline"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_CustomLiquidityCashNeedLivelihoodRulesDataIsOwnerConsumed"));
+        Assert.That(populationTests, Does.Contain("OfficialSupplyRequisition_InvalidLiquidityCashNeedLivelihoodRulesDataFallsBackToPreviousBaseline"));
+        Assert.That(populationModule, Does.Contain("ModuleSchemaVersion => 3"));
+        Assert.That(populationState, Does.Not.Contain("OfficialSupplyLiquidityCashNeed"));
+        Assert.That(populationState, Does.Not.Contain("PressureProfile"));
+        Assert.That(populationState, Does.Not.Contain("HouseholdMobility"));
+        Assert.That(populationState, Does.Not.Contain("RouteHistory"));
+        Assert.That(populationState, Does.Not.Contain("Ledger"));
+
+        foreach (string authorityToken in new[]
+                 {
+                     "OfficialSupplyLiquidityCashNeedOutcomeCalculator",
+                     "PopulationAndHouseholdsOfficialSupplyLiquidityCashNeedRules",
+                     "OfficialSupplyLiquidityCashNeedState",
+                     "OfficialSupplyLiquidityOutcomeCalculator",
+                     "PressureProfileOutcomeCalculator",
+                 })
+        {
+            Assert.That(applicationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(presentationSource, Does.Not.Contain(authorityToken), authorityToken);
+            Assert.That(unitySource, Does.Not.Contain(authorityToken), authorityToken);
+        }
+
+        foreach (string personRegistryToken in new[]
+                 {
+                     "OfficialSupplyLiquidityCashNeed",
+                     "PressureProfile",
+                     "PopulationHouseholdMobilityRulesData",
+                     "HouseholdMobilityRoute",
+                     "CommonerStatus",
+                     "SocialClass",
+                 })
+        {
+            Assert.That(personRegistrySource, Does.Not.Contain(personRegistryToken), personRegistryToken);
+        }
+
+        foreach (string forbidden in new[]
+                 {
+                     "HouseholdMovementCommand",
+                     "MoveHouseholdCommand",
+                     "RelocateHouseholdCommand",
+                     "RouteHistoryModel",
+                     "HouseholdRouteHistory",
+                     "MigrationEconomyEngine",
+                     "CommonerStatusEngine",
+                     "SocialClassEngine",
+                     "OfficialSupplyLiquidityCashNeedLedger",
+                     "PressureProfileLedger",
+                     "MobilitySelectorWatermark",
+                     "TargetCardinalityState",
+                     "OwnerLaneLedger",
+                     "CooldownLedger",
+                     "HouseholdMobilityRulesDataLoader",
+                     "HouseholdMobilityRulesDataFile",
+                     "IRuntimeRulePlugin",
+                     "RuntimePluginMarketplace",
+                     "ArbitraryScriptRule",
+                     "DynamicRuleAssembly",
+                     "Assembly.Load(",
+                     "DomainEvent.Summary.Split",
+                     ".Summary.Split",
+                     "ProjectionProseParser",
+                     "ReceiptTextParser",
+                     "PublicLifeLineParser",
+                 })
+        {
+            Assert.That(productionSource, Does.Not.Contain(forbidden), forbidden);
+        }
+    }
+
+    [Test]
     public void Regime_legitimacy_readback_v253_v260_must_stay_owner_laned_projection_only_and_schema_neutral()
     {
         string governanceSource = File.ReadAllText(Path.Combine(

@@ -1262,6 +1262,12 @@ V1165-V1172 extracts the official-supply burden event distress threshold into de
 
 This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.
 
+### Current population households official supply liquidity cash-need extraction v1317-v1324 note
+
+V1317-V1324 extracts the official-supply liquidity cash-need livelihood list into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.
+
+This does not add household movement, route history, migration economy, class/status simulation, new cadence, new persisted state, prose parsing, or UI/Application authority.
+
 ### Current population households official supply liquidity pressure extraction v1213-v1220 note
 
 V1213-V1220 extracts official-supply liquidity grain strain bands, cash-need score, tool drag threshold, debt drag bands, fallback scores, and clamp into deterministic owner-consumed rules-data. Default behavior remains unchanged for structured Office supply requisition handling.

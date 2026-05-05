@@ -398,3 +398,7 @@ The V1301-V1308 extraction keeps tax-season interaction tenant pressure, land/la
 ### population households tax season debt delta formula extraction v1309-v1316 adds no persisted fields
 
 The V1309-V1316 extraction keeps tax-season debt-delta base score and pressure weights in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
+
+### population households official supply liquidity cash-need extraction v1317-v1324 adds no persisted fields
+
+The V1317-V1324 extraction keeps the official-supply liquidity cash-need livelihood list in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.

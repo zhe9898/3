@@ -1915,3 +1915,11 @@ Application services, UI, Unity, `PersonRegistry`, and distant summary/projectio
 Application services, UI, Unity, `PersonRegistry`, and distant summary/projection code must not calculate tax debt delta or infer movement outcomes from these parameters.
 
 Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, or retune tax-season fragility outcomes. No movement command, route-history state, migration economy, class/status engine, runtime plugin loader, content/config namespace, prose parser, pressure-profile ledger, or persisted field is introduced.
+
+### PopulationAndHouseholds official supply liquidity cash-need extraction v1317-v1324 boundary note
+
+`PopulationAndHouseholds` remains the owner and sole consumer of the official-supply liquidity cash-need livelihood list. The extracted list is a schema-neutral in-memory `PopulationHouseholdMobilityRulesData` default, not module state, not public presentation authority, not a runtime rules-data file, and not a cross-module command surface.
+
+Application services, UI, Unity, `PersonRegistry`, and distant summary/projection code must not calculate official-supply liquidity cash-need outcomes or infer movement outcomes from these parameters.
+
+Application, UI, Unity, and `PersonRegistry` must not calculate, store, parse, or retune official-supply liquidity outcomes. No movement command, route-history state, migration economy, class/status engine, runtime plugin loader, content/config namespace, prose parser, pressure-profile ledger, or persisted field is introduced.

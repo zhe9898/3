@@ -1489,3 +1489,7 @@ Acceptance requires default-equivalent behavior for tax-season interaction tenan
 ### PopulationAndHouseholds tax season debt delta formula extraction v1309-v1316 acceptance
 
 Acceptance requires default-equivalent behavior for tax-season debt-delta base score and pressure weights, deterministic fallback for malformed debt-delta formula rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
+
+### PopulationAndHouseholds official supply liquidity cash-need extraction v1317-v1324 acceptance
+
+Acceptance requires default-equivalent behavior for the official-supply liquidity cash-need livelihood list, deterministic fallback for malformed livelihood rules-data, owner-only consumption by `PopulationAndHouseholds`, no save/schema drift, no rules-data loader/plugin system, no `PersonRegistry` expansion, no prose parsing, and no Application/UI/Unity authority.
