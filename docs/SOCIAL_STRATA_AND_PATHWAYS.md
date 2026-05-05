@@ -1039,3 +1039,9 @@ The extraction is default-equivalent. It does not retune tax-season registration
 V1309-V1316 moves the tax-season debt-delta base score and pressure weights into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. These values remain private household-owned tax burden inputs, not route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
 
 The extraction is default-equivalent. It does not retune tax-season registration visibility, liquidity, labor, fragility, interaction, clamp, event threshold, official-supply rules, household movement rules, or UI-visible social position.
+
+### Current population households official supply liquidity cash-need extraction: v1317-v1324
+
+V1317-V1324 moves the official-supply liquidity cash-need livelihood list into owner-consumed `PopulationHouseholdMobilityRulesData` without changing social-strata behavior. The list remains a household-owned pressure input for Office supply requisition handling, not a route-history state, movement command, migration economy, class/status ladder, or `PersonRegistry` expansion.
+
+The extraction is default-equivalent. It does not retune subsistence cash-need, tax-season cash-need, official-supply liquidity scores, household movement rules, or UI-visible social position.

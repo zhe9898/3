@@ -1036,3 +1036,9 @@ This is not tax-season debt-delta extraction, migration engine, household moveme
 V1309-V1316 extracts the tax-season debt-delta formula base score and pressure weights from `TaxSeasonBurdenProfile.DebtDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: base `14`, visibility/liquidity/labor/fragility/interaction weights all `1`, and the already extracted clamp remains unchanged.
 
 This is not tax-season clamp or event-threshold retune, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.
+
+## V1317-V1324 PopulationAndHouseholds Official Supply Liquidity Cash-Need Extraction
+
+V1317-V1324 extracts the official-supply liquidity cash-need livelihood predicate into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve the prior cash-need livelihoods: petty trader, boatman, artisan, seasonal migrant, and hired labor; the cash-need score and fallback remain unchanged.
+
+This is not subsistence cash-need extraction, official-supply liquidity score retune, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.

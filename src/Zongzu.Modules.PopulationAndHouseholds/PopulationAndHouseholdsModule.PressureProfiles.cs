@@ -440,7 +440,8 @@ public sealed partial class PopulationAndHouseholdsModule
     {
         int grainStrain = _householdMobilityRulesData.GetOfficialSupplyLiquidityGrainStrainPressureScoreOrDefault(
             household.GrainStore);
-        int cashNeed = IsCashNeedLivelihood(household.Livelihood)
+        int cashNeed = _householdMobilityRulesData.IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault(
+            household.Livelihood)
             ? _householdMobilityRulesData.GetOfficialSupplyLiquidityCashNeedPressureScoreOrDefault()
             : _householdMobilityRulesData.GetOfficialSupplyLiquidityCashNeedPressureFallbackScoreOrDefault();
         int toolDrag = _householdMobilityRulesData.GetOfficialSupplyLiquidityToolDragPressureScoreOrDefault(

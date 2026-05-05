@@ -1432,3 +1432,11 @@ No integration path is added for Application/UI/Unity authority, runtime loader/
 No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate tax-season fragility outcomes, and no prose parsing or loader/plugin system is introduced.
 
 No integration path may route these fragility pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist fragility pressure state, or create migration/route-history/class-status authority.
+
+### PopulationAndHouseholds official supply liquidity cash-need extraction v1317-v1324 integration note
+
+Official-supply liquidity cash-need livelihood ownership is internal to `PopulationAndHouseholds`. Upstream `OfficeAndCareer` still emits structured official-supply events; `PopulationAndHouseholds` applies owner-owned cash-need livelihood matching, cash-need score, fallback, and existing liquidity clamp while computing the household burden profile.
+
+No integration path is added for Application/UI/Unity authority, runtime loader/plugin execution, `PersonRegistry` state, movement commands, route history, or prose parsing.
+
+No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate official-supply liquidity outcomes, and no prose parsing or loader/plugin system is introduced.

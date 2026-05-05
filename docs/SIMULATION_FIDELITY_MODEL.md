@@ -1251,3 +1251,9 @@ No new household target store, movement ledger, route-history model, selector wa
 V1309-V1316 changes parameter ownership only. The tax-season debt-delta base score and visibility/liquidity/labor/fragility/interaction weights are validated and consumed by `PopulationAndHouseholds`, while tax-season registration visibility, liquidity, labor, fragility, interaction scoring, event threshold, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
 
 No new household target store, movement ledger, route-history model, selector watermark, tax-season-debt-delta state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.
+
+## V1317-V1324 PopulationAndHouseholds Official Supply Liquidity Cash-Need Extraction
+
+V1317-V1324 changes parameter ownership only. The official-supply liquidity cash-need livelihood list is validated and consumed by `PopulationAndHouseholds`, while official-supply scoring, event cadence, deterministic household ordering, focus-ring detail, active-pool logic, and near-detail/far-summary fidelity behavior remain unchanged.
+
+No new household target store, movement ledger, route-history model, selector watermark, official-supply-liquidity state, pressure-profile state, class/status state, `PersonRegistry` state, or distant-society detail promotion is added.

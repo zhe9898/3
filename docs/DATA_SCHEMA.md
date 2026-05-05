@@ -1863,3 +1863,9 @@ The tax-season interaction tenant pressure, land/labor pressure, cash-need livel
 Schema/migration impact: none. V1309-V1316 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The tax-season debt-delta base score and pressure weights are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households official supply liquidity cash-need extraction v1317-v1324 note
+
+Schema/migration impact: none. V1317-V1324 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The official-supply liquidity cash-need livelihood list is an in-memory `PopulationHouseholdMobilityRulesData` default/validation parameter consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.

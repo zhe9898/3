@@ -182,6 +182,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
     int OfficialSupplyLaborPressureClampCeiling,
     IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand> OfficialSupplyLiquidityGrainStrainPressureBands,
     int OfficialSupplyLiquidityGrainStrainPressureFallbackScore,
+    IReadOnlyList<LivelihoodType> OfficialSupplyLiquidityCashNeedLivelihoods,
     int OfficialSupplyLiquidityCashNeedPressureScore,
     int OfficialSupplyLiquidityCashNeedPressureFallbackScore,
     int OfficialSupplyLiquidityToolDragConditionThreshold,
@@ -905,6 +906,16 @@ public sealed record PopulationHouseholdMobilityRulesData(
             new PopulationHouseholdMobilityThresholdScoreBand(1, 3),
         };
 
+    public static IReadOnlyList<LivelihoodType> DefaultOfficialSupplyLiquidityCashNeedLivelihoods { get; } =
+        new[]
+        {
+            LivelihoodType.PettyTrader,
+            LivelihoodType.Boatman,
+            LivelihoodType.Artisan,
+            LivelihoodType.SeasonalMigrant,
+            LivelihoodType.HiredLabor,
+        };
+
     public static IReadOnlyList<PopulationHouseholdMobilityThresholdScoreBand>
         DefaultOfficialSupplyLiquidityDebtDragPressureBands { get; } =
         new[]
@@ -1112,6 +1123,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLaborPressureClampCeiling,
             DefaultOfficialSupplyLiquidityGrainStrainPressureBands,
             DefaultOfficialSupplyLiquidityGrainStrainPressureFallbackScore,
+            DefaultOfficialSupplyLiquidityCashNeedLivelihoods,
             DefaultOfficialSupplyLiquidityCashNeedPressureScore,
             DefaultOfficialSupplyLiquidityCashNeedPressureFallbackScore,
             DefaultOfficialSupplyLiquidityToolDragConditionThreshold,
@@ -1394,6 +1406,7 @@ public sealed record PopulationHouseholdMobilityRulesData(
             DefaultOfficialSupplyLaborPressureClampCeiling,
             DefaultOfficialSupplyLiquidityGrainStrainPressureBands,
             DefaultOfficialSupplyLiquidityGrainStrainPressureFallbackScore,
+            DefaultOfficialSupplyLiquidityCashNeedLivelihoods,
             DefaultOfficialSupplyLiquidityCashNeedPressureScore,
             DefaultOfficialSupplyLiquidityCashNeedPressureFallbackScore,
             DefaultOfficialSupplyLiquidityToolDragConditionThreshold,
@@ -3107,6 +3120,15 @@ public sealed record PopulationHouseholdMobilityRulesData(
         {
             errors.Add(
                 $"official_supply_liquidity_grain_strain_pressure_fallback_score must be between {MinOfficialSupplyLiquidityPressureContribution} and {MaxOfficialSupplyLiquidityPressureContribution}.");
+        }
+
+        if (OfficialSupplyLiquidityCashNeedLivelihoods is null
+            || OfficialSupplyLiquidityCashNeedLivelihoods.Count == 0
+            || OfficialSupplyLiquidityCashNeedLivelihoods.Any(static livelihood => !Enum.IsDefined(livelihood))
+            || OfficialSupplyLiquidityCashNeedLivelihoods.Distinct().Count()
+                != OfficialSupplyLiquidityCashNeedLivelihoods.Count)
+        {
+            errors.Add("official_supply_liquidity_cash_need_livelihoods must be non-empty, distinct, and defined.");
         }
 
         if (OfficialSupplyLiquidityCashNeedPressureScore is < 0 or > MaxOfficialSupplyLiquidityPressureContribution)
@@ -5541,6 +5563,18 @@ public sealed record PopulationHouseholdMobilityRulesData(
         return Validate().IsValid
             ? OfficialSupplyLiquidityCashNeedPressureScore
             : DefaultOfficialSupplyLiquidityCashNeedPressureScore;
+    }
+
+    public IReadOnlyList<LivelihoodType> GetOfficialSupplyLiquidityCashNeedLivelihoodsOrDefault()
+    {
+        return Validate().IsValid
+            ? OfficialSupplyLiquidityCashNeedLivelihoods
+            : DefaultOfficialSupplyLiquidityCashNeedLivelihoods;
+    }
+
+    public bool IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault(LivelihoodType livelihood)
+    {
+        return GetOfficialSupplyLiquidityCashNeedLivelihoodsOrDefault().Contains(livelihood);
     }
 
     public int GetOfficialSupplyLiquidityCashNeedPressureFallbackScoreOrDefault()

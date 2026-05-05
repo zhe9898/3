@@ -1174,6 +1174,8 @@ public sealed class OfficialSupplyBurdenHandlerTests
                 OfficialSupplyLiquidityGrainStrainPressureBands =
                     PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityGrainStrainPressureBands,
                 OfficialSupplyLiquidityGrainStrainPressureFallbackScore = 2,
+                OfficialSupplyLiquidityCashNeedLivelihoods =
+                    PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityCashNeedLivelihoods,
                 OfficialSupplyLiquidityCashNeedPressureScore = 2,
                 OfficialSupplyLiquidityCashNeedPressureFallbackScore = 0,
                 OfficialSupplyLiquidityToolDragConditionThreshold = 35,
@@ -1193,6 +1195,16 @@ public sealed class OfficialSupplyBurdenHandlerTests
         IDomainEvent explicitEvent = SingleBurdenEvent(explicitEvents);
 
         Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityGrainStrainPressureFallbackScore, Is.EqualTo(2));
+        Assert.That(
+            PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityCashNeedLivelihoods,
+            Is.EqualTo(new[]
+            {
+                LivelihoodType.PettyTrader,
+                LivelihoodType.Boatman,
+                LivelihoodType.Artisan,
+                LivelihoodType.SeasonalMigrant,
+                LivelihoodType.HiredLabor,
+            }));
         Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityCashNeedPressureScore, Is.EqualTo(2));
         Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityToolDragConditionThreshold, Is.EqualTo(35));
         Assert.That(PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityToolDragPressureScore, Is.EqualTo(1));
@@ -1203,9 +1215,34 @@ public sealed class OfficialSupplyBurdenHandlerTests
             PopulationHouseholdMobilityRulesData.DefaultOfficialSupplyLiquidityGrainStrainPressureBands
                 .Single(static band => band.Threshold == 55).Score,
             Is.EqualTo(-1));
+        Assert.That(explicitPreviousBaseline.IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault(LivelihoodType.Boatman), Is.True);
+        Assert.That(explicitPreviousBaseline.IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault(LivelihoodType.Smallholder), Is.False);
         Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure]));
         Assert.That(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo("4"));
         Assert.That(explicitEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta]));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_CustomLiquidityCashNeedLivelihoodRulesDataIsOwnerConsumed()
+    {
+        PopulationHouseholdMobilityRulesData customRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLiquidityCashNeedLivelihoods = new[] { LivelihoodType.PettyTrader },
+            };
+
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLiquidityPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> customEvents) = RunLiquidityPressureOfficialSupply(customRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent customEvent = SingleBurdenEvent(customEvents);
+
+        Assert.That(customRulesData.Validate().IsValid, Is.True);
+        Assert.That(customRulesData.IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault(LivelihoodType.Boatman), Is.False);
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo("2"));
+        Assert.That(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.Not.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure]));
+        Assert.That(
+            int.Parse(customEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta]),
+            Is.LessThan(int.Parse(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta])));
     }
 
     [Test]
@@ -1272,6 +1309,30 @@ public sealed class OfficialSupplyBurdenHandlerTests
         Assert.That(
             validation.Errors,
             Does.Contain("official_supply_liquidity_grain_strain_pressure_bands must be non-empty, distinct, and between threshold 0..100 and score -4..8."));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure]));
+        Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta]));
+    }
+
+    [Test]
+    public void OfficialSupplyRequisition_InvalidLiquidityCashNeedLivelihoodRulesDataFallsBackToPreviousBaseline()
+    {
+        PopulationHouseholdMobilityRulesData malformedRulesData =
+            PopulationHouseholdMobilityRulesData.Default with
+            {
+                OfficialSupplyLiquidityCashNeedLivelihoods = new[] { LivelihoodType.Boatman, LivelihoodType.Boatman },
+            };
+
+        PopulationHouseholdMobilityRulesValidationResult validation = malformedRulesData.Validate();
+        (_, IReadOnlyList<IDomainEvent> defaultEvents) = RunLiquidityPressureOfficialSupply();
+        (_, IReadOnlyList<IDomainEvent> fallbackEvents) = RunLiquidityPressureOfficialSupply(malformedRulesData);
+        IDomainEvent defaultEvent = SingleBurdenEvent(defaultEvents);
+        IDomainEvent fallbackEvent = SingleBurdenEvent(fallbackEvents);
+
+        Assert.That(validation.IsValid, Is.False);
+        Assert.That(
+            validation.Errors,
+            Does.Contain("official_supply_liquidity_cash_need_livelihoods must be non-empty, distinct, and defined."));
+        Assert.That(malformedRulesData.IsOfficialSupplyLiquidityCashNeedLivelihoodOrDefault(LivelihoodType.Boatman), Is.True);
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyLiquidityPressure]));
         Assert.That(fallbackEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta], Is.EqualTo(defaultEvent.Metadata[DomainEventMetadataKeys.OfficialSupplyDebtDelta]));
     }
