@@ -1423,6 +1423,12 @@ Tax-season interaction ownership is internal to `PopulationAndHouseholds`. Upstr
 
 No integration path is added for Application/UI/Unity authority, runtime loader/plugin execution, `PersonRegistry` state, movement commands, route history, or prose parsing.
 
+### PopulationAndHouseholds tax season debt delta formula extraction v1309-v1316 integration note
+
+Tax-season debt-delta formula ownership is internal to `PopulationAndHouseholds`. Upstream `WorldSettlements` still emits structured tax-season events; `PopulationAndHouseholds` applies owner-owned debt-delta base score, pressure weights, and existing clamp while computing the household tax burden profile.
+
+No integration path is added for Application/UI/Unity authority, runtime loader/plugin execution, `PersonRegistry` state, movement commands, route history, or prose parsing.
+
 No other module, Application service, UI surface, Unity adapter, or `PersonRegistry` path reads config to calculate tax-season fragility outcomes, and no prose parsing or loader/plugin system is introduced.
 
 No integration path may route these fragility pressure values through Application/UI/Unity, parse prose, load external rule assemblies, persist fragility pressure state, or create migration/route-history/class-status authority.

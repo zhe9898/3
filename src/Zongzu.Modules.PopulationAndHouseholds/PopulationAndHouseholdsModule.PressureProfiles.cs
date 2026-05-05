@@ -177,6 +177,12 @@ public sealed partial class PopulationAndHouseholdsModule
             ComputeTaxLaborPressure(household),
             ComputeTaxSeasonFragility(household),
             ComputeTaxInteractionPressure(household),
+            _householdMobilityRulesData.GetTaxSeasonDebtDeltaBaseScoreOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonDebtDeltaVisibilityPressureWeightOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonDebtDeltaLiquidityPressureWeightOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonDebtDeltaLaborPressureWeightOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonDebtDeltaFragilityPressureWeightOrDefault(),
+            _householdMobilityRulesData.GetTaxSeasonDebtDeltaInteractionPressureWeightOrDefault(),
             _householdMobilityRulesData.GetTaxSeasonDebtDeltaClampFloorOrDefault(),
             _householdMobilityRulesData.GetTaxSeasonDebtDeltaClampCeilingOrDefault());
     }
@@ -517,11 +523,22 @@ public sealed partial class PopulationAndHouseholdsModule
         int LaborPressure,
         int FragilityPressure,
         int InteractionPressure,
+        int DebtDeltaBaseScore,
+        int DebtDeltaVisibilityPressureWeight,
+        int DebtDeltaLiquidityPressureWeight,
+        int DebtDeltaLaborPressureWeight,
+        int DebtDeltaFragilityPressureWeight,
+        int DebtDeltaInteractionPressureWeight,
         int DebtDeltaClampFloor,
         int DebtDeltaClampCeiling)
     {
         public int DebtDelta => Math.Clamp(
-            14 + VisibilityPressure + LiquidityPressure + LaborPressure + FragilityPressure + InteractionPressure,
+            DebtDeltaBaseScore
+            + (VisibilityPressure * DebtDeltaVisibilityPressureWeight)
+            + (LiquidityPressure * DebtDeltaLiquidityPressureWeight)
+            + (LaborPressure * DebtDeltaLaborPressureWeight)
+            + (FragilityPressure * DebtDeltaFragilityPressureWeight)
+            + (InteractionPressure * DebtDeltaInteractionPressureWeight),
             DebtDeltaClampFloor,
             DebtDeltaClampCeiling);
     }

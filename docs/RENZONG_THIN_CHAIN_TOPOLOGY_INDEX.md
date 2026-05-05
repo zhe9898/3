@@ -1030,3 +1030,9 @@ This is not tax-season interaction/debt-delta extraction, migration engine, hous
 V1301-V1308 extracts tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback scores, and interaction clamp from `ComputeTaxInteractionPressure` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: tenant distress/grain `Tenant && distress>=65 && 0<grain<25 => +2`; land/labor `land>=40 && labor<35 => +1`; cash-need `PettyTrader|Boatman|Artisan|SeasonalMigrant|HiredLabor && 0<grain<30 && debt>=60 => +1`; resilience `grain>=70 && labor>=70 && debt<55 && distress<45 => -2`; final clamp `-2..4`.
 
 This is not tax-season debt-delta extraction, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.
+
+## V1309-V1316 PopulationAndHouseholds Tax Season Debt Delta Formula Extraction
+
+V1309-V1316 extracts the tax-season debt-delta formula base score and pressure weights from `TaxSeasonBurdenProfile.DebtDelta` into owner-consumed `PopulationHouseholdMobilityRulesData`. Defaults preserve prior behavior: base `14`, visibility/liquidity/labor/fragility/interaction weights all `1`, and the already extracted clamp remains unchanged.
+
+This is not tax-season clamp or event-threshold retune, migration engine, household movement command, route-history, loader/plugin, `PersonRegistry`, class/status, or schema expansion. Schema/migration impact: none.

@@ -394,3 +394,7 @@ The V1293-V1300 extraction keeps tax-season fragility distress bands, debt bands
 ### population households tax season interaction pressure extraction v1301-v1308 adds no persisted fields
 
 The V1301-V1308 extraction keeps tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback scores, and clamp in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.
+
+### population households tax season debt delta formula extraction v1309-v1316 adds no persisted fields
+
+The V1309-V1316 extraction keeps tax-season debt-delta base score and pressure weights in owner-consumed in-memory rules-data. It adds no namespace, persisted field, module schema version, migration, save manifest membership, serialized projection cache, movement ledger, route-history state, pressure-profile ledger, or loader/config file.

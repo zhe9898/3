@@ -1857,3 +1857,9 @@ The tax-season fragility distress bands, debt bands, shelter-drag threshold/scor
 Schema/migration impact: none. V1301-V1308 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
 
 The tax-season interaction tenant pressure, land/labor pressure, cash-need livelihood pressure, resilience relief, fallback scores, and clamp are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
+
+### Current population households tax season debt delta formula extraction v1309-v1316 note
+
+Schema/migration impact: none. V1309-V1316 adds no persisted fields and does not change root save version, module schema version, save manifest membership, migrations, or serialized projections.
+
+The tax-season debt-delta base score and pressure weights are in-memory `PopulationHouseholdMobilityRulesData` default/validation parameters consumed by `PopulationAndHouseholds`, not saved state and not a runtime rules-data file.
